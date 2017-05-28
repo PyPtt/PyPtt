@@ -69,7 +69,7 @@ class Ptt(object):
             sys.exit(0)
         return True
 
-    def isLogined(self):
+    def login(self):
         if self.input_user_password:
             return True
         PTTTelnetCrawlerLibraryUtil.Log("Connect error")
