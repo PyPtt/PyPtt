@@ -3,7 +3,7 @@ import telnetlib
 import time
 import PTTTelnetCrawlerLibraryUtil
 
-class Ptt(object):
+class PTTTelnetCrawlerLibrary(object):
     def __init__(self, ID, password, kickOtherLogin):
 
         PTTTelnetCrawlerLibraryUtil.Log("Start connect to PTT")
@@ -48,8 +48,6 @@ class Ptt(object):
             self._telnet.write(b"q\r\n")
             time.sleep(2)
             self._content = self._telnet.read_very_eager().decode('big5', 'ignore')
-
-        PTTTelnetCrawlerLibraryUtil.Log('Login success')
         return True
 
     @property
@@ -60,6 +58,7 @@ class Ptt(object):
             time.sleep(2)
             self._content = self._telnet.read_very_eager().decode('big5', 'ignore')
             return self.is_success
+        PTTTelnetCrawlerLibraryUtil.Log(self._content)
         return False
 
     def isConnected(self):
@@ -70,25 +69,42 @@ class Ptt(object):
         return True
 
     def login(self):
-        if self.input_user_password:
-            return True
-        PTTTelnetCrawlerLibraryUtil.Log("Connect error")
-        return False
- 
-    def logout(self):
+
+        result = self.input_user_password
+        self.toUserMenu()
+        
+        if result:
+            PTTTelnetCrawlerLibraryUtil.Log('Login success')
+        else :
+            PTTTelnetCrawlerLibraryUtil.Log("Login fail")
+
+        return result
+
+    def toUserMenu(self):
         # q = 上一頁，直到回到首頁為止，g = 離開，再見
-        self._telnet.write(b"qqqqqqqqqg\r\ny\r\n")
         time.sleep(1)
+        self._telnet.write(b"qqqqqqqqq\r\n")
+        time.sleep(1)
+    def toBoard(self, Board):
+        # s 進入要發文的看板
+        self._telnet.write(b's')
+        self._telnet.write(Board.encode('big5') + b'\r\n')
+        time.sleep(2)
+        IntoBoardDetect = self._telnet.read_very_eager().decode('big5', 'ignore')
+        if u"動畫播放中" in IntoBoardDetect:
+            PTTTelnetCrawlerLibraryUtil.Log("First time into " + Board)
+            self._telnet.write(b'q')
+        time.sleep(2)
+        
+    def logout(self):
+        self._telnet.write(b"g\r\ny\r\n")
         self._telnet.close()
         PTTTelnetCrawlerLibraryUtil.Log("Logout success")
 
     def post(self, board, title, content):
-        # s 進入要發文的看板
-        self._telnet.write(b's')
-        self._telnet.write(board.encode('big5') + b'\r\n')
-        time.sleep(1)
-        self._telnet.write(b'q')
-        time.sleep(2)
+        self.toUserMenu()
+        self.toBoard(board)
+
         # 請參考 http://donsnotes.com/tech/charsets/ascii.html#cntrl
         # Ctrl+P
         self._telnet.write(b'\x10')
@@ -103,7 +119,10 @@ class Ptt(object):
         self._telnet.write(b's\r\n')
         # 不加簽名檔
         self._telnet.write(b'0\r\n')
-        PTTTelnetCrawlerLibraryUtil.Log("Post success")
+        PTTTelnetCrawlerLibraryUtil.Log(title + " post success")
+        
+    def listPost(self, board):
+        pass
 
 if __name__ == "__main__":
 
