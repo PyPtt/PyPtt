@@ -4,7 +4,7 @@ import PTTTelnetCrawlerLibrary
 def Post(ID, PW, KickOtherLogin, Board, Title, Content):
     
     ptt = PTTTelnetCrawlerLibrary.Ptt(ID, PW, KickOtherLogin)
-    if ptt.isLogined():
+    if ptt.isConnected():
         if ptt.login():
             ptt.post(Board, Title, Content)
     ptt.logout()
