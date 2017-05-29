@@ -1,13 +1,45 @@
 import sys
 import telnetlib
 import time
+import re
 import PTTTelnetCrawlerLibraryUtil
+
+class PushInformation(object):
+    def __init__(self, PushType, PushID, PushContent, PushTime):
+
+class PostInformation(object):
+    def __init__(self, PostID, Index, Title, WebUrl, Money, PostContent):
+        self._PostID = PostID
+        self._Index = Index
+        self._Title = Title
+        self._PostContent = PostContent
+        self._Money = Money
+        self._WebUrl = WebUrl
+
+    def getPostID(self):
+        return self._PostID
+    def getPostIndex(self):
+        return self._Index
+    def getTitle(self):
+        return self._Title
+    def getPostContent(self):
+        return self._PostContent
+    def getMoney(self):
+        return self._Money
+    def getWebUrl(self):
+        return self._WebUrl
 
 class PTTTelnetCrawlerLibrary(object):
     def __init__(self, ID, password, kickOtherLogin):
-
+ 
         PTTTelnetCrawlerLibraryUtil.Log("ID: " + ID)
-        PTTTelnetCrawlerLibraryUtil.Log("Password: " + password)
+
+        TempPW = ''
+
+        for i in range(len(password)):
+            TempPW += "*"
+        
+        PTTTelnetCrawlerLibraryUtil.Log("Password: " + TempPW)
         if kickOtherLogin:
             PTTTelnetCrawlerLibraryUtil.Log("This connection will kick other login")
         else :
@@ -152,9 +184,100 @@ class PTTTelnetCrawlerLibrary(object):
         PTTTelnetCrawlerLibraryUtil.Log(title + " post success")
 
         return True
-    def listPost(self, board):
-        pass
+    
+    def getPostInformationByID(self, Board, PostID):
+        self.toUserMenu()
+        if not self.toBoard(Board):
+            PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
+            return False
 
+        self._telnet.write(b'#' + PostID.encode('big5') + b'\r\n')
+        self.waitResponse()
+        if u"找不到這個文章代碼(AID)" in self._content:
+            PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " fail")
+            return False
+        PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " success")
+
+        #Refresh screen
+        self._telnet.write(b'\x0C')
+        self.waitResponse()
+
+        #PostID, Index, Title, WebUrl, Money, PostContent):
+        PostIndex = -1
+        PostTitle = ""
+        PostWebUrl = ""
+        PostMoney = -1
+        PostContent = ""
+        
+        for InforTempString in self._content.split("\r\n"):
+            if ">" in InforTempString:
+                PostIndex = re.search(r'\d+', InforTempString).group()
+
+        if PostIndex == -1:
+            PTTTelnetCrawlerLibraryUtil.Log("Find PostIndex fail")
+            return False
+        else:
+            PTTTelnetCrawlerLibraryUtil.Log("Find PostIndex success")
+        
+        #Query post information
+        self._telnet.write(b'Q')
+        self.waitResponse()
+
+        for InforTempString in self._content.split("\r\n"):
+            Line = InforTempString.replace("[1;37m", "")
+            Line = Line.replace("[16;77H", "")
+            Line = Line.replace("[15;77H", "")
+
+            if u">" in Line:
+                PostTitle = Line[Line.index("□ ") + len("□ "): len(Line)]
+            if u"https" in Line:
+                PostWebUrl = Line[Line.index("https://") : Line.index(".html") + len(".html")]
+            if u"這一篇文章值" in Line:
+                PostMoney = re.search(r'\d+', Line).group()
+            #print(Line)
+
+        self._telnet.write(b'\r\n\r\n')
+        self.waitResponse()
+
+        PostContent = self._content.replace("[K", "")
+        PostContent = PostContent.replace("[H", "")
+        PostContent = PostContent.replace("[m", "")
+        PostContent = PostContent.replace("[34;47m ", "")
+        PostContent = PostContent.replace("[0;44m ", "")
+        PostContent = PostContent.replace("[1;37m", "")
+        PostContent = PostContent.replace("[0;33m", "")
+        PostContent = PostContent.replace("[0;36m", "")
+        PostContent = PostContent.replace("[0;1;37m", "")
+        #[0;1;37m
+        PostContent = PostContent.replace("[44m ", "")
+        PostContent = PostContent.replace("[36m", "")
+        PostContent = PostContent.replace("[33m", "")
+        PostContent = PostContent.replace("[32m", "")
+        PostContent = PostContent.replace("[31m", "")
+        PostContent = PostContent.replace("[30m", "")
+        #[44m  [40m
+        PostContent = PostContent[1 : len(PostContent)]
+        print(PostContent)
+        
+        if PostTitle == "":
+            PTTTelnetCrawlerLibraryUtil.Log("Find PostTitle fail")
+            return False
+
+        if PostWebUrl == "":
+            PTTTelnetCrawlerLibraryUtil.Log("Find PostWebUrl fail")
+            return False
+        if PostMoney == -1:
+            PTTTelnetCrawlerLibraryUtil.Log("Find PostMoney fail")
+            return False
+        
+        PTTTelnetCrawlerLibraryUtil.Log("Post id: " + PostID)
+        PTTTelnetCrawlerLibraryUtil.Log("Post index: " + PostIndex)
+        PTTTelnetCrawlerLibraryUtil.Log("Post title: " + PostTitle)
+        PTTTelnetCrawlerLibraryUtil.Log("Post web url: " + PostWebUrl)
+        PTTTelnetCrawlerLibraryUtil.Log("Post money: " + PostMoney)
+
+        return True
+    
 if __name__ == "__main__":
 
     print("PTT Telnet Crawler Library v 0.1.170528")
