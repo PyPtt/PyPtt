@@ -1,18 +1,16 @@
 import sys
 import PTTTelnetCrawlerLibrary
 
-def Post(ID, PW, KickOtherLogin, Board, Title, Content):
+def Post(ID, PW, KickOtherLogin, Board, Title, Content, PostType, SignType):
     
     PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
-    if PTTCrawler.isConnected():
-        if PTTCrawler.login():
-            PTTCrawler.post(Board, Title + " 1", Content)
-            PTTCrawler.post(Board, Title + " 2", Content)
-            PTTCrawler.post(Board, Title + " 3", Content)
-            PTTCrawler.post(Board, Title + " 4", Content)
-            PTTCrawler.post(Board, Title + " 5", Content)
+    if not PTTCrawler.isLoginSuccess():
+        return False
+    PTTCrawler.post(Board, Title + " 1", Content, PostType, SignType)
+    PTTCrawler.post(Board, Title + " 2", Content, PostType, SignType)
+    PTTCrawler.post(Board, Title + " 3", Content, PostType, SignType)
     PTTCrawler.logout()
-
+    return True
 def ListALLPost(ID, PW, KickOtherLogin, Board):
     
     PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
@@ -28,4 +26,6 @@ if __name__ == "__main__":
     Password = 'Your PTT Password'
     KickOtherLogin = False
 
-    Post(ID, Password, KickOtherLogin, 'test','發文文字測試', '這是一篇測試,哇哈哈 QQ')
+    #發文類別           1
+    #簽名檔選項  	0
+    Post(ID, Password, KickOtherLogin, 'test','發文類別測試', '發文類別測試 QQ', 1, 0)
