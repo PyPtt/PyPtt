@@ -11,13 +11,18 @@ def Post(ID, PW, KickOtherLogin, Board, Title, Content, PostType, SignType):
     PTTCrawler.post(Board, Title + " 3", Content, PostType, SignType)
     PTTCrawler.logout()
     return True
-def ListALLPost(ID, PW, KickOtherLogin, Board):
+def GetPostInformation(ID, PW, KickOtherLogin, Board, PostID):
+
+    result = False
     
     PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
-    if PTTCrawler.isConnected():
-        if PTTCrawler.login():
-            PTTCrawler.listPost(Board)
+    if not PTTCrawler.isLoginSuccess():
+        return False
+    
+    result = PTTCrawler.getPostInformationByID(Board, PostID)
+
     PTTCrawler.logout()
+    return result
     
 if __name__ == "__main__":
     print("Welcome to PTT Telnet Crawler Library Demo")
@@ -27,5 +32,6 @@ if __name__ == "__main__":
     KickOtherLogin = False
 
     #發文類別           1
-    #簽名檔選項  	0
-    Post(ID, Password, KickOtherLogin, 'test','發文類別測試', '發文類別測試 QQ', 1, 0)
+    #簽名檔        	0
+    #Post(ID, Password, KickOtherLogin, 'test','發文類別測試', '發文類別測試 QQ', 1, 0)
+    GetPostInformation(ID, Password, KickOtherLogin, 'test', "1PA_bYSj")
