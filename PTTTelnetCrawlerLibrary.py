@@ -382,7 +382,7 @@ class PTTTelnetCrawlerLibrary(object):
         
         result = []
         LastIndex = self.getNewestPostIndex(Board)
-        if LastPostIndex <= 0:
+        if LastPostIndex <= 0 or LastIndex < LastPostIndex:
             result.append(LastIndex)
         else:
             for IndexTemp in range(LastPostIndex + 1, LastIndex + 1):
