@@ -12,7 +12,7 @@ def Post(ID, PW, KickOtherLogin, Board, Title, Content, PostType, SignType):
     PTTCrawler.post(Board, Title + " 3", Content, PostType, SignType)
     PTTCrawler.logout()
     return True
-def GetPostInformation(ID, PW, KickOtherLogin, Board, PostID):
+def GetPostInformationByID(ID, PW, KickOtherLogin, Board, PostID):
 
     result = False
     
@@ -59,15 +59,20 @@ def GetNewPostIndex(ID, PW, KickOtherLogin, Board):
     
     LastIndex = 0
     LastIndexList = [0]
-    for i in range(30):
-        if not len(LastIndexList) == 0:
-            LastIndex = LastIndexList.pop()
-        LastIndexList = PTTCrawler.getNewPostIndex(Board, LastIndex)
-        
-        if not len(LastIndexList) == 0:
-            for NewPostIndex in LastIndexList:
-                print("Detected new post: " + str(NewPostIndex))
-        time.sleep(2)
+    while True:
+    
+        try:
+            if not len(LastIndexList) == 0:
+                LastIndex = LastIndexList.pop()
+            
+            LastIndexList = PTTCrawler.getNewPostIndex(Board, LastIndex)
+            
+            if not len(LastIndexList) == 0:
+                for NewPostIndex in LastIndexList:
+                    print("Detected new post: " + str(NewPostIndex))
+            time.sleep(2)
+        except KeyboardInterrupt:
+            break;
     PTTCrawler.logout()
     result = True
     return result
@@ -82,7 +87,7 @@ if __name__ == "__main__":
     #發文類別           1
     #簽名檔        	0
     #Post(ID, Password, KickOtherLogin, 'test','發文類別測試', '發文類別測試 QQ', 1, 0)
-    #GetPostInformation(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
+    GetPostInformationByID(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
     #GetPostInformationByIndex(ID, Password, KickOtherLogin, 'Wanted', 68935)
-    GetNewestPostIndex(ID, Password, KickOtherLogin, 'Wanted')
+    #GetNewestPostIndex(ID, Password, KickOtherLogin, 'Wanted')
     #GetNewPostIndex(ID, Password, KickOtherLogin, 'Wanted')

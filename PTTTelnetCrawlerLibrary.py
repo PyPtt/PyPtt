@@ -7,9 +7,6 @@ from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import PTTTelnetCrawlerLibraryUtil
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-WebRequest = requests.session()
-
 class PushInformation(object):
     def __init__(self, PushType, PushID, PushContent, PushTime):
         self._PushType = PushType
@@ -19,19 +16,26 @@ class PushInformation(object):
         self._PushTime = PushTime
 
 class PostInformation(object):
-    def __init__(self, Board, PostID, Index, Title, WebUrl, Money, PostContent):
+    def __init__(self, Board, PostID, Index, Author, Date, Title, WebUrl, Money, PostContent, OriginalData):
         self._Board = Board
         self._PostID = PostID
+        self._Author = Author
+        self._Date = Date
         self._Index = Index
         self._Title = Title
         self._PostContent = PostContent
         self._Money = Money
         self._WebUrl = WebUrl
+        self._OriginalData = OriginalData
 
     def getPostID(self):
         return self._PostID
     def getPostIndex(self):
         return self._Index
+    def getPostAuthor(self):
+        return self._Author
+    def getPostDate(self):
+        return self._Date
     def getTitle(self):
         return self._Title
     def getPostContent(self):
@@ -40,7 +44,9 @@ class PostInformation(object):
         return self._Money
     def getWebUrl(self):
         return self._WebUrl
-
+    def getOriginalData(self):
+        return self._OriginalData
+    
 class PTTTelnetCrawlerLibrary(object):
     def __init__(self, ID, password, kickOtherLogin):
  
@@ -204,12 +210,12 @@ class PTTTelnetCrawlerLibrary(object):
         self.toUserMenu()
         if not self.toBoard(Board):
             PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
-            return result
+            return None
         self._telnet.write(b'#' + PostID.encode('big5') + b'\r\n')
         self.waitResponse()
         if u"找不到這個文章代碼(AID)" in self._content:
             PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " fail")
-            return result
+            return None
 
         #Refresh screen
         self._telnet.write(b'\x0C')
@@ -217,7 +223,9 @@ class PTTTelnetCrawlerLibrary(object):
 
         #PostID, Index, Title, WebUrl, Money, PostContent):
         PostIndex = -1
+        PostAuthor = ""
         PostTitle = ""
+        PostDate = ""
         PostWebUrl = ""
         PostMoney = -1
         PostContent = ""
@@ -228,7 +236,7 @@ class PTTTelnetCrawlerLibrary(object):
 
         if PostIndex == -1:
             PTTTelnetCrawlerLibraryUtil.Log("Find PostIndex fail")
-            return result
+            return None
         
         #Query post information
         self._telnet.write(b'Q')
@@ -239,24 +247,22 @@ class PTTTelnetCrawlerLibrary(object):
             Line = Line.replace("[16;77H", "")
             Line = Line.replace("[15;77H", "")
 
-            if u">" in Line:
-                PostTitle = Line[Line.index("□ ") + len("□ "): len(Line)]
             if u"https" in Line:
                 PostWebUrl = Line[Line.index("https://") : Line.index(".html") + len(".html")]
             if u"這一篇文章值" in Line:
                 PostMoney = re.search(r'\d+', Line).group()
         
-        if PostTitle == "":
-            PTTTelnetCrawlerLibraryUtil.Log("Find PostTitle fail")
-            return False
         if PostWebUrl == "":
             PTTTelnetCrawlerLibraryUtil.Log("Find PostWebUrl fail")
-            return False
+            return None
         if PostMoney == -1:
             PTTTelnetCrawlerLibraryUtil.Log("Find PostMoney fail")
-            return False
-
-        res = WebRequest.get(PostWebUrl, verify=False)
+            return None
+            
+        
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+		
+        res = requests.get(PostWebUrl)
         if 'over18' in res.url:
             PTTTelnetCrawlerLibraryUtil.Log("Detect 18 web")
             load = {
@@ -265,7 +271,44 @@ class PTTTelnetCrawlerLibrary(object):
             }
             res = WebRequest.post('https://www.ptt.cc/ask/over18', verify=False, data=load)
 		
-        PostContent = res.text
+        ##################
+        
+        soup =  BeautifulSoup(res.text,"html.parser")
+        main_content = soup.find(id="main-content")
+        metas = main_content.select('div.article-metaline')
+        filtered = [ v for v in main_content.stripped_strings if v[0] not in [u'※', u'◆'] and  v[:2] not in [u'--'] ]
+        content = ' '.join(filtered)
+        content = re.sub(r'(\s)+', '', content )
+        
+        author = metas[0].select('span.article-meta-value')[0].string
+        title = metas[1].select('span.article-meta-value')[0].string
+        date = metas[2].select('span.article-meta-value')[0].string
+        
+        PostTitle = title
+        PostAuthor = author
+        PostDate = date
+        #print(content)
+        try:
+            if content.index("--" + PostWebUrl) > 0:
+                PostContent = content[0 : content.index("--" + PostWebUrl)]
+            else:
+                PostContent = content[0 : content.index(PostWebUrl)]
+            PostContent = PostContent[PostContent.index(PostDate.replace(" ", "")) + len(PostDate.replace(" ", "")): len(PostContent)]
+        except ValueError:
+            print("Error!")
+            print(content)
+            return None
+        ##################
+        
+        if PostTitle == "":
+            PTTTelnetCrawlerLibraryUtil.Log("Find PostTitle fail")
+            return None
+        if PostAuthor == "":
+            PTTTelnetCrawlerLibraryUtil.Log("Find PostAuthor fail")
+            return None
+        if PostDate == "":
+            PTTTelnetCrawlerLibraryUtil.Log("Find PostDate fail")
+            return None
         
         """PTTTelnetCrawlerLibraryUtil.Log("Post id: " + PostID)
         PTTTelnetCrawlerLibraryUtil.Log("Post index: " + PostIndex)
@@ -273,7 +316,7 @@ class PTTTelnetCrawlerLibrary(object):
         PTTTelnetCrawlerLibraryUtil.Log("Post web url: " + PostWebUrl)
         PTTTelnetCrawlerLibraryUtil.Log("Post money: " + PostMoney)"""
         
-        result = PostInformation(Board, PostID, PostIndex, PostTitle, PostWebUrl, PostMoney, PostContent)
+        result = PostInformation(Board, PostID, PostIndex, PostAuthor, PostDate, PostTitle, PostWebUrl, PostMoney, PostContent, res.text)
 
         return result
     def getPostInformationByIndex(self, Board, Index):
