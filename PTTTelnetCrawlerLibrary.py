@@ -210,7 +210,6 @@ class PTTTelnetCrawlerLibrary(object):
         if u"找不到這個文章代碼(AID)" in self._content:
             PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " fail")
             return result
-        PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " success")
 
         #Refresh screen
         self._telnet.write(b'\x0C')
@@ -277,7 +276,76 @@ class PTTTelnetCrawlerLibrary(object):
         result = PostInformation(Board, PostID, PostIndex, PostTitle, PostWebUrl, PostMoney, PostContent)
 
         return result
+    def getPostInformationByIndex(self, Board, Index):
+        
+        result = None   
     
+        self.toUserMenu()
+        if not self.toBoard(Board):
+            PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
+            return result
+        
+        NewestIndex = self.getNewestPostIndex(Board)
+        
+        if Index <= 0 or NewestIndex < Index:
+            PTTTelnetCrawlerLibraryUtil.Log("Error index: " + str(Index))
+            PTTTelnetCrawlerLibraryUtil.Log("0 ~ " + NewestIndex)
+            return result
+        
+        self._telnet.write(str(Index).encode('big5') + b'\r\n')
+        self.waitResponse()
+
+        self._telnet.write(b'Q\x0C')
+        self.waitResponse()
+        
+        PostID = ""
+        
+        for InforTempString in self._content.split("\r\n"):
+            if u"│ 文章代碼(AID): \x1B[1;37m#" in InforTempString:
+                PostID = InforTempString.replace(u"│ 文章代碼(AID): \x1B[1;37m#", "")
+                PostID = PostID[0 : PostID.index(" ")]
+                break
+        #print(PostID)
+        
+        result = self.getPostInformationByID(Board, PostID)
+
+        return result
+        
+    def getNewestPostIndex(self, Board):
+        result = -1
+        self.toUserMenu()
+        if not self.toBoard(Board):
+            PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
+            return result
+
+        self._telnet.write(b'\x0C')
+        self.waitResponse()
+        
+        while not u"> \x1B[1;33m  ★" in self._content:
+            self._telnet.write(b'\x1b\x4fB\x0C')
+            self.waitResponse()
+        while u"> \x1B[1;33m  ★" in self._content:
+            self._telnet.write(b'\x1b\x4fA\x0C')
+            self.waitResponse()
+
+        #print(self._content)
+        for InforTempString in self._content.split("\r\n"):
+            if u">" in InforTempString:
+                #print(InforTempString)
+                result = int(re.search(r'\d+', InforTempString).group())
+                break
+        return result
+    def getNewPostIndex(self, Board, LastPostIndex):
+        
+        result = []
+        LastIndex = self.getNewestPostIndex(Board)
+        if LastPostIndex <= 0:
+            result.append(LastIndex)
+        else:
+            for IndexTemp in range(LastPostIndex + 1, LastIndex + 1):
+                result.append(IndexTemp)
+        return result
+        
 if __name__ == "__main__":
 
     print("PTT Telnet Crawler Library v 0.1.170528")
