@@ -2,13 +2,25 @@ import sys
 import telnetlib
 import time
 import re
+import requests
+from bs4 import BeautifulSoup
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import PTTTelnetCrawlerLibraryUtil
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+WebRequest = requests.session()
 
 class PushInformation(object):
     def __init__(self, PushType, PushID, PushContent, PushTime):
+        self._PushType = PushType
+        self._PushID = PushID
+        self._PushContent = PushContent
+        self._PostContent = PostContent
+        self._PushTime = PushTime
 
 class PostInformation(object):
-    def __init__(self, PostID, Index, Title, WebUrl, Money, PostContent):
+    def __init__(self, Board, PostID, Index, Title, WebUrl, Money, PostContent):
+        self._Board = Board
         self._PostID = PostID
         self._Index = Index
         self._Title = Title
@@ -145,7 +157,7 @@ class PTTTelnetCrawlerLibrary(object):
         self._telnet.write(b's')
         self._telnet.write(Board.encode('big5') + b'\r\n')
         self.waitResponse()
-        if u"動畫播放中" in self._content:
+        if u"動畫播放中" in self._content or u"請按任意鍵繼續" in self._content:
             #PTTTelnetCrawlerLibraryUtil.Log("First time into " + Board)
             self._telnet.read_very_eager().decode('big5', 'ignore')
             self._telnet.write(b'q')
@@ -186,16 +198,18 @@ class PTTTelnetCrawlerLibrary(object):
         return True
     
     def getPostInformationByID(self, Board, PostID):
+        
+        result = None   
+    
         self.toUserMenu()
         if not self.toBoard(Board):
             PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
-            return False
-
+            return result
         self._telnet.write(b'#' + PostID.encode('big5') + b'\r\n')
         self.waitResponse()
         if u"找不到這個文章代碼(AID)" in self._content:
             PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " fail")
-            return False
+            return result
         PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " success")
 
         #Refresh screen
@@ -215,9 +229,7 @@ class PTTTelnetCrawlerLibrary(object):
 
         if PostIndex == -1:
             PTTTelnetCrawlerLibraryUtil.Log("Find PostIndex fail")
-            return False
-        else:
-            PTTTelnetCrawlerLibraryUtil.Log("Find PostIndex success")
+            return result
         
         #Query post information
         self._telnet.write(b'Q')
@@ -234,49 +246,37 @@ class PTTTelnetCrawlerLibrary(object):
                 PostWebUrl = Line[Line.index("https://") : Line.index(".html") + len(".html")]
             if u"這一篇文章值" in Line:
                 PostMoney = re.search(r'\d+', Line).group()
-            #print(Line)
-
-        self._telnet.write(b'\r\n\r\n')
-        self.waitResponse()
-
-        PostContent = self._content.replace("[K", "")
-        PostContent = PostContent.replace("[H", "")
-        PostContent = PostContent.replace("[m", "")
-        PostContent = PostContent.replace("[34;47m ", "")
-        PostContent = PostContent.replace("[0;44m ", "")
-        PostContent = PostContent.replace("[1;37m", "")
-        PostContent = PostContent.replace("[0;33m", "")
-        PostContent = PostContent.replace("[0;36m", "")
-        PostContent = PostContent.replace("[0;1;37m", "")
-        #[0;1;37m
-        PostContent = PostContent.replace("[44m ", "")
-        PostContent = PostContent.replace("[36m", "")
-        PostContent = PostContent.replace("[33m", "")
-        PostContent = PostContent.replace("[32m", "")
-        PostContent = PostContent.replace("[31m", "")
-        PostContent = PostContent.replace("[30m", "")
-        #[44m  [40m
-        PostContent = PostContent[1 : len(PostContent)]
-        print(PostContent)
         
         if PostTitle == "":
             PTTTelnetCrawlerLibraryUtil.Log("Find PostTitle fail")
             return False
-
         if PostWebUrl == "":
             PTTTelnetCrawlerLibraryUtil.Log("Find PostWebUrl fail")
             return False
         if PostMoney == -1:
             PTTTelnetCrawlerLibraryUtil.Log("Find PostMoney fail")
             return False
+
+        res = WebRequest.get(PostWebUrl, verify=False)
+        if 'over18' in res.url:
+            PTTTelnetCrawlerLibraryUtil.Log("Detect 18 web")
+            load = {
+                'from': '/bbs/{}/index.html'.format(Board),
+                'yes': 'yes'
+            }
+            res = WebRequest.post('https://www.ptt.cc/ask/over18', verify=False, data=load)
+		
+        PostContent = res.text
         
-        PTTTelnetCrawlerLibraryUtil.Log("Post id: " + PostID)
+        """PTTTelnetCrawlerLibraryUtil.Log("Post id: " + PostID)
         PTTTelnetCrawlerLibraryUtil.Log("Post index: " + PostIndex)
         PTTTelnetCrawlerLibraryUtil.Log("Post title: " + PostTitle)
         PTTTelnetCrawlerLibraryUtil.Log("Post web url: " + PostWebUrl)
-        PTTTelnetCrawlerLibraryUtil.Log("Post money: " + PostMoney)
+        PTTTelnetCrawlerLibraryUtil.Log("Post money: " + PostMoney)"""
+        
+        result = PostInformation(Board, PostID, PostIndex, PostTitle, PostWebUrl, PostMoney, PostContent)
 
-        return True
+        return result
     
 if __name__ == "__main__":
 

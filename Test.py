@@ -27,11 +27,11 @@ def GetPostInformation(ID, PW, KickOtherLogin, Board, PostID):
 if __name__ == "__main__":
     print("Welcome to PTT Telnet Crawler Library Demo")
 
-    ID = 'Your PTT ID'
-    Password = 'Your PTT Password'
+    ID = 'CodingMan'
+    Password = 'love1214'
     KickOtherLogin = False
 
     #發文類別           1
     #簽名檔        	0
     #Post(ID, Password, KickOtherLogin, 'test','發文類別測試', '發文類別測試 QQ', 1, 0)
-    GetPostInformation(ID, Password, KickOtherLogin, 'test', "1PA_bYSj")
+    GetPostInformation(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
