@@ -271,8 +271,6 @@ class PTTTelnetCrawlerLibrary(object):
             }
             res = WebRequest.post('https://www.ptt.cc/ask/over18', verify=False, data=load)
 		
-        ##################
-        
         soup =  BeautifulSoup(res.text,"html.parser")
         main_content = soup.find(id="main-content")
         metas = main_content.select('div.article-metaline')
@@ -288,17 +286,13 @@ class PTTTelnetCrawlerLibrary(object):
         PostAuthor = author
         PostDate = date
         #print(content)
-        try:
-            if content.index("--" + PostWebUrl) > 0:
-                PostContent = content[0 : content.index("--" + PostWebUrl)]
-            else:
-                PostContent = content[0 : content.index(PostWebUrl)]
-            PostContent = PostContent[PostContent.index(PostDate.replace(" ", "")) + len(PostDate.replace(" ", "")): len(PostContent)]
-        except ValueError:
-            print("Error!")
-            print(content)
-            return None
-        ##################
+        if content.find("--" + PostWebUrl) >= 0:
+            PostContent = content[0 : content.find("--" + PostWebUrl)]
+        elif content.find(PostWebUrl) >= 0:
+            PostContent = content[0 : content.find(PostWebUrl)]
+        else:
+            PTTTelnetCrawlerLibraryUtil.Log("Content parse error")
+        PostContent = PostContent[PostContent.index(PostDate.replace(" ", "")) + len(PostDate.replace(" ", "")): len(PostContent)]
         
         if PostTitle == "":
             PTTTelnetCrawlerLibraryUtil.Log("Find PostTitle fail")
@@ -371,7 +365,6 @@ class PTTTelnetCrawlerLibrary(object):
             self._telnet.write(b'\x1b\x4fA\x0C')
             self.waitResponse()
 
-        #print(self._content)
         for InforTempString in self._content.split("\r\n"):
             if u">" in InforTempString:
                 #print(InforTempString)
