@@ -2,6 +2,26 @@ import sys
 import time
 import PTTTelnetCrawlerLibrary
 
+def GoToBoard(ID, PW, KickOtherLogin, Board):
+    PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
+    if not PTTCrawler.isLoginSuccess():
+        return False
+    if PTTCrawler.toBoard(Board):
+        print("Go to " + Board + " success")
+    else:
+        print("Go to " + Board + " fail")
+    
+    if PTTCrawler.toBoard(Board):
+        print("Go to " + Board + " success")
+    else:
+        print("Go to " + Board + " fail")
+    
+    if PTTCrawler.toBoard(Board):
+        print("Go to " + Board + " success")
+    else:
+        print("Go to " + Board + " fail")
+    PTTCrawler.logout()
+
 def Post(ID, PW, KickOtherLogin, Board, Title, Content, PostType, SignType):
     
     PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
@@ -86,8 +106,9 @@ if __name__ == "__main__":
 
     #發文類別           1
     #簽名檔        	0
+    GoToBoard(ID, Password, KickOtherLogin, 'Test')
     Post(ID, Password, KickOtherLogin, 'Test','發文類別測試', '發文類別測試 QQ', 1, 0)
-    #GetPostInformationByID(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
-    #GetPostInformationByIndex(ID, Password, KickOtherLogin, 'Wanted', 68935)
-    #GetNewestPostIndex(ID, Password, KickOtherLogin, 'Wanted')
-    #GetNewPostIndex(ID, Password, KickOtherLogin, 'Wanted')
+    GetPostInformationByID(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
+    GetPostInformationByIndex(ID, Password, KickOtherLogin, 'Wanted', 68935)
+    GetNewestPostIndex(ID, Password, KickOtherLogin, 'Wanted')
+    GetNewPostIndex(ID, Password, KickOtherLogin, 'Wanted')
