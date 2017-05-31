@@ -166,12 +166,17 @@ class PTTTelnetCrawlerLibrary(object):
         # s 進入要發文的看板
         self._telnet.write(b'qqqqqqqqqqs' + Board.encode('big5') + b'\r\n\x0C')
         self.waitResponse()
-        if u"動畫播放中" in self._content or u"請按任意鍵繼續" in self._content:
+        
+        
+        while u"動畫播放中" in self._content or u"請按任意鍵繼續" in self._content or u"其他任意鍵停止" in self._content:
+            time.sleep(2)
             self._telnet.write(b'q')
             self.waitResponse()
-        if u"看板《" + Board + u"》":
+
+        if u"看板《" + Board + u"》" in self._content:
             return True
-        else :
+        else:
+            print(self._content)
             return False
 
     def logout(self):
