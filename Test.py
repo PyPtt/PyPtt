@@ -87,7 +87,7 @@ if __name__ == "__main__":
     #發文類別           1
     #簽名檔        	0
     #Post(ID, Password, KickOtherLogin, 'test','發文類別測試', '發文類別測試 QQ', 1, 0)
-    GetPostInformationByID(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
-    #GetPostInformationByIndex(ID, Password, KickOtherLogin, 'Wanted', 68935)
+    #GetPostInformationByID(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
+    GetPostInformationByIndex(ID, Password, KickOtherLogin, 'Wanted', 68935)
     #GetNewestPostIndex(ID, Password, KickOtherLogin, 'Wanted')
     #GetNewPostIndex(ID, Password, KickOtherLogin, 'Wanted')
