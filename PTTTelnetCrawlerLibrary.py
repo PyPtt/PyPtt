@@ -139,7 +139,8 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log('System is overload')
             sys.exit(0)
         return True
-
+    def Log(self, Message):
+        PTTTelnetCrawlerLibraryUtil.Log(Message)
     def login(self):
 
         result = self.input_user_password
@@ -304,13 +305,7 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log("Find PostDate fail")
             return None
         
-        """PTTTelnetCrawlerLibraryUtil.Log("Post id: " + PostID)
-        PTTTelnetCrawlerLibraryUtil.Log("Post index: " + PostIndex)
-        PTTTelnetCrawlerLibraryUtil.Log("Post title: " + PostTitle)
-        PTTTelnetCrawlerLibraryUtil.Log("Post web url: " + PostWebUrl)
-        PTTTelnetCrawlerLibraryUtil.Log("Post money: " + PostMoney)"""
-        
-        result = PostInformation(Board, PostID, PostIndex, PostAuthor, PostDate, PostTitle, PostWebUrl, PostMoney, PostContent, res.text)
+        result = PostInformation(Board, PostID, PostIndex, PostAuthor, PostDate, PostTitle, PostWebUrl, PostMoney, PostContent, res)
 
         return result
     def getPostInformationByIndex(self, Board, Index):
