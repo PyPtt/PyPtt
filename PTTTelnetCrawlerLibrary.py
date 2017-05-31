@@ -129,7 +129,7 @@ class PTTTelnetCrawlerLibrary(object):
         return self._isConnected
     def waitResponse(self):
         self._content = ''
-        
+        self._telnet.write(b"\x0C")
         RetryTime = 0
         while len(self._content) == 0:
             time.sleep(1)
@@ -159,21 +159,21 @@ class PTTTelnetCrawlerLibrary(object):
 
     def toUserMenu(self):
         # q = 上一頁，直到回到首頁為止，g = 離開，再見
-        self._telnet.write(b"qqqqqqqqqq\r\n\x0C")
+        self._telnet.write(b"qqqqqqqqqq\r\n")
         self.waitResponse()
             
     def toBoard(self, Board):
         # s 進入要發文的看板
-        self._telnet.write(b'qqqqqqqqqqs' + Board.encode('big5') + b'\r\n\x0C')
+        self.toUserMenu()
+        self._telnet.write(b's' + Board.encode('big5') + b'\r\n')
         self.waitResponse()
         
-        
-        while u"動畫播放中" in self._content or u"請按任意鍵繼續" in self._content or u"其他任意鍵停止" in self._content:
-            time.sleep(2)
+        while u"動畫播放中" in self._content or u"請按任意鍵繼續" in self._content or u"其他任意鍵停止" in self._content or not u"看板《" + Board + u"》" in self._content:
             self._telnet.write(b'q')
             self.waitResponse()
-
-        if u"看板《" + Board + u"》" in self._content:
+        
+        #print(self._content)
+        if u"看板《" + Board + u"》" in self._content and u"\x1B[H\x1B[2J\x1B[1;37;44m【板主:" in self._content:
             return True
         else:
             print(self._content)
@@ -221,10 +221,6 @@ class PTTTelnetCrawlerLibrary(object):
         if u"找不到這個文章代碼(AID)" in self._content:
             PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " fail")
             return None
-
-        #Refresh screen
-        self._telnet.write(b'\x0C')
-        self.waitResponse()
 
         #PostID, Index, Title, WebUrl, Money, PostContent):
         PostIndex = -1
@@ -326,14 +322,14 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
             return result
         
-        NewestIndex = self.getNewestPostIndex(Board)
+        """NewestIndex = self.getNewestPostIndex(Board)
         
         if Index <= 0 or NewestIndex < Index:
             PTTTelnetCrawlerLibraryUtil.Log("Error index: " + str(Index))
             PTTTelnetCrawlerLibraryUtil.Log("0 ~ " + str(NewestIndex))
-            return result
+            return result"""
         
-        self._telnet.write(str(Index).encode('big5') + b'\r\nQ\x0C')
+        self._telnet.write(str(Index).encode('big5') + b'\r\nQ')
         self.waitResponse()
         
         PostID = ""
@@ -341,7 +337,7 @@ class PTTTelnetCrawlerLibrary(object):
         for InforTempString in self._content.split("\r\n"):
             if u"│ 文章代碼(AID): \x1B[1;37m#" in InforTempString:
                 PostID = InforTempString.replace(u"│ 文章代碼(AID): \x1B[1;37m#", "")
-                PostID = PostID[0 : PostID.find(" ")]
+                PostID = PostID[0 : PostID.find(" ")].replace("\x1b[m", "")
                 break
         #print(PostID)
         
@@ -356,26 +352,28 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
             return result
 
-        self._telnet.write(b'\x0C')
-        self.waitResponse()
-        
         while not u"> \x1B[1;33m  ★" in self._content:
-            self._telnet.write(b'\x1b\x4fB\x0C')
+            self._telnet.write(b'\x1b\x4fB')
             self.waitResponse()
         while u"> \x1B[1;33m  ★" in self._content:
-            self._telnet.write(b'\x1b\x4fA\x0C')
+            self._telnet.write(b'\x1b\x4fA')
             self.waitResponse()
 
+        Line = 0
         for InforTempString in self._content.split("\r\n"):
-            if u">" in InforTempString:
-                #print(InforTempString)
-                result = int(re.search(r'\d+', InforTempString).group())
+            #print(str(Line) + " " + InforTempString)
+            if u">" in InforTempString[0 : 20] and Line >=2:
+                BoardLine = InforTempString[InforTempString.find(u">") : InforTempString.find(u">") + 8]
+                result = int(re.search(r'\d+', BoardLine).group())
                 break
+            Line += 1
         return result
     def getNewPostIndex(self, Board, LastPostIndex):
         
         result = []
         LastIndex = self.getNewestPostIndex(Board)
+        #print(LastIndex)
+        #print(LastPostIndex)
         if LastPostIndex <= 0 or LastIndex < LastPostIndex:
             result.append(LastIndex)
         else:
