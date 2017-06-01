@@ -6,17 +6,17 @@ def GoToBoard(ID, PW, KickOtherLogin, Board):
     PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
     if not PTTCrawler.isLoginSuccess():
         return False
-    if PTTCrawler.toBoard(Board):
+    if PTTCrawler.gotoBoard(Board):
         print("Go to " + Board + " success")
     else:
         print("Go to " + Board + " fail")
     
-    if PTTCrawler.toBoard(Board):
+    if PTTCrawler.gotoBoard(Board):
         print("Go to " + Board + " success")
     else:
         print("Go to " + Board + " fail")
     
-    if PTTCrawler.toBoard(Board):
+    if PTTCrawler.gotoBoard(Board):
         print("Go to " + Board + " success")
     else:
         print("Go to " + Board + " fail")
@@ -65,6 +65,19 @@ def GetNewestPostIndex(ID, PW, KickOtherLogin, Board):
     
     index = PTTCrawler.getNewestPostIndex(Board)
     if index == -1:
+        print("Fail")
+        return False
+    print("Index: " + str(index))
+    
+    index = PTTCrawler.getNewestPostIndex(Board)
+    if index == -1:
+        print("Fail")
+        return False
+    print("Index: " + str(index))
+    
+    index = PTTCrawler.getNewestPostIndex(Board)
+    if index == -1:
+        print("Fail")
         return False
     print("Index: " + str(index))
     PTTCrawler.logout()
@@ -79,8 +92,7 @@ def GetNewPostIndex(ID, PW, KickOtherLogin, Board):
     
     LastIndex = 0
     LastIndexList = [0]
-    while True:
-    
+    for i in range(30):    
         try:
             if not len(LastIndexList) == 0:
                 LastIndex = LastIndexList.pop()
@@ -96,19 +108,66 @@ def GetNewPostIndex(ID, PW, KickOtherLogin, Board):
     PTTCrawler.logout()
     result = True
     return result
+
+def Push(ID, PW, KickOtherLogin, Board, PushType, PushContent):
+    PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
+    if not PTTCrawler.isLoginSuccess():
+        return False
     
+    NewestPostIndex = 0
+    
+    for i in range(3):
+        NewestPostIndex = PTTCrawler.getNewestPostIndex(Board)
+        if PTTCrawler.pushByIndex(Board, NewestPostIndex, PTTCrawler.PushType_Push, PushContent + " by post index"):
+            print("pushByIndex Push success")
+        else:
+            print("pushByIndex Push fail")
+            
+    for i in range(3):
+        NewPost = PTTCrawler.getPostInformationByIndex(Board, NewestPostIndex)
+        
+        if NewPost == None:
+            print("getPostInformationByIndex fail")
+            break
+        
+        if PTTCrawler.pushByID(Board, NewPost.getPostID(), PTTCrawler.PushType_Push, PushContent + " by post id"):
+            print("pushByID Push success")
+        else:
+            print("pushByID Push fail")
+    PTTCrawler.logout()
+    return True
+
+def Mail(ID, PW, KickOtherLogin, MailTitle, MailContent, SignType):
+    PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
+    if not PTTCrawler.isLoginSuccess():
+            return False
+    
+    for i in range(2):
+        if PTTCrawler.mail(ID, MailTitle, MailContent, SignType):
+            print("Mail to " + ID + " success")
+        else:
+            print("Mail to " + ID + " fail")
+    
+    PTTCrawler.logout()
 if __name__ == "__main__":
     print("Welcome to PTT Telnet Crawler Library Demo")
 
-    ID = 'Your PTT ID'
-    Password = 'Your PTT Password'
+    ID = 'CodingMan'
+    Password = '04260426'
     KickOtherLogin = False
 
     #發文類別           1
     #簽名檔        	0
-    GoToBoard(ID, Password, KickOtherLogin, 'Test')
-    Post(ID, Password, KickOtherLogin, 'Test','發文類別測試', '發文類別測試 QQ', 1, 0)
-    GetPostInformationByID(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
-    GetPostInformationByIndex(ID, Password, KickOtherLogin, 'Wanted', 68935)
-    GetNewestPostIndex(ID, Password, KickOtherLogin, 'Wanted')
-    GetNewPostIndex(ID, Password, KickOtherLogin, 'Wanted')
+    #GoToBoard(ID, Password, KickOtherLogin, 'Test')
+    #Post(ID, Password, KickOtherLogin, 'Test','連續自動PO文測試', '自動PO文測試 啾咪', 1, 0)
+    #GetPostInformationByID(ID, Password, KickOtherLogin, 'GO', "1PAIyWdT")
+    #GetPostInformationByIndex(ID, Password, KickOtherLogin, 'Wanted', 68935)
+    #GetNewestPostIndex(ID, Password, KickOtherLogin, 'Wanted')
+    #GetNewPostIndex(ID, Password, KickOtherLogin, 'Wanted')
+    """
+    Push =         1
+    Boo =          2
+    Arrow =        3
+    """
+    #Push(ID, Password, KickOtherLogin, "Test", 1, "偵測最新文章推文測試")
+    Mail(ID, Password, KickOtherLogin, "測試標題", "自動測試 如有誤寄打擾 抱歉QQ", 0)
