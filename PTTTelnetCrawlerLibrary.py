@@ -9,43 +9,43 @@ import PTTTelnetCrawlerLibraryUtil
 
 class PushInformation(object):
     def __init__(self, PushType, PushID, PushContent, PushTime):
-        self._PushType = PushType
-        self._PushID = PushID
-        self._PushContent = PushContent
-        self._PostContent = PostContent
-        self._PushTime = PushTime
+        self.__PushType = PushType
+        self.__PushID = PushID
+        self.__PushContent = PushContent
+        self.__PostContent = PostContent
+        self.__PushTime = PushTime
         
 class PostInformation(object):
     def __init__(self, Board, PostID, Index, Author, Date, Title, WebUrl, Money, PostContent, OriginalData):
-        self._Board = Board
-        self._PostID = PostID
-        self._Author = Author
-        self._Date = Date
-        self._Index = Index
-        self._Title = Title
-        self._PostContent = PostContent
-        self._Money = Money
-        self._WebUrl = WebUrl
-        self._OriginalData = OriginalData
+        self.__Board = Board
+        self.__PostID = PostID
+        self.__Author = Author
+        self.__Date = Date
+        self.__Index = Index
+        self.__Title = Title
+        self.__PostContent = PostContent
+        self.__Money = Money
+        self.__WebUrl = WebUrl
+        self.__OriginalData = OriginalData
 
     def getPostID(self):
-        return self._PostID
+        return self.__PostID
     def getPostIndex(self):
-        return self._Index
+        return self.__Index
     def getPostAuthor(self):
-        return self._Author
+        return self.__Author
     def getPostDate(self):
-        return self._Date
+        return self.__Date
     def getTitle(self):
-        return self._Title
+        return self.__Title
     def getPostContent(self):
-        return self._PostContent
+        return self.__PostContent
     def getMoney(self):
-        return self._Money
+        return self.__Money
     def getWebUrl(self):
-        return self._WebUrl
+        return self.__WebUrl
     def getOriginalData(self):
-        return self._OriginalData
+        return self.__OriginalData
     
 class PTTTelnetCrawlerLibrary(object):
     def __init__(self, ID, password, kickOtherLogin):
@@ -64,102 +64,103 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log("This connection will NOT kick other login")
 
         PTTTelnetCrawlerLibraryUtil.Log("Start connect to PTT")
-        self._host = 'ptt.cc'
-        self._user = ID.encode('big5')
-        self._password = password.encode('big5')
-        self._kickOtherLogin = kickOtherLogin
-        self._telnet = telnetlib.Telnet(self._host)
-        self._content = ''
-        self._isConnected = False
+        self.__host = 'ptt.cc'
+        self.__user = ID.encode('big5')
+        self.__password = password.encode('big5')
+        self.__kickOtherLogin = kickOtherLogin
+        self.__telnet = telnetlib.Telnet(self.__host)
+        self.__content = ''
+        self.__isConnected = False
         time.sleep(1)
         
         self.PushType_Push =         1
         self.PushType_Boo =          2
         self.PushType_Arrow =        3
 
-        if self.connect():
-            if self.login():
-                self._isConnected = True
+        if self.__connect():
+            if self.__login():
+                self.__isConnected = True
         
     @property
-    def is_success(self):
+    def __is_success(self):
 
         NeedWait = True
 
         while NeedWait:
-        
-            if u"密碼不對" in self._content:
+            if u"密碼不對" in self.__content:
                 PTTTelnetCrawlerLibraryUtil.Log("Wrong password")
                 sys.exit()
-            elif u"您想刪除其他重複登入" in self._content:
+            elif u"您想刪除其他重複登入" in self.__content:
 
-                if self._kickOtherLogin:
-                    self._telnet.write(b"y\r\n")
+                if self.__kickOtherLogin:
+                    self.__telnet.write(b"y\r\n")
                     PTTTelnetCrawlerLibraryUtil.Log("Detect other login")
                     PTTTelnetCrawlerLibraryUtil.Log("Kick other login success")
                 else :
-                    self._telnet.write(b"n\r\n")
+                    self.__telnet.write(b"n\r\n")
                     PTTTelnetCrawlerLibraryUtil.Log("Detect other login")
 
-            elif u"請按任意鍵繼續" in self._content:
-                self._telnet.write(b"\r\n")
+            elif u"按任意鍵繼續" in self.__content:
+                self.__telnet.write(b"\r\n")
 
-            elif u"您要刪除以上錯誤嘗試" in self._content:
-                PTTTelnetCrawlerLibraryUtil.Log("Delete error password log....")
-                self._telnet.write(b"y\r\n")
+            elif u"您要刪除以上錯誤嘗試" in self.__content:
+                PTTTelnetCrawlerLibraryUtil.Log("Delete error password log")
+                self.__telnet.write(b"y\r\n")
                     
-            elif u"您有一篇文章尚未完成" in self._content:
+            elif u"您有一篇文章尚未完成" in self.__content:
                 PTTTelnetCrawlerLibraryUtil.Log('Delete post not finished')
-                self._telnet.write(b"q\r\n")
+                self.__telnet.write(b"q\r\n")
+            elif u"正在更新" in self.__content:
+                PTTTelnetCrawlerLibraryUtil.Log('Wait system update')
             else:
                 NeedWait = False
             if NeedWait:
-                self.waitResponse()
+                self.__waitResponse()
         return True
 
     @property
     def input_user_password(self):
-        if u"請輸入代號" in self._content:
-            self._telnet.write(self._user + b"\r\n")
-            self._telnet.write(self._password + b"\r\n")
+        if u"請輸入代號" in self.__content:
+            self.__telnet.write(self.__user + b"\r\n")
+            self.__telnet.write(self.__password + b"\r\n")
             
-            self.waitResponse()
+            self.__waitResponse()
                 
-            return self.is_success
+            return self.__is_success
 
         return False
 
     def isLoginSuccess(self):
-        return self._isConnected
-    def waitResponse(self):
-        self._content = ''
-        self._telnet.write(b"\x0C")
+        return self.__isConnected
+    def __waitResponse(self):
+        self.__content = ''
+        self.__telnet.write(b"\x0C")
         
         RetryTime = 0
         MaxWaitingTime = 30
         SleepTime = 1
         
-        while len(self._content) == 0:
+        while len(self.__content) == 0:
             time.sleep(SleepTime)
-            self._content = self._telnet.read_very_eager().decode('big5', 'ignore')
+            self.__content = self.__telnet.read_very_eager().decode('big5', 'ignore')
             
             RetryTime = RetryTime + 1
             
-            if len(self._content) == 0 and MaxWaitingTime - RetryTime * SleepTime <= 10:
+            if len(self.__content) == 0 and MaxWaitingTime - RetryTime * SleepTime <= 10:
                 PTTTelnetCrawlerLibraryUtil.Log('Lost connect...time out in ' + str(MaxWaitingTime - RetryTime * SleepTime) + " sec")
             
             if RetryTime * SleepTime >= MaxWaitingTime:
                 raise Exception("Wait repsonse time out")
             
-    def connect(self):
-        self._content = self._telnet.read_very_eager().decode('big5', 'ignore')
-        if u"系統過載" in self._content:
+    def __connect(self):
+        self.__content = self.__telnet.read_very_eager().decode('big5', 'ignore')
+        if u"系統過載" in self.__content:
             PTTTelnetCrawlerLibraryUtil.Log('System is overload')
             sys.exit(0)
         return True
     def Log(self, Message):
         PTTTelnetCrawlerLibraryUtil.Log(Message)
-    def login(self):
+    def __login(self):
 
         result = self.input_user_password
         
@@ -173,66 +174,71 @@ class PTTTelnetCrawlerLibrary(object):
     def gotoUserMenu(self):
         #\x1b[D 左
         #A上 B下C右D左
-        self._telnet.write(b'\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D')
-        self.waitResponse()
-            
+        self.__telnet.write(b'qqqqqqqqqqq\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D')
+        self.__waitResponse()
+        
     def gotoBoard(self, Board):
                 
         # s 進入要發文的看板
         self.gotoUserMenu()
-        self._telnet.write(b's' + Board.encode('big5') + b'\r\n')
-        self.waitResponse()
+        #print(self.__content)
+        self.__telnet.write(b's' + Board.encode('big5') + b'\r\n')
+        self.__waitResponse()
         
-        while u"動畫播放中" in self._content or u"請按任意鍵繼續" in self._content or u"其他任意鍵停止" in self._content or not u"看板《" + Board + u"》" in self._content:
-            self._telnet.write(b'q')
-            self.waitResponse()
+        GotoBoardRetryTime = 0
+        while u"動畫播放中" in self.__content or u"請按任意鍵繼續" in self.__content or u"其他任意鍵停止" in self.__content or not u"看板《" + Board + u"》" in self.__content:
+            self.__telnet.write(b'q')
+            self.__waitResponse()
+            GotoBoardRetryTime += 1
+            if GotoBoardRetryTime >= 5:
+                #print(self.__content)
+                return False
         
-        #print(self._content)
-        if u"看板《" + Board + u"》" in self._content and u"\x1B[H\x1B[2J\x1B[1;37;44m【板主:" in self._content:
+        if u"看板《" + Board + u"》" in self.__content and u"\x1B[H\x1B[2J\x1B[1;37;44m【板主:" in self.__content:
             return True
         else:
-            print(self._content)
+            print(self.__content)
             return False
 
     def logout(self):
         self.gotoUserMenu()
-        self._telnet.write(b"g\r\ny\r\n")
-        self._telnet.close()
+        self.__telnet.write(b"g\r\ny\r\n")
+        self.__telnet.close()
         PTTTelnetCrawlerLibraryUtil.Log("Logout success")
 
     def post(self, board, title, content, PostType, SignType):
     
         if not self.gotoBoard(board):
-            PTTTelnetCrawlerLibraryUtil.Log("Into " + board + " fail")
+            PTTTelnetCrawlerLibraryUtil.Log("Go to " + board + " fail")
             return False
 
         # 請參考 http://donsnotes.com/tech/charsets/ascii.html#cntrl
         # Ctrl+P
-        self._telnet.write(b'\x10')
+        self.__telnet.write(b'\x10')
         # 發文類別
-        self._telnet.write(str(PostType).encode('big5') + b'\r\n')
-        self._telnet.write(title.encode('big5') + b'\r\n')
-        self.waitResponse()
+        self.__telnet.write(str(PostType).encode('big5') + b'\r\n')
+        self.__telnet.write(title.encode('big5') + b'\r\n')
+        self.__waitResponse()
         # Ctrl+X
-        self._telnet.write(content.encode('big5') + b'\x18')
-        self.waitResponse()
+        self.__telnet.write(content.encode('big5') + b'\x18')
+        self.__waitResponse()
         # 儲存文章
-        self._telnet.write(b's\r\n')
-        self._telnet.write(str(SignType).encode('big5') + b'\r\n')
+        self.__telnet.write(b's\r\n')
+        self.__telnet.write(str(SignType).encode('big5') + b'\r\n')
         return True
     
     def gotoPostByIndex(self, Board, PostIndex):
     
         if not self.gotoBoard(Board):
-            PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
+            PTTTelnetCrawlerLibraryUtil.Log("Go to " + Board + " fail")
             return False
         
-        self._telnet.write(str(PostIndex).encode('big5') + b'\r\n')
-        self.waitResponse()
+        self.__telnet.write(str(PostIndex).encode('big5') + b'\r\n')
+        self.__waitResponse()
         
         FindPost = False
         
-        for InforTempString in self._content.split("\r\n"):
+        for InforTempString in self.__content.split("\r\n"):
             if u">" in InforTempString and str(PostIndex) in InforTempString:
                 FindPost = True
                 break
@@ -246,9 +252,9 @@ class PTTTelnetCrawlerLibrary(object):
         if not self.gotoBoard(Board):
             PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
             return False
-        self._telnet.write(b'#' + PostID.encode('big5') + b'\r\n')
-        self.waitResponse()
-        if u"找不到這個文章代碼(AID)" in self._content:
+        self.__telnet.write(b'#' + PostID.encode('big5') + b'\r\n')
+        self.__waitResponse()
+        if u"找不到這個文章代碼(AID)" in self.__content:
             PTTTelnetCrawlerLibraryUtil.Log("Find post id " + PostID + " fail")
             return False
         
@@ -271,8 +277,8 @@ class PTTTelnetCrawlerLibrary(object):
             return False
         
         
-        self._telnet.write(b'X')
-        self.waitResponse()
+        self.__telnet.write(b'X')
+        self.__waitResponse()
         
         Pushable = False
         
@@ -284,7 +290,7 @@ class PTTTelnetCrawlerLibrary(object):
         AllowPushTypeList[self.PushType_Boo] = False
         AllowPushTypeList[self.PushType_Arrow] = False
         
-        for InforTempString in self._content.split("\r\n"):
+        for InforTempString in self.__content.split("\r\n"):
             if u"您覺得這篇文章" in InforTempString:
                 if u"1.值得推薦" in InforTempString:
                     AllowPushTypeList[self.PushType_Push] = True
@@ -309,10 +315,10 @@ class PTTTelnetCrawlerLibrary(object):
             PushType = self.PushType_Arrow
         
         if ArrowOnly:
-            self._telnet.write(PushContent.encode('big5') + b'\r\ny\r\n')
+            self.__telnet.write(PushContent.encode('big5') + b'\r\ny\r\n')
         else:
-            self._telnet.write(str(PushType).encode('big5') + PushContent.encode('big5') + b'\r\ny\r\n')
-        self.waitResponse()
+            self.__telnet.write(str(PushType).encode('big5') + PushContent.encode('big5') + b'\r\ny\r\n')
+        self.__waitResponse()
         
         return True
     
@@ -333,8 +339,8 @@ class PTTTelnetCrawlerLibrary(object):
             return False
         
         
-        self._telnet.write(b'X')
-        self.waitResponse()
+        self.__telnet.write(b'X')
+        self.__waitResponse()
         
         Pushable = False
         
@@ -346,7 +352,7 @@ class PTTTelnetCrawlerLibrary(object):
         AllowPushTypeList[self.PushType_Boo] = False
         AllowPushTypeList[self.PushType_Arrow] = False
         
-        for InforTempString in self._content.split("\r\n"):
+        for InforTempString in self.__content.split("\r\n"):
             if u"您覺得這篇文章" in InforTempString:
                 if u"1.值得推薦" in InforTempString:
                     AllowPushTypeList[self.PushType_Push] = True
@@ -371,10 +377,10 @@ class PTTTelnetCrawlerLibrary(object):
             PushType = self.PushType_Arrow
         
         if ArrowOnly:
-            self._telnet.write(PushContent.encode('big5') + b'\r\ny\r\n')
+            self.__telnet.write(PushContent.encode('big5') + b'\r\ny\r\n')
         else:
-            self._telnet.write(str(PushType).encode('big5') + PushContent.encode('big5') + b'\r\ny\r\n')
-        self.waitResponse()
+            self.__telnet.write(str(PushType).encode('big5') + PushContent.encode('big5') + b'\r\ny\r\n')
+        self.__waitResponse()
         
         return True
     
@@ -382,33 +388,33 @@ class PTTTelnetCrawlerLibrary(object):
         
         self.gotoUserMenu()
        
-        self._telnet.write(b'M\r\nS\r\n' + UserID.encode('big5') + b'\r\n')
-        self.waitResponse()
+        self.__telnet.write(b'M\r\nS\r\n' + UserID.encode('big5') + b'\r\n')
+        self.__waitResponse()
         
-        if not u"主題：" in self._content:
+        if not u"主題：" in self.__content:
             PTTTelnetCrawlerLibraryUtil.Log("No this PTT user " + UserID)
-            print(self._content)
+            print(self.__content)
             return False
-        self._telnet.write(MailTitle.encode('big5') + b'\r\n')
-        self.waitResponse()
-        self._telnet.write(MailContent.encode('big5') + b'\x18')# Ctrl+X
-        self.waitResponse()
+        self.__telnet.write(MailTitle.encode('big5') + b'\r\n')
+        self.__waitResponse()
+        self.__telnet.write(MailContent.encode('big5') + b'\x18')# Ctrl+X
+        self.__waitResponse()
         
         # 儲存文章
-        self._telnet.write(b's\r\n')
-        self.waitResponse()
+        self.__telnet.write(b's\r\n')
+        self.__waitResponse()
         
-        if u"請選擇簽名檔" in self._content:
-            self._telnet.write(str(SignType).encode('big5') + b'\r\n')
-            self.waitResponse()
+        if u"請選擇簽名檔" in self.__content:
+            self.__telnet.write(str(SignType).encode('big5') + b'\r\n')
+            self.__waitResponse()
         
-        if u"已順利寄出，是否自存底稿" in self._content:
-            self._telnet.write(b'Y\r\n')
-            self.waitResponse()
+        if u"已順利寄出，是否自存底稿" in self.__content:
+            self.__telnet.write(b'Y\r\n')
+            self.__waitResponse()
         
-        if u"任意鍵繼續" in self._content:
-            self._telnet.write(b'\r\n')
-            self.waitResponse()
+        if u"任意鍵繼續" in self.__content:
+            self.__telnet.write(b'\r\n')
+            self.__waitResponse()
         
         return True
     
@@ -429,7 +435,7 @@ class PTTTelnetCrawlerLibrary(object):
         PostMoney = -1
         PostContent = ""
         
-        for InforTempString in self._content.split("\r\n"):
+        for InforTempString in self.__content.split("\r\n"):
             if ">" in InforTempString:
                 PostIndex = re.search(r'\d+', InforTempString).group()
 
@@ -438,10 +444,10 @@ class PTTTelnetCrawlerLibrary(object):
             return None
         
         #Query post information
-        self._telnet.write(b'Q')
-        self.waitResponse()
+        self.__telnet.write(b'Q')
+        self.__waitResponse()
 
-        for InforTempString in self._content.split("\r\n"):
+        for InforTempString in self.__content.split("\r\n"):
             Line = InforTempString.replace("[1;37m", "")
             Line = Line.replace("[16;77H", "")
             Line = Line.replace("[15;77H", "")
@@ -462,14 +468,7 @@ class PTTTelnetCrawlerLibrary(object):
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 		
         res = requests.get(PostWebUrl)
-        if 'over18' in res.url:
-            PTTTelnetCrawlerLibraryUtil.Log("Detect 18 web")
-            load = {
-                'from': '/bbs/{}/index.html'.format(Board),
-                'yes': 'yes'
-            }
-            res = WebRequest.post('https://www.ptt.cc/ask/over18', verify=False, data=load)
-		
+
         soup =  BeautifulSoup(res.text,"html.parser")
         main_content = soup.find(id="main-content")
         metas = main_content.select('div.article-metaline')
@@ -491,7 +490,7 @@ class PTTTelnetCrawlerLibrary(object):
             if date == ContentLine:
                 PostContentArea = True
                 continue
-            if PostWebUrl == ContentLine:
+            if PostWebUrl == ContentLine or u"推" in ContentLine or u"噓" in ContentLine or u"→" in ContentLine:
                 PostContentArea = False
                 break
             if PostContentArea:
@@ -518,10 +517,10 @@ class PTTTelnetCrawlerLibrary(object):
         
         PostID = ""
         
-        self._telnet.write(b'Q')
-        self.waitResponse()
+        self.__telnet.write(b'Q')
+        self.__waitResponse()
         
-        for InforTempString in self._content.split("\r\n"):
+        for InforTempString in self.__content.split("\r\n"):
             if u"│ 文章代碼(AID): \x1B[1;37m#" in InforTempString:
                 PostID = InforTempString.replace(u"│ 文章代碼(AID): \x1B[1;37m#", "")
                 PostID = PostID[0 : PostID.find(" ")].replace("\x1b[m", "")
@@ -540,39 +539,31 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
             return result
         
-        GoDown = True
-        
-        for InforTempString in self._content.split("\r\n"):
-            if u">" in InforTempString[0 : InforTempString.find(u"□")] and u"★" in InforTempString[0 : InforTempString.find(u"□")]:
-                GoDown = False
-        
-        while GoDown:
-            self._telnet.write(b'\x1b[B')
-            self.waitResponse()
-            for InforTempString in self._content.split("\r\n"):
-                if u">" in InforTempString[0 : InforTempString.find(u"□")] and u"★" in InforTempString[0 : InforTempString.find(u"□")]:
-                    GoDown = False
-                    break
+        self.__telnet.write(b'$')
+        self.__waitResponse()
         
         GoUp = True
 
         while GoUp:
-            self._telnet.write(b'\x1b[A')
-            self.waitResponse()
-            for InforTempString in self._content.split("\r\n"):
-                if u">" in InforTempString[0 : InforTempString.find(u"□")] and not u"★" in InforTempString[0 : InforTempString.find(u"□")]:
-                    GoUp = False
+            self.__telnet.write(b'\x1b[A')
+            self.__waitResponse()
+            for InforTempString in self.__content.split("\r\n"):
+                #print("!!! " + InforTempString)
+                if u">" in InforTempString[0 : InforTempString.find(u"□")]:
+                    if u"★" in InforTempString[0 : InforTempString.find(u"□")]:
+                        GoUp = True
+                    else:
+                        GoUp = False
                     break
 
         Line = 0
-        for InforTempString in self._content.split("\r\n"):
+        for InforTempString in self.__content.split("\r\n"):
             #print(str(Line) + " " + InforTempString)
             if u">" in InforTempString[0 : InforTempString.find(u"□")] and Line >=2:
                 BoardLine = InforTempString[InforTempString.find(u">") : InforTempString.find(u">") + 8]
                 result = int(re.search(r'\d+', BoardLine).group())
                 break
             Line += 1
-        
         return result
     def getNewPostIndex(self, Board, LastPostIndex):
         
@@ -589,5 +580,5 @@ class PTTTelnetCrawlerLibrary(object):
         
 if __name__ == "__main__":
 
-    print("PTT Telnet Crawler Library v 0.1.170601")
+    print("PTT Telnet Crawler Library v 0.1.170602")
     print("PTT CodingMan")
