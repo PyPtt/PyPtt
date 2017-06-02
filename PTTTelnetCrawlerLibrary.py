@@ -138,7 +138,7 @@ class PTTTelnetCrawlerLibrary(object):
         
         RetryTime = 0
         MaxWaitingTime = 30
-        SleepTime = 1
+        SleepTime = 0.1
         
         while len(self.__content) == 0:
             time.sleep(SleepTime)
@@ -250,7 +250,7 @@ class PTTTelnetCrawlerLibrary(object):
     def gotoPostByID(self, Board, PostID):
     
         if not self.gotoBoard(Board):
-            PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
+            PTTTelnetCrawlerLibraryUtil.Log("Go to " + Board + " fail")
             return False
         self.__telnet.write(b'#' + PostID.encode('big5') + b'\r\n')
         self.__waitResponse()
@@ -266,16 +266,9 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log("Go to post fail")
             return False
         
-        """
-        PTTTelnetCrawlerLibrary_PushType_Push =         0x01
-        PTTTelnetCrawlerLibrary_PushType_Boo =          0x02
-        PTTTelnetCrawlerLibrary_PushType_Arrow =        0x03
-        """
-        
         if PushType != self.PushType_Push and PushType != self.PushType_Boo and PushType != self.PushType_Arrow:
             PTTTelnetCrawlerLibraryUtil.Log("Not support this push type: " + str(PushType))
             return False
-        
         
         self.__telnet.write(b'X')
         self.__waitResponse()
@@ -542,10 +535,26 @@ class PTTTelnetCrawlerLibrary(object):
         self.__telnet.write(b'$')
         self.__waitResponse()
         
-        GoUp = True
+        GoUp = False
+        GoUpTime = 0
+        for InforTempString in self.__content.split("\r\n"):
+            if u"★" in InforTempString[0 : InforTempString.find(u"□")]:
+                GoUpTime+=1
+                if u">" in InforTempString[0 : InforTempString.find(u"□")]:
+                    GoUp = True
+                else:
+                    GoUp = False
+                break
+                
+        First = True
 
         while GoUp:
-            self.__telnet.write(b'\x1b[A')
+            if First:
+                First = False
+                for i in range(GoUpTime):
+                    self.__telnet.write(b'\x1b[A')
+            else:
+                self.__telnet.write(b'\x1b[A')
             self.__waitResponse()
             for InforTempString in self.__content.split("\r\n"):
                 #print("!!! " + InforTempString)
