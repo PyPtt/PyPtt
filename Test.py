@@ -12,7 +12,7 @@ if __name__ == "__main__":
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log("Login fail")
         sys.exit()
-    
+        
     BoardList = ["Wanted", "AllTogether", "Gossiping"]
     
     for Board in BoardList:
@@ -21,13 +21,13 @@ if __name__ == "__main__":
             PTTCrawler.Log("Get " + Board + " get newest post index success: " + str(NewestIndex))
         else:
             PTTCrawler.Log("Get " + Board + " get newest post index fail")
-    
+
     for Board in BoardList:
         if PTTCrawler.gotoBoard(Board):
             PTTCrawler.Log("Go to " + Board + " success")
         else:
             PTTCrawler.Log("Go to " + Board + " fail")
-    
+
     #發文類別       1
     #簽名檔        	0
 

@@ -138,7 +138,10 @@ class PTTTelnetCrawlerLibrary(object):
         
         RetryTime = 0
         MaxWaitingTime = 30
-        SleepTime = 0.1
+        if self.__isConnected:
+            SleepTime = 0.1
+        else:
+            SleepTime = 1
         
         while len(self.__content) == 0:
             time.sleep(SleepTime)
@@ -174,15 +177,21 @@ class PTTTelnetCrawlerLibrary(object):
     def gotoUserMenu(self):
         #\x1b[D 左
         #A上 B下C右D左
-        self.__telnet.write(b'qqqqqqqqqqq\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D')
+        self.__telnet.write(b'qqqqqq\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D')
         self.__waitResponse()
         
     def gotoBoard(self, Board):
-                
+        for i in range(10):
+            if self.__gotoBoard(Board):
+                return True
+        return False
+    def __gotoBoard(self, Board):
         # s 進入要發文的看板
         self.gotoUserMenu()
-        #print(self.__content)
-        self.__telnet.write(b's' + Board.encode('big5') + b'\r\n')
+        
+        self.__telnet.write(b's')
+        self.__waitResponse()
+        self.__telnet.write(Board.encode('big5') + b'\r\n')
         self.__waitResponse()
         
         GotoBoardRetryTime = 0
@@ -190,14 +199,14 @@ class PTTTelnetCrawlerLibrary(object):
             self.__telnet.write(b'q')
             self.__waitResponse()
             GotoBoardRetryTime += 1
-            if GotoBoardRetryTime >= 5:
+            if GotoBoardRetryTime >= 30:
                 #print(self.__content)
                 return False
         
         if u"看板《" + Board + u"》" in self.__content and u"\x1B[H\x1B[2J\x1B[1;37;44m【板主:" in self.__content:
             return True
         else:
-            print(self.__content)
+            #print(self.__content)
             return False
 
     def logout(self):
@@ -321,16 +330,9 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log("Go to post fail")
             return False
         
-        """
-        PTTTelnetCrawlerLibrary_PushType_Push =         0x01
-        PTTTelnetCrawlerLibrary_PushType_Boo =          0x02
-        PTTTelnetCrawlerLibrary_PushType_Arrow =        0x03
-        """
-        
         if PushType != self.PushType_Push and PushType != self.PushType_Boo and PushType != self.PushType_Arrow:
             PTTTelnetCrawlerLibraryUtil.Log("Not support this push type: " + str(PushType))
             return False
-        
         
         self.__telnet.write(b'X')
         self.__waitResponse()
@@ -524,55 +526,49 @@ class PTTTelnetCrawlerLibrary(object):
         result = self.getPostInformationByID(Board, PostID)
 
         return result
-        
+    
     def getNewestPostIndex(self, Board):
+        for i in range(10):
+            result = self.__getNewestPostIndex(Board)
+            if not result == -1:
+                return result
+        return -1
+    def __getNewestPostIndex(self, Board):
         result = -1
         
         if not self.gotoBoard(Board):
-            PTTTelnetCrawlerLibraryUtil.Log("Into " + Board + " fail")
+            PTTTelnetCrawlerLibraryUtil.Log("Goto " + Board + " fail")
             return result
         
         self.__telnet.write(b'$')
         self.__waitResponse()
         
-        GoUp = False
-        GoUpTime = 0
-        for InforTempString in self.__content.split("\r\n"):
-            if u"★" in InforTempString[0 : InforTempString.find(u"□")]:
-                GoUpTime+=1
-                if u">" in InforTempString[0 : InforTempString.find(u"□")]:
-                    GoUp = True
-                else:
-                    GoUp = False
-                break
-                
-        First = True
-
-        while GoUp:
-            if First:
-                First = False
-                for i in range(GoUpTime):
-                    self.__telnet.write(b'\x1b[A')
-            else:
-                self.__telnet.write(b'\x1b[A')
-            self.__waitResponse()
-            for InforTempString in self.__content.split("\r\n"):
-                #print("!!! " + InforTempString)
-                if u">" in InforTempString[0 : InforTempString.find(u"□")]:
-                    if u"★" in InforTempString[0 : InforTempString.find(u"□")]:
-                        GoUp = True
-                    else:
-                        GoUp = False
-                    break
-
+        DetectRange = 30
+        
         Line = 0
-        for InforTempString in self.__content.split("\r\n"):
-            #print(str(Line) + " " + InforTempString)
-            if u">" in InforTempString[0 : InforTempString.find(u"□")] and Line >=2:
-                BoardLine = InforTempString[InforTempString.find(u">") : InforTempString.find(u">") + 8]
+        GoUp = False
+        
+        self.__content = self.__content[10 : len(self.__content)]
+        if self.__content.find(u">") == -1:
+            return -1
+        BoardLine = self.__content[self.__content.find(u">") : self.__content.find(u">") + DetectRange]
+        
+        if u"★" in BoardLine:
+            GoUp = True
+        
+        while GoUp:
+            self.__telnet.write(b'\x1b[A')
+            self.__waitResponse()
+            self.__content = self.__content[10 : len(self.__content)]
+            BoardLine = self.__content[self.__content.find(u">") : self.__content.find(u">") + DetectRange]
+            if u"★" in BoardLine:
+                continue
+            try:
                 result = int(re.search(r'\d+', BoardLine).group())
-                break
-            Line += 1
+            except AttributeError:
+                return -1
+            break
+        
         return result
     def getNewPostIndex(self, Board, LastPostIndex):
         
