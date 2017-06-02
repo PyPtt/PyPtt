@@ -1,4 +1,6 @@
-# PTTTelnetCrawlerLibrary
+# PTT Telnet Crawler Library
+
+    Python 3.6.1
 
     這是PTT 爬蟲函式庫 PTTTelnetCrawlerLibrary v 0.1.170602
 
