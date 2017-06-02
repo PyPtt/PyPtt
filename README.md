@@ -2,9 +2,9 @@
 
     Python 3.6.1
 
-    這是PTT 爬蟲函式庫 PTTTelnetCrawlerLibrary v 0.1.170602
-
-![alt text](http://i.imgur.com/RBWptQS.jpg)
+    這是一個快速且穩定的 PTT 爬蟲函式庫 PTTTelnetCrawlerLibrary v 0.1.170602
+    
+![alt text](http://i.imgur.com/ErCRUk1.png)
 
     gotoUserMenu 移動至使用者選單
     
