@@ -108,7 +108,20 @@ def GetNewPostIndex(ID, PW, KickOtherLogin, Board):
     PTTCrawler.logout()
     result = True
     return result
-
+    
+def GetNewestPostInformation(ID, PW, KickOtherLogin, Board):
+    PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
+    if not PTTCrawler.isLoginSuccess():
+        return False
+    NewestIndex = PTTCrawler.getNewestPostIndex(Board)
+    
+    Post = PTTCrawler.getPostInformationByIndex(Board, NewestIndex)
+    if Post == None:
+        print("Get information fail")
+        return False
+    print(Post.getPostContent())
+    
+    PTTCrawler.logout()    
 def Push(ID, PW, KickOtherLogin, Board, PushType, PushContent):
     PTTCrawler = PTTTelnetCrawlerLibrary.PTTTelnetCrawlerLibrary(ID, PW, KickOtherLogin)
     if not PTTCrawler.isLoginSuccess():
@@ -142,7 +155,7 @@ def Mail(ID, PW, KickOtherLogin, MailTitle, MailContent, SignType):
     if not PTTCrawler.isLoginSuccess():
             return False
     
-    for i in range(2):
+    for i in range(3):
         if PTTCrawler.mail(ID, MailTitle, MailContent, SignType):
             print("Mail to " + ID + " success")
         else:
@@ -152,8 +165,8 @@ def Mail(ID, PW, KickOtherLogin, MailTitle, MailContent, SignType):
 if __name__ == "__main__":
     print("Welcome to PTT Telnet Crawler Library Demo")
 
-    ID = 'CodingMan'
-    Password = '04260426'
+    ID = 'Your PTT ID'
+    Password = 'Your PTT Password'
     KickOtherLogin = False
 
     #發文類別           1
@@ -164,6 +177,7 @@ if __name__ == "__main__":
     #GetPostInformationByIndex(ID, Password, KickOtherLogin, 'Wanted', 68935)
     #GetNewestPostIndex(ID, Password, KickOtherLogin, 'Wanted')
     #GetNewPostIndex(ID, Password, KickOtherLogin, 'Wanted')
+    #GetNewestPostInformation(ID, Password, KickOtherLogin, "Wanted")
     """
     Push =         1
     Boo =          2
