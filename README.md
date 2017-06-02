@@ -2,7 +2,7 @@
 
     這是PTT 爬蟲函式庫 PTTTelnetCrawlerLibrary v 0.1.170602
 
-![alt text](https://raw.githubusercontent.com/Truth0906/PTTTelnetCrawlerLibrary/tree/master/Pic/1496387385276.jpg)
+
 
     gotoUserMenu 移動至使用者選單
     
