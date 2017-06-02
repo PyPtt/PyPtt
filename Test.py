@@ -32,7 +32,7 @@ if __name__ == "__main__":
     #簽名檔        	0
 
     for i in range(3):
-        if PTTCrawler.post("Test", "連續自動PO文測試 " + str(i), "自動PO文測試", 1, 0):
+        if PTTCrawler.post("Test", "連續自動PO文測試 " + str(i), "自動PO文測試\r\n\r\n使用PTT Telnet Crawler Library 測試\r\n\r\nhttps://goo.gl/qlDRCt", 1, 0):
             PTTCrawler.Log("Post success")
         else:
             PTTCrawler.Log("Post fail")
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     
     for i in range(3):
         NewestPostIndex = PTTCrawler.getNewestPostIndex("Test")
-        if PTTCrawler.pushByIndex("Test", NewestPostIndex, PTTCrawler.PushType_Push, "自動推文測試 by post index"):
+        if PTTCrawler.pushByIndex("Test", NewestPostIndex, PTTCrawler.PushType_Push, "https://goo.gl/qlDRCt by post index"):
             PTTCrawler.Log("pushByIndex Push success")
         else:
             PTTCrawler.Log("pushByIndex Push fail")
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         if NewPost == None:
             PTTCrawler.Log("getPostInformationByIndex fail")
             break
-        if PTTCrawler.pushByID("Test", NewPost.getPostID(), PTTCrawler.PushType_Push, "自動推文測試 by post id"):
+        if PTTCrawler.pushByID("Test", NewPost.getPostID(), PTTCrawler.PushType_Push, "https://goo.gl/qlDRCt by post id"):
             PTTCrawler.Log("pushByID Push success")
         else:
             PTTCrawler.Log("pushByID Push fail")
