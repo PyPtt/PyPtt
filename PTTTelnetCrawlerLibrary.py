@@ -136,7 +136,7 @@ class PTTTelnetCrawlerLibrary(object):
         self._telnet.write(b"\x0C")
         
         RetryTime = 0
-        MaxWaitingTime = 10
+        MaxWaitingTime = 30
         SleepTime = 1
         
         while len(self._content) == 0:
@@ -145,8 +145,8 @@ class PTTTelnetCrawlerLibrary(object):
             
             RetryTime = RetryTime + 1
             
-            if len(self._content) == 0:
-                PTTTelnetCrawlerLibraryUtil.Log('Catch lost...raise exception in ' + str(MaxWaitingTime - RetryTime * SleepTime) + " sec")
+            if len(self._content) == 0 and MaxWaitingTime - RetryTime * SleepTime <= 10:
+                PTTTelnetCrawlerLibraryUtil.Log('Lost connect...time out in ' + str(MaxWaitingTime - RetryTime * SleepTime) + " sec")
             
             if RetryTime * SleepTime >= MaxWaitingTime:
                 raise Exception("Wait repsonse time out")
@@ -474,6 +474,7 @@ class PTTTelnetCrawlerLibrary(object):
         main_content = soup.find(id="main-content")
         metas = main_content.select('div.article-metaline')
         filtered = [ v for v in main_content.stripped_strings if v[0] not in [u'※', u'◆'] and  v[:2] not in [u'--'] ]
+        
         content = ' '.join(filtered)
         content = re.sub(r'(\s)+', '', content )
         
@@ -484,20 +485,17 @@ class PTTTelnetCrawlerLibrary(object):
         PostTitle = title
         PostAuthor = author
         PostDate = date
-        #print(content)
-        if content.find("--" + PostWebUrl) >= 0:
-            PostContent = content[0 : content.find("--" + PostWebUrl)]
-        elif content.find(PostWebUrl) >= 0:
-            PostContent = content[0 : content.find(PostWebUrl)]
-        else:
-            print(PostContent)
-            PTTTelnetCrawlerLibraryUtil.Log("Content parse error")
-            return None
-            
-        if PostContent.find(PostDate.replace(" ", "")) == -1:
-            print(PostContent)
-            return None
-        PostContent = PostContent[PostContent.find(PostDate.replace(" ", "")) + len(PostDate.replace(" ", "")): len(PostContent)]
+        
+        PostContentArea = False
+        for ContentLine in filtered:
+            if date == ContentLine:
+                PostContentArea = True
+                continue
+            if PostWebUrl == ContentLine:
+                PostContentArea = False
+                break
+            if PostContentArea:
+                PostContent += ContentLine + "\r\n"
         
         if PostTitle == "":
             PTTTelnetCrawlerLibraryUtil.Log("Find PostTitle fail")
@@ -529,7 +527,7 @@ class PTTTelnetCrawlerLibrary(object):
                 PostID = PostID[0 : PostID.find(" ")].replace("\x1b[m", "")
                 break
         if PostID == "":
-            PTTTelnetCrawlerLibraryUtil.Log("Query post fail, maybe has been deleted...")
+            #PTTTelnetCrawlerLibraryUtil.Log("Query fail, this post has been deleted...")
             return None
         result = self.getPostInformationByID(Board, PostID)
 
