@@ -16,15 +16,30 @@ def GotoBoardDemo():
         if PTTCrawler.gotoBoard(Board):
             PTTCrawler.Log("Go to " + Board + " success")
         else:
-            PTTCrawler.Log("Go to " + Board + " fail")
 
+            PTTCrawler.Log("Go to " + Board + " fail")
 def GetNewestPostIndexDemo():
-    for Board in BoardList:
-        NewestIndex = PTTCrawler.getNewestPostIndex(Board)
-        if not NewestIndex == -1:
-            PTTCrawler.Log("Get " + Board + " get newest post index success: " + str(NewestIndex))
+    
+    for i in range(1):
+        for Board in BoardList:
+            NewestIndex = PTTCrawler.getNewestPostIndex(Board)
+            if not NewestIndex == -1:
+                PTTCrawler.Log("Get " + Board + " get newest post index success: " + str(NewestIndex))
+            else:
+                PTTCrawler.Log("Get " + Board + " get newest post index fail")
+                return False
+def GotoPostDemo():
+
+    NewestIndex = PTTCrawler.getNewestPostIndex("Gossiping")
+    TryPost = 3
+    if NewestIndex == -1:
+        PTTCrawler.Log("Get newest post index fail")
+        return False
+    for i in range(TryPost):
+        if PTTCrawler.gotoPostByIndex("Gossiping", NewestIndex - i):
+            PTTCrawler.Log("Go to Gossiping post index: " + str(NewestIndex - i) + " success")
         else:
-            PTTCrawler.Log("Get " + Board + " get newest post index fail")
+            PTTCrawler.Log("Go to Gossiping post index: " + str(NewestIndex - i) + " fail")
             
 def PostDemo():
     #發文類別       1
@@ -43,18 +58,24 @@ def GetPostInformationByIDDemo():
         else:
             PTTCrawler.Log("getPostInformationByID fail")
 def GetNewestIndexDemo():
-    NewestIndex = PTTCrawler.getNewestPostIndex("Wanted")
-    PTTCrawler.Log("Wanted newest index: " + str(NewestIndex))
+    for i in range(3):        
+        NewestIndex = PTTCrawler.getNewestPostIndex("Wanted")
+        PTTCrawler.Log("Wanted newest index: " + str(NewestIndex))
 def GetPostInformationByIndexDemo():
     NewestIndex = PTTCrawler.getNewestPostIndex("Wanted")
+    
+    if NewestIndex == -1:
+        PTTCrawler.Log("Wanted get newest index fail")
+        return None
     PTTCrawler.Log("Wanted newest index: " + str(NewestIndex))    
-    for i in range(3):
+    for i in range(1):
         Post = PTTCrawler.getPostInformationByIndex("Wanted", NewestIndex - i)
         if not Post == None:
             PTTCrawler.Log("Title: " + Post.getTitle())
         else:
             PTTCrawler.Log("getPostInformationByIndex fail: " + str(NewestIndex - i))
 def GetNewPostIndexDemo():
+    NewestIndex = PTTCrawler.getNewestPostIndex("Wanted")
     LastIndex = NewestIndex - 5
     for i in range(3):
         #Return new post list LastIndex ~ newest without LastIndex
@@ -117,6 +138,7 @@ if __name__ == "__main__":
     
     GotoBoardDemo()
     GetNewestPostIndexDemo()
+    GotoPostDemo()
     PostDemo()
     GetPostInformationByIDDemo()
     GetNewestIndexDemo()

@@ -250,29 +250,51 @@ class PTTTelnetCrawlerLibrary(object):
         return True
     
     def gotoPostByIndex(self, Board, PostIndex):
-        for i in range(10):
-            if self.__gotoPostByIndex(Board, PostIndex):
-                return True
+        for i in range(20):
+            try:
+                if self.__gotoPostByIndex(Board, PostIndex):
+                    return True
+            except Exception:
+                return False
         return False
     def __gotoPostByIndex(self, Board, PostIndex):
         if not self.gotoBoard(Board):
             PTTTelnetCrawlerLibraryUtil.Log("Go to " + Board + " fail")
             return False
-        
+            
         self.__telnet.write(str(PostIndex).encode('big5') + b'\r\n')
         self.__waitResponse()
         
         FindPost = False
+        MarkList = [m.start() for m in re.finditer(u'>', self.__content)]
         
-        for InforTempString in self.__content.split("\r\n"):
-            if u">" in InforTempString and str(PostIndex) in InforTempString and not u"□ (本文已被刪除)" in InforTempString:
-                FindPost = True
-                break
-        if not FindPost:
-            PTTTelnetCrawlerLibraryUtil.Log("Find post index " + str(PostIndex) + " fail")
-            return False
-        return True
+        #print(MarkList)
+        if len(MarkList) == 1:
+            self.__content = self.__content[MarkList[0]:]
+        if len(MarkList) == 2 or len(MarkList) == 3:
+            self.__content = self.__content[MarkList[1]:]     
+        if len(MarkList) == 3:
+            self.__content = self.__content[:MarkList[2]]
+            
+        #print(self.__content)
+        #print(str(PostIndex))
+        #print(self.__content[:self.__content.find("/")])
         
+        Target = '>{0: >6}'.format(str(PostIndex))
+        NextTarget = str(PostIndex + 1)
+        if Target in self.__content:
+            self.__content = self.__content[self.__content.find(Target):]
+            if NextTarget in self.__content:
+                self.__content = self.__content[:self.__content.find(NextTarget)]
+            #print(self.__content)
+            #print(self.__content.find(u"("))
+            #print(self.__content.find(u"-"))
+            if self.__content.find(u"(") <= 26 and self.__content.find(u"-") < self.__content.find(u"("):
+                PTTTelnetCrawlerLibraryUtil.Log("This post has been deleted")
+                raise Exception("This post has been deleted")
+            else:
+                return True
+        return False
     def gotoPostByID(self, Board, PostID):
     
         if not self.gotoBoard(Board):
@@ -591,7 +613,6 @@ class PTTTelnetCrawlerLibrary(object):
         return -1
     def __getNewestPostIndex(self, Board):
         result = -1
-        
         if not self.gotoBoard(Board):
             PTTTelnetCrawlerLibraryUtil.Log("Goto " + Board + " fail")
             return result
@@ -603,29 +624,37 @@ class PTTTelnetCrawlerLibrary(object):
         
         Line = 0
         GoUp = False
-        
+        #print("")
         OrigrinalContent = self.__content
         
-        self.__content = self.__content[10 : len(self.__content)]
         if self.__content.find(u">") == -1:
-            #print("1 " + self.__content)
-            #print("1 " + OrigrinalContent)
+            print(self.__content)
+            print("1 0.0 " + self.__content)
+            print("1 " + OrigrinalContent)
             return -1
-        BoardLine = self.__content[self.__content.find(u">") : self.__content.find(u">") + DetectRange]
         
-        if u"★" in BoardLine:
+        if u">   ★" in self.__content:
             GoUp = True
         
         while GoUp:
             self.__telnet.write(b'\x1b[A')
             self.__waitResponse()
-            OrigrinalContent = self.__content
-            self.__content = self.__content[10 : len(self.__content)]
-            BoardLine = self.__content[self.__content.find(u">") : self.__content.find(u">") + DetectRange]
-            if u"★" in BoardLine:
+            if u">   ★" in self.__content:
                 continue
+            MarkList = [m.start() for m in re.finditer(u'>', self.__content)]            
+            if len(MarkList) == 1:
+                self.__content = self.__content[MarkList[0]:]
+            if len(MarkList) == 2 or len(MarkList) == 3:
+                self.__content = self.__content[MarkList[1]:]     
+            if len(MarkList) == 3:
+                self.__content = self.__content[:MarkList[2]]
+            #print(MarkList)
+            if u"★" in self.__content:
+                self.__content = self.__content[:self.__content.find(u"★")]
+            #print(self.__content)
+            
             try:
-                result = int(re.search(r'\d+', BoardLine).group())
+                result = int(re.search(r'\d+', self.__content).group())
             except AttributeError:
                 #print("2 " + self.__content)
                 #print("2 " + OrigrinalContent)
@@ -713,5 +742,5 @@ class PTTTelnetCrawlerLibrary(object):
         return True
 if __name__ == "__main__":
 
-    print("PTT Telnet Crawler Library v 0.1.170602")
+    print("PTT Telnet Crawler Library v 0.1.170604")
     print("PTT CodingMan")
