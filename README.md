@@ -24,13 +24,17 @@
     
     mail 寄信給某ID
     
-    getPostInformationByID 根據文章ID 取得文章資訊
+    getPostInformationByID 根據文章ID 取得文章資訊 內含推文清單
     
-    getPostInformationByIndex 根據文章編號 取得文章資訊
+    getPostInformationByIndex 根據文章編號 取得文章資訊 內含推文清單
     
     getNewestPostIndex 取得該看板最新的文章編號
     
     getNewPostIndex 取得上次查詢之後才新增的文章清單
+    
+    getPostFloorByIndex 取得該篇文章有多少推文數 包括推噓箭頭
+    
+    giveMoney 給某ID P幣
 
 #Demo
     
