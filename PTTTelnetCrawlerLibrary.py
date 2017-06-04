@@ -81,6 +81,8 @@ class PTTTelnetCrawlerLibrary(object):
         self.__content = ''
         self.__isConnected = False
         
+        self.__LastNewestPostIndex = {}
+        
         self.PushType_Push =         1
         self.PushType_Boo =          2
         self.PushType_Arrow =        3
@@ -144,7 +146,6 @@ class PTTTelnetCrawlerLibrary(object):
         return self.__isConnected
     def __waitResponse(self):
         self.__content = ''
-        self.__telnet.write(b"\x0C")
         
         RetryTime = 0
         MaxWaitingTime = 30
@@ -153,19 +154,21 @@ class PTTTelnetCrawlerLibrary(object):
         else:
             SleepTime = 1
         
-        while len(self.__content) == 0:
+        while len(self.__content) <= 8:
+            self.__telnet.write(b"\x0C")
             time.sleep(SleepTime)
             self.__content = self.__telnet.read_very_eager().decode('big5', 'ignore')
+            self.__content = re.sub(r'\x1b(\[.*?[@-~]|\].*?(\x07|\x1b\\))', '', self.__content)
             
             RetryTime = RetryTime + 1
-            
-            if len(self.__content) == 0 and MaxWaitingTime - RetryTime * SleepTime <= 10:
+            if len(self.__content) <= 8 and MaxWaitingTime - RetryTime * SleepTime <= 10:
                 PTTTelnetCrawlerLibraryUtil.Log('Lost connect...time out in ' + str(MaxWaitingTime - RetryTime * SleepTime) + " sec")
             
             if RetryTime * SleepTime >= MaxWaitingTime:
                 raise Exception("Wait repsonse time out")
         
-        self.__content = re.sub(r'\x1b(\[.*?[@-~]|\].*?(\x07|\x1b\\))', '', self.__content)
+        if self.__content.find(u"文章選讀") > 0:
+            self.__content = self.__content[:self.__content.find(u"文章選讀")]
         
     def __connect(self):
         self.__content = self.__telnet.read_very_eager().decode('big5', 'ignore')
@@ -261,9 +264,13 @@ class PTTTelnetCrawlerLibrary(object):
         if not self.gotoBoard(Board):
             PTTTelnetCrawlerLibraryUtil.Log("Go to " + Board + " fail")
             return False
-            
+        Target = '>{0: >6}'.format(str(PostIndex))
+        
         self.__telnet.write(str(PostIndex).encode('big5') + b'\r\n')
         self.__waitResponse()
+        
+        if not Target in self.__content:
+            raise Exception("This post does not exist")
         
         FindPost = False
         MarkList = [m.start() for m in re.finditer(u'>', self.__content)]
@@ -275,12 +282,7 @@ class PTTTelnetCrawlerLibrary(object):
             self.__content = self.__content[MarkList[1]:]     
         if len(MarkList) == 3:
             self.__content = self.__content[:MarkList[2]]
-            
-        #print(self.__content)
-        #print(str(PostIndex))
-        #print(self.__content[:self.__content.find("/")])
         
-        Target = '>{0: >6}'.format(str(PostIndex))
         NextTarget = str(PostIndex + 1)
         if Target in self.__content:
             self.__content = self.__content[self.__content.find(Target):]
@@ -506,11 +508,15 @@ class PTTTelnetCrawlerLibrary(object):
             
         
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-		
-        res = requests.get(PostWebUrl)
-
+        #print(PostWebUrl)
+        res = requests.get(
+            url = PostWebUrl,
+            cookies={'over18': '1'}
+        )
+        
         soup =  BeautifulSoup(res.text,"html.parser")
         main_content = soup.find(id="main-content")
+        
         metas = main_content.select('div.article-metaline')
         filtered = [ v for v in main_content.stripped_strings if v[0] not in [u'※', u'◆'] and  v[:2] not in [u'--'] ]
         
@@ -599,7 +605,7 @@ class PTTTelnetCrawlerLibrary(object):
                 PostID = PostID[0 : PostID.find(" ")].replace("\x1b[m", "")
                 break
         if PostID == "":
-            #PTTTelnetCrawlerLibraryUtil.Log("Query fail, this post has been deleted...")
+            PTTTelnetCrawlerLibraryUtil.Log("This post has been deleted...")
             return None
         result = self.getPostInformationByID(Board, PostID)
 
@@ -624,45 +630,75 @@ class PTTTelnetCrawlerLibrary(object):
         
         Line = 0
         GoUp = False
-        #print("")
-        OrigrinalContent = self.__content
         
         if self.__content.find(u">") == -1:
-            print(self.__content)
-            print("1 0.0 " + self.__content)
-            print("1 " + OrigrinalContent)
             return -1
         
         if u">   ★" in self.__content:
             GoUp = True
+        #else:
+            #print(self.__content)
+            #print(str(len(self.__content)))
         
         while GoUp:
             self.__telnet.write(b'\x1b[A')
             self.__waitResponse()
             if u">   ★" in self.__content:
                 continue
-            MarkList = [m.start() for m in re.finditer(u'>', self.__content)]            
-            if len(MarkList) == 1:
-                self.__content = self.__content[MarkList[0]:]
-            if len(MarkList) == 2 or len(MarkList) == 3:
-                self.__content = self.__content[MarkList[1]:]     
-            if len(MarkList) == 3:
-                self.__content = self.__content[:MarkList[2]]
-            #print(MarkList)
+            MarkList = [m.start() for m in re.finditer(u'>', self.__content)]        
+            
+            if len(MarkList) == 0:
+                return False
+            
+            self.__content = self.__content[MarkList[len(MarkList) - 1]:]
+            
             if u"★" in self.__content:
                 self.__content = self.__content[:self.__content.find(u"★")]
-            #print(self.__content)
+            
+            if u"看板《" + Board + "》" in self.__content:
+                return -1
             
             try:
+                #print(self.__content)
                 result = int(re.search(r'\d+', self.__content).group())
             except AttributeError:
-                #print("2 " + self.__content)
-                #print("2 " + OrigrinalContent)
+                #print(self.__content)
+                #print("Parse index error")
                 return -1
             break
         
-        if 0 < result and result < 100:
-            result = -1
+        try:
+            LastNewestPostIndexTemp = self.__LastNewestPostIndex[Board]
+        except KeyError:
+            self.__LastNewestPostIndex[Board] = -1
+        
+        CheckIndexDelta = False
+        
+        if not result == -1:
+            for i in range(10, -10, -1):
+                if self.__LastNewestPostIndex[Board] + i == result:
+                    if self.gotoPostByIndex(Board, result):
+                        CheckIndexDelta = True
+                    break
+        if (result != self.__LastNewestPostIndex[Board] or result == -1) and not self.__LastNewestPostIndex[Board] == -1 and not CheckIndexDelta:
+            
+            NewResult = result
+            
+            for ResultTempIndex in range(3, -4, -1):
+                if self.gotoPostByIndex(Board, self.__LastNewestPostIndex[Board] + ResultTempIndex):
+                    NewResult = self.__LastNewestPostIndex[Board] + ResultTempIndex
+                    break
+            
+            if NewResult != result:
+                if result == -1:
+                    PTTTelnetCrawlerLibraryUtil.Log("Detect error recover mode: correct result to " + str(NewResult))
+                else:
+                    PTTTelnetCrawlerLibraryUtil.Log("Check new index: correct result to " + str(NewResult))
+                result = NewResult
+            else:
+                PTTTelnetCrawlerLibraryUtil.Log("Check new index: OK")
+        if result != -1:
+            self.__LastNewestPostIndex[Board] = result
         return result
     def getNewPostIndex(self, Board, LastPostIndex):
         
