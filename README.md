@@ -1,6 +1,12 @@
 # PTT Telnet Crawler Library
 
     Python 3.6.1
+    
+    requirement:
+    
+    requests
+    
+    BeautifulSoup4
 
     這是一個快速且穩定的 PTT 爬蟲函式庫 PTTTelnetCrawlerLibrary v 0.1.170604
     
