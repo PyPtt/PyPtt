@@ -162,7 +162,7 @@ class PTTTelnetCrawlerLibrary(object):
             
             RetryTime = RetryTime + 1
             if len(self.__content) <= 8 and MaxWaitingTime - RetryTime * SleepTime <= 10:
-                PTTTelnetCrawlerLibraryUtil.Log('Lost connect...time out in ' + str(MaxWaitingTime - RetryTime * SleepTime) + " sec")
+                PTTTelnetCrawlerLibraryUtil.Log('Lost connect...time out in ' + str(int(MaxWaitingTime - RetryTime * SleepTime)) + " sec")
             
             if RetryTime * SleepTime >= MaxWaitingTime:
                 raise Exception("Wait repsonse time out")
@@ -476,11 +476,19 @@ class PTTTelnetCrawlerLibrary(object):
         PostMoney = -1
         PostContent = ""
         
+        MarkList = [m.start() for m in re.finditer(u'>', self.__content)]                    
+        if len(MarkList) == 0:
+            return False
+        
+        self.__content = self.__content[MarkList[len(MarkList) - 1]:]
+        
         for InforTempString in self.__content.split("\r\n"):
-            if ">" in InforTempString:
-                PostIndex = re.search(r'\d+', InforTempString).group()
-                break
-
+            if u">" in InforTempString:
+                try:
+                    PostIndex = re.search(r'\d+', InforTempString).group()
+                    break
+                except AttributeError:
+                    pass
         if PostIndex == -1:
             PTTTelnetCrawlerLibraryUtil.Log("Find PostIndex fail")
             return None
