@@ -2,8 +2,8 @@ import sys
 import time
 import PTTTelnetCrawlerLibrary
 
-ID = 'Your PTT ID'
-Password = 'Your PTT Password'
+ID = 'CodingMan'
+Password = '12140906'
 KickOtherLogin = False
 
 BoardList = ["Wanted", "AllTogether", "Gossiping"]
@@ -37,9 +37,9 @@ def GotoPostDemo():
         return False
     for i in range(TryPost):
         if PTTCrawler.gotoPostByIndex("Gossiping", NewestIndex - i):
-            PTTCrawler.Log("Go to Gossiping post index: " + str(NewestIndex - i) + " success")
+            PTTCrawler.Log(str(i) + " Go to Gossiping post index: " + str(NewestIndex - i) + " success")
         else:
-            PTTCrawler.Log("Go to Gossiping post index: " + str(NewestIndex - i) + " fail")
+            PTTCrawler.Log(str(i) + " Go to Gossiping post index: " + str(NewestIndex - i) + " fail")
             
 def PostDemo():
     #發文類別       1
@@ -50,13 +50,24 @@ def PostDemo():
         else:
             PTTCrawler.Log("Post in Test fail")
 def GetPostInformationByIDDemo():
-    
-    for PostID in PostIDList:
-        Post = PTTCrawler.getPostInformationByID("Wanted", PostID)
-        if not Post == None:
-            PTTCrawler.Log("Title: " + Post.getTitle())
-        else:
-            PTTCrawler.Log("getPostInformationByID fail")
+
+    NewestIndex = PTTCrawler.getNewestPostIndex("Gossiping")
+    TryPost = 1000
+    if NewestIndex == -1:
+        PTTCrawler.Log("Get newest post index fail")
+        return False
+        
+    for i in range(TryPost):
+        Post = PTTCrawler.getPostInformationByIndex("Gossiping", NewestIndex - i)
+        if Post == None:
+            PTTCrawler.Log("Get post by index fail")
+            continue
+        Post = PTTCrawler.getPostInformationByID("Gossiping", Post.getPostID())
+        if Post == None:
+            PTTCrawler.Log("Get post by ID fail")
+            break
+        PTTCrawler.Log(str(int((i * 100) / TryPost)) + " % " + str(NewestIndex - i) + " Title: " + Post.getTitle())
+        
 def GetNewestIndexDemo():
     for i in range(3):        
         NewestIndex = PTTCrawler.getNewestPostIndex("Wanted")
@@ -136,17 +147,20 @@ if __name__ == "__main__":
         PTTCrawler.Log("Login fail")
         sys.exit()
     
-    GotoBoardDemo()
-    GetNewestPostIndexDemo()
-    GotoPostDemo()
-    PostDemo()
-    GetPostInformationByIDDemo()
-    GetNewestIndexDemo()
-    GetPostInformationByIndexDemo()
-    GetNewPostIndexDemo()
-    PushDemo()
-    MainDemo()
-    GiveMoneyDemo()
-    GetPostFloorByIndex()
+    #GotoBoardDemo()
+    #GetNewestPostIndexDemo()
+    #GotoPostDemo()
+    #PostDemo()
+    #GetPostInformationByIDDemo()
+    
+    #PTTCrawler.getTime()
+    
+    #GetNewestIndexDemo()
+    #GetPostInformationByIndexDemo()
+    #GetNewPostIndexDemo()
+    #PushDemo()
+    #MainDemo()
+    #GiveMoneyDemo()
+    #GetPostFloorByIndex()
     
     PTTCrawler.logout()
