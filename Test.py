@@ -4,6 +4,7 @@ import PTTTelnetCrawlerLibrary
 
 ID = 'Your PTT ID'
 Password = 'Your PTT Password'
+
 KickOtherLogin = False
 
 BoardList = ["Wanted", "AllTogether", "Gossiping"]
@@ -21,7 +22,7 @@ def GotoBoardDemo():
                 break
 def GetNewestPostIndexDemo():
 
-    for i in range(1000):
+    for i in range(1):
         for Board in BoardList:
             NewestIndex = PTTCrawler.getNewestPostIndex(Board)
             if not NewestIndex == -1:
@@ -53,7 +54,7 @@ def PostDemo():
 def GetPostInformationByIDDemo():
 
     NewestIndex = PTTCrawler.getNewestPostIndex("Gossiping")
-    TryPost = 1000
+    TryPost = 3
     if NewestIndex == -1:
         PTTCrawler.Log("Get newest post index fail")
         return False
@@ -75,17 +76,18 @@ def GetNewestIndexDemo():
         PTTCrawler.Log("Wanted newest index: " + str(NewestIndex))
 def GetPostInformationByIndexDemo():
     NewestIndex = PTTCrawler.getNewestPostIndex("Wanted")
-    
+    TryPost = 3
     if NewestIndex == -1:
         PTTCrawler.Log("Wanted get newest index fail")
         return None
     PTTCrawler.Log("Wanted newest index: " + str(NewestIndex))    
-    for i in range(1):
+    for i in range(TryPost):
         Post = PTTCrawler.getPostInformationByIndex("Wanted", NewestIndex - i)
         if not Post == None:
-            PTTCrawler.Log("Title: " + Post.getTitle())
+            PTTCrawler.Log(str(i) + " Title: " + Post.getTitle())
         else:
             PTTCrawler.Log("getPostInformationByIndex fail: " + str(NewestIndex - i))
+            #Do not return
 def GetNewPostIndexDemo():
     NewestIndex = PTTCrawler.getNewestPostIndex("Wanted")
     LastIndex = NewestIndex - 5
@@ -149,16 +151,13 @@ if __name__ == "__main__":
         sys.exit()
     
     #GotoBoardDemo()
-    GetNewestPostIndexDemo()
+    #GetNewestPostIndexDemo()
     #GotoPostDemo()
-    #PostDemo()
-    #GetPostInformationByIDDemo()
-    
-    #PTTCrawler.getTime()
-    
-    #GetNewestIndexDemo()
     #GetPostInformationByIndexDemo()
+    #GetPostInformationByIDDemo()
+    #PTTCrawler.getTime()
     #GetNewPostIndexDemo()
+    #PostDemo()
     #PushDemo()
     #MainDemo()
     #GiveMoneyDemo()
