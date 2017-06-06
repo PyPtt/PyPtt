@@ -1,6 +1,7 @@
 # PTT Telnet Crawler Library
 
 ###### 這是一個專為 PTT 爬蟲開發者所開發的函式庫 PTTTelnetCrawlerLibrary
+###### 會根據網路速度調整操作速度 尋求最穩定的執行
 
 #### 需求
 
