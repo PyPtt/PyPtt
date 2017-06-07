@@ -1,7 +1,8 @@
 # PTT Telnet Crawler Library
 
 ###### 這是一個專為 PTT 爬蟲開發者所開發的函式庫 PTTTelnetCrawlerLibrary
-###### 會根據網路速度調整操作速度 尋求最穩定的執行
+###### 根據網路速度動態調整操作速度
+###### 斷線自動恢復
 
 #### 需求
 
@@ -13,7 +14,7 @@
 
 #### 版本
 
-###### 0.1.170604 beta
+###### 0.1.170607 beta
 
 #### API
 
@@ -32,7 +33,8 @@
 ###### getNewPostIndex 取得上次查詢之後才新增的文章清單
 ###### getPostFloorByIndex 取得該篇文章有多少推文數 包括推噓箭頭
 ###### giveMoney 給予使用者 P幣
-#### Demo   
+###### getTime 取得PTT系統時間
+#### Demo   
 ###### 請參考 Test.py
 
 ![alt text](http://i.imgur.com/ErCRUk1.png)
