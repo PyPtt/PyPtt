@@ -4,20 +4,20 @@
 ###### 根據網路速度動態調整操作速度
 ###### 斷線自動恢復
 
-#### 需求
-
+需求
+-------------------
 ###### Python 3.6.1
 
 ###### request
 
 ###### BeautifulSoup4
 
-#### 版本
-
+版本
+-------------------
 ###### 0.1.170607 beta
 
-#### API
-
+API
+-------------------
 ###### gotoUserMenu 移動至使用者選單    
 ###### gotoBoard 移動至看板
 ###### logout 登出
@@ -34,7 +34,8 @@
 ###### getPostFloorByIndex 取得該篇文章有多少推文數 包括推噓箭頭
 ###### giveMoney 給予使用者 P幣
 ###### getTime 取得PTT系統時間
-#### Demo   
+Demo
+-------------------
 ###### 請參考 Test.py
 
 ![alt text](http://i.imgur.com/ErCRUk1.png)
