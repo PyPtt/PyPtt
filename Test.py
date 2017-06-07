@@ -2,12 +2,13 @@ import sys
 import time
 import PTTTelnetCrawlerLibrary
 
-ID = 'Your PTT ID'
-Password = 'Your PTT Password'
+ID = 'CodingMan'
+Password = 'CNVAPK7W'
 
 KickOtherLogin = False
 
-BoardList = ['Wanted', 'AllTogether', 'Gossiping']
+#BoardList = ['Wanted', 'AllTogether', 'Gossiping']
+BoardList = ['Gossiping']
 PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTCrawler = None
@@ -22,7 +23,7 @@ def GotoBoardDemo():
                 break
 def GetNewestPostIndexDemo():
 
-    for i in range(1):
+    for i in range(1000):
         for Board in BoardList:
             NewestIndex = PTTCrawler.getNewestPostIndex(Board)
             if not NewestIndex == -1:
@@ -157,16 +158,19 @@ if __name__ == '__main__':
         PTTCrawler.Log('Login fail')
         sys.exit()
     
-    GotoBoardDemo()
+    #GotoBoardDemo()
     GetNewestPostIndexDemo()
-    GotoPostDemo()
-    GetPostInformationByIndexDemo()
-    GetPostInformationByIDDemo()
-    GetNewPostIndexDemo()
-    PostDemo()
-    PushDemo()
-    MainDemo()
-    GiveMoneyDemo()
-    GetPostFloorByIndex()
-    GetTimeDemo()
+    #GotoPostDemo()
+    #GetPostInformationByIndexDemo()
+    #GetPostInformationByIDDemo()
+    #GetNewPostIndexDemo()
+    #PostDemo()
+    #PushDemo()
+    #MainDemo()
+    #GiveMoneyDemo()
+    #GetPostFloorByIndex()
+    #GetTimeDemo()
+    
     PTTCrawler.logout()
+    
+    

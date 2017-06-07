@@ -240,7 +240,7 @@ class PTTTelnetCrawlerLibrary(object):
         if not self.__isConnected:
             pass
         elif RetryTime == 1:
-            if self.__StableTime >= 4:
+            if self.__StableTime >= 2:
                 self.__CurrentSleepTime = int(self.__CurrentSleepTime / 2.0)
                 if self.__CurrentSleepTime < self.__BasicSleepTime:
                     self.__CurrentSleepTime = self.__BasicSleepTime
@@ -248,11 +248,9 @@ class PTTTelnetCrawlerLibrary(object):
                 #print('self.__CurrentSleepTime: ' + str(self.__CurrentSleepTime))
             else:
                 self.__StableTime += 1
-        elif RetryTime == 2:
-            self.__CurrentSleepTime += self.__BasicSleepTime
-            self.__StableTime = 0
-        elif RetryTime >= 3:
-            self.__CurrentSleepTime = self.__CurrentSleepTime * RetryTime
+
+        elif RetryTime >= 4:
+            self.__CurrentSleepTime = self.__CurrentSleepTime * int(RetryTime / 2.0)
             self.__StableTime = 0
             #PTTTelnetCrawlerLibraryUtil.Log('Detect network deley')
         
@@ -334,7 +332,7 @@ class PTTTelnetCrawlerLibrary(object):
         return True
     
     def gotoPostByIndex(self, Board, PostIndex):
-        for i in range(1):
+        for i in range(5):
             try:
                 if self.__gotoPostByIndex(Board, PostIndex):
                     return True
@@ -357,7 +355,7 @@ class PTTTelnetCrawlerLibrary(object):
             time.sleep(self.__CurrentSleepTime / 100)
             
         if not Target in self.__content:
-            PTTTelnetCrawlerLibraryUtil.Log('This post has been deleted type 1')
+            #PTTTelnetCrawlerLibraryUtil.Log('This post has been deleted type 1')
             return False
         
         NextTarget = str(PostIndex + 1)
@@ -443,7 +441,7 @@ class PTTTelnetCrawlerLibrary(object):
         if ArrowOnly:
             self.__sendData(PushContent + '\r\ny\r\n')
         else:
-            self.__sendData(PushType + PushContent + '\r\ny\r\n')
+            self.__sendData(str(PushType) + PushContent + '\r\ny\r\n')
         
         return True
     
@@ -704,12 +702,21 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log('Goto ' + Board + ' fail')
             return result
         
-        self.__sendData('$')
-        #print(self.__content)
+        try:
+            LastNewestPostIndexTemp = self.__LastNewestPostIndex[Board]
+        except KeyError:
+            self.__LastNewestPostIndex[Board] = -1
         DetectRange = 30
         
         Line = 0
         GoUp = False
+        
+        for i in range(5):
+            self.__sendData('$')
+            if '>' in self.__content:
+                break
+        if not '>' in self.__content:
+            return -1
         
         if '>   ★' in self.__content:
             GoUp = True
@@ -741,11 +748,6 @@ class PTTTelnetCrawlerLibrary(object):
             except AttributeError:
                 result = -1
             break
-        
-        try:
-            LastNewestPostIndexTemp = self.__LastNewestPostIndex[Board]
-        except KeyError:
-            self.__LastNewestPostIndex[Board] = -1
             
         #print('result: ' + str(result))
         #print('[Board]: ' + str(self.__LastNewestPostIndex[Board]))
@@ -753,9 +755,11 @@ class PTTTelnetCrawlerLibrary(object):
         if result != -1 and self.__LastNewestPostIndex[Board] != -1:
             for i in range(10, -10, -1):
                 if (self.__LastNewestPostIndex[Board] + i) == result:
-                    if self.gotoPostByIndex(Board, result):
-                        self.__LastNewestPostIndex[Board] = result
-                        return result
+                    for ResultTempIndex in range(3, -1, -1):
+                        if self.gotoPostByIndex(Board, self.__LastNewestPostIndex[Board] + ResultTempIndex):
+                            self.__LastNewestPostIndex[Board] = result
+                            return result
+
         if (result != self.__LastNewestPostIndex[Board] or result == -1) and self.__LastNewestPostIndex[Board] != -1:
             #print('Execute recover mode')
             
@@ -765,8 +769,6 @@ class PTTTelnetCrawlerLibrary(object):
                 if self.gotoPostByIndex(Board, self.__LastNewestPostIndex[Board] + ResultTempIndex):
                     NewResult = self.__LastNewestPostIndex[Board] + ResultTempIndex
                     break
-            
-            
             
             if NewResult != result:
                 if result == -1:
