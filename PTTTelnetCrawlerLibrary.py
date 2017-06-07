@@ -858,10 +858,18 @@ class PTTTelnetCrawlerLibrary(object):
         self.__sendData('\r\n')
         return True
     def getTime(self):
-    
-        self.gotoUserMenu()
         
+        #Thanks everyone in Python board 3Q
+        
+        for i in range(5):
+            if not self.gotoBoard('Python'):
+                continue
+            self.gotoUserMenu()
+            if 'oodbye離開，再見…' in self.__content:
+                break
+                
         if not 'oodbye離開，再見…' in self.__content:
+            print(self.__content)
             return ''
         self.__content = self.__content[self.__content.find('oodbye離開，再見…'):]
         
@@ -869,26 +877,13 @@ class PTTTelnetCrawlerLibrary(object):
             return ''
         self.__content = self.__content[self.__content.find('['):]
         
-        print(self.__content)
+        #print(self.__content)
         
         if not ']' in self.__content:
             return ''
         self.__content = self.__content[:self.__content.find(']')]
         
-        
-        
-        print(self.__content)
-        print(len(self.__content))
-        print('[' in self.__content)
-        MarkList = [m.start() for m in re.finditer('[', self.__content)]
-        
-        if len(MarkList) < 3:
-            PTTTelnetCrawlerLibraryUtil.Log('Parse time error')
-            return ''
-        print(MarkList)
-        self.__content = self.__content[MarkList[len(MarkList) - 3]: ]
-        print(self.__content)
-        
+        return self.__content[self.__content.find(':') - 2 : self.__content.find(':') + 3]
 if __name__ == '__main__':
 
     print('PTT Telnet Crawler Library v 0.1.170604')
