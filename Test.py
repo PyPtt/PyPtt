@@ -2,8 +2,8 @@ import sys
 import time
 import PTTTelnetCrawlerLibrary
 
-ID = 'CodingMan'
-Password = 'CNVAPK7W'
+ID = 'Your ID'
+Password = 'Your Password'
 
 KickOtherLogin = False
 
@@ -159,7 +159,7 @@ if __name__ == '__main__':
         sys.exit()
     
     #GotoBoardDemo()
-    GetNewestPostIndexDemo()
+    #GetNewestPostIndexDemo()
     #GotoPostDemo()
     #GetPostInformationByIndexDemo()
     #GetPostInformationByIDDemo()
