@@ -68,7 +68,7 @@ def GetPostInformationByIDDemo():
         if Post == None:
             PTTCrawler.Log("Get post by ID fail")
             break
-        PTTCrawler.Log(str(int((i * 100) / TryPost)) + " % " + str(NewestIndex - i) + " Title: " + Post.getTitle())
+        PTTCrawler.Log(str(int(((i + 1) * 100) / TryPost)) + " % " + str(NewestIndex - i) + " Title: " + Post.getTitle())
         
 def GetNewestIndexDemo():
     for i in range(3):        
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     #GetNewestPostIndexDemo()
     #GotoPostDemo()
     #GetPostInformationByIndexDemo()
-    #GetPostInformationByIDDemo()
+    GetPostInformationByIDDemo()
     #PTTCrawler.getTime()
     #GetNewPostIndexDemo()
     #PostDemo()

@@ -24,16 +24,16 @@ class PushInformation(object):
         return self.__PushTime    
 class PostInformation(object):
     def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList, OriginalData):
-        self.__Board = Board
-        self.__PostID = PostID
-        self.__Author = Author
-        self.__Date = Date
-        self.__Title = Title
-        self.__PostContent = PostContent
+        self.__Board = Board + ''
+        self.__PostID = PostID + ''
+        self.__Author = Author + ''
+        self.__Date = Date + ''
+        self.__Title = Title + ''
+        self.__PostContent = PostContent + ''
         self.__Money = Money
-        self.__WebUrl = WebUrl
+        self.__WebUrl = WebUrl + ''
         self.__PushList = PushList
-        self.__OriginalData = OriginalData
+        self.__OriginalData = OriginalData + ''
 
     def getPostID(self):
         return self.__PostID
@@ -74,7 +74,6 @@ class PTTTelnetCrawlerLibrary(object):
         self.__user = ID
         self.__password = password
         self.__kickOtherLogin = kickOtherLogin
-        self.__telnet = telnetlib.Telnet(self.__host)
         self.__content = ''
         self.__isConnected = False
         
@@ -88,11 +87,7 @@ class PTTTelnetCrawlerLibrary(object):
         self.__CurrentSleepTime = 2
         self.__StableTime = 0
         
-        time.sleep(1)
-        PTTTelnetCrawlerLibraryUtil.Log('Start connect to PTT')
-        if self.__connect():
-            if self.__login():
-                self.__isConnected = True
+        self.__connectRemote()
         
     @property
     def __is_success(self):
@@ -139,15 +134,31 @@ class PTTTelnetCrawlerLibrary(object):
             
             return self.__is_success
         return False
-
+        
+    def __connectRemote(self):
+        self.__isConnected = False
+        self.__telnet = telnetlib.Telnet(self.__host)
+        time.sleep(1)
+        PTTTelnetCrawlerLibraryUtil.Log('Start connect to PTT')
+        if self.__connect():
+            if self.__login():
+                self.__isConnected = True
     def isLoginSuccess(self):
         return self.__isConnected
         
-    def __sendData(self, Message, ExtraWait = False, ExtraWaitSec = 0):
-        self.__telnet.write(str(Message).encode('big5'))
+    def __sendData(self, Message, ExtraWait = False, ExtraWaitSec = 0, ReadUtil = ''):
+        for i in range(5):
+            try:
+                self.__telnet.write(str(Message).encode('big5'))
+                break
+            except ConnectionResetError:
+                PTTTelnetCrawlerLibraryUtil.Log('Remote reset connection...')
+                self.__connectRemote()
+                return False
         if ExtraWaitSec > 0:
-            time.sleep(ExtraWaitSec)        
+            time.sleep(ExtraWaitSec)
         self.__waitResponse(ExtraWait)
+        return True
     def __waitResponse(self, ExtraWait = False):
         self.__content = ''
         
@@ -226,10 +237,12 @@ class PTTTelnetCrawlerLibrary(object):
             pass
         #print(self.__content)
         
-        if RetryTime == 1:
+        if not self.__isConnected:
+            pass
+        elif RetryTime == 1:
             if self.__StableTime >= 4:
                 self.__CurrentSleepTime = int(self.__CurrentSleepTime / 2.0)
-                if self.__CurrentSleepTime <= 0:
+                if self.__CurrentSleepTime < self.__BasicSleepTime:
                     self.__CurrentSleepTime = self.__BasicSleepTime
                 self.__StableTime = 0
                 #print('self.__CurrentSleepTime: ' + str(self.__CurrentSleepTime))
@@ -321,7 +334,7 @@ class PTTTelnetCrawlerLibrary(object):
         return True
     
     def gotoPostByIndex(self, Board, PostIndex):
-        for i in range(10):
+        for i in range(1):
             try:
                 if self.__gotoPostByIndex(Board, PostIndex):
                     return True
@@ -330,17 +343,21 @@ class PTTTelnetCrawlerLibrary(object):
                 return False
         return False
     def __gotoPostByIndex(self, Board, PostIndex):
-        if not self.gotoBoard(Board):
-            PTTTelnetCrawlerLibraryUtil.Log('Go to ' + Board + ' fail')
-            return False
+    
         Target = '>{0: >6}'.format(str(PostIndex))
         
-        self.__sendData(str(PostIndex) + '\r\n')
-        
+        for i in range(10):
+            if not self.gotoBoard(Board):
+                PTTTelnetCrawlerLibraryUtil.Log('Go to ' + Board + ' fail')
+                continue
+            self.__sendData(str(PostIndex) + '\r\n', False, 0.1)
+            if Target in self.__content:
+                break
+            #print(str(i) + " " + self.__content)
+            time.sleep(self.__CurrentSleepTime / 100)
+            
         if not Target in self.__content:
-            #print("safeline 1")
-            #print(self.__content)
-            #print(str(len(self.__content)))
+            PTTTelnetCrawlerLibraryUtil.Log('This post has been deleted type 1')
             return False
         
         NextTarget = str(PostIndex + 1)
@@ -352,7 +369,7 @@ class PTTTelnetCrawlerLibrary(object):
             #print(self.__content.find('('))
             #print(self.__content.find('-'))
             if self.__content.find('(') <= 26 and self.__content.find('-') < self.__content.find('('):
-                PTTTelnetCrawlerLibraryUtil.Log('This post has been deleted')
+                PTTTelnetCrawlerLibraryUtil.Log('This post has been deleted type 2')
                 raise Exception('This post has been deleted')
             else:
                 return True
@@ -516,10 +533,6 @@ class PTTTelnetCrawlerLibrary(object):
         
         result = None   
     
-        if not self.gotoPostByID(Board, PostID):
-            PTTTelnetCrawlerLibraryUtil.Log('Go to post id fail')
-            return None
-
         PostAuthor = ''
         PostTitle = ''
         PostDate = ''
@@ -527,14 +540,21 @@ class PTTTelnetCrawlerLibrary(object):
         PostMoney = -1
         PostContent = ''
         
-        #Query post information
-        self.__sendData('Q', True)
+        for i in range(5):
+            if not self.gotoPostByID(Board, PostID):
+                PTTTelnetCrawlerLibraryUtil.Log('Go to post id fail')
+                continue
+            #Query post information
+            self.__sendData('Q', False, 0.1)
+            if self.__content.find('https://') != -1 and self.__content.find('.html') != -1:
+                PostWebUrl = self.__content[self.__content.find('https://'):self.__content.find('.html')] + '.html'
+                break
         
-        #print('=.= ' + self.__content)
-        if not 'https://' in self.__content or not '.html' in self.__content:
+        if PostWebUrl == '':
+            print(self.__content)
+            print(len(self.__content))
             PTTTelnetCrawlerLibraryUtil.Log('Find http fail')
             return None
-        PostWebUrl = self.__content[self.__content.find('https://'):self.__content.find('.html')] + '.html'
         
         if not '這一篇文章值' in self.__content:
             PTTTelnetCrawlerLibraryUtil.Log('Find 這一篇文章值 fail')
@@ -648,7 +668,7 @@ class PTTTelnetCrawlerLibrary(object):
     def __getPostInformationByIndex(self, Board, Index):
     
         if not self.gotoPostByIndex(Board, Index):
-            PTTTelnetCrawlerLibraryUtil.Log('Go to post index fail')
+            PTTTelnetCrawlerLibraryUtil.Log('Go to post index fail..')
             raise Exception('This post has been deleted..')
         
         PostID = ''
