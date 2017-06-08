@@ -1,6 +1,7 @@
 import sys
 import time
 import PTTTelnetCrawlerLibrary
+import PTTTelnetCrawlerLibraryErrorCode
 import os.path
 try:
     sys.path.append("../IDPassword")
@@ -24,7 +25,7 @@ PTTCrawler = None
 def GotoBoardDemo():
     for i in range(1):
         for Board in BoardList:
-            if PTTCrawler.gotoBoard(Board):
+            if PTTCrawler.gotoBoard(Board) == PTTTelnetCrawlerLibraryErrorCode.Success:
                 PTTCrawler.Log('Go to ' + Board + ' success')
             else:
                 PTTCrawler.Log('Go to ' + Board + ' fail')
@@ -166,7 +167,7 @@ if __name__ == '__main__':
         PTTCrawler.Log('Login fail')
         sys.exit()
     
-    #GotoBoardDemo()
+    GotoBoardDemo()
     #GetNewestPostIndexDemo()
     #GotoPostDemo()
     #GetPostInformationByIndexDemo()

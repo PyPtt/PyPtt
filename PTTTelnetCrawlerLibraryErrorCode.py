@@ -7,3 +7,4 @@ EOFError =                        2
 ConnectionResetError =            3
 WaitTimeout =                     4
 WrongPassword =                   5
+ErrorInput =                      6
