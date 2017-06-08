@@ -179,7 +179,7 @@ class PTTTelnetCrawlerLibrary(object):
         
         try:
             if Enter:
-                self.__telnet.write(str(Message + '\r\n').encode('big5'))
+                self.__telnet.write(str(Message + '\r').encode('big5'))
             else:
                 self.__telnet.write(str(Message).encode('big5'))
                 
@@ -220,9 +220,6 @@ class PTTTelnetCrawlerLibrary(object):
             ErrorCode, Index = self.__sendData(SendMessage, CaseList)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 return ErrorCode
-            if Index == -1:
-                self.Log('No data receive!')
-                return PTTTelnetCrawlerLibraryErrorCode.ConnectError
             if Index == 0:
                 self.Log('Wrong password')
                 return PTTTelnetCrawlerLibraryErrorCode.WrongPassword
@@ -259,9 +256,7 @@ class PTTTelnetCrawlerLibrary(object):
         ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x0C', ['[呼叫器]'], False)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             return ErrorCode
-        if Index == -1:
-            self.__showScreen()
-            self.Log('GotoTop timeout')
+        
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def logout(self):
         ErrorCode = self.gotoTop()
@@ -273,9 +268,6 @@ class PTTTelnetCrawlerLibrary(object):
             self.__showScreen()
             print('Error code 2: ' + str(ErrorCode))
             return ErrorCode
-        if Index == -1:
-            self.__showScreen()
-            self.Log('GotoTop timeout')
         
         self.__telnet.close()
         PTTTelnetCrawlerLibraryUtil.Log('Logout success')
@@ -293,30 +285,86 @@ class PTTTelnetCrawlerLibrary(object):
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             print('Error code gotoBoard 1: ' + str(ErrorCode))
             return ErrorCode
-        if Index == -1:
-            self.Log('Input board error')
-            self.__showScreen()
-            return PTTTelnetCrawlerLibraryErrorCode.ErrorInput
         
+        #self.__showScreen()
         CaseList = ['請按任意鍵繼續', '其他任意鍵停止', '動畫播放中', '看板《' + Board + '》']
         SendMessage = Board
-        
+        Enter = True
         while True:            
-            ErrorCode, Index = self.__sendData(SendMessage, CaseList)
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+                self.__showScreen()
                 print('Error code gotoBoard 2: ' + str(ErrorCode))
                 return ErrorCode
             if Index == 0 or Index == 1:
                 SendMessage = ''
+                Enter = True
                 #self.Log('Press any key to continue')
             if Index == 2:
                 SendMessage = 'q'
-                #self.Log('Press any key to continue')
+                Enter = False
+                #self.Log('動畫播放中')
             if Index == 3:
                 #self.Log('Into ' + Board)
                 break
                 
         return PTTTelnetCrawlerLibraryErrorCode.Success
+    
+    def post(self, board, title, content, PostType, SignType):
+        ErrorCode = self.gotoBoard(board)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('post 1 Go to ' + board + ' fail')
+            return ErrorCode
+        
+        CaseList = ['1-8或不選']
+        SendMessage = '\x10'
+        
+        ErrorCode, Index = self.__sendData(SendMessage, CaseList, False)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('post 2 error code: ' + str(ErrorCode))
+            return ErrorCode
+        
+        CaseList = ['標題']
+        SendMessage = str(PostType)
+        
+        ErrorCode, Index = self.__sendData(SendMessage, CaseList)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('post 3 error code: ' + str(ErrorCode))
+            return ErrorCode
+        
+        CaseList = ['編輯文章']
+        SendMessage = title
+        
+        ErrorCode, Index = self.__sendData(SendMessage, CaseList)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('post 4 error code: ' + str(ErrorCode))
+            return ErrorCode
+        
+        CaseList = ['確定要儲存檔案嗎']
+        SendMessage = content + '\x18'
+        
+        ErrorCode, Index = self.__sendData(SendMessage, CaseList, False)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('post 5 error code: ' + str(ErrorCode))
+            return ErrorCode
+        
+        CaseList = ['請選擇簽名檔', '請按任意鍵繼續', '看板《' + board + '》']
+        SendMessage = 's'
+        
+        while True:        
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList)
+            if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+                self.Log('post 5 error code: ' + str(ErrorCode))
+                return ErrorCode
+            if Index == 0:
+                SendMessage = str(SignType)
+            if Index == 1:
+                SendMessage = ''
+            if Index == 2:
+                #self.Log('Post success')
+                break
+        return PTTTelnetCrawlerLibraryErrorCode.Success
+    
 if __name__ == '__main__':
 
     print('PTT Telnet Crawler Library v 0.2.170608')
