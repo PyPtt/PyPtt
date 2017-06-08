@@ -173,7 +173,7 @@ class PTTTelnetCrawlerLibrary(object):
                 CaseList[i] = CaseList[i].encode('big5')
         
         if self.__isConnected:
-            self.__Timeout = 1
+            self.__Timeout = 3
         else:
             self.__Timeout = 10
         
@@ -218,9 +218,8 @@ class PTTTelnetCrawlerLibrary(object):
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 return ErrorCode
             if Index == -1:
-                SendMessage = ''
-                self.Log('Wait..')
-                self.__showScreen()
+                self.Log('No data receive!')
+                return PTTTelnetCrawlerLibraryErrorCode.ConnectError
             if Index == 0:
                 self.Log('Wrong password')
                 return PTTTelnetCrawlerLibraryErrorCode.WrongPassword
@@ -234,7 +233,7 @@ class PTTTelnetCrawlerLibrary(object):
                     self.Log('Detect other login')
             if Index == 2:
                 SendMessage = ''
-                self.Log('Press any key continue')
+                self.Log('Press any key to continue')
             if Index == 3:
                 SendMessage = 'y'
                 self.Log('Delete error password log')
@@ -254,24 +253,26 @@ class PTTTelnetCrawlerLibrary(object):
         self.__isConnected = True
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def gotoTop(self):
-        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D', [], False)
+        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x0C', ['[呼叫器]'], False)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             return ErrorCode
-        
+        if Index == -1:
+            self.__showScreen()
+            self.Log('GotoTop timeout')
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def logout(self):
         ErrorCode = self.gotoTop()
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             print('Error code 1: ' + str(ErrorCode))
             return ErrorCode
-        ErrorCode, Index = self.__sendData('g', ['您確定要離開【 批踢踢實業坊 】嗎(Y/N)？[N]'])
+        ErrorCode, Index = self.__sendData('g\r\ny', ['此次停留時間'])
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             print('Error code 2: ' + str(ErrorCode))
             return ErrorCode
-        ErrorCode, Index = self.__sendData('y')
-        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
-            print('Error code 3: ' + str(ErrorCode))
-            return ErrorCode    
+        if Index == -1:
+            self.__showScreen()
+            self.Log('GotoTop timeout')
+        
         self.__telnet.close()
         PTTTelnetCrawlerLibraryUtil.Log('Logout success')
         
@@ -293,9 +294,25 @@ class PTTTelnetCrawlerLibrary(object):
             self.__showScreen()
             return PTTTelnetCrawlerLibraryErrorCode.ErrorInput
         
+        CaseList = ['請按任意鍵繼續', '其他任意鍵停止', '動畫播放中', '看板《' + Board + '》']
         SendMessage = Board
-        ErrorCode, Index = self.__sendData(SendMessage)
-            
+        
+        while True:            
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList)
+            if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+                print('Error code gotoBoard 2: ' + str(ErrorCode))
+                return ErrorCode
+            if Index == 0 or Index == 1:
+                SendMessage = ''
+                #self.Log('Press any key to continue')
+            if Index == 2:
+                SendMessage = 'q'
+                #self.Log('Press any key to continue')
+            if Index == 3:
+                #self.Log('Into ' + Board)
+                break
+                
+        return PTTTelnetCrawlerLibraryErrorCode.Success
 if __name__ == '__main__':
 
     print('PTT Telnet Crawler Library v 0.2.170608')

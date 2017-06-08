@@ -16,14 +16,14 @@ except ModuleNotFoundError:
 
 KickOtherLogin = False
 
-#BoardList = ['Wanted', 'AllTogether', 'Gossiping']
-BoardList = ['Gossiping']
+BoardList = ['Wanted', 'AllTogether', 'Gossiping']
+#BoardList = ['Gossiping']
 PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTCrawler = None
 
 def GotoBoardDemo():
-    for i in range(1):
+    for i in range(10):
         for Board in BoardList:
             if PTTCrawler.gotoBoard(Board) == PTTTelnetCrawlerLibraryErrorCode.Success:
                 PTTCrawler.Log('Go to ' + Board + ' success')
