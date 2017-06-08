@@ -1,9 +1,17 @@
 import sys
 import time
 import PTTTelnetCrawlerLibrary
+import os.path
+try:
+    sys.path.append("../IDPassword")
+    import IDPassword
 
-ID = 'Your ID'
-Password = 'Your Password'
+    ID = IDPassword.ID
+    Password = IDPassword.Password
+except ModuleNotFoundError:
+    #Define your id password here
+    ID = 'Your ID'
+    Password = 'Your Password'
 
 KickOtherLogin = False
 
@@ -23,7 +31,7 @@ def GotoBoardDemo():
                 break
 def GetNewestPostIndexDemo():
 
-    for i in range(1000):
+    for i in range(1):
         for Board in BoardList:
             NewestIndex = PTTCrawler.getNewestPostIndex(Board)
             if not NewestIndex == -1:
