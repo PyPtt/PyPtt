@@ -129,6 +129,7 @@ class PTTTelnetCrawlerLibrary(object):
                     self.__telnet.write(str(Message).encode('big5'))
         except ConnectionResetError:
             PTTTelnetCrawlerLibraryUtil.Log('Remote reset connection...')
+            self.__connectRemote()
             return PTTTelnetCrawlerLibraryErrorCode.ConnectionResetError, -1
         if ExtraWait > 0:
             time.sleep(ExtraWait)
@@ -140,8 +141,12 @@ class PTTTelnetCrawlerLibrary(object):
         for i in range(len(CaseList)):
             CaseList[i] = CaseList[i].encode('big5')
         
-        ReturnIndex = self.__telnet.expect(CaseList, self.__Timeout)[0]
-        
+        try:
+            ReturnIndex = self.__telnet.expect(CaseList, self.__Timeout)[0]
+        except EOFError:
+            #QQ why kick me
+            PTTTelnetCrawlerLibraryUtil.Log('Remote kick connection...')
+            self.__connectRemote()
         '''while True:
             time.sleep(self.__SleepTime)
             try:
@@ -211,9 +216,23 @@ class PTTTelnetCrawlerLibrary(object):
                 break
         
         self.__isConnected = True
-    
+        return PTTTelnetCrawlerLibraryErrorCode.Success
+    def gotoTop(self):
+        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D', ['【主功能表】'], False)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            return ErrorCode
+        return PTTTelnetCrawlerLibraryErrorCode.Success
     def logout(self):
-        pass
+        ErrorCode = self.gotoTop()
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            print('Error code 1: ' + str(ErrorCode))
+            return ErrorCode
+        ErrorCode, Index = self.__sendData('g', ['您確定要離開【 批踢踢實業坊 】嗎(Y/N)？[N]'])
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            print('Error code 2: ' + str(ErrorCode))
+            return ErrorCode
+        self.__telnet.close()
+        PTTTelnetCrawlerLibraryUtil.Log('Logout success')
 if __name__ == '__main__':
 
     print('PTT Telnet Crawler Library v 0.1.170607')
