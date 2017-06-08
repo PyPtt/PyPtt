@@ -155,8 +155,8 @@ class PTTTelnetCrawlerLibrary(object):
         #print('self.__SleepTime: ' + str(self.__SleepTime))
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def __showScreen(self):
-        result = self.__readScreen()
-        print(result)
+        self.__readScreen()
+        print(self.__ReceiveData)
     def __sendData(self, Message, CaseList=[], Enter=True):
         
         if Message == None:
@@ -194,7 +194,10 @@ class PTTTelnetCrawlerLibrary(object):
             PTTTelnetCrawlerLibraryUtil.Log('Remote reset connection...')
             self.__connectRemote()
             return PTTTelnetCrawlerLibraryErrorCode.ConnectionResetError, -1
-            
+        
+        if ReturnIndex == -1:
+            return PTTTelnetCrawlerLibraryErrorCode.WaitTimeout, ReturnIndex
+        
         return PTTTelnetCrawlerLibraryErrorCode.Success, ReturnIndex
     def __connectRemote(self):
         self.__isConnected = False
@@ -210,7 +213,7 @@ class PTTTelnetCrawlerLibrary(object):
             if Index == 1:
                 self.Log('System overload')
             
-        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼:', '編特別名單', '正在更新']
+        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新']
         SendMessage = self.__ID
         
         while True:
@@ -235,7 +238,7 @@ class PTTTelnetCrawlerLibrary(object):
                 SendMessage = ''
                 self.Log('Press any key to continue')
             if Index == 3:
-                SendMessage = 'y'
+                SendMessage = 'Y'
                 self.Log('Delete error password log')
             if Index == 4:
                 SendMessage = 'q'
@@ -253,7 +256,7 @@ class PTTTelnetCrawlerLibrary(object):
         self.__isConnected = True
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def gotoTop(self):
-        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x0C', ['[呼叫器]'], False)
+        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x0C', ['[呼叫器]'], False)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             return ErrorCode
         if Index == -1:
@@ -267,6 +270,7 @@ class PTTTelnetCrawlerLibrary(object):
             return ErrorCode
         ErrorCode, Index = self.__sendData('g\r\ny', ['此次停留時間'])
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.__showScreen()
             print('Error code 2: ' + str(ErrorCode))
             return ErrorCode
         if Index == -1:

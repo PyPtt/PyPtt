@@ -22,14 +22,35 @@ PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTCrawler = None
 
+def gotoTopDemo():
+    for i in range(5):
+        ErrorCode = PTTCrawler.gotoTop()
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
+            PTTCrawler.Log('gotoTop success')
+        else:
+            PTTCrawler.Log('gotoTop fail')
+            
 def GotoBoardDemo():
-    for i in range(10):
+    for i in range(3):
         for Board in BoardList:
             if PTTCrawler.gotoBoard(Board) == PTTTelnetCrawlerLibraryErrorCode.Success:
                 PTTCrawler.Log('Go to ' + Board + ' success')
             else:
                 PTTCrawler.Log('Go to ' + Board + ' fail')
                 break
+
+def PostDemo():
+    #發文類別       1
+    #簽名檔        	0
+    for i in range(1):
+        
+        ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Telnet Crawler Library 測試\r\n\r\nhttps://goo.gl/qlDRCt', 1, 0)
+        
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
+            PTTCrawler.Log('Post in Test success')
+        else:
+            PTTCrawler.Log('Post in Test fail')                
+
 def GetNewestPostIndexDemo():
 
     for i in range(1):
@@ -52,15 +73,7 @@ def GotoPostDemo():
             PTTCrawler.Log(str(i) + ' Go to Gossiping post index: ' + str(NewestIndex - i) + ' success')
         else:
             PTTCrawler.Log(str(i) + ' Go to Gossiping post index: ' + str(NewestIndex - i) + ' fail')
-            
-def PostDemo():
-    #發文類別       1
-    #簽名檔        	0
-    for i in range(3):
-        if PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Telnet Crawler Library 測試\r\n\r\nhttps://goo.gl/qlDRCt', 1, 0):
-            PTTCrawler.Log('Post in Test success')
-        else:
-            PTTCrawler.Log('Post in Test fail')
+
 def GetPostInformationByIDDemo():
 
     NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
@@ -167,14 +180,15 @@ if __name__ == '__main__':
         PTTCrawler.Log('Login fail')
         sys.exit()
     
+    gotoTopDemo()
     GotoBoardDemo()
+    #PostDemo()
+    #PushDemo()
     #GetNewestPostIndexDemo()
     #GotoPostDemo()
     #GetPostInformationByIndexDemo()
     #GetPostInformationByIDDemo()
     #GetNewPostIndexDemo()
-    #PostDemo()
-    #PushDemo()
     #MainDemo()
     #GiveMoneyDemo()
     #GetPostFloorByIndex()
