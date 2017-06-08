@@ -42,7 +42,7 @@ def GotoBoardDemo():
 def PostDemo():
     #發文類別       1
     #簽名檔        	0
-    for i in range(1):
+    for i in range(5):
         
         ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Telnet Crawler Library 測試\r\n\r\nhttps://goo.gl/qlDRCt', 1, 0)
         
@@ -182,7 +182,7 @@ if __name__ == '__main__':
     
     gotoTopDemo()
     GotoBoardDemo()
-    #PostDemo()
+    PostDemo()
     #PushDemo()
     #GetNewestPostIndexDemo()
     #GotoPostDemo()
