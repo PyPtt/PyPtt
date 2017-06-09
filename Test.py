@@ -16,8 +16,8 @@ except ModuleNotFoundError:
 
 KickOtherLogin = False
 
-BoardList = ['Wanted', 'AllTogether', 'Gossiping']
-#BoardList = ['Gossiping']
+BoardList = ['Wanted', 'Gossiping']
+BoardList = ['Gossiping']
 PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTCrawler = None
@@ -53,14 +53,15 @@ def PostDemo():
 
 def GetNewestPostIndexDemo():
 
-    for i in range(1):
+    for i in range(3):
         for Board in BoardList:
-            NewestIndex = PTTCrawler.getNewestPostIndex(Board)
-            if not NewestIndex == -1:
+            ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex(Board)
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
                 PTTCrawler.Log(str(i) + ' Get ' + Board + ' get newest post index success: ' + str(NewestIndex))
             else:
                 PTTCrawler.Log(str(i) + ' Get ' + Board + ' get newest post index fail')
                 return False
+            #time.sleep(1)
 def GotoPostDemo():
 
     NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
@@ -182,9 +183,9 @@ if __name__ == '__main__':
     
     gotoTopDemo()
     GotoBoardDemo()
-    PostDemo()
+    #PostDemo()
     #PushDemo()
-    #GetNewestPostIndexDemo()
+    GetNewestPostIndexDemo()
     #GotoPostDemo()
     #GetPostInformationByIndexDemo()
     #GetPostInformationByIDDemo()

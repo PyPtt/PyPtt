@@ -141,7 +141,7 @@ class PTTTelnetCrawlerLibrary(object):
                 self.__connectRemote()
                 return PTTTelnetCrawlerLibraryErrorCode.EOFError
             
-            self.removeColor()
+            #self.removeColor()
             
             if ExpectTarget != '' and ExpectTarget != None:
                 if ExpectTarget in self.__ReceiveData:
@@ -154,10 +154,10 @@ class PTTTelnetCrawlerLibrary(object):
         self.__SleepTime = self.__SleepTime * (ReceiveTimes / 5.0)
         #print('self.__SleepTime: ' + str(self.__SleepTime))
         return PTTTelnetCrawlerLibraryErrorCode.Success
-    def __showScreen(self):
-        self.__readScreen()
+    def __showScreen(self, ExpectTarget=None):
+        self.__readScreen(ExpectTarget)
         print(self.__ReceiveData)
-    def __sendData(self, Message, CaseList=[], Enter=True):
+    def __sendData(self, Message, CaseList=[], Enter=True, Refresh=False):
         
         if Message == None:
             Message = ''
@@ -167,7 +167,12 @@ class PTTTelnetCrawlerLibrary(object):
         self.__ReceiveData = ''
         
         ReceiveTimes = 0
+        PostFix = ''
         
+        if Enter:
+            PostFix += '\r'
+        if Refresh:
+            PostFix += '\x0C'
         for i in range(len(CaseList)):
             if type(CaseList[i]) is str:
                 CaseList[i] = CaseList[i].encode('big5')
@@ -178,11 +183,8 @@ class PTTTelnetCrawlerLibrary(object):
             self.__Timeout = 10
         
         try:
-            if Enter:
-                self.__telnet.write(str(Message + '\r').encode('big5'))
-            else:
-                self.__telnet.write(str(Message).encode('big5'))
-                
+            SendMessage = str(Message) + PostFix
+            self.__telnet.write(SendMessage.encode('big5'))
             ReturnIndex = self.__telnet.expect(CaseList, timeout=self.__Timeout)[0]
             
         except EOFError:
@@ -212,12 +214,14 @@ class PTTTelnetCrawlerLibrary(object):
                 break
             if Index == 1:
                 self.Log('System overload')
+                time.sleep(2)
             
         CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新']
         SendMessage = self.__ID
+        Enter = True
         
         while True:
-            ErrorCode, Index = self.__sendData(SendMessage, CaseList)
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 return ErrorCode
             if Index == 0:
@@ -226,34 +230,42 @@ class PTTTelnetCrawlerLibrary(object):
             if Index == 1:
                 if self.__kickOtherLogin:
                     SendMessage = 'y'
+                    Enter = True
                     self.Log('Detect other login')
                     self.Log('Kick other login success')
                 else :
                     SendMessage = 'n'
+                    Enter = True
                     self.Log('Detect other login')
             if Index == 2:
-                SendMessage = ''
+                SendMessage = 'q'
+                Enter = False
                 self.Log('Press any key to continue')
             if Index == 3:
                 SendMessage = 'Y'
+                Enter = True
                 self.Log('Delete error password log')
             if Index == 4:
                 SendMessage = 'q'
+                Enter = True
                 self.Log('Delete the post not finished')    
             if Index == 5:
                 SendMessage = self.__Password
+                Enter = True
                 self.Log('Input ID success')
             if Index == 6:
                 self.Log('Login success')
                 break
             if Index == 7:
                 SendMessage = ''
+                Enter = True
                 self.Log('Wait update')
+                time.sleep(1)
                 
         self.__isConnected = True
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def gotoTop(self):
-        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x0C', ['[呼叫器]'], False)
+        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]'], False, True)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             return ErrorCode
         
@@ -365,6 +377,62 @@ class PTTTelnetCrawlerLibrary(object):
                 break
         return PTTTelnetCrawlerLibraryErrorCode.Success
     
+    def getNewestPostIndex(self, Board):
+        
+        ReturnIndex = -1
+    
+        ErrorCode = self.gotoBoard(Board)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('getNewestPostIndex 1 Go to ' + Board + ' fail')
+            return ErrorCode
+        
+        CaseList = ['文章選讀']
+        SendMessage = '$'
+        
+        ErrorCode, Index = self.__sendData(SendMessage, CaseList, False, True)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('getNewestPostIndex 2 error code: ' + str(ErrorCode))
+            return ErrorCode
+        
+        self.__readScreen('文章選讀')
+        
+        AllIndex = re.findall(r'\d+ ', self.__ReceiveData)
+        
+        ScreenCount = self.__ReceiveData.count('看板《' + Board + '》')
+        StartCount = int(self.__ReceiveData.count('★') / ScreenCount)
+
+        AllIndex = list(set(map(int, AllIndex)))
+        AllIndex.sort()
+        
+        AllIndexTemp = list(AllIndex)
+        
+        while True:
+            
+            if len(AllIndex) == 0:
+                print(AllIndexTemp)
+            
+            ReturnIndexTemp = AllIndex.pop()
+            
+            if len(str(ReturnIndexTemp)) <= 6:
+                
+                TargetA = '{0: >6}'.format(str(ReturnIndexTemp))
+                TargetACount = 0
+                
+                for TargetBTemp in AllIndexTemp:
+                    TargetB = '{0: >6}'.format(str(TargetBTemp))
+                    if TargetA[:3] == TargetB[:3] and len(str(ReturnIndexTemp)) == len(str(TargetBTemp)):
+                        TargetACount += 1
+                    
+                if 20 - StartCount - 1 <= TargetACount and TargetACount <= 20:
+                    '''print(AllIndex)
+                    print(str(TargetACount))
+                    print(str(20 - StartCount - 1))'''
+                    ReturnIndex = ReturnIndexTemp
+                    break
+                else:
+                    print(str(TargetACount))
+                    print(str(20 - StartCount - 1))
+        return PTTTelnetCrawlerLibraryErrorCode.Success, ReturnIndex
 if __name__ == '__main__':
 
     print('PTT Telnet Crawler Library v 0.2.170608')
