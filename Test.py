@@ -70,32 +70,46 @@ def GotoPostDemo():
         PTTCrawler.Log('Get newest post index fail')
         return False
     for i in range(TryPost):
-        ErrorCode, isSuccess = PTTCrawler.gotoPostByIndex('Gossiping', NewestIndex - i)
+        ErrorCode = PTTCrawler.gotoPostByIndex('Gossiping', NewestIndex - i)
         
         if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log(str(i) + ' Go to Gossiping post index: ' + str(NewestIndex - i) + ' success')
         else:
             PTTCrawler.Log(str(i) + ' Go to Gossiping post index: ' + str(NewestIndex - i) + ' fail')
             return False
-def GetPostInformationByIDDemo():
+    
+    for i in PostIDList:
+        ErrorCode = PTTCrawler.gotoPostByID('Wanted', i)
+        
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
+            PTTCrawler.Log(str(i) + ' Go to Wanted post id: ' + i + ' success')
+        else:
+            PTTCrawler.Log(str(i) + ' Go to Wanted post id: ' + i + ' fail')
+            return False
+def GetPostInformationDemo():
 
-    NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
+    ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
+    if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+        PTTCrawler.Log('Get newest post index fail')
+        return False
     TryPost = 3
     if NewestIndex == -1:
         PTTCrawler.Log('Get newest post index fail')
         return False
         
     for i in range(TryPost):
-        Post = PTTCrawler.getPostInformationByIndex('Gossiping', NewestIndex - i)
-        if Post == None:
+        ErrorCode, Post = -1 , None
+        PTTCrawler.getPostInfoByIndex('Gossiping', NewestIndex - i)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log('Get post by index fail')
             continue
-        Post = PTTCrawler.getPostInformationByID('Gossiping', Post.getPostID())
+        PTTCrawler.Log('Get post by index success')
+        '''Post = PTTCrawler.getPostInformationByID('Gossiping', Post.getPostID())
         if Post == None:
             PTTCrawler.Log('Get post by ID fail')
             break
         PTTCrawler.Log(str(int(((i + 1) * 100) / TryPost)) + ' % ' + str(NewestIndex - i) + ' Title: ' + Post.getTitle())
-        
+        '''
 def GetNewestIndexDemo():
     for i in range(3):        
         NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
@@ -189,8 +203,7 @@ if __name__ == '__main__':
     #PostDemo()
     #PushDemo()
     GotoPostDemo()
-    #GetPostInformationByIndexDemo()
-    #GetPostInformationByIDDemo()
+    GetPostInformationDemo()
     #GetNewPostIndexDemo()
     #MainDemo()
     #GiveMoneyDemo()
