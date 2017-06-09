@@ -64,17 +64,19 @@ def GetNewestPostIndexDemo():
             #time.sleep(1)
 def GotoPostDemo():
 
-    NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
+    ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
     TryPost = 3
-    if NewestIndex == -1:
+    if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
         PTTCrawler.Log('Get newest post index fail')
         return False
     for i in range(TryPost):
-        if PTTCrawler.gotoPostByIndex('Gossiping', NewestIndex - i):
+        ErrorCode, isSuccess = PTTCrawler.gotoPostByIndex('Gossiping', NewestIndex - i)
+        
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log(str(i) + ' Go to Gossiping post index: ' + str(NewestIndex - i) + ' success')
         else:
             PTTCrawler.Log(str(i) + ' Go to Gossiping post index: ' + str(NewestIndex - i) + ' fail')
-
+            return False
 def GetPostInformationByIDDemo():
 
     NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
@@ -183,10 +185,10 @@ if __name__ == '__main__':
     
     gotoTopDemo()
     GotoBoardDemo()
+    GetNewestPostIndexDemo()
     #PostDemo()
     #PushDemo()
-    GetNewestPostIndexDemo()
-    #GotoPostDemo()
+    GotoPostDemo()
     #GetPostInformationByIndexDemo()
     #GetPostInformationByIDDemo()
     #GetNewPostIndexDemo()

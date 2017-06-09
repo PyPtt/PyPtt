@@ -141,7 +141,7 @@ class PTTTelnetCrawlerLibrary(object):
                 self.__connectRemote()
                 return PTTTelnetCrawlerLibraryErrorCode.EOFError
             
-            #self.removeColor()
+            self.removeColor()
             
             if ExpectTarget != '' and ExpectTarget != None:
                 if ExpectTarget in self.__ReceiveData:
@@ -151,7 +151,7 @@ class PTTTelnetCrawlerLibrary(object):
                 print(self.__ReceiveData)
                 return PTTTelnetCrawlerLibraryErrorCode.WaitTimeout
         
-        self.__SleepTime = self.__SleepTime * (ReceiveTimes / 5.0)
+        self.__SleepTime = self.__SleepTime * (ReceiveTimes / 10.0)
         #print('self.__SleepTime: ' + str(self.__SleepTime))
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def __showScreen(self, ExpectTarget=None):
@@ -178,11 +178,13 @@ class PTTTelnetCrawlerLibrary(object):
                 CaseList[i] = CaseList[i].encode('big5')
         
         if self.__isConnected:
-            self.__Timeout = 3
+            self.__Timeout = 1
         else:
             self.__Timeout = 10
         
         try:
+            #self.__telnet.read_very_eager()
+            #self.__telnet.read_until(b'')
             SendMessage = str(Message) + PostFix
             self.__telnet.write(SendMessage.encode('big5'))
             ReturnIndex = self.__telnet.expect(CaseList, timeout=self.__Timeout)[0]
@@ -384,7 +386,7 @@ class PTTTelnetCrawlerLibrary(object):
         ErrorCode = self.gotoBoard(Board)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             self.Log('getNewestPostIndex 1 Go to ' + Board + ' fail')
-            return ErrorCode
+            return ErrorCode, -1
         
         CaseList = ['文章選讀']
         SendMessage = '$'
@@ -392,7 +394,7 @@ class PTTTelnetCrawlerLibrary(object):
         ErrorCode, Index = self.__sendData(SendMessage, CaseList, False, True)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             self.Log('getNewestPostIndex 2 error code: ' + str(ErrorCode))
-            return ErrorCode
+            return ErrorCode, -1
         
         self.__readScreen('文章選讀')
         
@@ -408,9 +410,6 @@ class PTTTelnetCrawlerLibrary(object):
         
         while True:
             
-            if len(AllIndex) == 0:
-                print(AllIndexTemp)
-            
             ReturnIndexTemp = AllIndex.pop()
             
             if len(str(ReturnIndexTemp)) <= 6:
@@ -418,22 +417,76 @@ class PTTTelnetCrawlerLibrary(object):
                 TargetA = '{0: >6}'.format(str(ReturnIndexTemp))
                 TargetACount = 0
                 
+                #計算畫面中 所有數字的同質性，文章編號最長六碼，前三碼會相同，避免一樣是六碼但卻不是文章編號的數字混進來
                 for TargetBTemp in AllIndexTemp:
                     TargetB = '{0: >6}'.format(str(TargetBTemp))
                     if TargetA[:3] == TargetB[:3] and len(str(ReturnIndexTemp)) == len(str(TargetBTemp)):
                         TargetACount += 1
                     
-                if 20 - StartCount - 1 <= TargetACount and TargetACount <= 20:
-                    '''print(AllIndex)
-                    print(str(TargetACount))
-                    print(str(20 - StartCount - 1))'''
+                if 10 <= TargetACount and TargetACount <= 20:
+                    
+                    '''
+                    #通過同質性測試後，檢驗文章是否已經被刪除
+                    CurrentData = self.__ReceiveData[:]
+                    
+                    while CurrentData.find(str(ReturnIndexTemp)) != -1:
+                        CurrentData = CurrentData[CurrentData.find(str(ReturnIndexTemp)) + len(str(ReturnIndexTemp)):]
+                    
+                    while CurrentData.find('★') != -1:
+                        CurrentData = CurrentData[:CurrentData.find('★')]
+                    
+                    if CurrentData.find('(') != -1 and CurrentData.find('-') < CurrentData.find('('):
+                        continue
+                    else:
+                        ReturnIndex = ReturnIndexTemp
+                        break
+                    '''    
+                    
                     ReturnIndex = ReturnIndexTemp
                     break
+                    
                 else:
-                    print(str(TargetACount))
+                    pass
+                    '''
                     print(str(20 - StartCount - 1))
+                    print(str(TargetACount))
+                    print(TargetA)
+                    print(TargetA[:3])
+                    '''
+            if len(AllIndex) == 0:
+                #print(AllIndexTemp)
+                #self.Log('Parse error!!!')
+                return PTTTelnetCrawlerLibraryErrorCode.UnknowError, -1
         return PTTTelnetCrawlerLibraryErrorCode.Success, ReturnIndex
+    
+    def gotoPostByIndex(self, Board, PostIndex):
+        ErrorCode = self.gotoBoard(Board)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('gotoPostByIndex 1 Go to ' + Board + ' fail')
+            return ErrorCode, False
+        
+        IndexTarget = '>{0: >6}'.format(str(PostIndex))
+        
+        CaseList = [IndexTarget, '文章選讀']
+        SendMessage = str(PostIndex)
+        
+        ErrorCode, Index = self.__sendData(SendMessage, CaseList, True, True)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('gotoPostByIndex 2 error code: ' + str(ErrorCode))
+            return ErrorCode, False
+        
+        if Index == 0:
+            return PTTTelnetCrawlerLibraryErrorCode.Success, True
+        else:
+            return PTTTelnetCrawlerLibraryErrorCode.Success, False
+    def gotoPostByID(self, Board, PostID):
+        ErrorCode = self.gotoBoard(Board)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('gotoPostByID 1 Go to ' + Board + ' fail')
+            return ErrorCode, False
+        
+        
 if __name__ == '__main__':
 
-    print('PTT Telnet Crawler Library v 0.2.170608')
+    print('PTT Telnet Crawler Library v 0.2.170609')
     print('PTT CodingMan')
