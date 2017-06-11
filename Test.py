@@ -18,7 +18,7 @@ KickOtherLogin = False
 
 BoardList = ['Wanted', 'Gossiping']
 BoardList = ['Gossiping']
-PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
+PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV', 'QQQQQQQQ']
 
 PTTCrawler = None
 
@@ -44,8 +44,8 @@ def PostDemo():
     #簽名檔        	0
     for i in range(5):
         
-        ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Telnet Crawler Library 測試\r\n\r\nhttps://goo.gl/qlDRCt', 1, 0)
-        
+        #ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Telnet Crawler Library 測試\r\n\r\nhttps://goo.gl/qlDRCt', 1, 0)
+        ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n(羞', 1, 0)
         if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log('Post in Test success')
         else:
@@ -65,7 +65,7 @@ def GetNewestPostIndexDemo():
 def GotoPostDemo():
 
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
-    TryPost = 3
+    TryPost = 5
     if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
         PTTCrawler.Log('Get newest post index fail')
         return False
@@ -86,30 +86,36 @@ def GotoPostDemo():
         else:
             PTTCrawler.Log(str(i) + ' Go to Wanted post id: ' + i + ' fail')
             return False
-def GetPostInformationDemo():
+def GetPostInfoDemo():
 
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
     if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
         PTTCrawler.Log('Get newest post index fail')
         return False
-    TryPost = 3
+    TryPost = 1000
     if NewestIndex == -1:
         PTTCrawler.Log('Get newest post index fail')
         return False
         
     for i in range(TryPost):
-        ErrorCode, Post = -1 , None
-        PTTCrawler.getPostInfoByIndex('Gossiping', NewestIndex - i)
+        
+        ErrorCode, Post = PTTCrawler.getPostInfoByIndex('Gossiping', NewestIndex - i)
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.PostDeleted:
+            PTTCrawler.Log('Post has been deleted')
+            continue
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WebFormatError:
+            PTTCrawler.Log('Web structure error')
+            continue
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log('Get post by index fail')
-            continue
-        PTTCrawler.Log('Get post by index success')
-        '''Post = PTTCrawler.getPostInformationByID('Gossiping', Post.getPostID())
-        if Post == None:
-            PTTCrawler.Log('Get post by ID fail')
-            break
+            return False
         PTTCrawler.Log(str(int(((i + 1) * 100) / TryPost)) + ' % ' + str(NewestIndex - i) + ' Title: ' + Post.getTitle())
-        '''
+        ErrorCode, Post = PTTCrawler.getPostInfoByID('Gossiping', Post.getPostID())
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            PTTCrawler.Log('Get post by ID fail error code: ' + str(ErrorCode))
+            return False
+        PTTCrawler.Log(str(int(((i + 1) * 100) / TryPost)) + ' % ' + Post.getPostID() + ' Title: ' + Post.getTitle())
+        
 def GetNewestIndexDemo():
     for i in range(3):        
         NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
@@ -203,7 +209,7 @@ if __name__ == '__main__':
     #PostDemo()
     #PushDemo()
     GotoPostDemo()
-    GetPostInformationDemo()
+    GetPostInfoDemo()
     #GetNewPostIndexDemo()
     #MainDemo()
     #GiveMoneyDemo()
