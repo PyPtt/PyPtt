@@ -199,7 +199,7 @@ class PTTTelnetCrawlerLibrary(object):
                 CaseList[i] = CaseList[i].encode('big5')
         
         if self.__isConnected:
-            self.__Timeout = 1
+            self.__Timeout = 2
         else:
             self.__Timeout = 10
         
@@ -288,14 +288,14 @@ class PTTTelnetCrawlerLibrary(object):
                 
         self.__isConnected = True
         return PTTTelnetCrawlerLibraryErrorCode.Success
-    def gotoTop(self):
+    def __gotoTop(self):
         ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]'], False, True)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             return ErrorCode
         
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def logout(self):
-        ErrorCode = self.gotoTop()
+        ErrorCode = self.__gotoTop()
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             print('Error code 1: ' + str(ErrorCode))
             return ErrorCode
@@ -310,7 +310,7 @@ class PTTTelnetCrawlerLibrary(object):
         
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def gotoBoard(self, Board):
-        ErrorCode = self.gotoTop()
+        ErrorCode = self.__gotoTop()
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             print('Error code gotoBoard 1: ' + str(ErrorCode))
             return ErrorCode
@@ -410,6 +410,8 @@ class PTTTelnetCrawlerLibrary(object):
                 break
             if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.ParseError:
                 pass
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
+                pass
             else:
                 return ErrorCode, Index
         return ErrorCode, Index
@@ -454,6 +456,8 @@ class PTTTelnetCrawlerLibrary(object):
                     
                 if 10 <= TargetACount and TargetACount <= 20:
                     
+                    #檢驗是否刪除的邏輯，移動至取得文章資訊時檢查
+                    
                     '''
                     #通過同質性測試後，檢驗文章是否已經被刪除
                     CurrentData = self.__ReceiveData[:]
@@ -483,7 +487,7 @@ class PTTTelnetCrawlerLibrary(object):
                     print(TargetA[:3])
                     '''
             if len(AllIndex) == 0:
-                print(AllIndexTemp)
+                #print(AllIndexTemp)
                 #self.Log('Parse error!!!')
                 return PTTTelnetCrawlerLibraryErrorCode.ParseError, -1
         return PTTTelnetCrawlerLibraryErrorCode.Success, int(ReturnIndex)
@@ -697,6 +701,96 @@ class PTTTelnetCrawlerLibrary(object):
         ErrorCode, Post = self.getPostInfoByID(Board, '', Index)
         
         return ErrorCode, Post
+    
+    def getNewPostIndexList(self, Board, LastPostIndex):
+        
+        result = []
+        ErrorCode, LastIndex = self.getNewestPostIndex(Board)
+        
+        if LastIndex == -1:
+            return result
+        
+        if LastPostIndex <= 0 or LastIndex < LastPostIndex:
+            result.append(LastIndex)
+        else:
+            for IndexTemp in range(LastPostIndex + 1, LastIndex + 1):
+                result.append(IndexTemp)
+        return ErrorCode, result
+    
+    def pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1):
+        if PostIndex != -1:
+            ErrorCode = self.gotoPostByIndex(Board, PostIndex)
+            if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+                self.Log('pushByIndex 1 goto post fail')
+                return ErrorCode
+        else:
+        
+            if len(PostID) != 8:
+                self.Log('pushByID Error input: ' + PostID)
+                return PTTTelnetCrawlerLibraryErrorCode.ErrorInput
+        
+            ErrorCode = self.gotoPostByID(Board, PostID)
+            if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+                self.Log('pushByID 1 goto post fail')
+                return ErrorCode
+        
+        CaseList = ['您覺得這篇文章', '加註方式', '本板禁止快速連續推文']
+        SendMessage = 'X'
+        
+        while True:
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList, False)
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
+                self.Log('No push option')
+                return PTTTelnetCrawlerLibraryErrorCode.NoPermission
+            if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+                self.Log('pushByID 2 error code: ' + str(ErrorCode))
+                return ErrorCode
+            if Index == 0:
+                break
+            if Index == 1:
+                break
+            if Index == 2:
+                self.Log('No fast push')
+                SendMessage = '\r\nX'
+                time.sleep(1)
+                
+        self.__readScreen('[1]?')
+        
+        Pushable = False
+        
+        ArrowOnly = False
+        
+        AllowPushTypeList = [False, False, False, False]
+        
+        AllowPushTypeList[self.PushType_Push] = False
+        AllowPushTypeList[self.PushType_Boo] = False
+        AllowPushTypeList[self.PushType_Arrow] = False
+        
+        if '值得推薦' in self.__ReceiveData:
+            AllowPushTypeList[self.PushType_Push] = True
+        if '給它噓聲' in InforTempString:
+            AllowPushTypeList[self.PushType_Boo] = True
+        if '只加→註解' in InforTempString:
+            AllowPushTypeList[self.PushType_Arrow] = True
+        
+        if not AllowPushTypeList[self.PushType_Boo] and PushType == self.PushType_Boo:
+            PushType = self.PushType_Arrow
+        
+        CaseList = ['']
+        
+        if ArrowOnly:
+            SendMessage = PushContent + '\r\ny'
+        else:
+            SendMessage = str(PushType) + PushContent + '\r\ny'
+        
+        ErrorCode, Index = self.__sendData(SendMessage, CaseList, True, True)
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('pushByID 3 error code: ' + str(ErrorCode))
+            return ErrorCode
+        return PTTTelnetCrawlerLibraryErrorCode.Success
+    def pushByIndex(self, Board, PushType, PushContent, PostIndex):
+        ErrorCode = self.pushByID(Board, PushType, PushContent, '', PostIndex)
+        return ErrorCode
 if __name__ == '__main__':
 
     print('PTT Telnet Crawler Library v 0.2.170609')
