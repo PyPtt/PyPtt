@@ -37,4 +37,4 @@ API
 ###### giveMoney 給予使用者 P幣
 ###### getTime 取得 PTT 系統時間
 
-![alt text](http://i.imgur.com/ErCRUk1.png)
+![alt text](http://i.imgur.com/XT9LadL.png)
