@@ -83,7 +83,7 @@ class PTTTelnetCrawlerLibrary(object):
         self.PushType_Arrow =        3
         
         self.__SleepTime =         0.5
-        self.__DefaultTimeout =    0.5
+        self.__DefaultTimeout =      1
         self.__Timeout =            10
         self.__CurrentTimeout =      0
         
@@ -179,7 +179,7 @@ class PTTTelnetCrawlerLibrary(object):
         self.__SleepTime = self.__SleepTime * (ReceiveTimes / 5.0)
         return ErrorCode, result
     def __showScreen(self, ExpectTarget=[]):
-        self.__readScreen(ExpectTarget)
+        self.__readScreen('', ExpectTarget)
         print(self.__ReceiveData)
     def __sendData(self, Message, CaseList=[''], Enter=True, Refresh=False):
         
@@ -295,7 +295,7 @@ class PTTTelnetCrawlerLibrary(object):
         self.__isConnected = True
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def __gotoTop(self):
-        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]'], False, True)
+        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]'], False, True)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             return ErrorCode
         
@@ -315,17 +315,17 @@ class PTTTelnetCrawlerLibrary(object):
         PTTTelnetCrawlerLibraryUtil.Log('Logout success')
         
         return PTTTelnetCrawlerLibraryErrorCode.Success
-    def gotoBoard(self, Board):
+    def __gotoBoard(self, Board):
         ErrorCode = self.__gotoTop()
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
-            print('Error code gotoBoard 1: ' + str(ErrorCode))
+            print('Error code __gotoBoard 1: ' + str(ErrorCode))
             return ErrorCode
         CaseList = ['請輸入看板名稱']
         SendMessage = 's'
         
         ErrorCode, Index = self.__sendData(SendMessage, CaseList, False)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
-            print('Error code gotoBoard 2: ' + str(ErrorCode))
+            print('Error code __gotoBoard 2: ' + str(ErrorCode))
             return ErrorCode
         
         #self.__showScreen()
@@ -336,7 +336,7 @@ class PTTTelnetCrawlerLibrary(object):
             ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 self.__showScreen()
-                print('Error code gotoBoard 3: ' + str(ErrorCode))
+                print('Error code __gotoBoard 3: ' + str(ErrorCode))
                 return ErrorCode
             if Index == 0 or Index == 1:
                 SendMessage = ''
@@ -356,7 +356,7 @@ class PTTTelnetCrawlerLibrary(object):
     
         self.__CurrentTimeout = 3
         
-        ErrorCode = self.gotoBoard(board)
+        ErrorCode = self.__gotoBoard(board)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             self.Log('post 1 Go to ' + board + ' fail')
             return ErrorCode
@@ -441,7 +441,7 @@ class PTTTelnetCrawlerLibrary(object):
     def __getNewestPostIndex(self, Board):
         ReturnIndex = -1
     
-        ErrorCode = self.gotoBoard(Board)
+        ErrorCode = self.__gotoBoard(Board)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             self.Log('getNewestPostIndex 1 Go to ' + Board + ' fail')
             return ErrorCode, -1
@@ -451,14 +451,14 @@ class PTTTelnetCrawlerLibrary(object):
             #self.Log('getNewestPostIndex 2.1 error code: ' + str(ErrorCode))
             print(self.__ReceiveData)
             return ErrorCode, -1
-        
-        if Board == 'Test':
-            #print(self.__ReceiveData)
-            pass
+
         AllIndex = re.findall(r'\d+ ', self.__ReceiveData)
         
         AllIndex = list(set(map(int, AllIndex)))
         AllIndex.sort()
+        
+        if len(AllIndex) == 0:
+            return PTTTelnetCrawlerLibraryErrorCode.ParseError, -1
         
         AllIndexTemp = list(AllIndex)
         while True:
@@ -515,10 +515,10 @@ class PTTTelnetCrawlerLibrary(object):
                 return PTTTelnetCrawlerLibraryErrorCode.ParseError, -1
         return PTTTelnetCrawlerLibraryErrorCode.Success, int(ReturnIndex)
     
-    def gotoPostByIndex(self, Board, PostIndex):
-        ErrorCode = self.gotoBoard(Board)
+    def __gotoPostByIndex(self, Board, PostIndex):
+        ErrorCode = self.__gotoBoard(Board)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
-            self.Log('gotoPostByIndex 1 Go to ' + Board + ' fail')
+            self.Log('__gotoPostByIndex 1 Go to ' + Board + ' fail')
             self.__showScreen()
             return ErrorCode
         
@@ -531,10 +531,10 @@ class PTTTelnetCrawlerLibrary(object):
         else:
             print(self.__ReceiveData)
             return PTTTelnetCrawlerLibraryErrorCode.PostNotFound
-    def gotoPostByID(self, Board, PostID):
-        ErrorCode = self.gotoBoard(Board)
+    def __gotoPostByID(self, Board, PostID):
+        ErrorCode = self.__gotoBoard(Board)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
-            self.Log('gotoPostByID 1 Go to ' + Board + ' fail')
+            self.Log('__gotoPostByID 1 Go to ' + Board + ' fail')
             return ErrorCode
         
         self.__readScreen('#' + PostID + '\r\n', '文章選讀')
@@ -547,7 +547,7 @@ class PTTTelnetCrawlerLibrary(object):
     def getPostInfoByID(self, Board, PostID, Index=-1):
         
         if Index != -1:
-            ErrorCode = self.gotoPostByIndex(Board, Index)
+            ErrorCode = self.__gotoPostByIndex(Board, Index)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 self.Log('getPostInfoByIndex 1 goto post fail')
                 return ErrorCode, None
@@ -557,7 +557,7 @@ class PTTTelnetCrawlerLibrary(object):
                 self.Log('Error input: ' + PostID)
                 return PTTTelnetCrawlerLibraryErrorCode.ErrorInput, None
         
-            ErrorCode = self.gotoPostByID(Board, PostID)
+            ErrorCode = self.__gotoPostByID(Board, PostID)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 self.Log('getPostInfoByID 1 goto post fail')
                 return ErrorCode, None
@@ -703,9 +703,7 @@ class PTTTelnetCrawlerLibrary(object):
         
         result = []
         ErrorCode, LastIndex = self.getNewestPostIndex(Board)
-        
-        print('LastIndex: ' + str(LastIndex))
-        
+
         if LastIndex == -1:
             return result
         
@@ -718,10 +716,10 @@ class PTTTelnetCrawlerLibrary(object):
     
     def pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1):
     
-        self.__CurrentTimeout = 1
+        self.__CurrentTimeout = 3
     
         if PostIndex != -1:
-            ErrorCode = self.gotoPostByIndex(Board, PostIndex)
+            ErrorCode = self.__gotoPostByIndex(Board, PostIndex)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 self.Log('pushByIndex 1 goto post fail')
                 return ErrorCode
@@ -731,7 +729,7 @@ class PTTTelnetCrawlerLibrary(object):
                 self.Log('pushByID Error input: ' + PostID)
                 return PTTTelnetCrawlerLibraryErrorCode.ErrorInput
         
-            ErrorCode = self.gotoPostByID(Board, PostID)
+            ErrorCode = self.__gotoPostByID(Board, PostID)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 self.Log('pushByID 1 goto post fail')
                 return ErrorCode
@@ -781,9 +779,9 @@ class PTTTelnetCrawlerLibrary(object):
                 Message = 'qX'
                 time.sleep(1)
             if Index == 3:
-                PTTTelnetCrawlerLibraryUtil.Log('System abort fast push, wait...')
+                PTTTelnetCrawlerLibraryUtil.Log('System abort many push, wait...')
                 Message = 'qX'
-                time.sleep(1)
+                time.sleep(2)
                 
         if not AllowPushTypeList[self.PushType_Boo] and PushType == self.PushType_Boo:
             PushType = self.PushType_Arrow
@@ -805,6 +803,128 @@ class PTTTelnetCrawlerLibrary(object):
     def pushByIndex(self, Board, PushType, PushContent, PostIndex):
         ErrorCode = self.pushByID(Board, PushType, PushContent, '', PostIndex)
         return ErrorCode
+    def mail(self, UserID, MailTitle, MailContent, SignType):
+    
+        self.__CurrentTimeout = 3
+        
+        ErrorCode = self.__gotoTop()
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            print('mail goto top error code 1: ' + str(ErrorCode))
+            return ErrorCode
+        
+        CaseList = ['主題：', '請選擇簽名檔', '已順利寄出，是否自存底稿', '任意鍵繼續', '電子郵件']
+        SendMessage = 'M\r\nS\r\n' + UserID
+        Enter = True
+        while True:        
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
+                self.__showScreen()
+                self.Log('No such user: ' + UserID)
+                return PTTTelnetCrawlerLibraryErrorCode.NoUser
+            if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+                self.Log('mail 2 error code: ' + str(ErrorCode))
+                return ErrorCode
+            if Index == 0:
+                SendMessage = MailTitle + '\r\n' + MailContent + '\x18s'
+                Enter = True
+            if Index == 1:
+                SendMessage = str(SignType)
+                Enter = True
+            if Index == 2:
+                SendMessage = 'Y'
+                Enter = True
+            if Index == 3:
+                SendMessage = 'q'
+                Enter = False
+            if Index == 4:
+                break
+        
+        self.__CurrentTimeout = 0
+        return PTTTelnetCrawlerLibraryErrorCode.Success
+        
+    def giveMoney(self, ID, Money, YourPassword):
+        self.__CurrentTimeout = 3
+        
+        ErrorCode = self.__gotoTop()
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            print('giveMoney goto top error code 1: ' + str(ErrorCode))
+            return ErrorCode
+        
+        CaseList = ['量販店', '給其他人Ptt幣', '這位幸運兒的id', '請輸入金額', '請輸入您的密碼', '要修改紅包袋嗎', '確定進行交易嗎', '按任意鍵繼續']
+        SendMessage = 'P'
+        Enter = True
+        while True:        
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
+                self.__showScreen()
+                self.Log('No such option: ' + SendMessage)
+                return PTTTelnetCrawlerLibraryErrorCode.NoUser
+            if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+                self.Log('mail 2 error code: ' + str(ErrorCode))
+                return ErrorCode
+            if Index == 0:
+                SendMessage = 'P'
+                Enter = True
+            if Index == 1:
+                SendMessage = '0'
+                Enter = True
+            if Index == 2:
+                SendMessage = ID
+                Enter = True
+            if Index == 3:
+                SendMessage = '\t' + str(Money)
+                Enter = True
+            if Index == 4:
+                SendMessage = str(YourPassword)
+                Enter = True
+            if Index == 5:
+                SendMessage = 'n'
+                Enter = True
+            if Index == 6:
+                SendMessage = 'y'
+                Enter = True
+            if Index == 7:
+                break
+        self.__CurrentTimeout = 0
+        return PTTTelnetCrawlerLibraryErrorCode.Success
+        
+    def getTime(self):
+    
+        #Thanks for ervery one in Python
+    
+        ErrorCode = self.__gotoBoard('Python')
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('getTime 1 Go to Python fail')
+            return ErrorCode, ''
+        
+        ErrorCode = self.__gotoTop()
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            print('getTime goto top error code 2: ' + str(ErrorCode))
+            return ErrorCode, ''
+        
+        ErrorCode, Index = self.__readScreen('', ['[呼叫器]'])
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
+            self.__showScreen()
+            self.Log('getTime 2.1')
+            return ErrorCode, ''
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.Log('getTime 3 read screen error code: ' + str(ErrorCode))
+            return ErrorCode, ''
+        
+        if not '離開，再見…' in self.__ReceiveData or not '[呼叫器]' in self.__ReceiveData:
+            self.Log('Not in user menu')
+            return PTTTelnetCrawlerLibraryErrorCode.ParseError, ''
+        
+        result = self.__ReceiveData[self.__ReceiveData.find('離開，再見…') + len('離開，再見…'):self.__ReceiveData.find('[呼叫器]')]
+        
+        if not '星期' in self.__ReceiveData:
+            self.Log('Not in user menu')
+            return PTTTelnetCrawlerLibraryErrorCode.ParseError, ''
+        
+        result = self.__ReceiveData[self.__ReceiveData.find('星期') + len('星期'):]
+        result = result[result.find(' ') + 1:result.find(']')]
+        
+        return PTTTelnetCrawlerLibraryErrorCode.Success, result
 if __name__ == '__main__':
 
     print('PTT Telnet Crawler Library v 0.2.170609')
