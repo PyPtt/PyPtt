@@ -14,3 +14,4 @@ ParseError =                      8
 PostDeleted =                     9
 WebFormatError =                 10
 NoPermission =                   11
+NoUser =                         12

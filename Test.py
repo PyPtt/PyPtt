@@ -21,15 +21,6 @@ PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTCrawler = None
 
-def GotoBoardDemo():
-    for i in range(3):
-        for Board in BoardList:
-            if PTTCrawler.gotoBoard(Board) == PTTTelnetCrawlerLibraryErrorCode.Success:
-                PTTCrawler.Log('Go to ' + Board + ' success')
-            else:
-                PTTCrawler.Log('Go to ' + Board + ' fail')
-                break
-
 def PostDemo():
     #發文類別       1
     #簽名檔        	0
@@ -53,30 +44,7 @@ def GetNewestPostIndexDemo():
                 PTTCrawler.Log(str(i) + ' Get ' + Board + ' get newest post index fail')
                 return False
             #time.sleep(1)
-def GotoPostDemo():
 
-    ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
-    TryPost = 5
-    if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
-        PTTCrawler.Log('Get newest post index fail')
-        return False
-    for i in range(TryPost):
-        ErrorCode = PTTCrawler.gotoPostByIndex('Gossiping', NewestIndex - i)
-        
-        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
-            PTTCrawler.Log(str(i) + ' Go to Gossiping post index: ' + str(NewestIndex - i) + ' success')
-        else:
-            PTTCrawler.Log(str(i) + ' Go to Gossiping post index: ' + str(NewestIndex - i) + ' fail')
-            return False
-    
-    for i in PostIDList:
-        ErrorCode = PTTCrawler.gotoPostByID('Wanted', i)
-        
-        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
-            PTTCrawler.Log(str(i) + ' Go to Wanted post id: ' + i + ' success')
-        else:
-            PTTCrawler.Log(str(i) + ' Go to Wanted post id: ' + i + ' fail')
-            return False
 def GetPostInfoDemo():
 
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
@@ -128,7 +96,7 @@ def PushDemo():
         PTTCrawler.Log('getNewestPostIndex ErrorCode: ' + str(ErrorCode))
         return False
     PTTCrawler.Log('NewestIndex: ' + str(NewestIndex))
-    for i in range(50):
+    for i in range(3):
         ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/qlDRCt by post index', NewestIndex)
         if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log('pushByIndex Push success')
@@ -141,7 +109,7 @@ def PushDemo():
     if NewPost == None:
         PTTCrawler.Log('getPostInfoByIndex fail')
         return False
-    for i in range(50):
+    for i in range(3):
         
         ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/qlDRCt by post id', NewPost.getPostID())
         if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
@@ -150,8 +118,9 @@ def PushDemo():
             PTTCrawler.Log('pushByID Push fail')
 def MainDemo():
     #0 不加簽名檔
-    for i in range(3):
-        if PTTCrawler.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ', 0):
+    for i in range(1):
+        ErrorCode = PTTCrawler.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ', 0)
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log('Mail to ' + ID + ' success')
         else:
             PTTCrawler.Log('Mail to ' + ID + ' fail')
@@ -160,25 +129,21 @@ def GiveMoneyDemo():
     WhoAreUwantToGiveMoney = 'CodingMan'
     
     for i in range(3):
-        if PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 10, Password):
+        ErrorCode = PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 2, Password)
+        
+        if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log('Give money to ' + WhoAreUwantToGiveMoney + ' success')
         else:
             PTTCrawler.Log('Give money to ' + WhoAreUwantToGiveMoney + ' fail')
-def GetPostFloorByIndex():
-    
-    NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
-    for PostIndex in range(NewestIndex - 5, NewestIndex):
-        Floor = PTTCrawler.getPostFloorByIndex('Wanted', PostIndex)
-        if Floor == -1:
-            PTTCrawler.Log('Get post index ' + str(PostIndex) + ' floor fail')
-        else:
-            PTTCrawler.Log('Get post index ' + str(PostIndex) + ' has ' + str(Floor) + ' floor')
 
 def GetTimeDemo():
 
-    for i in range(5):
-        Time = PTTCrawler.getTime()
-        PTTCrawler.Log('Ptt time: ' + Time)
+    for i in range(1):
+        ErrorCode, Time = PTTCrawler.getTime()
+        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            PTTCrawler.Log('Get time error')
+            return False
+        PTTCrawler.Log('Ptt time: ' + Time + '!')
         time.sleep(1)
             
 if __name__ == '__main__':
@@ -188,18 +153,15 @@ if __name__ == '__main__':
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('Login fail')
         sys.exit()
-    
-    GotoBoardDemo()
+
     GetNewestPostIndexDemo()
     PostDemo()
     PushDemo()
-    #GotoPostDemo()
-    #GetPostInfoDemo()
-    #GetNewPostIndexListDemo()
+    GetPostInfoDemo()
+    GetNewPostIndexListDemo()
     #MainDemo()
     #GiveMoneyDemo()
-    #GetPostFloorByIndex()
-    #GetTimeDemo()
+    GetTimeDemo()
     
     PTTCrawler.logout()
     
