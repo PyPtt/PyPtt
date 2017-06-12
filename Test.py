@@ -16,8 +16,7 @@ except ModuleNotFoundError:
 
 KickOtherLogin = False
 
-BoardList = ['Wanted', 'Gossiping']
-BoardList = ['Gossiping']
+BoardList = ['Wanted', 'Gossiping', 'Test']
 PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTCrawler = None
@@ -34,7 +33,7 @@ def GotoBoardDemo():
 def PostDemo():
     #發文類別       1
     #簽名檔        	0
-    for i in range(5):
+    for i in range(3):
         
         #ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Telnet Crawler Library 測試\r\n\r\nhttps://goo.gl/qlDRCt', 1, 0)
         ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n(羞', 1, 0)
@@ -136,7 +135,6 @@ def PushDemo():
         else:
             PTTCrawler.Log('pushByIndex Push fail')
     
-    return False
     for i in range(3):
         ErrorCode, NewPost = PTTCrawler.getPostInfoByIndex('Test', NewestIndex)
         
@@ -194,9 +192,9 @@ if __name__ == '__main__':
     GetNewestPostIndexDemo()
     PostDemo()
     PushDemo()
-    GotoPostDemo()
-    GetPostInfoDemo()
-    GetNewPostIndexListDemo()
+    #GotoPostDemo()
+    #GetPostInfoDemo()
+    #GetNewPostIndexListDemo()
     #MainDemo()
     #GiveMoneyDemo()
     #GetPostFloorByIndex()
