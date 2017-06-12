@@ -128,19 +128,20 @@ def PushDemo():
         PTTCrawler.Log('getNewestPostIndex ErrorCode: ' + str(ErrorCode))
         return False
     PTTCrawler.Log('NewestIndex: ' + str(NewestIndex))
-    for i in range(3):
+    for i in range(50):
         ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/qlDRCt by post index', NewestIndex)
         if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log('pushByIndex Push success')
         else:
             PTTCrawler.Log('pushByIndex Push fail')
-    
-    for i in range(3):
-        ErrorCode, NewPost = PTTCrawler.getPostInfoByIndex('Test', NewestIndex)
-        
-        if NewPost == None:
-            PTTCrawler.Log('getPostInformationByIndex fail')
-            break
+    ErrorCode, NewPost = PTTCrawler.getPostInfoByIndex('Test', NewestIndex)
+    if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+        PTTCrawler.Log('getPostInfoByIndex ErrorCode: ' + str(ErrorCode))
+        return False
+    if NewPost == None:
+        PTTCrawler.Log('getPostInfoByIndex fail')
+        return False
+    for i in range(50):
         
         ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/qlDRCt by post id', NewPost.getPostID())
         if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
