@@ -742,8 +742,9 @@ class PTTTelnetCrawlerLibrary(object):
         
         while True:
         
-            ErrorCode, Index = self.__readScreen(Message, ['您覺得這篇文章', '加註方式', '禁止快速連續推文'])
+            ErrorCode, Index = self.__readScreen(Message, ['您覺得這篇文章', '加註方式', '禁止快速連續推文', '禁止短時間內大量推文'])
             if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
+                print(self.__ReceiveData)
                 self.Log('No push option')
                 return PTTTelnetCrawlerLibraryErrorCode.NoPermission
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
@@ -777,6 +778,10 @@ class PTTTelnetCrawlerLibrary(object):
                 break
             if Index == 2:
                 PTTTelnetCrawlerLibraryUtil.Log('No fast push, wait...')
+                Message = 'qX'
+                time.sleep(1)
+            if Index == 3:
+                PTTTelnetCrawlerLibraryUtil.Log('System abort fast push, wait...')
                 Message = 'qX'
                 time.sleep(1)
                 
