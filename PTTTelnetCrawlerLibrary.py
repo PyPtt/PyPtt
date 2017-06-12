@@ -365,7 +365,7 @@ class PTTTelnetCrawlerLibrary(object):
     
     def post(self, board, title, content, PostType, SignType):
     
-        self.__CurrentTimeout = 3
+        self.__CurrentTimeout = 10
         
         ErrorCode = self.__gotoBoard(board)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
@@ -405,11 +405,14 @@ class PTTTelnetCrawlerLibrary(object):
             self.Log('post 5 error code: ' + str(ErrorCode))
             return ErrorCode
         
-        CaseList = ['簽名檔', '請按任意鍵繼續', '看板《' + board + '》']
+        self.__CurrentTimeout = 10
+        
+        CaseList = ['x=隨機', '請按任意鍵繼續', '看板《' + board + '》']
         SendMessage = 's'
         Enter = True
+        Refresh = False
         while True:        
-            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter, Refresh)
             if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
                 self.__showScreen()
                 self.Log('post 6 error code: ' + str(ErrorCode))
@@ -417,9 +420,11 @@ class PTTTelnetCrawlerLibrary(object):
             if Index == 0:
                 SendMessage = str(SignType)
                 Enter = True
+                Refresh = False
             if Index == 1:
                 SendMessage = 'q'
                 Enter = False
+                Refresh = False
             if Index == 2:
                 #self.Log('Post success')
                 break
@@ -557,6 +562,12 @@ class PTTTelnetCrawlerLibrary(object):
         return PTTTelnetCrawlerLibraryErrorCode.Success
         
     def getPostInfoByID(self, Board, PostID, Index=-1):
+        for i in range(5):
+            ErrorCode = self.__getPostInfoByID(Board, PostID, Index)
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
+                break
+        return ErrorCode
+    def __getPostInfoByID(self, Board, PostID, Index=-1):
         
         if Index != -1:
             ErrorCode = self.__gotoPostByIndex(Board, Index)
@@ -727,7 +738,12 @@ class PTTTelnetCrawlerLibrary(object):
         return ErrorCode, result
     
     def pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1):
-    
+        for i in range(5):
+            ErrorCode = self.__pushByID(Board, PushType, PushContent, PostID, PostIndex)
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
+                break
+        return ErrorCode
+    def __pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1):
         self.__CurrentTimeout = 3
     
         if PostIndex != -1:
@@ -901,7 +917,12 @@ class PTTTelnetCrawlerLibrary(object):
         return PTTTelnetCrawlerLibraryErrorCode.Success
         
     def getTime(self):
-        
+        for i in range(5):
+            ErrorCode, Time = self.__getTime()
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
+                break
+        return ErrorCode, Time
+    def __getTime(self):
         self.__CurrentTimeout = 3
         
         #Thanks for ervery one in Python
