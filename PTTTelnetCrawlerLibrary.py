@@ -295,9 +295,14 @@ class PTTTelnetCrawlerLibrary(object):
         self.__isConnected = True
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def __gotoTop(self):
+        self.__CurrentTimeout = 3
+        
         ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表'], False, True)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
+            self.__CurrentTimeout = 0
+            self.__showScreen()
             return ErrorCode
+        self.__CurrentTimeout = 0
         return PTTTelnetCrawlerLibraryErrorCode.Success
     def logout(self):
         ErrorCode = self.__gotoTop()
