@@ -138,7 +138,7 @@ def GiveMoneyDemo():
 
 def GetTimeDemo():
 
-    for i in range(1):
+    for i in range(3):
         ErrorCode, Time = PTTCrawler.getTime()
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             PTTCrawler.Log('Get time error')

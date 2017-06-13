@@ -140,6 +140,11 @@ class PTTTelnetCrawlerLibrary(object):
         
         StartTime = time.time()
         
+        if self.__CurrentTimeout == 0:
+            self.__Timeout = self.__DefaultTimeout
+        else:
+            self.__Timeout = self.__CurrentTimeout
+        
         while True:
             time.sleep(self.__SleepTime)
             ReceiveTimes += 1
@@ -149,6 +154,7 @@ class PTTTelnetCrawlerLibrary(object):
             except EOFError:
                 PTTTelnetCrawlerLibraryUtil.Log('Remote kick connection...')
                 self.__connectRemote()
+                self.__Timeout = self.__DefaultTimeout
                 return PTTTelnetCrawlerLibraryErrorCode.EOFError, result
             
             if len(ExpectTarget) != 0:
@@ -177,6 +183,7 @@ class PTTTelnetCrawlerLibrary(object):
                 break
         
         self.__SleepTime = self.__SleepTime * (ReceiveTimes / 5.0)
+        self.__Timeout = self.__DefaultTimeout
         return ErrorCode, result
     def __showScreen(self, ExpectTarget=[]):
         self.__readScreen('', ExpectTarget)
@@ -221,15 +228,19 @@ class PTTTelnetCrawlerLibrary(object):
             #QQ why kick me
             PTTTelnetCrawlerLibraryUtil.Log('Remote kick connection...')
             self.__connectRemote()
+            self.__Timeout = self.__DefaultTimeout
             return PTTTelnetCrawlerLibraryErrorCode.EOFError, -1
         except ConnectionResetError:
             PTTTelnetCrawlerLibraryUtil.Log('Remote reset connection...')
             self.__connectRemote()
+            self.__Timeout = self.__DefaultTimeout
             return PTTTelnetCrawlerLibraryErrorCode.ConnectionResetError, -1
         
         if ReturnIndex == -1:
             print('SendData timeouted')
+            self.__Timeout = self.__DefaultTimeout
             return PTTTelnetCrawlerLibraryErrorCode.WaitTimeout, ReturnIndex
+        self.__Timeout = self.__DefaultTimeout
         return PTTTelnetCrawlerLibraryErrorCode.Success, ReturnIndex
     def __connectRemote(self):
         self.__isConnected = False
@@ -297,7 +308,7 @@ class PTTTelnetCrawlerLibrary(object):
     def __gotoTop(self):
         self.__CurrentTimeout = 3
         
-        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表'], False, True)
+        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x1b[Dq', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表'], False, True)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             self.__CurrentTimeout = 0
             self.__showScreen()
@@ -333,6 +344,8 @@ class PTTTelnetCrawlerLibrary(object):
             return ErrorCode
         CaseList = ['請輸入看板名稱']
         SendMessage = 's'
+        
+        self.__CurrentTimeout = 5
         
         ErrorCode, Index = self.__sendData(SendMessage, CaseList, False)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
@@ -372,13 +385,17 @@ class PTTTelnetCrawlerLibrary(object):
             self.Log('post 1 Go to ' + board + ' fail')
             return ErrorCode
         
-        CaseList = ['1-8或不選']
+        CaseList = ['1-8或不選', '使用者不可發言']
         SendMessage = '\x10'
         
         ErrorCode, Index = self.__sendData(SendMessage, CaseList, False)
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             self.Log('post 2 error code: ' + str(ErrorCode))
             return ErrorCode
+        
+        if Index == 1:
+            self.Log('You are in the bucket QQ')
+            return PTTTelnetCrawlerLibraryErrorCode.NoPermission
         
         CaseList = ['標題']
         SendMessage = str(PostType)
@@ -492,7 +509,7 @@ class PTTTelnetCrawlerLibrary(object):
                     if TargetA[:3] == TargetB[:3] and len(str(ReturnIndexTemp)) == len(str(TargetBTemp)):
                         TargetACount += 1
                     
-                if 10 <= TargetACount and TargetACount <= 20:
+                if 10 <= TargetACount and TargetACount <= 20 and (ReturnIndexTemp + 1 in AllIndexTemp or ReturnIndexTemp - 1 in AllIndexTemp):
                     
                     #檢驗是否刪除的邏輯，移動至取得文章資訊時檢查
                     
@@ -540,7 +557,9 @@ class PTTTelnetCrawlerLibrary(object):
             return ErrorCode
 
         IndexTarget = '>{0: >6}'.format(str(PostIndex))
-
+        
+        self.__CurrentTimeout = 5
+        
         self.__readScreen(str(PostIndex) + '\r\n', [IndexTarget])
         
         if IndexTarget in self.__ReceiveData:
@@ -742,6 +761,8 @@ class PTTTelnetCrawlerLibrary(object):
             ErrorCode = self.__pushByID(Board, PushType, PushContent, PostID, PostIndex)
             if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
                 break
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.NoPermission:
+                break
         return ErrorCode
     def __pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1):
         self.__CurrentTimeout = 3
@@ -768,7 +789,7 @@ class PTTTelnetCrawlerLibrary(object):
         
         while True:
         
-            ErrorCode, Index = self.__readScreen(Message, ['您覺得這篇文章', '加註方式', '禁止快速連續推文', '禁止短時間內大量推文'])
+            ErrorCode, Index = self.__readScreen(Message, ['您覺得這篇文章', '加註方式', '禁止快速連續推文', '禁止短時間內大量推文', '使用者不可發言'])
             if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
                 print(self.__ReceiveData)
                 self.Log('No push option')
@@ -810,6 +831,9 @@ class PTTTelnetCrawlerLibrary(object):
                 PTTTelnetCrawlerLibraryUtil.Log('System abort many push, wait...')
                 Message = 'qX'
                 time.sleep(2)
+            if Index == 4:
+                PTTTelnetCrawlerLibraryUtil.Log('You are in the bucket QQ')
+                return PTTTelnetCrawlerLibraryErrorCode.NoPermission
                 
         if not AllowPushTypeList[self.PushType_Boo] and PushType == self.PushType_Boo:
             PushType = self.PushType_Arrow
@@ -926,37 +950,34 @@ class PTTTelnetCrawlerLibrary(object):
         self.__CurrentTimeout = 3
         
         #Thanks for ervery one in Python
-    
-        ErrorCode = self.__gotoBoard('Python')
-        if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
-            self.Log('getTime 1 Go to Python fail')
-            return ErrorCode, ''
         
         ErrorCode = self.__gotoTop()
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             print('getTime goto top error code 2: ' + str(ErrorCode))
             return ErrorCode, ''
-        
-        ErrorCode, Index = self.__readScreen('', ['[呼叫器]'])
+            
+        self.__CurrentTimeout = 1
+        ErrorCode, Index = self.__readScreen('A\r\nqA\r\nq', ['呼叫器', '離開，再見…'])
+        #ErrorCode, Index = self.__readScreen('', ['[呼叫器]', '離開，再見…'])
         if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
-            print(self.__ReceiveData)
-            self.Log('getTime 2.1')
+            #self.__showScreen()
+            #self.Log('getTime 2.1')
             return ErrorCode, ''
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             self.Log('getTime 3 read screen error code: ' + str(ErrorCode))
             return ErrorCode, ''
         
         if not '離開，再見…' in self.__ReceiveData or not '[呼叫器]' in self.__ReceiveData:
-            self.Log('Not in user menu')
+            #self.Log('Not in user menu 1')
             return PTTTelnetCrawlerLibraryErrorCode.ParseError, ''
         
         result = self.__ReceiveData[self.__ReceiveData.find('離開，再見…') + len('離開，再見…'):self.__ReceiveData.find('[呼叫器]')]
         
-        if not '星期' in self.__ReceiveData:
-            self.Log('Not in user menu')
+        if not '星期' in result:
+            #self.Log('Not in user menu 2')
             return PTTTelnetCrawlerLibraryErrorCode.ParseError, ''
         
-        result = self.__ReceiveData[self.__ReceiveData.find('星期') + len('星期'):]
+        result = result[result.find('星期') + len('星期'):]
         result = result[result.find(' ') + 1:result.find(']')]
         
         self.__CurrentTimeout = 0
