@@ -585,6 +585,8 @@ class PTTTelnetCrawlerLibrary(object):
             ErrorCode = self.__getPostInfoByID(Board, PostID, Index)
             if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.Success:
                 break
+            if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WebFormatError:
+                break
         return ErrorCode
     def __getPostInfoByID(self, Board, PostID, Index=-1):
         
@@ -606,10 +608,8 @@ class PTTTelnetCrawlerLibrary(object):
         
         ErrorCode, Index = self.__readScreen('Q', ['請按任意鍵繼續'])
         if ErrorCode == PTTTelnetCrawlerLibraryErrorCode.WaitTimeout:
-            if Index == -1:
-                self.__showScreen()
-                print('getPostInfoByID 2.1')
-            return ErrorCode, None
+            
+            return PTTTelnetCrawlerLibraryErrorCode.PostDeleted, None
         if ErrorCode != PTTTelnetCrawlerLibraryErrorCode.Success:
             self.Log('getPostInfoByID 3 read screen time out')
             return ErrorCode, None
