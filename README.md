@@ -7,7 +7,7 @@
 
 範例程式
 -------------------
-[汪梯推文機器人](https://github.com/Truth0906/PTTTelnetCrawlerLibrary_HelloCrawler)
+[汪梯推文機器人](https://github.com/Truth0906/WantedPushCrawler)
 
 Demo
 -------------------
