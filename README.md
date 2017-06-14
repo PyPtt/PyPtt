@@ -1,4 +1,4 @@
-# PTT Telnet Crawler Library
+# PTT Crawler Library
 
 #### Do you want PTT in Python? import PTT
 
