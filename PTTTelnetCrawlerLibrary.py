@@ -499,48 +499,26 @@ class PTTTelnetCrawlerLibrary(object):
             ReturnIndexTemp = AllIndex.pop()
             
             if len(str(ReturnIndexTemp)) <= 6:
-                
-                TargetA = '{0: >6}'.format(str(ReturnIndexTemp))
-                TargetACount = 0
-                
-                #計算畫面中 所有數字的同質性，文章編號最長六碼，前三碼會相同，避免一樣是六碼但卻不是文章編號的數字混進來
-                for TargetBTemp in AllIndexTemp:
-                    TargetB = '{0: >6}'.format(str(TargetBTemp))
-                    if TargetA[:3] == TargetB[:3] and len(str(ReturnIndexTemp)) == len(str(TargetBTemp)):
-                        TargetACount += 1
-                    
-                if 10 <= TargetACount and TargetACount <= 20 and (ReturnIndexTemp + 1 in AllIndexTemp or ReturnIndexTemp - 1 in AllIndexTemp):
-                    
-                    #檢驗是否刪除的邏輯，移動至取得文章資訊時檢查
-                    
-                    '''
-                    #通過同質性測試後，檢驗文章是否已經被刪除
-                    CurrentData = self.__ReceiveData[:]
-                    
-                    while CurrentData.find(str(ReturnIndexTemp)) != -1:
-                        CurrentData = CurrentData[CurrentData.find(str(ReturnIndexTemp)) + len(str(ReturnIndexTemp)):]
-                    
-                    while CurrentData.find('★') != -1:
-                        CurrentData = CurrentData[:CurrentData.find('★')]
-                    
-                    if CurrentData.find('(') != -1 and CurrentData.find('-') < CurrentData.find('('):
-                        continue
-                    else:
-                        ReturnIndex = ReturnIndexTemp
+
+                HasFront = True
+                HasBack = True
+                '''
+                print(AllIndexTemp)
+                print(str(ReturnIndexTemp))
+                '''
+                for i in range(5):
+                    if not (ReturnIndexTemp - i) in AllIndexTemp:
+                        HasFront = False
                         break
-                    '''    
-                    
+                
+                for i in range(5):
+                    if not (ReturnIndexTemp + i) in AllIndexTemp:
+                        HasBack = False
+                        break
+                
+                if HasFront or HasBack:
                     ReturnIndex = ReturnIndexTemp
                     break
-                    
-                else:
-                    pass
-                    '''
-                    print(str(20 - StartCount - 1))
-                    print(str(TargetACount))
-                    print(TargetA)
-                    print(TargetA[:3])
-                    '''
             if len(AllIndex) == 0:
                 #print(self.__ReceiveData)
                 #print(AllIndexTemp)
