@@ -6,7 +6,7 @@
 
 範例程式
 -------------------
-[早安午安晚安機器人](https://github.com/Truth0906/PTTTelnetCrawlerLibrary_HelloCrawler/blob/master/README.md)
+[汪梯推文機器人](https://github.com/Truth0906/PTTTelnetCrawlerLibrary_HelloCrawler)
 
 Demo
 -------------------
