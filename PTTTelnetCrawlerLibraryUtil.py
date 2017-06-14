@@ -8,3 +8,4 @@ def Log(InputMessage):
     print(TotalMessage)
 def getTime():
     return strftime("%H:%M")
+    
