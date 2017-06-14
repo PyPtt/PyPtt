@@ -1,8 +1,8 @@
 # PTT Telnet Crawler Library
 
 ###### 這是一個專為 PTT 爬蟲開發者所開發的函式庫 PTTTelnetCrawlerLibrary
-###### 根據網路速度動態調整操作速度
-###### 斷線自動恢復
+###### 根據網路速度動態調整操作速度、斷線自動恢復
+###### Do you want PTT in Python? Just import PTT
 
 範例程式
 -------------------
@@ -20,7 +20,7 @@ Demo
 
 版本
 -------------------
-###### 0.1.170612 beta
+###### 0.1.170614 beta
 
 API
 -------------------
