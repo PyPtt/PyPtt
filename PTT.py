@@ -285,11 +285,25 @@ class Crawler(object):
                 time.sleep(1)
                 
         self.__isConnected = True
+        '''
+        BoardList = ['Wanted', 'Gossiping', 'Test', 'Python']
+        
+        i = 0
+        
+        for Board in BoardList:
+            ErrorCode, NewestIndex = self.getNewestPostIndex(Board)
+            if ErrorCode == Success:
+                self.Log('Detect network environment: ' + str(int(((i + 1) * 100) / len(BoardList))) + ' % ')
+            else:
+                self.Log('Detect network environment: ' + str(int(((i + 1) * 100) / len(BoardList))) + ' % ' + ' fail')
+                return False
+            i+=1
+        '''
         return Success
     def __gotoTop(self):
         self.__CurrentTimeout = 3
         
-        ErrorCode, Index = self.__sendData('\x1b[D\x1b[D\x1b[D\x1b[D\x1b[Dq', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表'], False, True)
+        ErrorCode, Index = self.__sendData('q\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], False, True)
         if ErrorCode != Success:
             self.__CurrentTimeout = 0
             self.__showScreen()
@@ -705,7 +719,7 @@ class Crawler(object):
         result = []
         ErrorCode, LastIndex = self.getNewestPostIndex(Board)
 
-        if LastIndex == -1:
+        if ErrorCode != Success:
             return result
         
         if LastPostIndex <= 0 or LastIndex < LastPostIndex:
@@ -906,7 +920,7 @@ class Crawler(object):
                 break
         return ErrorCode, Time
     def __getTime(self):
-        self.__CurrentTimeout = 3
+        self.__CurrentTimeout = 2
         
         #Thanks for ervery one in Python
         
@@ -917,7 +931,6 @@ class Crawler(object):
             
         self.__CurrentTimeout = 1
         ErrorCode, Index = self.__readScreen('A\r\nqA\r\nq', ['呼叫器', '離開，再見…'])
-        #ErrorCode, Index = self.__readScreen('', ['[呼叫器]', '離開，再見…'])
         if ErrorCode == WaitTimeout:
             #self.__showScreen()
             #self.Log('getTime 2.1')
