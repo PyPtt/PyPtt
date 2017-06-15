@@ -11,8 +11,8 @@ import PTTUtil
 Success =                         0
 UnknowError =                   0.1
 ConnectError =                    1
-EOFError =                        2
-ConnectionResetError =            3
+EOFErrorCode =                    2
+ConnectResetError =            3
 WaitTimeout =                     4
 WrongPassword =                   5
 ErrorInput =                      6
@@ -148,7 +148,7 @@ class Crawler(object):
         except ConnectionResetError:
             PTTUtil.Log('Remote reset connection...')
             self.__connectRemote()
-            return ConnectionResetError, result
+            return ConnectResetError, result
         
         ReceiveTimes = 0
         self.__Timeouted = False
@@ -172,7 +172,7 @@ class Crawler(object):
                 PTTUtil.Log('Remote kick connection...')
                 self.__connectRemote()
                 self.__CurrentTimeout = 0
-                return EOFError, result
+                return EOFErrorCode, result
             
             DataMacthed = False
             
@@ -243,12 +243,12 @@ class Crawler(object):
             PTTUtil.Log('Remote kick connection...')
             self.__connectRemote()
             self.__CurrentTimeout = 0
-            return EOFError, -1
+            return EOFErrorCode, -1
         except ConnectionResetError:
             PTTUtil.Log('Remote reset connection...')
             self.__connectRemote()
             self.__CurrentTimeout = 0
-            return ConnectionResetError, -1
+            return ConnectResetError, -1
         
         if ReturnIndex == -1:
             print('SendData timeouted')
