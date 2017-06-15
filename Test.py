@@ -25,8 +25,7 @@ def PostDemo():
     #簽名檔        	0
     for i in range(3):
         
-        #ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Telnet Crawler Library 測試\r\n\r\nhttps://goo.gl/qlDRCt', 1, 0)
-        ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n(羞', 1, 0)
+        ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('Post in Test success')
         else:
@@ -96,7 +95,7 @@ def PushDemo():
         return False
     PTTCrawler.Log('NewestIndex: ' + str(NewestIndex))
     for i in range(3):
-        ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/qlDRCt by post index', NewestIndex)
+        ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 1', NewestIndex)
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('pushByIndex Push success')
         else:
@@ -110,7 +109,7 @@ def PushDemo():
         return False
     for i in range(3):
         
-        ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/qlDRCt by post id', NewPost.getPostID())
+        ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 2', NewPost.getPostID())
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('pushByID Push success')
         else:
@@ -144,9 +143,33 @@ def GetTimeDemo():
             return False
         PTTCrawler.Log('Ptt time: ' + Time + '!')
         time.sleep(1)
-            
+def GetUserInfoDemo():
+    
+    for IDs in [ID, 'FakeID_____']:
+        
+        PTTCrawler.Log('---------------------------')
+        PTTCrawler.Log('Start query: ' + IDs)
+        ErrorCode, UserInfo = PTTCrawler.getUserInfo(IDs)
+        if ErrorCode == PTT.NoUser:
+            PTTCrawler.Log('No such user')
+            continue
+        if ErrorCode != PTT.Success:
+            PTTCrawler.Log('getUserInfo fail error code: ' + str(ErrorCode))
+            continue
+        
+        PTTCrawler.Log('UserID: ' + UserInfo.getID())
+        PTTCrawler.Log('UserMoney: ' + str(UserInfo.getMoney()))
+        PTTCrawler.Log('UserLoginTime: ' + str(UserInfo.getLoginTime()))
+        PTTCrawler.Log('UserPost: ' + str(UserInfo.getPost()))
+        PTTCrawler.Log('UserState: ' + UserInfo.getState() + '!')
+        PTTCrawler.Log('UserMail: ' + UserInfo.getMail() + '!')
+        PTTCrawler.Log('UserLastLogin: ' + UserInfo.getLastLogin() + '!')
+        PTTCrawler.Log('UserLastIP: ' + UserInfo.getLastIP() + '!')
+        PTTCrawler.Log('UserFiveChess: ' + UserInfo.getFiveChess() + '!')
+        PTTCrawler.Log('UserChess: ' + UserInfo.getChess() + '!')
+    
 if __name__ == '__main__':
-    print('Welcome to PTT Telnet Crawler Library Demo')
+    print('Welcome to PTT Crawler Library Demo')
 
     PTTCrawler = PTT.Crawler(ID, Password, KickOtherLogin)
     if not PTTCrawler.isLoginSuccess():
@@ -161,7 +184,7 @@ if __name__ == '__main__':
     #MainDemo()
     #GiveMoneyDemo()
     GetTimeDemo()
-    
+    GetUserInfoDemo()
     PTTCrawler.logout()
     
     
