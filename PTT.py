@@ -23,6 +23,39 @@ WebFormatError =                 10
 NoPermission =                   11
 NoUser =                         12
 
+class UserInformation(object):
+    def __init__(self, UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess):
+        self.__UserID = str(UserID)
+        self.__UserMoney = str(UserMoney)
+        self.__UserLoginTime = int(UserLoginTime)
+        self.__UserPost = int(UserPost)
+        self.__UserState = str(UserState)
+        self.__UserMail = str(UserMail)
+        self.__UserLastLogin = str(UserLastLogin)
+        self.__UserLastIP = str(UserLastIP)
+        self.__UserFiveChess = str(UserFiveChess)
+        self.__UserChess = str(UserChess)
+    def getID(self):
+        return self.__UserID
+    def getMoney(self):
+        return self.__UserMoney
+    def getLoginTime(self):
+        return self.__UserLoginTime
+    def getPost(self):
+        return self.__UserPost
+    def getState(self):
+        return self.__UserState
+    def getMail(self):
+        return self.__UserMail
+    def getLastLogin(self):
+        return self.__UserLastLogin
+    def getLastIP(self):
+        return self.__UserLastIP
+    def getFiveChess(self):
+        return self.__UserFiveChess
+    def getChess(self):
+        return self.__UserChess
+        
 class PushInformation(object):
     def __init__(self, PushType, PushID, PushContent, PushTime):
         self.__PushType = int(PushType)
@@ -138,7 +171,7 @@ class Crawler(object):
             except EOFError:
                 PTTUtil.Log('Remote kick connection...')
                 self.__connectRemote()
-                self.__Timeout = self.__DefaultTimeout
+                self.__CurrentTimeout = 0
                 return EOFError, result
             
             DataMacthed = False
@@ -164,7 +197,7 @@ class Crawler(object):
                 break
         
         self.__SleepTime = self.__SleepTime * (ReceiveTimes / 5.0)
-        self.__Timeout = self.__DefaultTimeout
+        self.__CurrentTimeout = 0
         return ErrorCode, result
     def __showScreen(self, ExpectTarget=[]):
         self.__readScreen('', ExpectTarget)
@@ -209,19 +242,19 @@ class Crawler(object):
             #QQ why kick me
             PTTUtil.Log('Remote kick connection...')
             self.__connectRemote()
-            self.__Timeout = self.__DefaultTimeout
+            self.__CurrentTimeout = 0
             return EOFError, -1
         except ConnectionResetError:
             PTTUtil.Log('Remote reset connection...')
             self.__connectRemote()
-            self.__Timeout = self.__DefaultTimeout
+            self.__CurrentTimeout = 0
             return ConnectionResetError, -1
         
         if ReturnIndex == -1:
             print('SendData timeouted')
-            self.__Timeout = self.__DefaultTimeout
+            self.__CurrentTimeout = 0
             return WaitTimeout, ReturnIndex
-        self.__Timeout = self.__DefaultTimeout
+        self.__CurrentTimeout = 0
         return Success, ReturnIndex
     def __connectRemote(self):
         self.__isConnected = False
@@ -300,26 +333,29 @@ class Crawler(object):
             i+=1
         '''
         return Success
-    def __gotoTop(self):
-        self.__CurrentTimeout = 3
         
+    def __gotoTop(self):
+        for i in range(3):
+            ErrorCode = self.___gotoTop()
+            if ErrorCode == Success:
+                break
+        return ErrorCode
+    def ___gotoTop(self):
+    
         ErrorCode, Index = self.__sendData('q\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], False, True)
         if ErrorCode != Success:
-            self.__CurrentTimeout = 0
-            self.__showScreen()
             return ErrorCode
-        self.__CurrentTimeout = 0
         return Success
     def logout(self):
         ErrorCode = self.__gotoTop()
         if ErrorCode != Success:
             print('Error code 1: ' + str(ErrorCode))
             return ErrorCode
-        ErrorCode, Index = self.__sendData('g\r\ny', ['此次停留時間'])
-        if ErrorCode != Success:
-            #self.__showScreen()
-            print('Error code 2: ' + str(ErrorCode))
-            return ErrorCode
+        
+        try:
+            ErrorCode, Index = self.__sendData('g\r\ny', ['此次停留時間'])
+        except TypeError:
+            pass
         
         self.__telnet.close()
         PTTUtil.Log('Logout success')
@@ -441,7 +477,6 @@ class Crawler(object):
                 #self.Log('Post success')
                 break
                 
-        self.__CurrentTimeout = 0
         return Success
     
     def getNewestPostIndex(self, Board):
@@ -522,6 +557,12 @@ class Crawler(object):
         return Success, int(ReturnIndex)
     
     def __gotoPostByIndex(self, Board, PostIndex):
+        for i in range(3):
+            ErrorCode = self.___gotoPostByIndex(Board, PostIndex)
+            if ErrorCode == Success:
+                break
+        return ErrorCode
+    def ___gotoPostByIndex(self, Board, PostIndex):
     
         ErrorCode = self.__gotoBoard(Board)
         if ErrorCode != Success:
@@ -538,7 +579,7 @@ class Crawler(object):
         if IndexTarget in self.__ReceiveData:
             return Success
         else:
-            print(self.__ReceiveData)
+            #print(self.__ReceiveData)
             return PostNotFound
     def __gotoPostByID(self, Board, PostID):
         ErrorCode = self.__gotoBoard(Board)
@@ -555,12 +596,14 @@ class Crawler(object):
         
     def getPostInfoByID(self, Board, PostID, Index=-1):
         for i in range(5):
-            ErrorCode = self.__getPostInfoByID(Board, PostID, Index)
+            ErrorCode, Post = self.__getPostInfoByID(Board, PostID, Index)
             if ErrorCode == Success:
                 break
             if ErrorCode == WebFormatError:
                 break
-        return ErrorCode
+            if ErrorCode == PostDeleted:
+                break
+        return ErrorCode, Post
     def __getPostInfoByID(self, Board, PostID, Index=-1):
         
         if Index != -1:
@@ -581,7 +624,6 @@ class Crawler(object):
         
         ErrorCode, Index = self.__readScreen('Q', ['請按任意鍵繼續'])
         if ErrorCode == WaitTimeout:
-            
             return PostDeleted, None
         if ErrorCode != Success:
             self.Log('getPostInfoByID 3 read screen time out')
@@ -642,7 +684,7 @@ class Crawler(object):
         content = ' '.join(filtered)
         content = re.sub(r'(\s)+', '', content )
         if len(metas) == 0:
-            self.Log('div.article-metaline is not exist')
+            #self.Log('div.article-metaline is not exist')
             return WebFormatError, None
             
         author = metas[0].select('span.article-meta-value')[0].string
@@ -822,8 +864,7 @@ class Crawler(object):
         if ErrorCode != Success:
             self.Log('pushByID 3 error code: ' + str(ErrorCode))
             return ErrorCode
-        
-        self.__CurrentTimeout = 0
+
         return Success
     def pushByIndex(self, Board, PushType, PushContent, PostIndex):
         ErrorCode = self.pushByID(Board, PushType, PushContent, '', PostIndex)
@@ -864,7 +905,6 @@ class Crawler(object):
             if Index == 4:
                 break
         
-        self.__CurrentTimeout = 0
         return Success
         
     def giveMoney(self, ID, Money, YourPassword):
@@ -910,7 +950,6 @@ class Crawler(object):
                 Enter = True
             if Index == 7:
                 break
-        self.__CurrentTimeout = 0
         return Success
         
     def getTime(self):
@@ -951,11 +990,138 @@ class Crawler(object):
         
         result = result[result.find('星期') + len('星期'):]
         result = result[result.find(' ') + 1:result.find(']')]
+
+        return Success, result
+    
+    def getUserInfo(self, ID):
+        ErrorCode = self.__gotoTop()
+        if ErrorCode != Success:
+            print('getUserInfo goto top error code 1: ' + str(ErrorCode))
+            return ErrorCode, None
+        CaseList = ['請輸入使用者代號', '請按任意鍵繼續', '顯示上幾次熱訊']
+        SendMessage = 'T\r\nQ\r\n'
+        Enter = False
+        while True:        
+            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
+            if ErrorCode == WaitTimeout:
+                self.__showScreen()
+                self.Log('No such option: ' + SendMessage)
+                return ErrorCode, None
+            if ErrorCode != Success:
+                self.Log('getUserInfo 2 error code: ' + str(ErrorCode))
+                return ErrorCode, None
+            if Index == 0:
+                #self.Log('Input user ID')
+                SendMessage = str(ID)
+                Enter = True
+            if Index == 1:
+                break
+            if Index == 2:
+                #self.Log('No such user')
+                return NoUser, None
         
-        self.__CurrentTimeout = 0
+                
+        self.__CurrentTimeout = 3
+        
+        ErrorCode, Index = self.__readScreen('', ['請按任意鍵繼續'])
+        
+        if ErrorCode == WaitTimeout:
+            return WaitTimeout, None
+        if ErrorCode != Success:
+            self.Log('getUserInfo 3 read screen time out')
+            return ErrorCode, None
+        
+        if not '《ＩＤ暱稱》' in self.__ReceiveData or not '《經濟狀況》' in self.__ReceiveData or not '《登入次數》' in self.__ReceiveData or not '《有效文章》' in self.__ReceiveData or not '《目前動態》' in self.__ReceiveData or not '《私人信箱》' in self.__ReceiveData or not '《上次上站》' in self.__ReceiveData or not '《上次故鄉》' in self.__ReceiveData or not '《 五子棋 》' in self.__ReceiveData or not '《象棋戰績》' in self.__ReceiveData:
+            self.Log('User info not complete')
+            return WaitTimeout, None
+        #print(self.__ReceiveData)
+        
+        UserID = self.__ReceiveData[self.__ReceiveData.find('《ＩＤ暱稱》') + len('《ＩＤ暱稱》'):self.__ReceiveData.find(')') + 1]
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find(')') + 1:]
+        
+        Temp = self.__ReceiveData[:self.__ReceiveData.find('《登入次數》')]
+
+        UserMoney = self.__ReceiveData[self.__ReceiveData.find('《經濟狀況》') + len('《經濟狀況》'):self.__ReceiveData.find('《登入次數》')]
+        
+        while UserMoney.endswith('m') or UserMoney.endswith(' ') or UserMoney.endswith('[') or UserMoney.endswith('\r') or UserMoney.endswith('\n') or UserMoney.endswith('\x1B'):
+            UserMoney = UserMoney[:len(UserMoney) - 1]
+        
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find('《登入次數》'):]
+
+        UserLoginTime = self.__ReceiveData[self.__ReceiveData.find('《登入次數》') + len('《登入次數》'):self.__ReceiveData.find(')') + 1]
+        UserLoginTime = int(re.search(r'\d+', UserLoginTime).group())
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find(')') + 1:]
+        
+        UserPost = self.__ReceiveData[self.__ReceiveData.find('《有效文章》') + len('《有效文章》'):self.__ReceiveData.find(')') + 1]
+        UserPost = int(re.search(r'\d+', UserPost).group())
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find(')') + 1:]
+        
+        UserState = self.__ReceiveData[self.__ReceiveData.find('《目前動態》') + len('《目前動態》'):self.__ReceiveData.find('《私人信箱》')]
+        
+        while UserState.endswith('m') or UserState.endswith(' ') or UserState.endswith('[') or UserState.endswith('\r') or UserState.endswith('\n') or UserState.endswith('\x1B'):
+            UserState = UserState[:len(UserState) - 1]
+        
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find('《私人信箱》'):]
+        
+        UserMail = self.__ReceiveData[self.__ReceiveData.find('《私人信箱》') + len('《私人信箱》'):self.__ReceiveData.find('《上次上站》')]
+        
+        while UserMail.endswith('m') or UserMail.endswith(' ') or UserMail.endswith('[') or UserMail.endswith('\r') or UserMail.endswith('\n') or UserMail.endswith('\x1B'):
+            UserMail = UserMail[:len(UserMail) - 1]
+        
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find('《上次上站》'):]
+        
+        UserLastLogin = self.__ReceiveData[self.__ReceiveData.find('《上次上站》') + len('《上次上站》'):self.__ReceiveData.find('《上次故鄉》')]
+        
+        while UserLastLogin.endswith('m') or UserLastLogin.endswith(' ') or UserLastLogin.endswith('[') or UserMail.endswith('\r') or UserMail.endswith('\n') or UserMail.endswith('\x1B'):
+            UserLastLogin = UserLastLogin[:len(UserLastLogin) - 1]
+        
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find('《上次故鄉》'):]
+        
+        UserLastIP = self.__ReceiveData[self.__ReceiveData.find('《上次故鄉》') + len('《上次故鄉》'):self.__ReceiveData.find('《 五子棋 》')]
+        
+        while UserLastIP.endswith('m') or UserLastIP.endswith(' ') or UserLastIP.endswith('[') or UserLastIP.endswith('\r') or UserLastIP.endswith('\n') or UserLastIP.endswith('\x1B'):
+            UserLastIP = UserLastIP[:len(UserLastIP) - 1]
+        
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find('《 五子棋 》'):]
+        
+        UserFiveChess = self.__ReceiveData[self.__ReceiveData.find('《 五子棋 》') + len('《 五子棋 》'):self.__ReceiveData.find('《象棋戰績》')]
+        
+        while UserFiveChess.endswith('m') or UserFiveChess.endswith(' ') or UserFiveChess.endswith('[') or UserFiveChess.endswith('\r') or UserFiveChess.endswith('\n') or UserFiveChess.endswith('\x1B'):
+            UserFiveChess = UserFiveChess[:len(UserFiveChess) - 1]
+        
+        while UserFiveChess.find('  ') != -1:
+            UserFiveChess = UserFiveChess.replace('  ', ' ')
+        
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find('《象棋戰績》'):]
+        
+        UserChess = self.__ReceiveData[self.__ReceiveData.find('《象棋戰績》') + len('《象棋戰績》'):self.__ReceiveData.find('和') + 1]
+        
+        while UserChess.endswith('m') or UserChess.endswith(' ') or UserChess.endswith('[') or UserChess.endswith('\r') or UserChess.endswith('\n') or UserChess.endswith('\x1B'):
+            UserChess = UserChess[:len(UserChess) - 1]
+        
+        while UserChess.find('  ') != -1:
+            UserChess = UserChess.replace('  ', ' ')
+        
+        self.__ReceiveData = self.__ReceiveData[self.__ReceiveData.find('和') + 1:]
+        
+        '''
+        print('QQ' + self.__ReceiveData)
+        
+        print('UserID: ' + UserID)
+        print('UserMoney: ' + str(UserMoney))
+        print('UserLoginTime: ' + str(UserLoginTime))
+        print('UserPost: ' + str(UserPost))
+        print('UserState: ' + UserState + '!')
+        print('UserMail: ' + UserMail + '!')
+        print('UserLastLogin: ' + UserLastLogin + '!')
+        print('UserLastIP: ' + UserLastIP + '!')
+        print('UserFiveChess: ' + UserFiveChess + '!')
+        print('UserChess: ' + UserChess + '!')
+        '''
+        result = UserInformation(UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess)
         
         return Success, result
 if __name__ == '__main__':
 
-    print('PTT Telnet Crawler Library v 0.2.170612 beta')
+    print('PTT Crawler Library v 0.2.170615 beta')
     print('PTT CodingMan')

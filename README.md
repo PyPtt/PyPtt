@@ -21,7 +21,7 @@ Demo
 
 版本
 -------------------
-###### 0.1.170614 beta
+###### 0.1.170615 beta
 
 API
 -------------------
@@ -37,5 +37,6 @@ API
 ###### getNewPostIndexList 取得上次查詢之後才新增的文章清單
 ###### giveMoney 給予使用者 P幣
 ###### getTime 取得 PTT 系統時間
+###### getUserInfo 取得該使用者資訊
 
 ![alt text](http://i.imgur.com/XT9LadL.png)
