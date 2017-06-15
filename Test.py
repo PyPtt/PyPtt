@@ -33,7 +33,7 @@ def PostDemo():
 
 def GetNewestPostIndexDemo():
 
-    for i in range(3):
+    for i in range(2):
         for Board in BoardList:
             ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex(Board)
             if ErrorCode == PTT.Success:
@@ -175,7 +175,8 @@ if __name__ == '__main__':
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('Login fail')
         sys.exit()
-
+    #PTTCrawler.setLogLevel(PTT.LogLevel_DEBUG)
+    
     GetNewestPostIndexDemo()
     PostDemo()
     PushDemo()
