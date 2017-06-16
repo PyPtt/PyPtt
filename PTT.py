@@ -139,6 +139,8 @@ class Crawler(object):
         self.__Timeout =            10
         self.__CurrentTimeout =      0
         
+        self.__Cursor =             '>'
+        
         self.__connectRemote()
     def setLogLevel(self, LogLevel):
         if LogLevel != LogLevel_DEBUG and LogLevel != LogLevel_RELEASE:
@@ -333,7 +335,18 @@ class Crawler(object):
                 Enter = True
                 self.Log('Wait update')
                 time.sleep(1)
-                
+        
+        ErrorCode, Index = self.__readScreen('', ['> (', '●('])
+        if ErrorCode != Success:
+            self.Log(self.__ReceiveData)
+            self.Log('Detect cursor fail ErrorCode: ' + str(ErrorCode))
+            return ErrorCode
+        if Index == 0:
+            self.__Cursor = '>'
+        if Index == 1:
+            self.__Cursor = '●'
+        
+        
         self.__isConnected = True
         '''
         BoardList = ['Wanted', 'Gossiping', 'Test', 'Python']
@@ -591,9 +604,15 @@ class Crawler(object):
             self.Log('__gotoPostByIndex 1 Go to ' + Board + ' fail', LogLevel_DEBUG)
             self.__showScreen()
             return ErrorCode
-
-        IndexTarget = '>{0: >6}'.format(str(PostIndex))
-        
+            
+        if self.__Cursor == '>':
+            IndexTarget = '>{0: >6}'.format(str(PostIndex))
+        else:
+            IndexTargetTemp = str(PostIndex)
+            if len(IndexTargetTemp) == 6:
+                IndexTargetTemp = IndexTargetTemp[1:]
+            IndexTarget = self.__Cursor + '{0: >5}'.format(IndexTargetTemp)
+            
         self.__CurrentTimeout = 5
         
         self.__readScreen(str(PostIndex) + '\r', [IndexTarget])
