@@ -13,7 +13,7 @@ except ModuleNotFoundError:
     ID = 'Your ID'
     Password = 'Your Password'
 
-BoardList = ['Wanted', 'Gossiping', 'Test']
+BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
 PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTCrawler = None
@@ -24,6 +24,7 @@ def PostDemo():
     for i in range(3):
         
         ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+        #ErrorCode = PTTCrawler.post('Test', '攻佔版面測試', '此版已經被攻陷 版眾束手就擒吧!!!\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('Post in Test success')
         else:
@@ -92,7 +93,7 @@ def PushDemo():
         PTTCrawler.Log('getNewestPostIndex ErrorCode: ' + str(ErrorCode))
         return False
     PTTCrawler.Log('NewestIndex: ' + str(NewestIndex))
-    for i in range(3):
+    for i in range(10):
         ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 1', NewestIndex)
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('pushByIndex Push success')
@@ -105,7 +106,7 @@ def PushDemo():
     if NewPost == None:
         PTTCrawler.Log('getPostInfoByIndex fail')
         return False
-    for i in range(3):
+    for i in range(10):
         
         ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 2', NewPost.getPostID())
         if ErrorCode == PTT.Success:
@@ -174,7 +175,7 @@ if __name__ == '__main__':
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('Login fail')
         sys.exit()
-    #PTTCrawler.setLogLevel(PTT.LogLevel_DEBUG)
+    PTTCrawler.setLogLevel(PTT.LogLevel_DEBUG)
     
     GetNewestPostIndexDemo()
     PostDemo()
