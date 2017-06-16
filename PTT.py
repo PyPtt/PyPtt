@@ -147,8 +147,12 @@ class Crawler(object):
         self.__LogLevel = LogLevel
         return Success
     def Log(self, Message, LogLevel=LogLevel_RELEASE):
+        if LogLevel != LogLevel_DEBUG and LogLevel != LogLevel_RELEASE:
+            self.Log('LogLevel error')
+            return ErrorInput
         if self.__LogLevel <= LogLevel:
             PTTUtil.Log(Message)
+        return Success
     def isLoginSuccess(self):
         return self.__isConnected
     def __readScreen(self, Message='', ExpectTarget=[]):
@@ -213,7 +217,8 @@ class Crawler(object):
         return ErrorCode, result
     def __showScreen(self, ExpectTarget=[]):
         self.__readScreen('', ExpectTarget)
-        print(self.__ReceiveData)
+        if self.__LogLevel == LogLevel_DEBUG:
+            print(self.__ReceiveData)
     def __sendData(self, Message, CaseList=[''], Enter=True, Refresh=False):
         
         if Message == None:
@@ -366,12 +371,7 @@ class Crawler(object):
         if ErrorCode != Success:
             print('Error code 1: ' + str(ErrorCode))
             return ErrorCode
-        
-        try:
-            ErrorCode, Index = self.__sendData('g\r\ny', ['此次停留時間'])
-        except TypeError:
-            pass
-        
+        ErrorCode, Index = self.__readScreen('g\ry\r', ['[按任意鍵繼續]'])
         self.__telnet.close()
         PTTUtil.Log('Logout success')
         
@@ -388,7 +388,7 @@ class Crawler(object):
     def ___gotoBoard(self, Board):
         ErrorCode = self.__gotoTop()
         if ErrorCode != Success:
-            print('Error code __gotoBoard 1: ' + str(ErrorCode))
+            self.Log('Error code __gotoBoard 1: ' + str(ErrorCode), LogLevel_DEBUG)
             return ErrorCode
         CaseList = ['請輸入看板名稱']
         SendMessage = 's'
@@ -397,31 +397,27 @@ class Crawler(object):
         
         ErrorCode, Index = self.__sendData(SendMessage, CaseList, False)
         if ErrorCode != Success:
-            print('Error code __gotoBoard 2: ' + str(ErrorCode))
+            self.Log('Error code __gotoBoard 2: ' + str(ErrorCode), LogLevel_DEBUG)
             return ErrorCode
         
         #self.__showScreen()
-        CaseList = ['請按任意鍵繼續', '其他任意鍵停止', '動畫播放中', '看板《' + Board + '》']
+        CaseList = ['請按任意鍵繼續', '其他任意鍵停止', '動畫播放中', '文章選讀']
         SendMessage = Board
         Enter = True
         while True:            
             ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
+            #self.Log('GotoBoard index: ' + str(Index), LogLevel_DEBUG)
             if ErrorCode != Success:
                 self.__showScreen()
-                print('Error code __gotoBoard 3: ' + str(ErrorCode))
+                self.Log('Error code __gotoBoard 3: ' + str(ErrorCode), LogLevel_DEBUG)
                 return ErrorCode
-            if Index == 0 or Index == 1:
-                SendMessage = ''
-                Enter = True
-                #self.Log('Press any key to continue')
-            if Index == 2:
+            if Index == 0 or Index == 1 or Index == 2:
                 SendMessage = 'q'
                 Enter = False
-                #self.Log('動畫播放中')
             if Index == 3:
-                #self.Log('Into ' + Board)
                 break
-                
+        #print('--------------------------------------------------------')
+        #self.__showScreen()
         return Success
     
     def post(self, board, title, content, PostType, SignType):
@@ -500,7 +496,7 @@ class Crawler(object):
         
         TryTime = 0
         
-        for i in range(10):
+        for i in range(3):
             ErrorCode, Index = self.__getNewestPostIndex(Board)
             TryTime += 1
             if ErrorCode == Success:
@@ -530,7 +526,7 @@ class Crawler(object):
         
         
         self.__CurrentTimeout = 3
-        self.__readScreen('0\r\n$', ['★'])
+        self.__readScreen('0\r$', ['★'])
         if ErrorCode == WaitTimeout:
             #self.Log('getNewestPostIndex 2.1 error code: ' + str(ErrorCode))
             #print(self.__ReceiveData)
@@ -546,6 +542,7 @@ class Crawler(object):
             return ParseError, -1
         
         AllIndexTemp = list(AllIndex)
+        
         while True:
             
             ReturnIndexTemp = AllIndex.pop()
@@ -555,7 +552,7 @@ class Crawler(object):
                 HasFront = True
                 HasBack = True
                 
-                DetectRange = 3
+                DetectRange = 5
                 '''
                 print(AllIndexTemp)
                 print(str(ReturnIndexTemp))
@@ -575,6 +572,7 @@ class Crawler(object):
                     break
             if len(AllIndex) == 0:
                 self.Log('ParseError type 2: ' + str(AllIndexTemp), LogLevel_DEBUG)
+                #self.Log(self.__ReceiveData, LogLevel_DEBUG)
                 return ParseError, -1
         return Success, int(ReturnIndex)
     
@@ -598,7 +596,7 @@ class Crawler(object):
         
         self.__CurrentTimeout = 5
         
-        self.__readScreen(str(PostIndex) + '\r\n', [IndexTarget])
+        self.__readScreen(str(PostIndex) + '\r', [IndexTarget])
         
         if IndexTarget in self.__ReceiveData:
             return Success
@@ -611,7 +609,7 @@ class Crawler(object):
             self.Log('__gotoPostByID 1 Go to ' + Board + ' fail', LogLevel_DEBUG)
             return ErrorCode
         
-        self.__readScreen('#' + PostID + '\r\n', '文章選讀')
+        self.__readScreen('#' + PostID + '\r', '文章選讀')
         
         if '找不到這個文章代碼' in self.__ReceiveData:
             return PostNotFound
@@ -763,7 +761,7 @@ class Crawler(object):
             if RealWebUrl in ContentLine or '推' in ContentLine or '噓' in ContentLine or '→' in ContentLine:
                 PostContentArea = False
             if PostContentArea:
-                RealPostContent += ContentLine + '\r\n'
+                RealPostContent += ContentLine + '\r'
         
         '''
         print('RealPostTitle ' + RealPostTitle)
@@ -884,9 +882,9 @@ class Crawler(object):
         CaseList = ['']
         
         if ArrowOnly:
-            SendMessage = PushContent + '\r\ny'
+            SendMessage = PushContent + '\ry'
         else:
-            SendMessage = str(PushType) + PushContent + '\r\ny'
+            SendMessage = str(PushType) + PushContent + '\ry'
         
         ErrorCode, Index = self.__sendData(SendMessage, CaseList, True, True)
         if ErrorCode != Success:
@@ -907,7 +905,7 @@ class Crawler(object):
             return ErrorCode
         
         CaseList = ['主題：', '請選擇簽名檔', '已順利寄出，是否自存底稿', '任意鍵繼續', '電子郵件']
-        SendMessage = 'M\r\nS\r\n' + UserID
+        SendMessage = 'M\rS\r' + UserID
         Enter = True
         while True:        
             ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
@@ -919,7 +917,7 @@ class Crawler(object):
                 self.Log('mail 2 error code: ' + str(ErrorCode), LogLevel_DEBUG)
                 return ErrorCode
             if Index == 0:
-                SendMessage = MailTitle + '\r\n' + MailContent + '\x18s'
+                SendMessage = MailTitle + '\r' + MailContent + '\x18s'
                 Enter = True
             if Index == 1:
                 SendMessage = str(SignType)
@@ -999,7 +997,7 @@ class Crawler(object):
             return ErrorCode, ''
             
         self.__CurrentTimeout = 5
-        ErrorCode, Index = self.__readScreen('A\r\nqA\r\nq', ['呼叫器', '離開，再見…'])
+        ErrorCode, Index = self.__readScreen('A\rqA\rq', ['呼叫器', '離開，再見…'])
         if ErrorCode == WaitTimeout:
             #self.__showScreen()
             self.Log('getTime 2.1', LogLevel_DEBUG)
@@ -1029,7 +1027,7 @@ class Crawler(object):
             print('getUserInfo goto top error code 1: ' + str(ErrorCode))
             return ErrorCode, None
         CaseList = ['請輸入使用者代號', '請按任意鍵繼續', '顯示上幾次熱訊']
-        SendMessage = 'T\r\nQ\r\n'
+        SendMessage = 'T\rQ\r'
         Enter = False
         while True:        
             ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)

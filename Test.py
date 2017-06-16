@@ -13,8 +13,6 @@ except ModuleNotFoundError:
     ID = 'Your ID'
     Password = 'Your Password'
 
-KickOtherLogin = False
-
 BoardList = ['Wanted', 'Gossiping', 'Test']
 PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
@@ -170,7 +168,8 @@ def GetUserInfoDemo():
     
 if __name__ == '__main__':
     print('Welcome to PTT Crawler Library Demo')
-
+    
+    KickOtherLogin = False
     PTTCrawler = PTT.Crawler(ID, Password, KickOtherLogin)
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('Login fail')
