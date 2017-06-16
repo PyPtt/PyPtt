@@ -7,6 +7,7 @@
 
 範例程式
 -------------------
+###### 歡迎開發者將使用PTT Crawler Library的程式連結加入
 [汪梯推文機器人](https://github.com/Truth0906/WantedPushCrawler)
 
 Demo
