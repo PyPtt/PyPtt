@@ -1,18 +1,19 @@
 import sys
 import time
 import PTT
-import os.path
+import json
+import getpass
+
+# If you want to automatically login define Account.txt
+# {"ID":"YourID", "Password":"YourPW"}
 try:
-    sys.path.append("../IDPassword")
-    import IDPassword
-
-    ID = IDPassword.ID
-    Password = IDPassword.Password
-except ModuleNotFoundError:
-    #Define your id password here
-    ID = 'Your ID'
-    Password = 'Your Password'
-
+    with open('Account.txt') as AccountFile:
+        Account = json.load(AccountFile)
+        ID = Account['ID']
+        Password = Account['Password']
+except FileNotFoundError:
+    ID = input('Input ID: ')
+    Password = getpass.getpass('Input password: ')
 BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
 PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
@@ -21,9 +22,9 @@ PTTCrawler = None
 def PostDemo():
     #發文類別       1
     #簽名檔        	0
-    for i in range(3):
+    for i in range(1):
         
-        ErrorCode = PTTCrawler.post('Test', '連續自動PO文測試 ' + str(i), '自動PO文測試\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+        ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '自動PO文測試\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         #ErrorCode = PTTCrawler.post('Test', '攻佔版面測試', '此版已經被攻陷 版眾束手就擒吧!!!\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('Post in Test success')
