@@ -3,7 +3,7 @@ import time
 from time import gmtime, strftime
 
 def Log(InputMessage):
-    TotalMessage = "[" + strftime("%Y-%m-%d %H:%M:%S") + "] " + InputMessage
+    TotalMessage = "[" + strftime("%Y-%m-%d %H:%M:%S") + "] " + str(InputMessage)
 
     print(TotalMessage)
 def getTime():

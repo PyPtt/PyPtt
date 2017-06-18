@@ -750,8 +750,8 @@ class Crawler(object):
         
         RealPushList = []
         for ContentLine in filtered:
-            #print(ContentLine)
-            if '推' in ContentLine or '噓' in ContentLine or '→' in ContentLine:
+            self.Log('QQ ' + ContentLine, LogLevel_DEBUG)
+            if not PostContentArea and (ContentLine.startswith('推') or ContentLine.startswith('噓') or ContentLine.startswith('→')):
                 PushArea = True
             if PushArea:
                 if PushIndex == 0:
@@ -774,10 +774,10 @@ class Crawler(object):
                     PushIndex = 0
                     #print(str(PushType) + ' ' + PushID + ' ' + PushContent + ' ' + PushDate)
                     RealPushList.append(PushInformation(PushType, PushID, PushContent, PushDate))
-            if date == ContentLine:
+            if date in ContentLine:
                 PostContentArea = True
                 continue
-            if RealWebUrl in ContentLine or '推' in ContentLine or '噓' in ContentLine or '→' in ContentLine:
+            if RealWebUrl in ContentLine:
                 PostContentArea = False
             if PostContentArea:
                 RealPostContent += ContentLine + '\r'

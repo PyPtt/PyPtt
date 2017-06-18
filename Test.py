@@ -24,8 +24,7 @@ def PostDemo():
     #簽名檔        	0
     for i in range(1):
         
-        ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '自動PO文測試\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
-        #ErrorCode = PTTCrawler.post('Test', '攻佔版面測試', '此版已經被攻陷 版眾束手就擒吧!!!\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+        ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('Post in Test success')
         else:
@@ -45,7 +44,7 @@ def GetNewestPostIndexDemo():
 
 def GetPostInfoDemo():
 
-    ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Gossiping')
+    ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
     if ErrorCode != PTT.Success:
         PTTCrawler.Log('Get newest post index fail')
         return False
@@ -53,10 +52,10 @@ def GetPostInfoDemo():
     if NewestIndex == -1:
         PTTCrawler.Log('Get newest post index fail')
         return False
-        
+
     for i in range(TryPost):
         
-        ErrorCode, Post = PTTCrawler.getPostInfoByIndex('Gossiping', NewestIndex - i)
+        ErrorCode, Post = PTTCrawler.getPostInfoByIndex('Wanted', NewestIndex - i)
         if ErrorCode == PTT.PostDeleted:
             PTTCrawler.Log('Post has been deleted')
             continue
@@ -67,11 +66,20 @@ def GetPostInfoDemo():
             PTTCrawler.Log('Get post by index fail')
             return False
         PTTCrawler.Log(str(int(((i + 1) * 100) / TryPost)) + ' % ' + str(NewestIndex - i) + ' Title: ' + Post.getTitle())
-        ErrorCode, Post = PTTCrawler.getPostInfoByID('Gossiping', Post.getPostID())
+        '''
+        PTTCrawler.Log('Content: \r\n' + Post.getPostContent())
+        PTTCrawler.Log('-----------------------')
+        for Push in Post.getPushList():
+            PTTCrawler.Log(str(Push.getPushType()) + '!' + Push.getPushID() + '!' + Push.getPushContent() + '!' + Push.getPushTime())
+            PTTCrawler.Log('-----------------------')
+        continue
+        '''
+        ErrorCode, Post = PTTCrawler.getPostInfoByID('Wanted', Post.getPostID())
         if ErrorCode != PTT.Success:
             PTTCrawler.Log('Get post by ID fail error code: ' + str(ErrorCode))
             return False
         PTTCrawler.Log(str(int(((i + 1) * 100) / TryPost)) + ' % ' + Post.getPostID() + ' Title: ' + Post.getTitle())
+        
         
 def GetNewPostIndexListDemo():
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
@@ -176,7 +184,7 @@ if __name__ == '__main__':
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('Login fail')
         sys.exit()
-    PTTCrawler.setLogLevel(PTT.LogLevel_DEBUG)
+    #PTTCrawler.setLogLevel(PTT.LogLevel_DEBUG)
     
     GetNewestPostIndexDemo()
     PostDemo()
