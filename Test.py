@@ -27,6 +27,8 @@ def PostDemo():
         ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('Post in Test success')
+        elif ErrorCode == NoPermission:
+            PTTCrawler.Log('發文權限不足')
         else:
             PTTCrawler.Log('Post in Test fail')                
 
@@ -106,8 +108,16 @@ def PushDemo():
         ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 1', NewestIndex)
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('pushByIndex Push success')
+        elif ErrorCode == PTT.ErrorInput:
+            PTTCrawler.Log('pushByIndex wrong input')
+            return False
+        elif ErrorCode == PTT.NoPermission:
+            PTTCrawler.Log('pushByIndex 無發文權限')
+            return False
         else:
             PTTCrawler.Log('pushByIndex Push fail')
+            return False
+            
     ErrorCode, NewPost = PTTCrawler.getPostInfoByIndex('Test', NewestIndex)
     if ErrorCode != PTT.Success:
         PTTCrawler.Log('getPostInfoByIndex ErrorCode: ' + str(ErrorCode))
@@ -120,8 +130,15 @@ def PushDemo():
         ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 2', NewPost.getPostID())
         if ErrorCode == PTT.Success:
             PTTCrawler.Log('pushByID Push success')
+        elif ErrorCode == PTT.ErrorInput:
+            PTTCrawler.Log('pushByID wrong input')
+            return False
+        elif ErrorCode == PTT.NoPermission:
+            PTTCrawler.Log('pushByID 無發文權限')
+            return False
         else:
             PTTCrawler.Log('pushByID Push fail')
+            return False
 def MainDemo():
     #0 不加簽名檔
     for i in range(1):
