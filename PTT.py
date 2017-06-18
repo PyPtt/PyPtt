@@ -520,7 +520,7 @@ class Crawler(object):
                 self.Log('getNewestPostIndex parse error retry..', LogLevel_DEBUG)
                 pass
             elif ErrorCode == WaitTimeout:
-                #self.Log('getNewestPostIndex time out retry..')
+                self.Log('getNewestPostIndex time out retry..', LogLevel_DEBUG)
                 pass
             else:
                 self.Log('ErrorCode: ' + str(ErrorCode), LogLevel_DEBUG)
