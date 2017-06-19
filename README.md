@@ -8,7 +8,7 @@
 範例程式
 -------------------
 ###### 歡迎開發者將使用PTT Crawler Library的程式連結加入
-[汪梯推文機器人](https://github.com/Truth0906/WantedPushCrawler)
+[汪梯推文機器人](https://github.com/Truth0906/PTTTelnetCrawlerLibrary_HelloCrawler)
 
 [五樓機器人](https://github.com/Truth0906/5FloorBot)
 
@@ -24,7 +24,7 @@ Demo
 
 版本
 -------------------
-###### 0.1.170615 beta
+###### 0.1.170619 beta
 
 API
 -------------------
