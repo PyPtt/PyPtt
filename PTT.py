@@ -1177,5 +1177,5 @@ class Crawler(object):
         return self.Success, result
 if __name__ == '__main__':
 
-    print('PTT Crawler Library v 0.2.170615 beta')
+    print('PTT Crawler Library v 0.2.170619 beta')
     print('PTT CodingMan')
