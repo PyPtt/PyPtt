@@ -271,7 +271,7 @@ class Crawler(object):
             return self.ConnectResetError, -1
         
         if ReturnIndex == -1:
-            print('SendData timeouted')
+            self.Log('Send data timeout', self.LogLevel_RELEASE)
             self.__CurrentTimeout = 0
             return self.WaitTimeout, ReturnIndex
         self.__CurrentTimeout = 0
