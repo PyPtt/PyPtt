@@ -67,7 +67,7 @@ def GetPostInfoDemo():
         if ErrorCode != PTTCrawler.Success:
             PTTCrawler.Log('Get post by index fail')
             return False
-        PTTCrawler.Log(str(int(((i + 1) * 100) / TryPost)) + ' % ' + str(NewestIndex - i) + ' Title: ' + Post.getTitle())
+        PTTCrawler.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ' + str(NewestIndex - i) + ' Title: ' + Post.getTitle())
         '''
         PTTCrawler.Log('Content: \r\n' + Post.getPostContent())
         PTTCrawler.Log('-----------------------')
@@ -80,7 +80,7 @@ def GetPostInfoDemo():
         if ErrorCode != PTTCrawler.Success:
             PTTCrawler.Log('Get post by ID fail error code: ' + str(ErrorCode))
             return False
-        PTTCrawler.Log(str(int(((i + 1) * 100) / TryPost)) + ' % ' + Post.getPostID() + ' Title: ' + Post.getTitle())
+        PTTCrawler.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' Title: ' + Post.getTitle())
         
         ################## 文章資訊 Post information ##################
         # getPostID                 文章 ID ex: 1PCBfel1
