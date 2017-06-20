@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 import sys
 import telnetlib
 import time
@@ -751,7 +750,7 @@ class Crawler(object):
         
         RealPushList = []
         for ContentLine in filtered:
-            self.Log('QQ ' + ContentLine, self.LogLevel_DEBUG)
+            self.Log('Post data: ' + ContentLine, self.LogLevel_DEBUG)
             if not PostContentArea and (ContentLine.startswith('推') or ContentLine.startswith('噓') or ContentLine.startswith('→')):
                 PushArea = True
             if PushArea:
@@ -1194,5 +1193,5 @@ class Crawler(object):
         return self.Success, result
 if __name__ == '__main__':
 
-    print('PTT Crawler Library v 0.2.170619 beta')
+    print('PTT Crawler Library v 0.2.170620 beta')
     print('PTT CodingMan')
