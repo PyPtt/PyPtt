@@ -750,7 +750,7 @@ class Crawler(object):
         
         RealPushList = []
         for ContentLine in filtered:
-            self.Log('Post data: ' + ContentLine, self.LogLevel_DEBUG)
+            self.Log('QQ ' + ContentLine, self.LogLevel_DEBUG)
             if not PostContentArea and (ContentLine.startswith('推') or ContentLine.startswith('噓') or ContentLine.startswith('→')):
                 PushArea = True
             if PushArea:
@@ -1014,23 +1014,6 @@ class Crawler(object):
         if ErrorCode != self.Success:
             print('getTime goto top error code 2: ' + str(ErrorCode))
             return ErrorCode, ''
-<<<<<<< HEAD
-=======
-            
-        self.__CurrentTimeout = 5
-        ErrorCode, Index = self.__readScreen('A\rqA\rq', ['呼叫器', '離開，再見…'])
-        if ErrorCode == WaitTimeout:
-            #self.__showScreen()
-            self.Log('getTime 2.1', LogLevel_DEBUG)
-            return ErrorCode, ''
-        if ErrorCode != Success:
-            self.Log('getTime 3 read screen error code: ' + str(ErrorCode), LogLevel_DEBUG)
-            return ErrorCode, ''
-        
-        if not '離開，再見…' in self.__ReceiveData or not '[呼叫器]' in self.__ReceiveData:
-            #self.Log('Not in user menu 1')
-            return ParseError, ''
->>>>>>> master
         
         for i in range(3):
             self.__CurrentTimeout = 5
@@ -1050,7 +1033,8 @@ class Crawler(object):
             '''
             if '離開，再見…' in self.__ReceiveData and '[呼叫器]' in self.__ReceiveData and '星期' in self.__ReceiveData:
                 break
-
+        if not '離開，再見…' in self.__ReceiveData or not '[呼叫器]' in self.__ReceiveData or not '星期' in self.__ReceiveData:
+            return self.ParseError, ''
         result = self.__ReceiveData[self.__ReceiveData.find('離開，再見…') + len('離開，再見…'):self.__ReceiveData.find('[呼叫器]')]
         
         if not '星期' in result:
