@@ -99,6 +99,7 @@ def GetPostInfoDemo():
         # getPushContent            推文內文
         # getPushTime               推文時間
         
+        
 def GetNewPostIndexListDemo():
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
     if ErrorCode != PTTCrawler.Success:

@@ -1,2 +1,4 @@
 __pycache__/
 /Account.txt
+build/
+dist/
