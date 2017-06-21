@@ -162,57 +162,54 @@ class Crawler(object):
         
         result = -1
         ErrorCode = self.UnknowError
-        try:
-            self.__telnet.read_very_eager()
-            self.__telnet.write(str(Message + '\x0C').encode('big5'))
-        except ConnectionResetError:
-            PTTUtil.Log('Remote reset connection...')
-            self.__connectRemote()
-            return self.ConnectResetError, result
         
         ReceiveTimes = 0
         self.__Timeouted = False
         self.__ReceiveData = ''
-        StartTime = time.time()
         
         if self.__CurrentTimeout == 0:
             self.__Timeout = self.__DefaultTimeout
         else:
             self.__Timeout = self.__CurrentTimeout
         
-        while True:
-            time.sleep(self.__SleepTime)
-            ReceiveTimes += 1
+        try:
+            self.__telnet.read_very_eager()
+            self.__telnet.write(str(Message + '\x0C').encode('big5'))
+            StartTime = time.time()
             
-            try:
+            while True:
+                time.sleep(self.__SleepTime)
+                ReceiveTimes += 1
+                
                 self.__ReceiveData += self.__telnet.read_very_eager().decode('big5', 'ignore')
-            except EOFError:
-                PTTUtil.Log('Remote kick connection...')
-                self.__connectRemote()
-                self.__CurrentTimeout = 0
-                return self.EOFErrorCode, result
-            
-            DataMacthed = False
-            
-            for i in range(len(ExpectTarget)):
-                #print(ExpectTarget[i])
-                if ExpectTarget[i] in self.__ReceiveData:
-                    result = i
-                    DataMacthed = True
+                
+                DataMacthed = False
+                for i in range(len(ExpectTarget)):
+                
+                    if ExpectTarget[i] in self.__ReceiveData:
+                        result = i
+                        DataMacthed = True
+                        break
+                
+                if DataMacthed:
+                    ErrorCode = self.Success
                     break
-            
-            if DataMacthed:
-                ErrorCode = self.Success
-                break
-            
-            NowTime = time.time()
-            
-            if NowTime - StartTime > self.__Timeout:
-                self.__Timeouted = True
-                #print(str(len(self.__ReceiveData)))
-                #print('ReadScreen timeouted')
-                ErrorCode = self.WaitTimeout
-                break
+                
+                NowTime = time.time()
+                
+                if NowTime - StartTime > self.__Timeout:
+                    self.__Timeouted = True
+                    ErrorCode = self.WaitTimeout
+                    break
+        except ConnectionResetError:
+            PTTUtil.Log('Remote reset connection...')
+            self.__connectRemote(True)
+            return self.ConnectResetError, result
+        except EOFError:
+            PTTUtil.Log('Remote kick connection...')
+            self.__connectRemote(True)
+            self.__CurrentTimeout = 0
+            return self.EOFErrorCode, result
         
         self.__SleepTime = self.__SleepTime * (ReceiveTimes / 5.0)
         self.__CurrentTimeout = 0
@@ -250,8 +247,7 @@ class Crawler(object):
             self.__Timeout = 10
         
         try:
-            #self.__telnet.read_very_eager()
-            #self.__telnet.read_until(b'')
+
             SendMessage = str(Message) + PostFix
             self.__telnet.read_very_eager()
             self.__telnet.write(SendMessage.encode('big5'))
@@ -260,22 +256,22 @@ class Crawler(object):
         except EOFError:
             #QQ why kick me
             PTTUtil.Log('Remote kick connection...')
-            self.__connectRemote()
+            self.__connectRemote(True)
             self.__CurrentTimeout = 0
             return self.EOFErrorCode, -1
         except ConnectionResetError:
             PTTUtil.Log('Remote reset connection...')
-            self.__connectRemote()
+            self.__connectRemote(True)
             self.__CurrentTimeout = 0
             return self.ConnectResetError, -1
         
         if ReturnIndex == -1:
-            self.Log('Send data timeout', self.LogLevel_RELEASE)
+            self.Log('Send data timeout', self.LogLevel_DEBUG)
             self.__CurrentTimeout = 0
             return self.WaitTimeout, ReturnIndex
         self.__CurrentTimeout = 0
         return self.Success, ReturnIndex
-    def __connectRemote(self):
+    def __connectRemote(self, Recovery=False):
         self.__isConnected = False
         
         while True:
@@ -284,7 +280,8 @@ class Crawler(object):
             if ErrorCode != self.Success:
                 return ErrorCode
             if Index == 0:
-                self.Log('Connect Success')
+                if not Recovery:
+                    self.Log('Connect Success')
                 break
             if Index == 1:
                 self.Log('System overload')
@@ -305,35 +302,43 @@ class Crawler(object):
                 if self.__kickOtherLogin:
                     SendMessage = 'y'
                     Enter = True
-                    self.Log('Detect other login')
-                    self.Log('Kick other login Success')
+                    if not Recovery:
+                        self.Log('Detect other login')
+                        self.Log('Kick other login Success')
                 else :
                     SendMessage = 'n'
                     Enter = True
-                    self.Log('Detect other login')
+                    if not Recovery:
+                        self.Log('Detect other login')
             if Index == 2:
                 SendMessage = 'q'
                 Enter = False
-                self.Log('Press any key to continue')
+                if not Recovery:
+                    self.Log('Press any key to continue')
             if Index == 3:
                 SendMessage = 'Y'
                 Enter = True
-                self.Log('Delete error password log')
+                if not Recovery:
+                    self.Log('Delete error password log')
             if Index == 4:
                 SendMessage = 'q'
                 Enter = True
-                self.Log('Delete the post not finished')    
+                if not Recovery:
+                    self.Log('Delete the post not finished')    
             if Index == 5:
                 SendMessage = self.__Password
                 Enter = True
-                self.Log('Input ID Success')
+                if not Recovery:
+                    self.Log('Input ID Success')
             if Index == 6:
-                self.Log('Login Success')
+                if not Recovery:
+                    self.Log('Login Success')
                 break
             if Index == 7:
                 SendMessage = ''
                 Enter = True
-                self.Log('Wait update')
+                if not Recovery:
+                    self.Log('Wait update')
                 time.sleep(1)
         
         ErrorCode, Index = self.__readScreen('', ['> (', '●('])
@@ -346,7 +351,8 @@ class Crawler(object):
         if Index == 1:
             self.__Cursor = '●'
         
-        
+        if Recovery:
+            self.Log('Recover connection success')
         self.__isConnected = True
         '''
         BoardList = ['Wanted', 'Gossiping', 'Test', 'Python']
@@ -369,7 +375,7 @@ class Crawler(object):
             ErrorCode = self.___gotoTop()
             if ErrorCode == self.Success:
                 if i != 0:
-                    self.Log('__gotoTop recovery Success', self.LogLevel_DEBUG)
+                    self.Log('__gotoTop recover Success', self.LogLevel_DEBUG)
                 break
         return ErrorCode
     def ___gotoTop(self):
@@ -394,7 +400,7 @@ class Crawler(object):
             ErrorCode = self.___gotoBoard(Board)
             if ErrorCode == self.Success:
                 if i != 0:
-                    self.Log('GotoBoard recovery Success', self.LogLevel_DEBUG)
+                    self.Log('GotoBoard recover Success', self.LogLevel_DEBUG)
                 break
                 
         return ErrorCode
@@ -594,7 +600,7 @@ class Crawler(object):
             ErrorCode = self.___gotoPostByIndex(Board, PostIndex)
             if ErrorCode == self.Success:
                 if i != 0:
-                    self.Log('GotoPostByIndex try ' + str(i + 1) + ' recovery Success', self.LogLevel_DEBUG)
+                    self.Log('GotoPostByIndex try ' + str(i + 1) + ' recover Success', self.LogLevel_DEBUG)
                 break
         return ErrorCode
     def ___gotoPostByIndex(self, Board, PostIndex):
@@ -640,7 +646,7 @@ class Crawler(object):
             ErrorCode, Post = self.__getPostInfoByID(Board, PostID, Index)
             if ErrorCode == self.Success:
                 if i != 0:
-                    self.Log('getPostInfoByID recovery Success', self.LogLevel_DEBUG)
+                    self.Log('getPostInfoByID recover Success', self.LogLevel_DEBUG)
                 break
             if ErrorCode == self.WebFormatError:
                 break
@@ -819,7 +825,7 @@ class Crawler(object):
             ErrorCode = self.__pushByID(Board, PushType, PushContent, PostID, PostIndex)
             if ErrorCode == self.Success:
                 if i != 0:
-                    self.Log('pushByID recovery Success', self.LogLevel_DEBUG)
+                    self.Log('pushByID recover Success', self.LogLevel_DEBUG)
                 break
             if ErrorCode == self.NoPermission:
                 break
@@ -1002,7 +1008,7 @@ class Crawler(object):
             ErrorCode, Time = self.__getTime()
             if ErrorCode == self.Success:
                 if i != 0:
-                    self.Log('getTime recovery Success ' + str(i) + ' times', self.LogLevel_DEBUG)
+                    self.Log('getTime recover Success ' + str(i) + ' times', self.LogLevel_DEBUG)
                 break
         return ErrorCode, Time
     def __getTime(self):
