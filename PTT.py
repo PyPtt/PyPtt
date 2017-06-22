@@ -87,21 +87,8 @@ class PostInformation(object):
         return self.__OriginalData
     
 class Crawler(object):
-    def __init__(self, ID, Password, kickOtherLogin):
+    def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
  
-        PTTUtil.Log('ID: ' + ID)
-
-        TempPW = ''
-
-        for i in range(len(Password)):
-            TempPW += '*'
-        
-        PTTUtil.Log('Password: ' + TempPW)
-        if kickOtherLogin:
-            PTTUtil.Log('This connection will kick other login')
-        else :
-            PTTUtil.Log('This connection will NOT kick other login')
-
         self.__host = 'ptt.cc'
         self.__ID = ID
         self.__Password = Password
@@ -129,9 +116,19 @@ class Crawler(object):
         self.PushType_Arrow =                  3
 
         self.LogLevel_DEBUG =                  1
-        self.LogLevel_RELEASE =                2
+        self.LogLevel_WARNING =                2
+        self.LogLevel_RELEASE =                3
+        self.LogLevel_CRITICAL =               4
+        self.LogLevel_SLIENT =                 5
         
         self.__LogLevel = self.LogLevel_RELEASE
+        
+        if LogLevel != -1:
+            if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
+                self.Log('LogLevel error: ' + str(LogLevel))
+                return None
+            else:
+                self.__LogLevel = LogLevel
         
         self.__SleepTime =         0.5
         self.__DefaultTimeout =      1
@@ -140,9 +137,21 @@ class Crawler(object):
         
         self.__Cursor =             '>'
         
+        self.Log('ID: ' + ID)
+        TempPW = ''
+
+        for i in range(len(Password)):
+            TempPW += '*'
+        
+        self.Log('Password: ' + TempPW)
+        if kickOtherLogin:
+            self.Log('This connection will KICK other login')
+        else :
+            self.Log('This connection will NOT kick other login')
+        
         self.__connectRemote()
     def setLogLevel(self, LogLevel):
-        if LogLevel != self.LogLevel_DEBUG and LogLevel != self.LogLevel_RELEASE:
+        if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
             self.Log('LogLevel error')
             return self.ErrorInput
         self.__LogLevel = LogLevel
@@ -150,7 +159,7 @@ class Crawler(object):
     def Log(self, Message, LogLevel=-1):
         if LogLevel == -1:
             LogLevel = self.LogLevel_RELEASE
-        if LogLevel != self.LogLevel_DEBUG and LogLevel != self.LogLevel_RELEASE:
+        if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
             self.Log('LogLevel error')
             return self.ErrorInput
         if self.__LogLevel <= LogLevel:
@@ -159,6 +168,9 @@ class Crawler(object):
     def isLoginSuccess(self):
         return self.__isConnected
     def __readScreen(self, Message='', ExpectTarget=[]):
+        
+        if ExpectTarget == None:
+            ExpectTarget = []
         
         result = -1
         ErrorCode = self.UnknowError
@@ -218,12 +230,12 @@ class Crawler(object):
         self.__readScreen('', ExpectTarget)
         if self.__LogLevel == self.LogLevel_DEBUG:
             print(self.__ReceiveData)
-    def __sendData(self, Message, CaseList=[''], Enter=True, Refresh=False):
+    def __sendData(self, Message, CaseList=[], Enter=True, Refresh=False):
         
         if Message == None:
             Message = ''
         if CaseList == None:
-            CaseList = ['']
+            CaseList = []
         
         self.__ReceiveData = ''
         
@@ -252,7 +264,7 @@ class Crawler(object):
             self.__telnet.read_very_eager()
             self.__telnet.write(SendMessage.encode('big5'))
             ReturnIndex = self.__telnet.expect(CaseList, timeout=self.__Timeout)[0]
-            
+
         except EOFError:
             #QQ why kick me
             PTTUtil.Log('Remote kick connection...')
@@ -388,11 +400,11 @@ class Crawler(object):
     def logout(self):
         ErrorCode = self.__gotoTop()
         if ErrorCode != self.Success:
-            print('Error code 1: ' + str(ErrorCode))
+            self.Log('Error code 1: ' + str(ErrorCode), self.LogLevel_DEBUG)
             return ErrorCode
         ErrorCode, Index = self.__readScreen('g\ry\r', ['[按任意鍵繼續]'])
         self.__telnet.close()
-        PTTUtil.Log('Logout Success')
+        self.Log('Logout Success')
         
         return self.Success
     def __gotoBoard(self, Board):
@@ -1183,5 +1195,5 @@ class Crawler(object):
         return self.Success, result
 if __name__ == '__main__':
 
-    print('PTT Crawler Library v 0.2.170620 beta')
+    print('PTT Crawler Library v 0.2.170622 beta')
     print('PTT CodingMan')
