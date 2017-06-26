@@ -747,11 +747,14 @@ class Crawler(object):
         if len(metas) == 0:
             #self.Log('div.article-metaline is not exist')
             return self.WebFormatError, None
-            
-        author = metas[0].select('span.article-meta-value')[0].string
-        title = metas[1].select('span.article-meta-value')[0].string
-        date = metas[2].select('span.article-meta-value')[0].string
         
+        try:
+            author = metas[0].select('span.article-meta-value')[0].string
+            title = metas[1].select('span.article-meta-value')[0].string
+            date = metas[2].select('span.article-meta-value')[0].string
+        except IndexError:
+            self.Log('div.article-metaline is not exist', self.LogLevel_DEBUG)
+            return self.WebFormatError, None
         RealPostTitle = title
         RealPostAuthor = author
         RealPostDate = date
