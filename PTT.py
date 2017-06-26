@@ -56,16 +56,16 @@ class PushInformation(object):
         return self.__PushTime    
 class PostInformation(object):
     def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList, OriginalData):
-        self.__Board = Board + ''
-        self.__PostID = PostID + ''
-        self.__Author = Author + ''
-        self.__Date = Date + ''
-        self.__Title = Title + ''
-        self.__PostContent = PostContent + ''
+        self.__Board = str(Board)
+        self.__PostID = str(PostID)
+        self.__Author = str(Author)
+        self.__Date = str(Date)
+        self.__Title = str(Title)
+        self.__PostContent = str(PostContent)
         self.__Money = Money
-        self.__WebUrl = WebUrl + ''
+        self.__WebUrl = str(WebUrl)
         self.__PushList = PushList
-        self.__OriginalData = OriginalData + ''
+        self.__OriginalData = str(OriginalData)
 
     def getPostID(self):
         return self.__PostID
