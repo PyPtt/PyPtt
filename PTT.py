@@ -435,6 +435,8 @@ class Crawler(object):
         CaseList = ['請按任意鍵繼續', '其他任意鍵停止', '動畫播放中', '文章選讀']
         SendMessage = Board
         Enter = True
+        
+        MaxTry, TryTime = 5, 0
         while True:            
             ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
             #self.Log('GotoBoard index: ' + str(Index), self.LogLevel_DEBUG)
@@ -447,6 +449,10 @@ class Crawler(object):
                 Enter = False
             if Index == 3:
                 break
+            TryTime += 1
+            if TryTime > MaxTry:
+                self.Log('___gotoBoard while too many times', self.LogLevel_DEBUG)
+                return self.WaitTimeout
         #print('--------------------------------------------------------')
         #self.__showScreen()
         return self.Success
@@ -641,6 +647,7 @@ class Crawler(object):
             #print(self.__ReceiveData)
             return self.PostNotFound
     def __gotoPostByID(self, Board, PostID):
+        self.Log('Into __gotoPostByID', self.LogLevel_DEBUG)
         ErrorCode = self.__gotoBoard(Board)
         if ErrorCode != self.Success:
             self.Log('__gotoPostByID 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
@@ -654,6 +661,7 @@ class Crawler(object):
         return self.Success
         
     def getPostInfoByID(self, Board, PostID, Index=-1):
+        self.Log('Into getPostInfoByID', self.LogLevel_DEBUG)
         for i in range(5):
             ErrorCode, Post = self.__getPostInfoByID(Board, PostID, Index)
             if ErrorCode == self.Success:
@@ -666,7 +674,7 @@ class Crawler(object):
                 break
         return ErrorCode, Post
     def __getPostInfoByID(self, Board, PostID, Index=-1):
-        
+        self.Log('Into __getPostInfoByID', self.LogLevel_DEBUG)
         if Index != -1:
             ErrorCode = self.__gotoPostByIndex(Board, Index)
             if ErrorCode != self.Success:
@@ -739,15 +747,15 @@ class Crawler(object):
         soup =  BeautifulSoup(res.text,'html.parser')
         main_content = soup.find(id='main-content')
         
+        if main_content == None:
+            return self.WebFormatError, None
+
         metas = main_content.select('div.article-metaline')
         filtered = [ v for v in main_content.stripped_strings if v[0] not in ['※', '◆'] and  v[:2] not in ['--'] ]
         
         content = ' '.join(filtered)
         content = re.sub(r'(\s)+', '', content )
-        if len(metas) == 0:
-            #self.Log('div.article-metaline is not exist')
-            return self.WebFormatError, None
-        
+
         try:
             author = metas[0].select('span.article-meta-value')[0].string
             title = metas[1].select('span.article-meta-value')[0].string
