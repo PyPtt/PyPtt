@@ -14,6 +14,8 @@
 
 [ID追蹤器](https://github.com/mi99202006/IDTracker)
 
+[文章爬蟲](https://github.com/Truth0906/PostCrawler)
+
 Demo
 -------------------
 ###### 請參考 Test.py
@@ -26,7 +28,7 @@ Demo
 
 版本
 -------------------
-###### 0.2.170626 beta
+###### 0.2.170704
 
 API
 -------------------
