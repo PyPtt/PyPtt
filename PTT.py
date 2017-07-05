@@ -169,6 +169,7 @@ class Crawler(object):
         return self.__isConnected
     def __readScreen(self, Message='', ExpectTarget=[]):
         
+        self.Log('__readScreen: into function', self.LogLevel_DEBUG)
         if ExpectTarget == None:
             ExpectTarget = []
         
@@ -676,12 +677,13 @@ class Crawler(object):
     def __getPostInfoByID(self, Board, PostID, Index=-1):
         self.Log('Into __getPostInfoByID', self.LogLevel_DEBUG)
         if Index != -1:
+            self.Log('Into __gotoPostByIndex', self.LogLevel_DEBUG)
             ErrorCode = self.__gotoPostByIndex(Board, Index)
             if ErrorCode != self.Success:
                 self.Log('getPostInfoByIndex 1 goto post fail', self.LogLevel_DEBUG)
                 return ErrorCode, None
         else:
-        
+            self.Log('Into __gotoPostByID', self.LogLevel_DEBUG)
             if len(PostID) != 8:
                 self.Log('Error input: ' + PostID)
                 return self.ErrorInput, None
@@ -695,7 +697,7 @@ class Crawler(object):
         if ErrorCode == self.WaitTimeout:
             return self.PostDeleted, None
         if ErrorCode != self.Success:
-            self.Log('getPostInfoByID 3 read screen time out', self.LogLevel_DEBUG)
+            self.Log('getPostInfoByID 3 read screen error: ' + str(ErrorCode), self.LogLevel_DEBUG)
             return ErrorCode, None
         
         if Index == 0:
@@ -739,11 +741,17 @@ class Crawler(object):
         '''
         
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-        res = requests.get(
-            url = RealWebUrl,
-            cookies={'over18': '1'}
-        )
-        
+        self.Log('getPostInfoByID: requests get', self.LogLevel_DEBUG)
+        for i in range(5):
+            try:
+                res = requests.get(
+                    url = RealWebUrl,
+                    cookies={'over18': '1'},
+                    timeout=5
+                )
+                break
+            except requests.exceptions.Timeout:
+                self.Log('getPostInfoByID: requests time out', self.LogLevel_DEBUG)
         soup =  BeautifulSoup(res.text,'html.parser')
         main_content = soup.find(id='main-content')
         
@@ -779,7 +787,7 @@ class Crawler(object):
         
         RealPushList = []
         for ContentLine in filtered:
-            self.Log('QQ ' + ContentLine, self.LogLevel_DEBUG)
+            self.Log('ContentLine-> ' + ContentLine, self.LogLevel_DEBUG)
             if not PostContentArea and (ContentLine.startswith('推') or ContentLine.startswith('噓') or ContentLine.startswith('→')):
                 PushArea = True
             if PushArea:
