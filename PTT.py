@@ -753,6 +753,8 @@ class Crawler(object):
                 break
             except requests.exceptions.Timeout:
                 self.Log('getPostInfoByID: requests time out', self.LogLevel_DEBUG)
+            except requests.exceptions.ConnectionError:
+                self.Log('getPostInfoByID: requests conect error', self.LogLevel_DEBUG)
         soup =  BeautifulSoup(res.text,'html.parser')
         main_content = soup.find(id='main-content')
         
