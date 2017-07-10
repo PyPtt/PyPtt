@@ -173,9 +173,10 @@ def MainDemo():
 def GiveMoneyDemo():
 
     WhoAreUwantToGiveMoney = 'CodingMan'
+    Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
     
-    for i in range(3):
-        ErrorCode = PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 2, Password)
+    if Donate == 'y' or Donate == '':
+        ErrorCode = PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 10, Password)
         
         if ErrorCode == PTTCrawler.Success:
             PTTCrawler.Log('Give money to ' + WhoAreUwantToGiveMoney + ' success')
@@ -239,15 +240,15 @@ if __name__ == '__main__':
         sys.exit()
     #PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
     
-    #GetNewestPostIndexDemo()
-    #PostDemo()
-    #PushDemo()
+    GetNewestPostIndexDemo()
+    PostDemo()
+    PushDemo()
     GetPostInfoDemo()
-    #GetNewPostIndexListDemo()
-    #MainDemo()
-    #GiveMoneyDemo()
-    #GetTimeDemo()
-    #GetUserInfoDemo()
+    GetNewPostIndexListDemo()
+    MainDemo()
+    GetTimeDemo()
+    GetUserInfoDemo()
+    GiveMoneyDemo()
     PTTCrawler.logout()
     
     
