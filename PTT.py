@@ -53,7 +53,8 @@ class PushInformation(object):
     def getPushContent(self):
         return self.__PushContent
     def getPushTime(self):
-        return self.__PushTime    
+        return self.__PushTime
+        
 class PostInformation(object):
     def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList, OriginalData):
         self.__Board = str(Board)
@@ -747,7 +748,7 @@ class Crawler(object):
                 res = requests.get(
                     url = RealWebUrl,
                     cookies={'over18': '1'},
-                    timeout=5
+                    timeout=3
                 )
                 break
             except requests.exceptions.Timeout:
@@ -790,6 +791,7 @@ class Crawler(object):
             self.Log('ContentLine-> ' + ContentLine, self.LogLevel_DEBUG)
             if not PostContentArea and (ContentLine.startswith('推') or ContentLine.startswith('噓') or ContentLine.startswith('→')):
                 PushArea = True
+                PushIndex = 0
             if PushArea:
                 if PushIndex == 0:
                     if '推' in ContentLine:
@@ -798,18 +800,19 @@ class Crawler(object):
                         PushType = self.PushType_Boo
                     elif '→' in ContentLine:
                         PushType = self.PushType_Arrow
+                    self.Log('PushType-> ' + str(PushType), self.LogLevel_DEBUG)
                 if PushIndex == 1:
                     PushID = ContentLine
                 if PushIndex == 2:
                     PushContent = ContentLine[2:]
                 if PushIndex == 3:
                     PushDate = ContentLine
-                    
+                    PushArea = False
                 PushIndex += 1
                 
                 if PushIndex >=4:
                     PushIndex = 0
-                    #print(str(PushType) + ' ' + PushID + ' ' + PushContent + ' ' + PushDate)
+                    self.Log('Push final-> ' + str(PushType) + ' ' + PushID + ' ' + PushContent + ' ' + PushDate, self.LogLevel_DEBUG)
                     RealPushList.append(PushInformation(PushType, PushID, PushContent, PushDate))
             if date in ContentLine:
                 PostContentArea = True
