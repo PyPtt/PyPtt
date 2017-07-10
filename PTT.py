@@ -956,8 +956,6 @@ class Crawler(object):
         return ErrorCode
     def mail(self, UserID, MailTitle, MailContent, SignType):
     
-        self.__CurrentTimeout = 3
-        
         ErrorCode = self.__gotoTop()
         if ErrorCode != self.Success:
             print('mail goto top error code 1: ' + str(ErrorCode))
@@ -966,7 +964,7 @@ class Crawler(object):
         CaseList = ['主題：', '請選擇簽名檔', '已順利寄出，是否自存底稿', '任意鍵繼續', '電子郵件']
         SendMessage = 'M\rS\r' + UserID
         Enter = True
-        while True:        
+        while True:
             ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
             if ErrorCode == self.WaitTimeout:
                 self.__showScreen()
@@ -978,16 +976,22 @@ class Crawler(object):
             if Index == 0:
                 SendMessage = MailTitle + '\r' + MailContent + '\x18s'
                 Enter = True
+                self.__CurrentTimeout = 3
+                self.Log('mail 主題', self.LogLevel_DEBUG)
             if Index == 1:
                 SendMessage = str(SignType)
                 Enter = True
+                self.Log('mail 請選擇簽名檔', self.LogLevel_DEBUG)
             if Index == 2:
                 SendMessage = 'Y'
                 Enter = True
+                self.Log('mail 已順利寄出', self.LogLevel_DEBUG)
             if Index == 3:
                 SendMessage = 'q'
                 Enter = False
+                self.Log('mail 任意鍵繼續', self.LogLevel_DEBUG)
             if Index == 4:
+                self.Log('mail 回到電子郵件', self.LogLevel_DEBUG)
                 break
         
         return self.Success
@@ -1015,25 +1019,36 @@ class Crawler(object):
             if Index == 0:
                 SendMessage = 'P'
                 Enter = True
+                self.Log('giveMoney 量販店', self.LogLevel_DEBUG)
             if Index == 1:
                 SendMessage = '0'
                 Enter = True
+                self.Log('giveMoney 給其他人Ptt幣', self.LogLevel_DEBUG)
             if Index == 2:
                 SendMessage = ID
                 Enter = True
+                self.Log('giveMoney 這位幸運兒的id', self.LogLevel_DEBUG)
             if Index == 3:
                 SendMessage = '\t' + str(Money)
                 Enter = True
+                self.Log('giveMoney 請輸入金額', self.LogLevel_DEBUG)
             if Index == 4:
                 SendMessage = str(YourPassword)
                 Enter = True
+                self.__CurrentTimeout = 3
+                self.Log('giveMoney 請輸入您的密碼', self.LogLevel_DEBUG)
             if Index == 5:
                 SendMessage = 'n'
                 Enter = True
+                self.__CurrentTimeout = 3
+                self.Log('giveMoney 要修改紅包袋嗎', self.LogLevel_DEBUG)
             if Index == 6:
                 SendMessage = 'y'
                 Enter = True
+                self.__CurrentTimeout = 3
+                self.Log('giveMoney 確定進行交易嗎', self.LogLevel_DEBUG)
             if Index == 7:
+                self.Log('giveMoney 按任意鍵繼續', self.LogLevel_DEBUG)
                 break
         return self.Success
         
