@@ -53,7 +53,8 @@ class PushInformation(object):
     def getPushContent(self):
         return self.__PushContent
     def getPushTime(self):
-        return self.__PushTime    
+        return self.__PushTime
+        
 class PostInformation(object):
     def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList, OriginalData):
         self.__Board = str(Board)
@@ -169,6 +170,7 @@ class Crawler(object):
         return self.__isConnected
     def __readScreen(self, Message='', ExpectTarget=[]):
         
+        self.Log('__readScreen: into function', self.LogLevel_DEBUG)
         if ExpectTarget == None:
             ExpectTarget = []
         
@@ -682,12 +684,13 @@ class Crawler(object):
     def __getPostInfoByID(self, Board, PostID, Index=-1):
         self.Log('Into __getPostInfoByID', self.LogLevel_DEBUG)
         if Index != -1:
+            self.Log('Into __gotoPostByIndex', self.LogLevel_DEBUG)
             ErrorCode = self.__gotoPostByIndex(Board, Index)
             if ErrorCode != self.Success:
                 self.Log('getPostInfoByIndex 1 goto post fail', self.LogLevel_DEBUG)
                 return ErrorCode, None
         else:
-        
+            self.Log('Into __gotoPostByID', self.LogLevel_DEBUG)
             if len(PostID) != 8:
                 self.Log('Error input: ' + PostID)
                 return self.ErrorInput, None
@@ -701,7 +704,7 @@ class Crawler(object):
         if ErrorCode == self.WaitTimeout:
             return self.PostDeleted, None
         if ErrorCode != self.Success:
-            self.Log('getPostInfoByID 3 read screen time out', self.LogLevel_DEBUG)
+            self.Log('getPostInfoByID 3 read screen error: ' + str(ErrorCode), self.LogLevel_DEBUG)
             return ErrorCode, None
         
         if Index == 0:
@@ -745,11 +748,19 @@ class Crawler(object):
         '''
         
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-        res = requests.get(
-            url = RealWebUrl,
-            cookies={'over18': '1'}
-        )
-        
+        self.Log('getPostInfoByID: requests get', self.LogLevel_DEBUG)
+        for i in range(5):
+            try:
+                res = requests.get(
+                    url = RealWebUrl,
+                    cookies={'over18': '1'},
+                    timeout=3
+                )
+                break
+            except requests.exceptions.Timeout:
+                self.Log('getPostInfoByID: requests time out', self.LogLevel_DEBUG)
+            except requests.exceptions.ConnectionError:
+                self.Log('getPostInfoByID: requests conect error', self.LogLevel_DEBUG)
         soup =  BeautifulSoup(res.text,'html.parser')
         main_content = soup.find(id='main-content')
         
@@ -785,9 +796,10 @@ class Crawler(object):
         
         RealPushList = []
         for ContentLine in filtered:
-            self.Log('QQ ' + ContentLine, self.LogLevel_DEBUG)
+            self.Log('ContentLine-> ' + ContentLine, self.LogLevel_DEBUG)
             if not PostContentArea and (ContentLine.startswith('推') or ContentLine.startswith('噓') or ContentLine.startswith('→')):
                 PushArea = True
+                PushIndex = 0
             if PushArea:
                 if PushIndex == 0:
                     if '推' in ContentLine:
@@ -796,18 +808,19 @@ class Crawler(object):
                         PushType = self.PushType_Boo
                     elif '→' in ContentLine:
                         PushType = self.PushType_Arrow
+                    self.Log('PushType-> ' + str(PushType), self.LogLevel_DEBUG)
                 if PushIndex == 1:
                     PushID = ContentLine
                 if PushIndex == 2:
                     PushContent = ContentLine[2:]
                 if PushIndex == 3:
                     PushDate = ContentLine
-                    
+                    PushArea = False
                 PushIndex += 1
                 
                 if PushIndex >=4:
                     PushIndex = 0
-                    #print(str(PushType) + ' ' + PushID + ' ' + PushContent + ' ' + PushDate)
+                    self.Log('Push final-> ' + str(PushType) + ' ' + PushID + ' ' + PushContent + ' ' + PushDate, self.LogLevel_DEBUG)
                     RealPushList.append(PushInformation(PushType, PushID, PushContent, PushDate))
             if date in ContentLine:
                 PostContentArea = True
@@ -951,8 +964,6 @@ class Crawler(object):
         return ErrorCode
     def mail(self, UserID, MailTitle, MailContent, SignType):
     
-        self.__CurrentTimeout = 3
-        
         ErrorCode = self.__gotoTop()
         if ErrorCode != self.Success:
             print('mail goto top error code 1: ' + str(ErrorCode))
@@ -961,7 +972,7 @@ class Crawler(object):
         CaseList = ['主題：', '請選擇簽名檔', '已順利寄出，是否自存底稿', '任意鍵繼續', '電子郵件']
         SendMessage = 'M\rS\r' + UserID
         Enter = True
-        while True:        
+        while True:
             ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
             if ErrorCode == self.WaitTimeout:
                 self.__showScreen()
@@ -973,16 +984,22 @@ class Crawler(object):
             if Index == 0:
                 SendMessage = MailTitle + '\r' + MailContent + '\x18s'
                 Enter = True
+                self.__CurrentTimeout = 3
+                self.Log('mail 主題', self.LogLevel_DEBUG)
             if Index == 1:
                 SendMessage = str(SignType)
                 Enter = True
+                self.Log('mail 請選擇簽名檔', self.LogLevel_DEBUG)
             if Index == 2:
                 SendMessage = 'Y'
                 Enter = True
+                self.Log('mail 已順利寄出', self.LogLevel_DEBUG)
             if Index == 3:
                 SendMessage = 'q'
                 Enter = False
+                self.Log('mail 任意鍵繼續', self.LogLevel_DEBUG)
             if Index == 4:
+                self.Log('mail 回到電子郵件', self.LogLevel_DEBUG)
                 break
         
         return self.Success
@@ -1010,25 +1027,36 @@ class Crawler(object):
             if Index == 0:
                 SendMessage = 'P'
                 Enter = True
+                self.Log('giveMoney 量販店', self.LogLevel_DEBUG)
             if Index == 1:
                 SendMessage = '0'
                 Enter = True
+                self.Log('giveMoney 給其他人Ptt幣', self.LogLevel_DEBUG)
             if Index == 2:
                 SendMessage = ID
                 Enter = True
+                self.Log('giveMoney 這位幸運兒的id', self.LogLevel_DEBUG)
             if Index == 3:
                 SendMessage = '\t' + str(Money)
                 Enter = True
+                self.Log('giveMoney 請輸入金額', self.LogLevel_DEBUG)
             if Index == 4:
                 SendMessage = str(YourPassword)
                 Enter = True
+                self.__CurrentTimeout = 3
+                self.Log('giveMoney 請輸入您的密碼', self.LogLevel_DEBUG)
             if Index == 5:
                 SendMessage = 'n'
                 Enter = True
+                self.__CurrentTimeout = 3
+                self.Log('giveMoney 要修改紅包袋嗎', self.LogLevel_DEBUG)
             if Index == 6:
                 SendMessage = 'y'
                 Enter = True
+                self.__CurrentTimeout = 3
+                self.Log('giveMoney 確定進行交易嗎', self.LogLevel_DEBUG)
             if Index == 7:
+                self.Log('giveMoney 按任意鍵繼續', self.LogLevel_DEBUG)
                 break
         return self.Success
         
