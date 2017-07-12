@@ -27,10 +27,10 @@ def PostDemo():
         ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTTCrawler.Success:
             PTTCrawler.Log('Post in Test success')
-        elif ErrorCode == NoPermission:
+        elif ErrorCode == PTTCrawler.NoPermission:
             PTTCrawler.Log('發文權限不足')
         else:
-            PTTCrawler.Log('Post in Test fail')                
+            PTTCrawler.Log('Post in Test fail') 
 
 def GetNewestPostIndexDemo():
 
