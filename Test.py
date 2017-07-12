@@ -70,7 +70,7 @@ def GetPostInfoDemo():
         PTTCrawler.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ' + str(NewestIndex - i) + ' Title: ' + Post.getTitle())
 
         PTTCrawler.Log('Content: \r\n' + Post.getPostContent())
-        #PTTCrawler.Log('-----------------------')
+
         for Push in Post.getPushList():
             if Push.getPushType() == PTTCrawler.PushType_Push:
                 PushTypeString = '推'
