@@ -287,7 +287,13 @@ class Crawler(object):
         self.__isConnected = False
         
         while True:
-            self.__telnet = telnetlib.Telnet(self.__host)
+            while True:
+                try:
+                    self.__telnet = telnetlib.Telnet(self.__host)
+                    break
+                except ConnectionRefusedError:
+                    self.Log('Connect to ' + self.__host + ' fail, retry 1 sec later', self.LogLevel_RELEASE)
+                    time.sleep(1)
             ErrorCode, Index = self.__sendData('', ['請輸入代號', '系統過載'], False)
             if ErrorCode != self.Success:
                 return ErrorCode
