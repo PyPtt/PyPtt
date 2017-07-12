@@ -8,4 +8,14 @@ def Log(InputMessage):
     print(TotalMessage.encode('utf-8-sig').decode('utf-8-sig'))
 def getTime():
     return strftime("%H:%M")
-    
+
+def readPostFile(FileName):
+    result = ''
+    try:
+        with open(FileName, encoding = 'utf-8-sig') as File:
+            Temp = File.readlines()
+            Temp = [x.strip() for x in content]
+            result = '\r\n'.join(Temp)
+    except FileNotFoundError:
+        return None
+    return result
