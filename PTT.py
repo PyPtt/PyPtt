@@ -100,32 +100,32 @@ class Crawler(object):
         self.__ReceiveData = ''
         self.__isConnected = False
         
-        self.__TelnetConnectList = [None] * 4
         
-        self.Success =                         0
-        self.UnknowError =                   0.1
-        self.ConnectError =                    1
-        self.EOFErrorCode =                    2
-        self.ConnectResetError =               3
-        self.WaitTimeout =                     4
-        self.WrongPassword =                   5
-        self.ErrorInput =                      6
-        self.PostNotFound =                    7
-        self.ParseError =                      8
-        self.PostDeleted =                     9
-        self.WebFormatError =                 10
-        self.NoPermission =                   11
-        self.NoUser =                         12
+        
+        self.Success =                          0
+        self.UnknowError =                    0.1
+        self.ConnectError =                     1
+        self.EOFErrorCode =                     2
+        self.ConnectResetError =                3
+        self.WaitTimeout =                      4
+        self.WrongPassword =                    5
+        self.ErrorInput =                       6
+        self.PostNotFound =                     7
+        self.ParseError =                       8
+        self.PostDeleted =                      9
+        self.WebFormatError =                  10
+        self.NoPermission =                    11
+        self.NoUser =                          12
 
-        self.PushType_Push =                   1
-        self.PushType_Boo =                    2
-        self.PushType_Arrow =                  3
+        self.PushType_Push =                    1
+        self.PushType_Boo =                     2
+        self.PushType_Arrow =                   3
 
-        self.LogLevel_DEBUG =                  1
-        self.LogLevel_WARNING =                2
-        self.LogLevel_RELEASE =                3
-        self.LogLevel_CRITICAL =               4
-        self.LogLevel_SLIENT =                 5
+        self.LogLevel_DEBUG =                   1
+        self.LogLevel_WARNING =                 2
+        self.LogLevel_RELEASE =                 3
+        self.LogLevel_CRITICAL =                4
+        self.LogLevel_SLIENT =                  5
         
         self.__LogLevel = self.LogLevel_RELEASE
         
@@ -136,14 +136,18 @@ class Crawler(object):
             else:
                 self.__LogLevel = LogLevel
         
-        self.__SleepTime =                   0.5
-        self.__DefaultTimeout =                1
-        self.__Timeout =                      10
-        self.__CurrentTimeout =                0
+        self.__SleepTime =                    0.5
+        self.__DefaultTimeout =                 1
+        self.__Timeout =                       10
+        self.__CurrentTimeout =                 0
         
-        self.__Cursor =                      '>'
+        self.__Cursor =                       '>'
         
-        self.__KickTimes =                     0
+        self.__KickTimes =                      0
+        
+        self.__MaxMultiLoing =                  4
+        
+        self.__TelnetConnectList = [None] * self.__MaxMultiLoing
         
         self.Log('ID: ' + ID)
         TempPW = ''
@@ -422,7 +426,7 @@ class Crawler(object):
         return self.Success
     def logout(self):
         
-        for index in range(4):
+        for index in range(self.__MaxMultiLoing):
             
             if self.__TelnetConnectList[index] == None:
                 continue
@@ -486,9 +490,8 @@ class Crawler(object):
         #self.__showScreen()
         return self.Success
     
-    def post(self, board, title, content, PostType, SignType):
+    def post(self, board, title, content, PostType, SignType, TelentConnectIndex = 0):
         
-        TelentConnectIndex = 0
         self.__CurrentTimeout = 10
         
         ErrorCode = self.__gotoBoard(board)
@@ -643,15 +646,15 @@ class Crawler(object):
                 return self.ParseError, -1
         return self.Success, int(ReturnIndex)
     
-    def __gotoPostByIndex(self, Board, PostIndex):
+    def __gotoPostByIndex(self, Board, PostIndex, TelnetConnectIndex = 0):
         for i in range(3):
-            ErrorCode = self.___gotoPostByIndex(Board, PostIndex)
+            ErrorCode = self.___gotoPostByIndex(Board, PostIndex, TelnetConnectIndex)
             if ErrorCode == self.Success:
                 if i != 0:
                     self.Log('GotoPostByIndex try ' + str(i + 1) + ' recover Success', self.LogLevel_DEBUG)
                 break
         return ErrorCode
-    def ___gotoPostByIndex(self, Board, PostIndex):
+    def ___gotoPostByIndex(self, Board, PostIndex, TelnetConnectIndex = 0):
     
         ErrorCode = self.__gotoBoard(Board)
         if ErrorCode != self.Success:
@@ -669,31 +672,31 @@ class Crawler(object):
             
         self.__CurrentTimeout = 5
         
-        self.__readScreen(str(PostIndex) + '\r', [IndexTarget])
+        self.__readScreen(TelnetConnectIndex, str(PostIndex) + '\r', [IndexTarget])
         
         if IndexTarget in self.__ReceiveData:
             return self.Success
         else:
             #print(self.__ReceiveData)
             return self.PostNotFound
-    def __gotoPostByID(self, Board, PostID):
+    def __gotoPostByID(self, Board, PostID, TelentConnectIndex = 0):
         self.Log('Into __gotoPostByID', self.LogLevel_DEBUG)
-        ErrorCode = self.__gotoBoard(Board)
+        ErrorCode = self.__gotoBoard(Board, TelentConnectIndex)
         if ErrorCode != self.Success:
             self.Log('__gotoPostByID 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
             return ErrorCode
         
-        self.__readScreen('#' + PostID + '\r', '文章選讀')
+        self.__readScreen(TelentConnectIndex, '#' + PostID + '\r', '文章選讀')
         
         if '找不到這個文章代碼' in self.__ReceiveData:
             return self.PostNotFound
         
         return self.Success
         
-    def getPostInfoByID(self, Board, PostID, Index=-1):
+    def getPostInfoByID(self, Board, PostID, Index=-1, TelentConnectIndex = 0):
         self.Log('Into getPostInfoByID', self.LogLevel_DEBUG)
         for i in range(5):
-            ErrorCode, Post = self.__getPostInfoByID(Board, PostID, Index)
+            ErrorCode, Post = self.__getPostInfoByID(Board, PostID, Index, TelentConnectIndex)
             if ErrorCode == self.Success:
                 if i != 0:
                     self.Log('getPostInfoByID recover Success', self.LogLevel_DEBUG)
@@ -789,11 +792,11 @@ class Crawler(object):
                 RealPostContent += ContentLine + '\r'
         
         return self.Success, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, res.text
-    def __getPostInfoByID(self, Board, PostID, Index=-1):
+    def __getPostInfoByID(self, Board, PostID, Index=-1, TelentConnectIndex = 0):
         self.Log('Into __getPostInfoByID', self.LogLevel_DEBUG)
         if Index != -1:
             self.Log('Into __gotoPostByIndex', self.LogLevel_DEBUG)
-            ErrorCode = self.__gotoPostByIndex(Board, Index)
+            ErrorCode = self.__gotoPostByIndex(Board, Index, TelentConnectIndex)
             if ErrorCode != self.Success:
                 self.Log('getPostInfoByIndex 1 goto post fail', self.LogLevel_DEBUG)
                 return ErrorCode, None
@@ -803,12 +806,12 @@ class Crawler(object):
                 self.Log('Error input: ' + PostID)
                 return self.ErrorInput, None
         
-            ErrorCode = self.__gotoPostByID(Board, PostID)
+            ErrorCode = self.__gotoPostByID(Board, PostID, TelentConnectIndex)
             if ErrorCode != self.Success:
                 self.Log('getPostInfoByID 1 goto post fail', self.LogLevel_DEBUG)
                 return ErrorCode, None
         
-        ErrorCode, Index = self.__readScreen('Q', ['請按任意鍵繼續'])
+        ErrorCode, Index = self.__readScreen(TelentConnectIndex, 'Q', ['請按任意鍵繼續'])
         if ErrorCode == self.WaitTimeout:
             return self.PostDeleted, None
         if ErrorCode != self.Success:
@@ -902,6 +905,14 @@ class Crawler(object):
             if EndIndex < StartIndex:
                 self.Log('EndIndex must bigger than  StartIndex')
                 return self.ErrorInput
+        #Login All
+        self.Log('Multi login mode')
+        
+        for i in range(1, self.__MaxMultiLoing):
+            self.Log('Start connection ' + str(i))
+            self.__connectRemote(True, i)
+        #Login All
+        return 0
         StartIndex = 1
         self.Log('Start crawl ' + Board + ' ' + str(StartIndex) + ' to ' + str(EndIndex))
         
@@ -946,16 +957,16 @@ class Crawler(object):
         
         self.Log(Board + ' crawl complete')
         return self.Success
-    def getPostInfoByIndex(self, Board, Index):
+    def getPostInfoByIndex(self, Board, Index, TelentConnectIndex = 0):
         
-        ErrorCode, Post = self.getPostInfoByID(Board, '', Index)
+        ErrorCode, Post = self.getPostInfoByID(Board, '', Index, TelentConnectIndex)
         
         return ErrorCode, Post
     
-    def getNewPostIndexList(self, Board, LastPostIndex):
+    def getNewPostIndexList(self, Board, LastPostIndex, TelentConnectIndex = 0):
         
         result = []
-        ErrorCode, LastIndex = self.getNewestPostIndex(Board)
+        ErrorCode, LastIndex = self.getNewestPostIndex(Board, TelentConnectIndex)
 
         if ErrorCode != self.Success:
             return result
@@ -967,9 +978,10 @@ class Crawler(object):
                 result.append(IndexTemp)
         return ErrorCode, result
     
-    def pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1):
+    def pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1, TelentConnectIndex = 0):
+    
         for i in range(5):
-            ErrorCode = self.__pushByID(Board, PushType, PushContent, PostID, PostIndex)
+            ErrorCode = self.__pushByID(Board, PushType, PushContent, PostID, PostIndex, TelentConnectIndex)
             if ErrorCode == self.Success:
                 if i != 0:
                     self.Log('pushByID recover Success', self.LogLevel_DEBUG)
@@ -977,11 +989,13 @@ class Crawler(object):
             if ErrorCode == self.NoPermission:
                 break
         return ErrorCode
-    def __pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1):
+    def __pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1, TelentConnectIndex = 0):
         self.__CurrentTimeout = 3
-    
+        
+        TelnetConnectIndex = 0
+        
         if PostIndex != -1:
-            ErrorCode = self.__gotoPostByIndex(Board, PostIndex)
+            ErrorCode = self.__gotoPostByIndex(Board, PostIndex, TelentConnectIndex)
             if ErrorCode != self.Success:
                 self.Log('pushByIndex 1 goto post fail', self.LogLevel_DEBUG)
                 return ErrorCode
@@ -991,7 +1005,7 @@ class Crawler(object):
                 self.Log('pushByID Error input: ' + PostID)
                 return self.ErrorInput
         
-            ErrorCode = self.__gotoPostByID(Board, PostID)
+            ErrorCode = self.__gotoPostByID(Board, PostID, TelentConnectIndex)
             if ErrorCode != self.Success:
                 self.Log('pushByID 1 goto post fail', self.LogLevel_DEBUG)
                 return ErrorCode
@@ -1002,7 +1016,7 @@ class Crawler(object):
         
         while True:
         
-            ErrorCode, Index = self.__readScreen(Message, ['您覺得這篇文章', '加註方式', '禁止快速連續推文', '禁止短時間內大量推文', '使用者不可發言'])
+            ErrorCode, Index = self.__readScreen(TelentConnectIndex, Message, ['您覺得這篇文章', '加註方式', '禁止快速連續推文', '禁止短時間內大量推文', '使用者不可發言'])
             if ErrorCode == self.WaitTimeout:
                 print(self.__ReceiveData)
                 self.Log('No push option')
@@ -1058,18 +1072,18 @@ class Crawler(object):
         else:
             SendMessage = str(PushType) + PushContent + '\ry'
         
-        ErrorCode, Index = self.__sendData(SendMessage, CaseList, True, True)
+        ErrorCode, Index = self.__sendData(TelentConnectIndex, SendMessage, CaseList, True, True)
         if ErrorCode != self.Success:
             self.Log('pushByID 3 error code: ' + str(ErrorCode), self.LogLevel_DEBUG)
             return ErrorCode
 
         return self.Success
-    def pushByIndex(self, Board, PushType, PushContent, PostIndex):
-        ErrorCode = self.pushByID(Board, PushType, PushContent, '', PostIndex)
+    def pushByIndex(self, Board, PushType, PushContent, PostIndex, TelentConnectIndex = 0):
+        ErrorCode = self.pushByID(Board, PushType, PushContent, '', PostIndex, TelentConnectIndex)
         return ErrorCode
-    def mail(self, UserID, MailTitle, MailContent, SignType):
+    def mail(self, UserID, MailTitle, MailContent, SignType, TelentConnectIndex = 0):
     
-        ErrorCode = self.__gotoTop()
+        ErrorCode = self.__gotoTop(TelentConnectIndex)
         if ErrorCode != self.Success:
             print('mail goto top error code 1: ' + str(ErrorCode))
             return ErrorCode
@@ -1078,7 +1092,7 @@ class Crawler(object):
         SendMessage = 'M\rS\r' + UserID
         Enter = True
         while True:
-            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
+            ErrorCode, Index = self.__sendData(TelentConnectIndex, SendMessage, CaseList, Enter)
             if ErrorCode == self.WaitTimeout:
                 self.__showScreen()
                 self.Log('No such user: ' + UserID)
@@ -1109,10 +1123,10 @@ class Crawler(object):
         
         return self.Success
         
-    def giveMoney(self, ID, Money, YourPassword):
+    def giveMoney(self, ID, Money, YourPassword, TelentConnectIndex = 0):
         self.__CurrentTimeout = 3
         
-        ErrorCode = self.__gotoTop()
+        ErrorCode = self.__gotoTop(TelentConnectIndex)
         if ErrorCode != self.Success:
             print('giveMoney goto top error code 1: ' + str(ErrorCode))
             return ErrorCode
@@ -1121,7 +1135,7 @@ class Crawler(object):
         SendMessage = 'P'
         Enter = True
         while True:        
-            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
+            ErrorCode, Index = self.__sendData(TelentConnectIndex, SendMessage, CaseList, Enter)
             if ErrorCode == self.WaitTimeout:
                 self.__showScreen()
                 self.Log('No such option: ' + SendMessage)
@@ -1165,27 +1179,27 @@ class Crawler(object):
                 break
         return self.Success
         
-    def getTime(self):
+    def getTime(self, TelentConnectIndex = 0):
         for i in range(3):
-            ErrorCode, Time = self.__getTime()
+            ErrorCode, Time = self.__getTime(TelentConnectIndex)
             if ErrorCode == self.Success:
                 if i != 0:
                     self.Log('getTime recover Success ' + str(i) + ' times', self.LogLevel_DEBUG)
                 break
         return ErrorCode, Time
-    def __getTime(self):
+    def __getTime(self, TelentConnectIndex = 0):
         self.__CurrentTimeout = 2
         
         #Thanks for ervery one in Python
         
-        ErrorCode = self.__gotoTop()
+        ErrorCode = self.__gotoTop(TelentConnectIndex)
         if ErrorCode != self.Success:
             print('getTime goto top error code 2: ' + str(ErrorCode))
             return ErrorCode, ''
         
         for i in range(3):
             self.__CurrentTimeout = 5
-            ErrorCode, Index = self.__readScreen('A\rqA\rq', ['[呼叫器]'])
+            ErrorCode, Index = self.__readScreen(TelentConnectIndex, 'A\rqA\rq', ['[呼叫器]'])
             if ErrorCode == self.WaitTimeout:
                 self.Log(self.__ReceiveData, self.LogLevel_DEBUG)
                 self.Log('getTime 2.1', self.LogLevel_DEBUG)
@@ -1215,8 +1229,8 @@ class Crawler(object):
 
         return self.Success, result
     
-    def getUserInfo(self, ID):
-        ErrorCode = self.__gotoTop()
+    def getUserInfo(self, ID, TelentConnectIndex = 0):
+        ErrorCode = self.__gotoTop(TelentConnectIndex)
         if ErrorCode != self.Success:
             print('getUserInfo goto top error code 1: ' + str(ErrorCode))
             return ErrorCode, None
@@ -1224,7 +1238,7 @@ class Crawler(object):
         SendMessage = 'T\rQ\r'
         Enter = False
         while True:        
-            ErrorCode, Index = self.__sendData(SendMessage, CaseList, Enter)
+            ErrorCode, Index = self.__sendData(TelentConnectIndex, SendMessage, CaseList, Enter)
             if ErrorCode == self.WaitTimeout:
                 self.__showScreen()
                 self.Log('No such option: ' + SendMessage)
@@ -1245,7 +1259,7 @@ class Crawler(object):
                 
         self.__CurrentTimeout = 3
         
-        ErrorCode, Index = self.__readScreen('', ['請按任意鍵繼續'])
+        ErrorCode, Index = self.__readScreen(TelentConnectIndex, '', ['請按任意鍵繼續'])
         
         if ErrorCode == self.WaitTimeout:
             return self.WaitTimeout, None
