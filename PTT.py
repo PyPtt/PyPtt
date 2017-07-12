@@ -131,12 +131,14 @@ class Crawler(object):
             else:
                 self.__LogLevel = LogLevel
         
-        self.__SleepTime =         0.5
-        self.__DefaultTimeout =      1
-        self.__Timeout =            10
-        self.__CurrentTimeout =      0
+        self.__SleepTime =                   0.5
+        self.__DefaultTimeout =                1
+        self.__Timeout =                      10
+        self.__CurrentTimeout =                0
         
-        self.__Cursor =             '>'
+        self.__Cursor =                      '>'
+        
+        self.__KickTimes =                     0
         
         self.Log('ID: ' + ID)
         TempPW = ''
@@ -195,7 +197,7 @@ class Crawler(object):
                 time.sleep(self.__SleepTime)
                 ReceiveTimes += 1
                 
-                self.__ReceiveData += self.__telnet.read_very_eager().decode('big5', 'ignore')
+                self.__ReceiveData += self.__telnet.read_very_eager().decode('cp950', 'ignore')
                 
                 DataMacthed = False
                 for i in range(len(ExpectTarget)):
@@ -228,6 +230,13 @@ class Crawler(object):
         self.__SleepTime = self.__SleepTime * (ReceiveTimes / 5.0)
         self.__CurrentTimeout = 0
         return ErrorCode, result
+    
+    def __checkState(self):
+        if not self.__isConnected:
+            return False
+        if self.__KickTimes > 5:
+            return False
+        return True
     def __showScreen(self, ExpectTarget=[]):
         self.__readScreen('', ExpectTarget)
         if self.__LogLevel == self.LogLevel_DEBUG:
