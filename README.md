@@ -2,7 +2,8 @@
 
 #### Do you want PTT in Python? import PTT
 
-###### 這是一個專為 PTT 爬蟲開發者所開發的函式庫
+###### 這是一個專為 PTT 開發者所開發的函式庫
+###### 提供完整快速的 PTT 操作
 ###### 根據網路速度動態調整操作速度、斷線自動恢復
 
 範例程式
@@ -11,6 +12,10 @@
 [汪梯推文機器人](https://github.com/Truth0906/WantedPushCrawler)
 
 [五樓機器人](https://github.com/Truth0906/5FloorBot)
+
+[ID追蹤器](https://github.com/mi99202006/IDTracker)
+
+[文章爬蟲](https://github.com/Truth0906/PostCrawler)
 
 Demo
 -------------------
@@ -24,11 +29,7 @@ Demo
 
 版本
 -------------------
-<<<<<<< HEAD
-###### 0.1.170619 beta
-=======
-###### 0.1.170615 beta
->>>>>>> master
+###### 0.2.170710
 
 API
 -------------------

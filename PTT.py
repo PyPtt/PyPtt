@@ -186,6 +186,10 @@ class Crawler(object):
         if ExpectTarget == None:
             ExpectTarget = []
         
+        self.Log('__readScreen: into function', self.LogLevel_DEBUG)
+        if ExpectTarget == None:
+            ExpectTarget = []
+        
         result = -1
         ErrorCode = self.UnknowError
         
