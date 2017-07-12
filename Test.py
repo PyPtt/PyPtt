@@ -251,16 +251,16 @@ if __name__ == '__main__':
         sys.exit()
     #PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
     
-    GetNewestPostIndexDemo()
-    PostDemo()
-    PushDemo()
+    #GetNewestPostIndexDemo()
+    #PostDemo()
+    #PushDemo()
     #GetPostInfoDemo()
     #GetNewPostIndexListDemo()
     #MainDemo()
     #GetTimeDemo()
     #GetUserInfoDemo()
     #GiveMoneyDemo()
-    #CrawlBoardDemo()
+    CrawlBoardDemo()
     PTTCrawler.logout()
     
     
