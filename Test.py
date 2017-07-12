@@ -250,16 +250,17 @@ if __name__ == '__main__':
         PTTCrawler.Log('Login fail')
         sys.exit()
     #PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
-    
-    #GetNewestPostIndexDemo()
-    #PostDemo()
-    #PushDemo()
-    #GetPostInfoDemo()
-    #GetNewPostIndexListDemo()
-    #MainDemo()
-    #GetTimeDemo()
-    #GetUserInfoDemo()
-    #GiveMoneyDemo()
+    '''
+    GetNewestPostIndexDemo()
+    PostDemo()
+    PushDemo()
+    GetPostInfoDemo()
+    GetNewPostIndexListDemo()
+    MainDemo()
+    GetTimeDemo()
+    GetUserInfoDemo()
+    GiveMoneyDemo()
+    '''
     CrawlBoardDemo()
     PTTCrawler.logout()
     

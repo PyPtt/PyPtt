@@ -120,6 +120,10 @@ class Crawler(object):
         self.PushType_Push =                    1
         self.PushType_Boo =                     2
         self.PushType_Arrow =                   3
+        
+        self.__LoginMode_Login =                1
+        self.__LoginMode_Recover =              2
+        self.__LoginMode_MultiLogin =           3
 
         self.LogLevel_DEBUG =                   1
         self.LogLevel_WARNING =                 2
@@ -148,6 +152,7 @@ class Crawler(object):
         self.__MaxMultiLoing =                  4
         
         self.__TelnetConnectList = [None] * self.__MaxMultiLoing
+        self.__TelnetPortList = [443, 3000, 3001, 3002]
         
         self.Log('ID: ' + ID)
         TempPW = ''
@@ -161,7 +166,7 @@ class Crawler(object):
         else :
             self.Log('This connection will NOT kick other login')
         
-        self.__connectRemote(0)
+        self.__connectRemote(0, self.__LoginMode_Login)
         
     def setLogLevel(self, LogLevel):
         if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
@@ -233,11 +238,11 @@ class Crawler(object):
                     break
         except ConnectionResetError:
             PTTUtil.Log('Remote reset connection...')
-            self.__connectRemote(True)
+            self.__connectRemote(0, self.__LoginMode_Recover)
             return self.ConnectResetError, result
         except EOFError:
-            PTTUtil.Log('Remote kick connection...')
-            self.__connectRemote(True)
+            PTTUtil.Log('Remote kick connection....')
+            self.__connectRemote(0, self.__LoginMode_Recover)
             self.__CurrentTimeout = 0
             return self.EOFErrorCode, result
         
@@ -251,8 +256,8 @@ class Crawler(object):
         if self.__KickTimes > 5:
             return False
         return True
-    def __showScreen(self, ExpectTarget=[]):
-        self.__readScreen('', ExpectTarget)
+    def __showScreen(self, ExpectTarget=[], TelnetConnectIndex=0):
+        self.__readScreen(TelnetConnectIndex, '', ExpectTarget)
         if self.__LogLevel == self.LogLevel_DEBUG:
             print(self.__ReceiveData)
     def __sendData(self, TelnetConnectIndex, Message, CaseList=[], Enter=True, Refresh=False):
@@ -286,6 +291,7 @@ class Crawler(object):
         try:
 
             SendMessage = str(Message) + PostFix
+            self.Log('TelnetConnectIndex: ' + str(TelnetConnectIndex), self.LogLevel_DEBUG)
             self.__TelnetConnectList[TelnetConnectIndex].read_very_eager()
             self.__TelnetConnectList[TelnetConnectIndex].write(SendMessage.encode('big5'))
             ReturnIndex = self.__TelnetConnectList[TelnetConnectIndex].expect(CaseList, timeout=self.__Timeout)[0]
@@ -293,12 +299,12 @@ class Crawler(object):
         except EOFError:
             #QQ why kick me
             PTTUtil.Log('Remote kick connection...')
-            self.__connectRemote(True)
+            self.__connectRemote(0, self.__LoginMode_Recover)
             self.__CurrentTimeout = 0
             return self.EOFErrorCode, -1
         except ConnectionResetError:
             PTTUtil.Log('Remote reset connection...')
-            self.__connectRemote(True)
+            self.__connectRemote(0, self.__LoginMode_Recover)
             self.__CurrentTimeout = 0
             return self.ConnectResetError, -1
         
@@ -308,13 +314,26 @@ class Crawler(object):
             return self.WaitTimeout, ReturnIndex
         self.__CurrentTimeout = 0
         return self.Success, ReturnIndex
-    def __connectRemote(self, TelnetConnectIndex, Recovery=False):
+    def __connectRemote(self, TelnetConnectIndex, LoginMode=1):
+        
+        if LoginMode != self.__LoginMode_Login and LoginMode != self.__LoginMode_Recover and LoginMode != self.__LoginMode_MultiLogin:
+            self.Log('Login mode input error')
+            return self.ErrorInput
+        
+        if LoginMode == self.__LoginMode_Recover or LoginMode == self.__LoginMode_MultiLogin:
+            SlientLogin = True
+        else:
+            SlientLogin = False
+        
+        SlientLogin = False
+        
         self.__isConnected = False
         
         while True:
             while True:
                 try:
-                    self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host)
+                    if self.__TelnetConnectList[TelnetConnectIndex] == None:
+                        self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
                     break
                 except ConnectionRefusedError:
                     self.Log('Connect to ' + self.__host + ' fail, retry 1 sec later', self.LogLevel_RELEASE)
@@ -323,11 +342,11 @@ class Crawler(object):
             if ErrorCode != self.Success:
                 return ErrorCode
             if Index == 0:
-                if not Recovery:
-                    self.Log('Connect Success')
+                if not SlientLogin:
+                    self.Log('連接成功')
                 break
             if Index == 1:
-                self.Log('System overload')
+                self.Log('系統過載')
                 time.sleep(2)
             
         CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新']
@@ -337,51 +356,52 @@ class Crawler(object):
         while True:
             ErrorCode, Index = self.__sendData(TelnetConnectIndex, SendMessage, CaseList, Enter)
             if ErrorCode != self.Success:
+                self.__showScreen([], TelnetConnectIndex)
+                self.Log('Error code: ' + str(ErrorCode))
                 return ErrorCode
             if Index == 0:
-                self.Log('Wrong password')
+                self.Log('密碼不對')
                 return self.WrongPassword
             if Index == 1:
                 if self.__kickOtherLogin:
                     SendMessage = 'y'
                     Enter = True
-                    if not Recovery:
-                        self.Log('Detect other login')
-                        self.Log('Kick other login Success')
+                    if not SlientLogin:
+                        self.Log('您想刪除其他重複登入 是')
                 else :
                     SendMessage = 'n'
                     Enter = True
-                    if not Recovery:
-                        self.Log('Detect other login')
+                    if not SlientLogin:
+                        self.Log('您想刪除其他重複登入 否')
             if Index == 2:
                 SendMessage = 'q'
                 Enter = False
-                if not Recovery:
-                    self.Log('Press any key to continue')
+                if not SlientLogin:
+                    self.Log('按任意鍵繼續')
             if Index == 3:
                 SendMessage = 'Y'
                 Enter = True
-                if not Recovery:
-                    self.Log('Delete error password log')
+                if not SlientLogin:
+                    self.Log('您要刪除以上錯誤嘗試 是')
             if Index == 4:
                 SendMessage = 'q'
                 Enter = True
-                if not Recovery:
-                    self.Log('Delete the post not finished')    
+                if not SlientLogin:
+                    self.Log('您有一篇文章尚未完成 不保留')
             if Index == 5:
                 SendMessage = self.__Password
                 Enter = True
-                if not Recovery:
-                    self.Log('Input ID Success')
+                if not SlientLogin:
+                    self.Log('請輸入您的密碼')
             if Index == 6:
-                if not Recovery:
-                    self.Log('Login Success')
+                if not SlientLogin:
+                    self.Log('登入成功')
                 break
             if Index == 7:
                 SendMessage = ''
                 Enter = True
-                if not Recovery:
-                    self.Log('Wait update')
+                if not SlientLogin:
+                    self.Log('正在更新...')
                 time.sleep(1)
         
         ErrorCode, Index = self.__readScreen(TelnetConnectIndex, '', ['> (', '●('])
@@ -394,8 +414,10 @@ class Crawler(object):
         if Index == 1:
             self.__Cursor = '●'
         
-        if Recovery:
+        if LoginMode == self.__LoginMode_Recover:
             self.Log('Recover connection success')
+        if LoginMode == self.__LoginMode_MultiLogin:
+            self.Log('Connect ' + str(TelnetConnectIndex) + ' multi-login success')
         self.__isConnected = True
         '''
         BoardList = ['Wanted', 'Gossiping', 'Test', 'Python']
@@ -428,20 +450,34 @@ class Crawler(object):
         if ErrorCode != self.Success:
             return ErrorCode
         return self.Success
-    def logout(self):
+    def logout(self, TelnetConnectIndex=-1):
         
-        for index in range(self.__MaxMultiLoing):
-            
-            if self.__TelnetConnectList[index] == None:
-                continue
-            
-            ErrorCode = self.__gotoTop(index)
+        if TelnetConnectIndex >-1:
+            if self.__TelnetConnectList[TelnetConnectIndex] == None:
+                return self.Success
+                
+            ErrorCode = self.__gotoTop(TelnetConnectIndex)
             if ErrorCode != self.Success:
                 self.Log('Error code 1: ' + str(ErrorCode), self.LogLevel_DEBUG)
                 return ErrorCode
-            ErrorCode, Index = self.__readScreen(index, 'g\ry\r', ['[按任意鍵繼續]'])
+            ErrorCode, _ = self.__readScreen(TelnetConnectIndex, 'g\ry\r', ['[按任意鍵繼續]'])
             self.__TelnetConnectList[0].close()
-            self.Log('Connection ' + str(index) + ' logout Success')
+            self.Log('Connection ' + str(TelnetConnectIndex) + ' logout Success')
+            self.__TelnetConnectList[TelnetConnectIndex] = None
+        if TelnetConnectIndex == -1:
+            for index in range(self.__MaxMultiLoing):
+                
+                if self.__TelnetConnectList[index] == None:
+                    continue
+                
+                ErrorCode = self.__gotoTop(index)
+                if ErrorCode != self.Success:
+                    self.Log('Error code 1: ' + str(ErrorCode), self.LogLevel_DEBUG)
+                    return ErrorCode
+                ErrorCode, _ = self.__readScreen(index, 'g\ry\r', ['[按任意鍵繼續]'])
+                self.__TelnetConnectList[0].close()
+                self.Log('Connection ' + str(index) + ' logout Success')
+                self.__TelnetConnectList[index] = None
         
         return self.Success
     def __gotoBoard(self, Board, TelentConnectIndex = 0):
@@ -891,7 +927,7 @@ class Crawler(object):
                 continue
             self.Log('Thread ' + str(ThreadIndex) + ': ' + str(Index) + ' ' + RealPostTitle)
         self.Log('Thread ' + str(ThreadIndex) + ' finish', self.LogLevel_DEBUG)
-    def crawlBoard(self, Board, StartIndex=0, EndIndex=0, DefaultThreadNumber=512):
+    def crawlBoard(self, Board, StartIndex=0, EndIndex=0, DefaultThreadNumber=32):
         
         self.Log('Into crawlBoard', self.LogLevel_DEBUG)
         
@@ -909,12 +945,20 @@ class Crawler(object):
             if EndIndex < StartIndex:
                 self.Log('EndIndex must bigger than  StartIndex')
                 return self.ErrorInput
+        #Logout all
+        
+        self.logout()
+        
         #Login All
         self.Log('Multi login mode')
         
-        for i in range(1, self.__MaxMultiLoing):
-            self.Log('Start connection ' + str(i))
-            self.__connectRemote(True, i)
+        for i in range(0, self.__MaxMultiLoing):
+            if i == 0:
+                self.__kickOtherLogin = True
+            self.Log(' i = ' + str(i))
+            while self.__connectRemote(i, self.__LoginMode_MultiLogin) != 0:
+                pass
+            self.__kickOtherLogin = False
         #Login All
         return 0
         StartIndex = 1
