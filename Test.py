@@ -27,10 +27,10 @@ def PostDemo():
         ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTTCrawler.Success:
             PTTCrawler.Log('Post in Test success')
-        elif ErrorCode == NoPermission:
+        elif ErrorCode == PTTCrawler.NoPermission:
             PTTCrawler.Log('發文權限不足')
         else:
-            PTTCrawler.Log('Post in Test fail')                
+            PTTCrawler.Log('Post in Test fail') 
 
 def GetNewestPostIndexDemo():
 
@@ -55,7 +55,7 @@ def GetPostInfoDemo():
         PTTCrawler.Log('Get newest post index fail')
         return False
 
-    for i in range(TryPost):
+    for i in range(TryPost)[::-1]:
         
         ErrorCode, Post = PTTCrawler.getPostInfoByIndex('Wanted', NewestIndex - i)
         if ErrorCode == PTTCrawler.PostDeleted:
@@ -67,21 +67,34 @@ def GetPostInfoDemo():
         if ErrorCode != PTTCrawler.Success:
             PTTCrawler.Log('Get post by index fail')
             return False
-        PTTCrawler.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ' + str(NewestIndex - i) + ' Title: ' + Post.getTitle())
-        '''
+        PTTCrawler.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ')
+
+        PTTCrawler.Log('Post id: ' + Post.getPostID())
+        PTTCrawler.Log('Author: ' + Post.getPostAuthor())
+        PTTCrawler.Log('Date: ' + Post.getPostDate())
+        PTTCrawler.Log('Title: ' + Post.getTitle())
+        PTTCrawler.Log('Money: ' + str(Post.getMoney()))
+        PTTCrawler.Log('Url: ' + Post.getWebUrl())
+        PTTCrawler.Log('Post id: ' + Post.getPostID())
         PTTCrawler.Log('Content: \r\n' + Post.getPostContent())
-        PTTCrawler.Log('-----------------------')
+
         for Push in Post.getPushList():
-            PTTCrawler.Log(str(Push.getPushType()) + '!' + Push.getPushID() + '!' + Push.getPushContent() + '!' + Push.getPushTime())
-            PTTCrawler.Log('-----------------------')
-        continue
-        '''
+            if Push.getPushType() == PTTCrawler.PushType_Push:
+                PushTypeString = '推'
+            elif Push.getPushType() == PTTCrawler.PushType_Boo:
+                PushTypeString = '噓'
+            elif Push.getPushType() == PTTCrawler.PushType_Arrow:
+                PushTypeString = '→'
+                
+            PTTCrawler.Log(PushTypeString + ' ' + Push.getPushID() + ' ' + Push.getPushContent() + ' ' + Push.getPushTime())
+        
         ErrorCode, Post = PTTCrawler.getPostInfoByID('Wanted', Post.getPostID())
         if ErrorCode != PTTCrawler.Success:
             PTTCrawler.Log('Get post by ID fail error code: ' + str(ErrorCode))
             return False
         PTTCrawler.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' Title: ' + Post.getTitle())
         
+        PTTCrawler.Log('-----------------------')
         ################## 文章資訊 Post information ##################
         # getPostID                 文章 ID ex: 1PCBfel1
         # getPostAuthor             作者
@@ -167,9 +180,10 @@ def MainDemo():
 def GiveMoneyDemo():
 
     WhoAreUwantToGiveMoney = 'CodingMan'
+    Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
     
-    for i in range(3):
-        ErrorCode = PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 2, Password)
+    if Donate == 'y' or Donate == '':
+        ErrorCode = PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 10, Password)
         
         if ErrorCode == PTTCrawler.Success:
             PTTCrawler.Log('Give money to ' + WhoAreUwantToGiveMoney + ' success')
@@ -185,6 +199,11 @@ def GetTimeDemo():
             return False
         PTTCrawler.Log('Ptt time: ' + Time + '!')
         time.sleep(1)
+
+def CrawlBoardDemo():
+    
+    PTTCrawler.crawlBoard('Wanted')
+    
 def GetUserInfoDemo():
     
     for IDs in [ID, 'FakeID_____']:
@@ -221,8 +240,7 @@ def GetUserInfoDemo():
         # getLastIP                 上次故鄉
         # getFiveChess              五子棋戰績
         # getChess                  象棋戰績
-        
-         
+    
 if __name__ == '__main__':
     print('Welcome to PTT Crawler Library Demo')
     
@@ -236,12 +254,13 @@ if __name__ == '__main__':
     GetNewestPostIndexDemo()
     PostDemo()
     PushDemo()
-    GetPostInfoDemo()
-    GetNewPostIndexListDemo()
+    #GetPostInfoDemo()
+    #GetNewPostIndexListDemo()
     #MainDemo()
+    #GetTimeDemo()
+    #GetUserInfoDemo()
     #GiveMoneyDemo()
-    GetTimeDemo()
-    GetUserInfoDemo()
+    #CrawlBoardDemo()
     PTTCrawler.logout()
     
     
