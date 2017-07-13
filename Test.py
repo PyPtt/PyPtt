@@ -26,11 +26,11 @@ def PostDemo():
         
         ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTTCrawler.Success:
-            PTTCrawler.Log('Post in Test success')
+            PTTCrawler.Log('在 Test 板發文成功')
         elif ErrorCode == PTTCrawler.NoPermission:
             PTTCrawler.Log('發文權限不足')
         else:
-            PTTCrawler.Log('Post in Test fail') 
+            PTTCrawler.Log('在 Test 板發文失敗') 
 
 def GetNewestPostIndexDemo():
 
@@ -38,9 +38,9 @@ def GetNewestPostIndexDemo():
         for Board in BoardList:
             ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex(Board)
             if ErrorCode == PTTCrawler.Success:
-                PTTCrawler.Log(str(i) + ' Get ' + Board + ' get newest post index success: ' + str(NewestIndex))
+                PTTCrawler.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
             else:
-                PTTCrawler.Log(str(i) + ' Get ' + Board + ' get newest post index fail')
+                PTTCrawler.Log('取得 ' + Board + ' 板最新文章編號失敗')
                 return False
             #time.sleep(1)
 
@@ -48,35 +48,34 @@ def GetPostInfoDemo():
 
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
     if ErrorCode != PTTCrawler.Success:
-        PTTCrawler.Log('Get newest post index fail')
+        PTTCrawler.Log('取得最新文章編號失敗')
         return False
     TryPost = 3
     if NewestIndex == -1:
-        PTTCrawler.Log('Get newest post index fail')
+        PTTCrawler.Log('取得最新文章編號失敗')
         return False
 
     for i in range(TryPost)[::-1]:
         
         ErrorCode, Post = PTTCrawler.getPostInfoByIndex('Wanted', NewestIndex - i)
         if ErrorCode == PTTCrawler.PostDeleted:
-            PTTCrawler.Log('Post has been deleted')
+            PTTCrawler.Log('文章已經被刪除')
             continue
         if ErrorCode == PTTCrawler.WebFormatError:
-            PTTCrawler.Log('Web structure error')
+            PTTCrawler.Log('網頁結構錯誤')
             continue
         if ErrorCode != PTTCrawler.Success:
-            PTTCrawler.Log('Get post by index fail')
+            PTTCrawler.Log('使用文章編號取得文章詳細資訊失敗: ' + str(ErrorCode))
             return False
         PTTCrawler.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ')
 
-        PTTCrawler.Log('Post id: ' + Post.getPostID())
-        PTTCrawler.Log('Author: ' + Post.getPostAuthor())
-        PTTCrawler.Log('Date: ' + Post.getPostDate())
-        PTTCrawler.Log('Title: ' + Post.getTitle())
-        PTTCrawler.Log('Money: ' + str(Post.getMoney()))
-        PTTCrawler.Log('Url: ' + Post.getWebUrl())
-        PTTCrawler.Log('Post id: ' + Post.getPostID())
-        PTTCrawler.Log('Content: \r\n' + Post.getPostContent())
+        PTTCrawler.Log('文章代碼: ' + Post.getPostID())
+        PTTCrawler.Log('作者: ' + Post.getPostAuthor())
+        PTTCrawler.Log('時間: ' + Post.getPostDate())
+        PTTCrawler.Log('標題: ' + Post.getTitle())
+        PTTCrawler.Log('價錢: ' + str(Post.getMoney()))
+        PTTCrawler.Log('網址: ' + Post.getWebUrl())
+        PTTCrawler.Log('內文: \r\n' + Post.getPostContent())
 
         for Push in Post.getPushList():
             if Push.getPushType() == PTTCrawler.PushType_Push:
@@ -90,9 +89,9 @@ def GetPostInfoDemo():
         
         ErrorCode, Post = PTTCrawler.getPostInfoByID('Wanted', Post.getPostID())
         if ErrorCode != PTTCrawler.Success:
-            PTTCrawler.Log('Get post by ID fail error code: ' + str(ErrorCode))
+            PTTCrawler.Log('使用文章代碼取得文章詳細資訊失敗: ' + str(ErrorCode))
             return False
-        PTTCrawler.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' Title: ' + Post.getTitle())
+        PTTCrawler.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' 標題: ' + Post.getTitle())
         
         PTTCrawler.Log('-----------------------')
         ################## 文章資訊 Post information ##################
@@ -126,57 +125,57 @@ def GetNewPostIndexListDemo():
             return False
         if not len(LastIndexList) == 0:
             for NewPostIndex in LastIndexList:
-                PTTCrawler.Log('Detected new post: ' + str(NewPostIndex))
+                PTTCrawler.Log('偵測到新文章編號 ' + str(NewPostIndex))
             LastIndex = LastIndexList.pop()
 def PushDemo():
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Test')
     if ErrorCode != PTTCrawler.Success:
-        PTTCrawler.Log('getNewestPostIndex ErrorCode: ' + str(ErrorCode))
+        PTTCrawler.Log('取得最新文章編號失敗: ' + str(ErrorCode))
         return False
     PTTCrawler.Log('NewestIndex: ' + str(NewestIndex))
     for i in range(10):
         ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 1', NewestIndex)
         if ErrorCode == PTTCrawler.Success:
-            PTTCrawler.Log('pushByIndex Push success')
+            PTTCrawler.Log('使用文章編號: 推文成功')
         elif ErrorCode == PTTCrawler.ErrorInput:
-            PTTCrawler.Log('pushByIndex wrong input')
+            PTTCrawler.Log('使用文章編號: 參數錯誤')
             return False
         elif ErrorCode == PTTCrawler.NoPermission:
-            PTTCrawler.Log('pushByIndex 無發文權限')
+            PTTCrawler.Log('使用文章編號: 無發文權限')
             return False
         else:
-            PTTCrawler.Log('pushByIndex Push fail')
+            PTTCrawler.Log('使用文章編號: 推文失敗')
             return False
             
     ErrorCode, NewPost = PTTCrawler.getPostInfoByIndex('Test', NewestIndex)
     if ErrorCode != PTTCrawler.Success:
-        PTTCrawler.Log('getPostInfoByIndex ErrorCode: ' + str(ErrorCode))
+        PTTCrawler.Log('取得最新文章編號失敗: ' + str(ErrorCode))
         return False
     if NewPost == None:
-        PTTCrawler.Log('getPostInfoByIndex fail')
+        PTTCrawler.Log('取得最新文章編號失敗')
         return False
     for i in range(10):
         
         ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 2', NewPost.getPostID())
         if ErrorCode == PTTCrawler.Success:
-            PTTCrawler.Log('pushByID Push success')
+            PTTCrawler.Log('使用文章代碼: 推文成功')
         elif ErrorCode == PTTCrawler.ErrorInput:
-            PTTCrawler.Log('pushByID wrong input')
+            PTTCrawler.Log('使用文章代碼: 參數錯誤')
             return False
         elif ErrorCode == PTTCrawler.NoPermission:
-            PTTCrawler.Log('pushByID 無發文權限')
+            PTTCrawler.Log('使用文章代碼: 無發文權限')
             return False
         else:
-            PTTCrawler.Log('pushByID Push fail')
+            PTTCrawler.Log('使用文章代碼: 推文失敗')
             return False
 def MainDemo():
     #0 不加簽名檔
     for i in range(1):
         ErrorCode = PTTCrawler.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ', 0)
         if ErrorCode == PTTCrawler.Success:
-            PTTCrawler.Log('Mail to ' + ID + ' success')
+            PTTCrawler.Log('寄信給 ' + ID + ' 成功')
         else:
-            PTTCrawler.Log('Mail to ' + ID + ' fail')
+            PTTCrawler.Log('寄信給 ' + ID + ' 失敗')
 def GiveMoneyDemo():
 
     WhoAreUwantToGiveMoney = 'CodingMan'
@@ -186,16 +185,16 @@ def GiveMoneyDemo():
         ErrorCode = PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 10, Password)
         
         if ErrorCode == PTTCrawler.Success:
-            PTTCrawler.Log('Give money to ' + WhoAreUwantToGiveMoney + ' success')
+            PTTCrawler.Log('送P幣給 ' + WhoAreUwantToGiveMoney + ' 成功')
         else:
-            PTTCrawler.Log('Give money to ' + WhoAreUwantToGiveMoney + ' fail')
+            PTTCrawler.Log('送P幣給 ' + WhoAreUwantToGiveMoney + ' 失敗')
 
 def GetTimeDemo():
 
     for i in range(3):
         ErrorCode, Time = PTTCrawler.getTime()
         if ErrorCode != PTTCrawler.Success:
-            PTTCrawler.Log('Get time error')
+            PTTCrawler.Log('取得時間失敗')
             return False
         PTTCrawler.Log('Ptt time: ' + Time + '!')
         time.sleep(1)
@@ -218,16 +217,16 @@ def GetUserInfoDemo():
             PTTCrawler.Log('getUserInfo fail error code: ' + str(ErrorCode))
             continue
         
-        PTTCrawler.Log('UserID: ' + UserInfo.getID())
-        PTTCrawler.Log('UserMoney: ' + str(UserInfo.getMoney()))
-        PTTCrawler.Log('UserLoginTime: ' + str(UserInfo.getLoginTime()))
-        PTTCrawler.Log('UserPost: ' + str(UserInfo.getPost()))
-        PTTCrawler.Log('UserState: ' + UserInfo.getState() + '!')
-        PTTCrawler.Log('UserMail: ' + UserInfo.getMail() + '!')
-        PTTCrawler.Log('UserLastLogin: ' + UserInfo.getLastLogin() + '!')
-        PTTCrawler.Log('UserLastIP: ' + UserInfo.getLastIP() + '!')
-        PTTCrawler.Log('UserFiveChess: ' + UserInfo.getFiveChess() + '!')
-        PTTCrawler.Log('UserChess: ' + UserInfo.getChess() + '!')
+        PTTCrawler.Log('使用者ID: ' + UserInfo.getID())
+        PTTCrawler.Log('使用者經濟狀況: ' + str(UserInfo.getMoney()))
+        PTTCrawler.Log('登入次數: ' + str(UserInfo.getLoginTime()))
+        PTTCrawler.Log('有效文章數: ' + str(UserInfo.getPost()))
+        PTTCrawler.Log('目前動態: ' + UserInfo.getState() + '!')
+        PTTCrawler.Log('信箱狀態: ' + UserInfo.getMail() + '!')
+        PTTCrawler.Log('最後登入時間: ' + UserInfo.getLastLogin() + '!')
+        PTTCrawler.Log('上次故鄉: ' + UserInfo.getLastIP() + '!')
+        PTTCrawler.Log('五子棋戰績: ' + UserInfo.getFiveChess() + '!')
+        PTTCrawler.Log('象棋戰績: ' + UserInfo.getChess() + '!')
         
         ################## 使用者資訊 User information ##################
         # getID                     ID
@@ -244,12 +243,13 @@ def GetUserInfoDemo():
 if __name__ == '__main__':
     print('Welcome to PTT Crawler Library Demo')
     
-    KickOtherLogin = False
+    KickOtherLogin = True
     PTTCrawler = PTT.Crawler(ID, Password, KickOtherLogin)
     if not PTTCrawler.isLoginSuccess():
-        PTTCrawler.Log('Login fail')
+        PTTCrawler.Log('登入失敗')
         sys.exit()
-    #PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
+    PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
+    
     '''
     GetNewestPostIndexDemo()
     PostDemo()
@@ -262,6 +262,7 @@ if __name__ == '__main__':
     GiveMoneyDemo()
     '''
     CrawlBoardDemo()
-    PTTCrawler.logout()
+    
+    #PTTCrawler.logout()
     
     
