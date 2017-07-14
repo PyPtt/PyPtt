@@ -5,6 +5,7 @@
 ###### 這是一個專為 PTT 開發者所開發的函式庫
 ###### 提供完整快速的 PTT 操作
 ###### 根據網路速度動態調整操作速度、斷線自動恢復
+###### 如有功能未能詳盡 歡迎來信告知
 
 範例程式
 -------------------
@@ -16,6 +17,8 @@
 [ID追蹤器](https://github.com/mi99202006/IDTracker)
 
 [文章爬蟲](https://github.com/Truth0906/PostCrawler)
+
+[準點報時機器人](https://github.com/Truth0906/ReportTimeBot)
 
 Demo
 -------------------
@@ -29,7 +32,7 @@ Demo
 
 版本
 -------------------
-###### 0.2.170710
+###### 0.3.170714
 
 API
 -------------------
@@ -46,5 +49,7 @@ API
 ###### giveMoney 給予使用者 P幣
 ###### getTime 取得 PTT 系統時間
 ###### getUserInfo 取得該使用者資訊
+###### crawlBoard 多線程爬蟲 以多重登入增加爬蟲速度
+###### getVersion 取得版本資訊
 
 ![alt text](http://i.imgur.com/XT9LadL.png)
