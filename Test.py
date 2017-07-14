@@ -248,7 +248,7 @@ if __name__ == '__main__':
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('登入失敗')
         sys.exit()
-    PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
+    #PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
     
     '''
     GetNewestPostIndexDemo()
@@ -263,6 +263,6 @@ if __name__ == '__main__':
     '''
     CrawlBoardDemo()
     
-    #PTTCrawler.logout()
+    PTTCrawler.logout()
     
     
