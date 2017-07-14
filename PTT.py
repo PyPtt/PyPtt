@@ -92,7 +92,9 @@ class PostInformation(object):
     
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
- 
+    
+        self.__Version = '0.3.170714'
+    
         self.__host = 'ptt.cc'
         self.__ID = ID
         self.__Password = Password
@@ -142,7 +144,7 @@ class Crawler(object):
         
         self.__KickTimes =                      0
         
-        self.__MaxMultiLogin =                  4
+        self.__MaxMultiLogin =                  3
         
         self.__TelnetConnectList = [None] * self.__MaxMultiLogin
         self.__TelnetPortList = [23, 23, 23, 23]
@@ -154,7 +156,13 @@ class Crawler(object):
         
         self.__CrawPool = []
         
-        self.Log('ID: ' + ID)
+        self.Log('歡迎訊息\r\n' + 
+        '感謝您使用本 PTT 函式庫，此函式庫提供您各式 PTT 操作功能\r\n\r\n' + 
+        '使用方式簡單、開發快速，能滿足您最嚴苛的需求。\r\n\r\n' + 
+        '如有功能未能滿足您的需求時，歡迎來信告知。\r\n\r\n' + 
+        '作者 CodingMan\r\n')
+        
+        self.Log('使用者帳號: ' + ID)
         TempPW = ''
 
         for i in range(len(Password)):
@@ -233,12 +241,12 @@ class Crawler(object):
                     ErrorCode = self.WaitTimeout
                     break
         except ConnectionResetError:
-            PTTUtil.Log('連線 ' + str(TelnetConnectIndex) + ' 被遠端主機重設')
+            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設')
             if self.__isConnected[TelnetConnectIndex]:
                 self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             return self.ConnectResetError, result
         except EOFError:
-            PTTUtil.Log('連線 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除')
+            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除')
             if self.__isConnected[TelnetConnectIndex]:
                 self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             self.__CurrentTimeout[TelnetConnectIndex] = 0
@@ -295,20 +303,20 @@ class Crawler(object):
 
         except EOFError:
             #QQ why kick me
-            PTTUtil.Log('連線 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除')
+            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除')
             if self.__isConnected[TelnetConnectIndex]:
                 self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             self.__CurrentTimeout[TelnetConnectIndex] = 0
             return self.EOFErrorCode, -1
         except ConnectionResetError:
-            PTTUtil.Log('連線 ' + str(TelnetConnectIndex) + ' 被遠端主機重設')
+            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設')
             if self.__isConnected[TelnetConnectIndex]:
                 self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             self.__CurrentTimeout[TelnetConnectIndex] = 0
             return self.ConnectResetError, -1
             
         if ReturnIndex == -1:
-            PTTUtil.Log('連線 ' + str(TelnetConnectIndex) + ' 傳送資料超時')
+            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 傳送資料超時')
             self.__CurrentTimeout[TelnetConnectIndex] = 0
             return self.WaitTimeout, ReturnIndex
         self.__CurrentTimeout[TelnetConnectIndex] = 0
@@ -330,7 +338,7 @@ class Crawler(object):
             while True:
                 try:
                     if self.__TelnetConnectList[TelnetConnectIndex] == None:
-                        self.Log('連線 ' + str(TelnetConnectIndex) + ' 啟動')
+                        self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 啟動')
                         self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
                     break
                 except ConnectionRefusedError:
@@ -423,7 +431,7 @@ class Crawler(object):
         if LoginMode == self.__LoginMode_Recover:
             self.Log('恢復連線成功')
         if LoginMode == self.__LoginMode_MultiLogin:
-            self.Log('連線 ' + str(TelnetConnectIndex) + ' 登入成功')
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 登入成功')
         
         self.__isConnected[TelnetConnectIndex] = True
         return self.Success
@@ -463,7 +471,7 @@ class Crawler(object):
                 return ErrorCode
             ErrorCode, _ = self.__readScreen(TelnetConnectIndex, 'g\ry\r', ['[按任意鍵繼續]'])
             self.__TelnetConnectList[0].close()
-            self.Log('連線 ' + str(TelnetConnectIndex) + ' 登出成功')
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 登出成功')
             self.__TelnetConnectList[TelnetConnectIndex] = None
             
         if TelnetConnectIndex == -1:
@@ -938,7 +946,7 @@ class Crawler(object):
     
     def crawlFindUrlThread(self, Board, StartIndex , EndIndex, TelnetConnectIndex):
         
-        self.Log('連線 ' + str(TelnetConnectIndex) + ' 開始取得編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 網址')
+        self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 開始取得編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 網址')
         
         for Index in range(StartIndex, EndIndex + 1):
         
@@ -947,17 +955,17 @@ class Crawler(object):
                 ErrorCode = self.__gotoPostByIndex(Board, Index, TelnetConnectIndex)
                 
                 if ErrorCode != self.Success:
-                    self.Log('連線 ' + str(TelnetConnectIndex) + ' crawlFindUrlThread 1 goto post fail', self.LogLevel_DEBUG)
+                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' crawlFindUrlThread 1 goto post fail', self.LogLevel_DEBUG)
                     continue
                 
                 ErrorCode, ScreenIndex = self.__readScreen(TelnetConnectIndex, 'Q', ['請按任意鍵繼續'])
 
                 if ErrorCode == self.WaitTimeout:
-                    #self.Log('連線 ' + str(TelnetConnectIndex) + ' ' + self.__ReceiveData[TelnetConnectIndex], self.LogLevel_DEBUG)
-                    self.Log('連線 ' + str(TelnetConnectIndex) + ' 讀取畫面超時', self.LogLevel_DEBUG)
+                    #self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' ' + self.__ReceiveData[TelnetConnectIndex], self.LogLevel_DEBUG)
+                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 讀取畫面超時', self.LogLevel_DEBUG)
                     continue
                 if ErrorCode != self.Success:
-                    self.Log('連線 ' + str(TelnetConnectIndex) + ' crawlFindUrlThread 3 __readScreen error: ' + str(ErrorCode), self.LogLevel_DEBUG)
+                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' crawlFindUrlThread 3 __readScreen error: ' + str(ErrorCode), self.LogLevel_DEBUG)
                     break
                 isSuccess = True
                 break
@@ -972,10 +980,10 @@ class Crawler(object):
             if RealWebUrl != '':
                 # Get RealWebUrl!!!
                 self.Log(str(len(self.__CrawPool)))
-                #self.Log('連線 ' + str(TelnetConnectIndex) + ' : ' + RealWebUrl)
+                #self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' : ' + RealWebUrl)
                 self.__CrawPool.append((Index, RealWebUrl))
         
-        self.Log('連線 ' + str(TelnetConnectIndex) + ' 結束')
+        self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 結束')
         if TelnetConnectIndex != 0:
             self.logout(TelnetConnectIndex)
         self.__ThreadCount -= 1
@@ -1114,9 +1122,7 @@ class Crawler(object):
             if ErrorCode != self.Success:
                 self.Log('pushByID 1 goto post fail', self.LogLevel_DEBUG)
                 return ErrorCode
-        
-        #CaseList = ['您覺得這篇文章', '加註方式', '禁止快速連續推文']
-        
+
         Message = 'X'
         
         while True:
@@ -1462,7 +1468,13 @@ class Crawler(object):
         result = UserInformation(UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess)
         
         return self.Success, result
+        
+    def readPostFile(self, FileName):
+        
+        return PTTUtil.readPostFile(FileName)
+    def getVersion(self):
+        return self.__Version
 if __name__ == '__main__':
 
-    print('PTT Crawler Library v 0.2.170622 beta')
-    print('PTT CodingMan')
+    print('PTT Library v ' + self.__Version)
+    print('作者: CodingMan')
