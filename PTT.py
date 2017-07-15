@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import PTTUtil
 import threading
+import progressbar
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -766,18 +767,28 @@ class Crawler(object):
     def __getPostinfoByUrl(self, WebUrl):
     
         self.Log('__getPostinfoByUrl: requests get', self.LogLevel_DEBUG)
+        isTimeout = False
         for i in range(5):
             try:
                 res = requests.get(
                     url = WebUrl,
                     cookies={'over18': '1'},
-                    timeout=3
+                    timeout=5
                 )
+                isTimeout = False
                 break
             except requests.exceptions.Timeout:
-                self.Log('__getPostinfoByUrl: requests time out', self.LogLevel_DEBUG)
+                #self.Log('__getPostinfoByUrl: requests time out', self.LogLevel_DEBUG)
+                #self.Log('__getPostinfoByUrl: requests time out', self.LogLevel_DEBUG)
+                isTimeout = True
             except requests.exceptions.ConnectionError:
+                #self.Log('__getPostinfoByUrl: requests conect error', self.LogLevel_DEBUG)
                 self.Log('__getPostinfoByUrl: requests conect error', self.LogLevel_DEBUG)
+        
+        if isTimeout:
+            self.Log('__getPostinfoByUr2: requests time out', self.LogLevel_DEBUG)
+            return self.WaitTimeout, '', '', '', '', None, ''
+            
         soup =  BeautifulSoup(res.text, 'html.parser')
         main_content = soup.find(id='main-content')
         
@@ -848,6 +859,37 @@ class Crawler(object):
                 RealPostContent += ContentLine + '\r'
         
         return self.Success, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, res.text
+    
+    def __parsePost(self, TelnetConnectIndex = 0):
+        RealPostID = ''
+        RealWebUrl = ''
+        RealMoney = -1
+        ErrorCode = self.Success
+        
+        if '#' in self.__ReceiveData[TelnetConnectIndex]:
+            RealPostID = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('#') + 1:]
+            RealPostID = RealPostID[:RealPostID.find(' ')]
+        else:
+            self.Log('解析文章代碼失敗', self.LogLevel_DEBUG)
+            ErrorCode = self.ParseError
+            
+        if 'https' in self.__ReceiveData[TelnetConnectIndex]:
+            RealWebUrl = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('https'):self.__ReceiveData[TelnetConnectIndex].find('.html') + 5]
+        else:
+            self.Log('解析文章網址失敗', self.LogLevel_DEBUG)
+            ErrorCode = self.ParseError
+            
+        if '這一篇文章值' in self.__ReceiveData[TelnetConnectIndex]:
+            RealMoneyTemp = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('這一篇文章值') + len('這一篇文章值') : self.__ReceiveData[TelnetConnectIndex].find('Ptt幣')]
+            RealMoney = int(re.search(r'\d+', RealMoneyTemp).group())
+        else:
+            self.Log('解析文章價錢失敗', self.LogLevel_DEBUG)
+            ErrorCode = self.ParseError
+        
+        if ErrorCode != self.Success:
+            return ErrorCode, RealPostID, RealMoney, RealWebUrl
+            
+        return self.Success, RealPostID, RealMoney, RealWebUrl
     def __getPostInfoByID(self, Board, PostID, Index=-1, TelnetConnectIndex = 0):
         self.Log('Into __getPostInfoByID', self.LogLevel_DEBUG)
         if Index != -1:
@@ -874,53 +916,14 @@ class Crawler(object):
             self.Log('getPostInfoByID 3 read screen error: ' + str(ErrorCode), self.LogLevel_DEBUG)
             return ErrorCode, None
         
-        if Index == 0:
-            #Get query screen self.Success
-            pass
-
-        RealPostID = ''
-        RealWebUrl = ''
-        RealMoney = -1
-        
-        if Index == -1:
-            RealPostID = PostID
-            
-        else:
-            if '#' in self.__ReceiveData[TelnetConnectIndex]:
-                RealPostID = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('#') + 1:]
-                RealPostID = RealPostID[:RealPostID.find(' ')]
-            else:
-                self.Log('解析文章代碼失敗')
-                return self.ParseError, None
-        
-        if 'https' in self.__ReceiveData[TelnetConnectIndex]:
-            RealWebUrl = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('https'):self.__ReceiveData[TelnetConnectIndex].find('.html') + 5]
-        else:
-            self.Log('解析文章網址失敗')
-            return self.ParseError, None
-        
-        if '這一篇文章值' in self.__ReceiveData[TelnetConnectIndex]:
-            RealMoneyTemp = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('這一篇文章值') + len('這一篇文章值') : self.__ReceiveData[TelnetConnectIndex].find('Ptt幣')]
-            RealMoney = int(re.search(r'\d+', RealMoneyTemp).group())
-        else:
-            self.Log('解析文章價錢失敗')
-            return self.ParseError, None
-        '''
-        print('RealWebUrl ' + RealWebUrl)
-        print('RealPostID ' + RealPostID)
-        print('RealMoney ' + str(RealMoney))
-        '''
+        ErrorCode, RealPostID, RealMoney, RealWebUrl = self.__parsePost(TelnetConnectIndex)
         
         ErrorCode, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, OriginalText = self.__getPostinfoByUrl(RealWebUrl)
+        
         if ErrorCode != self.Success:
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 取得文章失敗')
             return ErrorCode, None
-        #######################
-        '''
-        print('RealPostTitle ' + RealPostTitle)
-        print('RealPostAuthor ' + RealPostAuthor)
-        print('RealPostDate ' + RealPostDate)
-        print('RealPostContent ' + RealPostContent)
-        '''
+        
         result = PostInformation(Board, RealPostID, RealPostAuthor, RealPostDate, RealPostTitle, RealWebUrl, RealMoney, RealPostContent, RealPushList, OriginalText)
         
         return self.Success, result
@@ -929,66 +932,96 @@ class Crawler(object):
         
         self.Log('線程 ' + str(ThreadIndex) + ' 啟動', self.LogLevel_DEBUG)
         
-        while self.__ThreadRunning:
-            if len(self.__CrawPool) == 0:
-                time.sleep(0.97)
-                continue
-            Index, WebUrl = self.__CrawPool.pop()
-            self.Log('Thread ' + str(ThreadIndex) + ': ' + str(Index) + ' ' + WebUrl, self.LogLevel_DEBUG)
+        while True:
             
-            ErrorCode, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, OriginalText = self.__getPostinfoByUrl(WebUrl)
+            if self.__ConnectCount == 0:
+                if len(self.__CrawPool) == 0:
+                    break
+            
+            self.__CrawPoolLock.acquire()
+            if len(self.__CrawPool) == 0:
+                self.__CrawPoolLock.release()
+                time.sleep(0.1)
+                continue
+                
+            Index, RealPostID, RealMoney, RealWebUrl = self.__CrawPool.pop()
+            self.__CrawPoolLock.release()
+            
+            self.Log('線程 ' + str(ThreadIndex) + ' 取得編號 ' + str(Index) + ' ' + RealWebUrl, self.LogLevel_DEBUG)
+            
+            ErrorCode, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, OriginalText = self.__getPostinfoByUrl(RealWebUrl)
+            
+            if ErrorCode == self.WaitTimeout:
+                #表示太多 thread 惹
+                self.Log('線程 ' + str(ThreadIndex) + ' 被丟棄')
+                self.__CrawPool.append((Index, RealPostID, RealMoney, RealWebUrl))
+                break
             
             if ErrorCode != self.Success:
-                #self.Log()
+                self.Log('線程 ' + str(ThreadIndex) + ' 取得文章失敗', self.LogLevel_DEBUG)
+                self.__ProgressBarCount += 1
+                self.__ProgressBar.update(self.__ProgressBarCount)
                 continue
-            self.Log('線程 ' + str(ThreadIndex) + ' : ' + str(Index) + ' ' + RealPostTitle)
+            #Find post
+            
+            Post = PostInformation(Board, RealPostID, RealPostAuthor, RealPostDate, RealPostTitle, RealWebUrl, RealMoney, RealPostContent, RealPushList, OriginalText)
+            
+            self.__ProgressBarCount += 1
+            self.__ProgressBar.update(self.__ProgressBarCount)
+            self.__CrawlBoardResult.append(Post)
+            
         self.Log('線程 ' + str(ThreadIndex) + ' 結束', self.LogLevel_DEBUG)
     
     def crawlFindUrlThread(self, Board, StartIndex , EndIndex, TelnetConnectIndex):
         
-        self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 開始取得編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 網址')
+        self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 開始取得編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 文章網址')
         
         for Index in range(StartIndex, EndIndex + 1):
         
             isSuccess = False
+            FailReason = ''
             for i in range(3):
                 ErrorCode = self.__gotoPostByIndex(Board, Index, TelnetConnectIndex)
                 
                 if ErrorCode != self.Success:
-                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' crawlFindUrlThread 1 goto post fail', self.LogLevel_DEBUG)
+                    FailReason = '連線頻道 ' + str(TelnetConnectIndex) + ' crawlFindUrlThread 1 goto post fail'
                     continue
                 
                 ErrorCode, ScreenIndex = self.__readScreen(TelnetConnectIndex, 'Q', ['請按任意鍵繼續'])
 
                 if ErrorCode == self.WaitTimeout:
-                    #self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' ' + self.__ReceiveData[TelnetConnectIndex], self.LogLevel_DEBUG)
-                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 讀取畫面超時', self.LogLevel_DEBUG)
+                    FailReason = '連線頻道 ' + str(TelnetConnectIndex) + ' 讀取畫面超時'
                     continue
                 if ErrorCode != self.Success:
-                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' crawlFindUrlThread 3 __readScreen error: ' + str(ErrorCode), self.LogLevel_DEBUG)
+                    FailReason = '連線頻道 ' + str(TelnetConnectIndex) + ' crawlFindUrlThread 3 __readScreen error: ' + str(ErrorCode)
                     break
+                    
+                ErrorCode, RealPostID, RealMoney, RealWebUrl = self.__parsePost(TelnetConnectIndex)
+                if ErrorCode != self.Success:
+                    FailReason = '連線頻道 ' + str(TelnetConnectIndex) + ' 解析文章失敗'
+                    continue
+                    
                 isSuccess = True
                 break
             
             if not isSuccess:
+                self.Log(FailReason, self.LogLevel_DEBUG)
                 continue
-            RealWebUrl = ''
-            
-            if 'https' in self.__ReceiveData[TelnetConnectIndex]:
-                RealWebUrl = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('https'):self.__ReceiveData[TelnetConnectIndex].find('.html') + 5]
-            
+                
             if RealWebUrl != '':
                 # Get RealWebUrl!!!
-                self.Log(str(len(self.__CrawPool)))
+                #self.Log(str(len(self.__CrawPool)))
                 #self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' : ' + RealWebUrl)
-                self.__CrawPool.append((Index, RealWebUrl))
-        
+                self.__CrawPool.append((Index, RealPostID, RealMoney, RealWebUrl))
+                
         self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 結束')
         if TelnetConnectIndex != 0:
             self.logout(TelnetConnectIndex)
         self.__ThreadCount -= 1
         
-    def crawlBoard(self, Board, StartIndex=0, EndIndex=0, DefaultThreadNumber=64):
+    def crawlBoard(self, Board, StartIndex=0, EndIndex=0):
+    
+        DefaultThreadNumber = 64
         
         self.Log('Into crawlBoard', self.LogLevel_DEBUG)
         
@@ -1006,8 +1039,13 @@ class Crawler(object):
         if EndIndex < StartIndex:
             self.Log('文章編號範圍錯誤: ' + str(StartIndex) + ' 到 ' + str(EndIndex))
             return self.ErrorInput
-            
+        
+        self.__CrawlBoardResult = []
         ConnectList = [0]
+        self.__CrawPoolLock = threading.Lock()
+        
+        self.__ProgressBar = progressbar.ProgressBar(max_value=(EndIndex - StartIndex + 1))
+        self.__ProgressBarCount = 0
         
         self.__ThreadLock = None
         
@@ -1028,8 +1066,6 @@ class Crawler(object):
         StartIndex = 1
         self.Log('開始爬行 ' + Board + ' 板編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 的文章')
 
-        self.__ThreadRunning = True
-        
         ThreadUnit = int((EndIndex - StartIndex) / len(ConnectList) + 0.5)
         
         self.Log('總共 ' + str(EndIndex - StartIndex + 1) + ' 篇文章')
@@ -1067,10 +1103,13 @@ class Crawler(object):
         for TelnetConnectIndex in range(DefaultThreadNumber):
             threading.Thread(target = self.crawlSaveThread, args = (TelnetConnectIndex, Board)).start()
 
-        while self.__ConnectCount != 0 or len(self.__CrawPool) != 0:
+        while True:
+            if self.__ConnectCount == 0:
+                if len(self.__CrawPool) == 0:
+                    break
             time.sleep(1)
         
-        self.Log(Board + ' crawl complete')
+        self.Log(Board + ' 爬行完畢')
         return self.Success
     def getPostInfoByIndex(self, Board, Index, TelnetConnectIndex = 0):
         
