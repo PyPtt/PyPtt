@@ -199,6 +199,8 @@ def GetTimeDemo():
         PTTCrawler.Log('Ptt time: ' + Time + '!')
         time.sleep(1)
 
+def PostHander():
+    pass
 def CrawlBoardDemo():
     
     PTTCrawler.crawlBoard('Wanted')
@@ -263,6 +265,6 @@ if __name__ == '__main__':
     '''
     CrawlBoardDemo()
     
-    PTTCrawler.logout()
+    #PTTCrawler.logout()
     
     
