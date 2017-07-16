@@ -158,11 +158,11 @@ class Crawler(object):
         
         self.__CrawPool = []
         
-        self.Log('歡迎訊息\r\n' + 
-        '感謝您使用本 PTT 函式庫，此函式庫提供您各式 PTT 操作功能\r\n\r\n' + 
+        self.Log('歡迎使用 PTT Crawler Library v ' + self.__Version + '\r\n' + 
+        '本函式庫提供您各式 PTT 操作功能\r\n\r\n' + 
         '使用方式簡單、開發快速，滿足您最嚴苛的需求。\r\n\r\n' + 
         '如有功能未能滿足您的需求時，歡迎來信告知。\r\n\r\n' + 
-        '作者 CodingMan\r\n')
+        'CodingMan\r\n')
         
         self.Log('使用者帳號: ' + ID)
         TempPW = ''
