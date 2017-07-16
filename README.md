@@ -56,4 +56,4 @@ API
 ###### crawlBoard 多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式
 ###### getVersion 取得版本資訊
 
-![alt text](http://i.imgur.com/SDnb7QM.png)
+![alt text](http://i.imgur.com/nkyH9fG.png)
