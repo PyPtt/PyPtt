@@ -36,7 +36,7 @@ Demo
 
 版本
 -------------------
-###### 0.3.170714
+###### 0.3.170716
 
 API
 -------------------
@@ -53,7 +53,7 @@ API
 ###### giveMoney 給予使用者 P幣
 ###### getTime 取得 PTT 系統時間
 ###### getUserInfo 取得該使用者資訊
-###### crawlBoard 多線程爬蟲 以多重登入增加爬蟲速度
+###### crawlBoard 多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式
 ###### getVersion 取得版本資訊
 
 ![alt text](http://i.imgur.com/XT9LadL.png)

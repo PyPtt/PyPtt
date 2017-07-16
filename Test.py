@@ -4,8 +4,9 @@ import PTT
 import json
 import getpass
 
-# If you want to automatically login define Account.txt
-# {"ID":"YourID", "Password":"YourPW"}
+# 如果你想要自動登入，建立 Account.txt
+# 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
+
 try:
     with open('Account.txt') as AccountFile:
         Account = json.load(AccountFile)
@@ -20,8 +21,15 @@ PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 PTTCrawler = None
 
 def PostDemo():
-    #發文類別       1
-    #簽名檔        	0
+
+    #這個範例是如何PO文
+    #第一個參數是你要PO文的板
+    #第二個參數是文章標題
+    #第三個參數是文章內文
+    #第四個參數是發文類別       1
+    #第五個參數是簽名檔        	0
+    
+    #回傳值 就是錯誤碼
     for i in range(1):
         
         ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
@@ -34,6 +42,10 @@ def PostDemo():
 
 def GetNewestPostIndexDemo():
 
+    #這個範例是如何取得某版的最新文章編號
+    #第一個參數是板面
+    
+    #回傳值 就是錯誤碼跟最新文章編號
     for i in range(2):
         for Board in BoardList:
             ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex(Board)
@@ -45,7 +57,38 @@ def GetNewestPostIndexDemo():
             #time.sleep(1)
 
 def GetPostInfoDemo():
-
+    
+    #這個範例是如何取得單一文章資訊
+    #getPostInfoByIndex
+    #第一個參數是板面
+    #第二個參數就是你想查詢的文章編號
+    #如果你不幸的只有文章代碼 那就使用 getPostInfoByID
+    #getPostInfoByID
+    #第一個參數是板面
+    #第二個參數就是你想查詢的文章代碼
+    
+    #回傳值 就是錯誤碼跟文章資訊
+    
+    #文章資訊的資料結構可參考如下
+    
+    ################## 文章資訊 Post information ##################
+    # getPostBoard              文章所在版面
+    # getPostID                 文章 ID ex: 1PCBfel1
+    # getPostAuthor             作者
+    # getPostDate               文章發布時間
+    # getTitle                  文章標題
+    # getPostContent            文章內文
+    # getMoney                  文章P幣
+    # getWebUrl                 文章網址
+    # getPushList               文章推文清單 備註: 推文是從網頁解析，極有可能不即時
+    # getOriginalData           文章網頁原始資料 (開發用)
+    
+    ################## 推文資訊 Push information ##################
+    # getPushType               推文類別 推噓箭頭?
+    # getPushID                 推文ID
+    # getPushContent            推文內文
+    # getPushTime               推文時間
+    
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
     if ErrorCode != PTTCrawler.Success:
         PTTCrawler.Log('取得最新文章編號失敗')
@@ -94,25 +137,18 @@ def GetPostInfoDemo():
         PTTCrawler.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' 標題: ' + Post.getTitle())
         
         PTTCrawler.Log('-----------------------')
-        ################## 文章資訊 Post information ##################
-        # getPostID                 文章 ID ex: 1PCBfel1
-        # getPostAuthor             作者
-        # getPostDate               文章發布時間
-        # getTitle                  文章標題
-        # getPostContent            文章內文
-        # getMoney                  文章P幣
-        # getWebUrl                 文章網址
-        # getPushList               文章推文清單 備註: 推文是從網頁解析，極有可能不即時
-        # getOriginalData           文章網頁原始資料 (開發用)
-        
-        ################## 推文資訊 Push information ##################
-        # getPushType               推文類別 推噓箭頭?
-        # getPushID                 推文ID
-        # getPushContent            推文內文
-        # getPushTime               推文時間
-        
         
 def GetNewPostIndexListDemo():
+
+    #這個範例是如何取得某版的最新文章編號清單
+    #跟上一次使用 getPostInfoByIndex 比較
+    #第一個參數是板面
+    #第二個參數就是你上一次查詢的最新文章編號 代入 0 就會等到有PO文才會有清單結果
+    
+    #詳細使用方式可以參考 範例程式中的 汪踢推文機器人
+    
+    #回傳值 就是錯誤碼跟最新文章編號清單
+
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Wanted')
     if ErrorCode != PTTCrawler.Success:
         return False
@@ -169,7 +205,14 @@ def PushDemo():
             PTTCrawler.Log('使用文章代碼: 推文失敗')
             return False
 def MainDemo():
-    #0 不加簽名檔
+    
+    #這個範例是如何寄信給某鄉民
+
+    #第一個參數是你想寄信的ID
+    #第二個參數是信件標題
+    #第三個參數是信件內容
+    #第四個參數是簽名檔選擇 0 不加簽名檔
+    
     for i in range(1):
         ErrorCode = PTTCrawler.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ', 0)
         if ErrorCode == PTTCrawler.Success:
@@ -178,6 +221,12 @@ def MainDemo():
             PTTCrawler.Log('寄信給 ' + ID + ' 失敗')
 def GiveMoneyDemo():
 
+    #這個範例是如何給P幣給某鄉民
+
+    #第一個參數是你想寄信的ID
+    #第二個參數是你想給予多少P幣
+    #第三個參數是你自己的密碼
+    
     WhoAreUwantToGiveMoney = 'CodingMan'
     Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
     
@@ -191,6 +240,8 @@ def GiveMoneyDemo():
 
 def GetTimeDemo():
 
+    #這個範例是取得PTT的時間，有時需要跟PTT對時的需求，比如說 準點報時
+        
     for i in range(3):
         ErrorCode, Time = PTTCrawler.getTime()
         if ErrorCode != PTTCrawler.Success:
@@ -199,13 +250,64 @@ def GetTimeDemo():
         PTTCrawler.Log('Ptt time: ' + Time + '!')
         time.sleep(1)
 
-def PostHander():
-    pass
+def PostHandler(Post):
+    
+    #這是 crawlBoard 需要的 call back function
+    #每當爬蟲取得新文章就會呼叫此函式一次
+    #因此你可以在這自由地決定存檔的格式 或者任何你想做的分析
+    
+    #文章資料結構可參考如下
+    ################## 文章資訊 Post information ##################
+    # getPostBoard              文章所在版面
+    # getPostID                 文章 ID ex: 1PCBfel1
+    # getPostAuthor             作者
+    # getPostDate               文章發布時間
+    # getTitle                  文章標題
+    # getPostContent            文章內文
+    # getMoney                  文章P幣
+    # getWebUrl                 文章網址
+    # getPushList               文章推文清單 備註: 推文是從網頁解析，極有可能不即時
+    # getOriginalData           文章網頁原始資料 (開發用)
+    
+    ################## 推文資訊 Push information ##################
+    # getPushType               推文類別 推噓箭頭?
+    # getPushID                 推文ID
+    # getPushContent            推文內文
+    # getPushTime               推文時間
+    
+    with open("CrawlBoardResult.txt", "a") as ResultFile:
+        ResultFile.write(Post.getTitle() + '\n')
+    
 def CrawlBoardDemo():
     
-    PTTCrawler.crawlBoard('Wanted')
+    #範例是從編號 1 爬到 編號 100 的文章
+    #如果想要取得所有文章可省略編號參數
+    #PTTCrawler.crawlBoard('Wanted', PostHandler)
+    #這樣就會全部文章都會爬下來
     
+    ErrorCode = PTTCrawler.crawlBoard('Wanted', PostHandler, 1, 100)
+    if ErrorCode == PTTCrawler.Success:
+        PTTCrawler.Log('爬行成功')
+        
 def GetUserInfoDemo():
+    
+    #範例是追蹤 某些ID的情況
+    #此API可以持續追蹤某ID的動態
+    #詳細可以參考 範例程式中的 ID追蹤器
+    
+    #使用者資訊資料結構可參考如下
+    
+    ################## 使用者資訊 User information ##################
+    # getID                     ID
+    # getMoney                  使用者經濟狀況
+    # getLoginTime              登入次數
+    # getPost                   有效文章數
+    # getState                  目前動態
+    # getMail                   信箱狀態
+    # getLastLogin              最後登入時間
+    # getLastIP                 上次故鄉
+    # getFiveChess              五子棋戰績
+    # getChess                  象棋戰績
     
     for IDs in [ID, 'FakeID_____']:
         
@@ -230,18 +332,6 @@ def GetUserInfoDemo():
         PTTCrawler.Log('五子棋戰績: ' + UserInfo.getFiveChess() + '!')
         PTTCrawler.Log('象棋戰績: ' + UserInfo.getChess() + '!')
         
-        ################## 使用者資訊 User information ##################
-        # getID                     ID
-        # getMoney                  使用者經濟狀況
-        # getLoginTime              登入次數
-        # getPost                   有效文章數
-        # getState                  目前動態
-        # getMail                   信箱狀態
-        # getLastLogin              最後登入時間
-        # getLastIP                 上次故鄉
-        # getFiveChess              五子棋戰績
-        # getChess                  象棋戰績
-    
 if __name__ == '__main__':
     print('Welcome to PTT Crawler Library Demo')
     
@@ -252,7 +342,8 @@ if __name__ == '__main__':
         sys.exit()
     #PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
     
-    '''
+    PTTCrawler.Log('版本: ' + PTTCrawler.getVersion())
+    
     GetNewestPostIndexDemo()
     PostDemo()
     PushDemo()
@@ -262,9 +353,8 @@ if __name__ == '__main__':
     GetTimeDemo()
     GetUserInfoDemo()
     GiveMoneyDemo()
-    '''
     CrawlBoardDemo()
     
-    #PTTCrawler.logout()
+    PTTCrawler.logout()
     
     
