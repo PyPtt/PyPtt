@@ -7,6 +7,10 @@
 ###### 根據網路速度動態調整操作速度、斷線自動恢復
 ###### 如有功能未能詳盡 歡迎來信告知
 
+如何使用
+-------------------
+你可以參考範例程式，並佐以 Test.py 裡面有 API 的範例與說明
+
 範例程式
 -------------------
 ###### 歡迎開發者將使用PTT Crawler Library的程式連結加入
@@ -56,4 +60,4 @@ API
 ###### crawlBoard 多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式
 ###### getVersion 取得版本資訊
 
-![alt text](http://i.imgur.com/SDnb7QM.png)
+![alt text](http://i.imgur.com/nkyH9fG.png)
