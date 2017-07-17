@@ -95,7 +95,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
     
-        self.__Version = '0.3.170716'
+        self.__Version = '0.3.170717'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -127,11 +127,11 @@ class Crawler(object):
 
         self.LogLevel_DEBUG =                   1
         self.LogLevel_WARNING =                 2
-        self.LogLevel_RELEASE =                 3
+        self.LogLevel_INFO =                    3
         self.LogLevel_CRITICAL =                4
         self.LogLevel_SLIENT =                  5
         
-        self.__LogLevel = self.LogLevel_RELEASE
+        self.__LogLevel = self.LogLevel_INFO
         
         if LogLevel != -1:
             if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
@@ -158,10 +158,10 @@ class Crawler(object):
         
         self.__CrawPool = []
         
-        self.Log('歡迎使用 PTT Crawler Library v ' + self.__Version + '\r\n' + 
+        self.Log('歡迎使用 PTT Crawler Library v ' + self.__Version + '\r\n\r\n' + 
         '本函式庫提供您各式 PTT 操作功能\r\n\r\n' + 
         '使用方式簡單、開發快速，滿足您最嚴苛的需求。\r\n\r\n' + 
-        '如有功能未能滿足您的需求時，歡迎來信告知。\r\n\r\n' + 
+        '如有功能未能滿足您的需求，請來信告知。\r\n\r\n' + 
         'CodingMan\r\n')
         
         self.Log('使用者帳號: ' + ID)
@@ -186,12 +186,22 @@ class Crawler(object):
         return self.Success
     def Log(self, Message, LogLevel=-1):
         if LogLevel == -1:
-            LogLevel = self.LogLevel_RELEASE
-        if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
+            LogLevel = self.LogLevel_INFO
+        if LogLevel < self.LogLevel_DEBUG or self.LogLevel_CRITICAL < LogLevel:
             self.Log('LogLevel error')
             return self.ErrorInput
+        
         if self.__LogLevel <= LogLevel:
-            PTTUtil.Log(Message)
+            if LogLevel == self.LogLevel_DEBUG:
+                Prefix = '[除錯] '
+            elif LogLevel == self.LogLevel_WARNING:
+                Prefix = '[警告] '
+            elif LogLevel == self.LogLevel_INFO:
+                Prefix = '[資訊] '
+            elif LogLevel == self.LogLevel_CRITICAL:
+                Prefix = '[重要] '
+        
+            PTTUtil.Log(Prefix + Message)
         return self.Success
     def isLoginSuccess(self, TelnetConnectIndex=0):
         return self.__isConnected[TelnetConnectIndex]
@@ -1366,12 +1376,7 @@ class Crawler(object):
             if ErrorCode != self.Success:
                 self.Log('getTime 3 read screen error code: ' + str(ErrorCode), self.LogLevel_DEBUG)
                 #return ErrorCode, ''
-            '''
-            if not '離開，再見…' in self.__ReceiveData[TelnetConnectIndex] or not '[呼叫器]' in self.__ReceiveData[TelnetConnectIndex]:
-                self.Log(self.__ReceiveData[TelnetConnectIndex], self.LogLevel_DEBUG)
-                self.Log('Not in user menu 1', self.LogLevel_DEBUG)
-                return self.ParseError, ''
-            '''
+
             if '離開，再見…' in self.__ReceiveData[TelnetConnectIndex] and '[呼叫器]' in self.__ReceiveData[TelnetConnectIndex] and '星期' in self.__ReceiveData[TelnetConnectIndex]:
                 break
         if not '離開，再見…' in self.__ReceiveData[TelnetConnectIndex] or not '[呼叫器]' in self.__ReceiveData[TelnetConnectIndex] or not '星期' in self.__ReceiveData[TelnetConnectIndex]:
@@ -1499,20 +1504,6 @@ class Crawler(object):
         
         self.__ReceiveData[TelnetConnectIndex] = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('和') + 1:]
         
-        '''
-        print('QQ' + self.__ReceiveData[TelnetConnectIndex])
-        
-        print('UserID: ' + UserID)
-        print('UserMoney: ' + str(UserMoney))
-        print('UserLoginTime: ' + str(UserLoginTime))
-        print('UserPost: ' + str(UserPost))
-        print('UserState: ' + UserState + '!')
-        print('UserMail: ' + UserMail + '!')
-        print('UserLastLogin: ' + UserLastLogin + '!')
-        print('UserLastIP: ' + UserLastIP + '!')
-        print('UserFiveChess: ' + UserFiveChess + '!')
-        print('UserChess: ' + UserChess + '!')
-        '''
         result = UserInformation(UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess)
         
         return self.Success, result
@@ -1524,5 +1515,5 @@ class Crawler(object):
         return self.__Version
 if __name__ == '__main__':
 
-    print('PTT Library v ' + self.__Version)
-    print('作者: CodingMan')
+    print('PTT Crawler Library v ' + self.__Version)
+    print('CodingMan')
