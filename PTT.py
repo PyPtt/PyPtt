@@ -358,9 +358,10 @@ class Crawler(object):
                     time.sleep(1)
             ErrorCode, Index = self.__sendData(TelnetConnectIndex, '', ['請輸入代號', '系統過載'], False)
             if ErrorCode != self.Success:
-                self.Log('連接至 ' + self.__host + ' 失敗: ' + str(ErrorCode))
+                self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 連接至 ' + self.__host + ' 失敗: ' + str(ErrorCode))
+                self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 2 秒後重新啟動')
                 self.__TelnetConnectList[TelnetConnectIndex] = None
-                return ErrorCode
+                time.sleep(2)
             if Index == 0:
                 if not SlientLogin:
                     self.Log('連接成功')
