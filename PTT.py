@@ -253,12 +253,12 @@ class Crawler(object):
                     ErrorCode = self.WaitTimeout
                     break
         except ConnectionResetError:
-            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設')
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設')
             if self.__isConnected[TelnetConnectIndex]:
                 self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             return self.ConnectResetError, result
         except EOFError:
-            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除')
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除')
             if self.__isConnected[TelnetConnectIndex]:
                 self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             self.__CurrentTimeout[TelnetConnectIndex] = 0
@@ -315,20 +315,20 @@ class Crawler(object):
 
         except EOFError:
             #QQ why kick me
-            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除')
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除')
             if self.__isConnected[TelnetConnectIndex]:
                 self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             self.__CurrentTimeout[TelnetConnectIndex] = 0
             return self.EOFErrorCode, -1
         except ConnectionResetError:
-            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設')
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設')
             if self.__isConnected[TelnetConnectIndex]:
                 self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             self.__CurrentTimeout[TelnetConnectIndex] = 0
             return self.ConnectResetError, -1
             
         if ReturnIndex == -1:
-            PTTUtil.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 傳送資料超時')
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 傳送資料超時')
             self.__CurrentTimeout[TelnetConnectIndex] = 0
             return self.WaitTimeout, ReturnIndex
         self.__CurrentTimeout[TelnetConnectIndex] = 0
@@ -442,7 +442,7 @@ class Crawler(object):
             self.__Cursor = '●'
         
         if LoginMode == self.__LoginMode_Recover:
-            self.Log('恢復連線成功')
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 恢復連線成功')
         if LoginMode == self.__LoginMode_MultiLogin:
             self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 登入成功')
         
@@ -780,26 +780,31 @@ class Crawler(object):
     
         self.Log('__getPostinfoByUrl: requests get', self.LogLevel_DEBUG)
         isError = False
-        for i in range(60):
+        for i in range(600):
             try:
                 res = requests.get(
                     url = WebUrl,
                     cookies={'over18': '1'},
-                    timeout=5
+                    timeout=3
                 )
                 isError = False
                 break
             except requests.exceptions.Timeout:
-                time.sleep(10)
+                
+                self.__MaxRequestCount -= 1
+                if self.__MaxRequestCount < self.__MinRequestCount:
+                    self.__MaxRequestCount = self.__MinRequestCount
+                
+                time.sleep(1)
                 isError = True
             except requests.exceptions.ConnectionError:
                 #self.Log('__getPostinfoByUrl: requests conect error', self.LogLevel_DEBUG)
                 self.Log('__getPostinfoByUrl: requests conect error', self.LogLevel_DEBUG)
-                time.sleep(10)
+                time.sleep(1)
                 isError = True
         
         if isError:
-            self.Log('__getPostinfoByUr2: requests time out', self.LogLevel_DEBUG)
+            self.Log('getPostinfoByUrl requests 超時!', self.LogLevel_CRITICAL)
             return self.WaitTimeout, '', '', '', '', None, ''
             
         soup =  BeautifulSoup(res.text, 'html.parser')
@@ -931,7 +936,12 @@ class Crawler(object):
         
         ErrorCode, RealPostID, RealMoney, RealWebUrl = self.__parsePost(TelnetConnectIndex)
         
+        while self.__RequestCount >= self.__MaxRequestCount:
+            time.sleep(0.1)
+        
+        self.__RequestCount += 1
         ErrorCode, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, OriginalText = self.__getPostinfoByUrl(RealWebUrl)
+        self.__RequestCount -= 1
         
         if ErrorCode != self.Success:
             self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 取得文章失敗', self.LogLevel_DEBUG)
@@ -1032,7 +1042,7 @@ class Crawler(object):
     
         self.__PostHandler = PostHandler
     
-        DefaultThreadNumber = 64
+        DefaultThreadNumber = 32
         
         self.Log('Into crawlBoard', self.LogLevel_DEBUG)
         
@@ -1058,6 +1068,10 @@ class Crawler(object):
         self.__ProgressBarCount = 0
         self.__SuccessPostCount = 0
         
+        self.__RequestCount = 0
+        self.__MaxRequestCount = DefaultThreadNumber
+        self.__MinRequestCount = 4
+        
         self.__ThreadLock = None
         
         if self.__MaxMultiLogin > 1:
@@ -1065,8 +1079,10 @@ class Crawler(object):
             self.Log('啟動多重登入模式')
         
         for i in range(1, self.__MaxMultiLogin):
-            if self.__connectRemote(i, self.__LoginMode_MultiLogin) == self.Success:
-                ConnectList.append(i)
+            for ii in range(3):            
+                if self.__connectRemote(i, self.__LoginMode_MultiLogin) == self.Success:
+                    ConnectList.append(i)
+                    break
         
         ConnectListTemp = ''
         
@@ -1085,6 +1101,10 @@ class Crawler(object):
         self.__SaveCount = DefaultThreadNumber
         
         ThreadUnitCount = 0
+        
+        self.__CurrentLogLevel = self.__LogLevel
+        
+        self.setLogLevel(self.LogLevel_CRITICAL)
         
         for TelnetConnectIndex in ConnectList:
         
@@ -1127,9 +1147,12 @@ class Crawler(object):
             if TelnetConnectIndex != 0:
                 self.logout(TelnetConnectIndex)
         
+        self.__LogLevel = self.__CurrentLogLevel
+        
         self.Log('成功取得 ' + str(self.__SuccessPostCount) + ' 篇文章')
         
         #self.Log(Board + ' 爬行完畢')
+        
         return self.Success
     def getPostInfoByIndex(self, Board, Index, TelnetConnectIndex = 0):
         
@@ -1221,15 +1244,15 @@ class Crawler(object):
                 Pushable = True
                 break
             if Index == 2:
-                PTTUtil.Log('無法快速推文，等待中...')
+                self.Log('無法快速推文，等待中...')
                 Message = 'qX'
                 time.sleep(1)
             if Index == 3:
-                PTTUtil.Log('系統阻擋過多推文，等待中...')
+                self.Log('系統阻擋過多推文，等待中...')
                 Message = 'qX'
                 time.sleep(2)
             if Index == 4:
-                PTTUtil.Log('你被水桶惹 QQ')
+                self.Log('你被水桶惹 QQ')
                 return self.NoPermission
                 
         if not AllowPushTypeList[self.PushType_Boo] and PushType == self.PushType_Boo:
@@ -1350,12 +1373,16 @@ class Crawler(object):
         return self.Success
         
     def getTime(self, TelnetConnectIndex = 0):
-        for i in range(3):
+        for i in range(10):
             ErrorCode, Time = self.__getTime(TelnetConnectIndex)
             if ErrorCode == self.Success:
                 if i != 0:
                     self.Log('getTime recover Success ' + str(i) + ' times', self.LogLevel_DEBUG)
                 break
+        
+        if len(Time) == 4:
+            Time = '0' + Time
+        
         return ErrorCode, Time
     def __getTime(self, TelnetConnectIndex = 0):
         self.__CurrentTimeout[TelnetConnectIndex] = 2
