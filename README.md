@@ -13,7 +13,7 @@
 
 範例程式
 -------------------
-###### 歡迎開發者將使用PTT Crawler Library的程式連結加入
+###### 歡迎開發者將使用 PTT Crawler Library 的程式連結加入
 [汪梯推文機器人](https://github.com/Truth0906/WantedPushCrawler)
 
 [五樓機器人](https://github.com/Truth0906/5FloorBot)
@@ -40,7 +40,7 @@ Demo
 
 版本
 -------------------
-###### 0.3.170716
+###### 0.3.170721
 
 API
 -------------------
