@@ -95,7 +95,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
     
-        self.__Version = '0.3.170717'
+        self.__Version = '0.3.170721'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
