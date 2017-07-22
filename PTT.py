@@ -95,7 +95,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
     
-        self.__Version = '0.3.170721'
+        self.__Version = '0.3.170722'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -116,7 +116,8 @@ class Crawler(object):
         self.WebFormatError =                  10
         self.NoPermission =                    11
         self.NoUser =                          12
-
+        self.InvalidURLError =                 13
+        
         self.PushType_Push =                    1
         self.PushType_Boo =                     2
         self.PushType_Arrow =                   3
@@ -395,6 +396,10 @@ class Crawler(object):
                 if ErrorCode != self.Success:
                     
                     self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 連接至 ' + self.__host + ' 失敗: ' + str(ErrorCode), self.LogLevel_WARNING)
+                    
+                    if TelnetConnectIndex != 0:
+                        return self.UnknowError
+                    
                     self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 2 秒後重新連接', self.LogLevel_WARNING)
                     self.__TelnetConnectList[TelnetConnectIndex] = None
                     time.sleep(2)
@@ -827,7 +832,9 @@ class Crawler(object):
                 self.Log('__getPostinfoByUrl: requests conect error', self.LogLevel_DEBUG)
                 time.sleep(1)
                 isError = True
-        
+            except requests.exceptions.InvalidURL:
+                self.Log('不合法的網址: ' + WebUrl, sel.LogLevel_CRITICAL)
+                return self.InvalidURLError, '', '', '', '', None, ''
         if isError:
             self.Log('getPostinfoByUrl requests 超時!', self.LogLevel_CRITICAL)
             return self.WaitTimeout, '', '', '', '', None, ''
@@ -925,8 +932,14 @@ class Crawler(object):
             ErrorCode = self.ParseError
             
         if 'https' in self.__ReceiveData[TelnetConnectIndex]:
-            RealWebUrl = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('文章網址: https://www.ptt.cc/bbs/'):]
-            RealWebUrl = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('https'):self.__ReceiveData[TelnetConnectIndex].find('.html') + 5]
+            RealWebUrl = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('https://www.ptt.cc/bbs'):]
+            
+            self.Log(self.__ReceiveData[TelnetConnectIndex])
+            self.Log(RealWebUrl)
+            
+            RealWebUrl = RealWebUrl[RealWebUrl.find('https'):RealWebUrl.find('.html') + 5]
+            
+            self.Log('QQ ' + RealWebUrl)
         else:
             self.Log('解析文章網址失敗', self.LogLevel_DEBUG)
             ErrorCode = self.ParseError
