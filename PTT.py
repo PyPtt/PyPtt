@@ -934,12 +934,12 @@ class Crawler(object):
         if 'https' in self.__ReceiveData[TelnetConnectIndex]:
             RealWebUrl = self.__ReceiveData[TelnetConnectIndex][self.__ReceiveData[TelnetConnectIndex].find('https://www.ptt.cc/bbs'):]
             
-            self.Log(self.__ReceiveData[TelnetConnectIndex])
-            self.Log(RealWebUrl)
+            self.Log(self.__ReceiveData[TelnetConnectIndex], self.LogLevel_DEBUG)
+            self.Log(RealWebUrl, self.LogLevel_DEBUG)
             
             RealWebUrl = RealWebUrl[RealWebUrl.find('https'):RealWebUrl.find('.html') + 5]
             
-            self.Log('QQ ' + RealWebUrl)
+            self.Log('QQ ' + RealWebUrl, self.LogLevel_DEBUG)
         else:
             self.Log('解析文章網址失敗', self.LogLevel_DEBUG)
             ErrorCode = self.ParseError
