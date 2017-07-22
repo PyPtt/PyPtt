@@ -381,8 +381,10 @@ class Crawler(object):
                         self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
                     break
                 except ConnectionRefusedError:
-                    self.Log('連接至 ' + self.__host + ' 失敗 1 秒後重試')
-                    time.sleep(1)
+                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
+                    time.sleep(10)
+            
+            self.Log('連接成功')
             
             SendMessage = ''
             Enter = False
@@ -448,7 +450,6 @@ class Crawler(object):
                     time.sleep(1)
                 if Index == 8:
                     if not SlientLogin:
-                        self.Log('連接成功')
                         self.Log('輸入使用者代號')
                     SendMessage = self.__ID
                     Enter = True
