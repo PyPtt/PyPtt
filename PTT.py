@@ -95,7 +95,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
     
-        self.__Version = '0.3.170722'
+        self.__Version = '0.3.170723'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -331,7 +331,7 @@ class Crawler(object):
 
             SendMessage = str(Message) + PostFix
             self.__TelnetConnectList[TelnetConnectIndex].read_very_eager()
-            self.__TelnetConnectList[TelnetConnectIndex].write(SendMessage.encode('big5'))
+            self.__TelnetConnectList[TelnetConnectIndex].write(SendMessage.encode('big5', 'ignore'))
             ReturnIndex = self.__TelnetConnectList[TelnetConnectIndex].expect(CaseList, timeout=self.__Timeout[TelnetConnectIndex])[0]
 
         except EOFError:
