@@ -95,7 +95,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
     
-        self.__Version = '0.3.170723'
+        self.__Version = '0.3.170802'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -153,6 +153,7 @@ class Crawler(object):
         
         self.__RequestCount =                   0
         self.__MaxRequestCount =                1
+        self.__MinRequestCount =                1
         
         self.__TelnetConnectList = [None] * self.__MaxMultiLogin
         self.__TelnetPortList = [23, 23, 23, 23]
@@ -833,6 +834,9 @@ class Crawler(object):
                 time.sleep(1)
                 isError = True
             except requests.exceptions.InvalidURL:
+                self.Log('不合法的網址: ' + WebUrl, sel.LogLevel_CRITICAL)
+                return self.InvalidURLError, '', '', '', '', None, ''
+            except requests.exceptions.MissingSchema:
                 self.Log('不合法的網址: ' + WebUrl, sel.LogLevel_CRITICAL)
                 return self.InvalidURLError, '', '', '', '', None, ''
         if isError:
