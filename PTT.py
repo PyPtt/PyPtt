@@ -8,6 +8,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import PTTUtil
 import threading
 import progressbar
+import socket
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -95,7 +96,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
     
-        self.__Version = '0.3.170804'
+        self.__Version = '0.3.170805'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -393,7 +394,12 @@ class Crawler(object):
                 except ConnectionRefusedError:
                     self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
                     time.sleep(10)
-            
+                except TimeoutError:
+                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
+                    time.sleep(10)
+                except socket.timeout:
+                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
+                    time.sleep(10)
             self.Log('連接成功')
             
             SendMessage = ''
