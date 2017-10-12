@@ -1,22 +1,22 @@
 import codecs
 import struct
+import array
 
 #encoding_map
 class Codec(codecs.Codec):
 	def encode(self,input,errors='strict'):
-    	# 此 encode 流程引用自 https://gist.github.com/NEJmark/add42a5d812e2909c7aee24a42b23836
+    	# 此 encode 流程修改自 https://gist.github.com/NEJmark/add42a5d812e2909c7aee24a42b23836
 		# 字元表則更新至 uao250-u2b 多支援很多很多字 (羞
-
-		encdoe_str = ''
+		encdoe_str = []
 		for unichar in input:
 			_ucode =  ord(unichar)
 			if _ucode in encoding_map:
 				_bcode = encoding_map[_ucode]
-				encdoe_str += struct.pack('>i',_bcode)[2:]
+				encdoe_str.extend(struct.pack('>i',_bcode)[2:])
 			else:
 				#use_default cp950
-				encdoe_str += unichar.encode('cp950')
-		return encdoe_str,len(encdoe_str)
+				encdoe_str.extend(unichar.encode('cp950'))
+		return bytes(encdoe_str), len(encdoe_str)
 
 	def decode(self,input,errors='strict'):
 		unistr = ''
