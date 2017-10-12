@@ -240,7 +240,7 @@ class Crawler(object):
         
         try:
             self.__TelnetConnectList[TelnetConnectIndex].read_very_eager()
-            self.__TelnetConnectList[TelnetConnectIndex].write(str(Message + '\x0C').encode('big5'))
+            self.__TelnetConnectList[TelnetConnectIndex].write(str(Message + '\x0C').encode('uao_decode'))
             StartTime = time.time()
             
             while True:
@@ -326,7 +326,7 @@ class Crawler(object):
             PostFix += '\x0C'
         for i in range(len(CaseList)):
             if type(CaseList[i]) is str:
-                CaseList[i] = CaseList[i].encode('big5')
+                CaseList[i] = CaseList[i].encode('uao_decode')
         
         if self.__isConnected[TelnetConnectIndex]:
             if self.__CurrentTimeout[TelnetConnectIndex] == 0:
@@ -340,7 +340,7 @@ class Crawler(object):
 
             SendMessage = str(Message) + PostFix
             self.__TelnetConnectList[TelnetConnectIndex].read_very_eager()
-            self.__TelnetConnectList[TelnetConnectIndex].write(SendMessage.encode('big5hkscs', 'ignore'))
+            self.__TelnetConnectList[TelnetConnectIndex].write(SendMessage.encode('uao_decode'))
             ReturnIndex = self.__TelnetConnectList[TelnetConnectIndex].expect(CaseList, timeout=self.__Timeout[TelnetConnectIndex])[0]
 
         except EOFError:
