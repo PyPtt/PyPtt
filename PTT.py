@@ -9,6 +9,7 @@ import PTTUtil
 import threading
 import progressbar
 import socket
+import uao_decode
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -96,7 +97,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
     
-        self.__Version = '0.3.170805'
+        self.__Version = '0.3.171012'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -118,7 +119,8 @@ class Crawler(object):
         self.NoPermission =                    11
         self.NoUser =                          12
         self.InvalidURLError =                 13
-        
+        self.LoginFrequently =                 14
+
         self.PushType_Push =                    1
         self.PushType_Boo =                     2
         self.PushType_Arrow =                   3
@@ -245,7 +247,9 @@ class Crawler(object):
                 time.sleep(self.__SleepTime[TelnetConnectIndex])
                 ReceiveTimes += 1
                 
-                self.__ReceiveData[TelnetConnectIndex] += self.__TelnetConnectList[TelnetConnectIndex].read_very_eager().decode('big5', 'ignore')
+                # self.__ReceiveData[TelnetConnectIndex] += self.__TelnetConnectList[TelnetConnectIndex].read_very_eager().decode('big5', 'ignore')
+
+                self.__ReceiveData[TelnetConnectIndex] += self.__TelnetConnectList[TelnetConnectIndex].read_very_eager().decode('uao_decode') 
                 
                 DataMacthed = False
                 for i in range(len(ExpectTarget)):
@@ -336,7 +340,7 @@ class Crawler(object):
 
             SendMessage = str(Message) + PostFix
             self.__TelnetConnectList[TelnetConnectIndex].read_very_eager()
-            self.__TelnetConnectList[TelnetConnectIndex].write(SendMessage.encode('big5', 'ignore'))
+            self.__TelnetConnectList[TelnetConnectIndex].write(SendMessage.encode('big5hkscs', 'ignore'))
             ReturnIndex = self.__TelnetConnectList[TelnetConnectIndex].expect(CaseList, timeout=self.__Timeout[TelnetConnectIndex])[0]
 
         except EOFError:
@@ -381,7 +385,7 @@ class Crawler(object):
         else:
             SlientLogin = False
             
-        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新', '請輸入代號', '系統過載']
+        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新', '請輸入代號', '系統過載', '請勿頻繁登入']
         
         while not self.__isConnected[TelnetConnectIndex]:
         
@@ -478,6 +482,9 @@ class Crawler(object):
                     time.sleep(2)
                     SendMessage = ''
                     Enter = False
+                if Index == 10:
+                    self.Log('請勿頻繁登入')
+                    return self.LoginFrequently
         ErrorCode, Index = self.__readScreen(TelnetConnectIndex, '', ['> (', '●('])
         if ErrorCode != self.Success:
             self.Log(self.__ReceiveData[TelnetConnectIndex])
