@@ -50,7 +50,7 @@ def PostDemo():
 蓮花が咲いたら、瑠璃の鳥。 \r\n\
 \r\n\
 わい、わい、わっしょい。ワ、ヰ、ウ、ヱ、ヲ。 \r\n\
-植木屋、井戸換へ、お祭りだ。"
+植木屋、井戸換へ、お祭りだ。\r\n"
 
     #這個範例是如何PO文
     #第一個參數是你要PO文的板
@@ -63,22 +63,13 @@ def PostDemo():
 
     for i in range(1):
         
-        ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '\r\n標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+        ErrorCode = PTTCrawler.post('Test', '自動PO文測試', JapanText + '\r\n自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTTCrawler.Success:
             PTTCrawler.Log('在 Test 板發文成功')
         elif ErrorCode == PTTCrawler.NoPermission:
             PTTCrawler.Log('發文權限不足')
         else:
             PTTCrawler.Log('在 Test 板發文失敗')
-        
-        ErrorCode = PTTCrawler.post('Test', '日文支援測試', JapanText + '\r\n日文支援測試，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
-        if ErrorCode == PTTCrawler.Success:
-            PTTCrawler.Log('在 Test 板發文成功')
-        elif ErrorCode == PTTCrawler.NoPermission:
-            PTTCrawler.Log('發文權限不足')
-        else:
-            PTTCrawler.Log('在 Test 板發文失敗')
-
 
 def GetNewestPostIndexDemo():
 
@@ -148,7 +139,7 @@ def GetPostInfoDemo():
             PTTCrawler.Log('網頁結構錯誤')
             continue
         if ErrorCode != PTTCrawler.Success:
-            PTTCrawler.Log('使用文章編號取得文章詳細資訊失敗: ' + str(ErrorCode))
+            PTTCrawler.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
             return False
         PTTCrawler.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ')
 
@@ -172,7 +163,7 @@ def GetPostInfoDemo():
         
         ErrorCode, Post = PTTCrawler.getPostInfoByID('Wanted', Post.getPostID())
         if ErrorCode != PTTCrawler.Success:
-            PTTCrawler.Log('使用文章代碼取得文章詳細資訊失敗: ' + str(ErrorCode))
+            PTTCrawler.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
             return False
         PTTCrawler.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' 標題: ' + Post.getTitle())
         
@@ -206,9 +197,9 @@ def GetNewPostIndexListDemo():
 def PushDemo():
     ErrorCode, NewestIndex = PTTCrawler.getNewestPostIndex('Test')
     if ErrorCode != PTTCrawler.Success:
-        PTTCrawler.Log('取得最新文章編號失敗: ' + str(ErrorCode))
+        PTTCrawler.Log('取得最新文章編號失敗 錯誤碼: ' + str(ErrorCode))
         return False
-    PTTCrawler.Log('NewestIndex: ' + str(NewestIndex))
+    PTTCrawler.Log('最新文章編號: ' + str(NewestIndex))
     for i in range(10):
         ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 1', NewestIndex)
         if ErrorCode == PTTCrawler.Success:
@@ -225,11 +216,12 @@ def PushDemo():
             
     ErrorCode, NewPost = PTTCrawler.getPostInfoByIndex('Test', NewestIndex)
     if ErrorCode != PTTCrawler.Success:
-        PTTCrawler.Log('取得最新文章編號失敗: ' + str(ErrorCode))
+        PTTCrawler.Log('取得最新文章編號失敗 錯誤碼: ' + str(ErrorCode))
         return False
     if NewPost == None:
         PTTCrawler.Log('取得最新文章編號失敗')
         return False
+
     for i in range(10):
         
         ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 2', NewPost.getPostID())
@@ -374,7 +366,7 @@ def GetUserInfoDemo():
 
 def ReplyPostDemo():
     
-    ErrorCode = PTTCrawler.post('Test', '自動PO文測試', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+    ErrorCode = PTTCrawler.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
     if ErrorCode == PTTCrawler.Success:
         PTTCrawler.Log('在 Test 板發文成功')
     elif ErrorCode == PTTCrawler.NoPermission:
@@ -395,19 +387,19 @@ def ReplyPostDemo():
     '''
     #def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1, TelnetConnectIndex = 0):
     
-    ErrorCode = PTTCrawler.replyPost('Test', '回文測試', PTTCrawler.ReplyPost_Board, Index=NewestIndex)
+    ErrorCode = PTTCrawler.replyPost('Test', '回文測試 回文至板上', PTTCrawler.ReplyPost_Board, Index=NewestIndex)
     if ErrorCode == PTTCrawler.Success:
         PTTCrawler.Log('在 Test 回文至板上成功!')
     else:
         PTTCrawler.Log('在 Test 回文至板上失敗 ' + str(ErrorCode))
     
-    ErrorCode = PTTCrawler.replyPost('Test', '回文測試', PTTCrawler.ReplyPost_Mail, Index=NewestIndex)
+    ErrorCode = PTTCrawler.replyPost('Test', '回文測試 回文至信箱', PTTCrawler.ReplyPost_Mail, Index=NewestIndex)
     if ErrorCode == PTTCrawler.Success:
         PTTCrawler.Log('在 Test 回文至信箱成功!')
     else:
         PTTCrawler.Log('在 Test 回文至信箱失敗 ' + str(ErrorCode))
         
-    ErrorCode = PTTCrawler.replyPost('Test', '回文測試', PTTCrawler.ReplyPost_Board + PTTCrawler.ReplyPost_Mail, Index=NewestIndex)
+    ErrorCode = PTTCrawler.replyPost('Test', '回文測試 回文至版上與信箱', PTTCrawler.ReplyPost_Board + PTTCrawler.ReplyPost_Mail, Index=NewestIndex)
     if ErrorCode == PTTCrawler.Success:
         PTTCrawler.Log('在 Test 回文至版上與信箱成功!')
     else:
@@ -424,6 +416,7 @@ def ReplyPostDemo():
     #         PTTCrawler.Log('在 ' + Board + ' 回文至信箱失敗 ' + str(ErrorCode))
     # else:
     #     PTTCrawler.Log('取得 ' + Board + ' 板最新文章編號失敗')
+
 if __name__ == '__main__':
     print('Welcome to PTT Crawler Library Demo')
     
@@ -432,19 +425,19 @@ if __name__ == '__main__':
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('登入失敗')
         sys.exit()
-    PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
+    # PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
     
-    # GetNewestPostIndexDemo()
+    GetNewestPostIndexDemo()
     PostDemo()
-    # PushDemo()
-    # GetPostInfoDemo()
-    # GetNewPostIndexListDemo()
-    # MainDemo()
-    # GetTimeDemo()
-    # GetUserInfoDemo()
-    # GiveMoneyDemo()
-    # CrawlBoardDemo()
-    # ReplyPostDemo()
+    GetPostInfoDemo()
+    PushDemo()
+    GetNewPostIndexListDemo()
+    MainDemo()
+    GetTimeDemo()
+    GetUserInfoDemo()
+    GiveMoneyDemo()
+    CrawlBoardDemo()
+    ReplyPostDemo()
     
     PTTCrawler.logout()
     
