@@ -366,6 +366,9 @@ def GetUserInfoDemo():
 
 def ReplyPostDemo():
     
+    #此範例是因應回文的需求
+    #此API可以用三種方式回文 回文至板上 信箱 或者皆是
+
     ErrorCode = PTTCrawler.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
     if ErrorCode == PTTCrawler.Success:
         PTTCrawler.Log('在 Test 板發文成功')
@@ -380,11 +383,7 @@ def ReplyPostDemo():
     else:
         PTTCrawler.Log('取得 ' + 'Test' + ' 板最新文章編號失敗')
         return False
-    
-    '''
-    PTTCrawler.ReplyPost_Board =                1
-    PTTCrawler.ReplyPost_Mail =                 2
-    '''
+
     #def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1, TelnetConnectIndex = 0):
     
     ErrorCode = PTTCrawler.replyPost('Test', '回文測試 回文至板上', PTTCrawler.ReplyPost_Board, Index=NewestIndex)
@@ -439,6 +438,6 @@ if __name__ == '__main__':
     CrawlBoardDemo()
     ReplyPostDemo()
     
+    # 請養好登出好習慣
     PTTCrawler.logout()
-    
     
