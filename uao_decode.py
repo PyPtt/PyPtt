@@ -2,7 +2,6 @@ import codecs
 import struct
 import array
 
-#encoding_map
 class Codec(codecs.Codec):
 	def encode(self,input,errors='strict'):
     	# 此 encode 流程修改自 https://gist.github.com/NEJmark/add42a5d812e2909c7aee24a42b23836
@@ -14,8 +13,9 @@ class Codec(codecs.Codec):
 				_bcode = encoding_map[_ucode]
 				encdoe_str.extend(struct.pack('>i',_bcode)[2:])
 			else:
-				#use_default cp950
-				encdoe_str.extend(unichar.encode('cp950'))
+				# use big5hkscs
+				# 支援範圍比較廣
+				encdoe_str.extend(unichar.encode('big5hkscs', 'ignore'))
 		return bytes(encdoe_str), len(encdoe_str)
 
 	def decode(self,input,errors='strict'):
