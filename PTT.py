@@ -97,7 +97,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
     
-        self.__Version = '0.4.171012'
+        self.__Version = '0.4.171013'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -247,7 +247,7 @@ class Crawler(object):
                 time.sleep(self.__SleepTime[TelnetConnectIndex])
                 ReceiveTimes += 1
 
-                self.__ReceiveData[TelnetConnectIndex] += self.__TelnetConnectList[TelnetConnectIndex].read_very_eager().decode('uao_decode') 
+                self.__ReceiveData[TelnetConnectIndex] += self.__TelnetConnectList[TelnetConnectIndex].read_very_eager().decode('big5', 'ignore') 
                 
                 DataMacthed = False
                 for i in range(len(ExpectTarget)):
@@ -942,6 +942,8 @@ class Crawler(object):
         #┌─────────────────────────────────────┐
         #└─────────────────────────────────────┘
         
+        self.Log(self.__ReceiveData[TelnetConnectIndex], self.LogLevel_DEBUG)
+
         if not '┌─────────────────────────────────────┐' in self.__ReceiveData[TelnetConnectIndex] or not '└─────────────────────────────────────┘' in self.__ReceiveData[TelnetConnectIndex]:
             return self.ParseError, RealPostID, RealMoney, RealWebUrl
         
