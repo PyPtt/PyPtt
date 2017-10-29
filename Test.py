@@ -260,8 +260,15 @@ def GiveMoneyDemo():
     #第三個參數是你自己的密碼
     
     WhoAreUwantToGiveMoney = 'CodingMan'
-    Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
-    
+    try:
+        PTTCrawler.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
+        Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
+    except Exception:
+        # 被背景執行了..邊緣程式沒資格問要不要贊助..
+        # 反正..從來沒收到過贊助，角落就是我的圈圈!!! 嗚嗚嗚
+        pass
+        return
+
     if Donate == 'y' or Donate == '':
         ErrorCode = PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 10, Password)
         
@@ -269,7 +276,8 @@ def GiveMoneyDemo():
             PTTCrawler.Log('送P幣給 ' + WhoAreUwantToGiveMoney + ' 成功')
         else:
             PTTCrawler.Log('送P幣給 ' + WhoAreUwantToGiveMoney + ' 失敗')
-
+    else:
+        PTTCrawler.Log('贊助又被拒絕了..可..可惡')
 def GetTimeDemo():
 
     #這個範例是取得PTT的時間，有時需要跟PTT對時的需求，比如說 準點報時
@@ -438,6 +446,6 @@ if __name__ == '__main__':
     CrawlBoardDemo()
     ReplyPostDemo()
     
-    # 請養好登出好習慣
+    # 請養成登出好習慣
     PTTCrawler.logout()
     
