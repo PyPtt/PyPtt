@@ -96,8 +96,8 @@ class PostInformation(object):
     
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
-    
-        self.__Version = '0.4.171013'
+
+        self.__Version = '0.4.171029'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -139,14 +139,14 @@ class Crawler(object):
         self.LogLevel_SLIENT =                  5
         
         self.__LogLevel = self.LogLevel_INFO
-        
+
         if LogLevel != -1:
             if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
                 self.Log('LogLevel error: ' + str(LogLevel))
                 return None
             else:
                 self.__LogLevel = LogLevel
-        
+
         self.__DefaultTimeout =                 1
         
         self.__Cursor =                       '>'
@@ -172,12 +172,19 @@ class Crawler(object):
         
         self.__CrawPool = []
         
+        self.__isBackground = False
+
         self.Log('歡迎使用 PTT Crawler Library v ' + self.__Version + '\r\n\r\n' + 
         '本函式庫提供您各式 PTT 操作功能\r\n\r\n' + 
         '使用方式簡單、開發快速，滿足您最嚴苛的需求。\r\n\r\n' + 
         '如有功能未能滿足您的需求，請來信告知。\r\n\r\n' + 
         'CodingMan\r\n')
-        
+        try:
+            self.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
+            self.__isBackground = False
+        except Exception:
+            self.Log('偵測到背景執行')
+            self.__isBackground = True
         self.Log('使用者帳號: ' + ID)
         TempPW = ''
 
@@ -1048,15 +1055,17 @@ class Crawler(object):
             
             if ErrorCode != self.Success:
                 self.Log('線程 ' + str(ThreadIndex) + ' 取得文章失敗', self.LogLevel_DEBUG)
-                self.__ProgressBarCount += 1
-                self.__ProgressBar.update(self.__ProgressBarCount)
+                if not self.__isBackground:
+                    self.__ProgressBarCount += 1
+                    self.__ProgressBar.update(self.__ProgressBarCount)
                 continue
             #Find post
             
             Post = PostInformation(Board, RealPostID, RealPostAuthor, RealPostDate, RealPostTitle, RealWebUrl, RealMoney, RealPostContent, RealPushList, OriginalText)
             
-            self.__ProgressBarCount += 1
-            self.__ProgressBar.update(self.__ProgressBarCount)
+            if not self.__isBackground:
+                self.__ProgressBarCount += 1
+                self.__ProgressBar.update(self.__ProgressBarCount)
             self.__SuccessPostCount += 1
             self.__PostHandler(Post)
         
@@ -1097,8 +1106,9 @@ class Crawler(object):
             
             if not isSuccess:
                 self.Log(FailReason, self.LogLevel_DEBUG)
-                self.__ProgressBarCount += 1
-                self.__ProgressBar.update(self.__ProgressBarCount)
+                if not self.__isBackground:
+                    self.__ProgressBarCount += 1
+                    self.__ProgressBar.update(self.__ProgressBarCount)
                 continue
                 
             if RealWebUrl != '':
@@ -1136,8 +1146,10 @@ class Crawler(object):
         ConnectList = [0]
         self.__CrawPoolLock = threading.Lock()
         self.__TotalPost = EndIndex - StartIndex + 1
-        self.__ProgressBar = progressbar.ProgressBar(max_value=self.__TotalPost)
-        self.__ProgressBarCount = 0
+
+        if not self.__isBackground:
+            self.__ProgressBar = progressbar.ProgressBar(max_value=self.__TotalPost)
+            self.__ProgressBarCount = 0
         self.__SuccessPostCount = 0
         
         self.__RequestCount = 0
@@ -1211,8 +1223,9 @@ class Crawler(object):
             time.sleep(1)
             if self.__ConnectCount == 0:
                 if len(self.__CrawPool) == 0 and self.__SaveCount == 0:
-                    self.__ProgressBar.update(self.__TotalPost)
-                    self.__ProgressBar.finish()
+                    if not self.__isBackground:
+                        self.__ProgressBar.update(self.__TotalPost)
+                        self.__ProgressBar.finish()
                     break
 
         for TelnetConnectIndex in ConnectList:
