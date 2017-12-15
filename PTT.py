@@ -1506,7 +1506,7 @@ class Crawler(object):
             ErrorCode, Index = self.__sendData(TelnetConnectIndex, SendMessage, CaseList, Enter)
             if ErrorCode == self.WaitTimeout:
                 self.__showScreen()
-                self.Log('No such option: ' + SendMessage)
+                self.Log('No such option: ' + SendMessage, self.LogLevel_DEBUG)
                 return ErrorCode, None
             if ErrorCode != self.Success:
                 self.Log('getUserInfo 2 error code: ' + str(ErrorCode), self.LogLevel_DEBUG)
