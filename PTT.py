@@ -97,7 +97,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
 
-        self.__Version = '0.4.171029'
+        self.__Version = '0.4.180123'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -153,7 +153,7 @@ class Crawler(object):
         
         self.__KickTimes =                      0
         
-        self.__MaxMultiLogin =                  3
+        self.__MaxMultiLogin =                  2
         
         self.__TimeoutCountMax =                3
         
@@ -174,7 +174,7 @@ class Crawler(object):
         
         self.__isBackground = False
 
-        self.Log('歡迎使用 PTT Crawler Library v ' + self.__Version + '\r\n\r\n' + 
+        self.Log('歡迎使用 PTT Library v ' + self.__Version + '\r\n\r\n' + 
         '本函式庫提供您各式 PTT 操作功能\r\n\r\n' + 
         '使用方式簡單、開發快速，滿足您最嚴苛的需求。\r\n\r\n' + 
         '如有功能未能滿足您的需求，請來信告知。\r\n\r\n' + 
@@ -407,6 +407,9 @@ class Crawler(object):
                     self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
                     time.sleep(10)
                 except socket.timeout:
+                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
+                    time.sleep(10)
+                except socket.gaierror:
                     self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
                     time.sleep(10)
             self.Log('連接成功')
