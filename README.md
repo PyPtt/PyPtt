@@ -1,4 +1,4 @@
-# PTT Crawler Library
+# PTT Library
 
 #### Do you want PTT in Python? import PTT
 
