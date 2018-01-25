@@ -1,4 +1,4 @@
-# PTT Crawler Library
+# PTT Library
 
 #### Do you want PTT in Python? import PTT
 
@@ -40,7 +40,7 @@ Demo
 
 版本
 -------------------
-###### 0.4.171029
+###### 0.4.180123
 
 API
 -------------------
