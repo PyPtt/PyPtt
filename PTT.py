@@ -153,7 +153,8 @@ class Crawler(object):
         
         self.__KickTimes =                      0
         
-        self.__MaxMultiLogin =                  2
+        self.__MaxMultiLogin =                  3
+        self.__ShowProgressBar =             True
         
         self.__TimeoutCountMax =                3
         
@@ -1058,7 +1059,7 @@ class Crawler(object):
             
             if ErrorCode != self.Success:
                 self.Log('線程 ' + str(ThreadIndex) + ' 取得文章失敗', self.LogLevel_DEBUG)
-                if not self.__isBackground:
+                if not self.__isBackground and self.__ShowProgressBar:
                     self.__ProgressBarCount += 1
                     self.__ProgressBar.update(self.__ProgressBarCount)
                 continue
@@ -1066,7 +1067,7 @@ class Crawler(object):
             
             Post = PostInformation(Board, RealPostID, RealPostAuthor, RealPostDate, RealPostTitle, RealWebUrl, RealMoney, RealPostContent, RealPushList, OriginalText)
             
-            if not self.__isBackground:
+            if not self.__isBackground and self.__ShowProgressBar:
                 self.__ProgressBarCount += 1
                 self.__ProgressBar.update(self.__ProgressBarCount)
             self.__SuccessPostCount += 1
@@ -1109,7 +1110,7 @@ class Crawler(object):
             
             if not isSuccess:
                 self.Log(FailReason, self.LogLevel_DEBUG)
-                if not self.__isBackground:
+                if not self.__isBackground and self.__ShowProgressBar:
                     self.__ProgressBarCount += 1
                     self.__ProgressBar.update(self.__ProgressBarCount)
                 continue
@@ -1123,13 +1124,15 @@ class Crawler(object):
         self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 結束', self.LogLevel_DEBUG)
         self.__ConnectCount -= 1
         
-    def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0):
+    def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0, ShowProgressBar=True):
     
         self.__PostHandler = PostHandler
     
         DefaultThreadNumber = 32
         
         self.Log('Into crawlBoard', self.LogLevel_DEBUG)
+        
+        self.__ShowProgressBar = ShowProgressBar
         
         if StartIndex == 0 and EndIndex == 0:
             self.Log('爬行 ' + Board + ' 板所有文章')
@@ -1150,7 +1153,7 @@ class Crawler(object):
         self.__CrawPoolLock = threading.Lock()
         self.__TotalPost = EndIndex - StartIndex + 1
 
-        if not self.__isBackground:
+        if not self.__isBackground and self.__ShowProgressBar:
             self.__ProgressBar = progressbar.ProgressBar(max_value=self.__TotalPost)
             self.__ProgressBarCount = 0
         self.__SuccessPostCount = 0
@@ -1177,7 +1180,8 @@ class Crawler(object):
             ConnectListTemp += str(TelnetConnectIndex) + ' '
         self.Log('已啟動連線 ' + ConnectListTemp)
         
-        StartIndex = 1
+        if StartIndex == 0:
+            StartIndex = 1
         self.Log('開始爬行 ' + Board + ' 板編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 的文章')
 
         ThreadUnit = int((EndIndex - StartIndex) / len(ConnectList) + 0.5)
@@ -1226,7 +1230,7 @@ class Crawler(object):
             time.sleep(1)
             if self.__ConnectCount == 0:
                 if len(self.__CrawPool) == 0 and self.__SaveCount == 0:
-                    if not self.__isBackground:
+                    if not self.__isBackground and self.__ShowProgressBar:
                         self.__ProgressBar.update(self.__TotalPost)
                         self.__ProgressBar.finish()
                     break
