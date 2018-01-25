@@ -97,7 +97,7 @@ class PostInformation(object):
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
 
-        self.__Version = '0.4.180123'
+        self.__Version = '0.4.180125'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -1184,7 +1184,7 @@ class Crawler(object):
             StartIndex = 1
         self.Log('開始爬行 ' + Board + ' 板編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 的文章')
 
-        ThreadUnit = int((EndIndex - StartIndex) / len(ConnectList) + 0.5)
+        ThreadUnit = int((EndIndex - StartIndex) / len(ConnectList))
         
         self.Log('總共 ' + str(self.__TotalPost) + ' 篇文章')
         
@@ -1201,23 +1201,26 @@ class Crawler(object):
         
             ThreadStartIndex = 0
             ThreadEndIndex = 0
-        
+
             if len(ConnectList) == 1:
                 ThreadStartIndex = StartIndex
                 ThreadEndIndex = EndIndex
             elif ThreadUnitCount == 0:
 
-                ThreadStartIndex = 1
-                ThreadEndIndex = ThreadUnit
+                ThreadStartIndex = StartIndex
+                ThreadEndIndex = StartIndex + ThreadUnit
                 
             elif TelnetConnectIndex == ConnectList[len(ConnectList) - 1]:
                 
-                ThreadStartIndex = ThreadUnitCount * ThreadUnit + 1
+                ThreadStartIndex = StartIndex + ThreadUnitCount * ThreadUnit + 1
                 ThreadEndIndex = EndIndex
             else:
 
-                ThreadStartIndex = ThreadUnitCount * ThreadUnit + 1
-                ThreadEndIndex = (ThreadUnitCount + 1) * ThreadUnit
+                ThreadStartIndex = StartIndex + ThreadUnitCount * ThreadUnit + 1
+                ThreadEndIndex = StartIndex + (ThreadUnitCount + 1) * ThreadUnit
+
+            # print('ThreadStartIndex: ' + str(ThreadStartIndex))
+            # print('ThreadEndIndex: ' + str(ThreadEndIndex))
             
             threading.Thread(target = self.crawlFindUrlThread, args = (Board, ThreadStartIndex, ThreadEndIndex, TelnetConnectIndex) ).start()
             
