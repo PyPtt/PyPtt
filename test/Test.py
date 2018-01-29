@@ -5,7 +5,7 @@ import getpass
 
 # import PTTLibrary as PTTAPI
 #from PTTLibrary import Crawler
-from PTTLibrary import Crawler
+from PTTLibrary import PTTLibrary
 
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
@@ -431,7 +431,7 @@ if __name__ == '__main__':
     print('Welcome to PTT Library Demo')
     
     KickOtherLogin = True
-    PTTCrawler = PTTAPI.Crawler(ID, Password, KickOtherLogin)
+    PTTCrawler = PTTLibrary.Crawler(ID, Password, KickOtherLogin)
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('登入失敗')
         sys.exit()
