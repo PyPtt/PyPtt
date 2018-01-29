@@ -99,8 +99,8 @@ class PostInformation(object):
     
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
-    
-        self.__Version = '0.4.171013'
+
+        self.__Version = '0.4.180125'
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -142,14 +142,14 @@ class Crawler(object):
         self.LogLevel_SLIENT =                  5
         
         self.__LogLevel = self.LogLevel_INFO
-        
+
         if LogLevel != -1:
             if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
                 self.Log('LogLevel error: ' + str(LogLevel))
                 return None
             else:
                 self.__LogLevel = LogLevel
-        
+
         self.__DefaultTimeout =                 1
         
         self.__Cursor =                       '>'
@@ -157,6 +157,7 @@ class Crawler(object):
         self.__KickTimes =                      0
         
         self.__MaxMultiLogin =                  3
+        self.__ShowProgressBar =             True
         
         self.__TimeoutCountMax =                3
         
@@ -175,12 +176,19 @@ class Crawler(object):
         
         self.__CrawPool = []
         
-        self.Log('歡迎使用 PTT Crawler Library v ' + self.__Version + '\r\n\r\n' + 
+        self.__isBackground = False
+
+        self.Log('歡迎使用 PTT Library v ' + self.__Version + '\r\n\r\n' + 
         '本函式庫提供您各式 PTT 操作功能\r\n\r\n' + 
         '使用方式簡單、開發快速，滿足您最嚴苛的需求。\r\n\r\n' + 
         '如有功能未能滿足您的需求，請來信告知。\r\n\r\n' + 
         'CodingMan\r\n')
-        
+        try:
+            self.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
+            self.__isBackground = False
+        except Exception:
+            self.Log('偵測到背景執行')
+            self.__isBackground = True
         self.Log('使用者帳號: ' + ID)
         TempPW = ''
 
@@ -403,6 +411,9 @@ class Crawler(object):
                     self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
                     time.sleep(10)
                 except socket.timeout:
+                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
+                    time.sleep(10)
+                except socket.gaierror:
                     self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
                     time.sleep(10)
             self.Log('連接成功')
@@ -1051,15 +1062,17 @@ class Crawler(object):
             
             if ErrorCode != self.Success:
                 self.Log('線程 ' + str(ThreadIndex) + ' 取得文章失敗', self.LogLevel_DEBUG)
-                self.__ProgressBarCount += 1
-                self.__ProgressBar.update(self.__ProgressBarCount)
+                if not self.__isBackground and self.__ShowProgressBar:
+                    self.__ProgressBarCount += 1
+                    self.__ProgressBar.update(self.__ProgressBarCount)
                 continue
             #Find post
             
             Post = PostInformation(Board, RealPostID, RealPostAuthor, RealPostDate, RealPostTitle, RealWebUrl, RealMoney, RealPostContent, RealPushList, OriginalText)
             
-            self.__ProgressBarCount += 1
-            self.__ProgressBar.update(self.__ProgressBarCount)
+            if not self.__isBackground and self.__ShowProgressBar:
+                self.__ProgressBarCount += 1
+                self.__ProgressBar.update(self.__ProgressBarCount)
             self.__SuccessPostCount += 1
             self.__PostHandler(Post)
         
@@ -1100,8 +1113,9 @@ class Crawler(object):
             
             if not isSuccess:
                 self.Log(FailReason, self.LogLevel_DEBUG)
-                self.__ProgressBarCount += 1
-                self.__ProgressBar.update(self.__ProgressBarCount)
+                if not self.__isBackground and self.__ShowProgressBar:
+                    self.__ProgressBarCount += 1
+                    self.__ProgressBar.update(self.__ProgressBarCount)
                 continue
                 
             if RealWebUrl != '':
@@ -1113,13 +1127,15 @@ class Crawler(object):
         self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 結束', self.LogLevel_DEBUG)
         self.__ConnectCount -= 1
         
-    def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0):
+    def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0, ShowProgressBar=True):
     
         self.__PostHandler = PostHandler
     
         DefaultThreadNumber = 32
         
         self.Log('Into crawlBoard', self.LogLevel_DEBUG)
+        
+        self.__ShowProgressBar = ShowProgressBar
         
         if StartIndex == 0 and EndIndex == 0:
             self.Log('爬行 ' + Board + ' 板所有文章')
@@ -1139,8 +1155,10 @@ class Crawler(object):
         ConnectList = [0]
         self.__CrawPoolLock = threading.Lock()
         self.__TotalPost = EndIndex - StartIndex + 1
-        self.__ProgressBar = progressbar.ProgressBar(max_value=self.__TotalPost)
-        self.__ProgressBarCount = 0
+
+        if not self.__isBackground and self.__ShowProgressBar:
+            self.__ProgressBar = progressbar.ProgressBar(max_value=self.__TotalPost)
+            self.__ProgressBarCount = 0
         self.__SuccessPostCount = 0
         
         self.__RequestCount = 0
@@ -1165,10 +1183,11 @@ class Crawler(object):
             ConnectListTemp += str(TelnetConnectIndex) + ' '
         self.Log('已啟動連線 ' + ConnectListTemp)
         
-        StartIndex = 1
+        if StartIndex == 0:
+            StartIndex = 1
         self.Log('開始爬行 ' + Board + ' 板編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 的文章')
 
-        ThreadUnit = int((EndIndex - StartIndex) / len(ConnectList) + 0.5)
+        ThreadUnit = int((EndIndex - StartIndex) / len(ConnectList))
         
         self.Log('總共 ' + str(self.__TotalPost) + ' 篇文章')
         
@@ -1185,23 +1204,26 @@ class Crawler(object):
         
             ThreadStartIndex = 0
             ThreadEndIndex = 0
-        
+
             if len(ConnectList) == 1:
                 ThreadStartIndex = StartIndex
                 ThreadEndIndex = EndIndex
             elif ThreadUnitCount == 0:
 
-                ThreadStartIndex = 1
-                ThreadEndIndex = ThreadUnit
+                ThreadStartIndex = StartIndex
+                ThreadEndIndex = StartIndex + ThreadUnit
                 
             elif TelnetConnectIndex == ConnectList[len(ConnectList) - 1]:
                 
-                ThreadStartIndex = ThreadUnitCount * ThreadUnit + 1
+                ThreadStartIndex = StartIndex + ThreadUnitCount * ThreadUnit + 1
                 ThreadEndIndex = EndIndex
             else:
 
-                ThreadStartIndex = ThreadUnitCount * ThreadUnit + 1
-                ThreadEndIndex = (ThreadUnitCount + 1) * ThreadUnit
+                ThreadStartIndex = StartIndex + ThreadUnitCount * ThreadUnit + 1
+                ThreadEndIndex = StartIndex + (ThreadUnitCount + 1) * ThreadUnit
+
+            # print('ThreadStartIndex: ' + str(ThreadStartIndex))
+            # print('ThreadEndIndex: ' + str(ThreadEndIndex))
             
             threading.Thread(target = self.crawlFindUrlThread, args = (Board, ThreadStartIndex, ThreadEndIndex, TelnetConnectIndex) ).start()
             
@@ -1214,8 +1236,9 @@ class Crawler(object):
             time.sleep(1)
             if self.__ConnectCount == 0:
                 if len(self.__CrawPool) == 0 and self.__SaveCount == 0:
-                    self.__ProgressBar.update(self.__TotalPost)
-                    self.__ProgressBar.finish()
+                    if not self.__isBackground and self.__ShowProgressBar:
+                        self.__ProgressBar.update(self.__TotalPost)
+                        self.__ProgressBar.finish()
                     break
 
         for TelnetConnectIndex in ConnectList:
@@ -1509,7 +1532,7 @@ class Crawler(object):
             ErrorCode, Index = self.__sendData(TelnetConnectIndex, SendMessage, CaseList, Enter)
             if ErrorCode == self.WaitTimeout:
                 self.__showScreen()
-                self.Log('No such option: ' + SendMessage)
+                self.Log('No such option: ' + SendMessage, self.LogLevel_DEBUG)
                 return ErrorCode, None
             if ErrorCode != self.Success:
                 self.Log('getUserInfo 2 error code: ' + str(ErrorCode), self.LogLevel_DEBUG)

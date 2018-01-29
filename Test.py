@@ -456,4 +456,3 @@ if __name__ == '__main__':
     # 請養成登出好習慣
     PTTCrawler.logout()
     
-    
