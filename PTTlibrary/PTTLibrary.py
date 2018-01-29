@@ -5,11 +5,11 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-import PTTUtil
+from . import PTTUtil
+from . import uao_decode
 import threading
 import progressbar
 import socket
-import uao_decode
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
