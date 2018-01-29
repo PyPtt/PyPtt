@@ -1,4 +1,4 @@
-# PTT Crawler Library
+# PTT Library
 
 #### Do you want PTT in Python? import PTT
 
@@ -9,7 +9,7 @@
 
 如何使用
 -------------------
-你可以參考範例程式，並佐以 Test.py 裡面有 API 的範例與說明
+###### 你可以參考範例程式，並佐以 Test.py 裡面有 API 的範例與說明
 
 範例程式
 -------------------
@@ -44,7 +44,6 @@ Demo
 
 API
 -------------------
-
 ###### logout 登出
 ###### post PO 文
 ###### pushByIndex 根據文章編號推文
