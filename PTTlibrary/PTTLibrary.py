@@ -93,7 +93,8 @@ class PostInformation(object):
         return self.__PushList
     def getOriginalData(self):
         return self.__OriginalData
-    
+
+
 class Crawler(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
 
@@ -1735,5 +1736,5 @@ class Crawler(object):
         return self.Success
 if __name__ == '__main__':
 
-    print('PTT Crawler Library v ' + self.__Version)
+    print('PTT Library v ' + self.__Version)
     print('CodingMan')

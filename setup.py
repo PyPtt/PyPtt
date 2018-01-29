@@ -40,12 +40,12 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.4.1801290',  # Required
+    version='0.4.18012992',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='A python library for the best BBS in the world PTT',  # Required
+    description='A PTT library',  # Required
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
@@ -87,8 +87,8 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
         # Pick your license as you wish
-        'License :: OSI Approved :: GPL 3.0',
-
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
@@ -109,10 +109,11 @@ setup(
     # the `py_modules` argument instead as follows, which will expect a file
     # called `my_module.py` to exist:
     #
-    #   py_modules=["my_module"],
+    py_modules=["PTTLibrary.py"],
     #
-    packages=find_packages(exclude=['PTTLibrary', 'docs', 'test']),  # Required
-
+    packages=['PTTLibrary'],  # Required
+    
+    # package_dir={'PTTLibrary': 'PTT'},
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
     # installed, so they must be valid existing projects.
@@ -159,7 +160,7 @@ setup(
     # executes the function `main` from this package when invoked:
     # entry_points={  # Optional
     #     'console_scripts': [
-    #         'sample=sample:main',
+    #         'PTTLibrary=PTT:main',
     #     ],
     # },
 )
