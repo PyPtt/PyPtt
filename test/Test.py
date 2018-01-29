@@ -1,8 +1,11 @@
 import sys
 import time
-import PTT
 import json
 import getpass
+
+# import PTTLibrary as PTTAPI
+#from PTTLibrary import Crawler
+from PTTLibrary import Crawler
 
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
@@ -425,26 +428,26 @@ def ReplyPostDemo():
     #     PTTCrawler.Log('取得 ' + Board + ' 板最新文章編號失敗')
 
 if __name__ == '__main__':
-    print('Welcome to PTT Crawler Library Demo')
+    print('Welcome to PTT Library Demo')
     
     KickOtherLogin = True
-    PTTCrawler = PTT.Crawler(ID, Password, KickOtherLogin)
+    PTTCrawler = PTTAPI.Crawler(ID, Password, KickOtherLogin)
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('登入失敗')
         sys.exit()
     # PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
     
-    GetNewestPostIndexDemo()
-    PostDemo()
-    GetPostInfoDemo()
-    PushDemo()
-    GetNewPostIndexListDemo()
-    MainDemo()
-    GetTimeDemo()
-    GetUserInfoDemo()
-    GiveMoneyDemo()
-    CrawlBoardDemo()
-    ReplyPostDemo()
+    # GetNewestPostIndexDemo()
+    # PostDemo()
+    # GetPostInfoDemo()
+    # PushDemo()
+    # GetNewPostIndexListDemo()
+    # MainDemo()
+    # GetTimeDemo()
+    # GetUserInfoDemo()
+    # GiveMoneyDemo()
+    # CrawlBoardDemo()
+    # ReplyPostDemo()
     
     # 請養成登出好習慣
     PTTCrawler.logout()
