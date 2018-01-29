@@ -63,7 +63,7 @@ def PostDemo():
 
     for i in range(1):
         
-        ErrorCode = PTTCrawler.post('Test', '自動PO文測試', JapanText + '\r\n自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+        ErrorCode = PTTCrawler.post('Test', '自動PO文測試', JapanText + '\r\n自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/WHK6B5', 1, 0)
         if ErrorCode == PTTCrawler.Success:
             PTTCrawler.Log('在 Test 板發文成功')
         elif ErrorCode == PTTCrawler.NoPermission:
@@ -201,7 +201,7 @@ def PushDemo():
         return False
     PTTCrawler.Log('最新文章編號: ' + str(NewestIndex))
     for i in range(10):
-        ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 1', NewestIndex)
+        ErrorCode = PTTCrawler.pushByIndex('Test', PTTCrawler.PushType_Push, 'https://goo.gl/WHK6B5 type 1', NewestIndex)
         if ErrorCode == PTTCrawler.Success:
             PTTCrawler.Log('使用文章編號: 推文成功')
         elif ErrorCode == PTTCrawler.ErrorInput:
@@ -224,7 +224,7 @@ def PushDemo():
 
     for i in range(10):
         
-        ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/5hdAqu type 2', NewPost.getPostID())
+        ErrorCode = PTTCrawler.pushByID('Test', PTTCrawler.PushType_Push, 'https://goo.gl/WHK6B5 type 2', NewPost.getPostID())
         if ErrorCode == PTTCrawler.Success:
             PTTCrawler.Log('使用文章代碼: 推文成功')
         elif ErrorCode == PTTCrawler.ErrorInput:
@@ -260,8 +260,15 @@ def GiveMoneyDemo():
     #第三個參數是你自己的密碼
     
     WhoAreUwantToGiveMoney = 'CodingMan'
-    Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
-    
+    try:
+        PTTCrawler.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
+        Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
+    except Exception:
+        # 被背景執行了..邊緣程式沒資格問要不要贊助..
+        # 反正..從來沒收到過贊助，角落就是我的圈圈!!! 嗚嗚嗚
+        pass
+        return
+
     if Donate == 'y' or Donate == '':
         ErrorCode = PTTCrawler.giveMoney(WhoAreUwantToGiveMoney, 10, Password)
         
@@ -269,7 +276,8 @@ def GiveMoneyDemo():
             PTTCrawler.Log('送P幣給 ' + WhoAreUwantToGiveMoney + ' 成功')
         else:
             PTTCrawler.Log('送P幣給 ' + WhoAreUwantToGiveMoney + ' 失敗')
-
+    else:
+        PTTCrawler.Log('贊助又被拒絕了..可..可惡')
 def GetTimeDemo():
 
     #這個範例是取得PTT的時間，有時需要跟PTT對時的需求，比如說 準點報時
@@ -366,7 +374,10 @@ def GetUserInfoDemo():
 
 def ReplyPostDemo():
     
-    ErrorCode = PTTCrawler.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+    #此範例是因應回文的需求
+    #此API可以用三種方式回文 回文至板上 信箱 或者皆是
+
+    ErrorCode = PTTCrawler.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/WHK6B5', 1, 0)
     if ErrorCode == PTTCrawler.Success:
         PTTCrawler.Log('在 Test 板發文成功')
     elif ErrorCode == PTTCrawler.NoPermission:
@@ -380,11 +391,7 @@ def ReplyPostDemo():
     else:
         PTTCrawler.Log('取得 ' + 'Test' + ' 板最新文章編號失敗')
         return False
-    
-    '''
-    PTTCrawler.ReplyPost_Board =                1
-    PTTCrawler.ReplyPost_Mail =                 2
-    '''
+
     #def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1, TelnetConnectIndex = 0):
     
     ErrorCode = PTTCrawler.replyPost('Test', '回文測試 回文至板上', PTTCrawler.ReplyPost_Board, Index=NewestIndex)
@@ -417,6 +424,12 @@ def ReplyPostDemo():
     # else:
     #     PTTCrawler.Log('取得 ' + Board + ' 板最新文章編號失敗')
 
+def GetMailDemo():
+    
+    # 此範例是示範如何取得 mail
+
+    ErrorCode = PTTCrawler.getMail(1)
+    PTTCrawler.Log('getMail 最終結果: ' + str(ErrorCode))
 if __name__ == '__main__':
     print('Welcome to PTT Crawler Library Demo')
     
@@ -425,20 +438,22 @@ if __name__ == '__main__':
     if not PTTCrawler.isLoginSuccess():
         PTTCrawler.Log('登入失敗')
         sys.exit()
-    # PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
+    PTTCrawler.setLogLevel(PTTCrawler.LogLevel_DEBUG)
     
-    GetNewestPostIndexDemo()
-    PostDemo()
-    GetPostInfoDemo()
-    PushDemo()
-    GetNewPostIndexListDemo()
-    MainDemo()
-    GetTimeDemo()
-    GetUserInfoDemo()
-    GiveMoneyDemo()
-    CrawlBoardDemo()
-    ReplyPostDemo()
-    
+    # GetNewestPostIndexDemo()
+    # PostDemo()
+    # GetPostInfoDemo()
+    # PushDemo()
+    # GetNewPostIndexListDemo()
+    # MainDemo()
+    # GetTimeDemo()
+    # GetUserInfoDemo()
+    # GiveMoneyDemo()
+    # CrawlBoardDemo()
+    # ReplyPostDemo()
+    GetMailDemo()
+
+    # 請養成登出好習慣
     PTTCrawler.logout()
     
     

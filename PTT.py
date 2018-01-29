@@ -13,6 +13,9 @@ import uao_decode
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+class MailInformation(object):
+    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList, OriginalData):
+
 class UserInformation(object):
     def __init__(self, UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess):
         self.__UserID = str(UserID)
@@ -1708,6 +1711,95 @@ class Crawler(object):
                 SendMessage = 'Y'
                 Enter = True
                 self.Log('replyPost 已順利寄出', self.LogLevel_DEBUG)
+        
+        return self.Success
+    def getMail(self, inputMailIndex, TelnetConnectIndex = 0):
+        try:
+            MailIndex = int(inputMailIndex)
+        except ValueError:
+            self.Log('錯誤的信件編號: ' + str(inputMailIndex), self.LogLevel_INFO)
+            return self.ErrorInput
+
+        if MailIndex < 1:
+            self.Log('過小的信件編號: ' + str(MailIndex), self.LogLevel_INFO)
+            return self.ErrorInput
+
+        ErrorCode = self.__gotoTop(TelnetConnectIndex)
+        if ErrorCode != self.Success:
+            print('無法移動至主選單: ' + str(ErrorCode))
+            return ErrorCode
+        # self.__showScreen()
+
+        CaseList = [
+            '我的信箱', 
+            '鴻雁往返'
+        ]
+        SendMessage = 'm'
+        Enter = True
+        self.__CurrentTimeout[TelnetConnectIndex] = 10
+        
+        while True:
+            ErrorCode, Index = self.__sendData(TelnetConnectIndex, SendMessage, CaseList, Enter)
+            if ErrorCode == self.WaitTimeout:
+                self.__showScreen()
+                self.Log('無法前進至信箱', self.LogLevel_DEBUG)
+                return self.WaitTimeout
+            if ErrorCode != self.Success:
+                self.Log('getMail 錯誤: ' + str(ErrorCode), self.LogLevel_DEBUG)
+                return ErrorCode
+            if Index == 0:
+                self.__CurrentTimeout[TelnetConnectIndex] = 10
+                SendMessage = 'r'
+                Enter = True
+                self.Log('進入私人信件區', self.LogLevel_DEBUG)
+            elif Index == 1:
+                self.Log('進入郵件選單', self.LogLevel_DEBUG)
+                # 置底
+                # SendMessage = '$'
+                # Enter = False
+                # self.__showScreen()
+                break
+            else:
+                self.Log('else', self.LogLevel_DEBUG)
+                self.__showScreen()
+                return self.UnknowError
+        
+        self.__CurrentTimeout[TelnetConnectIndex] = 3
+        self.__readScreen(TelnetConnectIndex, '0\r$', ['鴻雁往返'])
+
+        print(self.__ReceiveData[TelnetConnectIndex])
+        # self.Log('MailIndex: ' + str(MailIndex), self.LogLevel_INFO)
+
+        MaxMail = 0
+        for i in reversed(range(1000)):
+            if '/' + str(i) + '篇' in self.__ReceiveData[TelnetConnectIndex]:
+                MaxMail = i
+                break
+        if MaxMail == 0:
+            self.Log('取得信箱最高容量失敗')
+            return self.UnknowError
+        self.Log('此信箱最高容量: '+ str(MaxMail))
+
+        if self.__Cursor == '>':
+            MailIndexTest = 5
+        elif self.__Cursor == '●':
+            MailIndexTest = 4
+        else:
+            self.Log('無游標')
+            return self.UnknowError
+        NewestMailIndex = 0
+        for i in reversed(range(MaxMail + 1)):
+            TestString = self.__Cursor + (' ' * (MailIndexTest - len(str(i)))) + str(i)
+            if TestString in self.__ReceiveData[TelnetConnectIndex]:
+                NewestMailIndex = i
+                break
+        if NewestMailIndex == 0:
+            self.Log('信箱中沒有郵件')
+            return self.Success
+        else:
+            self.Log('信箱中最新郵件編號: ' + str(NewestMailIndex))
+
+        
         
         return self.Success
 if __name__ == '__main__':
