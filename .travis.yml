@@ -9,7 +9,7 @@ os:
   - windows
 
 install:
-  - pip install PTTLibrary --upgrade
+  - pip install PTTLibrary request BeautifulSoup4 progressbar2
 
 script:
   - python3 Test.py
