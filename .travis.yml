@@ -1,0 +1,18 @@
+language: python
+cache: pip
+
+python:
+  - '3.6'
+
+os:
+  - linux
+  - windows
+
+services:
+  - mongodb
+
+install:
+  - pip install PTTLibrary
+
+script:
+  - Test.py

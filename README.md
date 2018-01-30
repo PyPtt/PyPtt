@@ -7,6 +7,8 @@
 ###### 根據網路速度動態調整操作速度、斷線自動恢復
 ###### 如有功能未能詳盡 歡迎來信告知
 
+[![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)
+
 如何使用
 -------------------
 ###### 你可以參考範例程式，並佐以 Test.py 裡面有 API 的範例與說明
@@ -24,13 +26,17 @@
 
 [準點報時機器人](https://github.com/Truth0906/ReportTimeBot)
 
-Demo
+安裝
+-------------------
+###### pip3 install PTTLibrary
+
+詳細說明
 -------------------
 ###### 請參考 Test.py
 
 需求
 -------------------
-###### Python 3.6.1
+###### Python 3 up
 
 相依函式庫
 -------------------

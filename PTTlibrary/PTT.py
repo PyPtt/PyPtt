@@ -14,8 +14,8 @@ import socket
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class MailInformation(object):
-    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList, OriginalData):
-
+    def __init__(self, Author, Title, Date, MailContent, IP, OriginalData):
+        pass
 class UserInformation(object):
     def __init__(self, UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess):
         self.__UserID = str(UserID)
