@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 import telnetlib
 import time
 import re
@@ -21,8 +21,22 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 Version = '0.4.180129'
 
 class MailInformation(object):
-    def __init__(self, Author, Title, Date, MailContent, IP, OriginalData):
-        pass
+    def __init__(self, Author, Title, Date, Content, IP):
+        self.__Author = str(Author)
+        self.__Title = str(Title)
+        self.__Date = str(Date)
+        self.__Content = str(Content)
+        self.__IP = str(IP)
+    def getAuthor(self):
+        return self.__Author
+    def getTitle(self):
+        return self.__Title
+    def getDate(self):
+        return self.__Date
+    def getContent(self):
+        return self.__Content
+    def getIP(self):
+        return self.__IP
 class UserInformation(object):
     def __init__(self, UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess):
         self.__UserID = str(UserID)
@@ -1749,16 +1763,16 @@ class Library(object):
             MailIndex = int(inputMailIndex)
         except ValueError:
             self.Log('錯誤的信件編號: ' + str(inputMailIndex), self.LogLevel_INFO)
-            return self.ErrorInput
+            return self.ErrorInput, None
 
         if MailIndex < 1:
             self.Log('過小的信件編號: ' + str(MailIndex), self.LogLevel_INFO)
-            return self.ErrorInput
+            return self.ErrorInput, None
 
         ErrorCode = self.__gotoTop(TelnetConnectIndex)
         if ErrorCode != self.Success:
             print('無法移動至主選單: ' + str(ErrorCode))
-            return ErrorCode
+            return ErrorCode, None
         # self.__showScreen()
 
         CaseList = [
@@ -1774,10 +1788,10 @@ class Library(object):
             if ErrorCode == self.WaitTimeout:
                 self.__showScreen()
                 self.Log('無法前進至信箱', self.LogLevel_DEBUG)
-                return self.WaitTimeout
+                return self.WaitTimeout, None
             if ErrorCode != self.Success:
                 self.Log('getMail 錯誤: ' + str(ErrorCode), self.LogLevel_DEBUG)
-                return ErrorCode
+                return ErrorCode, None
             if Index == 0:
                 self.__CurrentTimeout[TelnetConnectIndex] = 10
                 SendMessage = 'r'
@@ -1793,7 +1807,7 @@ class Library(object):
             else:
                 self.Log('else', self.LogLevel_DEBUG)
                 self.__showScreen()
-                return self.UnknowError
+                return self.UnknowError, None
         
         self.__CurrentTimeout[TelnetConnectIndex] = 2
         self.__readScreen(TelnetConnectIndex, '0\r$', ['鴻雁往返'])
@@ -1808,7 +1822,7 @@ class Library(object):
                 break
         if MaxMail == 0:
             self.Log('取得信箱最高容量失敗')
-            return self.UnknowError
+            return self.UnknowError, None
         self.Log('此信箱最高容量: '+ str(MaxMail))
 
         if self.__Cursor == '>':
@@ -1817,7 +1831,7 @@ class Library(object):
             MailIndexTest = 4
         else:
             self.Log('無游標')
-            return self.UnknowError
+            return self.UnknowError, None
         NewestMailIndex = 0
         for i in reversed(range(MaxMail + 1)):
             TestString = self.__Cursor + (' ' * (MailIndexTest - len(str(i)))) + str(i)
@@ -1826,13 +1840,13 @@ class Library(object):
                 break
         if NewestMailIndex == 0:
             self.Log('信箱中沒有郵件')
-            return self.Success
+            return self.Success, None
         else:
             self.Log('信箱中最新郵件編號: ' + str(NewestMailIndex))
 
         if inputMailIndex > NewestMailIndex:
             self.Log('錯誤的輸入!輸入的郵件編號(' + str(inputMailIndex) + ')超過目前的郵件編號(' + str(NewestMailIndex) + ')')
-            return self.ErrorInput
+            return self.ErrorInput, None
         
         self.__CurrentTimeout[TelnetConnectIndex] = 2
         self.__readScreen(TelnetConnectIndex, str(inputMailIndex) + '\r\r', ['瀏覽'])
@@ -1861,14 +1875,15 @@ class Library(object):
 
         # [0;36m───────────────────────────────────────
         # \x1b[D
+        # [1;30;47m目前顯示: 第 01~22 行[m
+        # map(int, re.findall(r'\d+', string1))
 
-
-        MailContent = []
-        MailContent.append(self.__ReceiveData[TelnetConnectIndex])
-        MailContent[0] = MailContent[0][MailContent[0].find('[0;36m───────────────────────────────────────') + len('[0;36m───────────────────────────────────────') + 6:]
-        MailContent[0] = MailContent[0][:MailContent[0].find('瀏覽 第') - 11]
+        MailContentTemp = []
+        MailContentTemp.append(self.__ReceiveData[TelnetConnectIndex])
+        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[0;36m───────────────────────────────────────') + len('[0;36m───────────────────────────────────────') + 6:]
+        MailContentTemp[0] = MailContentTemp[0][:MailContentTemp[0].find('瀏覽 第') - 11]
         # 瀏覽 第
-
+        LastLineCount = [1, 22]
         MailPage = 2
         while '頁 (100%)' not in self.__ReceiveData[TelnetConnectIndex]:
             
@@ -1876,26 +1891,43 @@ class Library(object):
             self.__readScreen(TelnetConnectIndex, str(MailPage) + '\r', ['瀏覽'])
             MailPage += 1
 
-            MailContentTemp = self.__ReceiveData[TelnetConnectIndex] 
-            MailContentTemp = MailContentTemp[len('[H [2J'):]
-            MailContentTemp = MailContentTemp[:MailContentTemp.find('瀏覽 第') - 11]
+            MailContentTempTemp = self.__ReceiveData[TelnetConnectIndex]
+            MailContentTempTemp = MailContentTempTemp[len('[H [2J'):]
+            MailContentTempTemp = MailContentTempTemp[:MailContentTempTemp.find('瀏覽 第') - 11]
             
-            MailContent.append(MailContentTemp)
-            # print('QQ: \r' + MailContentTemp)
-    
-        print('MailAuthor: ' + MailAuthor)
-        print('MailTitle: ' + MailTitle)
-        print('MailDate: ' + MailDate)
+            # [1;30;47m目前顯示: 第 
+            LineCountTemp = self.__ReceiveData[TelnetConnectIndex]
+            LineCountTemp = LineCountTemp[LineCountTemp.find('目前顯示: 第 ') + len('目前顯示: 第 '):]
+            LineCountTemp = LineCountTemp[:LineCountTemp.find(' 行')]
+            LastLineCountTemp = list(map(int, re.findall(r'\d+', LineCountTemp)))
 
+            # print(LastLineCount)
+            # print(LastLineCountTemp)
+            if LastLineCountTemp[0] != LastLineCount[1] + 1:
+                SubLine = (LastLineCount[1] + 1) - LastLineCountTemp[0]
+                # print('重疊: ' + str(SubLine) + ' 行')
+
+                for i in range(SubLine):
+                    MailContentTempTemp = MailContentTempTemp[MailContentTempTemp.find('\r') + 2:]
+            
+            MailContentTemp.append(MailContentTempTemp)
+            LastLineCount = LastLineCountTemp
+        MailContent = ''.join(MailContentTemp)
+
+        MailIP = MailContent[len(MailContent) - 15:]
+        MailIP = MailIP.replace(' ', '')
+
+        MailContent = MailContent[:MailContent.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自:') - 5]
         
+        # print('MailAuthor: ' + MailAuthor)
+        # print('MailTitle: ' + MailTitle)
+        # print('MailDate: ' + MailDate)
+        # print('MailContent: \r\n' + MailContent + '=end=')
+        # print('MailIP: ' + MailIP + '==end==')
+        
+        result = MailInformation(MailAuthor, MailTitle, MailDate, MailContent, MailIP)
 
-        # print('-' * 20)
-        # for Content in MailContent:
-        #     print(Content)
-        # print('-' * 20)
-
-
-        return self.Success
+        return self.Success, result
 if __name__ == '__main__':
 
     print('PTT Library v ' + Version)
