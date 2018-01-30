@@ -8,6 +8,7 @@
 ###### 如有功能未能詳盡 歡迎來信告知
 
 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)
+[![Build Status](https://travis-ci.org/Truth0906/PTTLibrary.svg?branch=master)](https://travis-ci.org/Truth0906/PTTLibrary)
 
 安裝
 -------------------
