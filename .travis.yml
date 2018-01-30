@@ -9,7 +9,7 @@ os:
   - windows
 
 install:
-  - pip install PTTLibrary
+  - pip install PTTLibrary --upgrade
 
 script:
   - python3 Test.py
