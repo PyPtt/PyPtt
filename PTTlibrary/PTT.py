@@ -2,7 +2,6 @@ import sys
 import telnetlib
 import time
 import re
-import requests
 from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from . import PTTUtil
@@ -10,6 +9,7 @@ from . import uao_decode
 import threading
 import progressbar
 import socket
+import requests
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
