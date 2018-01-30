@@ -2,22 +2,11 @@ import sys
 import time
 import json
 import getpass
-
-# import PTTLibrary as PTTAPI
-#from PTTLibrary import Crawler
 from PTTLibrary import PTT
 
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
 
-try:
-    with open('Account.txt') as AccountFile:
-        Account = json.load(AccountFile)
-        ID = Account['ID']
-        Password = Account['Password']
-except FileNotFoundError:
-    ID = input('Input ID: ')
-    Password = getpass.getpass('Input password: ')
 BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
 PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
@@ -436,6 +425,15 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
+    try:
+        with open('Account.txt') as AccountFile:
+            Account = json.load(AccountFile)
+            ID = Account['ID']
+            Password = Account['Password']
+    except FileNotFoundError:
+        ID = input('請輸入帳號: ')
+        Password = getpass.getpass('請輸入密碼: ')
+    
     KickOtherLogin = True
     PTTBot = PTT.Library(ID, Password, KickOtherLogin)
     if not PTTBot.isLoginSuccess():
