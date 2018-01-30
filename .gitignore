@@ -4,3 +4,4 @@ build/
 dist/
 /CrawlBoardResult.txt
 /.pypirc
+PTTLibrary.egg-info/

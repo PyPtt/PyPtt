@@ -1,6 +1,6 @@
 Metadata-Version: 1.2
 Name: PTTLibrary
-Version: 0.4.180129912
+Version: 0.4.180129913
 Summary: PTT library
 Home-page: https://github.com/Truth0906/PTTLibrary
 Author: CodingMan
@@ -10,7 +10,7 @@ Description: # PTT Library
         
         #### Do you want PTT in Python? import PTT
         
-        ###### 這是一個專為 PTT 開發者所開發的函式庫
+        ###### 這是一個專為使用 Python 操作 PTT 的開發者所開發的函式庫
         ###### 提供完整快速的 PTT 操作
         ###### 根據網路速度動態調整操作速度、斷線自動恢復
         ###### 如有功能未能詳盡 歡迎來信告知
@@ -21,7 +21,7 @@ Description: # PTT Library
         
         範例程式
         -------------------
-        ###### 歡迎開發者將使用 PTT Crawler Library 的程式連結加入
+        ###### 歡迎開發者將使用 PTT Library 的程式連結加入
         [汪梯推文機器人](https://github.com/Truth0906/WantedPushCrawler)
         
         [五樓機器人](https://github.com/Truth0906/5FloorBot)
@@ -48,7 +48,7 @@ Description: # PTT Library
         
         版本
         -------------------
-        ###### 0.4.180125
+        ###### 0.4.180129
         
         API
         -------------------
