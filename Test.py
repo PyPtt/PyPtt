@@ -228,7 +228,7 @@ def PushDemo():
         else:
             PTTBot.Log('使用文章代碼: 推文失敗')
             return False
-def MainDemo():
+def MailDemo():
     
     #這個範例是如何寄信給某鄉民
 
@@ -416,6 +416,12 @@ def ReplyPostDemo():
     # else:
     #     PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
 
+def GetMailDemo():
+    
+    ErrorCode = PTTBot.getMail(4)
+
+    return 
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
     print(sys.argv)
@@ -434,25 +440,36 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    KickOtherLogin = True
-    PTTBot = PTT.Library(ID, Password, KickOtherLogin)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
-    # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
+    PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
     
-    GetNewestPostIndexDemo()
-    PostDemo()
-    GetPostInfoDemo()
-    PushDemo()
-    GetNewPostIndexListDemo()
-    MainDemo()
-    GetTimeDemo()
-    GetUserInfoDemo()
-    GiveMoneyDemo()
-    CrawlBoardDemo()
-    ReplyPostDemo()
+    # GetNewestPostIndexDemo()
+    # PostDemo()
+    # GetPostInfoDemo()
+    # PushDemo()
+    # GetNewPostIndexListDemo()
+    # MailDemo()
+    # GetTimeDemo()
+    # GetUserInfoDemo()
+    # GiveMoneyDemo()
+    # CrawlBoardDemo()
+    # ReplyPostDemo()
     
+    GetMailDemo()
+
+    # Str = ''
+    # for i in range(85):
+    #     Str += 'line ' + str(i) + '\r'
+
+    # ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ\r' + Str, 0)
+    # if ErrorCode == PTTBot.Success:
+    #     PTTBot.Log('寄信給 ' + ID + ' 成功')
+    # else:
+    #     PTTBot.Log('寄信給 ' + ID + ' 失敗')
+
     # 請養成登出好習慣
     PTTBot.logout()
     
