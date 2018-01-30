@@ -4,14 +4,21 @@ import time
 import re
 from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from . import PTTUtil
-from . import uao_decode
 import threading
 import progressbar
 import socket
 import requests
 
+try:
+    from . import PTTUtil
+    from . import uao_decode
+except SystemError:
+    import PTTUtil
+    import uao_decode
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+Version = '0.4.180129'
 
 # class MailInformation(object):
 #     def __init__(self, Author, Title, Date, MailContent, IP, OriginalData):
@@ -101,7 +108,7 @@ class PostInformation(object):
 class Library(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
 
-        self.__Version = '0.4.180129'
+        self.Version = Version
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -179,7 +186,7 @@ class Library(object):
         
         self.__isBackground = False
 
-        self.Log('歡迎使用 PTT Library v ' + self.__Version + '\r\n\r\n' + 
+        self.Log('歡迎使用 PTT Library v ' + self.Version + '\r\n\r\n' + 
         '本函式庫提供您各式 PTT 操作功能\r\n\r\n' + 
         '使用方式簡單、開發快速，滿足您最嚴苛的需求。\r\n\r\n' + 
         '如有功能未能滿足您的需求，請來信告知。\r\n\r\n' + 
@@ -1640,7 +1647,7 @@ class Library(object):
         
         return PTTUtil.readPostFile(FileName)
     def getVersion(self):
-        return self.__Version
+        return self.Version
     
     def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1, TelnetConnectIndex = 0):
 
@@ -1828,5 +1835,5 @@ class Library(object):
         return self.Success
 if __name__ == '__main__':
 
-    print('PTT Library v ' + self.__Version)
-    print('CodingMan')
+    print('PTT Library v ' + Version)
+    print('Developed by PTT CodingMan')
