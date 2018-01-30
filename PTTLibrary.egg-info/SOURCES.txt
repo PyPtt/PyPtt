@@ -2,7 +2,7 @@ LICENSE
 MANIFEST.in
 README.md
 setup.py
-PTTLibrary/PTTLibrary.py
+PTTLibrary/PTT.py
 PTTLibrary/PTTUtil.py
 PTTLibrary/uao_decode.py
 PTTLibrary.egg-info/PKG-INFO
@@ -10,7 +10,7 @@ PTTLibrary.egg-info/SOURCES.txt
 PTTLibrary.egg-info/dependency_links.txt
 PTTLibrary.egg-info/requires.txt
 PTTLibrary.egg-info/top_level.txt
-PTTlibrary/PTTLibrary.py
+PTTlibrary/PTT.py
 PTTlibrary/PTTUtil.py
 PTTlibrary/uao_decode.py
 test/Test.py

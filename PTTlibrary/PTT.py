@@ -95,7 +95,7 @@ class PostInformation(object):
         return self.__OriginalData
 
 
-class Crawler(object):
+class Library(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
 
         self.__Version = '0.4.180125'
