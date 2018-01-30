@@ -428,27 +428,33 @@ def ReplyPostDemo():
     #     PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
 
 if __name__ == '__main__':
-    print('Welcome to PTT Library Demo')
-    
-    # KickOtherLogin = True
-    # PTTBot = PTT.Library(ID, Password, KickOtherLogin)
-    # if not PTTBot.isLoginSuccess():
-    #     PTTBot.Log('登入失敗')
-    #     sys.exit()
+    print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
+    # print(sys.argv)
+
+    if len(sys.argv) == 2:
+        if sys.argv[1] == '-ci':
+            print('CI test run success!!')
+            sys.exit()
+
+    KickOtherLogin = True
+    PTTBot = PTT.Library(ID, Password, KickOtherLogin)
+    if not PTTBot.isLoginSuccess():
+        PTTBot.Log('登入失敗')
+        sys.exit()
     # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
     
-    # GetNewestPostIndexDemo()
-    # PostDemo()
-    # GetPostInfoDemo()
-    # PushDemo()
-    # GetNewPostIndexListDemo()
-    # MainDemo()
-    # GetTimeDemo()
-    # GetUserInfoDemo()
-    # GiveMoneyDemo()
-    # CrawlBoardDemo()
-    # ReplyPostDemo()
+    GetNewestPostIndexDemo()
+    PostDemo()
+    GetPostInfoDemo()
+    PushDemo()
+    GetNewPostIndexListDemo()
+    MainDemo()
+    GetTimeDemo()
+    GetUserInfoDemo()
+    GiveMoneyDemo()
+    CrawlBoardDemo()
+    ReplyPostDemo()
     
     # 請養成登出好習慣
-    # PTTBot.logout()
+    PTTBot.logout()
     
