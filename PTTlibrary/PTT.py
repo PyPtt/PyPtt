@@ -20,9 +20,9 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 Version = '0.4.180129'
 
-# class MailInformation(object):
-#     def __init__(self, Author, Title, Date, MailContent, IP, OriginalData):
-#         pass
+class MailInformation(object):
+    def __init__(self, Author, Title, Date, MailContent, IP, OriginalData):
+        pass
 class UserInformation(object):
     def __init__(self, UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess):
         self.__UserID = str(UserID)
@@ -106,7 +106,7 @@ class PostInformation(object):
 
 
 class Library(object):
-    def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
+    def __init__(self, ID, Password, kickOtherLogin=True, LogLevel=-1):
 
         self.Version = Version
     
@@ -1795,10 +1795,10 @@ class Library(object):
                 self.__showScreen()
                 return self.UnknowError
         
-        self.__CurrentTimeout[TelnetConnectIndex] = 3
+        self.__CurrentTimeout[TelnetConnectIndex] = 2
         self.__readScreen(TelnetConnectIndex, '0\r$', ['鴻雁往返'])
 
-        print(self.__ReceiveData[TelnetConnectIndex])
+        # print(self.__ReceiveData[TelnetConnectIndex])
         # self.Log('MailIndex: ' + str(MailIndex), self.LogLevel_INFO)
 
         MaxMail = 0
@@ -1830,8 +1830,71 @@ class Library(object):
         else:
             self.Log('信箱中最新郵件編號: ' + str(NewestMailIndex))
 
+        if inputMailIndex > NewestMailIndex:
+            self.Log('錯誤的輸入!輸入的郵件編號(' + str(inputMailIndex) + ')超過目前的郵件編號(' + str(NewestMailIndex) + ')')
+            return self.ErrorInput
         
+        self.__CurrentTimeout[TelnetConnectIndex] = 2
+        self.__readScreen(TelnetConnectIndex, str(inputMailIndex) + '\r\r', ['瀏覽'])
+
+        print(self.__ReceiveData[TelnetConnectIndex])
+        # 作者 [0;44m 
+        MailAuthor = self.__ReceiveData[TelnetConnectIndex]
+        MailAuthor = MailAuthor[MailAuthor.find('作者 [0;44m ') + len('作者 [0;44m '):]
+        MailAuthor = MailAuthor[:MailAuthor.find('\r')]
+        while MailAuthor.endswith(' '):
+            MailAuthor = MailAuthor[:-1]
+
+        # 標題 [0;44m
+        MailTitle = self.__ReceiveData[TelnetConnectIndex]
+        MailTitle = MailTitle[MailTitle.find('標題 [0;44m ') + len('標題 [0;44m '):]
+        MailTitle = MailTitle[:MailTitle.find('\r')]
+        while MailTitle.endswith(' '):
+            MailTitle = MailTitle[:-1]
         
+        # 時間 [0;44m
+        MailDate = self.__ReceiveData[TelnetConnectIndex]
+        MailDate = MailDate[MailDate.find('時間 [0;44m ') + len('時間 [0;44m '):]
+        MailDate = MailDate[:MailDate.find('\r')]
+        while MailDate.endswith(' '):
+            MailDate = MailDate[:-1]
+
+        # [0;36m───────────────────────────────────────
+        # \x1b[D
+
+
+        MailContent = []
+        MailContent.append(self.__ReceiveData[TelnetConnectIndex])
+        MailContent[0] = MailContent[0][MailContent[0].find('[0;36m───────────────────────────────────────') + len('[0;36m───────────────────────────────────────') + 6:]
+        MailContent[0] = MailContent[0][:MailContent[0].find('瀏覽 第') - 11]
+        # 瀏覽 第
+
+        MailPage = 2
+        while '頁 (100%)' not in self.__ReceiveData[TelnetConnectIndex]:
+            
+            self.__CurrentTimeout[TelnetConnectIndex] = 2
+            self.__readScreen(TelnetConnectIndex, str(MailPage) + '\r', ['瀏覽'])
+            MailPage += 1
+
+            MailContentTemp = self.__ReceiveData[TelnetConnectIndex] 
+            MailContentTemp = MailContentTemp[len('[H [2J'):]
+            MailContentTemp = MailContentTemp[:MailContentTemp.find('瀏覽 第') - 11]
+            
+            MailContent.append(MailContentTemp)
+            # print('QQ: \r' + MailContentTemp)
+    
+        print('MailAuthor: ' + MailAuthor)
+        print('MailTitle: ' + MailTitle)
+        print('MailDate: ' + MailDate)
+
+        
+
+        # print('-' * 20)
+        # for Content in MailContent:
+        #     print(Content)
+        # print('-' * 20)
+
+
         return self.Success
 if __name__ == '__main__':
 
