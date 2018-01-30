@@ -430,11 +430,11 @@ def ReplyPostDemo():
 if __name__ == '__main__':
     print('Welcome to PTT Library Demo')
     
-    KickOtherLogin = True
-    PTTBot = PTT.Library(ID, Password, KickOtherLogin)
-    if not PTTBot.isLoginSuccess():
-        PTTBot.Log('登入失敗')
-        sys.exit()
+    # KickOtherLogin = True
+    # PTTBot = PTT.Library(ID, Password, KickOtherLogin)
+    # if not PTTBot.isLoginSuccess():
+    #     PTTBot.Log('登入失敗')
+    #     sys.exit()
     # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
     
     # GetNewestPostIndexDemo()
@@ -450,5 +450,5 @@ if __name__ == '__main__':
     # ReplyPostDemo()
     
     # 請養成登出好習慣
-    PTTBot.logout()
+    # PTTBot.logout()
     
