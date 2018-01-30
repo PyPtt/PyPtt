@@ -429,7 +429,7 @@ def ReplyPostDemo():
 
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
-    # print(sys.argv)
+    print(sys.argv)
 
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
