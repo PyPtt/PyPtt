@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 import time
 import json
 import getpass
@@ -418,13 +418,31 @@ def ReplyPostDemo():
 
 def GetMailDemo():
     
-    ErrorCode = PTTBot.getMail(4)
+    # 這是用來取得信件的 api
+    # 輸入信件編號
+    # 回傳 錯誤碼、郵件結構、最新郵件編號
+
+    ErrorCode, Mail = PTTBot.getMail(4)
+    if ErrorCode == PTTBot.Success:
+        PTTBot.Log('在 Test 回文至版上與信箱成功!')
+    else:
+        PTTBot.Log('在 Test 回文至版上與信箱失敗 ' + str(ErrorCode))
+
+    # Str = ''
+    # for i in range(85):
+    #     Str += 'line ' + str(i) + '\r'
+
+    # ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ\r' + Str, 0)
+    # if ErrorCode == PTTBot.Success:
+    #     PTTBot.Log('寄信給 ' + ID + ' 成功')
+    # else:
+    #     PTTBot.Log('寄信給 ' + ID + ' 失敗')
 
     return 
 
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
-    print(sys.argv)
+    # print(sys.argv)
 
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
@@ -459,16 +477,6 @@ if __name__ == '__main__':
     # ReplyPostDemo()
     
     GetMailDemo()
-
-    # Str = ''
-    # for i in range(85):
-    #     Str += 'line ' + str(i) + '\r'
-
-    # ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ\r' + Str, 0)
-    # if ErrorCode == PTTBot.Success:
-    #     PTTBot.Log('寄信給 ' + ID + ' 成功')
-    # else:
-    #     PTTBot.Log('寄信給 ' + ID + ' 失敗')
 
     # 請養成登出好習慣
     PTTBot.logout()
