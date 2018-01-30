@@ -1,0 +1,9 @@
+include LICENSE
+include README.md
+# include uao_decode.py
+# include PTTLibrary.py
+# include PTTUtil.py
+# include uao_decode.py
+
+# Include the data files
+recursive-include PTTlibrary *

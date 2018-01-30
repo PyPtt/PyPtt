@@ -5,11 +5,11 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-import PTTUtil
+from . import PTTUtil
+from . import uao_decode
 import threading
 import progressbar
 import socket
-import uao_decode
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -96,8 +96,9 @@ class PostInformation(object):
         return self.__PushList
     def getOriginalData(self):
         return self.__OriginalData
-    
-class Crawler(object):
+
+
+class Library(object):
     def __init__(self, ID, Password, kickOtherLogin, LogLevel=-1):
 
         self.__Version = '0.4.180129'
@@ -1827,5 +1828,5 @@ class Crawler(object):
         return self.Success
 if __name__ == '__main__':
 
-    print('PTT Crawler Library v ' + self.__Version)
+    print('PTT Library v ' + self.__Version)
     print('CodingMan')

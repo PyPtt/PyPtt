@@ -1,0 +1,3 @@
+request
+BeautifulSoup4
+progressbar2
