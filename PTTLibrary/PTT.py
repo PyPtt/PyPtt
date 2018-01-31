@@ -18,7 +18,7 @@ except SystemError:
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-Version = '0.4.180129'
+Version = '0.5.0'
 
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP):
