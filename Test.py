@@ -49,13 +49,13 @@ def PostDemo():
     #第二個參數是文章標題
     #第三個參數是文章內文
     #第四個參數是發文類別       1
-    #第五個參數是簽名檔        	0
+    #第五個參數是第幾個簽名檔    0 表示不放簽名檔
     
-    #回傳值 就是錯誤碼
+    #回傳值 錯誤碼
 
     for i in range(1):
         
-        ErrorCode = PTTBot.post('Test', '自動PO文測試', JapanText + '\r\n自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+        ErrorCode = PTTBot.post('Test', '自動PO文測試', JapanText + '\r\n自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
         if ErrorCode == PTTBot.Success:
             PTTBot.Log('在 Test 板發文成功')
         elif ErrorCode == PTTBot.NoPermission:
@@ -81,16 +81,16 @@ def GetNewestPostIndexDemo():
 
 def GetPostInfoDemo():
     
-    #這個範例是如何取得單一文章資訊
-    #getPostInfoByIndex
-    #第一個參數是板面
-    #第二個參數就是你想查詢的文章編號
-    #如果你不幸的只有文章代碼 那就使用 getPostInfoByID
-    #getPostInfoByID
-    #第一個參數是板面
-    #第二個參數就是你想查詢的文章代碼
+    # 這個範例是如何取得單一文章資訊
+    # getPostInfoByIndex
+    # 第一個參數是板面
+    # 第二個參數就是你想查詢的文章編號
+    # 如果你不幸的只有文章代碼 那就使用 getPostInfoByID
+    # getPostInfoByID
+    # 第一個參數是板面
+    # 第二個參數就是你想查詢的文章代碼
     
-    #回傳值 就是錯誤碼跟文章資訊
+    #回傳值 錯誤碼, 文章資訊
     
     #文章資訊的資料結構可參考如下
     
@@ -107,7 +107,7 @@ def GetPostInfoDemo():
     # getOriginalData           文章網頁原始資料 (開發用)
     
     ################## 推文資訊 Push information ##################
-    # getPushType               推文類別 推噓箭頭?
+    # getPushType               推文類別 推噓箭頭
     # getPushID                 推文ID
     # getPushContent            推文內文
     # getPushTime               推文時間
@@ -163,14 +163,14 @@ def GetPostInfoDemo():
         
 def GetNewPostIndexListDemo():
 
-    #這個範例是如何取得某版的最新文章編號清單
-    #跟上一次使用 getPostInfoByIndex 比較
-    #第一個參數是板面
-    #第二個參數就是你上一次查詢的最新文章編號 代入 0 就會等到有PO文才會有清單結果
+    # 這個範例是如何取得某版的最新文章編號清單
+    # 跟上一次使用 getPostInfoByIndex 比較
+    # 第一個參數是板面
+    # 第二個參數就是你上一次查詢的最新文章編號 代入 0 就會等到有PO文才會有清單結果
     
-    #詳細使用方式可以參考 範例程式中的 汪踢推文機器人
+    # 詳細使用方式可以參考 範例程式中的 汪踢推文機器人
     
-    #回傳值 就是錯誤碼跟最新文章編號清單
+    # 回傳值 錯誤碼, 最新文章編號清單
 
     ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
     if ErrorCode != PTTBot.Success:
@@ -187,11 +187,27 @@ def GetNewPostIndexListDemo():
                 PTTBot.Log('偵測到新文章編號 ' + str(NewPostIndex))
             LastIndex = LastIndexList.pop()
 def PushDemo():
+    
+    # 這個範例是示範如何對特定文章推文
+    # 第一個參數是板面
+    # 第二個參數是推文類別
+
+    ################## 推文種類 Push Type ##################
+    # PTTBot.PushType_Push      推
+    # PTTBot.PushType_Boo       噓
+    # PTTBot.PushType_Arrow     箭頭
+    
+    # 第三個參數是推文內文
+    # 第四個參數是文章編號或者ID 端看你用 ByIndex 或 ByID
+    
+    # 回傳值 錯誤碼
+
     ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Test')
     if ErrorCode != PTTBot.Success:
         PTTBot.Log('取得最新文章編號失敗 錯誤碼: ' + str(ErrorCode))
         return False
     PTTBot.Log('最新文章編號: ' + str(NewestIndex))
+
     for i in range(10):
         ErrorCode = PTTBot.pushByIndex('Test', PTTBot.PushType_Push, 'https://goo.gl/5hdAqu type 1', NewestIndex)
         if ErrorCode == PTTBot.Success:
@@ -230,12 +246,12 @@ def PushDemo():
             return False
 def MailDemo():
     
-    #這個範例是如何寄信給某鄉民
+    # 這個範例是如何寄信給某鄉民
 
-    #第一個參數是你想寄信的ID
-    #第二個參數是信件標題
-    #第三個參數是信件內容
-    #第四個參數是簽名檔選擇 0 不加簽名檔
+    # 第一個參數是你想寄信的ID
+    # 第二個參數是信件標題
+    # 第三個參數是信件內容
+    # 第四個參數是簽名檔選擇 0 不加簽名檔
     
     for i in range(1):
         ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ', 0)
@@ -245,11 +261,11 @@ def MailDemo():
             PTTBot.Log('寄信給 ' + ID + ' 失敗')
 def GiveMoneyDemo():
 
-    #這個範例是如何給P幣給某鄉民
+    # 這個範例是如何送P幣給某鄉民
 
-    #第一個參數是你想寄信的ID
-    #第二個參數是你想給予多少P幣
-    #第三個參數是你自己的密碼
+    # 第一個參數是你想寄信的ID
+    # 第二個參數是你想給予多少P幣
+    # 第三個參數是你自己的密碼
     
     WhoAreUwantToGiveMoney = 'CodingMan'
     try:
@@ -369,7 +385,18 @@ def ReplyPostDemo():
     #此範例是因應回文的需求
     #此API可以用三種方式回文 回文至板上 信箱 或者皆是
 
-    ErrorCode = PTTBot.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Crawler Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+    # 第一個參數是版面
+    # 第二個參數是回文內容
+    # 第三個參數是回文種類
+
+    ################## 回文種類 ReplyPost information ##################
+    # PTTBot.ReplyPost_Board    回文至板上
+    # PTTBot.ReplyPost_Mail     回文至信箱
+    # PTTBot.ReplyPost_Board + PTTBot.ReplyPost_Mail 回文至信箱與板上
+     
+    # 回傳 錯誤碼
+
+    ErrorCode = PTTBot.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
     if ErrorCode == PTTBot.Success:
         PTTBot.Log('在 Test 板發文成功')
     elif ErrorCode == PTTBot.NoPermission:
@@ -384,8 +411,6 @@ def ReplyPostDemo():
         PTTBot.Log('取得 ' + 'Test' + ' 板最新文章編號失敗')
         return False
 
-    #def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1, TelnetConnectIndex = 0):
-    
     ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至板上', PTTBot.ReplyPost_Board, Index=NewestIndex)
     if ErrorCode == PTTBot.Success:
         PTTBot.Log('在 Test 回文至板上成功!')
@@ -404,45 +429,56 @@ def ReplyPostDemo():
     else:
         PTTBot.Log('在 Test 回文至版上與信箱失敗 ' + str(ErrorCode))
 
-    # Board = 'Wanted'
-    # ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
-    # if ErrorCode == PTTBot.Success:
-    #     PTTBot.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
-    #     ErrorCode = PTTBot.replyPost(Board, '抱歉打擾了 需要在汪梯測試回文 對不起 QQ', PTTBot.ReplyPost_Mail, Index=NewestIndex)
-    #     if ErrorCode == PTTBot.Success:
-    #         PTTBot.Log('在 ' + Board + ' 回文至信箱成功!')
-    #     else:
-    #         PTTBot.Log('在 ' + Board + ' 回文至信箱失敗 ' + str(ErrorCode))
-    # else:
-    #     PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-
 def GetMailDemo():
     
     # 這是用來取得信件的 api
     # 輸入信件編號
-    # 回傳 錯誤碼、郵件結構、最新郵件編號
+    # 回傳 錯誤碼、郵件結構
+    
+    #信件資訊資料結構可參考如下
+    
+    ################## 信件資訊 Mail information ##################
+    # getAuthor                 寄件人資訊
+    # getTitle                  信件標題
+    # getDate                   寄件日期
+    # getContent                信件內文
+    # getIP                     寄件IP
 
-    ErrorCode, Mail = PTTBot.getMail(4)
+    ErrorCode, NewestMailIndex = PTTBot.getNewestMailIndex()
     if ErrorCode == PTTBot.Success:
-        PTTBot.Log('在 Test 回文至版上與信箱成功!')
+        PTTBot.Log('取得最新信件編號成功')
     else:
-        PTTBot.Log('在 Test 回文至版上與信箱失敗 ' + str(ErrorCode))
+        PTTBot.Log('取得最新信件編號失敗 錯誤碼: ' + str(ErrorCode))
+        return
 
-    # Str = ''
-    # for i in range(85):
-    #     Str += 'line ' + str(i) + '\r'
+    PTTBot.Log('最新信件編號: ' + str(NewestMailIndex))
 
-    # ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ\r' + Str, 0)
-    # if ErrorCode == PTTBot.Success:
-    #     PTTBot.Log('寄信給 ' + ID + ' 成功')
-    # else:
-    #     PTTBot.Log('寄信給 ' + ID + ' 失敗')
+    if NewestMailIndex > 3:
+        MailStartIndex = NewestMailIndex - 3
+    else:
+        MailStartIndex = 1
 
+    for i in range(MailStartIndex, NewestMailIndex):
+        MailIndex = i + 1
+        ErrorCode, Mail = PTTBot.getMail(MailIndex)
+        if ErrorCode == PTTBot.Success:
+            PTTBot.Log('取得編號 ' + str(MailIndex) + ' 信件成功')
+
+            PTTBot.Log('信件作者: ' + Mail.getAuthor())
+            PTTBot.Log('信件標題: ' + Mail.getTitle())
+            PTTBot.Log('信件日期: ' + Mail.getDate())
+            # PTTBot.Log('信件內文: ' + Mail.getContent())
+            PTTBot.Log('信件IP: ' + Mail.getIP())
+
+            PTTBot.Log('=' * 30)
+
+        else:
+            PTTBot.Log('取得編號 ' + str(MailIndex) + ' 信件失敗 錯誤碼: ' + str(ErrorCode))
+            return
     return 
 
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
-    # print(sys.argv)
 
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
@@ -462,7 +498,7 @@ if __name__ == '__main__':
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
-    PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
+    # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
     
     # GetNewestPostIndexDemo()
     # PostDemo()
@@ -475,7 +511,6 @@ if __name__ == '__main__':
     # GiveMoneyDemo()
     # CrawlBoardDemo()
     # ReplyPostDemo()
-    
     GetMailDemo()
 
     # 請養成登出好習慣
