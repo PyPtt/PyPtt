@@ -85,4 +85,3 @@ API
 ###### getVersion 取得版本資訊
 ###### getNewestMailIndex 取得最新信件編號
 ###### getMail 取得信件資訊
-![alt text](http://i.imgur.com/nkyH9fG.png)
