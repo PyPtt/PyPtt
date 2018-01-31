@@ -2,18 +2,40 @@
 
 #### Do you want PTT in Python? import PTT
 
-###### 這是一個專為 PTT 開發者所開發的函式庫
+###### 這是一個讓開發者方便操作 PTT 的函式庫
 ###### 提供完整快速的 PTT 操作
 ###### 根據網路速度動態調整操作速度、斷線自動恢復
 ###### 如有功能未能詳盡 歡迎來信告知
 
+[![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)
+[![Build Status](https://travis-ci.org/Truth0906/PTTLibrary.svg?branch=master)](https://travis-ci.org/Truth0906/PTTLibrary)
+
+安裝
+-------------------
+```
+pip3 install PTTLibrary
+```
+
 如何使用
 -------------------
+```
+from PTTLibrary import PTT
+
+PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
+if not PTTBot.isLoginSuccess():
+    PTTBot.Log('登入失敗')
+    sys.exit()
+
+......
+
+# 請養成登出好習慣
+PTTBot.logout()
+```
 ###### 你可以參考範例程式，並佐以 Test.py 裡面有 API 的範例與說明
 
 範例程式
 -------------------
-###### 歡迎開發者將使用 PTT Crawler Library 的程式連結加入
+###### 歡迎開發者將使用 PTT Library 的程式連結加入
 [汪梯推文機器人](https://github.com/Truth0906/WantedPushCrawler)
 
 [五樓機器人](https://github.com/Truth0906/5FloorBot)
@@ -24,23 +46,23 @@
 
 [準點報時機器人](https://github.com/Truth0906/ReportTimeBot)
 
-Demo
+詳細說明
 -------------------
 ###### 請參考 Test.py
 
 需求
 -------------------
-###### Python 3.6.1
+###### Python 3
 
 相依函式庫
 -------------------
-###### request
+###### requests
 ###### BeautifulSoup4
 ###### progressbar2
 
 版本
 -------------------
-###### 0.4.180125
+###### 0.5.0
 
 API
 -------------------
@@ -58,5 +80,6 @@ API
 ###### getUserInfo 取得該使用者資訊
 ###### crawlBoard 多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式
 ###### getVersion 取得版本資訊
-
+###### getNewestMailIndex 取得最新信件編號
+###### getMail 取得信件資訊
 ![alt text](http://i.imgur.com/nkyH9fG.png)
