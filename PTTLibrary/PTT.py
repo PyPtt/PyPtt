@@ -2,12 +2,9 @@
 import telnetlib
 import time
 import re
-from bs4 import BeautifulSoup
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import threading
 import progressbar
 import socket
-import requests
 
 try:
     from . import PTTUtil
@@ -15,8 +12,6 @@ try:
 except SystemError:
     import PTTUtil
     import uao_decode
-
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 Version = '0.5.0'
 
@@ -145,6 +140,7 @@ class Library(object):
         self.NoUser =                          12
         self.InvalidURLError =                 13
         self.LoginFrequently =                 14
+        self.MailBoxFull =                     15
 
         self.PushType_Push =                    1
         self.PushType_Boo =                     2
@@ -195,8 +191,6 @@ class Library(object):
         self.__Timeout = [10] * self.__MaxMultiLogin
         self.__SleepTime = [0.5] * self.__MaxMultiLogin
         self.__TimeoutCount = [0] * self.__MaxMultiLogin
-        
-        self.__CrawPool = []
         
         self.__isBackground = False
 
@@ -305,6 +299,13 @@ class Library(object):
                         self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
                         self.__TimeoutCount[TelnetConnectIndex] = 0
                     return ErrorCode, result
+        except ConnectionAbortedError:
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設', self.LogLevel_WARNING)
+            if self.__isConnected[TelnetConnectIndex]:
+                self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
+            self.__CurrentTimeout[TelnetConnectIndex] = 0
+            self.__TimeoutCount[TelnetConnectIndex] = 0
+            return self.ConnectResetError, result
         except ConnectionResetError:
             self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設', self.LogLevel_WARNING)
             if self.__isConnected[TelnetConnectIndex]:
@@ -324,6 +325,7 @@ class Library(object):
             self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             self.__CurrentTimeout[TelnetConnectIndex] = 0
             return self.ConnectResetError, -1
+        
         self.__TimeoutCount[TelnetConnectIndex] = 0
         self.__SleepTime[TelnetConnectIndex] = self.__SleepTime[TelnetConnectIndex] * (ReceiveTimes / 5.0)
         self.__CurrentTimeout[TelnetConnectIndex] = 0
@@ -415,8 +417,8 @@ class Library(object):
             SlientLogin = True
         else:
             SlientLogin = False
-            
-        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新', '請輸入代號', '系統過載', '請勿頻繁登入']
+        
+        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新', '請輸入代號', '系統過載', '請勿頻繁登入', '郵件選單']
         
         while not self.__isConnected[TelnetConnectIndex]:
         
@@ -519,6 +521,10 @@ class Library(object):
                 if Index == 10:
                     self.Log('請勿頻繁登入')
                     return self.LoginFrequently
+                if Index == 11:
+                    self.Log('信件數目超出上限請整理')
+                    return self.MailBoxFull
+
         ErrorCode, Index = self.__readScreen(TelnetConnectIndex, '', ['> (', '●('])
         if ErrorCode != self.Success:
             self.Log(self.__ReceiveData[TelnetConnectIndex])
@@ -1059,49 +1065,7 @@ class Library(object):
         
         return self.Success, result
         
-    def crawlSaveThread(self, ThreadIndex, Board):
-        
-        self.Log('線程 ' + str(ThreadIndex) + ' 啟動', self.LogLevel_DEBUG)
-        
-        while True:
-            
-            if self.__ConnectCount == 0:
-                if len(self.__CrawPool) == 0:
-                    break
-            
-            self.__CrawPoolLock.acquire()
-            if len(self.__CrawPool) == 0:
-                self.__CrawPoolLock.release()
-                time.sleep(0.1)
-                continue
-                
-            Index, RealPostID, RealMoney, RealWebUrl = self.__CrawPool.pop()
-            self.__CrawPoolLock.release()
-            
-            self.Log('線程 ' + str(ThreadIndex) + ' 取得編號 ' + str(Index) + ' ' + RealWebUrl, self.LogLevel_DEBUG)
-            
-            ErrorCode, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, OriginalText = self.__getPostinfoByUrl(RealWebUrl)
-            
-            if ErrorCode != self.Success:
-                self.Log('線程 ' + str(ThreadIndex) + ' 取得文章失敗', self.LogLevel_DEBUG)
-                if not self.__isBackground and self.__ShowProgressBar:
-                    self.__ProgressBarCount += 1
-                    self.__ProgressBar.update(self.__ProgressBarCount)
-                continue
-            #Find post
-            
-            Post = PostInformation(Board, RealPostID, RealPostAuthor, RealPostDate, RealPostTitle, RealWebUrl, RealMoney, RealPostContent, RealPushList, OriginalText)
-            
-            if not self.__isBackground and self.__ShowProgressBar:
-                self.__ProgressBarCount += 1
-                self.__ProgressBar.update(self.__ProgressBarCount)
-            self.__SuccessPostCount += 1
-            self.__PostHandler(Post)
-        
-        self.__SaveCount -= 1
-        self.Log('線程 ' + str(ThreadIndex) + ' 結束', self.LogLevel_DEBUG)
-        
-    def crawlFindUrlThread(self, Board, StartIndex , EndIndex, TelnetConnectIndex):
+    def crawlThread(self, Board, StartIndex , EndIndex, TelnetConnectIndex):
         
         self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 開始取得編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 文章網址')
         
@@ -1129,7 +1093,78 @@ class Library(object):
                 if ErrorCode != self.Success:
                     FailReason = '連線頻道 ' + str(TelnetConnectIndex) + ' 解析文章失敗'
                     continue
+                
+                ErrorCode, ScreenIndex = self.__readScreen(TelnetConnectIndex, '\r\r', ['[1;30;47m行[;47m  [31m(y)[30m回應[31m(X%)[30m推文[31m(h)[30m說明[31m(←)[30m離開[37;40m'])
+                print('=' * 50)
+                print(self.__ReceiveData[TelnetConnectIndex])
+
+                # [34;47m作者 [37;44m [40m
+                PostAuthor = self.__ReceiveData[TelnetConnectIndex]
+                PostAuthor = PostAuthor[PostAuthor.find('作者 [0;44m ') + len('作者 [0;44m '):]
+                PostAuthor = PostAuthor[:PostAuthor.find(')') + 1]
+                while PostAuthor.endswith(' '):
+                    PostAuthor = PostAuthor[:-1]
+                
+                PostTitle = self.__ReceiveData[TelnetConnectIndex]
+                PostTitle = PostTitle[PostTitle.find('標題 [0;44m ') + len('標題 [0;44m '):]
+                PostTitle = PostTitle[:PostTitle.find('\r')]
+                while PostTitle.endswith(' '):
+                    PostTitle = PostTitle[:-1]
+                
+                PostDate = self.__ReceiveData[TelnetConnectIndex]
+                PostDate = PostDate[PostDate.find('時間 [0;44m ') + len('時間 [0;44m '):]
+                PostDate = PostDate[:PostDate.find('\r')]
+                while PostDate.endswith(' '):
+                    PostDate = PostDate[:-1]
+
+                PostContentTemp = []
+                PostContentTemp.append(self.__ReceiveData[TelnetConnectIndex])
+                PostContentTemp[0] = PostContentTemp[0][PostContentTemp[0].find('[36m───────────────────────────────────────[37m ') + len('[36m───────────────────────────────────────[37m '):]
+                PostContentTemp[0] = PostContentTemp[0][PostContentTemp[0].find('[m') + len('[m'):]
+   
+                PostContentTemp[0] = PostContentTemp[0][:PostContentTemp[0].find('瀏覽 第') - 11]
+
+                LastLineCount = [1, 22]
+                PostPage = 2
+                while '頁 (100%)' not in self.__ReceiveData[TelnetConnectIndex]:
+
+                    self.__CurrentTimeout[TelnetConnectIndex] = 2
+                    self.__readScreen(TelnetConnectIndex, str(PostPage) + '\r', ['[1;30;47m行[;47m  [31m(y)[30m回應[31m(X%)[30m推文[31m(h)[30m說明[31m(←)[30m離開[37;40m'])
+                    PostPage += 1
+
+                    PostContentTempTemp = self.__ReceiveData[TelnetConnectIndex]
+                    PostContentTempTemp = PostContentTempTemp[len('[H [2J'):]
+                    PostContentTempTemp = PostContentTempTemp[:PostContentTempTemp.find('瀏覽 第') - 11]
+
+                    LineCountTemp = self.__ReceiveData[TelnetConnectIndex]
+                    LineCountTemp = LineCountTemp[LineCountTemp.find('目前顯示: 第 ') + len('目前顯示: 第 '):]
+                    LineCountTemp = LineCountTemp[:LineCountTemp.find(' 行')]
+                    LastLineCountTemp = list(map(int, re.findall(r'\d+', LineCountTemp)))
+
+                    # print(LastLineCount)
+                    # print(LastLineCountTemp)
+                    if LastLineCountTemp[0] != LastLineCount[1] + 1:
+                        SubLine = (LastLineCount[1] + 1) - LastLineCountTemp[0]
+                        # print('重疊: ' + str(SubLine) + ' 行')
+
+                        for i in range(SubLine):
+                            PostContentTempTemp = PostContentTempTemp[PostContentTempTemp.find('\r') + 2:]
                     
+                    PostContentTemp.append(PostContentTempTemp)
+                    LastLineCount = LastLineCountTemp
+                PostContent = ''.join(PostContentTemp)
+
+                PostIP = '不明來源'
+                # [32m※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 211.72.193.127[37m  
+                if PostContent.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自:') >= 0:
+                    PostIP = PostContent[PostContent.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自:') + len('※ 發信站: 批踢踢實業坊(ptt.cc), 來自:'):]
+                    PostIP = PostIP[:PostIP.find('[')]
+                    PostIP = PostIP[:PostIP.find('\r')]
+                    PostIP = PostIP.replace(' ', '')
+                
+                PushArea = PostContent[PostContent.find(RealWebUrl) + len(RealWebUrl):]
+                PostContent = PostContent[:PostContent.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自:') - 6]
+
                 isSuccess = True
                 break
             
@@ -1139,12 +1174,15 @@ class Library(object):
                     self.__ProgressBarCount += 1
                     self.__ProgressBar.update(self.__ProgressBarCount)
                 continue
-                
+
             if RealWebUrl != '':
-                # Get RealWebUrl!!!
-                #self.Log(str(len(self.__CrawPool)))
-                #self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' : ' + RealWebUrl)
-                self.__CrawPool.append((Index, RealPostID, RealMoney, RealWebUrl))
+                print('取得: ' + str(Index))
+                # print('PostAuthor: ' + PostAuthor)
+                # print('PostTitle: ' + PostTitle)
+                # print('PostDate: ' + PostDate)
+                print('PostContent: ' + PostContent)
+                print('PostIP: ' + PostIP)
+                # print('PushArea: ' + PushArea)
             
         self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 結束', self.LogLevel_DEBUG)
         self.__ConnectCount -= 1
@@ -1175,7 +1213,6 @@ class Library(object):
             return self.ErrorInput
         
         ConnectList = [0]
-        self.__CrawPoolLock = threading.Lock()
         self.__TotalPost = EndIndex - StartIndex + 1
 
         if not self.__isBackground and self.__ShowProgressBar:
@@ -1189,16 +1226,17 @@ class Library(object):
         
         self.__ThreadLock = None
         
-        if self.__MaxMultiLogin > 1:
+        if self.__MaxMultiLogin > 1 and EndIndex - StartIndex + 1 > 10:
             self.__kickOtherLogin = False
             self.Log('啟動多重登入模式')
-        
-        for i in range(1, self.__MaxMultiLogin):
-            for ii in range(3):            
-                if self.__connectRemote(i, self.__LoginMode_MultiLogin) == self.Success:
-                    ConnectList.append(i)
-                    break
-        
+            for i in range(1, self.__MaxMultiLogin):
+                for ii in range(3):            
+                    if self.__connectRemote(i, self.__LoginMode_MultiLogin) == self.Success:
+                        ConnectList.append(i)
+                        break
+        else:
+            self.Log('啟動單一登入模式')
+
         ConnectListTemp = ''
         
         for TelnetConnectIndex in ConnectList:
@@ -1247,22 +1285,11 @@ class Library(object):
             # print('ThreadStartIndex: ' + str(ThreadStartIndex))
             # print('ThreadEndIndex: ' + str(ThreadEndIndex))
             
-            threading.Thread(target = self.crawlFindUrlThread, args = (Board, ThreadStartIndex, ThreadEndIndex, TelnetConnectIndex) ).start()
+            threading.Thread(target = self.crawlThread, args = (Board, ThreadStartIndex, ThreadEndIndex, TelnetConnectIndex) ).start()
             
             ThreadUnitCount += 1
         
-        for TelnetConnectIndex in range(DefaultThreadNumber):
-            threading.Thread(target = self.crawlSaveThread, args = (TelnetConnectIndex, Board)).start()
-
-        while True:
-            time.sleep(1)
-            if self.__ConnectCount == 0:
-                if len(self.__CrawPool) == 0 and self.__SaveCount == 0:
-                    if not self.__isBackground and self.__ShowProgressBar:
-                        self.__ProgressBar.update(self.__TotalPost)
-                        self.__ProgressBar.finish()
-                    break
-
+        time.sleep(10)
         for TelnetConnectIndex in ConnectList:
             if TelnetConnectIndex != 0:
                 self.logout(TelnetConnectIndex)
@@ -1814,7 +1841,9 @@ class Library(object):
 
         MailContentTemp = []
         MailContentTemp.append(self.__ReceiveData[TelnetConnectIndex])
-        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[0;36m───────────────────────────────────────') + len('[0;36m───────────────────────────────────────') + 6:]
+        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[36m───────────────────────────────────────[37m ') + len('[36m───────────────────────────────────────[37m '):]
+        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[m') + len('[m'):]
+
         MailContentTemp[0] = MailContentTemp[0][:MailContentTemp[0].find('瀏覽 第') - 11]
 
         LastLineCount = [1, 22]
