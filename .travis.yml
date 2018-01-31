@@ -11,3 +11,5 @@ install:
 
 script:
   - python3 Test.py -ci
+after_success:
+  - coveralls
