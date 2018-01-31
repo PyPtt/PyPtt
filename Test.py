@@ -253,7 +253,7 @@ def MailDemo():
     # 第三個參數是信件內容
     # 第四個參數是簽名檔選擇 0 不加簽名檔
     
-    for i in range(1):
+    for i in range(200):
         ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ', 0)
         if ErrorCode == PTTBot.Success:
             PTTBot.Log('寄信給 ' + ID + ' 成功')
@@ -332,8 +332,14 @@ def CrawlBoardDemo():
     #如果想要取得所有文章可省略編號參數
     #PTTBot.crawlBoard('Wanted', PostHandler)
     #這樣就會全部文章都會爬下來
-    
-    ErrorCode = PTTBot.crawlBoard('Wanted', PostHandler, 1, 100)
+
+    # ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
+    # if ErrorCode != PTTBot.Success:
+    #     PTTBot.Log('取得最新文章編號失敗 錯誤碼: ' + str(ErrorCode))
+    #     return False
+    # PTTBot.Log('最新文章編號: ' + str(NewestIndex))
+
+    ErrorCode = PTTBot.crawlBoard('Wanted', PostHandler, 1, 1)
     if ErrorCode == PTTBot.Success:
         PTTBot.Log('爬行成功')
         
@@ -494,7 +500,7 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
@@ -509,9 +515,9 @@ if __name__ == '__main__':
     # GetTimeDemo()
     # GetUserInfoDemo()
     # GiveMoneyDemo()
-    # CrawlBoardDemo()
+    CrawlBoardDemo()
     # ReplyPostDemo()
-    GetMailDemo()
+    # GetMailDemo()
 
     # 請養成登出好習慣
     PTTBot.logout()
