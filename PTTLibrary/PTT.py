@@ -18,7 +18,7 @@ except SystemError:
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-Version = '0.5.0'
+Version = '0.5.1'
 
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP):
@@ -145,6 +145,7 @@ class Library(object):
         self.NoUser =                          12
         self.InvalidURLError =                 13
         self.LoginFrequently =                 14
+        self.MailBoxFull =                     15
 
         self.PushType_Push =                    1
         self.PushType_Boo =                     2
@@ -305,6 +306,13 @@ class Library(object):
                         self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
                         self.__TimeoutCount[TelnetConnectIndex] = 0
                     return ErrorCode, result
+        except ConnectionAbortedError:
+            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設', self.LogLevel_WARNING)
+            if self.__isConnected[TelnetConnectIndex]:
+                self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
+            self.__CurrentTimeout[TelnetConnectIndex] = 0
+            self.__TimeoutCount[TelnetConnectIndex] = 0
+            return self.ConnectResetError, result
         except ConnectionResetError:
             self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設', self.LogLevel_WARNING)
             if self.__isConnected[TelnetConnectIndex]:
@@ -324,6 +332,7 @@ class Library(object):
             self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
             self.__CurrentTimeout[TelnetConnectIndex] = 0
             return self.ConnectResetError, -1
+        
         self.__TimeoutCount[TelnetConnectIndex] = 0
         self.__SleepTime[TelnetConnectIndex] = self.__SleepTime[TelnetConnectIndex] * (ReceiveTimes / 5.0)
         self.__CurrentTimeout[TelnetConnectIndex] = 0
@@ -415,8 +424,8 @@ class Library(object):
             SlientLogin = True
         else:
             SlientLogin = False
-            
-        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新', '請輸入代號', '系統過載', '請勿頻繁登入']
+        
+        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新', '請輸入代號', '系統過載', '請勿頻繁登入', '郵件選單']
         
         while not self.__isConnected[TelnetConnectIndex]:
         
@@ -519,6 +528,10 @@ class Library(object):
                 if Index == 10:
                     self.Log('請勿頻繁登入')
                     return self.LoginFrequently
+                if Index == 11:
+                    self.Log('信件數目超出上限請整理')
+                    return self.MailBoxFull
+
         ErrorCode, Index = self.__readScreen(TelnetConnectIndex, '', ['> (', '●('])
         if ErrorCode != self.Success:
             self.Log(self.__ReceiveData[TelnetConnectIndex])
@@ -567,7 +580,9 @@ class Library(object):
             
             ErrorCode = self.__gotoTop(TelnetConnectIndex)
             if ErrorCode != self.Success:
-                self.Log('登出出錯: ' + str(ErrorCode))
+                self.Log('登出出錯: ' + str(ErrorCode), self.LogLevel_DEBUG)
+                self.__TelnetConnectList[TelnetConnectIndex].close()
+                self.__TelnetConnectList[TelnetConnectIndex] = None
                 return ErrorCode
             ErrorCode, _ = self.__readScreen(TelnetConnectIndex, 'g\ry\r', ['[按任意鍵繼續]'])
             self.__TelnetConnectList[TelnetConnectIndex].close()
@@ -1189,16 +1204,17 @@ class Library(object):
         
         self.__ThreadLock = None
         
-        if self.__MaxMultiLogin > 1:
+        if self.__MaxMultiLogin > 1 and EndIndex - StartIndex + 1 > 10:
             self.__kickOtherLogin = False
             self.Log('啟動多重登入模式')
-        
-        for i in range(1, self.__MaxMultiLogin):
-            for ii in range(3):            
-                if self.__connectRemote(i, self.__LoginMode_MultiLogin) == self.Success:
-                    ConnectList.append(i)
-                    break
-        
+            for i in range(1, self.__MaxMultiLogin):
+                for ii in range(3):            
+                    if self.__connectRemote(i, self.__LoginMode_MultiLogin) == self.Success:
+                        ConnectList.append(i)
+                        break
+        else:
+            self.Log('啟動單一登入模式')
+
         ConnectListTemp = ''
         
         for TelnetConnectIndex in ConnectList:
@@ -1814,7 +1830,9 @@ class Library(object):
 
         MailContentTemp = []
         MailContentTemp.append(self.__ReceiveData[TelnetConnectIndex])
-        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[0;36m───────────────────────────────────────') + len('[0;36m───────────────────────────────────────') + 6:]
+        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[36m───────────────────────────────────────[37m ') + len('[36m───────────────────────────────────────[37m '):]
+        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[m') + len('[m'):]
+
         MailContentTemp[0] = MailContentTemp[0][:MailContentTemp[0].find('瀏覽 第') - 11]
 
         LastLineCount = [1, 22]
