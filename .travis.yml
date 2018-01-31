@@ -1,0 +1,13 @@
+language: python
+cache: pip
+
+python:
+  - '3.6'
+os:
+  - linux
+  - windows
+install:
+  - pip3 install PTTLibrary --upgrade
+
+script:
+  - python3 Test.py -ci

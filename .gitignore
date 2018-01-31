@@ -1,5 +1,7 @@
 __pycache__/
-/Account.txt
+Account.txt
 build/
 dist/
 /CrawlBoardResult.txt
+/.pypirc
+PTTLibrary.egg-info/
