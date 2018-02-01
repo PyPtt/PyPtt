@@ -66,6 +66,7 @@ PTTBot.logout()
 ###### requests
 ###### BeautifulSoup4
 ###### progressbar2
+###### paramiko
 
 API
 -------------------
