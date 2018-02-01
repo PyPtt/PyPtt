@@ -8,6 +8,7 @@ import threading
 import progressbar
 import socket
 import requests
+import paramiko
 
 try:
     from . import PTTUtil
@@ -18,7 +19,7 @@ except SystemError:
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-Version = '0.5.1'
+Version = '0.5.2'
 
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP):
@@ -223,7 +224,7 @@ class Library(object):
             self.Log('此連線將"會"剔除其他登入')
         else :
             self.Log('此連線將"不會"剔除其他登入')
-        
+
         self.__connectRemote(0, self.__LoginMode_Login)
         
     def setLogLevel(self, LogLevel):
@@ -433,7 +434,15 @@ class Library(object):
                 try:
                     if self.__TelnetConnectList[TelnetConnectIndex] == None:
                         self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 啟動')
-                        self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
+                        # self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
+                        
+                        self.__TelnetConnectList[TelnetConnectIndex] = paramiko.SSHClient()
+                        self.__TelnetConnectList[TelnetConnectIndex].load_system_host_keys()
+                        self.__TelnetConnectList[TelnetConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
+
+                        self.__TelnetConnectList[TelnetConnectIndex].connect(self.__host, username = 'bbsu' , password = '')
+
+                        print('SSH Works OK')
                     break
                 except ConnectionRefusedError:
                     self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
@@ -448,7 +457,8 @@ class Library(object):
                     self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
                     time.sleep(10)
             self.Log('連接成功')
-            
+            sys.exit()
+
             SendMessage = ''
             Enter = False
             
