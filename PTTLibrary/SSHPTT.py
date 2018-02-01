@@ -8,6 +8,7 @@ import threading
 import progressbar
 import socket
 import requests
+import paramiko
 
 try:
     from . import PTTUtil
@@ -433,7 +434,13 @@ class Library(object):
                 try:
                     if self.__TelnetConnectList[TelnetConnectIndex] == None:
                         self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 啟動')
-                        self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
+                        # self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
+
+                        self.__TelnetConnectList[TelnetConnectIndex] = paramiko.SSHClient()
+                        self.__TelnetConnectList[TelnetConnectIndex].load_system_host_keys()
+                        self.__TelnetConnectList[TelnetConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
+                        self.__TelnetConnectList[TelnetConnectIndex].connect('ptt.cc', username = 'bbsu', password = '')
+
                     break
                 except ConnectionRefusedError:
                     self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
@@ -452,85 +459,7 @@ class Library(object):
             SendMessage = ''
             Enter = False
             
-            while not self.__isConnected[TelnetConnectIndex]:
-            
-                ErrorCode, Index = self.__sendData(TelnetConnectIndex, SendMessage, CaseList, Enter)
-                if ErrorCode != self.Success:
-                    
-                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 連接至 ' + self.__host + ' 失敗: ' + str(ErrorCode), self.LogLevel_WARNING)
-                    
-                    if TelnetConnectIndex != 0:
-                        return self.UnknowError
-                    
-                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 2 秒後重新連接', self.LogLevel_WARNING)
-                    self.__TelnetConnectList[TelnetConnectIndex] = None
-                    time.sleep(2)
-                    break
-                if Index == 0:
-                    self.Log('密碼不對')
-                    return self.WrongPassword
-                if Index == 1:
-                    if self.__kickOtherLogin:
-                        SendMessage = 'y'
-                        Enter = True
-                        if not SlientLogin:
-                            self.Log('您想刪除其他重複登入 是')
-                    else :
-                        SendMessage = 'n'
-                        Enter = True
-                        if not SlientLogin:
-                            self.Log('您想刪除其他重複登入 否')
-                if Index == 2:
-                    SendMessage = 'q'
-                    Enter = False
-                    if not SlientLogin:
-                        self.Log('按任意鍵繼續')
-                if Index == 3:
-                    SendMessage = 'Y'
-                    Enter = True
-                    if not SlientLogin:
-                        self.Log('您要刪除以上錯誤嘗試 是')
-                if Index == 4:
-                    SendMessage = 'q'
-                    Enter = True
-                    if not SlientLogin:
-                        self.Log('您有一篇文章尚未完成 不保留')
-                if Index == 5:
-                    SendMessage = self.__Password
-                    Enter = True
-                    if not SlientLogin:
-                        self.Log('請輸入您的密碼')
-                if Index == 6:
-                    self.__isConnected[TelnetConnectIndex] = True
-                    if not SlientLogin:
-                        self.Log('登入成功')
-                    if LoginMode == self.__LoginMode_Recover:
-                        self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 恢復連線成功')
-                    if LoginMode == self.__LoginMode_MultiLogin:
-                        self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 登入成功')
-                    break
-                if Index == 7:
-                    SendMessage = 'q'
-                    Enter = False
-                    if not SlientLogin:
-                        self.Log('正在更新資料...')
-                    time.sleep(1)
-                if Index == 8:
-                    if not SlientLogin:
-                        self.Log('輸入使用者代號')
-                    SendMessage = self.__ID
-                    Enter = True
-                if Index == 9:
-                    self.Log('系統過載 2 秒後重試')
-                    time.sleep(2)
-                    SendMessage = ''
-                    Enter = False
-                if Index == 10:
-                    self.Log('請勿頻繁登入')
-                    return self.LoginFrequently
-                if Index == 11:
-                    self.Log('信件數目超出上限請整理')
-                    return self.MailBoxFull
+            sys.exit()
 
         ErrorCode, Index = self.__readScreen(TelnetConnectIndex, '', ['> (', '●('])
         if ErrorCode != self.Success:
@@ -1946,7 +1875,28 @@ class Library(object):
             self.Log('信箱中最新郵件編號: ' + str(NewestMailIndex), self.LogLevel_DEBUG)
         
         return self.Success, NewestMailIndex
+
+import json
 if __name__ == '__main__':
 
     print('PTT Library v ' + PTTdefine.Version)
     print('Developed by PTT CodingMan')
+
+    ######### 自我測試 #########
+
+    try:
+        with open('Account.txt') as AccountFile:
+            Account = json.load(AccountFile)
+            ID = Account['ID']
+            Password = Account['Password']
+    except FileNotFoundError:
+        ID = input('請輸入帳號: ')
+        Password = getpass.getpass('請輸入密碼: ')
+
+    PTTBot = Library(ID, Password, kickOtherLogin=False)
+    if not PTTBot.isLoginSuccess():
+        PTTBot.Log('登入失敗')
+        sys.exit()
+    # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
+
+    PTTBot.logout()
