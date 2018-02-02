@@ -20,6 +20,8 @@ except SystemError:
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+Version = PTTdefine.Version
+
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP):
         self.__Author = str(Author)

@@ -21,6 +21,8 @@ except SystemError:
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+Version = PTTdefine.Version
+
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP):
         self.__Author = str(Author)
@@ -147,6 +149,7 @@ class Library(object):
         self.InvalidURLError =                 13
         self.LoginFrequently =                 14
         self.MailBoxFull =                     15
+        self.SSHFail =                         16
 
         self.PushType_Push =                    1
         self.PushType_Boo =                     2
@@ -165,6 +168,16 @@ class Library(object):
         self.LogLevel_CRITICAL =                4
         self.LogLevel_SLIENT =                  5
         
+        
+        self.__Refresh =                    '\x0C'
+
+        # screen size
+        self.width = 80
+        self.height = 24
+        # screen buffer
+        self.screen = ''
+        self.buf_size = self.width * self.height
+
         self.__LogLevel = self.LogLevel_INFO
 
         if LogLevel != -1:
@@ -254,165 +267,71 @@ class Library(object):
         return self.Success
     def isLoginSuccess(self, TelnetConnectIndex=0):
         return self.__isConnected[TelnetConnectIndex]
-    def __readScreen(self, TelnetConnectIndex, Message='', ExpectTarget=[]):
+    def __operatePTT(self, TelnetConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
-        #self.Log('__readScreen: into function TelnetConnectIndex: ' + str(TelnetConnectIndex), self.LogLevel_DEBUG)
-
-        if ExpectTarget == None:
-            ExpectTarget = []
+        if CatchTargetList == None:
+            CatchTargetList = []
         
-        result = -1
-        ErrorCode = self.UnknowError
-        
-        ReceiveTimes = 0
-
-        self.__ReceiveData[TelnetConnectIndex] = ''
-        
-        if self.__CurrentTimeout[TelnetConnectIndex] == 0:
-            self.__Timeout[TelnetConnectIndex] = self.__DefaultTimeout
-        else:
-            self.__Timeout[TelnetConnectIndex] = self.__CurrentTimeout[TelnetConnectIndex]
-        
-        try:
-            self.__TelnetConnectList[TelnetConnectIndex].read_very_eager()
-            self.__TelnetConnectList[TelnetConnectIndex].write(str(Message + '\x0C').encode('uao_decode'))
-            StartTime = time.time()
-            
-            while True:
-                time.sleep(self.__SleepTime[TelnetConnectIndex])
-                ReceiveTimes += 1
-
-                self.__ReceiveData[TelnetConnectIndex] += self.__TelnetConnectList[TelnetConnectIndex].read_very_eager().decode('big5', 'ignore') 
-                
-                DataMacthed = False
-                for i in range(len(ExpectTarget)):
-                
-                    if ExpectTarget[i] in self.__ReceiveData[TelnetConnectIndex]:
-                        result = i
-                        DataMacthed = True
-                        break
-                
-                if DataMacthed:
-                    ErrorCode = self.Success
-                    break
-                
-                NowTime = time.time()
-                
-                if NowTime - StartTime > self.__Timeout[TelnetConnectIndex]:
-                    ErrorCode = self.WaitTimeout
-                    self.__CurrentTimeout[TelnetConnectIndex] = 0
-                    self.__TimeoutCount[TelnetConnectIndex] += 1
-                    
-                    if self.__TimeoutCount[TelnetConnectIndex] > self.__TimeoutCountMax:
-                        self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-                        self.__TimeoutCount[TelnetConnectIndex] = 0
-                    return ErrorCode, result
-        except ConnectionAbortedError:
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設', self.LogLevel_WARNING)
-            if self.__isConnected[TelnetConnectIndex]:
-                self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            self.__TimeoutCount[TelnetConnectIndex] = 0
-            return self.ConnectResetError, result
-        except ConnectionResetError:
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設', self.LogLevel_WARNING)
-            if self.__isConnected[TelnetConnectIndex]:
-                self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            self.__TimeoutCount[TelnetConnectIndex] = 0
-            return self.ConnectResetError, result
-        except EOFError:
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除', self.LogLevel_WARNING)
-            if self.__isConnected[TelnetConnectIndex]:
-                self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            self.__TimeoutCount[TelnetConnectIndex] = 0
-            return self.EOFErrorCode, result
-        except AttributeError:
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除或重設', self.LogLevel_WARNING)
-            self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            return self.ConnectResetError, -1
-        
-        self.__TimeoutCount[TelnetConnectIndex] = 0
-        self.__SleepTime[TelnetConnectIndex] = self.__SleepTime[TelnetConnectIndex] * (ReceiveTimes / 5.0)
-        self.__CurrentTimeout[TelnetConnectIndex] = 0
-        return ErrorCode, result
-    
-    def __checkState(self):
-        if not self.__isConnected[TelnetConnectIndex]:
-            return False
-        if self.__KickTimes > 5:
-            return False
-        return True
-    def __showScreen(self, ExpectTarget=[], TelnetConnectIndex=0):
-        self.__readScreen(TelnetConnectIndex, '', ExpectTarget)
-        if self.__LogLevel == self.LogLevel_DEBUG:
-            print(self.__ReceiveData[TelnetConnectIndex])
-    def __sendData(self, TelnetConnectIndex, Message, CaseList=[], Enter=True, Refresh=False):
-        
-        if Message == None:
-            Message = ''
-        if CaseList == None:
-            CaseList = []
+        ErrorCode = self.Success
         
         self.__ReceiveData[TelnetConnectIndex] = ''
+
+        if SendMessage != '':
+            while not self.__TelnetConnectList[TelnetConnectIndex].channel.send_ready():
+                time.sleep(0.01)
+            if Refresh:
+                SendMessage += self.__Refresh
+            self.__TelnetConnectList[TelnetConnectIndex].channel.send(SendMessage)
         
-        ReceiveTimes = 0
-        PostFix = ''
-        
-        if Enter:
-            PostFix += '\r'
-        if Refresh:
-            PostFix += '\x0C'
-        for i in range(len(CaseList)):
-            if type(CaseList[i]) is str:
-                CaseList[i] = CaseList[i].encode('uao_decode')
-        
-        if self.__isConnected[TelnetConnectIndex]:
-            if self.__CurrentTimeout[TelnetConnectIndex] == 0:
-                self.__Timeout[TelnetConnectIndex] = self.__DefaultTimeout
-            else:
-                self.__Timeout[TelnetConnectIndex] = self.__CurrentTimeout[TelnetConnectIndex]
+        if ExtraWait != 0:
+            time.sleep(ExtraWait)
         else:
-            self.__Timeout[TelnetConnectIndex] = 10
+            time.sleep(0.1)
+
+        self.__ReceiveData[TelnetConnectIndex] = self.__wait_str(TelnetConnectIndex)
         
-        try:
+        while self.__TelnetConnectList[TelnetConnectIndex].channel.recv_ready():
+            self.__ReceiveData[TelnetConnectIndex] += self.__recv_str(TelnetConnectIndex)
+            self.__ReceiveData[TelnetConnectIndex] = self.__cleanScreen(self.__ReceiveData[TelnetConnectIndex])
 
-            SendMessage = str(Message) + PostFix
-            self.__TelnetConnectList[TelnetConnectIndex].read_very_eager()
-            self.__TelnetConnectList[TelnetConnectIndex].write(SendMessage.encode('uao_decode'))
-            ReturnIndex = self.__TelnetConnectList[TelnetConnectIndex].expect(CaseList, timeout=self.__Timeout[TelnetConnectIndex])[0]
+            # print(self.__ReceiveData[TelnetConnectIndex])
+            for i in range(len(CatchTargetList)):
+                
+                if CatchTargetList[i] in self.__ReceiveData[TelnetConnectIndex]:
+                    # print('check ' + CatchTargetList[i] + ' success')
+                    self.__TelnetConnectList[TelnetConnectIndex].channel.settimeout(self.__DefaultTimeout)
+                    return self.Success, i
+                else:
+                    pass
+                    # print('check ' + CatchTargetList[i] + ' fail')
 
-        except EOFError:
-            #QQ why kick me
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除', self.LogLevel_WARNING)
-            if self.__isConnected[TelnetConnectIndex]:
-                self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            return self.EOFErrorCode, -1
-        except ConnectionResetError:
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機重設', self.LogLevel_WARNING)
-            if self.__isConnected[TelnetConnectIndex]:
-                self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            return self.ConnectResetError, -1
-        except AttributeError:
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 被遠端主機剔除或重設', self.LogLevel_WARNING)
-            self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            return self.ConnectResetError, -1
-        except socket.gaierror:
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 網路中斷', self.LogLevel_WARNING)
-            self.__connectRemote(TelnetConnectIndex, self.__LoginMode_Recover)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            return self.ConnectResetError, -1
-        if ReturnIndex == -1:
-            self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 傳送資料超時', self.LogLevel_WARNING)
-            self.__CurrentTimeout[TelnetConnectIndex] = 0
-            return self.WaitTimeout, ReturnIndex
-        self.__CurrentTimeout[TelnetConnectIndex] = 0
-        return self.Success, ReturnIndex
+        self.__TelnetConnectList[TelnetConnectIndex].channel.settimeout(self.__DefaultTimeout)
+        return ErrorCode, -1
+    def __cleanScreen(self, screen):
+        if not screen:
+            return screen
+            # remove color codes
+        screen = re.sub('\[[\d+;]*[mH]', '', screen)
+        # remove carriage return
+        screen = re.sub(r'[\r]', '', screen)
+        # remove escape cahracters, capabale of partial replace
+        screen = re.sub(r'[\x00-\x08]', '', screen)
+        screen = re.sub(r'[\x0b\x0c]', '', screen)
+        screen = re.sub(r'[\x0e-\x1f]', '', screen)
+        screen = re.sub(r'[\x7f-\xff]', '', screen)
+        return screen
+    def __wait_str(self, TelnetConnectIndex):
+        ch = ''
+        while True:
+            ch = self.__TelnetConnectList[TelnetConnectIndex].channel.recv(1)
+            if ch:
+                break
+        return self.__dec_bytes(ch)
+    def __recv_str(self, TelnetConnectIndex):
+        return self.__dec_bytes(self.__TelnetConnectList[TelnetConnectIndex].channel.recv(self.buf_size))
+    # decode byte array to UTF-8 string
+    def __dec_bytes(self, bytes):
+        return bytes.decode('utf-8', errors = 'ignore')
     def __connectRemote(self, TelnetConnectIndex, LoginMode=1):
         
         self.__isConnected[TelnetConnectIndex] = False
@@ -427,55 +346,115 @@ class Library(object):
             SlientLogin = False
         
         CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新', '請輸入代號', '系統過載', '請勿頻繁登入', '郵件選單']
-        
+
         while not self.__isConnected[TelnetConnectIndex]:
         
-            while True:
-                try:
-                    if self.__TelnetConnectList[TelnetConnectIndex] == None:
-                        self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 啟動')
-                        # self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
+            try:
+                self.__isConnected[TelnetConnectIndex] = False
+                if self.__TelnetConnectList[TelnetConnectIndex] != None:
+                    self.__TelnetConnectList[TelnetConnectIndex] = None
+                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 重啟')
+                else:
+                    self.Log('連線頻道 ' + str(TelnetConnectIndex) + ' 啟動')
+                    # self.__TelnetConnectList[TelnetConnectIndex] = telnetlib.Telnet(self.__host, self.__TelnetPortList[TelnetConnectIndex])
 
-                        self.__TelnetConnectList[TelnetConnectIndex] = paramiko.SSHClient()
-                        self.__TelnetConnectList[TelnetConnectIndex].load_system_host_keys()
-                        self.__TelnetConnectList[TelnetConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
-                        self.__TelnetConnectList[TelnetConnectIndex].connect('ptt.cc', username = 'bbsu', password = '')
+                self.__TelnetConnectList[TelnetConnectIndex] = paramiko.SSHClient()
+                self.__TelnetConnectList[TelnetConnectIndex].load_system_host_keys()
+                self.__TelnetConnectList[TelnetConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
+                self.__TelnetConnectList[TelnetConnectIndex].connect('ptt.cc', username = 'bbsu', password = '')
+                
+            except paramiko.AuthenticationException:
+                # print('... Authentication failed')
+                self.Log('連接至 ' + self.__host + ' SSH 認證失敗')
+                return self.SSHFail
+            except Exception as e:
+                # print('... Connection failed:', str(e))
+                self.Log('連接至 ' + self.__host + ' 連線失敗')
+                return self.UnknowError
 
-                    break
-                except ConnectionRefusedError:
-                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
-                    time.sleep(10)
-                except TimeoutError:
-                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
-                    time.sleep(10)
-                except socket.timeout:
-                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
-                    time.sleep(10)
-                except socket.gaierror:
-                    self.Log('連接至 ' + self.__host + ' 失敗 10 秒後重試')
-                    time.sleep(10)
-            self.Log('連接成功')
+            try:
+                self.__TelnetConnectList[TelnetConnectIndex].channel = self.__TelnetConnectList[TelnetConnectIndex].invoke_shell(width = self.width, height = self.height)
+            except paramiko.SSHException:
+                self.Log('建立互動通道失敗')
+                return self.UnknowError
+
+            self.Log('建立互動通道成功')
             
+            self.__TelnetConnectList[TelnetConnectIndex].channel.settimeout(self.__DefaultTimeout)
+
             SendMessage = ''
-            Enter = False
-            
-            sys.exit()
+            Refresh = False
+            ExtraWait = 0
+            CatchList = [
+                '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
+                '請輸入您的密碼:', 
+                '開始登入系統...',
+                '正在更新與同步線上使用者及好友名單，系統負荷量大時會需時較久...',
+                '請按任意鍵繼續',
+                '您想刪除其他重複登入的連線嗎？[Y/n]',
+                '(G)oodbye離開，再見'
+            ]
 
-        ErrorCode, Index = self.__readScreen(TelnetConnectIndex, '', ['> (', '●('])
-        if ErrorCode != self.Success:
-            self.Log(self.__ReceiveData[TelnetConnectIndex])
-            self.Log('Detect cursor fail ErrorCode: ' + str(ErrorCode))
-            self.__TelnetConnectList[TelnetConnectIndex] = None
-            return ErrorCode
-        if Index == 0:
-            if not SlientLogin:
-                self.Log('新式游標模式')
+            while True:
+                ErrorCode, CatchIndex = self.__operatePTT(TelnetConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+                
+                SendMessage = ''
+                Refresh = False
+                ExtraWait = 0
+
+                if ErrorCode != 0:
+                    self.Log('登入失敗 錯誤碼: ' + str(ErrorCode))
+                    return ErrorCode
+                if CatchIndex == 0:
+                    self.Log('連線至首頁')
+                    self.Log('輸入帳號')
+                    SendMessage = self.__ID + '\r'
+                elif CatchIndex == 1:
+                    self.Log('輸入帳號成功')
+                    self.Log('輸入密碼')
+                    SendMessage = self.__Password + '\r'
+                elif CatchIndex == 2:
+                    self.Log('登入成功!')
+                    self.Log('等待載入主選單')
+                    SendMessage = ''
+                    Refresh = True
+                elif CatchIndex == 3:
+                    self.Log('正在更新與同步線上使用者及好友名單')
+                    time.sleep(1)
+                    SendMessage = ' '
+                    Refresh = True
+                elif CatchIndex == 4:
+                    self.Log('請按任意鍵繼續')
+                    SendMessage = ' '
+                    Refresh = True
+                elif CatchIndex == 5:
+                    if self.__kickOtherLogin:
+                        self.Log('踢除其他登入...')
+                        SendMessage = 'Y\r'
+                    else:
+                        self.Log('不踢除其他登入...')
+                        SendMessage = 'n\r'
+                    Refresh = True
+                    self.__TelnetConnectList[TelnetConnectIndex].channel.settimeout(5)
+                elif CatchIndex == 6:
+                    self.Log('進入主選單')
+                    self.__isConnected[TelnetConnectIndex] = True
+                    break
+                else:
+                    print(self.__ReceiveData[TelnetConnectIndex])
+                    print('ErrorCode: ' + str(ErrorCode))
+                    print('CatchIndex: ' + str(CatchIndex))
+                    return self.UnknowError
+
+        if '> (' in self.__ReceiveData[TelnetConnectIndex]:
+            self.Log('新式游標模式')
             self.__Cursor = '>'
-        if Index == 1:
-            if not SlientLogin:
-                self.Log('舊式游標模式')
+        elif '●(' in self.__ReceiveData[TelnetConnectIndex]:
+            self.Log('舊式游標模式')
             self.__Cursor = '●'
-        
+        else:
+            self.Log('無法偵測游標')
+            return self.UnknowError
         return self.Success
         
     def __gotoTop(self, TelnetConnectIndex=0):
