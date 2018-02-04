@@ -69,10 +69,19 @@ def GetNewestPostIndexDemo():
     #第一個參數是板面
     
     #回傳值 就是錯誤碼跟最新文章編號
+
+    # ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
+    # if ErrorCode == PTTBot.ErrorCode.Success:
+    #     PTTBot.Log('取得 Wanted 板最新文章編號成功: ' + str(NewestIndex))
+    # else:
+    #     PTTBot.Log('取得 Wanted 板最新文章編號失敗')
+    #     return False
+
+
     for i in range(2):
         for Board in BoardList:
             ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
-            if ErrorCode == PTTBot.Success:
+            if ErrorCode == PTTBot.ErrorCode.Success:
                 PTTBot.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
             else:
                 PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
