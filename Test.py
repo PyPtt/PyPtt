@@ -499,9 +499,9 @@ if __name__ == '__main__':
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
+    PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
     
-    # GetNewestPostIndexDemo()
+    GetNewestPostIndexDemo()
     # PostDemo()
     # GetPostInfoDemo()
     # PushDemo()
