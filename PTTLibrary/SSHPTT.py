@@ -120,7 +120,17 @@ class Library(object):
             self.Log('此連線將"不會"剔除其他登入')
         
         self.__connectRemote(0, self.__LoginMode_Login)
-        
+    
+    def __showScreen(self, ErrorCode, CatchIndex, ConnectIndex=0):
+        if Debug:
+            print('-' * 50)
+            print(self.__PreReceiveData[ConnectIndex])
+            print('-' * 50)
+            print(self.__ReceiveData[ConnectIndex])
+            print('-' * 50)
+            print('ErrorCode: ' + str(ErrorCode))
+            print('CatchIndex: ' + str(CatchIndex))
+                                    
     def setLogLevel(self, LogLevel):
         if LogLevel < self.LogLevel_DEBUG or self.LogLevel_SLIENT < LogLevel:
             self.Log('LogLevel error')
@@ -213,23 +223,23 @@ class Library(object):
     # decode byte array to UTF-8 string
     def __dec_bytes(self, bytes):
         return bytes.decode('utf-8', errors = 'ignore')
-    def __connectRemote(self, ConnectIndex, LoginMode=1):
+    def __connectRemote(self, ConnectIndex):
         
         self.__isConnected[ConnectIndex] = False
-        
-        if LoginMode != self.__LoginMode_Login and LoginMode != self.__LoginMode_Recover and LoginMode != self.__LoginMode_MultiLogin:
-            self.Log('Login mode input error')
-            return self.ErrorInput
-        
-        if LoginMode == self.__LoginMode_Recover or LoginMode == self.__LoginMode_MultiLogin:
-            SlientLogin = True
-        else:
-            SlientLogin = False
-        
-        CaseList = ['密碼不對', '您想刪除其他重複登入', '按任意鍵繼續', '您要刪除以上錯誤嘗試', '您有一篇文章尚未完成', '請輸入您的密碼', '編特別名單', '正在更新', '請輸入代號', '系統過載', '請勿頻繁登入', '郵件選單']
+
+        RetryCount = 0
+        Retry = False
+        ErrorCode = self.ErrorCode.Success
 
         while not self.__isConnected[ConnectIndex]:
-        
+
+            if Retry:
+                RetryCount += 1
+                if RetryCount == 3:
+                    return ErrorCode
+            else:
+                RetryCount = 0
+
             try:
                 self.__isConnected[ConnectIndex] = False
                 if self.__ConnectList[ConnectIndex] != None:
@@ -292,21 +302,14 @@ class Library(object):
                 #11
                 '請檢查帳號及密碼大小寫有無輸入錯誤',
             ]
-            self.__ConnectList[ConnectIndex].channel.settimeout(3)
-
+            
             while True:
                 self.__ConnectList[ConnectIndex].channel.settimeout(5)
+
                 try:
                     ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
                 except socket.timeout:
-                    if Debug:
-                        print('-' * 50 + ' __operatePTT error')
-                        print(self.__PreReceiveData[ConnectIndex])
-                        print('-' * 50)
-                        print(self.__ReceiveData[ConnectIndex])
-                        print('-' * 50)
-                        print('ErrorCode: ' + str(ErrorCode))
-                        print('CatchIndex: ' + str(CatchIndex))
+                    self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
                     return self.ErrorCode.UnknowError
                 SendMessage = ''
                 Refresh = False
@@ -349,8 +352,10 @@ class Library(object):
                     self.Log('刪除錯誤嘗試的記錄')
                     SendMessage = 'y\r'
                 elif CatchIndex == 7:
-                    self.Log('登入太頻繁, 為避免系統負荷過重, 請稍後再試')
-                    return self.ErrorCode.LoginFrequently
+                    self.Log('登入太頻繁 重新連線')
+                    time.sleep(1)
+                    Retry = True
+                    break
                 elif CatchIndex == 8:
                     self.Log('正在更新與同步線上使用者及好友名單')
                     time.sleep(2)
@@ -367,14 +372,7 @@ class Library(object):
                     self.Log('密碼錯誤')
                     return self.ErrorCode.WrongPassword
                 else:
-                    if Debug:
-                        print('-' * 50)
-                        print(self.__PreReceiveData[ConnectIndex])
-                        print('-' * 50)
-                        print(self.__ReceiveData[ConnectIndex])
-                        print('-' * 50)
-                        print('ErrorCode: ' + str(ErrorCode))
-                        print('CatchIndex: ' + str(CatchIndex))
+                    self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
                     return self.ErrorCode.UnknowError
 
         if '> (' in self.__ReceiveData[ConnectIndex]:
@@ -387,31 +385,32 @@ class Library(object):
             self.Log('無法偵測游標')
             return self.ErrorCode.UnknowError
         return self.ErrorCode.Success
-
     def __gotoMainMenu(self, ConnectIndex=0):
         
         self.__ConnectList[ConnectIndex].channel.settimeout(3)
-        ErrorCode, Catch = self.__operatePTT(ConnectIndex, 'q\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], Refresh=True)
+        ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, 'q\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], Refresh=True)
         if ErrorCode != self.ErrorCode.Success:
             return ErrorCode
-        return self.ErrorCode.Success
+        if CatchIndex != -1:
+            return self.ErrorCode.Success
+        return self.ErrorCode.UnknowError
     def logout(self, ConnectIndex=-1):
         
         if ConnectIndex == -1:
             
-            self.Log('準備登出所有連線')
+            self.Log('準備登出所有頻道')
             
             for index in range(self.__MaxMultiLogin):
                 self.__isConnected[index] = False
             
             for index in range(self.__MaxMultiLogin):
                 if self.__ConnectList[index] == None:
-                    self.Log('連線 ' + str(index) + ' 未連接')
+                    # self.Log('連線 ' + str(index) + ' 未連接')
                     continue
-                self.Log('連線 ' + str(index) + ' 執行登出', self.LogLevel_DEBUG)
+                self.Log('頻道 ' + str(index) + ' 登出', self.LogLevel_DEBUG)
                 ErrorCode = self.__gotoMainMenu(index)
                 if ErrorCode != self.ErrorCode.Success:
-                    self.Log('登出出錯: ' + str(ErrorCode))
+                    self.Log('頻道 ' + str(index) + '登出出錯: ' + str(ErrorCode))
                     continue
                 
                 SendMessage = 'g\ry\r'
@@ -420,44 +419,48 @@ class Library(object):
                 self.__ConnectList[index].channel.settimeout(3)
                 ErrorCode, CatchIndex = self.__operatePTT(index, SendMessage=SendMessage, CatchTargetList=['按任意鍵繼續'], Refresh=Refresh, ExtraWait=ExtraWait)
                 if ErrorCode != 0:
-                    self.Log('登出失敗 錯誤碼: ' + str(ErrorCode))
+                    self.Log('頻道 ' + str(index) + '登出失敗 錯誤碼: ' + str(ErrorCode))
                     return
                 if CatchIndex == 0:
                     self.__ConnectList[index].channel.close()
                     self.__ConnectList[index].close()
                     self.__ConnectList[index] = None
-                    self.Log('連線 ' + str(index) + ' 登出成功')
+                    self.Log('頻道 ' + str(index) + ' 登出成功')
                 else:
-                    print(self.__ReceiveData[ConnectIndex])
-                    print('ErrorCode: ' + str(ErrorCode))
-                    print('CatchIndex: ' + str(CatchIndex))
+                    self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
                 
         return self.ErrorCode.Success
-    def __gotoBoard(self, Board, ConnectIndex = 0):
-        for i in range(5):
-            ErrorCode = self.___gotoBoard(Board, ConnectIndex)
-            if ErrorCode == self.ErrorCode.Success:
-                if i != 0:
-                    self.Log('GotoBoard recover Success', self.LogLevel_DEBUG)
-                break
-                
-        return ErrorCode
-    def ___gotoBoard(self, Board, ConnectIndex):
-        ErrorCode = self.__gotoTop(ConnectIndex)
+    def __gotoBoard(self, Board, ConnectIndex):
+        ErrorCode = self.__gotoMainMenu(ConnectIndex)
         if ErrorCode != self.ErrorCode.Success:
             self.Log('Error code __gotoBoard 1: ' + str(ErrorCode), self.LogLevel_DEBUG)
             return ErrorCode
-        CaseList = ['請輸入看板名稱']
+
+        CatchList = ['請輸入看板名稱']
         SendMessage = 's'
-        
-        self.__CurrentTimeout[ConnectIndex] = 5
-        
-        ErrorCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, False)
-        if ErrorCode != self.ErrorCode.Success:
-            self.Log('Error code __gotoBoard 2: ' + str(ErrorCode), self.LogLevel_DEBUG)
-            return ErrorCode
-        
-        #self.__showScreen()
+        Refresh = False
+        ExtraWait = 0
+        while True:
+            try:
+                ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+            except socket.timeout:
+                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+                return self.ErrorCode.UnknowError
+            
+            SendMessage = 's'
+            Refresh = False
+            ExtraWait = 0
+            
+            if ErrorCode != self.ErrorCode.Success:
+                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+                return ErrorCode
+            if CatchIndex == 0:
+                SendMessage = Board + '\r'
+            else:
+                self.Log('前往 ' + Board + ' 板時發生不明原因錯誤: ' + str(Errorcode))
+                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+                return ErrorCode
+
         CaseList = ['請按任意鍵繼續', '其他任意鍵停止', '動畫播放中', '文章選讀']
         SendMessage = Board
         Enter = True
@@ -467,7 +470,7 @@ class Library(object):
             ErrorCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
             #self.Log('GotoBoard index: ' + str(Index), self.LogLevel_DEBUG)
             if ErrorCode != self.ErrorCode.Success:
-                self.__showScreen()
+                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
                 self.Log('Error code __gotoBoard 3: ' + str(ErrorCode), self.LogLevel_DEBUG)
                 return ErrorCode
             if Index == 0 or Index == 1 or Index == 2:
@@ -483,103 +486,8 @@ class Library(object):
         #self.__showScreen()
         return self.ErrorCode.Success
     
-    def post(self, board, title, content, PostType, SignType, ConnectIndex = 0):
-        
-        self.__CurrentTimeout[ConnectIndex] = 10
-        
-        ErrorCode = self.__gotoBoard(board)
-        if ErrorCode != self.ErrorCode.Success:
-            self.Log('post 1 Go to ' + board + ' fail', self.LogLevel_DEBUG)
-            return ErrorCode
-        
-        CaseList = ['或不選', '使用者不可發言']
-        SendMessage = '\x10'
-        
-        ErrorCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, False)
-        if ErrorCode != self.ErrorCode.Success:
-            self.Log('post 2 error code: ' + str(ErrorCode), self.LogLevel_DEBUG)
-            return ErrorCode
-        
-        if Index == 1:
-            self.Log('你被水桶惹 QQ')
-            return self.NoPermission
-        
-        CaseList = ['標題']
-        SendMessage = str(PostType)
-        
-        ErrorCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList)
-        if ErrorCode != self.ErrorCode.Success:
-            self.Log('post 3 error code: ' + str(ErrorCode), self.LogLevel_DEBUG)
-            return ErrorCode
-        
-        CaseList = ['編輯文章']
-        SendMessage = title
-        
-        ErrorCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList)
-        if ErrorCode != self.ErrorCode.Success:
-            
-            self.Log('post 4 error code: ' + str(ErrorCode), self.LogLevel_DEBUG)
-            return ErrorCode
-        
-        CaseList = ['確定要儲存檔案嗎']
-        SendMessage = content + '\x18'
-        
-        ErrorCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, False)
-        if ErrorCode != self.ErrorCode.Success:
-            self.Log('post 5 error code: ' + str(ErrorCode), self.LogLevel_DEBUG)
-            return ErrorCode
-        
-        self.__CurrentTimeout[ConnectIndex] = 10
-        
-        CaseList = ['x=隨機', '請按任意鍵繼續', '看板《' + board + '》']
-        SendMessage = 's'
-        Enter = True
-        Refresh = False
-        while True:        
-            ErrorCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter, Refresh)
-            if ErrorCode != self.ErrorCode.Success:
-                self.__showScreen()
-                self.Log('post 6 error code: ' + str(ErrorCode), self.LogLevel_DEBUG)
-                return ErrorCode
-            if Index == 0:
-                SendMessage = str(SignType)
-                Enter = True
-                Refresh = False
-            if Index == 1:
-                SendMessage = 'q'
-                Enter = False
-                Refresh = False
-            if Index == 2:
-                #self.Log('Post Success')
-                break
-                
-        return self.ErrorCode.Success
-    
     def getNewestPostIndex(self, Board, ConnectIndex = 0):
         
-        TryTime = 0
-        
-        for i in range(3):
-            ErrorCode, Index = self.__getNewestPostIndex(Board, ConnectIndex)
-            TryTime += 1
-            if ErrorCode == self.ErrorCode.Success:
-                if i != 0:
-                    self.Log('getNewestPostIndex try ' + str(i + 1) + ' ecovery Success', self.LogLevel_DEBUG)
-                break
-            elif ErrorCode == self.ParseError:
-                self.Log('getNewestPostIndex parse error retry..', self.LogLevel_DEBUG)
-                pass
-            elif ErrorCode == self.WaitTimeout:
-                self.Log('getNewestPostIndex time out retry..', self.LogLevel_DEBUG)
-                pass
-            else:
-                self.Log('ErrorCode: ' + str(ErrorCode), self.LogLevel_DEBUG)
-                return ErrorCode, Index
-            time.sleep(self.__SleepTime[ConnectIndex])
-        
-        #self.Log('TryTime: ' + str(TryTime))
-        return ErrorCode, Index
-    def __getNewestPostIndex(self, Board, ConnectIndex = 0):
         ReturnIndex = -1
     
         ErrorCode = self.__gotoBoard(Board, ConnectIndex)
@@ -587,57 +495,7 @@ class Library(object):
             self.Log('getNewestPostIndex 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
             return ErrorCode, -1
         
-        self.__CurrentTimeout[ConnectIndex] = 3
-        self.__readScreen(ConnectIndex, '0\r$', ['★'])
-        if ErrorCode == self.WaitTimeout:
-            #self.Log('getNewestPostIndex 2.1 error code: ' + str(ErrorCode))
-            #print(self.__ReceiveData[ConnectIndex])
-            return ErrorCode, -1
-
-        AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
-        
-        AllIndex = list(set(map(int, AllIndex)))
-        AllIndex.sort()
-        
-        if len(AllIndex) == 0:
-            self.Log('self.ParseError type 1', self.LogLevel_DEBUG)
-            return self.ParseError, -1
-        
-        AllIndexTemp = list(AllIndex)
-        
-        while True:
-            
-            ReturnIndexTemp = AllIndex.pop()
-            
-            if len(str(ReturnIndexTemp)) <= 6:
-
-                HasFront = True
-                HasBack = True
-                
-                DetectRange = 5
-                '''
-                print(AllIndexTemp)
-                print(str(ReturnIndexTemp))
-                '''
-                for i in range(DetectRange):
-                    if not (ReturnIndexTemp - i) in AllIndexTemp:
-                        HasFront = False
-                        break
-                
-                for i in range(DetectRange):
-                    if not (ReturnIndexTemp + i) in AllIndexTemp:
-                        HasBack = False
-                        break
-                
-                if HasFront or HasBack:
-                    ReturnIndex = ReturnIndexTemp
-                    break
-            if len(AllIndex) == 0:
-                self.Log('self.ParseError type 2: ' + str(AllIndexTemp), self.LogLevel_DEBUG)
-                #self.Log(self.__ReceiveData[ConnectIndex], self.LogLevel_DEBUG)
-                return self.ParseError, -1
         return self.ErrorCode.Success, int(ReturnIndex)
-    
     def __gotoPostByIndex(self, Board, PostIndex, ConnectIndex=0):
         for i in range(3):
             ErrorCode = self.___gotoPostByIndex(Board, PostIndex, ConnectIndex)
@@ -697,7 +555,15 @@ class Library(object):
                 break
             if ErrorCode == self.PostDeleted:
                 break
-        return ErrorCode, Post
+        return ErrorCode, Post    
+    def post(self, Board, Title, Content, PostType, SignType, ConnectIndex = 0):
+        
+        ErrorCode = self.__gotoBoard(Board, ConnectIndex)
+        if ErrorCode != self.ErrorCode.Success:
+            self.Log('post 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
+            return ErrorCode
+        
+        return self.ErrorCode.Success
         
     def __getPostinfoByUrl(self, WebUrl):
     
