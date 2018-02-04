@@ -67,7 +67,7 @@ class Library(object):
             else:
                 self.__LogLevel = LogLevel
 
-        self.__DefaultTimeout =                 1
+        self.__DefaultTimeout =                 5
         
         self.__Cursor =                       '>'
         
@@ -119,7 +119,7 @@ class Library(object):
         else :
             self.Log('此連線將"不會"剔除其他登入')
         
-        self.__connectRemote(0, self.__LoginMode_Login)
+        self.__connectRemote(0)
     
     def __showScreen(self, ErrorCode, CatchIndex, ConnectIndex=0):
         if Debug:
@@ -168,33 +168,36 @@ class Library(object):
         self.__PreReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex]
         self.__ReceiveData[ConnectIndex] = ''
 
-        if SendMessage != '':
-            while not self.__ConnectList[ConnectIndex].channel.send_ready():
-                time.sleep(0.1)
-            if Refresh:
-                SendMessage += self.__Refresh
-            self.__ConnectList[ConnectIndex].channel.send(SendMessage)
-        
-        if ExtraWait != 0:
-            time.sleep(ExtraWait)
-        time.sleep(0.1)
+        try:
+            if SendMessage != '':
+                while not self.__ConnectList[ConnectIndex].channel.send_ready():
+                    time.sleep(0.1)
+                if Refresh:
+                    SendMessage += self.__Refresh
+                self.__ConnectList[ConnectIndex].channel.send(SendMessage)
+            
+            if ExtraWait != 0:
+                time.sleep(ExtraWait)
+            time.sleep(0.1)
 
-        self.__ReceiveData[ConnectIndex] = self.__wait_str(ConnectIndex)
-        
-        while self.__ConnectList[ConnectIndex].channel.recv_ready():
-            self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
-            self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
+            self.__ReceiveData[ConnectIndex] = self.__wait_str(ConnectIndex)
+            
+            while self.__ConnectList[ConnectIndex].channel.recv_ready():
+                self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
+                self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
-            # print(self.__ReceiveData[ConnectIndex])
-            for i in range(len(CatchTargetList)):
-                
-                if CatchTargetList[i] in self.__ReceiveData[ConnectIndex]:
-                    # print('check ' + CatchTargetList[i] + ' success')
-                    self.__ConnectList[ConnectIndex].channel.settimeout(self.__DefaultTimeout)
-                    return self.ErrorCode.Success, i
-                else:
-                    pass
-                    # print('check ' + CatchTargetList[i] + ' fail')
+                # print(self.__ReceiveData[ConnectIndex])
+                for i in range(len(CatchTargetList)):
+                    
+                    if CatchTargetList[i] in self.__ReceiveData[ConnectIndex]:
+                        # print('check ' + CatchTargetList[i] + ' success')
+                        self.__ConnectList[ConnectIndex].channel.settimeout(self.__DefaultTimeout)
+                        return self.ErrorCode.Success, i
+                    else:
+                        pass
+                        # print('check ' + CatchTargetList[i] + ' fail')
+        except socket.timeout:
+            ErrorCode = self.ErrorCode.WaitTimeout
 
         self.__ConnectList[ConnectIndex].channel.settimeout(self.__DefaultTimeout)
         return ErrorCode, -1
@@ -234,12 +237,13 @@ class Library(object):
         while not self.__isConnected[ConnectIndex]:
 
             if Retry:
+                Retry = False
                 RetryCount += 1
                 if RetryCount == 3:
                     return ErrorCode
             else:
                 RetryCount = 0
-
+            
             try:
                 self.__isConnected[ConnectIndex] = False
                 if self.__ConnectList[ConnectIndex] != None:
@@ -254,6 +258,7 @@ class Library(object):
                 self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
                 self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbsu', password = '')
                 
+                self.__ConnectList[ConnectIndex].channel = self.__ConnectList[ConnectIndex].invoke_shell(width = self.width, height = self.height)
             except paramiko.AuthenticationException:
                 # print('... Authentication failed')
                 self.Log('連接至 ' + self.__host + ' SSH 認證失敗')
@@ -261,13 +266,14 @@ class Library(object):
             except Exception as e:
                 # print('... Connection failed:', str(e))
                 self.Log('連接至 ' + self.__host + ' 連線失敗')
-                return self.ErrorCode.UnknowError
-
-            try:
-                self.__ConnectList[ConnectIndex].channel = self.__ConnectList[ConnectIndex].invoke_shell(width = self.width, height = self.height)
+                Retry = True
+                ErrorCode = self.ErrorCode.UnknowError
+                continue
             except paramiko.SSHException:
                 self.Log('建立互動通道失敗')
-                return self.ErrorCode.UnknowError
+                Retry = True
+                ErrorCode = self.ErrorCode.UnknowError
+                continue
 
             self.Log('建立互動通道成功')
             
@@ -304,13 +310,10 @@ class Library(object):
             ]
             
             while True:
-                self.__ConnectList[ConnectIndex].channel.settimeout(5)
+                ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+                if ErrorCode != self.ErrorCode.Success:
+                    return ErrorCode
 
-                try:
-                    ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
-                except socket.timeout:
-                    self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
-                    return self.ErrorCode.UnknowError
                 SendMessage = ''
                 Refresh = False
                 ExtraWait = 0
@@ -343,7 +346,7 @@ class Library(object):
                         self.Log('不踢除其他登入...')
                         SendMessage = 'n\r'
                     Refresh = True
-                    self.__ConnectList[ConnectIndex].channel.settimeout(5)
+                    ExtraWait = 1
                 elif CatchIndex == 5:
                     self.Log('進入主選單')
                     self.__isConnected[ConnectIndex] = True
@@ -355,11 +358,11 @@ class Library(object):
                     self.Log('登入太頻繁 重新連線')
                     time.sleep(1)
                     Retry = True
-                    break
+                    ErrorCode = self.ErrorCode.LoginFrequently
+                    continue
                 elif CatchIndex == 8:
                     self.Log('正在更新與同步線上使用者及好友名單')
                     time.sleep(2)
-                    self.__ConnectList[ConnectIndex].channel.settimeout(5)
                     SendMessage = ' '
                     Refresh = True
                 elif CatchIndex == 9:
@@ -373,7 +376,9 @@ class Library(object):
                     return self.ErrorCode.WrongPassword
                 else:
                     self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
-                    return self.ErrorCode.UnknowError
+                    ErrorCode = self.ErrorCode.UnknowError
+                    Retry = True
+                    continue
 
         if '> (' in self.__ReceiveData[ConnectIndex]:
             self.Log('新式游標模式')
@@ -387,7 +392,6 @@ class Library(object):
         return self.ErrorCode.Success
     def __gotoMainMenu(self, ConnectIndex=0):
         
-        self.__ConnectList[ConnectIndex].channel.settimeout(3)
         ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, 'q\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], Refresh=True)
         if ErrorCode != self.ErrorCode.Success:
             return ErrorCode
@@ -431,71 +435,113 @@ class Library(object):
                 
         return self.ErrorCode.Success
     def __gotoBoard(self, Board, ConnectIndex):
+
         ErrorCode = self.__gotoMainMenu(ConnectIndex)
         if ErrorCode != self.ErrorCode.Success:
             self.Log('Error code __gotoBoard 1: ' + str(ErrorCode), self.LogLevel_DEBUG)
+            self.__showScreen(0, 0, ConnectIndex)
             return ErrorCode
 
-        CatchList = ['請輸入看板名稱']
+        CatchList = [
+            # 0
+            '請輸入看板名稱', 
+            # 1
+            '請按任意鍵繼續', 
+            # 2
+            '文章選讀',
+            # 3
+            '動畫播放中',
+        ]
         SendMessage = 's'
         Refresh = False
         ExtraWait = 0
+
+        ErrorCount = 0
         while True:
-            try:
-                ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
-            except socket.timeout:
-                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
-                return self.ErrorCode.UnknowError
-            
-            SendMessage = 's'
-            Refresh = False
-            ExtraWait = 0
-            
+            ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
             if ErrorCode != self.ErrorCode.Success:
-                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
-                return ErrorCode
-            if CatchIndex == 0:
-                SendMessage = Board + '\r'
-            else:
-                self.Log('前往 ' + Board + ' 板時發生不明原因錯誤: ' + str(Errorcode))
-                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
                 return ErrorCode
 
-        CaseList = ['請按任意鍵繼續', '其他任意鍵停止', '動畫播放中', '文章選讀']
-        SendMessage = Board
-        Enter = True
-        
-        MaxTry, TryTime = 5, 0
-        while True:            
-            ErrorCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
-            #self.Log('GotoBoard index: ' + str(Index), self.LogLevel_DEBUG)
-            if ErrorCode != self.ErrorCode.Success:
-                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
-                self.Log('Error code __gotoBoard 3: ' + str(ErrorCode), self.LogLevel_DEBUG)
-                return ErrorCode
-            if Index == 0 or Index == 1 or Index == 2:
+            SendMessage = ''
+            Refresh = False
+            ExtraWait = 0
+
+            if CatchIndex == 0:
+                self.Log('輸入看板名稱')
+                SendMessage = Board + '\r'
+                # ExtraWait = 1
+            elif CatchIndex == 1:
+                self.Log('請按任意鍵繼續')
+                SendMessage = ' '
+            elif CatchIndex == 2:
+                self.Log('進入 ' + Board + ' 板成功')
+                return self.ErrorCode.Success
+            elif CatchIndex == 3:
+                self.Log('動畫播放中')
                 SendMessage = 'q'
-                Enter = False
-            if Index == 3:
-                break
-            TryTime += 1
-            if TryTime > MaxTry:
-                self.Log('___gotoBoard while too many times', self.LogLevel_DEBUG)
-                return self.WaitTimeout
-        #print('--------------------------------------------------------')
-        #self.__showScreen()
+            else:
+                self.Log('前往 ' + Board + ' 板時有無法處理的標的', self.LogLevel_DEBUG)
+                # self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+                SendMessage = ' '
+                ErrorCount += 1
+                if ErrorCount >= 3:
+                    return self.ErrorCode.UnknowError
+        
         return self.ErrorCode.Success
     
     def getNewestPostIndex(self, Board, ConnectIndex = 0):
         
-        ReturnIndex = -1
+        result = -1
     
         ErrorCode = self.__gotoBoard(Board, ConnectIndex)
         if ErrorCode != self.ErrorCode.Success:
             self.Log('getNewestPostIndex 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
-            return ErrorCode, -1
+            return ErrorCode, result
         
-        return self.ErrorCode.Success, int(ReturnIndex)
+        CatchList = [
+            # 0
+            '文章選讀',
+        ]
+        SendMessage = '0\r$'
+        Refresh = True
+        ExtraWait = 0
+
+        while True:
+            ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+            if ErrorCode != self.ErrorCode.Success:
+                return ErrorCode, result
+
+            SendMessage = ''
+            Refresh = False
+            ExtraWait = 0
+
+            if CatchIndex == 0:
+                self.Log('游標移動至底部成功')
+                break
+
+        # self.__showScreen(ErrorCode, 0, 0)
+        AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
+        AllIndex = list(set(map(int, AllIndex)))
+
+        if len(AllIndex) == 0:
+            self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+            return self.ErrorCode.ParseError, result
+
+        AllIndex.sort(reverse=True)
+
+        for IndexTemp in AllIndex:
+            isContinue = True
+
+            for i in range(5):
+                if IndexTemp - i not in AllIndex:
+                    isContinue = False
+                    break
+            
+            if isContinue:
+                result = IndexTemp
+                break
+
+        return self.ErrorCode.Success, result
     def __gotoPostByIndex(self, Board, PostIndex, ConnectIndex=0):
         for i in range(3):
             ErrorCode = self.___gotoPostByIndex(Board, PostIndex, ConnectIndex)
@@ -897,7 +943,7 @@ class Library(object):
             self.Log('啟動多重登入模式')
             for i in range(1, self.__MaxMultiLogin):
                 for ii in range(3):            
-                    if self.__connectRemote(i, self.__LoginMode_MultiLogin) == self.ErrorCode.Success:
+                    if self.__connectRemote(i) == self.ErrorCode.Success:
                         ConnectList.append(i)
                         break
         else:
