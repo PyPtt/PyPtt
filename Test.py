@@ -78,7 +78,7 @@ def GetNewestPostIndexDemo():
     #     return False
 
 
-    for i in range(2):
+    for i in range(10):
         for Board in BoardList:
             ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
             if ErrorCode == PTTBot.ErrorCode.Success:
@@ -508,7 +508,7 @@ if __name__ == '__main__':
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
+    # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
     
     GetNewestPostIndexDemo()
     # PostDemo()

@@ -20,8 +20,6 @@ except SystemError:
     import ErrorCode
     import Information
 
-Debug = True
-
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 Version = Version.Ver
@@ -122,7 +120,7 @@ class Library(object):
         self.__connectRemote(0)
     
     def __showScreen(self, ErrorCode, CatchIndex, ConnectIndex=0):
-        if Debug:
+        if self.__LogLevel == self.LogLevel_DEBUG:
             print('-' * 50)
             print(self.__PreReceiveData[ConnectIndex])
             print('-' * 50)
@@ -160,6 +158,8 @@ class Library(object):
         return self.__isConnected[ConnectIndex]
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
+        SendMessageTimeout = 1.0
+
         if CatchTargetList == None:
             CatchTargetList = []
         
@@ -170,15 +170,30 @@ class Library(object):
 
         try:
             if SendMessage != '':
-                while not self.__ConnectList[ConnectIndex].channel.send_ready():
-                    time.sleep(0.1)
+
                 if Refresh:
                     SendMessage += self.__Refresh
+
+                StartTime = time.time()
+                time.sleep(0.01)
+                while not self.__ConnectList[ConnectIndex].channel.send_ready():
+                    time.sleep(0.01)
+                    NowTime = time.time()
+                    if (NowTime - StartTime) >= SendMessageTimeout:
+                        return self.ErrorCode.WaitTimeout
+
                 self.__ConnectList[ConnectIndex].channel.send(SendMessage)
             
             if ExtraWait != 0:
                 time.sleep(ExtraWait)
-            time.sleep(0.1)
+            
+            StartTime = time.time()
+            time.sleep(0.01)
+            while not self.__ConnectList[ConnectIndex].channel.recv_ready():
+                time.sleep(0.01)
+                NowTime = time.time()
+                if (NowTime - StartTime) >= SendMessageTimeout:
+                    return self.ErrorCode.WaitTimeout
 
             self.__ReceiveData[ConnectIndex] = self.__wait_str(ConnectIndex)
             
@@ -186,16 +201,12 @@ class Library(object):
                 self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
                 self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
-                # print(self.__ReceiveData[ConnectIndex])
                 for i in range(len(CatchTargetList)):
                     
                     if CatchTargetList[i] in self.__ReceiveData[ConnectIndex]:
-                        # print('check ' + CatchTargetList[i] + ' success')
                         self.__ConnectList[ConnectIndex].channel.settimeout(self.__DefaultTimeout)
                         return self.ErrorCode.Success, i
-                    else:
-                        pass
-                        # print('check ' + CatchTargetList[i] + ' fail')
+
         except socket.timeout:
             ErrorCode = self.ErrorCode.WaitTimeout
 
@@ -434,7 +445,14 @@ class Library(object):
                     self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
                 
         return self.ErrorCode.Success
+
     def __gotoBoard(self, Board, ConnectIndex):
+        for i in range(2):
+            ErrorCode = self.___gotoBoard(Board, ConnectIndex)
+            if ErrorCode == self.ErrorCode.Success:
+                return ErrorCode
+        return ErrorCode
+    def ___gotoBoard(self, Board, ConnectIndex):
 
         ErrorCode = self.__gotoMainMenu(ConnectIndex)
         if ErrorCode != self.ErrorCode.Success:
@@ -446,7 +464,7 @@ class Library(object):
             # 0
             '請輸入看板名稱', 
             # 1
-            '請按任意鍵繼續', 
+            '按任意鍵繼續', 
             # 2
             '文章選讀',
             # 3
@@ -467,29 +485,35 @@ class Library(object):
             ExtraWait = 0
 
             if CatchIndex == 0:
-                self.Log('輸入看板名稱')
+                self.Log('輸入看板名稱', self.LogLevel_DEBUG)
                 SendMessage = Board + '\r'
-                # ExtraWait = 1
+                # ExtraWait = 0.1
             elif CatchIndex == 1:
-                self.Log('請按任意鍵繼續')
+                self.Log('按任意鍵繼續', self.LogLevel_DEBUG)
                 SendMessage = ' '
             elif CatchIndex == 2:
-                self.Log('進入 ' + Board + ' 板成功')
+                self.Log('進入 ' + Board + ' 板成功', self.LogLevel_DEBUG)
                 return self.ErrorCode.Success
             elif CatchIndex == 3:
-                self.Log('動畫播放中')
+                self.Log('動畫播放中', self.LogLevel_DEBUG)
                 SendMessage = 'q'
             else:
                 self.Log('前往 ' + Board + ' 板時有無法處理的標的', self.LogLevel_DEBUG)
-                # self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
                 SendMessage = ' '
+                Refresh = True
                 ErrorCount += 1
-                if ErrorCount >= 3:
+                if ErrorCount >= 2:
                     return self.ErrorCode.UnknowError
         
         return self.ErrorCode.Success
-    
     def getNewestPostIndex(self, Board, ConnectIndex = 0):
+        for i in range(3):
+            ErrorCode, NewestIndex = self.__getNewestPostIndex(Board, ConnectIndex = 0)
+            if ErrorCode == self.ErrorCode.Success:
+                return ErrorCode, NewestIndex
+        return ErrorCode, NewestIndex
+    def __getNewestPostIndex(self, Board, ConnectIndex = 0):
         
         result = -1
     
@@ -516,10 +540,9 @@ class Library(object):
             ExtraWait = 0
 
             if CatchIndex == 0:
-                self.Log('游標移動至底部成功')
+                self.Log('游標移動至底部成功', self.LogLevel_DEBUG)
                 break
 
-        # self.__showScreen(ErrorCode, 0, 0)
         AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
         AllIndex = list(set(map(int, AllIndex)))
 
@@ -543,14 +566,6 @@ class Library(object):
 
         return self.ErrorCode.Success, result
     def __gotoPostByIndex(self, Board, PostIndex, ConnectIndex=0):
-        for i in range(3):
-            ErrorCode = self.___gotoPostByIndex(Board, PostIndex, ConnectIndex)
-            if ErrorCode == self.ErrorCode.Success:
-                if i != 0:
-                    self.Log('GotoPostByIndex try ' + str(i + 1) + ' recover Success', self.LogLevel_DEBUG)
-                break
-        return ErrorCode
-    def ___gotoPostByIndex(self, Board, PostIndex, ConnectIndex=0):
     
         ErrorCode = self.__gotoBoard(Board, ConnectIndex)
         if ErrorCode != self.ErrorCode.Success:
@@ -1683,5 +1698,5 @@ class Library(object):
 
 if __name__ == '__main__':
 
-    print('PTT Library v ' + Version.Ver)
+    print('PTT Library v ' + Version)
     print('Developed by PTT CodingMan')
