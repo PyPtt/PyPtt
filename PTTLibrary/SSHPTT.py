@@ -20,9 +20,17 @@ except SystemError:
     import ErrorCode
     import Information
 
+Debug = True
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 Version = Version.Ver
+
+LogLevel_DEBUG =                   1
+LogLevel_WARNING =                 2
+LogLevel_INFO =                    3
+LogLevel_CRITICAL =                4
+LogLevel_SLIENT =                  5
 
 class Library(object):
     def __init__(self, ID, Password, kickOtherLogin=True, LogLevel=-1):
@@ -120,7 +128,7 @@ class Library(object):
         self.__connectRemote(0)
     
     def __showScreen(self, ErrorCode, CatchIndex, ConnectIndex=0):
-        if self.__LogLevel == self.LogLevel_DEBUG:
+        if self.__LogLevel == self.LogLevel_DEBUG or Debug:
             print('-' * 50)
             print(self.__PreReceiveData[ConnectIndex])
             print('-' * 50)
@@ -158,7 +166,7 @@ class Library(object):
         return self.__isConnected[ConnectIndex]
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
-        SendMessageTimeout = 1.0
+        SendMessageTimeout = 10.0
 
         if CatchTargetList == None:
             CatchTargetList = []
@@ -175,12 +183,12 @@ class Library(object):
                     SendMessage += self.__Refresh
 
                 StartTime = time.time()
-                time.sleep(0.01)
+                time.sleep(0.02)
                 while not self.__ConnectList[ConnectIndex].channel.send_ready():
                     time.sleep(0.01)
                     NowTime = time.time()
                     if (NowTime - StartTime) >= SendMessageTimeout:
-                        return self.ErrorCode.WaitTimeout
+                        return self.ErrorCode.WaitTimeout, -1
 
                 self.__ConnectList[ConnectIndex].channel.send(SendMessage)
             
@@ -188,12 +196,12 @@ class Library(object):
                 time.sleep(ExtraWait)
             
             StartTime = time.time()
-            time.sleep(0.01)
+            time.sleep(0.02)
             while not self.__ConnectList[ConnectIndex].channel.recv_ready():
                 time.sleep(0.01)
                 NowTime = time.time()
                 if (NowTime - StartTime) >= SendMessageTimeout:
-                    return self.ErrorCode.WaitTimeout
+                    return self.ErrorCode.WaitTimeout, -1
 
             self.__ReceiveData[ConnectIndex] = self.__wait_str(ConnectIndex)
             
@@ -301,7 +309,7 @@ class Library(object):
                 # 2
                 '開始登入系統...',
                 # 3
-                '請按任意鍵繼續',
+                '任意鍵',
                 # 4
                 '您想刪除其他重複登入的連線嗎？[Y/n]',
                 # 5
@@ -323,8 +331,9 @@ class Library(object):
             while True:
                 ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
                 if ErrorCode != self.ErrorCode.Success:
+                    self.Log('登入操作失敗 錯誤碼: ' + str(ErrorCode), self.LogLevel_DEBUG)
                     return ErrorCode
-
+                
                 SendMessage = ''
                 Refresh = False
                 ExtraWait = 0
@@ -352,12 +361,10 @@ class Library(object):
                 elif CatchIndex == 4:
                     if self.__kickOtherLogin:
                         self.Log('踢除其他登入...')
-                        SendMessage = 'Y\r'
+                        SendMessage = 'y\r'
                     else:
                         self.Log('不踢除其他登入...')
                         SendMessage = 'n\r'
-                    Refresh = True
-                    ExtraWait = 1
                 elif CatchIndex == 5:
                     self.Log('進入主選單')
                     self.__isConnected[ConnectIndex] = True
@@ -379,6 +386,7 @@ class Library(object):
                 elif CatchIndex == 9:
                     self.Log('放棄尚未完成文章')
                     SendMessage = 'q\r'
+                    ExtraWait = 1
                 elif CatchIndex == 10:
                     self.Log('信件數目超出上限請整理')
                     return self.ErrorCode.MailBoxFull
@@ -386,7 +394,7 @@ class Library(object):
                     self.Log('密碼錯誤')
                     return self.ErrorCode.WrongPassword
                 else:
-                    self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+                    self.__showScreen(ErrorCode, CatchIndex, ConnectIndex=ConnectIndex)
                     ErrorCode = self.ErrorCode.UnknowError
                     Retry = True
                     continue
@@ -464,7 +472,7 @@ class Library(object):
             # 0
             '請輸入看板名稱', 
             # 1
-            '按任意鍵繼續', 
+            '任意鍵', 
             # 2
             '文章選讀',
             # 3
@@ -522,33 +530,48 @@ class Library(object):
             self.Log('getNewestPostIndex 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
             return ErrorCode, result
         
-        CatchList = [
-            # 0
-            '文章選讀',
-        ]
-        SendMessage = '0\r$'
-        Refresh = True
-        ExtraWait = 0
-
+        ErrorCount = 0
+        Retry = False
         while True:
-            ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
-            if ErrorCode != self.ErrorCode.Success:
-                return ErrorCode, result
+            CatchList = [
+                # 0
+                '文章選讀',
+            ]
 
-            SendMessage = ''
-            Refresh = False
+            SendMessage = '0\r$'
+            Refresh = True
             ExtraWait = 0
 
-            if CatchIndex == 0:
-                self.Log('游標移動至底部成功', self.LogLevel_DEBUG)
+            if Retry:
+                Retry = False
+                RetryCount += 1
+                if RetryCount == 3:
+                    return ErrorCode, result
+            else:
+                RetryCount = 0
+
+            while True:
+                ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+                if ErrorCode != self.ErrorCode.Success:
+                    return ErrorCode, result
+
+                if CatchIndex == 0:
+                    self.Log('游標移動至底部成功', self.LogLevel_DEBUG)
+                    break
+                else:
+                    ErrorCode = self.ErrorCode.UnknowError
+                    Retry = True
+                    continue
+                
+            AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
+            AllIndex = list(set(map(int, AllIndex)))
+
+            if len(AllIndex) == 0:
+                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+                ErrorCode = self.ErrorCode.ParseError
+                Retry = True
+            else:
                 break
-
-        AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
-        AllIndex = list(set(map(int, AllIndex)))
-
-        if len(AllIndex) == 0:
-            self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
-            return self.ErrorCode.ParseError, result
 
         AllIndex.sort(reverse=True)
 
@@ -565,58 +588,6 @@ class Library(object):
                 break
 
         return self.ErrorCode.Success, result
-    def __gotoPostByIndex(self, Board, PostIndex, ConnectIndex=0):
-    
-        ErrorCode = self.__gotoBoard(Board, ConnectIndex)
-        if ErrorCode != self.ErrorCode.Success:
-            self.Log('__gotoPostByIndex 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
-            self.__showScreen()
-            return ErrorCode
-            
-        if self.__Cursor == '>':
-            IndexTarget = '>{0: >6}'.format(str(PostIndex))
-        else:
-            IndexTargetTemp = str(PostIndex)
-            if len(IndexTargetTemp) == 6:
-                IndexTargetTemp = IndexTargetTemp[1:]
-            IndexTarget = self.__Cursor + '{0: >5}'.format(IndexTargetTemp)
-            
-        self.__CurrentTimeout[ConnectIndex] = 5
-        
-        self.__readScreen(ConnectIndex, str(PostIndex) + '\r', [IndexTarget])
-        
-        if IndexTarget in self.__ReceiveData[ConnectIndex]:
-            return self.ErrorCode.Success
-        else:
-            #print(self.__ReceiveData[ConnectIndex])
-            return self.PostNotFound
-    def __gotoPostByID(self, Board, PostID, ConnectIndex = 0):
-        self.Log('Into __gotoPostByID', self.LogLevel_DEBUG)
-        ErrorCode = self.__gotoBoard(Board, ConnectIndex)
-        if ErrorCode != self.ErrorCode.Success:
-            self.Log('__gotoPostByID 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
-            return ErrorCode
-        
-        self.__readScreen(ConnectIndex, '#' + PostID + '\r', '文章選讀')
-        
-        if '找不到這個文章代碼' in self.__ReceiveData[ConnectIndex]:
-            return self.PostNotFound
-        
-        return self.ErrorCode.Success
-        
-    def getPostInfoByID(self, Board, PostID, Index=-1, ConnectIndex = 0):
-        self.Log('Into getPostInfoByID', self.LogLevel_DEBUG)
-        for i in range(5):
-            ErrorCode, Post = self.__getPostInfoByID(Board, PostID, Index, ConnectIndex)
-            if ErrorCode == self.ErrorCode.Success:
-                if i != 0:
-                    self.Log('getPostInfoByID recover Success', self.LogLevel_DEBUG)
-                break
-            if ErrorCode == self.WebFormatError:
-                break
-            if ErrorCode == self.PostDeleted:
-                break
-        return ErrorCode, Post    
     def post(self, Board, Title, Content, PostType, SignType, ConnectIndex = 0):
         
         ErrorCode = self.__gotoBoard(Board, ConnectIndex)
@@ -624,8 +595,180 @@ class Library(object):
             self.Log('post 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
             return ErrorCode
         
+        CatchList = [
+            # 0
+            '或不選',
+            # 1
+            '標題：',
+            # 2
+            '編輯文章',
+            # 3
+            '使用者不可發言',
+        ]
+
+        SendMessage = '\x10'
+        Refresh = True
+        ExtraWait = 0
+
+        Retry = False
+        RetryCount = 0
+
+        while True:
+            
+            if Retry:
+                Retry = False
+                RetryCount += 1
+                if RetryCount == 3:
+                    return ErrorCode
+            else:
+                RetryCount = 0
+
+            ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+            if ErrorCode != self.ErrorCode.Success:
+                return ErrorCode
+
+            SendMessage = ' '
+            Refresh = False
+            ExtraWait = 0
+
+            if CatchIndex == 0:
+                self.Log('選擇發文種類: ' + str(PostType), self.LogLevel_DEBUG)
+                SendMessage = str(PostType) + '\r'
+            elif CatchIndex == 1:
+                self.Log('輸入文章標題: ' + str(Title), self.LogLevel_DEBUG)
+                SendMessage = str(Title) + '\r'
+            elif CatchIndex == 2:
+                break
+            elif CatchIndex == 3:
+                self.Log('你被水桶惹 QQ')
+                return self.ErrorCode.NoPermission
+            else:
+                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+                return self.ErrorCode.UnknowError
+
+        self.Log('編輯文章', self.LogLevel_DEBUG)
+        SendMessage = str(Content) + '\x18'
+
+        self.Log('送出文章', self.LogLevel_DEBUG)
+
+        Refresh = True
+        ExtraWait = 0
+
+        Retry = False
+        RetryCount = 0
+
+        CatchList = [
+            # 0
+            '確定要儲存檔案嗎',
+        ]
+
+        ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+        if ErrorCode != self.ErrorCode.Success:
+            return ErrorCode
+
+        if CatchIndex == 0:
+            self.Log('儲存檔案', self.LogLevel_DEBUG)
+            SendMessage = 's\r'
+        else:
+            self.__showScreen(ErrorCode, CatchIndex, ConnectIndex)
+            return self.ErrorCode.UnknowError
+
+        CatchList = [
+            # 0
+            '任意鍵繼續', 
+            # 1
+            'x=隨機', 
+            # 2
+            '文章選讀']
+
+        while True:
+            ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+            if ErrorCode != self.ErrorCode.Success:
+                return ErrorCode
+
+            if CatchIndex == 0:
+                SendMessage = ' '
+            elif CatchIndex == 1:
+                self.Log('選擇簽名檔: ' + str(SignType), self.LogLevel_DEBUG)
+                SendMessage = str(SignType) + '\r'
+            elif CatchIndex == 2:
+                break
+            else:
+                self.__showScreen(ErrorCode, CatchIndex, ConnectIndex = ConnectIndex)
+                return self.ErrorCode.UnknowError
+            
         return self.ErrorCode.Success
+    def __gotoPost(self, Board, PostIndex=0, PostID='', ConnectIndex=0):
         
+        PostIndex = int(PostIndex)
+        PostID = str(PostID)
+
+        if len(Board) == 0:
+            return self.ErrorCode.ErrorInput
+
+        if PostIndex != 0 and PostID != '':
+            return self.ErrorCode.ErrorInput
+
+        if PostIndex == 0 and PostID == '':
+            return self.ErrorCode.ErrorInput
+
+        ErrorCode = self.__gotoBoard(Board, ConnectIndex)
+        if ErrorCode != self.ErrorCode.Success:
+            self.Log('__gotoPost 1 Go to ' + Board + ' fail', self.LogLevel_DEBUG)
+            return ErrorCode
+
+        if self.__Cursor == '>':
+            IndexTarget = '>{0: >6}'.format(str(PostIndex))
+        else:
+            IndexTargetTemp = str(PostIndex)
+            if len(IndexTargetTemp) == 6:
+                IndexTargetTemp = IndexTargetTemp[1:]
+            IndexTarget = self.__Cursor + '{0: >5}'.format(IndexTargetTemp)
+        
+        CatchList = [
+            # 0
+            IndexTarget,
+        ]
+        if PostID != '':
+            SendMessage = '#' + PostID + '\r'
+        else:
+            SendMessage = str(PostIndex) + '\r'
+
+        Refresh = True
+        ExtraWait = 0
+
+        Retry = False
+        RetryCount = 0
+        while True:
+
+            if Retry:
+                Retry = False
+                RetryCount += 1
+                if RetryCount == 3:
+                    return ErrorCode
+            else:
+                RetryCount = 0
+
+            ErrorCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+            if ErrorCode != self.ErrorCode.Success:
+                return ErrorCode, result
+
+            SendMessage = ''
+            Refresh = False
+            ExtraWait = 0
+
+            if CatchIndex == 0:
+                return self.ErrorCode.Success
+            else:
+                Retry = True
+                ErrorCode = self.ErrorCode.UnknowError
+                continue
+
+        return self.ErrorCode.UnknowError
+        
+    def getPostInfo(self, Board, PostID, Index=-1, ConnectIndex = 0):
+        # __gotoPost        
+        pass
     def __getPostinfoByUrl(self, WebUrl):
     
         self.Log('__getPostinfoByUrl: requests get', self.LogLevel_DEBUG)

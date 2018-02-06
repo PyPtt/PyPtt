@@ -53,12 +53,12 @@ def PostDemo():
     
     #回傳值 錯誤碼
 
-    for i in range(1):
+    for i in range(3):
         
-        ErrorCode = PTTBot.post('Test', '自動PO文測試', JapanText + '\r\n自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
-        if ErrorCode == PTTBot.Success:
+        ErrorCode = PTTBot.post('Test', 'Python 機器人自動PO文測試', '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + JapanText, 1, 0)
+        if ErrorCode == PTTBot.ErrorCode.Success:
             PTTBot.Log('在 Test 板發文成功')
-        elif ErrorCode == PTTBot.NoPermission:
+        elif ErrorCode == PTTBot.ErrorCode.NoPermission:
             PTTBot.Log('發文權限不足')
         else:
             PTTBot.Log('在 Test 板發文失敗')
@@ -503,15 +503,13 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, LogLevel=PTT.LogLevel_DEBUG)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
-    
-    GetNewestPostIndexDemo()
-    # PostDemo()
+    # GetNewestPostIndexDemo()
+    PostDemo()
     # GetPostInfoDemo()
     # PushDemo()
     # GetNewPostIndexListDemo()
