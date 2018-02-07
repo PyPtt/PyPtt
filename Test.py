@@ -481,15 +481,15 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=True)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    # GetNewestPostIndexDemo()
+    GetNewestPostIndexDemo()
     # PostDemo()
-    PushDemo()
+    # PushDemo()
 
     # GetPostInfoDemo()
     # GetNewPostIndexListDemo()
