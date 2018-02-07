@@ -517,62 +517,35 @@ class Library(object):
         return ErrCode, NewestIndex
     def __getNewestPostIndex(self, Board, ConnectIndex = 0):
         
-        result = -1
-    
-        ErrCode = self.__gotoBoard(Board, ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            self.Log('getNewestPostIndex 進入 ' + Board + ' 板失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
-            return ErrCode, result
+        result = 0
         
-        ErrorCount = 0
-        Retry = False
-        while True:
-            CatchList = [
-                # 0
-                '文章選讀',
-            ]
+        CatchList = [
+            # 0
+            '文章選讀',
+        ]
 
-            SendMessage = '0\r$'
-            Refresh = True
-            ExtraWait = 0
+        SendMessage = '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r q0\r$'
+        Refresh = True
+        ExtraWait = 0
 
-            if Retry:
-                Retry = False
-                RetryCount += 1
-                if RetryCount == 3:
-                    return ErrCode, result
-            else:
-                RetryCount = 0
+        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+        if ErrCode != ErrorCode.Success:
+            return ErrCode, result
 
-            while True:
-                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
-                if ErrCode != ErrorCode.Success:
-                    return ErrCode, result
+        AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
+        
+        if len(AllIndex) == 0:
+            self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
+            return ErrorCode.UnknowError, result
 
-                if CatchIndex == 0:
-                    self.Log('游標移動至底部成功', LogLevel.DEBUG)
-                    break
-                else:
-                    ErrCode = ErrorCode.UnknowError
-                    Retry = True
-                    continue
-                
-            AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
-            AllIndex = list(set(map(int, AllIndex)))
-
-            if len(AllIndex) == 0:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
-                ErrCode = ErrorCode.ParseError
-                Retry = True
-            else:
-                break
+        AllIndex = list(set(map(int, AllIndex)))
 
         AllIndex.sort(reverse=True)
 
         for IndexTemp in AllIndex:
             isContinue = True
 
-            for i in range(5):
+            for i in range(4):
                 if IndexTemp - i not in AllIndex:
                     isContinue = False
                     break
@@ -580,7 +553,10 @@ class Library(object):
             if isContinue:
                 result = IndexTemp
                 break
-
+        
+        if result == 0:
+            return ErrorCode.ParseError, result
+        
         return ErrorCode.Success, result
     def post(self, Board, Title, Content, PostType, SignType, ConnectIndex = 0):
         
