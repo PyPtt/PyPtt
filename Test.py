@@ -56,9 +56,9 @@ def PostDemo():
     for i in range(3):
         
         ErrorCode = PTTBot.post('Test', 'Python 機器人自動PO文測試', '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + JapanText, 1, 0)
-        if ErrorCode == PTTBot.ErrorCode.Success:
+        if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('在 Test 板發文成功')
-        elif ErrorCode == PTTBot.ErrorCode.NoPermission:
+        elif ErrorCode == PTT.ErrorCode.NoPermission:
             PTTBot.Log('發文權限不足')
         else:
             PTTBot.Log('在 Test 板發文失敗')
@@ -81,7 +81,7 @@ def GetNewestPostIndexDemo():
     for i in range(10):
         for Board in BoardList:
             ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
-            if ErrorCode == PTTBot.ErrorCode.Success:
+            if ErrorCode == PTT.ErrorCode.Success:
                 PTTBot.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
             else:
                 PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
@@ -212,47 +212,25 @@ def PushDemo():
     # 回傳值 錯誤碼
 
     ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Test')
-    if ErrorCode != PTTBot.Success:
+    if ErrorCode != PTT.ErrorCode.Success:
         PTTBot.Log('取得最新文章編號失敗 錯誤碼: ' + str(ErrorCode))
         return False
     PTTBot.Log('最新文章編號: ' + str(NewestIndex))
 
-    for i in range(10):
-        ErrorCode = PTTBot.pushByIndex('Test', PTTBot.PushType_Push, 'https://goo.gl/5hdAqu type 1', NewestIndex)
-        if ErrorCode == PTTBot.Success:
+    for i in range(1):
+        ErrorCode = PTTBot.push('Test', PTT.PushType.Push, 'PTT Library Push API https://goo.gl/5hdAqu', PostIndex=NewestIndex)
+        if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號: 推文成功')
-        elif ErrorCode == PTTBot.ErrorInput:
+        elif ErrorCode == PTT.ErrorCode.ErrorInput:
             PTTBot.Log('使用文章編號: 參數錯誤')
             return False
-        elif ErrorCode == PTTBot.NoPermission:
+        elif ErrorCode == PTT.ErrorCode.NoPermission:
             PTTBot.Log('使用文章編號: 無發文權限')
             return False
         else:
             PTTBot.Log('使用文章編號: 推文失敗')
             return False
-            
-    ErrorCode, NewPost = PTTBot.getPostInfoByIndex('Test', NewestIndex)
-    if ErrorCode != PTTBot.Success:
-        PTTBot.Log('取得最新文章編號失敗 錯誤碼: ' + str(ErrorCode))
-        return False
-    if NewPost == None:
-        PTTBot.Log('取得最新文章編號失敗')
-        return False
 
-    for i in range(10):
-        
-        ErrorCode = PTTBot.pushByID('Test', PTTBot.PushType_Push, 'https://goo.gl/5hdAqu type 2', NewPost.getPostID())
-        if ErrorCode == PTTBot.Success:
-            PTTBot.Log('使用文章代碼: 推文成功')
-        elif ErrorCode == PTTBot.ErrorInput:
-            PTTBot.Log('使用文章代碼: 參數錯誤')
-            return False
-        elif ErrorCode == PTTBot.NoPermission:
-            PTTBot.Log('使用文章代碼: 無發文權限')
-            return False
-        else:
-            PTTBot.Log('使用文章代碼: 推文失敗')
-            return False
 def MailDemo():
     
     # 這個範例是如何寄信給某鄉民
@@ -503,15 +481,17 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, LogLevel=PTT.LogLevel_DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
+    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=True)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
 
     # GetNewestPostIndexDemo()
-    PostDemo()
+    # PostDemo()
+    PushDemo()
+
     # GetPostInfoDemo()
-    # PushDemo()
     # GetNewPostIndexListDemo()
     # MailDemo()
     # GetTimeDemo()

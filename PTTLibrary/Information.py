@@ -1,10 +1,22 @@
 
+class ReplyPostType(object):
+    def __init__(self):
+        self.Board =                        1
+        self.Mail =                         2
+
+class LogLevel(object):
+    def __init__(self):
+        self.DEBUG =                        1
+        self.WARNING =                      2
+        self.INFO =                         3
+        self.CRITICAL =                     4
+        self.SLIENT =                       5
 
 class PushType(object):
     def __init__(self):
-        self.Push =                    1
-        self.Boo =                     2
-        self.Arrow =                   3
+        self.Push =                         1
+        self.Boo =                          2
+        self.Arrow =                        3
 
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP):
@@ -72,7 +84,7 @@ class PushInformation(object):
         return self.__PushTime
         
 class PostInformation(object):
-    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList, OriginalData):
+    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList):
         self.__Board = str(Board)
         self.__PostID = str(PostID)
         self.__Author = str(Author)
@@ -82,7 +94,6 @@ class PostInformation(object):
         self.__Money = Money
         self.__WebUrl = str(WebUrl)
         self.__PushList = PushList
-        self.__OriginalData = str(OriginalData)
     def getPostBoard(self):
         return self.__Board
     def getPostID(self):
@@ -101,5 +112,3 @@ class PostInformation(object):
         return self.__WebUrl
     def getPushList(self):
         return self.__PushList
-    def getOriginalData(self):
-        return self.__OriginalData
