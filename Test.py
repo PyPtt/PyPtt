@@ -487,8 +487,8 @@ if __name__ == '__main__':
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    GetNewestPostIndexDemo()
-    # PostDemo()
+    # GetNewestPostIndexDemo()
+    PostDemo()
     # PushDemo()
 
     # GetPostInfoDemo()
