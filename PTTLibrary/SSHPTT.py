@@ -202,7 +202,7 @@ class Library(object):
             
         except socket.timeout:
             ErrCode = ErrorCode.WaitTimeout
-        
+
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
         for i in range(len(CatchTargetList)):
@@ -449,66 +449,66 @@ class Library(object):
                 
         return ErrorCode.Success
 
-    def __gotoBoard(self, Board, ConnectIndex):
-        for i in range(2):
-            ErrCode = self.___gotoBoard(Board, ConnectIndex)
-            if ErrCode == ErrorCode.Success:
-                return ErrCode
-        return ErrCode
-    def ___gotoBoard(self, Board, ConnectIndex):
+    # def __gotoBoard(self, Board, ConnectIndex):
+    #     for i in range(2):
+    #         ErrCode = self.___gotoBoard(Board, ConnectIndex)
+    #         if ErrCode == ErrorCode.Success:
+    #             return ErrCode
+    #     return ErrCode
+    # def ___gotoBoard(self, Board, ConnectIndex):
 
-        ErrCode = self.__gotoMainMenu(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            self.Log('Error code __gotoBoard 1: ' + str(ErrCode), LogLevel.DEBUG)
-            self.__showScreen(0, 0, ConnectIndex)
-            return ErrCode
+    #     ErrCode = self.__gotoMainMenu(ConnectIndex)
+    #     if ErrCode != ErrorCode.Success:
+    #         self.Log('Error code __gotoBoard 1: ' + str(ErrCode), LogLevel.DEBUG)
+    #         self.__showScreen(0, 0, ConnectIndex)
+    #         return ErrCode
 
-        CatchList = [
-            # 0
-            '請輸入看板名稱', 
-            # 1
-            '任意鍵', 
-            # 2
-            '文章選讀',
-            # 3
-            '動畫播放中',
-        ]
-        SendMessage = 's'
-        Refresh = False
-        ExtraWait = 0
+    #     CatchList = [
+    #         # 0
+    #         '請輸入看板名稱', 
+    #         # 1
+    #         '任意鍵', 
+    #         # 2
+    #         '文章選讀',
+    #         # 3
+    #         '動畫播放中',
+    #     ]
+    #     SendMessage = 's'
+    #     Refresh = False
+    #     ExtraWait = 0
 
-        ErrorCount = 0
-        while True:
-            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
-            if ErrCode != ErrorCode.Success:
-                return ErrCode
+    #     ErrorCount = 0
+    #     while True:
+    #         ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+    #         if ErrCode != ErrorCode.Success:
+    #             return ErrCode
 
-            SendMessage = ''
-            Refresh = False
-            ExtraWait = 0
+    #         SendMessage = ''
+    #         Refresh = False
+    #         ExtraWait = 0
 
-            if CatchIndex == 0:
-                self.Log('輸入看板名稱', LogLevel.DEBUG)
-                SendMessage = Board + '\r'
-                # ExtraWait = 0.1
-            elif CatchIndex == 1:
-                self.Log('按任意鍵繼續', LogLevel.DEBUG)
-                SendMessage = ' '
-            elif CatchIndex == 2:
-                self.Log('進入 ' + Board + ' 板成功', LogLevel.DEBUG)
-                return ErrorCode.Success
-            elif CatchIndex == 3:
-                self.Log('動畫播放中', LogLevel.DEBUG)
-                SendMessage = 'q'
-            else:
-                self.Log('前往 ' + Board + ' 板時有無法處理的標的', LogLevel.DEBUG)
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
-                SendMessage = ' '
-                Refresh = True
-                ErrorCount += 1
-                if ErrorCount >= 2:
-                    return ErrorCode.UnknowError
-        return ErrorCode.Success
+    #         if CatchIndex == 0:
+    #             self.Log('輸入看板名稱', LogLevel.DEBUG)
+    #             SendMessage = Board + '\r'
+    #             # ExtraWait = 0.1
+    #         elif CatchIndex == 1:
+    #             self.Log('按任意鍵繼續', LogLevel.DEBUG)
+    #             SendMessage = ' '
+    #         elif CatchIndex == 2:
+    #             self.Log('進入 ' + Board + ' 板成功', LogLevel.DEBUG)
+    #             return ErrorCode.Success
+    #         elif CatchIndex == 3:
+    #             self.Log('動畫播放中', LogLevel.DEBUG)
+    #             SendMessage = 'q'
+    #         else:
+    #             self.Log('前往 ' + Board + ' 板時有無法處理的標的', LogLevel.DEBUG)
+    #             self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
+    #             SendMessage = ' '
+    #             Refresh = True
+    #             ErrorCount += 1
+    #             if ErrorCount >= 2:
+    #                 return ErrorCode.UnknowError
+    #     return ErrorCode.Success
     def getNewestPostIndex(self, Board, ConnectIndex = 0):
         for i in range(3):
             ErrCode, NewestIndex = self.__getNewestPostIndex(Board, ConnectIndex = 0)
@@ -524,7 +524,7 @@ class Library(object):
             '文章選讀',
         ]
 
-        SendMessage = '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r q0\r$'
+        SendMessage = '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r\x03\x03 0\r$'
         Refresh = True
         ExtraWait = 0
 
@@ -560,6 +560,32 @@ class Library(object):
         return ErrorCode.Success, result
     def post(self, Board, Title, Content, PostType, SignType, ConnectIndex = 0):
         
+        CatchList = [
+            # 0
+            '文章選讀',
+        ]
+        
+        # 前進至板面 
+        SendMessage = '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r\x03\x03'
+        # PO 文
+        SendMessage += '\x10' + str(PostType) + '\r' + str(Title) + '\r' + str(Content) + '\x18'
+        # 儲存檔案
+        SendMessage += 's\r'
+        # 選擇簽名檔
+        SendMessage += str(SignType) + '\r'
+        # 送一個 Ctrl + C
+        # 可以應對 任意鍵繼續或者已經回到板面的情況
+        SendMessage += '\x03'
+
+        Refresh = True
+        ExtraWait = 0
+
+        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
+        if ErrCode != ErrorCode.Success:
+            return ErrCode
+
+        return ErrorCode.Success
+
         ErrCode = self.__gotoBoard(Board, ConnectIndex)
         if ErrCode != ErrorCode.Success:
             self.Log('post 1 Go to ' + Board + ' fail', LogLevel.DEBUG)
