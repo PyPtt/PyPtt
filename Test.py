@@ -70,23 +70,23 @@ def GetNewestPostIndexDemo():
     
     #回傳值 就是錯誤碼跟最新文章編號
 
-    # ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
-    # if ErrorCode == PTTBot.ErrorCode.Success:
-    #     PTTBot.Log('取得 Wanted 板最新文章編號成功: ' + str(NewestIndex))
-    # else:
-    #     PTTBot.Log('取得 Wanted 板最新文章編號失敗')
-    #     return False
+    SingleBoard = 'Wanted'
+    ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(SingleBoard)
+    if ErrorCode == PTT.ErrorCode.Success:
+        PTTBot.Log('取得 ' + SingleBoard + ' 板最新文章編號成功: ' + str(NewestIndex))
+    else:
+        PTTBot.Log('取得 ' + SingleBoard + ' 板最新文章編號失敗')
+        return False
 
 
-    for i in range(10):
-        for Board in BoardList:
-            ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
-            if ErrorCode == PTT.ErrorCode.Success:
-                PTTBot.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
-            else:
-                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-                return False
-            #time.sleep(1)
+    # for i in range(10):
+    #     for Board in BoardList:
+    #         ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
+    #         if ErrorCode == PTT.ErrorCode.Success:
+    #             PTTBot.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
+    #         else:
+    #             PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+    #             return False
 
 def GetPostInfoDemo():
     
@@ -122,53 +122,54 @@ def GetPostInfoDemo():
     # getPushTime               推文時間
     
     ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
-    if ErrorCode != PTTBot.Success:
+    if ErrorCode != PTT.ErrorCode.Success:
         PTTBot.Log('取得最新文章編號失敗')
         return False
-    TryPost = 3
+    TryPost = 2
     if NewestIndex == -1:
         PTTBot.Log('取得最新文章編號失敗')
         return False
 
+    PTTBot.Log('取得最新文章編號: ' + str(ErrorCode))
     for i in range(TryPost)[::-1]:
         
-        ErrorCode, Post = PTTBot.getPostInfoByIndex('Wanted', NewestIndex - i)
-        if ErrorCode == PTTBot.PostDeleted:
+        ErrorCode, Post = PTTBot.getPostInfo('Wanted', NewestIndex - i)
+        if ErrorCode == PTT.ErrorCode.PostDeleted:
             PTTBot.Log('文章已經被刪除')
             continue
-        if ErrorCode == PTTBot.WebFormatError:
+        if ErrorCode == PTT.ErrorCode.WebFormatError:
             PTTBot.Log('網頁結構錯誤')
             continue
-        if ErrorCode != PTTBot.Success:
+        if ErrorCode != PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
-            return False
-        PTTBot.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ')
+            continue
+        # PTTBot.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ')
 
-        PTTBot.Log('文章代碼: ' + Post.getPostID())
-        PTTBot.Log('作者: ' + Post.getPostAuthor())
-        PTTBot.Log('時間: ' + Post.getPostDate())
-        PTTBot.Log('標題: ' + Post.getTitle())
-        PTTBot.Log('價錢: ' + str(Post.getMoney()))
-        PTTBot.Log('網址: ' + Post.getWebUrl())
-        PTTBot.Log('內文: \r\n' + Post.getPostContent())
+        # PTTBot.Log('文章代碼: ' + Post.getPostID())
+        # PTTBot.Log('作者: ' + Post.getPostAuthor())
+        # PTTBot.Log('時間: ' + Post.getPostDate())
+        # PTTBot.Log('標題: ' + Post.getTitle())
+        # PTTBot.Log('價錢: ' + str(Post.getMoney()))
+        # PTTBot.Log('網址: ' + Post.getWebUrl())
+        # PTTBot.Log('內文: \r\n' + Post.getPostContent())
 
-        for Push in Post.getPushList():
-            if Push.getPushType() == PTTBot.PushType_Push:
-                PushTypeString = '推'
-            elif Push.getPushType() == PTTBot.PushType_Boo:
-                PushTypeString = '噓'
-            elif Push.getPushType() == PTTBot.PushType_Arrow:
-                PushTypeString = '→'
+        # for Push in Post.getPushList():
+        #     if Push.getPushType() == PTTBot.PushType_Push:
+        #         PushTypeString = '推'
+        #     elif Push.getPushType() == PTTBot.PushType_Boo:
+        #         PushTypeString = '噓'
+        #     elif Push.getPushType() == PTTBot.PushType_Arrow:
+        #         PushTypeString = '→'
                 
-            PTTBot.Log(PushTypeString + ' ' + Push.getPushID() + ' ' + Push.getPushContent() + ' ' + Push.getPushTime())
+        #     PTTBot.Log(PushTypeString + ' ' + Push.getPushID() + ' ' + Push.getPushContent() + ' ' + Push.getPushTime())
         
-        ErrorCode, Post = PTTBot.getPostInfoByID('Wanted', Post.getPostID())
-        if ErrorCode != PTTBot.Success:
-            PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
-            return False
-        PTTBot.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' 標題: ' + Post.getTitle())
+        # ErrorCode, Post = PTTBot.getPostInfoByID('Wanted', Post.getPostID())
+        # if ErrorCode != PTTBot.Success:
+        #     PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
+        #     return False
+        # PTTBot.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' 標題: ' + Post.getTitle())
         
-        PTTBot.Log('-----------------------')
+        # PTTBot.Log('-----------------------')
         
 def GetNewPostIndexListDemo():
 
@@ -217,7 +218,7 @@ def PushDemo():
         return False
     PTTBot.Log('最新文章編號: ' + str(NewestIndex))
 
-    for i in range(1):
+    for i in range(10):
         ErrorCode = PTTBot.push('Test', PTT.PushType.Push, 'PTT Library Push API https://goo.gl/5hdAqu', PostIndex=NewestIndex)
         if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號: 推文成功')
@@ -481,17 +482,17 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    # GetNewestPostIndexDemo()
-    PostDemo()
+    GetNewestPostIndexDemo()
+    # PostDemo()
     # PushDemo()
-
     # GetPostInfoDemo()
+
     # GetNewPostIndexListDemo()
     # MailDemo()
     # GetTimeDemo()
