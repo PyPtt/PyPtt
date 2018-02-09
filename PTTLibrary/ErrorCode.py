@@ -19,3 +19,4 @@ class ErrorCode(object):
         self.LoginFrequently =                 14
         self.MailBoxFull =                     15
         self.SSHFail =                         16
+        self.NoFastPush =                      17
