@@ -564,46 +564,33 @@ class Library(object):
             # 0
             '文章選讀',
         ]
+
+        if '看板《' + Board + '》' in self.__ReceiveData[ConnectIndex] and '文章選讀' in self.__ReceiveData[ConnectIndex]:
+            self.Log('已經位於 ' + Board + ' 板', LogLevel.DEBUG)
+        else:
+            # 前進至板面
+            SendMessage = '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r\x03\x03 '
+            
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=False)
+            if ErrCode != ErrorCode.Success:
+                return ErrCode
+
+            if CatchIndex == -1:
+                self.Log('前進至 ' + Board + '板失敗')
+                print(self.__ReceiveData[ConnectIndex])
+                return ErrorCode.UnknowError
         
-        # 前進至板面 
-        SendMessage = '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r\x03\x03'
-        # PO 文
-        SendMessage += '\x10' + str(PostType) + '\r' + str(Title) + '\r' + str(Content) + '\x18'
-        # 儲存檔案
-        SendMessage += 's\r'
-        # 選擇簽名檔
-        SendMessage += str(SignType) + '\r'
-        # 送一個 Ctrl + C
-        # 可以應對 任意鍵繼續或者已經回到板面的情況
-        SendMessage += '\x03'
+        # 確認是否有發文權限
 
-        Refresh = True
-        ExtraWait = 0
-
-        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
-        if ErrCode != ErrorCode.Success:
-            return ErrCode
-
-        return ErrorCode.Success
-
-        ErrCode = self.__gotoBoard(Board, ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            self.Log('post 1 Go to ' + Board + ' fail', LogLevel.DEBUG)
-            return ErrCode
-        
         CatchList = [
             # 0
             '或不選',
             # 1
-            '標題：',
-            # 2
-            '編輯文章',
-            # 3
             '使用者不可發言',
         ]
 
         SendMessage = '\x10'
-        Refresh = True
+        Refresh = False
         ExtraWait = 0
 
         Retry = False
@@ -628,30 +615,20 @@ class Library(object):
             ExtraWait = 0
 
             if CatchIndex == 0:
-                self.Log('選擇發文種類: ' + str(PostType), LogLevel.DEBUG)
-                SendMessage = str(PostType) + '\r'
-            elif CatchIndex == 1:
-                self.Log('輸入文章標題: ' + str(Title), LogLevel.DEBUG)
-                SendMessage = str(Title) + '\r'
-            elif CatchIndex == 2:
+                self.Log('具備發文權限', LogLevel.DEBUG)
                 break
-            elif CatchIndex == 3:
+            elif CatchIndex == 1:
                 self.Log('你被水桶惹 QQ')
                 return ErrorCode.NoPermission
             else:
                 self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
                 return ErrorCode.UnknowError
 
-        self.Log('編輯文章', LogLevel.DEBUG)
-        SendMessage = str(Content) + '\x18'
-
+        SendMessage = str(PostType) + '\r' + str(Title) + '\r' + str(Content) + '\x18'
         self.Log('送出文章', LogLevel.DEBUG)
 
         Refresh = True
         ExtraWait = 0
-
-        Retry = False
-        RetryCount = 0
 
         CatchList = [
             # 0
@@ -675,8 +652,10 @@ class Library(object):
             # 1
             'x=隨機', 
             # 2
-            '文章選讀'
+            '文章選讀',
         ]
+        
+        Refresh = True
 
         while True:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
@@ -693,7 +672,7 @@ class Library(object):
             else:
                 self.__showScreen(ErrCode, CatchIndex, ConnectIndex = ConnectIndex)
                 return ErrorCode.UnknowError
-            
+        
         return ErrorCode.Success
     def __gotoPost(self, Board, PostIndex=0, PostID='', ConnectIndex=0):
         

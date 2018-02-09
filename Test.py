@@ -55,7 +55,7 @@ def PostDemo():
 
     for i in range(3):
         
-        ErrorCode = PTTBot.post('Test', 'Python 機器人自動PO文測試', '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + JapanText, 1, 0)
+        ErrorCode = PTTBot.post('Test', 'Python 機器人自動PO文測試' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + JapanText, 1, 0)
         if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('在 Test 板發文成功')
         elif ErrorCode == PTT.ErrorCode.NoPermission:
@@ -481,8 +481,8 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
-    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=True)
+    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
