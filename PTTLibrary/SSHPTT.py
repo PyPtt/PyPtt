@@ -392,6 +392,8 @@ class Library(object):
                     self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
                     ErrCode = ErrorCode.UnknowError
                     Retry = True
+                    # 若是沒有抓到適合的字串，表示可能誤進其他地方了，使用q 退出
+                    SendMessage = 'qqqq'
                     continue
 
         if '> (' in self.__ReceiveData[ConnectIndex]:
@@ -854,13 +856,54 @@ class Library(object):
         # 前進至文章
 
         if PostID != '':
-            SendMessage += '#' + PostID + '\r'
+            SendMessage += '#' + PostID + '\rQ'
         else:
-            SendMessage += str(PostIndex) + '\r'
+            SendMessage += str(PostIndex) + '\rQ'
 
         CatchList = [
             # 0
             '找不到這個文章代碼',
+            # 1
+            '┌  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ┐',
+
+        ]
+        
+        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
+        if ErrCode != ErrorCode.Success:
+            return ErrCode, result
+
+        # print(self.__ReceiveData[ConnectIndex])
+
+        if CatchIndex == 0:
+            return ErrorCode.PostNotFound, result
+        elif CatchIndex == 1:
+            InformationEnd = '└  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ┘'
+            screen = self.__ReceiveData[ConnectIndex]
+            screen = screen[screen.find(CatchList[1]) + len(CatchList[1]):screen.find(InformationEnd)]
+
+            screen = screen[screen.find('文章代碼(AID): #') + len('文章代碼(AID): #'):]
+            if PostID == '':
+                PostID = screen[:screen.find(' ')]
+
+            PostTitle = screen[screen.find('ptt.cc') + len('ptt.cc') + 2:]
+            PostTitle = PostTitle[:PostTitle.find('│')]
+            while PostTitle.endswith(' ') or PostTitle.endswith('\r'):
+                PostTitle = PostTitle[:-1]
+            
+            PostURL = screen[screen.find('https://www.ptt.cc/bbs'):]
+            PostURL = PostURL[:PostURL.find(' ')]
+
+            PostMoney = screen
+            PostMoney = PostMoney[PostMoney.find('這一篇文章值'):]
+            # 
+            PostMoney = int(re.search(r'\d+', PostMoney).group())
+            # print(screen)
+
+        SendMessage = '\x03\r'
+
+        CatchList = [
+            # 0
+            '目前顯示: 第',
         ]
         
         ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
@@ -868,10 +911,115 @@ class Library(object):
             return ErrCode, result
 
         if CatchIndex == 0:
-            return ErrorCode.PostNotFound, result
+            # print(self.__ReceiveData[ConnectIndex])
+            # 
+            PostAuthor = self.__ReceiveData[ConnectIndex]
+            PostAuthor = PostAuthor[PostAuthor.find('[2J 作者  ') + len('[2J 作者  '):PostAuthor.find('看板  ' + Board)]
+            while PostAuthor.endswith(' '):
+                PostAuthor = PostAuthor[:-1]
+            # 時間
+            PostDate = self.__ReceiveData[ConnectIndex]
+            PostDate = PostDate[PostDate.find(' 時間  ') + len(' 時間  '):]
+            PostDate = PostDate[:24]
 
-        print(self.__ReceiveData[ConnectIndex])
-        
+            PostContent = self.__ReceiveData[ConnectIndex]
+            PostContentList = PostContent.split('\n')
+            PostContentList = PostContentList[4:][:-1]
+                
+            if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自:' in self.__ReceiveData[ConnectIndex]:
+                PostIP = self.__ReceiveData[ConnectIndex]
+                PostIP = PostIP[PostIP.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自: ') + len('※ 發信站: 批踢踢實業坊(ptt.cc), 來自: '):]
+                PostIP = PostIP[:PostIP.find(' ')]
+            
+            PostContent = '\n'.join(PostContentList) + '\n'
+            
+            PageIndex = 2
+            LastPageIndex = [1, 22]
+            PostContentAreaEnd = False
+            while not '(100%)  目前顯示: 第' in self.__ReceiveData[ConnectIndex]:
+                
+                SendMessage = str(PageIndex) + '\r'
+                CatchList = [
+                    # 0
+                    '目前顯示: 第',
+                ]
+                
+                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
+                if ErrCode != ErrorCode.Success:
+                    return ErrCode, result
+                print('-' * 50)
+                # print(self.__ReceiveData[ConnectIndex])
+                
+                if CatchIndex == 0:
+                    
+                    PostContentTemp = self.__ReceiveData[ConnectIndex]
+                    PostContentTemp = PostContentTemp.replace('[2J', '')
+                    # while not PostContentTemp.startswith('推') and not PostContentTemp.startswith('→') and not PostContentTemp.startswith('噓'):
+                    #     PostContentTemp = PostContentTemp[1:]
+
+                    PostContentList = PostContentTemp.split('\n')
+                    PostContentList = PostContentList[:-1]
+
+                    PageLineRange = self.__ReceiveData[ConnectIndex]
+                    PageLineRange = PageLineRange[PageLineRange.find('目前顯示: 第') + len('目前顯示: 第'):]
+                    PageLineRange = re.findall(r'\d+', PageLineRange)
+                    PageLineRange = list(map(int, PageLineRange))
+                    # print('PageLineRange:', PageLineRange)
+                    
+                    OverlapLine = LastPageIndex[1] - PageLineRange[0] + 1
+
+                    if OverlapLine >= 1:
+                        # print('重疊', OverlapLine, '行')
+                        PostContentList = PostContentList[OverlapLine:]
+
+                    LastPageIndex = PageLineRange
+                    PostContentTemp = ''
+                    if '※ 發信站: 批踢踢實業坊(ptt.cc)' in self.__ReceiveData[ConnectIndex]:
+                        
+                        for line in PostContentList:
+                            if not '※ 發信站: 批踢踢實業坊(ptt.cc)' in line:
+                                PostContentTemp += line + '\n'
+                            else:
+                                break
+                        PostContent += PostContentTemp
+                        PostContentAreaEnd = True
+
+                        PostIP = self.__ReceiveData[ConnectIndex]
+                        PostIP = PostIP[PostIP.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自: ') + len('※ 發信站: 批踢踢實業坊(ptt.cc), 來自: '):]
+                        PostIP = PostIP[:PostIP.find(' ')]
+                        PostIP = PostIP.replace('\n', '')
+
+                    elif not PostContentAreaEnd:
+                        PostContent += '\n'.join(PostContentList) + '\n'
+
+                    if PostContentAreaEnd:
+                        for line in PostContentList:
+                            while line.startswith(' '):
+                                line = line[1:]
+                            
+                            if line.startswith('推') or line.startswith('噓') or line.startswith('→'):
+                                print('Push line:' + line + '==end')
+                PageIndex += 1
+            
+            while PostContent.startswith('\n'):
+                PostContent = PostContent[1:]
+            while PostContent.endswith('\n'):
+                PostContent = PostContent[:-1]
+                
+        else:
+            print(self.__ReceiveData[ConnectIndex])
+            print('Catch error')
+
+        print('PostID:', PostID)
+        print('PostTitle:', PostTitle)
+        print('PostURL:', PostURL)
+        print('PostMoney:', PostMoney)
+        print('PostAuthor:', PostAuthor)
+        print('PostDate:', PostDate)
+        print('PostContent:', PostContent + '=')
+        print('PostIP:', PostIP + '=')
+        # PostContent
+        print('-' * 50)
         return ErrorCode.Success, result
     def __getPostinfoByUrl(self, WebUrl):
     
