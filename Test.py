@@ -125,7 +125,7 @@ def GetPostInfoDemo():
     if ErrorCode != PTT.ErrorCode.Success:
         PTTBot.Log('取得最新文章編號失敗')
         return False
-    TryPost = 2
+    TryPost = 1
     if NewestIndex == -1:
         PTTBot.Log('取得最新文章編號失敗')
         return False
@@ -133,7 +133,8 @@ def GetPostInfoDemo():
     PTTBot.Log('取得最新文章編號: ' + str(ErrorCode))
     for i in range(TryPost)[::-1]:
         
-        ErrorCode, Post = PTTBot.getPostInfo('Wanted', NewestIndex - i)
+        # ErrorCode, Post = PTTBot.getPostInfo('Wanted', PostIndex=NewestIndex - i)
+        ErrorCode, Post = PTTBot.getPostInfo('Wanted', PostIndex=78489)
         if ErrorCode == PTT.ErrorCode.PostDeleted:
             PTTBot.Log('文章已經被刪除')
             continue
@@ -488,10 +489,10 @@ if __name__ == '__main__':
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    GetNewestPostIndexDemo()
+    # GetNewestPostIndexDemo()
     # PostDemo()
     # PushDemo()
-    # GetPostInfoDemo()
+    GetPostInfoDemo()
 
     # GetNewPostIndexListDemo()
     # MailDemo()
