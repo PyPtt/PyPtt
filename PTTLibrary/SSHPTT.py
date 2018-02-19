@@ -875,6 +875,7 @@ class Library(object):
         # print(self.__ReceiveData[ConnectIndex])
 
         if CatchIndex == 0:
+            self.Log('此文章代碼不存在')
             return ErrorCode.PostNotFound, result
         elif CatchIndex == 1:
             InformationEnd = '└  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ┘'
@@ -898,6 +899,9 @@ class Library(object):
             # 
             PostMoney = int(re.search(r'\d+', PostMoney).group())
             # print(screen)
+        else:
+            self.Log('文章已經被刪除')
+            return ErrorCode.PostNotFound, result
 
         SendMessage = '\x03\r'
 
@@ -933,9 +937,11 @@ class Library(object):
             
             PostContent = '\n'.join(PostContentList) + '\n'
             
+            PushList = []
             PageIndex = 2
             LastPageIndex = [1, 22]
             PostContentAreaEnd = False
+
             while not '(100%)  目前顯示: 第' in self.__ReceiveData[ConnectIndex]:
                 
                 SendMessage = str(PageIndex) + '\r'
@@ -947,7 +953,7 @@ class Library(object):
                 ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
                 if ErrCode != ErrorCode.Success:
                     return ErrCode, result
-                print('-' * 50)
+                # print('-' * 50)
                 # print(self.__ReceiveData[ConnectIndex])
                 
                 if CatchIndex == 0:
@@ -997,8 +1003,39 @@ class Library(object):
                             while line.startswith(' '):
                                 line = line[1:]
                             
-                            if line.startswith('推') or line.startswith('噓') or line.startswith('→'):
-                                print('Push line:' + line + '==end')
+                            CurrentPushType = 0
+
+                            if line.startswith('推'):
+                                CurrentPushType = PushType.Push
+                            elif line.startswith('噓'):
+                                CurrentPushType = PushType.Boo
+                            elif line.startswith('→'):
+                                CurrentPushType = PushType.Arrow
+                                
+                            if CurrentPushType != 0:
+                                # print('Push line:' + line + '==end')
+                                line = line[2:]
+
+                                CurrentPushID = line[:line.find(':')]
+
+                                line = line[line.find(':') + 2:]
+
+                                CurrentPushTimeList = line.split(' ')
+                                CurrentPushTime = CurrentPushTimeList.pop()
+                                CurrentPushTime = CurrentPushTimeList.pop() + ' ' + CurrentPushTime
+
+                                CurrentPushContent = ' '.join(CurrentPushTimeList)
+                                while CurrentPushContent.endswith(' '):
+                                    CurrentPushContent = CurrentPushContent[:-1]
+                                
+                                # print('Push Type:', CurrentPushType, '==end')
+                                # print('Push ID:' + CurrentPushID + '==end')
+                                # print('Push Content:' + CurrentPushContent + '==end')
+                                # print('Push Time:' + CurrentPushTime + '==end')
+                                # print('-' * 50)
+
+                                CurrentPush = Information.PushInformation(CurrentPushType, CurrentPushID, CurrentPushContent, CurrentPushTime)
+                                PushList.append(CurrentPush)
                 PageIndex += 1
             
             while PostContent.startswith('\n'):

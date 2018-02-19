@@ -121,20 +121,22 @@ def GetPostInfoDemo():
     # getPushContent            推文內文
     # getPushTime               推文時間
     
-    ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
-    if ErrorCode != PTT.ErrorCode.Success:
-        PTTBot.Log('取得最新文章編號失敗')
-        return False
     TryPost = 1
-    if NewestIndex == -1:
-        PTTBot.Log('取得最新文章編號失敗')
-        return False
 
-    PTTBot.Log('取得最新文章編號: ' + str(ErrorCode))
+    # ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Gossiping')
+    # if ErrorCode != PTT.ErrorCode.Success:
+    #     PTTBot.Log('取得最新文章編號失敗')
+    #     return False
+    # 
+    # if NewestIndex == -1:
+    #     PTTBot.Log('取得最新文章編號失敗')
+    #     return False
+
+    # PTTBot.Log('取得最新文章編號: ' + str(ErrorCode))
     for i in range(TryPost)[::-1]:
         
         # ErrorCode, Post = PTTBot.getPostInfo('Wanted', PostIndex=NewestIndex - i)
-        ErrorCode, Post = PTTBot.getPostInfo('Wanted', PostIndex=78489)
+        ErrorCode, Post = PTTBot.getPostInfo('Gossiping', PostIndex=728482)
         if ErrorCode == PTT.ErrorCode.PostDeleted:
             PTTBot.Log('文章已經被刪除')
             continue
