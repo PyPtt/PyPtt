@@ -35,6 +35,7 @@ class MailInformation(object):
         return self.__Content
     def getIP(self):
         return self.__IP
+
 class UserInformation(object):
     def __init__(self, UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess):
         self.__UserID = str(UserID)
@@ -74,6 +75,7 @@ class PushInformation(object):
         self.__PushID = str(PushID)
         self.__PushContent = str(PushContent)
         self.__PushTime = str(PushTime)
+
     def getPushType(self):
         return self.__PushType
     def getPushID(self):
@@ -94,6 +96,7 @@ class PostInformation(object):
         self.__Money = Money
         self.__WebUrl = str(WebUrl)
         self.__PushList = PushList
+        
     def getPostBoard(self):
         return self.__Board
     def getPostID(self):
