@@ -123,20 +123,20 @@ def GetPostInfoDemo():
     
     TryPost = 1
 
-    # ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Gossiping')
-    # if ErrorCode != PTT.ErrorCode.Success:
-    #     PTTBot.Log('取得最新文章編號失敗')
-    #     return False
-    # 
-    # if NewestIndex == -1:
-    #     PTTBot.Log('取得最新文章編號失敗')
-    #     return False
+    ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Gossiping')
+    if ErrorCode != PTT.ErrorCode.Success:
+        PTTBot.Log('取得最新文章編號失敗')
+        return False
+    
+    if NewestIndex == -1:
+        PTTBot.Log('取得最新文章編號失敗')
+        return False
 
-    # PTTBot.Log('取得最新文章編號: ' + str(ErrorCode))
+    PTTBot.Log('取得最新文章編號: ' + str(ErrorCode))
     for i in range(TryPost)[::-1]:
         
-        # ErrorCode, Post = PTTBot.getPostInfo('Wanted', PostIndex=NewestIndex - i)
-        ErrorCode, Post = PTTBot.getPostInfo('Gossiping', PostIndex=728482)
+        ErrorCode, Post = PTTBot.getPostInfo('Gossiping', PostIndex=NewestIndex - i)
+        # ErrorCode, Post = PTTBot.getPostInfo('Gossiping', PostIndex=728482)
         if ErrorCode == PTT.ErrorCode.PostDeleted:
             PTTBot.Log('文章已經被刪除')
             continue
@@ -146,33 +146,27 @@ def GetPostInfoDemo():
         if ErrorCode != PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
             continue
-        # PTTBot.Log(str(int(((i) * 2 * 100) / (TryPost * 2))) + ' % ')
 
-        # PTTBot.Log('文章代碼: ' + Post.getPostID())
-        # PTTBot.Log('作者: ' + Post.getPostAuthor())
-        # PTTBot.Log('時間: ' + Post.getPostDate())
-        # PTTBot.Log('標題: ' + Post.getTitle())
-        # PTTBot.Log('價錢: ' + str(Post.getMoney()))
-        # PTTBot.Log('網址: ' + Post.getWebUrl())
-        # PTTBot.Log('內文: \r\n' + Post.getPostContent())
+        PTTBot.Log('文章代碼: ' + Post.getID())
+        PTTBot.Log('作者: ' + Post.getAuthor())
+        PTTBot.Log('時間: ' + Post.getDate())
+        PTTBot.Log('標題: ' + Post.getTitle())
+        PTTBot.Log('價錢: ' + str(Post.getMoney()))
+        PTTBot.Log('網址: ' + Post.getWebUrl())
+        PTTBot.Log('內文: \r\n' + Post.getContent())
 
-        # for Push in Post.getPushList():
-        #     if Push.getPushType() == PTTBot.PushType_Push:
-        #         PushTypeString = '推'
-        #     elif Push.getPushType() == PTTBot.PushType_Boo:
-        #         PushTypeString = '噓'
-        #     elif Push.getPushType() == PTTBot.PushType_Arrow:
-        #         PushTypeString = '→'
-                
-        #     PTTBot.Log(PushTypeString + ' ' + Push.getPushID() + ' ' + Push.getPushContent() + ' ' + Push.getPushTime())
+        PushCount = 0
+        BooCount = 0
+        ArrowCount = 0
+        for Push in Post.getPushList():
+            if Push.getType() == PTT.PushType.Push:
+                PushCount += 1
+            elif Push.getType() == PTT.PushType.Boo:
+                BooCount += 1
+            elif Push.getType() == PTT.PushType.Arrow:
+                ArrowCount += 1
         
-        # ErrorCode, Post = PTTBot.getPostInfoByID('Wanted', Post.getPostID())
-        # if ErrorCode != PTTBot.Success:
-        #     PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
-        #     return False
-        # PTTBot.Log(str(int(((i + 1) * 2 * 100) / (TryPost * 2))) + ' % ' + Post.getPostID() + ' 標題: ' + Post.getTitle())
-        
-        # PTTBot.Log('-----------------------')
+        print('共有', PushCount, '推', BooCount, '噓', ArrowCount, '箭頭')
         
 def GetNewPostIndexListDemo():
 

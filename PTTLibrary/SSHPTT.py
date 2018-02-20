@@ -749,6 +749,75 @@ class Library(object):
         # print(self.__ReceiveData[ConnectIndex])
 
         return ErrorCode.Success
+
+    def __parsePostMail(self, PostList):
+
+        LastIndex = len(PostList[0]) - PostList[0][::-1].find(')')
+
+        PostAuthor = PostList[0][8:LastIndex]
+        PostTitle = PostList[1][5:]
+        while PostTitle.endswith(' '):
+            PostTitle = PostTitle[:-1]
+        PostDate = PostList[2][5:]
+        while PostDate.endswith(' '):
+            PostDate = PostDate[:-1]
+        
+        PostContentEndIndex = 0
+        for i in range(5, len(PostList)):
+            if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自: ' in PostList[i]:
+                while PostList[i].endswith(' '):
+                    PostList[i] = PostList[i][:-1]
+                PostIP = PostList[i].split(' ').pop()
+                # print(PostIP, '==')
+                PostContentEndIndex = i
+                break
+        PostContent = '\n'.join(PostList[5:PostContentEndIndex])
+
+        PushList = []
+
+        # print('-' * 30)
+        for i in range(PostContentEndIndex + 2, len(PostList)):
+            PushLine = PostList[i]
+            while PushLine.startswith(' '):
+                PushLine = PushLine[1:]
+            # print(PushLine)
+            
+            CurrentPushType = PushType.Unknow
+
+            if PushLine.startswith('推'):
+                CurrentPushType = PushType.Push
+            elif PushLine.startswith('噓'):
+                CurrentPushType = PushType.Boo
+            elif PushLine.startswith('→'):
+                CurrentPushType = PushType.Arrow
+            
+            PushLine = PushLine[2:]
+            PushAuthor = PushLine[:PushLine.find(':')]
+            PushLine = PushLine[PushLine.find(':') + 1:]
+            
+            PushLineList = PushLine.split(' ')
+            PushLineTime = PushLineList.pop()
+            PushLineTime = PushLineList.pop() + ' ' + PushLineTime
+
+            PushLineList = [x for x in PushLineList if x != '']
+
+            PushContent = ' '.join(PushLineList)
+            # while PushContent.endswith(' '):
+
+            # print(CurrentPushType)
+            # print(PushAuthor)
+            # print(PushContent, '==')
+            # print(PushLineTime)
+            
+            CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushLineTime)
+            PushList.append(CurrentPush)
+
+        # print('PostAuthor:', PostAuthor, '==')
+        # print('PostTitle:', PostTitle, '==')
+        # print('PostDate:', PostDate, '==')
+        # print('PostContent:', PostContent, '==')
+
+        return PostAuthor, PostTitle, PostDate, PostContent, PostIP, PushList
     def getPostInfo(self, Board, PostID='', PostIndex=0):
         ConnectIndex = 0
         
@@ -841,146 +910,74 @@ class Library(object):
         if CatchIndex == 0:
             # print(self.__ReceiveData[ConnectIndex])
             # 
-            PostAuthor = self.__ReceiveData[ConnectIndex]
-            PostAuthor = PostAuthor[PostAuthor.find('[2J 作者  ') + len('[2J 作者  '):PostAuthor.find('看板  ' + Board)]
-            while PostAuthor.endswith(' '):
-                PostAuthor = PostAuthor[:-1]
-            # 時間
-            PostDate = self.__ReceiveData[ConnectIndex]
-            PostDate = PostDate[PostDate.find(' 時間  ') + len(' 時間  '):]
-            PostDate = PostDate[:24]
-
-            PostContent = self.__ReceiveData[ConnectIndex]
-            PostContentList = PostContent.split('\n')
-            PostContentList = PostContentList[4:][:-1]
-                
-            if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自:' in self.__ReceiveData[ConnectIndex]:
-                PostIP = self.__ReceiveData[ConnectIndex]
-                PostIP = PostIP[PostIP.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自: ') + len('※ 發信站: 批踢踢實業坊(ptt.cc), 來自: '):]
-                PostIP = PostIP[:PostIP.find(' ')]
-            
-            PostContent = '\n'.join(PostContentList) + '\n'
-            
-            PushList = []
-            PageIndex = 2
-            LastPageIndex = [1, 22]
-            PostContentAreaEnd = False
-
-            while not '(100%)  目前顯示: 第' in self.__ReceiveData[ConnectIndex]:
-                
-                SendMessage = str(PageIndex) + '\r'
-                CatchList = [
-                    # 0
-                    '目前顯示: 第',
-                ]
-                
-                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
-                if ErrCode != ErrorCode.Success:
-                    return ErrCode, result
-                # print('-' * 50)
-                # print(self.__ReceiveData[ConnectIndex])
-                
-                if CatchIndex == 0:
-                    
-                    PostContentTemp = self.__ReceiveData[ConnectIndex]
-                    PostContentTemp = PostContentTemp.replace('[2J', '')
-                    # while not PostContentTemp.startswith('推') and not PostContentTemp.startswith('→') and not PostContentTemp.startswith('噓'):
-                    #     PostContentTemp = PostContentTemp[1:]
-
-                    PostContentList = PostContentTemp.split('\n')
-                    PostContentList = PostContentList[:-1]
-
-                    PageLineRange = self.__ReceiveData[ConnectIndex]
-                    PageLineRange = PageLineRange[PageLineRange.find('目前顯示: 第') + len('目前顯示: 第'):]
-                    PageLineRange = re.findall(r'\d+', PageLineRange)
-                    PageLineRange = list(map(int, PageLineRange))
-                    # print('PageLineRange:', PageLineRange)
-                    
-                    OverlapLine = LastPageIndex[1] - PageLineRange[0] + 1
-
-                    if OverlapLine >= 1:
-                        # print('重疊', OverlapLine, '行')
-                        PostContentList = PostContentList[OverlapLine:]
-
-                    LastPageIndex = PageLineRange
-                    PostContentTemp = ''
-                    if '※ 發信站: 批踢踢實業坊(ptt.cc)' in self.__ReceiveData[ConnectIndex]:
-                        
-                        for line in PostContentList:
-                            if not '※ 發信站: 批踢踢實業坊(ptt.cc)' in line:
-                                PostContentTemp += line + '\n'
-                            else:
-                                break
-                        PostContent += PostContentTemp
-                        PostContentAreaEnd = True
-
-                        PostIP = self.__ReceiveData[ConnectIndex]
-                        PostIP = PostIP[PostIP.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自: ') + len('※ 發信站: 批踢踢實業坊(ptt.cc), 來自: '):]
-                        PostIP = PostIP[:PostIP.find(' ')]
-                        PostIP = PostIP.replace('\n', '')
-
-                    elif not PostContentAreaEnd:
-                        PostContent += '\n'.join(PostContentList) + '\n'
-
-                    if PostContentAreaEnd:
-                        for line in PostContentList:
-                            while line.startswith(' '):
-                                line = line[1:]
-                            
-                            CurrentPushType = 0
-
-                            if line.startswith('推'):
-                                CurrentPushType = PushType.Push
-                            elif line.startswith('噓'):
-                                CurrentPushType = PushType.Boo
-                            elif line.startswith('→'):
-                                CurrentPushType = PushType.Arrow
-                                
-                            if CurrentPushType != 0:
-                                # print('Push line:' + line + '==end')
-                                line = line[2:]
-
-                                CurrentPushID = line[:line.find(':')]
-
-                                line = line[line.find(':') + 2:]
-
-                                CurrentPushTimeList = line.split(' ')
-                                CurrentPushTime = CurrentPushTimeList.pop()
-                                CurrentPushTime = CurrentPushTimeList.pop() + ' ' + CurrentPushTime
-
-                                CurrentPushContent = ' '.join(CurrentPushTimeList)
-                                while CurrentPushContent.endswith(' '):
-                                    CurrentPushContent = CurrentPushContent[:-1]
-                                
-                                # print('Push Type:', CurrentPushType, '==end')
-                                # print('Push ID:' + CurrentPushID + '==end')
-                                # print('Push Content:' + CurrentPushContent + '==end')
-                                # print('Push Time:' + CurrentPushTime + '==end')
-                                # print('-' * 50)
-
-                                CurrentPush = Information.PushInformation(CurrentPushType, CurrentPushID, CurrentPushContent, CurrentPushTime)
-                                PushList.append(CurrentPush)
-                PageIndex += 1
-            
-            while PostContent.startswith('\n'):
-                PostContent = PostContent[1:]
-            while PostContent.endswith('\n'):
-                PostContent = PostContent[:-1]
-                
+            self.Log('進入文章成功')
         else:
             print(self.__ReceiveData[ConnectIndex])
             print('Catch error')
+            return ErrorCode.UnknowError, result
+        
+        PageIndex = 2
+        LastPageIndex = [1, 22]
 
-        print('PostID:', PostID)
-        print('PostTitle:', PostTitle)
-        print('PostURL:', PostURL)
-        print('PostMoney:', PostMoney)
-        print('PostAuthor:', PostAuthor)
-        print('PostDate:', PostDate)
-        print('PostContent:', PostContent + '=')
-        print('PostIP:', PostIP + '=')
-        # PostContent
-        print('-' * 50)
+        PostList = self.__ReceiveData[ConnectIndex].split('\n')[:-1]
+
+        while not '(100%)  目前顯示: 第' in self.__ReceiveData[ConnectIndex]:
+                
+            SendMessage = str(PageIndex) + '\r'
+            CatchList = [
+                # 0
+                '目前顯示: 第',
+            ]
+            
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
+            if ErrCode != ErrorCode.Success:
+                return ErrCode, result
+            # print('-' * 50)
+            # print(self.__ReceiveData[ConnectIndex])
+            
+            if CatchIndex == 0:
+                PageIndex += 1
+
+                Temp = self.__ReceiveData[ConnectIndex]
+                Temp = Temp.replace('[2J', '')
+                # while not PostContentTemp.startswith('推') and not PostContentTemp.startswith('→') and not PostContentTemp.startswith('噓'):
+                #     PostContentTemp = PostContentTemp[1:]
+
+                TempList = Temp.split('\n')
+                TempList = TempList[:-1]
+
+                PageLineRange = self.__ReceiveData[ConnectIndex]
+                PageLineRange = PageLineRange[PageLineRange.find('目前顯示: 第') + len('目前顯示: 第'):]
+                PageLineRange = re.findall(r'\d+', PageLineRange)
+                PageLineRange = list(map(int, PageLineRange))
+                # print('PageLineRange:', PageLineRange)
+                
+                OverlapLine = LastPageIndex[1] - PageLineRange[0] + 1
+                # print('OverlapLine:', OverlapLine)
+                if OverlapLine >= 1:
+                    # print('重疊', OverlapLine, '行')
+                    TempList = TempList[OverlapLine:]
+                
+                LastPageIndex = PageLineRange
+
+                PostList.extend(TempList)
+        
+        # for line in PostList:
+        #     print(line)
+        # return PostAuthor, PostTitle, PostTime, PostContent, PushList
+        PostAuthor, PostTitle, PostDate, PostContent, PostIP, PushList = self.__parsePostMail(PostList)
+
+        # print('PostID:', PostID)
+        # print('PostTitle:', PostTitle)
+        # print('PostURL:', PostURL)
+        # print('PostMoney:', PostMoney)
+        # print('PostAuthor:', PostAuthor)
+        # print('PostDate:', PostDate)
+        # print('PostContent:', PostContent + '=')
+        # print('PostIP:', PostIP + '=')
+        # print('-' * 50)
+
+        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostURL, PostMoney, PostContent, PushList)
         return ErrorCode.Success, result
     def __getPostinfoByUrl(self, WebUrl):
     

@@ -14,6 +14,7 @@ class LogLevel(object):
 
 class PushType(object):
     def __init__(self):
+        self.Unknow =                       0
         self.Push =                         1
         self.Boo =                          2
         self.Arrow =                        3
@@ -93,7 +94,7 @@ class PostInformation(object):
         self.__Date = str(Date)
         self.__Title = str(Title)
         self.__PostContent = str(PostContent)
-        self.__Money = Money
+        self.__Money = int(Money)
         self.__WebUrl = str(WebUrl)
         self.__PushList = PushList
         
