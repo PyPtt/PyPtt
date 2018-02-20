@@ -70,20 +70,20 @@ class UserInformation(object):
         return self.__UserChess
         
 class PushInformation(object):
-    def __init__(self, PushType, PushID, PushContent, PushTime):
-        self.__PushType = int(PushType)
-        self.__PushID = str(PushID)
-        self.__PushContent = str(PushContent)
-        self.__PushTime = str(PushTime)
+    def __init__(self, PushType, Author, PushContent, PushTime):
+        self.__Type = int(PushType)
+        self.__Author = str(Author)
+        self.__Content = str(PushContent)
+        self.__Time = str(PushTime)
 
-    def getPushType(self):
-        return self.__PushType
-    def getPushID(self):
-        return self.__PushID
-    def getPushContent(self):
-        return self.__PushContent
-    def getPushTime(self):
-        return self.__PushTime
+    def getType(self):
+        return self.__Type
+    def getAuthor(self):
+        return self.__Author
+    def getContent(self):
+        return self.__Content
+    def getTime(self):
+        return self.__Time
         
 class PostInformation(object):
     def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList):
@@ -97,17 +97,17 @@ class PostInformation(object):
         self.__WebUrl = str(WebUrl)
         self.__PushList = PushList
         
-    def getPostBoard(self):
+    def getBoard(self):
         return self.__Board
-    def getPostID(self):
+    def getID(self):
         return self.__PostID
-    def getPostAuthor(self):
+    def getAuthor(self):
         return self.__Author
-    def getPostDate(self):
+    def getDate(self):
         return self.__Date
     def getTitle(self):
         return self.__Title
-    def getPostContent(self):
+    def getContent(self):
         return self.__PostContent
     def getMoney(self):
         return self.__Money
