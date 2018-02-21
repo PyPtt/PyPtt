@@ -87,7 +87,7 @@ class PushInformation(object):
         return self.__Time
         
 class PostInformation(object):
-    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, PushList):
+    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, IP, PushList):
         self.__Board = str(Board)
         self.__PostID = str(PostID)
         self.__Author = str(Author)
@@ -96,6 +96,7 @@ class PostInformation(object):
         self.__PostContent = str(PostContent)
         self.__Money = int(Money)
         self.__WebUrl = str(WebUrl)
+        self.__IP = str(IP)
         self.__PushList = PushList
         
     def getBoard(self):
@@ -114,5 +115,7 @@ class PostInformation(object):
         return self.__Money
     def getWebUrl(self):
         return self.__WebUrl
+    def getIP(self):
+        return self.__IP
     def getPushList(self):
         return self.__PushList

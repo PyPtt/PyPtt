@@ -763,11 +763,24 @@ class Library(object):
             PostDate = PostDate[:-1]
         
         PostContentEndIndex = 0
+        PostIP = 'Unknow IP'
         for i in range(5, len(PostList)):
             if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自: ' in PostList[i]:
                 while PostList[i].endswith(' '):
                     PostList[i] = PostList[i][:-1]
                 PostIP = PostList[i].split(' ').pop()
+                break
+            if '※ 編輯:' in PostList[i]:
+                while PostList[i].endswith(' '):
+                    PostList[i] = PostList[i][:-1]
+                TempList = PostList[i].split(' ')
+                TempList.pop()
+                TempList.pop()
+                PostIP = TempList.pop()[1:-2]
+        for i in range(5, len(PostList)):
+            # print(PostList[i])
+            if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自: ' in PostList[i]:
+                
                 # print(PostIP, '==')
                 PostContentEndIndex = i
                 break
@@ -781,7 +794,10 @@ class Library(object):
             while PushLine.startswith(' '):
                 PushLine = PushLine[1:]
             # print(PushLine)
-            
+
+            if len(PushLine) == 0:
+                continue
+
             CurrentPushType = PushType.Unknow
 
             if PushLine.startswith('推'):
@@ -796,6 +812,12 @@ class Library(object):
             PushLine = PushLine[PushLine.find(':') + 1:]
             
             PushLineList = PushLine.split(' ')
+
+            # print(len(PushLineList))
+
+            if len(PushLineList) < 2:
+                continue
+
             PushLineTime = PushLineList.pop()
             PushLineTime = PushLineList.pop() + ' ' + PushLineTime
 
@@ -857,7 +879,7 @@ class Library(object):
             # 0
             '找不到這個文章代碼',
             # 1
-            '┌  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ┐',
+            '─  ─  ┐',
 
         ]
         
@@ -887,12 +909,15 @@ class Library(object):
             PostURL = screen[screen.find('https://www.ptt.cc/bbs'):]
             PostURL = PostURL[:PostURL.find(' ')]
 
+            # print(screen)
             PostMoney = screen
             PostMoney = PostMoney[PostMoney.find('這一篇文章值'):]
             # 
             PostMoney = int(re.search(r'\d+', PostMoney).group())
             # print(screen)
         else:
+            print('-' * 50)
+            print(self.__ReceiveData[ConnectIndex])
             self.Log('文章已經被刪除')
             return ErrorCode.PostNotFound, result
 
@@ -900,7 +925,7 @@ class Library(object):
 
         CatchList = [
             # 0
-            '目前顯示: 第',
+            '(y)回應(X',
         ]
         
         ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
@@ -921,12 +946,12 @@ class Library(object):
 
         PostList = self.__ReceiveData[ConnectIndex].split('\n')[:-1]
 
-        while not '(100%)  目前顯示: 第' in self.__ReceiveData[ConnectIndex]:
-                
+        while not '(100%)  目前顯示:' in self.__ReceiveData[ConnectIndex]:
+            
             SendMessage = str(PageIndex) + '\r'
             CatchList = [
                 # 0
-                '目前顯示: 第',
+                '(y)回應(X',
             ]
             
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
@@ -961,6 +986,8 @@ class Library(object):
                 LastPageIndex = PageLineRange
 
                 PostList.extend(TempList)
+            else:
+                print('換頁錯誤')
         
         # for line in PostList:
         #     print(line)
@@ -977,7 +1004,7 @@ class Library(object):
         # print('PostIP:', PostIP + '=')
         # print('-' * 50)
 
-        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostURL, PostMoney, PostContent, PushList)
+        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostURL, PostMoney, PostContent, PostIP, PushList)
         return ErrorCode.Success, result
     def __getPostinfoByUrl(self, WebUrl):
     

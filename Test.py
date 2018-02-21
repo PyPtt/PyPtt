@@ -8,7 +8,6 @@ from PTTLibrary import SSHPTT as PTT
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
 
 BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTBot = None
 
@@ -70,35 +69,55 @@ def GetNewestPostIndexDemo():
     
     #回傳值 就是錯誤碼跟最新文章編號
 
-    SingleBoard = 'Wanted'
-    ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(SingleBoard)
-    if ErrorCode == PTT.ErrorCode.Success:
-        PTTBot.Log('取得 ' + SingleBoard + ' 板最新文章編號成功: ' + str(NewestIndex))
-    else:
-        PTTBot.Log('取得 ' + SingleBoard + ' 板最新文章編號失敗')
-        return False
+    # SingleBoard = 'Gossiping'
+    # ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(SingleBoard)
+    # if ErrorCode == PTT.ErrorCode.Success:
+    #     PTTBot.Log('取得 ' + SingleBoard + ' 板最新文章編號成功: ' + str(NewestIndex))
+    # else:
+    #     PTTBot.Log('取得 ' + SingleBoard + ' 板最新文章編號失敗')
+    #     return False
 
 
-    # for i in range(10):
-    #     for Board in BoardList:
-    #         ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
-    #         if ErrorCode == PTT.ErrorCode.Success:
-    #             PTTBot.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
-    #         else:
-    #             PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-    #             return False
+    for i in range(2):
+        for Board in BoardList:
+            ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
+            if ErrorCode == PTT.ErrorCode.Success:
+                PTTBot.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
+            else:
+                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+                return False
 
+def showPost(Post):
+    PTTBot.Log('文章代碼: ' + Post.getID())
+    PTTBot.Log('作者: ' + Post.getAuthor())
+    PTTBot.Log('時間: ' + Post.getDate())
+    PTTBot.Log('標題: ' + Post.getTitle())
+    PTTBot.Log('價錢: ' + str(Post.getMoney()))
+    PTTBot.Log('IP: ' + Post.getIP())
+    PTTBot.Log('網址: ' + Post.getWebUrl())
+
+    # PTTBot.Log('內文: ' + Post.getContent())
+
+    PushCount = 0
+    BooCount = 0
+    ArrowCount = 0
+    for Push in Post.getPushList():
+        if Push.getType() == PTT.PushType.Push:
+            PushCount += 1
+        elif Push.getType() == PTT.PushType.Boo:
+            BooCount += 1
+        elif Push.getType() == PTT.PushType.Arrow:
+            ArrowCount += 1
+    
+    PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
+    PTTBot.Log('-' * 50)
 def GetPostInfoDemo():
     
     # 這個範例是如何取得單一文章資訊
-    # getPostInfoByIndex
-    # 第一個參數是板面
-    # 第二個參數就是你想查詢的文章編號
-    # 如果你不幸的只有文章代碼 那就使用 getPostInfoByID
-    # getPostInfoByID
-    # 第一個參數是板面
-    # 第二個參數就是你想查詢的文章代碼
-    
+    # getPostInfo
+    # 第一個固定參數是板面
+    # 第二個參數就是你想查詢的文章編號或者文章代碼
+        
     #回傳值 錯誤碼, 文章資訊
     
     #文章資訊的資料結構可參考如下
@@ -112,8 +131,7 @@ def GetPostInfoDemo():
     # getPostContent            文章內文
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
-    # getPushList               文章推文清單 備註: 推文是從網頁解析，極有可能不即時
-    # getOriginalData           文章網頁原始資料 (開發用)
+    # getPushList               文章即時推文清單
     
     ################## 推文資訊 Push information ##################
     # getPushType               推文類別 推噓箭頭
@@ -121,52 +139,49 @@ def GetPostInfoDemo():
     # getPushContent            推文內文
     # getPushTime               推文時間
     
-    TryPost = 1
+    TryPost = 3
+    PostIDList = []
 
-    ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Gossiping')
-    if ErrorCode != PTT.ErrorCode.Success:
-        PTTBot.Log('取得最新文章編號失敗')
-        return False
-    
-    if NewestIndex == -1:
-        PTTBot.Log('取得最新文章編號失敗')
-        return False
-
-    PTTBot.Log('取得最新文章編號: ' + str(ErrorCode))
-    for i in range(TryPost)[::-1]:
+    for Board in BoardList:
         
-        ErrorCode, Post = PTTBot.getPostInfo('Gossiping', PostIndex=NewestIndex - i)
-        # ErrorCode, Post = PTTBot.getPostInfo('Gossiping', PostIndex=728482)
-        if ErrorCode == PTT.ErrorCode.PostDeleted:
-            PTTBot.Log('文章已經被刪除')
-            continue
-        if ErrorCode == PTT.ErrorCode.WebFormatError:
-            PTTBot.Log('網頁結構錯誤')
-            continue
+        ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
         if ErrorCode != PTT.ErrorCode.Success:
-            PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
-            continue
-
-        PTTBot.Log('文章代碼: ' + Post.getID())
-        PTTBot.Log('作者: ' + Post.getAuthor())
-        PTTBot.Log('時間: ' + Post.getDate())
-        PTTBot.Log('標題: ' + Post.getTitle())
-        PTTBot.Log('價錢: ' + str(Post.getMoney()))
-        PTTBot.Log('網址: ' + Post.getWebUrl())
-        PTTBot.Log('內文: \r\n' + Post.getContent())
-
-        PushCount = 0
-        BooCount = 0
-        ArrowCount = 0
-        for Push in Post.getPushList():
-            if Push.getType() == PTT.PushType.Push:
-                PushCount += 1
-            elif Push.getType() == PTT.PushType.Boo:
-                BooCount += 1
-            elif Push.getType() == PTT.PushType.Arrow:
-                ArrowCount += 1
+            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+            return False
         
-        print('共有', PushCount, '推', BooCount, '噓', ArrowCount, '箭頭')
+        if NewestIndex == -1:
+            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+            return False
+
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+        for i in range(TryPost)[::-1]:
+            
+            print('測試', NewestIndex - i)
+
+            ErrorCode, Post = PTTBot.getPostInfo(Board, PostIndex=NewestIndex - i)
+            # ErrorCode, Post = PTTBot.getPostInfo('Gossiping', PostIndex=731775)
+            if ErrorCode == PTT.ErrorCode.PostDeleted:
+                PTTBot.Log('文章已經被刪除')
+                continue
+            elif ErrorCode != PTT.ErrorCode.Success:
+                PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
+                continue
+            
+            showPost(Post)
+            PostIDList.append(Post.getID())
+            
+        for PostID in PostIDList:
+            print('測試', PostID)
+
+            ErrorCode, Post = PTTBot.getPostInfo('Wanted', PostID=PostID)
+            if ErrorCode == PTT.ErrorCode.PostDeleted:
+                PTTBot.Log('文章已經被刪除')
+                continue
+            elif ErrorCode != PTT.ErrorCode.Success:
+                PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrorCode))
+                continue
+            
+            showPost(Post)
         
 def GetNewPostIndexListDemo():
 
