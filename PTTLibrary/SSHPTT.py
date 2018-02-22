@@ -408,7 +408,7 @@ class Library(object):
         return ErrorCode.Success
     def __gotoMainMenu(self, ConnectIndex=0):
         
-        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, 'q\x1b[D\x1b[D\x1b[D\x1b[D', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], Refresh=True)
+        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, '\x1d\x1d\x1d\x1d', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], Refresh=True)
         if ErrCode != ErrorCode.Success:
             return ErrCode
         if CatchIndex != -1:
@@ -428,26 +428,16 @@ class Library(object):
                     # self.Log('連線 ' + str(index) + ' 未連接')
                     continue
                 self.Log('頻道 ' + str(index) + ' 登出', LogLevel.DEBUG)
-                ErrCode = self.__gotoMainMenu(index)
-                if ErrCode != ErrorCode.Success:
-                    self.Log('頻道 ' + str(index) + '登出出錯: ' + str(ErrCode))
-                    continue
                 
-                SendMessage = 'g\ry\r'
+                SendMessage = '\x1d\x1d\x1d\x1dg\ry\r'
                 Refresh = False
-                ExtraWait = 1
+                ExtraWait = 0
 
                 ErrCode, CatchIndex = self.__operatePTT(index, SendMessage=SendMessage, CatchTargetList=['按任意鍵繼續'], Refresh=Refresh, ExtraWait=ExtraWait)
                 if ErrCode != 0:
                     self.Log('頻道 ' + str(index) + '登出失敗 錯誤碼: ' + str(ErrCode))
                     return ErrorCode.UnknowError
-                if CatchIndex == 0:
-                    self.__ConnectList[index].channel.close()
-                    self.__ConnectList[index].close()
-                    self.__ConnectList[index] = None
-                    self.Log('頻道 ' + str(index) + ' 登出成功')
-                else:
-                    self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
+                self.Log('頻道 ' + str(index) + ' 登出成功')
                 
         return ErrorCode.Success
     def getNewestPostIndex(self, Board):
@@ -466,7 +456,7 @@ class Library(object):
             '文章選讀',
         ]
 
-        SendMessage = '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r\x03\x03 0\r$'
+        SendMessage = '\x1d\x1d\x1dqs' + Board + '\r\x03\x03 0\r$'
         Refresh = True
         ExtraWait = 0
 
@@ -516,18 +506,19 @@ class Library(object):
         
         ConnectIndex = 0
         
-        CatchList = [
-            # 0
-            '文章選讀',
-        ]
+        # 前進至板面
 
         if '看板《' + Board + '》' in self.__ReceiveData[ConnectIndex] and '文章選讀' in self.__ReceiveData[ConnectIndex]:
             self.Log('已經位於 ' + Board + ' 板', LogLevel.DEBUG)
         else:
-            # 前進至板面
-            SendMessage = '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r\x03\x03 '
-            
-            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=False)
+            CatchList = [
+                # 0
+                '文章選讀',
+            ]
+
+            SendMessage = '\x1d\x1d\x1d\x1dqs' + Board + '\r\x03\x03 '
+        
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
             if ErrCode != ErrorCode.Success:
                 return ErrCode
 
@@ -535,7 +526,7 @@ class Library(object):
                 self.Log('前進至 ' + Board + '板失敗')
                 print(self.__ReceiveData[ConnectIndex])
                 return ErrorCode.UnknowError
-        
+
         # 確認是否有發文權限
 
         CatchList = [
@@ -656,7 +647,7 @@ class Library(object):
             self.Log('已經位於 ' + Board + ' 板', LogLevel.DEBUG)
         else:
             # 前進至板面
-            SendMessage += '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r\x03\x03 '
+            SendMessage += '\x1d\x1d\x1d\x1dqs' + Board + '\r\x03\x03 '
         
         # 前進至文章
 
@@ -866,7 +857,7 @@ class Library(object):
             self.Log('已經位於 ' + Board + ' 板', LogLevel.DEBUG)
         else:
             # 前進至板面
-            SendMessage += '\x1b[D\x1b[D\x1b[Dqs' + Board + '\r\x03\x03 '
+            SendMessage += '\x1d\x1d\x1d\x1dqs' + Board + '\r\x03\x03 '
         
         # 前進至文章
 
@@ -879,7 +870,7 @@ class Library(object):
             # 0
             '找不到這個文章代碼',
             # 1
-            '─  ─  ┐',
+            '─  ─  ─  ─  ─  ─  ─  ─  ',
 
         ]
         
@@ -893,6 +884,8 @@ class Library(object):
             self.Log('此文章代碼不存在')
             return ErrorCode.PostNotFound, result
         elif CatchIndex == 1:
+            # print(self.__ReceiveData[ConnectIndex])
+
             InformationEnd = '└  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ┘'
             screen = self.__ReceiveData[ConnectIndex]
             screen = screen[screen.find(CatchList[1]) + len(CatchList[1]):screen.find(InformationEnd)]
@@ -909,23 +902,31 @@ class Library(object):
             PostURL = screen[screen.find('https://www.ptt.cc/bbs'):]
             PostURL = PostURL[:PostURL.find(' ')]
 
-            # print(screen)
-            PostMoney = screen
-            PostMoney = PostMoney[PostMoney.find('這一篇文章值'):]
-            # 
-            PostMoney = int(re.search(r'\d+', PostMoney).group())
-            # print(screen)
+            if '價格記錄' in screen:
+                PostMoney = -1
+            else:
+                PostMoney = screen
+                PostMoney = PostMoney[PostMoney.find('一篇文章'):]
+                # 
+                try:
+                    PostMoney = int(re.search(r'\d+', PostMoney).group())
+                except AttributeError:
+                    print('解析文章價錢失敗', screen)
+
+                # print(screen)
         else:
-            print('-' * 50)
-            print(self.__ReceiveData[ConnectIndex])
-            self.Log('文章已經被刪除')
-            return ErrorCode.PostNotFound, result
+            # print('-' * 50)
+            # print(self.__ReceiveData[ConnectIndex])
+            # self.Log('文章已經被刪除')
+            return ErrorCode.PostDeleted, result
 
         SendMessage = '\x03\r'
 
         CatchList = [
             # 0
-            '(y)回應(X',
+            '(  ←)離開',
+            # 1
+            '這份文件是可播放的文字動畫',
         ]
         
         ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
@@ -936,28 +937,55 @@ class Library(object):
             # print(self.__ReceiveData[ConnectIndex])
             # 
             self.Log('進入文章成功')
-        else:
-            print(self.__ReceiveData[ConnectIndex])
-            print('Catch error')
-            return ErrorCode.UnknowError, result
-        
-        PageIndex = 2
-        LastPageIndex = [1, 22]
+        elif CatchIndex == 1:
+            SendMessage = 'n'
 
-        PostList = self.__ReceiveData[ConnectIndex].split('\n')[:-1]
-
-        while not '(100%)  目前顯示:' in self.__ReceiveData[ConnectIndex]:
-            
-            SendMessage = str(PageIndex) + '\r'
             CatchList = [
                 # 0
-                '(y)回應(X',
+                '(  ←)離開',
             ]
             
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
             if ErrCode != ErrorCode.Success:
                 return ErrCode, result
-            # print('-' * 50)
+            if CatchIndex == 0:
+                self.Log('停止播放動畫')
+            else:
+                self.Log('停止播放動畫失敗')
+            
+        else:
+            
+            LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
+            if '瀏覽' in LastLine or '目前顯示' in LastLine or '離開' in LastLine:
+                self.Log('進入文章成功')
+            else:
+                print('進入文章 error')
+                return ErrorCode.UnknowError, result
+
+        LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
+        # print(LastLine)
+        TotalPageTemp = re.findall(r'\d+', LastLine)
+        TotalPage = list(map(int, TotalPageTemp))[1]
+        # print(TotalPage)
+
+        PageIndex = 2
+        LastPageIndex = [1, 22]
+
+        PostList = self.__ReceiveData[ConnectIndex].split('\n')[:-1]
+
+        for i in range(TotalPage - 1):
+        # while not '(100%)  目前顯示:' in self.__ReceiveData[ConnectIndex]:
+            # print(PageIndex, TotalPage)
+            SendMessage = str(PageIndex) + '\r'
+            CatchList = [
+                # 0
+                '(  ←)離開',
+            ]
+            
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
+            if ErrCode != ErrorCode.Success:
+                return ErrCode, result
+            # print('=' * 50)
             # print(self.__ReceiveData[ConnectIndex])
             
             if CatchIndex == 0:
@@ -969,12 +997,11 @@ class Library(object):
                 #     PostContentTemp = PostContentTemp[1:]
 
                 TempList = Temp.split('\n')
-                TempList = TempList[:-1]
-
-                PageLineRange = self.__ReceiveData[ConnectIndex]
-                PageLineRange = PageLineRange[PageLineRange.find('目前顯示: 第') + len('目前顯示: 第'):]
+                
+                PageLineRange = TempList.pop()
                 PageLineRange = re.findall(r'\d+', PageLineRange)
-                PageLineRange = list(map(int, PageLineRange))
+                PageLineRange = list(map(int, PageLineRange))[3:]
+
                 # print('PageLineRange:', PageLineRange)
                 
                 OverlapLine = LastPageIndex[1] - PageLineRange[0] + 1
@@ -990,7 +1017,7 @@ class Library(object):
                 print('換頁錯誤')
         
         # for line in PostList:
-        #     print(line)
+        #     print('list line:', line)
         # return PostAuthor, PostTitle, PostTime, PostContent, PushList
         PostAuthor, PostTitle, PostDate, PostContent, PostIP, PushList = self.__parsePostMail(PostList)
 
@@ -1006,293 +1033,69 @@ class Library(object):
 
         result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostURL, PostMoney, PostContent, PostIP, PushList)
         return ErrorCode.Success, result
-    def __getPostinfoByUrl(self, WebUrl):
-    
-        self.Log('__getPostinfoByUrl: requests get', LogLevel.DEBUG)
-        isError = False
-        for i in range(600):
-            try:
-                res = requests.get(
-                    url = WebUrl,
-                    cookies={'over18': '1'},
-                    timeout=3
-                )
-                isError = False
-                break
-            except requests.exceptions.Timeout:
-                
-                self.__MaxRequestCount -= 1
-                if self.__MaxRequestCount < self.__MinRequestCount:
-                    self.__MaxRequestCount = self.__MinRequestCount
-                
-                time.sleep(1)
-                isError = True
-            except requests.exceptions.ConnectionError:
-                #self.Log('__getPostinfoByUrl: requests conect error', LogLevel.DEBUG)
-                self.Log('__getPostinfoByUrl: requests conect error', LogLevel.DEBUG)
-                time.sleep(1)
-                isError = True
-            except requests.exceptions.InvalidURL:
-                self.Log('不合法的網址: ' + WebUrl, LogLevel.CRITICAL)
-                return self.InvalidURLError, '', '', '', '', None, ''
-            except requests.exceptions.MissingSchema:
-                self.Log('不合法的網址: ' + WebUrl, LogLevel.CRITICAL)
-                return self.InvalidURLError, '', '', '', '', None, ''
-        if isError:
-            self.Log('getPostinfoByUrl requests 超時!', LogLevel.CRITICAL)
-            return self.WaitTimeout, '', '', '', '', None, ''
-            
-        soup =  BeautifulSoup(res.text, 'html.parser')
-        main_content = soup.find(id='main-content')
+    def mail(self, UserID, MailTitle, MailContent, SignType):
         
-        if main_content == None:
-            return self.WebFormatError, '', '', '', '', None, ''
+        ConnectIndex = 0
+        SendMessage = ''
 
-        metas = main_content.select('div.article-metaline')
-        filtered = [ v for v in main_content.stripped_strings if v[0] not in ['※', '◆'] and  v[:2] not in ['--'] ]
+        if '【主功能表】' in self.__ReceiveData[ConnectIndex]:
+            self.Log('已經位於主功能表', LogLevel.DEBUG)
+        else:
+            # 前進至板面
+            SendMessage += '\x1d\x1d\x1d\x1d'
         
-        content = ' '.join(filtered)
-        content = re.sub(r'(\s)+', '', content )
+        SendMessage += 'M\rS\r' + UserID + '\r' + MailTitle + '\r'
+        CatchList = []
 
-        try:
-            author = metas[0].select('span.article-meta-value')[0].string
-            title = metas[1].select('span.article-meta-value')[0].string
-            date = metas[2].select('span.article-meta-value')[0].string
-        except IndexError:
-            self.Log('div.article-metaline is not exist', LogLevel.DEBUG)
-            return self.WebFormatError, '', '', '', '', None, ''
-        RealPostTitle = title
-        RealPostAuthor = author
-        RealPostDate = date
-        RealPostContent = ''
-        PostContentArea = False
-        
-        PushArea = False
-        
-        PushType = 0
-        PushID = ''
-        PushContent = ''
-        PushDate = ''
-        PushIndex = 0
-        
-        RealPushList = []
-        for ContentLine in filtered:
-            self.Log('ContentLine-> ' + ContentLine, LogLevel.DEBUG)
-            if not PostContentArea and (ContentLine.startswith('推') or ContentLine.startswith('噓') or ContentLine.startswith('→')):
-                PushArea = True
-                PushIndex = 0
-            if PushArea:
-                if PushIndex == 0:
-                    if '推' in ContentLine:
-                        PushType = self.PushType_Push
-                    elif '噓' in ContentLine:
-                        PushType = self.PushType_Boo
-                    elif '→' in ContentLine:
-                        PushType = self.PushType_Arrow
-                    self.Log('PushType-> ' + str(PushType), LogLevel.DEBUG)
-                if PushIndex == 1:
-                    PushID = ContentLine
-                if PushIndex == 2:
-                    PushContent = ContentLine[2:]
-                if PushIndex == 3:
-                    PushDate = ContentLine
-                    PushArea = False
-                PushIndex += 1
-                
-                if PushIndex >=4:
-                    PushIndex = 0
-                    self.Log('Push final-> ' + str(PushType) + ' ' + PushID + ' ' + PushContent + ' ' + PushDate, LogLevel.DEBUG)
-                    RealPushList.append(PushInformation(PushType, PushID, PushContent, PushDate))
-            if date in ContentLine:
-                PostContentArea = True
-                continue
-            if WebUrl in ContentLine:
-                PostContentArea = False
-            if PostContentArea:
-                RealPostContent += ContentLine + '\r'
-        
-        return ErrorCode.Success, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, res.text
-    
-    def __parsePost(self, ConnectIndex = 0):
-        RealPostID = ''
-        RealWebUrl = ''
-        RealMoney = -1
-        ErrCode = ErrorCode.Success
-        
-        #┌─────────────────────────────────────┐
-        #└─────────────────────────────────────┘
-        
-        self.Log(self.__ReceiveData[ConnectIndex], LogLevel.DEBUG)
+        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
+        if ErrCode != ErrorCode.Success:
+            return ErrCode
 
-        if not '┌─────────────────────────────────────┐' in self.__ReceiveData[ConnectIndex] or not '└─────────────────────────────────────┘' in self.__ReceiveData[ConnectIndex]:
-            return self.ParseError, RealPostID, RealMoney, RealWebUrl
+        self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
+        if CatchIndex == 0:
+            pass
+
+        return ErrorCode.Success
         
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('┌─────────────────────────────────────┐') : self.__ReceiveData[ConnectIndex].find('└─────────────────────────────────────┘')]
-        
-        if '#' in self.__ReceiveData[ConnectIndex]:
-            RealPostID = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('#') + 1:]
-            RealPostID = RealPostID[:RealPostID.find(' ')]
-        else:
-            self.Log('解析文章代碼失敗', LogLevel.DEBUG)
-            ErrCode = self.ParseError
-            
-        if 'https' in self.__ReceiveData[ConnectIndex]:
-            RealWebUrl = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('https://www.ptt.cc/bbs'):]
-            
-            self.Log(self.__ReceiveData[ConnectIndex], LogLevel.DEBUG)
-            self.Log(RealWebUrl, LogLevel.DEBUG)
-            
-            RealWebUrl = RealWebUrl[RealWebUrl.find('https'):RealWebUrl.find('.html') + 5]
-            
-            self.Log('QQ ' + RealWebUrl, LogLevel.DEBUG)
-        else:
-            self.Log('解析文章網址失敗', LogLevel.DEBUG)
-            ErrCode = self.ParseError
-            
-        if '這一篇文章值' in self.__ReceiveData[ConnectIndex]:
-            RealMoneyTemp = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('這一篇文章值') + len('這一篇文章值') : self.__ReceiveData[ConnectIndex].find('Ptt幣')]
-            RealMoney = int(re.search(r'\d+', RealMoneyTemp).group())
-        else:
-            self.Log('解析文章價錢失敗', LogLevel.DEBUG)
-            ErrCode = self.ParseError
-        
+        ErrCode = self.__gotoTop(ConnectIndex)
         if ErrCode != ErrorCode.Success:
-            return ErrCode, RealPostID, RealMoney, RealWebUrl
-            
-        return ErrorCode.Success, RealPostID, RealMoney, RealWebUrl
-    def __getPostInfoByID(self, Board, PostID, Index=-1, ConnectIndex = 0):
-        self.Log('Into __getPostInfoByID', LogLevel.DEBUG)
-        if Index != -1:
-            self.Log('Into __gotoPostByIndex', LogLevel.DEBUG)
-            ErrCode = self.__gotoPostByIndex(Board, Index, ConnectIndex)
-            if ErrCode != ErrorCode.Success:
-                self.Log('getPostInfoByIndex 1 goto post fail', LogLevel.DEBUG)
-                return ErrCode, None
-        else:
-            self.Log('Into __gotoPostByID', LogLevel.DEBUG)
-            if len(PostID) != 8:
-                self.Log('Error input: ' + PostID)
-                return self.ErrorInput, None
+            print('mail goto top error code 1: ' + str(ErrorCode))
+            return ErrorCode
         
-            ErrCode = self.__gotoPostByID(Board, PostID, ConnectIndex)
-            if ErrCode != ErrorCode.Success:
-                self.Log('getPostInfoByID 1 goto post fail', LogLevel.DEBUG)
-                return ErrCode, None
-        
-        ErrCode, Index = self.__readScreen(ConnectIndex, 'Q', ['請按任意鍵繼續'])
-        if ErrCode == self.WaitTimeout:
-            return self.PostDeleted, None
-        if ErrCode != ErrorCode.Success:
-            self.Log('getPostInfoByID 3 read screen error: ' + str(ErrorCode), LogLevel.DEBUG)
-            return ErrCode, None
-        
-        ErrCode, RealPostID, RealMoney, RealWebUrl = self.__parsePost(ConnectIndex)
-        
-        while self.__RequestCount >= self.__MaxRequestCount:
-            time.sleep(0.1)
-        
-        self.__RequestCount += 1
-        ErrCode, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, OriginalText = self.__getPostinfoByUrl(RealWebUrl)
-        self.__RequestCount -= 1
-        
-        if ErrCode != ErrorCode.Success:
-            self.Log('連線頻道 ' + str(ConnectIndex) + ' 取得文章失敗', LogLevel.DEBUG)
-            return ErrCode, None
-        
-        result = PostInformation(Board, RealPostID, RealPostAuthor, RealPostDate, RealPostTitle, RealWebUrl, RealMoney, RealPostContent, RealPushList, OriginalText)
-        
-        return ErrorCode.Success, result
-        
-    def crawlSaveThread(self, ThreadIndex, Board):
-        
-        self.Log('線程 ' + str(ThreadIndex) + ' 啟動', LogLevel.DEBUG)
-        
+        CaseList = ['主題：', '請選擇簽名檔', '已順利寄出，是否自存底稿', '任意鍵繼續', '電子郵件']
+        SendMessage = 'M\rS\r' + UserID
+        Enter = True
         while True:
-            
-            if self.__ConnectCount == 0:
-                if len(self.__CrawPool) == 0:
-                    break
-            
-            self.__CrawPoolLock.acquire()
-            if len(self.__CrawPool) == 0:
-                self.__CrawPoolLock.release()
-                time.sleep(0.1)
-                continue
-                
-            Index, RealPostID, RealMoney, RealWebUrl = self.__CrawPool.pop()
-            self.__CrawPoolLock.release()
-            
-            self.Log('線程 ' + str(ThreadIndex) + ' 取得編號 ' + str(Index) + ' ' + RealWebUrl, LogLevel.DEBUG)
-            
-            ErrCode, RealPostTitle, RealPostAuthor, RealPostDate, RealPostContent, RealPushList, OriginalText = self.__getPostinfoByUrl(RealWebUrl)
-            
+            ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
+            if ErrCode == self.WaitTimeout:
+                self.__showScreen()
+                self.Log('無該使用: ' + UserID)
+                return self.NoUser
             if ErrCode != ErrorCode.Success:
-                self.Log('線程 ' + str(ThreadIndex) + ' 取得文章失敗', LogLevel.DEBUG)
-                if not self.__isBackground and self.__ShowProgressBar:
-                    self.__ProgressBarCount += 1
-                    self.__ProgressBar.update(self.__ProgressBarCount)
-                continue
-            #Find post
-            
-            Post = PostInformation(Board, RealPostID, RealPostAuthor, RealPostDate, RealPostTitle, RealWebUrl, RealMoney, RealPostContent, RealPushList, OriginalText)
-            
-            if not self.__isBackground and self.__ShowProgressBar:
-                self.__ProgressBarCount += 1
-                self.__ProgressBar.update(self.__ProgressBarCount)
-            self.__SuccessPostCount += 1
-            self.__PostHandler(Post)
-        
-        self.__SaveCount -= 1
-        self.Log('線程 ' + str(ThreadIndex) + ' 結束', LogLevel.DEBUG)
-        
-    def crawlFindUrlThread(self, Board, StartIndex , EndIndex, ConnectIndex):
-        
-        self.Log('連線頻道 ' + str(ConnectIndex) + ' 開始取得編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 文章網址')
-        
-        for Index in range(StartIndex, EndIndex + 1):
-        
-            isSuccess = False
-            FailReason = ''
-            for i in range(3):
-                ErrCode = self.__gotoPostByIndex(Board, Index, ConnectIndex)
-                
-                if ErrCode != ErrorCode.Success:
-                    FailReason = '連線頻道 ' + str(ConnectIndex) + ' crawlFindUrlThread 1 goto post fail'
-                    continue
-                
-                ErrCode, ScreenIndex = self.__readScreen(ConnectIndex, 'Q', ['請按任意鍵繼續'])
-
-                if ErrCode == self.WaitTimeout:
-                    FailReason = '連線頻道 ' + str(ConnectIndex) + ' 讀取畫面超時'
-                    continue
-                if ErrCode != ErrorCode.Success:
-                    FailReason = '連線頻道 ' + str(ConnectIndex) + ' crawlFindUrlThread 3 __readScreen error: ' + str(ErrorCode)
-                    break
-                    
-                ErrCode, RealPostID, RealMoney, RealWebUrl = self.__parsePost(ConnectIndex)
-                if ErrCode != ErrorCode.Success:
-                    FailReason = '連線頻道 ' + str(ConnectIndex) + ' 解析文章失敗'
-                    continue
-                    
-                isSuccess = True
+                self.Log('mail 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
+                return ErrorCode
+            if Index == 0:
+                SendMessage = MailTitle + '\r' + MailContent + '\x18s'
+                Enter = True
+                self.__CurrentTimeout[ConnectIndex] = 3
+                self.Log('mail 主題', LogLevel.DEBUG)
+            if Index == 1:
+                SendMessage = str(SignType)
+                Enter = True
+                self.Log('mail 請選擇簽名檔', LogLevel.DEBUG)
+            if Index == 2:
+                SendMessage = 'Y'
+                Enter = True
+                self.Log('mail 已順利寄出', LogLevel.DEBUG)
+            if Index == 3:
+                SendMessage = 'q'
+                Enter = False
+                self.Log('mail 任意鍵繼續', LogLevel.DEBUG)
+            if Index == 4:
+                self.Log('mail 回到電子郵件', LogLevel.DEBUG)
                 break
-            
-            if not isSuccess:
-                self.Log(FailReason, LogLevel.DEBUG)
-                if not self.__isBackground and self.__ShowProgressBar:
-                    self.__ProgressBarCount += 1
-                    self.__ProgressBar.update(self.__ProgressBarCount)
-                continue
-                
-            if RealWebUrl != '':
-                # Get RealWebUrl!!!
-                #self.Log(str(len(self.__CrawPool)))
-                #self.Log('連線頻道 ' + str(ConnectIndex) + ' : ' + RealWebUrl)
-                self.__CrawPool.append((Index, RealPostID, RealMoney, RealWebUrl))
-            
-        self.Log('連線頻道 ' + str(ConnectIndex) + ' 結束', LogLevel.DEBUG)
-        self.__ConnectCount -= 1
         
+        return ErrorCode.Success
     def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0, ShowProgressBar=True):
     
         self.__PostHandler = PostHandler
@@ -1415,167 +1218,6 @@ class Library(object):
         self.__LogLevel = self.__CurrentLogLevel
         
         self.Log('成功取得 ' + str(self.__SuccessPostCount) + ' 篇文章')
-        
-        return ErrorCode.Success
-    def getPostInfoByIndex(self, Board, Index, ConnectIndex = 0):
-        
-        ErrCode, Post = self.getPostInfoByID(Board, '', Index, ConnectIndex)
-        
-        return ErrCode, Post
-    
-    def getNewPostIndexList(self, Board, LastPostIndex, ConnectIndex = 0):
-        
-        result = []
-        ErrCode, LastIndex = self.getNewestPostIndex(Board, ConnectIndex)
-
-        if ErrCode != ErrorCode.Success:
-            return ErrCode, result
-        
-        if LastPostIndex <= 0 or LastIndex < LastPostIndex:
-            result.append(LastIndex)
-        else:
-            for IndexTemp in range(LastPostIndex + 1, LastIndex + 1):
-                result.append(IndexTemp)
-        return ErrCode, result
-    
-    def pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1, ConnectIndex = 0):
-    
-        for i in range(5):
-            ErrCode = self.__pushByID(Board, PushType, PushContent, PostID, PostIndex, ConnectIndex)
-            if ErrCode == ErrorCode.Success:
-                if i != 0:
-                    self.Log('pushByID recover Success', LogLevel.DEBUG)
-                break
-            if ErrCode == self.NoPermission:
-                break
-        return ErrorCode
-    def __pushByID(self, Board, PushType, PushContent, PostID, PostIndex=-1, ConnectIndex = 0):
-        self.__CurrentTimeout[ConnectIndex] = 3
-
-        if PostIndex != -1:
-            ErrCode = self.__gotoPostByIndex(Board, PostIndex, ConnectIndex)
-            if ErrCode != ErrorCode.Success:
-                self.Log('pushByIndex 1 goto post fail', LogLevel.DEBUG)
-                return ErrorCode
-        else:
-        
-            if len(PostID) != 8:
-                self.Log('pushByID Error input: ' + PostID)
-                return self.ErrorInput
-        
-            ErrCode = self.__gotoPostByID(Board, PostID, ConnectIndex)
-            if ErrCode != ErrorCode.Success:
-                self.Log('pushByID 1 goto post fail', LogLevel.DEBUG)
-                return ErrorCode
-
-        Message = 'X'
-        
-        while True:
-        
-            ErrCode, Index = self.__readScreen(ConnectIndex, Message, ['您覺得這篇文章', '加註方式', '禁止快速連續推文', '禁止短時間內大量推文', '使用者不可發言'])
-            if ErrCode == self.WaitTimeout:
-                print(self.__ReceiveData[ConnectIndex])
-                self.Log('No push option')
-                return self.NoPermission
-            if ErrCode != ErrorCode.Success:
-                self.Log('pushByID 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
-                return ErrorCode
-            
-            Pushable = False
-            
-            ArrowOnly = False
-            
-            AllowPushTypeList = [False, False, False, False]
-            
-            AllowPushTypeList[self.PushType_Push] = False
-            AllowPushTypeList[self.PushType_Boo] = False
-            AllowPushTypeList[self.PushType_Arrow] = False
-            
-            if Index == 0:
-                if '值得推薦' in self.__ReceiveData[ConnectIndex]:
-                    AllowPushTypeList[self.PushType_Push] = True
-                if '給它噓聲' in self.__ReceiveData[ConnectIndex]:
-                    AllowPushTypeList[self.PushType_Boo] = True
-                if '註解' in self.__ReceiveData[ConnectIndex]:
-                    AllowPushTypeList[self.PushType_Arrow] = True
-                Pushable = True
-                break
-            if Index == 1:
-                AllowPushTypeList[self.PushType_Arrow] = True
-                PushType = self.PushType_Arrow
-                ArrowOnly = True
-                Pushable = True
-                break
-            if Index == 2:
-                self.Log('無法快速推文，等待中...')
-                Message = 'qX'
-                time.sleep(1)
-            if Index == 3:
-                self.Log('系統阻擋過多推文，等待中...')
-                Message = 'qX'
-                time.sleep(2)
-            if Index == 4:
-                self.Log('你被水桶惹 QQ')
-                return self.NoPermission
-                
-        if not AllowPushTypeList[self.PushType_Boo] and PushType == self.PushType_Boo:
-            PushType = self.PushType_Arrow
-        
-        CaseList = ['']
-        
-        if ArrowOnly:
-            SendMessage = PushContent + '\ry'
-        else:
-            SendMessage = str(PushType) + PushContent + '\ry'
-        
-        ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, True, True)
-        if ErrCode != ErrorCode.Success:
-            self.Log('pushByID 3 error code: ' + str(ErrorCode), LogLevel.DEBUG)
-            return ErrorCode
-
-        return ErrorCode.Success
-    def pushByIndex(self, Board, PushType, PushContent, PostIndex, ConnectIndex = 0):
-        ErrCode = self.pushByID(Board, PushType, PushContent, '', PostIndex, ConnectIndex)
-        return ErrorCode
-    def mail(self, UserID, MailTitle, MailContent, SignType, ConnectIndex = 0):
-    
-        ErrCode = self.__gotoTop(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            print('mail goto top error code 1: ' + str(ErrorCode))
-            return ErrorCode
-        
-        CaseList = ['主題：', '請選擇簽名檔', '已順利寄出，是否自存底稿', '任意鍵繼續', '電子郵件']
-        SendMessage = 'M\rS\r' + UserID
-        Enter = True
-        while True:
-            ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
-            if ErrCode == self.WaitTimeout:
-                self.__showScreen()
-                self.Log('無該使用: ' + UserID)
-                return self.NoUser
-            if ErrCode != ErrorCode.Success:
-                self.Log('mail 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
-                return ErrorCode
-            if Index == 0:
-                SendMessage = MailTitle + '\r' + MailContent + '\x18s'
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 3
-                self.Log('mail 主題', LogLevel.DEBUG)
-            if Index == 1:
-                SendMessage = str(SignType)
-                Enter = True
-                self.Log('mail 請選擇簽名檔', LogLevel.DEBUG)
-            if Index == 2:
-                SendMessage = 'Y'
-                Enter = True
-                self.Log('mail 已順利寄出', LogLevel.DEBUG)
-            if Index == 3:
-                SendMessage = 'q'
-                Enter = False
-                self.Log('mail 任意鍵繼續', LogLevel.DEBUG)
-            if Index == 4:
-                self.Log('mail 回到電子郵件', LogLevel.DEBUG)
-                break
         
         return ErrorCode.Success
         
