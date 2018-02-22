@@ -68,7 +68,8 @@ class Library(object):
         self.__PreReceiveData = [''] * self.__MaxMultiLogin
         self.__isConnected = [False] * self.__MaxMultiLogin
 
-        self.QQ = 0
+        self.__isBackground = False
+
         ###############################
 
         self.__KickTimes =                      0
@@ -87,8 +88,6 @@ class Library(object):
         
         self.__CrawPool = []
         
-        self.__isBackground = False
-
         try:
             self.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
             self.__isBackground = False
@@ -295,12 +294,12 @@ class Library(object):
 
             SendMessage = ''
             Refresh = True
-            ExtraWait = 0
+
             CatchList = [
                 # 0
-                '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
+                '請檢查帳號及密碼大小寫有無輸入錯誤',
                 # 1
-                '請輸入您的密碼:', 
+                '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
                 # 2
                 '開始登入系統...',
                 # 3
@@ -315,43 +314,45 @@ class Library(object):
                 '為避免系統負荷過重, 請稍後再試',
                 # 8
                 '正在更新與同步線上使用者及好友名單，系統負荷量大時會需時較久...',
-                #9
+                # 9
                 '您有一篇文章尚未完成',
-                #10
+                # 10
                 '郵件選單',
-                #11
-                '請檢查帳號及密碼大小寫有無輸入錯誤',
+                # 11
+                '正在檢查密碼...',
+                # 12
+                '請輸入您的密碼:',
             ]
             
             while True:
-                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh, ExtraWait=ExtraWait)
-                if ErrCode != ErrorCode.Success:
+                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh)
+                if ErrCode == ErrorCode.WaitTimeout:
+                    self.Log('登入操作超時重新嘗試')
+                    break
+                elif ErrCode != ErrorCode.Success:
                     self.Log('登入操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                     return ErrCode
                 
                 SendMessage = ''
                 Refresh = False
-                ExtraWait = 0
 
-                if ErrCode != 0:
-                    self.Log('登入失敗 錯誤碼: ' + str(ErrCode))
-                    return ErrCode
+                # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+
                 if CatchIndex == 0:
+                    self.Log('密碼錯誤')
+                    return ErrorCode.WrongPassword
+                elif CatchIndex == 1:
                     self.Log('連線至首頁')
                     self.Log('輸入帳號')
                     SendMessage = self.__ID + '\r'
-                elif CatchIndex == 1:
-                    self.Log('輸入密碼')
-                    SendMessage = self.__Password + '\r'
-                    Refresh = True
+                    # Refresh = False
                 elif CatchIndex == 2:
                     self.Log('登入成功!')
                     self.Log('等待載入主選單')
                     SendMessage = ' '
-                    Refresh = True
                 elif CatchIndex == 3:
                     self.Log('請按任意鍵繼續')
-                    SendMessage = ' '
+                    SendMessage = 'qqq'
                     Refresh = True
                 elif CatchIndex == 4:
                     if self.__kickOtherLogin:
@@ -372,29 +373,31 @@ class Library(object):
                     time.sleep(1)
                     Retry = True
                     ErrCode = ErrorCode.LoginFrequently
-                    continue
+                    break
                 elif CatchIndex == 8:
                     self.Log('正在更新與同步線上使用者及好友名單')
                     time.sleep(2)
                     SendMessage = ' '
-                    Refresh = True
                 elif CatchIndex == 9:
                     self.Log('放棄尚未完成文章')
                     SendMessage = 'q\r'
-                    ExtraWait = 1
                 elif CatchIndex == 10:
                     self.Log('信件數目超出上限請整理')
                     return ErrorCode.MailBoxFull
                 elif CatchIndex == 11:
-                    self.Log('密碼錯誤')
-                    return ErrorCode.WrongPassword
+                    self.Log('正在檢查密碼')
+                    # time.sleep(1)
+                    SendMessage = ' '
+                    Refresh = True
+                elif CatchIndex == 12:
+                    self.Log('輸入密碼')
+                    SendMessage = self.__Password + '\r'
+                    # Refresh = True
                 else:
-                    self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
                     ErrCode = ErrorCode.UnknowError
-                    Retry = True
-                    # 若是沒有抓到適合的字串，表示可能誤進其他地方了，使用q 退出
-                    SendMessage = 'qqqq'
-                    continue
+                    SendMessage = '\x1d\x1d'
+                    Refresh = True
+                    # Retry = True
 
         if '> (' in self.__ReceiveData[ConnectIndex]:
             self.Log('新式游標模式')
@@ -429,13 +432,14 @@ class Library(object):
                     continue
                 self.Log('頻道 ' + str(index) + ' 登出', LogLevel.DEBUG)
                 
-                SendMessage = '\x1d\x1d\x1d\x1dg\ry\r'
-                Refresh = False
+                SendMessage = '\x1d\x1d\x1d\x1d g\ry\r'
+                Refresh = True
                 ExtraWait = 0
 
                 ErrCode, CatchIndex = self.__operatePTT(index, SendMessage=SendMessage, CatchTargetList=['按任意鍵繼續'], Refresh=Refresh, ExtraWait=ExtraWait)
                 if ErrCode != 0:
-                    self.Log('頻道 ' + str(index) + '登出失敗 錯誤碼: ' + str(ErrCode))
+                    # self.Log('頻道 ' + str(index) + ' 登出失敗 錯誤碼: ' + str(ErrCode))
+                    self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
                     return ErrorCode.UnknowError
                 self.Log('頻道 ' + str(index) + ' 登出成功')
                 
@@ -1044,16 +1048,23 @@ class Library(object):
             # 前進至板面
             SendMessage += '\x1d\x1d\x1d\x1d'
         
-        SendMessage += 'M\rS\r' + UserID + '\r' + MailTitle + '\r'
-        CatchList = []
+        SendMessage += 'M\rS\r' + UserID + '\r' + MailTitle + '\r' + MailContent + '\x18s\ry\r\x1d\x1d\x1d\x1d'
+        CatchList = [
+            # 0
+            '【主功能表】',
+            # 1
+            '【電子郵件】',
+        ]
 
         ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
         if ErrCode != ErrorCode.Success:
             return ErrCode
 
         self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
-        if CatchIndex == 0:
-            pass
+        if CatchIndex == 0 or CatchIndex == 1:
+            return ErrorCode.Success
+        else:
+            return ErrorCode.UnknowError
 
         return ErrorCode.Success
         
