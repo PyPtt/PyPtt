@@ -38,37 +38,40 @@ class MailInformation(object):
         return self.__IP
 
 class UserInformation(object):
-    def __init__(self, UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess):
-        self.__UserID = str(UserID)
-        self.__UserMoney = str(UserMoney)
-        self.__UserLoginTime = int(UserLoginTime)
-        self.__UserPost = int(UserPost)
-        self.__UserState = str(UserState)
-        self.__UserMail = str(UserMail)
-        self.__UserLastLogin = str(UserLastLogin)
-        self.__UserLastIP = str(UserLastIP)
-        self.__UserFiveChess = str(UserFiveChess)
-        self.__UserChess = str(UserChess)
+    def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State, Mail, LastLogin, LastIP, FiveChess, Chess):
+        self.__ID = str(ID)
+        self.__Money = str(Money)
+        self.__LoginTime = int(LoginTime)
+        self.__LegalPost = int(LegalPost)
+        self.__IllegalPost = int(IllegalPost)
+        self.__State = str(State)
+        self.__Mail = str(Mail)
+        self.__LastLogin = str(LastLogin)
+        self.__LastIP = str(LastIP)
+        self.__FiveChess = FiveChess
+        self.__Chess = Chess
     def getID(self):
-        return self.__UserID
+        return self.__ID
     def getMoney(self):
-        return self.__UserMoney
+        return self.__Money
     def getLoginTime(self):
-        return self.__UserLoginTime
-    def getPost(self):
-        return self.__UserPost
+        return self.__LoginTime
+    def getLegalPost(self):
+        return self.__LegalPost
+    def getIllegalPost(self):
+        return self.__IllegalPost
     def getState(self):
-        return self.__UserState
+        return self.__State
     def getMail(self):
-        return self.__UserMail
+        return self.__Mail
     def getLastLogin(self):
-        return self.__UserLastLogin
+        return self.__LastLogin
     def getLastIP(self):
-        return self.__UserLastIP
+        return self.__LastIP
     def getFiveChess(self):
-        return self.__UserFiveChess
+        return self.__FiveChess
     def getChess(self):
-        return self.__UserChess
+        return self.__Chess
         
 class PushInformation(object):
     def __init__(self, PushType, Author, PushContent, PushTime):

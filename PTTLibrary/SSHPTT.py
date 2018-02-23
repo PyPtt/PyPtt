@@ -331,7 +331,7 @@ class Library(object):
                 _DetectUnit(
                     '按任意鍵繼續',
                     '任意鍵', 
-                    _ResponseUnit('\x1d', False)
+                    _ResponseUnit('\x1b\x4fD', False)
                 ),
                 _DetectUnit(
                     '放棄未完成文章',
@@ -353,16 +353,16 @@ class Library(object):
                     ErrCode = ErrorCode.WrongPassword
                 ),
                 _DetectUnit(
-                    '更新與同步線上使用者及好友名單',
-                    '更新與同步線上使用者及好友名單', 
-                    _ResponseUnit('\x1d\x1d', False)
-                ),
-                _DetectUnit(
                     '系統負荷過重，重新執行連線',
                     '為避免系統負荷過重, 請稍後再試', 
                     _ResponseUnit(' ', False),
                     BreakDetect=True,
                     ErrCode = ErrorCode.WaitTimeout
+                ),
+                _DetectUnit(
+                    '更新與同步線上使用者及好友名單',
+                    '更新與同步線上使用者及好友名單', 
+                    _ResponseUnit('\x1b\x4fD\x1b\x4fD', False)
                 ),
                 _DetectUnit(
                     '刪除重複登入的連線' if self.__kickOtherLogin else '不刪除重複登入的連線',
@@ -440,7 +440,7 @@ class Library(object):
         return ErrorCode.Success
     def __gotoMainMenu(self, ConnectIndex=0):
         
-        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, '\x1d\x1d\x1d\x1d', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], Refresh=True)
+        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], Refresh=True)
         if ErrCode != ErrorCode.Success:
             return ErrCode
         if CatchIndex != -1:
@@ -461,7 +461,7 @@ class Library(object):
                     continue
                 self.Log('頻道 ' + str(index) + ' 登出', LogLevel.DEBUG)
                 
-                SendMessage = '\x1d\x1d\x1d\x1d g\ry\r'
+                SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD g\ry\r'
                 Refresh = True
                 ExtraWait = 0
 
@@ -489,7 +489,7 @@ class Library(object):
             '文章選讀',
         ]
 
-        SendMessage = '\x1d\x1d\x1dqs' + Board + '\r\x03\x03 0\r$'
+        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 0\r$'
         Refresh = True
         ExtraWait = 0
 
@@ -549,7 +549,7 @@ class Library(object):
                 '文章選讀',
             ]
 
-            SendMessage = '\x1d\x1d\x1d\x1dqs' + Board + '\r\x03\x03 '
+            SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
         
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
             if ErrCode != ErrorCode.Success:
@@ -680,7 +680,7 @@ class Library(object):
             self.Log('已經位於 ' + Board + ' 板', LogLevel.DEBUG)
         else:
             # 前進至板面
-            SendMessage += '\x1d\x1d\x1d\x1dqs' + Board + '\r\x03\x03 '
+            SendMessage += '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
         
         # 前進至文章
 
@@ -890,7 +890,7 @@ class Library(object):
             self.Log('已經位於 ' + Board + ' 板', LogLevel.DEBUG)
         else:
             # 前進至板面
-            SendMessage += '\x1d\x1d\x1d\x1dqs' + Board + '\r\x03\x03 '
+            SendMessage += '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
         
         # 前進至文章
 
@@ -938,8 +938,14 @@ class Library(object):
             if '價格記錄' in screen:
                 PostMoney = -1
             else:
+                
                 PostMoney = screen
-                PostMoney = PostMoney[PostMoney.find('一篇文章'):]
+                # print(len(PostMoney))
+                print(PostMoney)
+                for c in '這一篇文章值':
+                    if c in PostMoney:
+                        PostMoney = PostMoney[PostMoney.find(c):]
+                print(PostMoney)
                 # 
                 try:
                     PostMoney = int(re.search(r'\d+', PostMoney).group())
@@ -1075,67 +1081,255 @@ class Library(object):
             self.Log('已經位於主功能表', LogLevel.DEBUG)
         else:
             # 前進至板面
-            SendMessage += '\x1d\x1d\x1d\x1d'
-        
-        SendMessage += 'M\rS\r' + UserID + '\r' + MailTitle + '\r' + MailContent + '\x18s\ry\r\x1d\x1d\x1d\x1d'
-        CatchList = [
-            # 0
-            '【主功能表】',
-            # 1
-            '【電子郵件】',
-        ]
+            SendMessage += '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
 
-        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
+        SendMessage += 'M\rS\r' + UserID + '\r' + MailTitle + '\r' + MailContent + '\x18s\r' + str(SignType) + '\ry\r'
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '任意鍵繼續',
+                '任意鍵', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD', False),
+            ),
+            _DetectUnit(
+                '電子郵件選單',
+                '【電子郵件】', 
+                _ResponseUnit('\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '電子郵件選單',
+                '【主功能表】', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
+        
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('超時')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+            
+            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    SendMessage = DetectTarget.getResponse().getSendMessaget()
+                    Refresh = DetectTarget.getResponse().needRefresh
+                    
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        self.__isConnected[ConnectIndex] = True
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                    break
+
+            if not isDetectedTarget:
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
         if ErrCode != ErrorCode.Success:
             return ErrCode
-
-        self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
-        if CatchIndex == 0 or CatchIndex == 1:
-            return ErrorCode.Success
-        else:
-            return ErrorCode.UnknowError
-
+        
         return ErrorCode.Success
+    def getTime(self):
         
-        ErrCode = self.__gotoTop(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            print('mail goto top error code 1: ' + str(ErrorCode))
-            return ErrorCode
+        ConnectIndex = 0
+
+        # \x1b\x4fA (上, 下右左 BCD)
+        SendMessage = '\x1b\x4fC\x1b\x4fD'
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '於主功能表取得系統時間',
+                '【主功能表】', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
         
-        CaseList = ['主題：', '請選擇簽名檔', '已順利寄出，是否自存底稿', '任意鍵繼續', '電子郵件']
-        SendMessage = 'M\rS\r' + UserID
-        Enter = True
-        while True:
-            ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
-            if ErrCode == self.WaitTimeout:
-                self.__showScreen()
-                self.Log('無該使用: ' + UserID)
-                return self.NoUser
-            if ErrCode != ErrorCode.Success:
-                self.Log('mail 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
-                return ErrorCode
-            if Index == 0:
-                SendMessage = MailTitle + '\r' + MailContent + '\x18s'
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 3
-                self.Log('mail 主題', LogLevel.DEBUG)
-            if Index == 1:
-                SendMessage = str(SignType)
-                Enter = True
-                self.Log('mail 請選擇簽名檔', LogLevel.DEBUG)
-            if Index == 2:
-                SendMessage = 'Y'
-                Enter = True
-                self.Log('mail 已順利寄出', LogLevel.DEBUG)
-            if Index == 3:
-                SendMessage = 'q'
-                Enter = False
-                self.Log('mail 任意鍵繼續', LogLevel.DEBUG)
-            if Index == 4:
-                self.Log('mail 回到電子郵件', LogLevel.DEBUG)
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('超時')
                 break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+            
+            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
+
+                    SendMessage = DetectTarget.getResponse().getSendMessaget()
+                    Refresh = DetectTarget.getResponse().needRefresh
+                    
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        self.__isConnected[ConnectIndex] = True
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                    break
+
+            if not isDetectedTarget:
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
+        if ErrCode != ErrorCode.Success:
+            return ErrCode
         
-        return ErrorCode.Success
+        LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
+        LastLineList = list(map(int, re.findall(r'\d+', LastLine)))
+        result = str(LastLineList[2]) + ':' + str(LastLineList[3])
+        # print(result)
+
+        return ErrorCode.Success, result
+    
+    def getUserInfo(self, UserID):
+        ConnectIndex = 0
+
+        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDT\rQ\r' + UserID + '\r'
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '取得使用者資料頁面',
+                '任意鍵', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '查無該使用者',
+                '【聊天說話】', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.NoUser
+            ),
+        ]
+        
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('超時')
+                return ErrCode, None
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode, None
+            
+            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
+
+                    SendMessage = DetectTarget.getResponse().getSendMessaget()
+                    Refresh = DetectTarget.getResponse().needRefresh
+                    
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        self.__isConnected[ConnectIndex] = True
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                    break
+
+            if not isDetectedTarget:
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
+        if ErrCode != ErrorCode.Success:
+            return ErrCode, None
+        
+        UserPageList = self.__ReceiveData[ConnectIndex].split('\n')
+        # for i in range(len(UserPageList)):
+        #     print('Q', UserPageList[i])
+        
+        UserPage = '\n'.join(UserPageList[2:6])
+        # print(UserPage)
+        UserDataList = list(map(int, re.findall(r'\d+', UserPage)))
+        # print(UserDataList)
+        # print(len(UserDataList)) 19
+
+        LoginTime = UserDataList[0]
+        LegalPost = UserDataList[1]
+        IllegalPost = UserDataList[2]
+        LastIP = str(UserDataList[9]) + '.' + str(UserDataList[10]) + '.' + str(UserDataList[11]) + '.' + str(UserDataList[12])
+        FiveChess = UserDataList[13:16]
+        Chess = UserDataList[16:19]
+
+        ID = UserPageList[1]
+        ID = ID[ID.find('《ＩＤ暱稱》') + len('《ＩＤ暱稱》') : ID.find('《經濟狀況》')]
+        while ID.startswith(' '):
+            ID = ID[1:]
+        while ID.endswith(' '):
+            ID = ID[:-1]
+        
+        Money = UserPageList[1]
+        Money = Money[Money.find('《經濟狀況》') + len('《經濟狀況》') :]
+        while Money.startswith(' '):
+            Money = Money[1:]
+        while Money.endswith(' '):
+            Money = Money[:-1]
+
+        State = UserPageList[3]
+        State = State[State.find('《目前動態》') + len('《目前動態》') : State.find('《私人信箱》')]
+        while State.startswith(' '):
+            State = State[1:]
+        while State.endswith(' '):
+            State = State[:-1]
+        
+        Mail = UserPageList[3]
+        Mail = Mail[Mail.find('《私人信箱》') + len('《私人信箱》') :]
+        while Mail.startswith(' '):
+            Mail = Mail[1:]
+        while Mail.endswith(' '):
+            Mail = Mail[:-1]
+
+        LastLogin = UserPageList[4]
+        LastLogin = LastLogin[LastLogin.find('《上次上站》') + len('《上次上站》') : LastLogin.find('《上次故鄉》')]
+        while LastLogin.startswith(' '):
+            LastLogin = LastLogin[1:]
+        while LastLogin.endswith(' '):
+            LastLogin = LastLogin[:-1]
+
+        # print('ID:', ID)
+        # print('Money:', Money)
+        # print('State:', State)
+        # print('Mail:', Mail)
+        # print('LastLogin:', LastLogin)
+
+        # print('LoginTime:', LoginTime)
+        # print('LegalPost:', LegalPost)
+        # print('IllegalPost:', IllegalPost)
+        # print('LastIP:', LastIP)
+        # print('FiveChess:', FiveChess)
+        # print('Chess:', Chess)
+
+        result = Information.UserInformation(ID, Money, LoginTime, LegalPost, IllegalPost, State, Mail, LastLogin, LastIP, FiveChess, Chess)
+
+        return ErrorCode.Success, result
     def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0, ShowProgressBar=True):
     
         self.__PostHandler = PostHandler
@@ -1316,174 +1510,7 @@ class Library(object):
                 self.Log('giveMoney 按任意鍵繼續', LogLevel.DEBUG)
                 break
         return ErrorCode.Success
-        
-    def getTime(self, ConnectIndex = 0):
-        for i in range(10):
-            ErrCode, Time = self.__getTime(ConnectIndex)
-            if ErrCode == ErrorCode.Success:
-                if i != 0:
-                    self.Log('getTime recover Success ' + str(i) + ' times', LogLevel.DEBUG)
-                break
-        
-        if len(Time) == 4:
-            Time = '0' + Time
-        
-        return ErrCode, Time
-    def __getTime(self, ConnectIndex = 0):
-        self.__CurrentTimeout[ConnectIndex] = 2
-        
-        #Thanks for ervery one in Python
-        
-        ErrCode = self.__gotoTop(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            print('getTime goto top error code 2: ' + str(ErrorCode))
-            return ErrCode, ''
-        
-        for i in range(3):
-            self.__CurrentTimeout[ConnectIndex] = 5
-            ErrCode, Index = self.__readScreen(ConnectIndex, 'A\rqA\rq', ['呼叫器'])
-            if ErrCode == self.WaitTimeout:
-                self.Log(self.__ReceiveData[ConnectIndex], LogLevel.DEBUG)
-                self.Log('getTime 2.1', LogLevel.DEBUG)
-                #return ErrCode, ''
-            if ErrCode != ErrorCode.Success:
-                self.Log('getTime 3 read screen error code: ' + str(ErrorCode), LogLevel.DEBUG)
-                #return ErrCode, ''
-            if '離開，再見…' in self.__ReceiveData[ConnectIndex] and '呼叫器' in self.__ReceiveData[ConnectIndex] and '星期' in self.__ReceiveData[ConnectIndex]:
-                break
-        if not '離開，再見…' in self.__ReceiveData[ConnectIndex] or not '呼叫器' in self.__ReceiveData[ConnectIndex] or not '星期' in self.__ReceiveData[ConnectIndex]:
-            return self.ParseError, ''
-        
-        LastResult = self.__ReceiveData[ConnectIndex]
-        
-        result = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('離開，再見…') + len('離開，再見…'):self.__ReceiveData[ConnectIndex].find('呼叫器')]
-        
-        if result.find('星期') < 0:
-            self.Log(LastResult, LogLevel.DEBUG)
-            self.Log(result, LogLevel.DEBUG)
-            self.Log('無法取得時間標的', LogLevel.DEBUG)
-            return self.ParseError, ''
-            
-        result = result[result.find('星期') + len('星期'):]
-        result = result[result.find(' ') + 1:result.find(']')]
-
-        return ErrorCode.Success, result
     
-    def getUserInfo(self, ID, ConnectIndex = 0):
-        ErrCode = self.__gotoTop(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            print('getUserInfo goto top error code 1: ' + str(ErrorCode))
-            return ErrCode, None
-        CaseList = ['請輸入使用者代號', '請按任意鍵繼續', '顯示上幾次熱訊']
-        SendMessage = 'T\rQ\r'
-        Enter = False
-        while True:        
-            ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
-            if ErrCode == self.WaitTimeout:
-                self.__showScreen()
-                self.Log('No such option: ' + SendMessage, LogLevel.DEBUG)
-                return ErrCode, None
-            if ErrCode != ErrorCode.Success:
-                self.Log('getUserInfo 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
-                return ErrCode, None
-            if Index == 0:
-                #self.Log('Input user ID')
-                SendMessage = str(ID)
-                Enter = True
-            if Index == 1:
-                break
-            if Index == 2:
-                #self.Log('No such user')
-                return self.NoUser, None
-        
-                
-        self.__CurrentTimeout[ConnectIndex] = 3
-        
-        ErrCode, Index = self.__readScreen(ConnectIndex, '', ['請按任意鍵繼續'])
-        
-        if ErrCode == self.WaitTimeout:
-            return self.WaitTimeout, None
-        if ErrCode != ErrorCode.Success:
-            self.Log('getUserInfo 3 read screen time out', LogLevel.DEBUG)
-            return ErrCode, None
-        
-        if not '《ＩＤ暱稱》' in self.__ReceiveData[ConnectIndex] or not '《經濟狀況》' in self.__ReceiveData[ConnectIndex] or not '《登入次數》' in self.__ReceiveData[ConnectIndex] or not '《有效文章》' in self.__ReceiveData[ConnectIndex] or not '《目前動態》' in self.__ReceiveData[ConnectIndex] or not '《私人信箱》' in self.__ReceiveData[ConnectIndex] or not '《上次上站》' in self.__ReceiveData[ConnectIndex] or not '《上次故鄉》' in self.__ReceiveData[ConnectIndex] or not '《 五子棋 》' in self.__ReceiveData[ConnectIndex] or not '《象棋戰績》' in self.__ReceiveData[ConnectIndex]:
-            self.Log('User info not complete')
-            return self.WaitTimeout, None
-        #print(self.__ReceiveData[ConnectIndex])
-        
-        UserID = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《ＩＤ暱稱》') + len('《ＩＤ暱稱》'):self.__ReceiveData[ConnectIndex].find(')') + 1]
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find(')') + 1:]
-        
-        Temp = self.__ReceiveData[ConnectIndex][:self.__ReceiveData[ConnectIndex].find('《登入次數》')]
-
-        UserMoney = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《經濟狀況》') + len('《經濟狀況》'):self.__ReceiveData[ConnectIndex].find('《登入次數》')]
-        
-        while UserMoney.endswith('m') or UserMoney.endswith(' ') or UserMoney.endswith('[') or UserMoney.endswith('\r') or UserMoney.endswith('\n') or UserMoney.endswith('\x1B'):
-            UserMoney = UserMoney[:len(UserMoney) - 1]
-        
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《登入次數》'):]
-
-        UserLoginTime = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《登入次數》') + len('《登入次數》'):self.__ReceiveData[ConnectIndex].find(')') + 1]
-        UserLoginTime = int(re.search(r'\d+', UserLoginTime).group())
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find(')') + 1:]
-        
-        UserPost = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《有效文章》') + len('《有效文章》'):self.__ReceiveData[ConnectIndex].find(')') + 1]
-        UserPost = int(re.search(r'\d+', UserPost).group())
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find(')') + 1:]
-        
-        UserState = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《目前動態》') + len('《目前動態》'):self.__ReceiveData[ConnectIndex].find('《私人信箱》')]
-        
-        while UserState.endswith('m') or UserState.endswith(' ') or UserState.endswith('[') or UserState.endswith('\r') or UserState.endswith('\n') or UserState.endswith('\x1B'):
-            UserState = UserState[:len(UserState) - 1]
-        
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《私人信箱》'):]
-        
-        UserMail = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《私人信箱》') + len('《私人信箱》'):self.__ReceiveData[ConnectIndex].find('《上次上站》')]
-        
-        while UserMail.endswith('m') or UserMail.endswith(' ') or UserMail.endswith('[') or UserMail.endswith('\r') or UserMail.endswith('\n') or UserMail.endswith('\x1B'):
-            UserMail = UserMail[:len(UserMail) - 1]
-        
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《上次上站》'):]
-        
-        UserLastLogin = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《上次上站》') + len('《上次上站》'):self.__ReceiveData[ConnectIndex].find('《上次故鄉》')]
-        
-        while UserLastLogin.endswith('m') or UserLastLogin.endswith(' ') or UserLastLogin.endswith('[') or UserMail.endswith('\r') or UserMail.endswith('\n') or UserMail.endswith('\x1B'):
-            UserLastLogin = UserLastLogin[:len(UserLastLogin) - 1]
-        
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《上次故鄉》'):]
-        
-        UserLastIP = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《上次故鄉》') + len('《上次故鄉》'):self.__ReceiveData[ConnectIndex].find('《 五子棋 》')]
-        
-        while UserLastIP.endswith('m') or UserLastIP.endswith(' ') or UserLastIP.endswith('[') or UserLastIP.endswith('\r') or UserLastIP.endswith('\n') or UserLastIP.endswith('\x1B'):
-            UserLastIP = UserLastIP[:len(UserLastIP) - 1]
-        
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《 五子棋 》'):]
-        
-        UserFiveChess = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《 五子棋 》') + len('《 五子棋 》'):self.__ReceiveData[ConnectIndex].find('《象棋戰績》')]
-        
-        while UserFiveChess.endswith('m') or UserFiveChess.endswith(' ') or UserFiveChess.endswith('[') or UserFiveChess.endswith('\r') or UserFiveChess.endswith('\n') or UserFiveChess.endswith('\x1B'):
-            UserFiveChess = UserFiveChess[:len(UserFiveChess) - 1]
-        
-        while UserFiveChess.find('  ') != -1:
-            UserFiveChess = UserFiveChess.replace('  ', ' ')
-        
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《象棋戰績》'):]
-        
-        UserChess = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('《象棋戰績》') + len('《象棋戰績》'):self.__ReceiveData[ConnectIndex].find('和') + 1]
-        
-        while UserChess.endswith('m') or UserChess.endswith(' ') or UserChess.endswith('[') or UserChess.endswith('\r') or UserChess.endswith('\n') or UserChess.endswith('\x1B'):
-            UserChess = UserChess[:len(UserChess) - 1]
-        
-        while UserChess.find('  ') != -1:
-            UserChess = UserChess.replace('  ', ' ')
-        
-        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][self.__ReceiveData[ConnectIndex].find('和') + 1:]
-        
-        result = UserInformation(UserID, UserMoney, UserLoginTime, UserPost, UserState, UserMail, UserLastLogin, UserLastIP, UserFiveChess, UserChess)
-        
-        return ErrorCode.Success, result
-        
     def readPostFile(self, FileName):
         
         return Util.readPostFile(FileName)
