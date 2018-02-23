@@ -492,16 +492,16 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
-    # for i in range(10):
-    #     PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
-    #     if not PTTBot.isLoginSuccess():
-    #         PTTBot.Log('登入失敗')
-    #         sys.exit()
-    #     PTTBot.logout()
-    
-    # sys.exit()
+    for i in range(10):
+        PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
+        if not PTTBot.isLoginSuccess():
+            PTTBot.Log('登入失敗')
+            sys.exit()
+        PTTBot.logout()
+        PTTBot.Log('-' * 50)
+    sys.exit()
 
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')

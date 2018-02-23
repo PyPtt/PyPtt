@@ -24,6 +24,37 @@ LogLevel = Information.LogLevel()
 PushType = Information.PushType()
 ErrorCode = ErrorCode.ErrorCode()
 
+class _ResponseUnit(object):
+    def __init__(self, SendMessage, Refresh):
+        self.__SendMessage = SendMessage
+        self.__Refresh = Refresh
+    def getSendMessaget(self):
+        return self.__SendMessage
+    def needRefresh(self):
+        return self.__Refresh
+
+class _DetectUnit(object):
+    def __init__(self, DisplayMsg, DetectTarget, Response, BreakDetect=False, ErrCode=0):
+        self.__DisplayMsg = DisplayMsg
+        self.__DetectTarget = DetectTarget
+        self.__Response = Response
+        self.__BreakDetect = BreakDetect
+        self.__ErrCode = ErrCode
+    def isMatch(self, Screen):
+        if self.__DetectTarget in Screen:
+            return True
+        return False
+    def getDisplayMsg(self):
+        return self.__DisplayMsg
+    def getDetectTarget(self):
+        return self.__DetectTarget
+    def getResponse(self):
+        return self.__Response
+    def isBreakDetect(self):
+        return self.__BreakDetect
+    def getErrorCode(self):
+        return self.__ErrCode
+
 class Library(object):
     def __init__(self, ID, Password, kickOtherLogin=True, _LogLevel=-1):
 
@@ -101,10 +132,10 @@ class Library(object):
             TempPW += '*'
         
         self.Log('密碼: ' + TempPW)
-        if kickOtherLogin:
-            self.Log('此連線將"會"剔除其他登入')
-        else :
-            self.Log('此連線將"不會"剔除其他登入')
+        # if kickOtherLogin:
+        #     self.Log('此連線將"會"剔除其他登入')
+        # else :
+        #     self.Log('此連線將"不會"剔除其他登入')
         
         self.__connectRemote(0)
     
@@ -178,8 +209,8 @@ class Library(object):
 
                 self.__ConnectList[ConnectIndex].channel.send(SendMessage)
             
-            if ExtraWait != 0:
-                time.sleep(ExtraWait)
+            # if ExtraWait != 0:
+            #     time.sleep(ExtraWait)
             
             TimeCout = 0
             StartTime = time.time()
@@ -294,111 +325,109 @@ class Library(object):
 
             SendMessage = ''
             Refresh = True
-
-            CatchList = [
-                # 0
-                '請檢查帳號及密碼大小寫有無輸入錯誤',
-                # 1
-                '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
-                # 2
-                '開始登入系統...',
-                # 3
-                '任意鍵',
-                # 4
-                '您想刪除其他重複登入的連線嗎？[Y/n]',
-                # 5
-                '【 編特別名單 】',
-                # 6
-                '您要刪除以上錯誤嘗試的記錄嗎?',
-                # 7
-                '為避免系統負荷過重, 請稍後再試',
-                # 8
-                '正在更新與同步線上使用者及好友名單，系統負荷量大時會需時較久...',
-                # 9
-                '您有一篇文章尚未完成',
-                # 10
-                '郵件選單',
-                # 11
-                '正在檢查密碼...',
-                # 12
-                '請輸入您的密碼:',
+            isBreakDetect = False
+            # 先後順序代表偵測的優先順序
+            DetectTargetList = [
+                _DetectUnit(
+                    '按任意鍵繼續',
+                    '任意鍵', 
+                    _ResponseUnit('\x1d', False)
+                ),
+                _DetectUnit(
+                    '放棄未完成文章',
+                    '有一篇文章尚未完成', 
+                    _ResponseUnit('q\r', False)
+                ),
+                _DetectUnit(
+                    '郵件已滿，無法執行任何功能',
+                    '郵件選單', 
+                    _ResponseUnit(' ', False),
+                    BreakDetect=True,
+                    ErrCode = ErrorCode.MailBoxFull
+                ),
+                _DetectUnit(
+                    '密碼錯誤',
+                    '請檢查帳號及密碼大小寫有無輸入錯誤', 
+                    _ResponseUnit(' ', False),
+                    BreakDetect=True,
+                    ErrCode = ErrorCode.WrongPassword
+                ),
+                _DetectUnit(
+                    '更新與同步線上使用者及好友名單',
+                    '更新與同步線上使用者及好友名單', 
+                    _ResponseUnit('\x1d\x1d', False)
+                ),
+                _DetectUnit(
+                    '系統負荷過重，重新執行連線',
+                    '為避免系統負荷過重, 請稍後再試', 
+                    _ResponseUnit(' ', False),
+                    BreakDetect=True,
+                    ErrCode = ErrorCode.WaitTimeout
+                ),
+                _DetectUnit(
+                    '刪除重複登入的連線' if self.__kickOtherLogin else '不刪除重複登入的連線',
+                    '刪除其他重複登入的連線', 
+                    _ResponseUnit('y\r' if self.__kickOtherLogin else 'n\r', True)
+                ),
+                _DetectUnit(
+                    '刪除錯誤嘗試紀錄',
+                    '您要刪除以上錯誤嘗試的記錄嗎', 
+                    _ResponseUnit('y\r', False)
+                ),
+                _DetectUnit(
+                    '登入成功',
+                    '【主功能表】', 
+                    _ResponseUnit(' ', False),
+                    BreakDetect=True,
+                ),
+                _DetectUnit(
+                    '輸入密碼',
+                    '請輸入您的密碼:', 
+                    _ResponseUnit(self.__Password + '\r\r', True)
+                ),
+                _DetectUnit(
+                    '輸入帳號',
+                    '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
+                    _ResponseUnit(self.__ID + '\r', False)
+                ),
             ]
             
-            while True:
-                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=Refresh)
+            while not isBreakDetect:
+                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
                 if ErrCode == ErrorCode.WaitTimeout:
-                    self.Log('登入操作超時重新嘗試')
+                    self.Log('登入超時重新嘗試')
                     break
                 elif ErrCode != ErrorCode.Success:
                     self.Log('登入操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                     return ErrCode
                 
-                SendMessage = ''
-                Refresh = False
-
                 # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
 
-                if CatchIndex == 0:
-                    self.Log('密碼錯誤')
-                    return ErrorCode.WrongPassword
-                elif CatchIndex == 1:
-                    self.Log('連線至首頁')
-                    self.Log('輸入帳號')
-                    SendMessage = self.__ID + '\r'
-                    # Refresh = False
-                elif CatchIndex == 2:
-                    self.Log('登入成功!')
-                    self.Log('等待載入主選單')
-                    SendMessage = ' '
-                elif CatchIndex == 3:
-                    self.Log('請按任意鍵繼續')
-                    SendMessage = 'qqq'
-                    Refresh = True
-                elif CatchIndex == 4:
-                    if self.__kickOtherLogin:
-                        self.Log('踢除其他登入...')
-                        SendMessage = 'y\r'
-                    else:
-                        self.Log('不踢除其他登入...')
-                        SendMessage = 'n\r'
-                elif CatchIndex == 5:
-                    self.Log('進入主選單')
-                    self.__isConnected[ConnectIndex] = True
-                    break
-                elif CatchIndex == 6:
-                    self.Log('刪除錯誤嘗試的記錄')
-                    SendMessage = 'y\r'
-                elif CatchIndex == 7:
-                    self.Log('登入太頻繁 重新連線')
-                    time.sleep(1)
-                    Retry = True
-                    ErrCode = ErrorCode.LoginFrequently
-                    break
-                elif CatchIndex == 8:
-                    self.Log('正在更新與同步線上使用者及好友名單')
-                    time.sleep(2)
-                    SendMessage = ' '
-                elif CatchIndex == 9:
-                    self.Log('放棄尚未完成文章')
-                    SendMessage = 'q\r'
-                elif CatchIndex == 10:
-                    self.Log('信件數目超出上限請整理')
-                    return ErrorCode.MailBoxFull
-                elif CatchIndex == 11:
-                    self.Log('正在檢查密碼')
-                    # time.sleep(1)
-                    SendMessage = ' '
-                    Refresh = True
-                elif CatchIndex == 12:
-                    self.Log('輸入密碼')
-                    SendMessage = self.__Password + '\r'
-                    # Refresh = True
-                else:
-                    ErrCode = ErrorCode.UnknowError
-                    SendMessage = '\x1d\x1d'
-                    Refresh = True
-                    # Retry = True
+                isDetectedTarget = False
 
+                for DetectTarget in DetectTargetList:
+                    if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                        self.Log(DetectTarget.getDisplayMsg())
+
+                        SendMessage = DetectTarget.getResponse().getSendMessaget()
+                        Refresh = DetectTarget.getResponse().needRefresh
+                        
+                        isDetectedTarget = True
+                        if DetectTarget.isBreakDetect():
+                            self.__isConnected[ConnectIndex] = True
+                            isBreakDetect = True
+                            ErrCode = DetectTarget.getErrorCode()
+                        break
+
+                if not isDetectedTarget:
+                    self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                    self.Log('無法解析的狀態 以上是最後兩個畫面')
+                    sys.exit()
+            if ErrCode == ErrorCode.WaitTimeout:
+                Retry = True
+            elif ErrCode != ErrorCode.Success:
+                return ErrCode
+            
         if '> (' in self.__ReceiveData[ConnectIndex]:
             self.Log('新式游標模式')
             self.__Cursor = '>'

@@ -11,11 +11,6 @@ def Log(InputMessage):
         #print(TotalMessage.encode('big5').decode('big5'))
         print(TotalMessage.encode('utf-8', "replace").decode('utf-8'))
 
-    # TotalMessage = TotalMessage.replace('\r\n', '\n')
-
-    # with open("Log.txt", "a", encoding = 'utf-8') as myfile:
-    #     myfile.write(TotalMessage + '\n')
-    
 def getTime():
     return strftime("%H:%M")
 
