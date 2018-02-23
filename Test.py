@@ -251,7 +251,7 @@ def MailDemo():
     # 第三個參數是信件內容
     # 第四個參數是簽名檔選擇 0 不加簽名檔
     
-    for i in range(1):
+    for i in range(3):
         ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ', 0)
         if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('寄信給 ' + ID + ' 成功')
@@ -290,7 +290,7 @@ def GetTimeDemo():
         
     for i in range(3):
         ErrorCode, Time = PTTBot.getTime()
-        if ErrorCode != PTTBot.Success:
+        if ErrorCode != PTT.ErrorCode.Success:
             PTTBot.Log('取得時間失敗')
             return False
         PTTBot.Log('Ptt time: ' + Time + '!')
@@ -337,11 +337,11 @@ def CrawlBoardDemo():
         
 def GetUserInfoDemo():
     
-    #範例是追蹤 某些ID的情況
-    #此API可以持續追蹤某ID的動態
-    #詳細可以參考 範例程式中的 ID追蹤器
+    # 範例是追蹤特定 ID 的情況
+    # 此API可以持續追蹤某ID的動態
+    # 詳細可以參考 範例程式中的 ID追蹤器
     
-    #使用者資訊資料結構可參考如下
+    # 使用者資訊資料結構可參考如下
     
     ################## 使用者資訊 User information ##################
     # getID                     ID
@@ -360,23 +360,24 @@ def GetUserInfoDemo():
         PTTBot.Log('---------------------------')
         PTTBot.Log('Start query: ' + IDs)
         ErrorCode, UserInfo = PTTBot.getUserInfo(IDs)
-        if ErrorCode == PTTBot.NoUser:
-            PTTBot.Log('No such user')
+        if ErrorCode == PTT.ErrorCode.NoUser:
+            # PTTBot.Log('')
             continue
-        if ErrorCode != PTTBot.Success:
+        elif ErrorCode != PTT.ErrorCode.Success:
             PTTBot.Log('getUserInfo fail error code: ' + str(ErrorCode))
             continue
         
         PTTBot.Log('使用者ID: ' + UserInfo.getID())
         PTTBot.Log('使用者經濟狀況: ' + str(UserInfo.getMoney()))
         PTTBot.Log('登入次數: ' + str(UserInfo.getLoginTime()))
-        PTTBot.Log('有效文章數: ' + str(UserInfo.getPost()))
+        PTTBot.Log('有效文章數: ' + str(UserInfo.getLegalPost()))
+        PTTBot.Log('退文章數: ' + str(UserInfo.getIllegalPost()))
         PTTBot.Log('目前動態: ' + UserInfo.getState() + '!')
         PTTBot.Log('信箱狀態: ' + UserInfo.getMail() + '!')
         PTTBot.Log('最後登入時間: ' + UserInfo.getLastLogin() + '!')
         PTTBot.Log('上次故鄉: ' + UserInfo.getLastIP() + '!')
-        PTTBot.Log('五子棋戰績: ' + UserInfo.getFiveChess() + '!')
-        PTTBot.Log('象棋戰績: ' + UserInfo.getChess() + '!')
+        PTTBot.Log('五子棋戰績: ' + str(UserInfo.getFiveChess()[0]) + ' 勝 ' + str(UserInfo.getFiveChess()[1]) + ' 敗 ' + str(UserInfo.getFiveChess()[2]) + ' 和')
+        PTTBot.Log('象棋戰績:' + str(UserInfo.getChess()[0]) + ' 勝 ' + str(UserInfo.getChess()[1]) + ' 敗 ' + str(UserInfo.getChess()[2]) + ' 和')
 
 def ReplyPostDemo():
     
@@ -492,16 +493,16 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
-    for i in range(10):
-        PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
-        if not PTTBot.isLoginSuccess():
-            PTTBot.Log('登入失敗')
-            sys.exit()
-        PTTBot.logout()
-        PTTBot.Log('-' * 50)
-    sys.exit()
+    # for i in range(10):
+    #     PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
+    #     if not PTTBot.isLoginSuccess():
+    #         PTTBot.Log('登入失敗')
+    #         sys.exit()
+    #     PTTBot.logout()
+    #     PTTBot.Log('-' * 50)
+    # sys.exit()
 
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
@@ -512,10 +513,9 @@ if __name__ == '__main__':
     # PushDemo()
     # GetPostInfoDemo()
     # MailDemo()
-
-    # GetNewPostIndexListDemo()
     # GetTimeDemo()
-    # GetUserInfoDemo()
+    GetUserInfoDemo()
+    
     # GiveMoneyDemo()
     # CrawlBoardDemo()
     # ReplyPostDemo()
