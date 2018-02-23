@@ -371,7 +371,7 @@ def GetUserInfoDemo():
         PTTBot.Log('使用者經濟狀況: ' + str(UserInfo.getMoney()))
         PTTBot.Log('登入次數: ' + str(UserInfo.getLoginTime()))
         PTTBot.Log('有效文章數: ' + str(UserInfo.getLegalPost()))
-        PTTBot.Log('退文章數: ' + str(UserInfo.getIllegalPost()))
+        PTTBot.Log('退文文章數: ' + str(UserInfo.getIllegalPost()))
         PTTBot.Log('目前動態: ' + UserInfo.getState() + '!')
         PTTBot.Log('信箱狀態: ' + UserInfo.getMail() + '!')
         PTTBot.Log('最後登入時間: ' + UserInfo.getLastLogin() + '!')
@@ -444,7 +444,7 @@ def GetMailDemo():
     # getIP                     寄件IP
 
     ErrorCode, NewestMailIndex = PTTBot.getNewestMailIndex()
-    if ErrorCode == PTTBot.Success:
+    if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得最新信件編號成功')
     else:
         PTTBot.Log('取得最新信件編號失敗 錯誤碼: ' + str(ErrorCode))
@@ -460,7 +460,7 @@ def GetMailDemo():
     for i in range(MailStartIndex, NewestMailIndex):
         MailIndex = i + 1
         ErrorCode, Mail = PTTBot.getMail(MailIndex)
-        if ErrorCode == PTTBot.Success:
+        if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('取得編號 ' + str(MailIndex) + ' 信件成功')
 
             PTTBot.Log('信件作者: ' + Mail.getAuthor())
@@ -514,12 +514,13 @@ if __name__ == '__main__':
     # GetPostInfoDemo()
     # MailDemo()
     # GetTimeDemo()
-    GetUserInfoDemo()
+    GetMailDemo()
+    # GetUserInfoDemo()
     
+
     # GiveMoneyDemo()
     # CrawlBoardDemo()
     # ReplyPostDemo()
-    # GetMailDemo()
 
     # 請養成登出好習慣
     PTTBot.logout()
