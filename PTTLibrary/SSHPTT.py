@@ -101,6 +101,7 @@ class Library(object):
 
         self.__isBackground = False
 
+        self.__gotoMainMenu = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
         ###############################
 
         self.__KickTimes =                      0
@@ -388,7 +389,7 @@ class Library(object):
                 _DetectUnit(
                     '輸入帳號',
                     '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
-                    _ResponseUnit(self.__ID + '\r', False)
+                    _ResponseUnit(self.__ID + '\r', True)
                 ),
             ]
             
@@ -438,14 +439,6 @@ class Library(object):
             self.Log('無法偵測游標')
             return ErrorCode.UnknowError
         return ErrorCode.Success
-    def __gotoMainMenu(self, ConnectIndex=0):
-        
-        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', ['[呼叫器]', '編特別名單', '娛樂與休閒', '系統資訊區', '主功能表', '私人信件區'], Refresh=True)
-        if ErrCode != ErrorCode.Success:
-            return ErrCode
-        if CatchIndex != -1:
-            return ErrorCode.Success
-        return ErrorCode.UnknowError
     def logout(self, ConnectIndex=-1):
         
         if ConnectIndex == -1:
@@ -1075,23 +1068,102 @@ class Library(object):
     def mail(self, UserID, MailTitle, MailContent, SignType):
         
         ConnectIndex = 0
-        SendMessage = ''
 
-        if '【主功能表】' in self.__ReceiveData[ConnectIndex]:
-            self.Log('已經位於主功能表', LogLevel.DEBUG)
-        else:
-            # 前進至板面
-            SendMessage += '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
+        MailContentListTemp = MailContent.split('\r')
+        MailContentList = []
 
-        SendMessage += 'M\rS\r' + UserID + '\r' + MailTitle + '\r' + MailContent + '\x18s\r' + str(SignType) + '\ry\r'
+        MailContentListIndex = 0
+
+        while len(MailContentListTemp) != 0:
+            if len(MailContentListTemp) >= 20:
+                MailContentList.append('\r'.join(MailContentListTemp[0:20]))
+                for i in range(20):
+                    MailContentListTemp.pop(0)
+            else:
+                MailContentList.append('\r'.join(MailContentListTemp))
+                break
+        
+        SendMessage = self.__gotoMainMenu + 'M\rS\r' + UserID + '\r' + MailTitle + '\r'
+        # MailContent + '\x18s\r' + str(SignType) + '\ry\r'
         Refresh = True
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
             _DetectUnit(
+                '編輯文章 ' + str(int((MailContentListIndex + 1) * 100 / len(MailContentList))) + ' %',
+                '編輯文章', 
+                _ResponseUnit(MailContentList[MailContentListIndex], True),
+            ),
+        ]
+        
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('超時')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+            
+            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+
+            isDetectedTarget = False
+
+            for i in range(len(DetectTargetList)):
+                if DetectTargetList[i].isMatch(self.__ReceiveData[ConnectIndex]):
+                    self.Log(DetectTargetList[i].getDisplayMsg())
+
+                    SendMessage = DetectTargetList[i].getResponse().getSendMessaget()
+                    Refresh = DetectTargetList[i].getResponse().needRefresh
+                    
+                    isDetectedTarget = True
+                    if DetectTargetList[i].isBreakDetect():
+                        isBreakDetect = True
+                        ErrCode = DetectTargetList[i].getErrorCode()
+                    
+                    if '編輯文章' in DetectTargetList[i].getDisplayMsg():
+
+                        MailContentListIndex += 1
+                        if MailContentListIndex == len(MailContentList):
+                            isBreakDetect = True
+                            break
+
+                        DetectTargetList[i] = _DetectUnit(
+                            '編輯文章 ' + str(int((MailContentListIndex + 1) * 100 / len(MailContentList))) + ' %',
+                            '編輯文章', 
+                            _ResponseUnit('\r' + MailContentList[MailContentListIndex], True),
+                        )
+
+                    break
+
+            if not isDetectedTarget:
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
+        if ErrCode != ErrorCode.Success:
+            return ErrCode
+        
+        SendMessage = '\x18'
+        Refresh = True
+        isBreakDetect = False
+        
+        DetectTargetList = [
+            _DetectUnit(
                 '任意鍵繼續',
                 '任意鍵', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD', False),
+                _ResponseUnit(self.__gotoMainMenu, False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '儲存檔案',
+                '確定要儲存檔案嗎', 
+                _ResponseUnit('s\r', False),
+            ),
+            _DetectUnit(
+                '自存底稿',
+                '是否自存底稿', 
+                _ResponseUnit('y\r', True),
             ),
             _DetectUnit(
                 '電子郵件選單',
@@ -1122,18 +1194,18 @@ class Library(object):
 
             isDetectedTarget = False
 
-            for DetectTarget in DetectTargetList:
-                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
-                    self.Log(DetectTarget.getDisplayMsg())
+            for i in range(len(DetectTargetList)):
+                if DetectTargetList[i].isMatch(self.__ReceiveData[ConnectIndex]):
+                    self.Log(DetectTargetList[i].getDisplayMsg())
 
-                    SendMessage = DetectTarget.getResponse().getSendMessaget()
-                    Refresh = DetectTarget.getResponse().needRefresh
+                    SendMessage = DetectTargetList[i].getResponse().getSendMessaget()
+                    Refresh = DetectTargetList[i].getResponse().needRefresh
                     
                     isDetectedTarget = True
-                    if DetectTarget.isBreakDetect():
-                        self.__isConnected[ConnectIndex] = True
+                    if DetectTargetList[i].isBreakDetect():
                         isBreakDetect = True
-                        ErrCode = DetectTarget.getErrorCode()
+                        ErrCode = DetectTargetList[i].getErrorCode()
+
                     break
 
             if not isDetectedTarget:
@@ -1142,7 +1214,7 @@ class Library(object):
                 sys.exit()
         if ErrCode != ErrorCode.Success:
             return ErrCode
-        
+
         return ErrorCode.Success
     def getTime(self):
         
@@ -1185,7 +1257,6 @@ class Library(object):
                     
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
-                        self.__isConnected[ConnectIndex] = True
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                     break
@@ -1250,7 +1321,6 @@ class Library(object):
                     
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
-                        self.__isConnected[ConnectIndex] = True
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                     break
@@ -1371,7 +1441,6 @@ class Library(object):
                     
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
-                        self.__isConnected[ConnectIndex] = True
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                     break
@@ -1450,7 +1519,6 @@ class Library(object):
                     
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
-                        self.__isConnected[ConnectIndex] = True
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                     break
@@ -1462,8 +1530,13 @@ class Library(object):
         if ErrCode != ErrorCode.Success:
             return ErrCode, None
 
-        MailLine = 
+        MailLineList = self.__ReceiveData[ConnectIndex].split('\n')
+
+        for line in MailLineList:
+            print('Q', line)
+
         return ErrorCode.Success, result
+        ###############################################
         try:
             MailIndex = int(inputMailIndex)
         except ValueError:
