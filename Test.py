@@ -250,9 +250,13 @@ def MailDemo():
     # 第二個參數是信件標題
     # 第三個參數是信件內容
     # 第四個參數是簽名檔選擇 0 不加簽名檔
-    
+    Content = ''
+
+    for i in range(128):
+        Content += '測試行 ' + str(i) + '\r'
+
     for i in range(3):
-        ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ', 0)
+        ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ\r' + Content, 0)
         if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('寄信給 ' + ID + ' 成功')
         else:
@@ -500,7 +504,10 @@ if __name__ == '__main__':
     #         sys.exit()
     #     PTTBot.logout()
     #     PTTBot.Log('-' * 50)
-    # sys.exit()
+    TestString = '哈囉你好嗎？'
+    print(len(TestString))
+    print(len(TestString.encode('big5')))
+    sys.exit()
 
     PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
@@ -514,7 +521,7 @@ if __name__ == '__main__':
     # GetPostInfoDemo()
     # MailDemo()
     # GetTimeDemo()
-    GetMailDemo()
+    # GetMailDemo()
     # GetUserInfoDemo()
     
 
