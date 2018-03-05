@@ -647,10 +647,7 @@ class Library(object):
                 return ErrorCode.UnknowError
         
         return ErrorCode.Success
-    
     def push(self, Board, inputPushType, PushContent, PostID='', PostIndex=0):
-        
-        ConnectIndex=0
         
         PostIndex = int(PostIndex)
         PostID = str(PostID)
@@ -667,6 +664,44 @@ class Library(object):
             self.Log('文章編號與代碼輸入錯誤: 皆無輸入')
             return ErrorCode.ErrorInput
 
+        MaxPushLength = 45
+
+        self.__PushShow = [False * 5]
+        PushList = []
+        Temp = ''
+
+        TempStartIndex = 0
+        TempEndIndex = TempStartIndex + 1
+
+        while TempEndIndex < len(PushContent):
+
+            Temp = ''
+            while len(Temp.encode('big5')) < MaxPushLength:
+                Temp = PushContent[TempStartIndex:TempEndIndex]
+                
+                if not len(Temp.encode('big5')) < MaxPushLength:
+                    break
+                elif PushContent.endswith(Temp):
+                    break
+                    
+                TempEndIndex += 1
+            
+            PushList.append(Temp)
+            
+            TempStartIndex = TempEndIndex
+            TempEndIndex = TempStartIndex + 1
+        
+        for Push in PushList:
+            # print('Push:', Push)
+            ErrCode = self.__push(Board, inputPushType, Push, PostID=PostID, PostIndex=PostIndex)
+
+            if ErrCode != ErrorCode.Success:
+                return ErrCode
+        return ErrCode
+    def __push(self, Board, inputPushType, PushContent, PostID='', PostIndex=0):
+        
+        ConnectIndex=0
+        
         SendMessage = ''
 
         if '看板《' + Board + '》' in self.__ReceiveData[ConnectIndex] and '文章選讀' in self.__ReceiveData[ConnectIndex]:
@@ -748,7 +783,9 @@ class Library(object):
             self.Log('你被水桶惹 QQ')
             return ErrorCode.NoPermission
         elif CatchIndex == 4:
-            self.Log('作者本人使用箭頭')
+            if not self.__PushShow[CatchIndex]:
+                self.Log('作者本人使用箭頭')
+                self.__PushShow[CatchIndex] = True
             SendMessage = str(PushContent) + '\ry\r'
         elif CatchIndex == 5:
             self.Log('文章已經被刪除')
