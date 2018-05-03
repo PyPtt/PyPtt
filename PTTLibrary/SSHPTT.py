@@ -384,13 +384,13 @@ class Library(object):
                 _DetectUnit(
                     '輸入密碼',
                     '請輸入您的密碼:', 
-                    _ResponseUnit(self.__Password + '\r\r', True)
+                    _ResponseUnit(self.__Password + '\r\r', False)
                 ),
                 _DetectUnit(
                     '輸入帳號',
                     '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
                     _ResponseUnit(self.__ID + '\r', True)
-                ),
+                )
             ]
             
             while not isBreakDetect:
@@ -423,6 +423,11 @@ class Library(object):
                 if not isDetectedTarget:
                     self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
                     self.Log('無法解析的狀態 以上是最後兩個畫面')
+
+                    Lines = self.__ReceiveData[ConnectIndex].split('\r')
+                    for line in Lines:
+                        print('===' + line)
+
                     sys.exit()
             if ErrCode == ErrorCode.WaitTimeout:
                 Retry = True
@@ -432,6 +437,7 @@ class Library(object):
         if '> (' in self.__ReceiveData[ConnectIndex]:
             self.Log('新式游標模式')
             self.__Cursor = '>'
+            
         elif '●(' in self.__ReceiveData[ConnectIndex]:
             self.Log('舊式游標模式')
             self.__Cursor = '●'
@@ -492,6 +498,11 @@ class Library(object):
 
         # print(self.__ReceiveData[ConnectIndex])
 
+        ReceiveDataLines = self.__ReceiveData[ConnectIndex].split('\n')
+        ReceiveDataLines = ReceiveDataLines[2:-1]
+        self.__ReceiveData[ConnectIndex] = '\n'.join(ReceiveDataLines)
+        self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex][:self.__ReceiveData[ConnectIndex].find('★  ')]
+
         AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
         
         if len(AllIndex) == 0:
@@ -525,6 +536,81 @@ class Library(object):
             if str(result + 1) in self.__ReceiveData[ConnectIndex]:
                 result += 1
             else: 
+                break
+        
+        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 ' + str(result) + '\rQ'
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '偵測到可閱讀文章',
+                '文章代碼', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '偵測到可閱讀文章',
+                '文章網址', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '偵測到可閱讀文章',
+                '這一篇文章值', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '文章已被刪除',
+                '本文已被刪除', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+            ),
+        ]
+        for TryResult in range(result, result - 100, -1):
+            
+            FindResult = False
+
+            SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 ' + str(TryResult) + '\rQ'
+
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('登入超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('登入操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+            
+            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    SendMessage = DetectTarget.getResponse().getSendMessaget()
+                    Refresh = DetectTarget.getResponse().needRefresh
+                    
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        self.__isConnected[ConnectIndex] = True
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+
+                        if result != TryResult:
+                            self.Log('修正結果為 ' + str(TryResult))
+                            result = TryResult
+                    FindResult = True
+                    break
+                if not isDetectedTarget:
+                    self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                    self.Log('無法解析的狀態 以上是最後兩個畫面')
+                    sys.exit()
+            if FindResult:
                 break
 
         return ErrorCode.Success, result
@@ -692,7 +778,7 @@ class Library(object):
             TempEndIndex = TempStartIndex + 1
         
         for Push in PushList:
-            # print('Push:', Push)
+            print('Push:', Push)
             ErrCode = self.__push(Board, inputPushType, Push, PostID=PostID, PostIndex=PostIndex)
 
             if ErrCode != ErrorCode.Success:
@@ -700,8 +786,7 @@ class Library(object):
         return ErrCode
     def __push(self, Board, inputPushType, PushContent, PostID='', PostIndex=0):
         
-        ConnectIndex=0
-        
+        ConnectIndex = 0
         SendMessage = ''
 
         if '看板《' + Board + '》' in self.__ReceiveData[ConnectIndex] and '文章選讀' in self.__ReceiveData[ConnectIndex]:
