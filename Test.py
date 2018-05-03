@@ -77,6 +77,7 @@ def GetNewestPostIndexDemo():
     #     PTTBot.Log('取得 ' + SingleBoard + ' 板最新文章編號失敗')
     #     return False
 
+    # BoardList = ['Test']
 
     for i in range(2):
         for Board in BoardList:
@@ -242,34 +243,34 @@ def PushDemo():
             PTTBot.Log('使用文章編號: 推文失敗')
             return False
     
-    TestString = '批踢踢實業坊，簡稱批踢踢、PTT，是一個台灣BBS，採用Telnet BBS技術運作，以學術性質為目的在網路上提供言論空間。目前由國立臺灣大學電子布告欄系統研究社管理，大部份的系統原始碼由國立臺灣大學資訊工程學系的學生與校友進行維護，並且邀請法律專業人士擔任法律顧問。它有兩個分站，分別為批踢踢兔與批踢踢參。目前在批踢踢實業坊與批踢踢兔註冊總人數約150萬人，尖峰時段兩站超過15萬名使用者同時上線，擁有超過2萬個不同主題的看板，每日超過2萬篇新文章及50萬則推文被發表，是台灣使用人次最多的網路論壇之一。'
+    # TestString = '批踢踢實業坊，簡稱批踢踢、PTT，是一個台灣BBS，採用Telnet BBS技術運作，以學術性質為目的在網路上提供言論空間。目前由國立臺灣大學電子布告欄系統研究社管理，大部份的系統原始碼由國立臺灣大學資訊工程學系的學生與校友進行維護，並且邀請法律專業人士擔任法律顧問。它有兩個分站，分別為批踢踢兔與批踢踢參。目前在批踢踢實業坊與批踢踢兔註冊總人數約150萬人，尖峰時段兩站超過15萬名使用者同時上線，擁有超過2萬個不同主題的看板，每日超過2萬篇新文章及50萬則推文被發表，是台灣使用人次最多的網路論壇之一。'
 
-    ErrorCode = PTTBot.push('Test', PTT.PushType.Push, 'PTT Library Long Push https://goo.gl/5hdAqu', PostIndex=NewestIndex)
-    if ErrorCode == PTT.ErrorCode.Success:
-        PTTBot.Log('使用文章編號: 推文成功')
-    elif ErrorCode == PTT.ErrorCode.ErrorInput:
-        PTTBot.Log('使用文章編號: 參數錯誤')
-        return False
-    elif ErrorCode == PTT.ErrorCode.NoPermission:
-        PTTBot.Log('使用文章編號: 無發文權限')
-        return False
-    else:
-        PTTBot.Log('使用文章編號: 推文失敗')
-        return False
+    # ErrorCode = PTTBot.push('Test', PTT.PushType.Push, 'PTT Library Long Push https://goo.gl/5hdAqu', PostIndex=NewestIndex)
+    # if ErrorCode == PTT.ErrorCode.Success:
+    #     PTTBot.Log('使用文章編號: 推文成功')
+    # elif ErrorCode == PTT.ErrorCode.ErrorInput:
+    #     PTTBot.Log('使用文章編號: 參數錯誤')
+    #     return False
+    # elif ErrorCode == PTT.ErrorCode.NoPermission:
+    #     PTTBot.Log('使用文章編號: 無發文權限')
+    #     return False
+    # else:
+    #     PTTBot.Log('使用文章編號: 推文失敗')
+    #     return False
 
-    for i in range(3):
-        ErrorCode = PTTBot.push('Test', PTT.PushType.Push, TestString, PostIndex=NewestIndex)
-        if ErrorCode == PTT.ErrorCode.Success:
-            PTTBot.Log('使用文章編號: 推文成功')
-        elif ErrorCode == PTT.ErrorCode.ErrorInput:
-            PTTBot.Log('使用文章編號: 參數錯誤')
-            return False
-        elif ErrorCode == PTT.ErrorCode.NoPermission:
-            PTTBot.Log('使用文章編號: 無發文權限')
-            return False
-        else:
-            PTTBot.Log('使用文章編號: 推文失敗')
-            return False
+    # for i in range(3):
+    #     ErrorCode = PTTBot.push('Test', PTT.PushType.Push, TestString, PostIndex=NewestIndex)
+    #     if ErrorCode == PTT.ErrorCode.Success:
+    #         PTTBot.Log('使用文章編號: 推文成功')
+    #     elif ErrorCode == PTT.ErrorCode.ErrorInput:
+    #         PTTBot.Log('使用文章編號: 參數錯誤')
+    #         return False
+    #     elif ErrorCode == PTT.ErrorCode.NoPermission:
+    #         PTTBot.Log('使用文章編號: 無發文權限')
+    #         return False
+    #     else:
+    #         PTTBot.Log('使用文章編號: 推文失敗')
+    #         return False
 def MailDemo():
     
     # 這個範例是如何寄信給某鄉民
@@ -539,9 +540,9 @@ if __name__ == '__main__':
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    # GetNewestPostIndexDemo()
+    GetNewestPostIndexDemo()
     # PostDemo()
-    PushDemo()
+    # PushDemo()
     # GetPostInfoDemo()
     # MailDemo()
     # GetTimeDemo()
