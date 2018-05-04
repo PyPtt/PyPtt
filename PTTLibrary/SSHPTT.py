@@ -544,21 +544,21 @@ class Library(object):
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
             _DetectUnit(
-                '偵測到可閱讀文章',
+                '取得可閱讀文章',
                 '文章代碼', 
                 _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
             _DetectUnit(
-                '偵測到可閱讀文章',
+                '取得可閱讀文章',
                 '文章網址', 
                 _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
             _DetectUnit(
-                '偵測到可閱讀文章',
+                '取得可閱讀文章',
                 '這一篇文章值', 
                 _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
@@ -570,10 +570,14 @@ class Library(object):
                 _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
             ),
         ]
+
+        ShowFixResult = False
+
         for TryResult in range(result, result - 100, -1):
             
             FindResult = False
 
+            #self.Log('Try: ' + Board + ' ' + str(TryResult))
             SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 ' + str(TryResult) + '\rQ'
 
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
@@ -583,14 +587,14 @@ class Library(object):
             elif ErrCode != ErrorCode.Success:
                 self.Log('登入操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode
-            
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
             for DetectTarget in DetectTargetList:
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
-                    self.Log(DetectTarget.getDisplayMsg())
+                    
+                    if ShowFixResult:
+                        self.Log(DetectTarget.getDisplayMsg())
 
                     SendMessage = DetectTarget.getResponse().getSendMessaget()
                     Refresh = DetectTarget.getResponse().needRefresh
@@ -602,14 +606,17 @@ class Library(object):
                         ErrCode = DetectTarget.getErrorCode()
 
                         if result != TryResult:
-                            self.Log('修正結果為 ' + str(TryResult))
+                            if ShowFixResult:
+                                self.Log('修正結果為 ' + str(TryResult))
                             result = TryResult
-                    FindResult = True
+                        FindResult = True
+                    else:
+                        ShowFixResult = True
                     break
-                if not isDetectedTarget:
-                    self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                    self.Log('無法解析的狀態 以上是最後兩個畫面')
-                    sys.exit()
+            if not isDetectedTarget:
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
             if FindResult:
                 break
 

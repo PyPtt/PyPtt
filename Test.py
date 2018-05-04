@@ -79,7 +79,7 @@ def GetNewestPostIndexDemo():
 
     # BoardList = ['Test']
 
-    for i in range(2):
+    for i in range(3):
         for Board in BoardList:
             ErrorCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
             if ErrorCode == PTT.ErrorCode.Success:
