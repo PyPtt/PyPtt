@@ -304,14 +304,14 @@ def GiveMoneyDemo():
         Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
     except Exception:
         # 被背景執行了..邊緣程式沒資格問要不要贊助..
-        # 反正..從來沒收到過贊助，角落就是我的圈圈!!! 嗚嗚嗚
+        # 反正..從來沒收到過贊助，角落就是我的舒適圈!!! 嗚嗚嗚
         pass
         return
 
     if Donate == 'y' or Donate == '':
         ErrorCode = PTTBot.giveMoney(WhoAreUwantToGiveMoney, 10, Password)
         
-        if ErrorCode == PTTBot.Success:
+        if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('送P幣給 ' + WhoAreUwantToGiveMoney + ' 成功')
         else:
             PTTBot.Log('送P幣給 ' + WhoAreUwantToGiveMoney + ' 失敗')
@@ -540,15 +540,15 @@ if __name__ == '__main__':
         PTTBot.Log('登入失敗')
         sys.exit()
 
-    GetNewestPostIndexDemo()
+    # GetNewestPostIndexDemo()
     # PostDemo()
     # PushDemo()
     # GetPostInfoDemo()
     # MailDemo()
     # GetTimeDemo()
-    # GetMailDemo()
+    GetMailDemo()
     # GetUserInfoDemo()
-    
+    # 
 
     # GiveMoneyDemo()
     # CrawlBoardDemo()

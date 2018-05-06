@@ -172,8 +172,9 @@ class Library(object):
                 Prefix = '[資訊] '
             elif _LogLevel == LogLevel.CRITICAL:
                 Prefix = '[重要] '
-        
-            Util.Log(Prefix + Message)
+            
+            if len(Message) > 0:
+                Util.Log(Prefix + Message)
         return ErrorCode.Success
     def isLoginSuccess(self, ConnectIndex=0):
         return self.__isConnected[ConnectIndex]
@@ -393,6 +394,8 @@ class Library(object):
                 )
             ]
             
+            ReadPTTLoginSuccess = False
+
             while not isBreakDetect:
                 ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
                 if ErrCode == ErrorCode.WaitTimeout:
@@ -408,6 +411,10 @@ class Library(object):
 
                 for DetectTarget in DetectTargetList:
                     if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+
+                        if not ReadPTTLoginSuccess:
+                            self.Log('讀取 PTT 畫面成功')
+                            ReadPTTLoginSuccess = True
                         self.Log(DetectTarget.getDisplayMsg())
 
                         SendMessage = DetectTarget.getResponse().getSendMessaget()
@@ -419,7 +426,9 @@ class Library(object):
                             isBreakDetect = True
                             ErrCode = DetectTarget.getErrorCode()
                         break
-
+                if not isDetectedTarget and not ReadPTTLoginSuccess:
+                    self.Log('讀取 PTT 畫面..')
+                    continue
                 if not isDetectedTarget:
                     self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
                     self.Log('無法解析的狀態 以上是最後兩個畫面')
@@ -565,7 +574,7 @@ class Library(object):
                 ErrCode = ErrorCode.Success
             ),
             _DetectUnit(
-                '文章已被刪除',
+                '',
                 '本文已被刪除', 
                 _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
             ),
@@ -1541,7 +1550,7 @@ class Library(object):
         DetectTargetList = [
             _DetectUnit(
                 '進入信箱',
-                '鴻雁往返', 
+                '郵件選單', 
                 _ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
@@ -1664,6 +1673,31 @@ class Library(object):
         for line in MailLineList:
             print('Q', line)
 
+        Target = '作者  '
+        MailAuthor = MailLineList[0]
+        MailAuthor = MailAuthor[MailAuthor.find(Target) + len(Target):]
+        MailAuthor = MailAuthor[:MailAuthor.find('\r')]
+        while MailAuthor.endswith(' '):
+            MailAuthor = MailAuthor[:-1]
+        
+        Target = '標題  '
+        MailTitle = MailLineList[1]
+        MailTitle = MailTitle[MailTitle.find(Target) + len(Target):]
+        MailTitle = MailTitle[:MailTitle.find('\r')]
+        while MailTitle.endswith(' '):
+            MailTitle = MailTitle[:-1]
+        
+        Target = '時間  '
+        MailDate = MailLineList[2]
+        MailDate = MailDate[MailDate.find(Target) + len(Target):]
+        MailDate = MailDate[:MailDate.find('\r')]
+        while MailDate.endswith(' '):
+            MailDate = MailDate[:-1]
+        
+        self.Log('MailAuthor: =' + MailAuthor + '=', LogLevel.DEBUG)
+        self.Log('MailTitle: =' + MailTitle + '=', LogLevel.DEBUG)
+        self.Log('MailDate: =' + MailDate + '=', LogLevel.DEBUG)
+
         return ErrorCode.Success, result
         ###############################################
         try:
@@ -1766,6 +1800,88 @@ class Library(object):
         result = MailInformation(MailAuthor, MailTitle, MailDate, MailContent, MailIP)
 
         return ErrorCode.Success, result
+    
+    def giveMoney(self, ID, Money, YourPassword):
+
+        ConnectIndex = 0
+
+        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '讀取信件完畢',
+                '(100%)  目前顯示: 第', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '讀取信件...',
+                '目前顯示', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
+
+        return ErrorCode.Success
+
+        self.__CurrentTimeout[ConnectIndex] = 3
+        
+        ErrCode = self.__gotoTop(ConnectIndex)
+        if ErrCode != ErrorCode.Success:
+            print('giveMoney goto top error code 1: ' + str(ErrorCode))
+            return ErrorCode
+        
+        CaseList = ['量販店', '給其他人Ptt幣', '這位幸運兒的id', '請輸入金額', '請輸入您的密碼', '要修改紅包袋嗎', '確定進行交易嗎', '按任意鍵繼續']
+        SendMessage = 'P'
+        Enter = True
+        while True:        
+            ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
+            if ErrCode == self.WaitTimeout:
+                self.__showScreen()
+                self.Log('No such option: ' + SendMessage, LogLevel.DEBUG)
+                return self.NoUser
+            if ErrCode != ErrorCode.Success:
+                self.Log('mail 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
+                return ErrorCode
+            if Index == 0:
+                SendMessage = 'P'
+                Enter = True
+                self.Log('giveMoney 量販店', LogLevel.DEBUG)
+            if Index == 1:
+                SendMessage = '0'
+                Enter = True
+                self.Log('giveMoney 給其他人Ptt幣', LogLevel.DEBUG)
+            if Index == 2:
+                SendMessage = ID
+                Enter = True
+                self.Log('giveMoney 這位幸運兒的id', LogLevel.DEBUG)
+            if Index == 3:
+                SendMessage = '\t' + str(Money)
+                Enter = True
+                self.Log('giveMoney 請輸入金額', LogLevel.DEBUG)
+            if Index == 4:
+                SendMessage = str(YourPassword)
+                Enter = True
+                self.__CurrentTimeout[ConnectIndex] = 3
+                self.Log('giveMoney 請輸入您的密碼', LogLevel.DEBUG)
+            if Index == 5:
+                SendMessage = 'n'
+                Enter = True
+                self.__CurrentTimeout[ConnectIndex] = 3
+                self.Log('giveMoney 要修改紅包袋嗎', LogLevel.DEBUG)
+            if Index == 6:
+                SendMessage = 'y'
+                Enter = True
+                self.__CurrentTimeout[ConnectIndex] = 3
+                self.Log('giveMoney 確定進行交易嗎', LogLevel.DEBUG)
+            if Index == 7:
+                self.Log('giveMoney 按任意鍵繼續', LogLevel.DEBUG)
+                break
+        return ErrorCode.Success
     def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0, ShowProgressBar=True):
     
         self.__PostHandler = PostHandler
@@ -1889,62 +2005,6 @@ class Library(object):
         
         self.Log('成功取得 ' + str(self.__SuccessPostCount) + ' 篇文章')
         
-        return ErrorCode.Success
-        
-    def giveMoney(self, ID, Money, YourPassword, ConnectIndex = 0):
-        self.__CurrentTimeout[ConnectIndex] = 3
-        
-        ErrCode = self.__gotoTop(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            print('giveMoney goto top error code 1: ' + str(ErrorCode))
-            return ErrorCode
-        
-        CaseList = ['量販店', '給其他人Ptt幣', '這位幸運兒的id', '請輸入金額', '請輸入您的密碼', '要修改紅包袋嗎', '確定進行交易嗎', '按任意鍵繼續']
-        SendMessage = 'P'
-        Enter = True
-        while True:        
-            ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
-            if ErrCode == self.WaitTimeout:
-                self.__showScreen()
-                self.Log('No such option: ' + SendMessage, LogLevel.DEBUG)
-                return self.NoUser
-            if ErrCode != ErrorCode.Success:
-                self.Log('mail 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
-                return ErrorCode
-            if Index == 0:
-                SendMessage = 'P'
-                Enter = True
-                self.Log('giveMoney 量販店', LogLevel.DEBUG)
-            if Index == 1:
-                SendMessage = '0'
-                Enter = True
-                self.Log('giveMoney 給其他人Ptt幣', LogLevel.DEBUG)
-            if Index == 2:
-                SendMessage = ID
-                Enter = True
-                self.Log('giveMoney 這位幸運兒的id', LogLevel.DEBUG)
-            if Index == 3:
-                SendMessage = '\t' + str(Money)
-                Enter = True
-                self.Log('giveMoney 請輸入金額', LogLevel.DEBUG)
-            if Index == 4:
-                SendMessage = str(YourPassword)
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 3
-                self.Log('giveMoney 請輸入您的密碼', LogLevel.DEBUG)
-            if Index == 5:
-                SendMessage = 'n'
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 3
-                self.Log('giveMoney 要修改紅包袋嗎', LogLevel.DEBUG)
-            if Index == 6:
-                SendMessage = 'y'
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 3
-                self.Log('giveMoney 確定進行交易嗎', LogLevel.DEBUG)
-            if Index == 7:
-                self.Log('giveMoney 按任意鍵繼續', LogLevel.DEBUG)
-                break
         return ErrorCode.Success
     
     def readPostFile(self, FileName):
