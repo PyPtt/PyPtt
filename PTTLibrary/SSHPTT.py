@@ -148,9 +148,10 @@ class Library(object):
             print(self.__PreReceiveData[ConnectIndex])
             print('-' * 50)
             print(self.__ReceiveData[ConnectIndex])
+            print('此畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
             print('-' * 50)
-            print('ErrorCode: ' + str(ErrCode))
-            print('CatchIndex: ' + str(CatchIndex))
+            # print('ErrorCode: ' + str(ErrCode))
+            # print('CatchIndex: ' + str(CatchIndex))
                                     
     def setLogLevel(self, _LogLevel):
         if _LogLevel < LogLevel.DEBUG or LogLevel.SLIENT < _LogLevel:
@@ -400,7 +401,8 @@ class Library(object):
                 )
             ]
             
-            ReadPTTLoginSuccess = False
+            LoginFailCount = 0
+            MaxLoginFail = 2
 
             while not isBreakDetect:
                 ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
@@ -418,9 +420,7 @@ class Library(object):
                 for DetectTarget in DetectTargetList:
                     if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
 
-                        if not ReadPTTLoginSuccess:
-                            self.Log('讀取 PTT 畫面成功')
-                            ReadPTTLoginSuccess = True
+                        LoginFailCount = 0
                         self.Log(DetectTarget.getDisplayMsg())
 
                         SendMessage = DetectTarget.getResponse().getSendMessage()
@@ -432,10 +432,14 @@ class Library(object):
                             isBreakDetect = True
                             ErrCode = DetectTarget.getErrorCode()
                         break
-                if not isDetectedTarget and not ReadPTTLoginSuccess:
-                    self.Log('讀取 PTT 畫面..')
-                    continue
+
                 if not isDetectedTarget:
+
+                    if LoginFailCount < MaxLoginFail:
+                        self.Log('讀取 PTT 畫面..')
+                        LoginFailCount += 1
+                        continue
+
                     self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
                     self.Log('無法解析的狀態 以上是最後兩個畫面')
 
@@ -1766,6 +1770,7 @@ class Library(object):
 
         # 前進至主頁面
         SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
+        # 前進至發錢的地方
         SendMessage += 'P\rP\rO\r'
         Refresh = True
         isBreakDetect = False
@@ -1850,7 +1855,8 @@ class Library(object):
             
         return ErrCode
     def changePassword(self, OldPassword, NewPassword):
-        
+        ConnectIndex = 0
+
         ErrCode = ErrorCode.Success
 
         OldPassword = str(OldPassword)
@@ -1862,6 +1868,79 @@ class Library(object):
             while len(NewPassword) > 8:
                 NewPassword = NewPassword[:-1]
         
+        # 前進至主頁面
+        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
+        # 前進至修改密碼的地方
+        SendMessage += 'U\rI\r2\r'
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '輸入舊密碼',
+                '請輸入原密碼', 
+                _ResponseUnit(OldPassword + '\r', False),
+            ),
+            _DetectUnit(
+                '輸入新密碼',
+                '請設定新密碼', 
+                _ResponseUnit(NewPassword + '\r', False),
+            ),
+            _DetectUnit(
+                '確認新密碼',
+                '請檢查新密碼', 
+                _ResponseUnit(NewPassword + '\r', False),
+            ),
+            _DetectUnit(
+                '確認',
+                '您確定(Y/N)', 
+                _ResponseUnit('y\r', True),
+            ),
+            _DetectUnit(
+                '注意！您已將舊密碼更換為新密碼(' + NewPassword + ')',
+                '我是' + self.__ID, 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+            ),
+            _DetectUnit(
+                '',
+                '主功能表', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
+
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
+                    
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        self.__isConnected[ConnectIndex] = True
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        break
+            if not isDetectedTarget:
+
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
+
         return ErrCode
     def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0, ShowProgressBar=True):
     
@@ -1989,11 +2068,9 @@ class Library(object):
         return ErrorCode.Success
     
     def readPostFile(self, FileName):
-        
         return Util.readPostFile(FileName)
     def getVersion(self):
         return Version
-    
     def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1):
         ConnectIndex = 0
 

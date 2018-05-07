@@ -508,7 +508,14 @@ def GetMailDemo():
             PTTBot.Log('取得編號 ' + str(MailIndex) + ' 信件失敗 錯誤碼: ' + str(ErrorCode))
             return
     return 
+def ChangePasswordDemo():
 
+    ErrCode = PTTBot.changePassword(Password, Password)
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('changePassword 失敗 錯誤碼:' + str(ErrCode))
+    else:
+        PTTBot.Log('changePassword 成功')
+    return 
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -549,8 +556,9 @@ if __name__ == '__main__':
     # GetMailDemo()
     # GetUserInfoDemo()
     # GiveMoneyDemo()
-    ReplyPostDemo()
+    ChangePasswordDemo()
 
+    # ReplyPostDemo()
     # CrawlBoardDemo()
     
     # 請養成登出好習慣
