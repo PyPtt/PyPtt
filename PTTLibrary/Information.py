@@ -3,7 +3,8 @@ class ReplyPostType(object):
     def __init__(self):
         self.Board =                        1
         self.Mail =                         2
-
+        self.Board_Mail =                   3
+        
 class LogLevel(object):
     def __init__(self):
         self.DEBUG =                        1
