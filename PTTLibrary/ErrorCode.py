@@ -20,3 +20,4 @@ class ErrorCode(object):
         self.MailBoxFull =                     15
         self.SSHFail =                         16
         self.NoFastPush =                      17
+        self.NoEnoughP =                       18

@@ -429,34 +429,34 @@ def ReplyPostDemo():
     # 回傳 錯誤碼
 
     ErrorCode = PTTBot.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
-    if ErrorCode == PTTBot.Success:
+    if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('在 Test 板發文成功')
-    elif ErrorCode == PTTBot.NoPermission:
+    elif ErrorCode == PTT.ErrorCode.NoPermission:
         PTTBot.Log('發文權限不足')
     else:
         PTTBot.Log('在 Test 板發文失敗')
     
     ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Test')
-    if ErrorCode == PTTBot.Success:
+    if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + 'Test' + ' 板最新文章編號成功: ' + str(NewestIndex))
     else:
         PTTBot.Log('取得 ' + 'Test' + ' 板最新文章編號失敗')
         return False
 
     ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至板上', PTTBot.ReplyPost_Board, Index=NewestIndex)
-    if ErrorCode == PTTBot.Success:
+    if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('在 Test 回文至板上成功!')
     else:
         PTTBot.Log('在 Test 回文至板上失敗 ' + str(ErrorCode))
     
     ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至信箱', PTTBot.ReplyPost_Mail, Index=NewestIndex)
-    if ErrorCode == PTTBot.Success:
+    if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('在 Test 回文至信箱成功!')
     else:
         PTTBot.Log('在 Test 回文至信箱失敗 ' + str(ErrorCode))
         
     ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至版上與信箱', PTTBot.ReplyPost_Board + PTTBot.ReplyPost_Mail, Index=NewestIndex)
-    if ErrorCode == PTTBot.Success:
+    if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('在 Test 回文至版上與信箱成功!')
     else:
         PTTBot.Log('在 Test 回文至版上與信箱失敗 ' + str(ErrorCode))
@@ -546,13 +546,12 @@ if __name__ == '__main__':
     # GetPostInfoDemo()
     # MailDemo()
     # GetTimeDemo()
-    GetMailDemo()
+    # GetMailDemo()
     # GetUserInfoDemo()
-    # 
-
     # GiveMoneyDemo()
-    # CrawlBoardDemo()
-    # ReplyPostDemo()
+    ReplyPostDemo()
 
+    # CrawlBoardDemo()
+    
     # 請養成登出好習慣
     PTTBot.logout()

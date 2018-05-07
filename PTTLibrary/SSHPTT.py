@@ -5,6 +5,7 @@ import threading
 import progressbar
 import socket
 import paramiko
+from paramiko import ECDSAKey
 
 try:
     from . import Util
@@ -23,6 +24,7 @@ Version = Version.Ver
 LogLevel = Information.LogLevel()
 PushType = Information.PushType()
 ErrorCode = ErrorCode.ErrorCode()
+ReplyPostType = Information.ReplyPostType()
 
 class _ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -281,6 +283,9 @@ class Library(object):
         Retry = False
         ErrCode = ErrorCode.Success
 
+        SSHKey = ECDSAKey.generate()
+        self.Log('產生 SSH 金鑰完成')
+
         while not self.__isConnected[ConnectIndex]:
 
             if Retry:
@@ -298,12 +303,12 @@ class Library(object):
                     self.Log('連線頻道 ' + str(ConnectIndex) + ' 重啟')
                 else:
                     self.Log('連線頻道 ' + str(ConnectIndex) + ' 啟動')
-                    # self.__ConnectList[ConnectIndex] = lib.(self.__host, self.__PortList[ConnectIndex])
 
                 self.__ConnectList[ConnectIndex] = paramiko.SSHClient()
-                self.__ConnectList[ConnectIndex].load_system_host_keys()
-                self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
-                self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbsu', password = '')
+                # self.__ConnectList[ConnectIndex].load_system_host_keys()
+                # self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
+                self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbsu', password = '', pkey = SSHKey)
                 
                 self.__ConnectList[ConnectIndex].channel = self.__ConnectList[ConnectIndex].invoke_shell(width = self.width, height = self.height)
             except paramiko.AuthenticationException:
@@ -1602,7 +1607,7 @@ class Library(object):
     def getMail(self, MailIndex):
         
         MailIndex = int(MailIndex)
-        
+
         result = None
         ConnectIndex = 0
 
@@ -1644,6 +1649,7 @@ class Library(object):
         
         FirstPage = ''
         PageIndex = 2
+        # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
         LastPageIndex = 5
         MailContentList = []
         IPLine = ''
@@ -1758,83 +1764,105 @@ class Library(object):
 
         ConnectIndex = 0
 
+        # 前進至主頁面
         SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
+        SendMessage += 'P\rP\rO\r'
         Refresh = True
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
+            #
             _DetectUnit(
-                '讀取信件完畢',
-                '(100%)  目前顯示: 第', 
+                'P 幣不足',
+                '你沒有那麼多Ptt幣喔!', 
                 _ResponseUnit('', False),
                 BreakDetect=True,
-                ErrCode = ErrorCode.Success
+                ErrCode = ErrorCode.NoEnoughP
             ),
             _DetectUnit(
-                '讀取信件...',
-                '目前顯示', 
+                '輸入幸運兒帳號',
+                '這位幸運兒的id', 
+                _ResponseUnit(ID + '\r', False),
+            ),
+            _DetectUnit(
+                '輸入金額',
+                '要給他多少Ptt幣呢?', 
+                _ResponseUnit('\t' + str(Money) + '\r', False),
+            ),
+            _DetectUnit(
+                '確認身分',
+                '完成交易前要重新確認您的身份', 
+                _ResponseUnit(YourPassword + '\r', False),
+            ),
+            _DetectUnit(
+                '等待交易進行中',
+                '交易正在進行中', 
+                _ResponseUnit('', False),
+            ),
+            _DetectUnit(
+                '',
+                '要修改紅包袋嗎？', 
+                _ResponseUnit('\r', False),
+            ),
+            _DetectUnit(
+                '交易成功',
+                '按任意鍵繼續', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+            ),
+            _DetectUnit(
+                '',
+                '主功能表', 
                 _ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
         ]
 
-        return ErrorCode.Success
-
-        self.__CurrentTimeout[ConnectIndex] = 3
-        
-        ErrCode = self.__gotoTop(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            print('giveMoney goto top error code 1: ' + str(ErrorCode))
-            return ErrorCode
-        
-        CaseList = ['量販店', '給其他人Ptt幣', '這位幸運兒的id', '請輸入金額', '請輸入您的密碼', '要修改紅包袋嗎', '確定進行交易嗎', '按任意鍵繼續']
-        SendMessage = 'P'
-        Enter = True
-        while True:        
-            ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
-            if ErrCode == self.WaitTimeout:
-                self.__showScreen()
-                self.Log('No such option: ' + SendMessage, LogLevel.DEBUG)
-                return self.NoUser
-            if ErrCode != ErrorCode.Success:
-                self.Log('mail 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
-                return ErrorCode
-            if Index == 0:
-                SendMessage = 'P'
-                Enter = True
-                self.Log('giveMoney 量販店', LogLevel.DEBUG)
-            if Index == 1:
-                SendMessage = '0'
-                Enter = True
-                self.Log('giveMoney 給其他人Ptt幣', LogLevel.DEBUG)
-            if Index == 2:
-                SendMessage = ID
-                Enter = True
-                self.Log('giveMoney 這位幸運兒的id', LogLevel.DEBUG)
-            if Index == 3:
-                SendMessage = '\t' + str(Money)
-                Enter = True
-                self.Log('giveMoney 請輸入金額', LogLevel.DEBUG)
-            if Index == 4:
-                SendMessage = str(YourPassword)
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 3
-                self.Log('giveMoney 請輸入您的密碼', LogLevel.DEBUG)
-            if Index == 5:
-                SendMessage = 'n'
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 3
-                self.Log('giveMoney 要修改紅包袋嗎', LogLevel.DEBUG)
-            if Index == 6:
-                SendMessage = 'y'
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 3
-                self.Log('giveMoney 確定進行交易嗎', LogLevel.DEBUG)
-            if Index == 7:
-                self.Log('giveMoney 按任意鍵繼續', LogLevel.DEBUG)
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('登入超時重新嘗試')
                 break
-        return ErrorCode.Success
+            elif ErrCode != ErrorCode.Success:
+                self.Log('登入操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
+                    
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        self.__isConnected[ConnectIndex] = True
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        break
+            if not isDetectedTarget:
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
+            
+        return ErrCode
+    def changePassword(self, OldPassword, NewPassword):
+        
+        ErrCode = ErrorCode.Success
+
+        OldPassword = str(OldPassword)
+        NewPassword = str(NewPassword)
+
+        if len(NewPassword) > 8:
+            self.Log('新密碼超過八位後將被系統省略', LogLevel.WARNING)
+
+            while len(NewPassword) > 8:
+                NewPassword = NewPassword[:-1]
+        
+        return ErrCode
     def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0, ShowProgressBar=True):
     
         self.__PostHandler = PostHandler
@@ -1966,7 +1994,8 @@ class Library(object):
     def getVersion(self):
         return Version
     
-    def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1, ConnectIndex = 0):
+    def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1):
+        ConnectIndex = 0
 
         if PostID == '' and Index == -1:
             self.Log('輸入參數錯誤')
