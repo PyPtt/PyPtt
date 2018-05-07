@@ -28,7 +28,7 @@ class _ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
         self.__SendMessage = SendMessage
         self.__Refresh = Refresh
-    def getSendMessaget(self):
+    def getSendMessage(self):
         return self.__SendMessage
     def needRefresh(self):
         return self.__Refresh
@@ -173,6 +173,7 @@ class Library(object):
             elif _LogLevel == LogLevel.CRITICAL:
                 Prefix = '[重要] '
             
+            Message = str(Message)
             if len(Message) > 0:
                 Util.Log(Prefix + Message)
         return ErrorCode.Success
@@ -417,8 +418,8 @@ class Library(object):
                             ReadPTTLoginSuccess = True
                         self.Log(DetectTarget.getDisplayMsg())
 
-                        SendMessage = DetectTarget.getResponse().getSendMessaget()
-                        Refresh = DetectTarget.getResponse().needRefresh
+                        SendMessage = DetectTarget.getResponse().getSendMessage()
+                        Refresh = DetectTarget.getResponse().needRefresh()
                         
                         isDetectedTarget = True
                         if DetectTarget.isBreakDetect():
@@ -605,8 +606,8 @@ class Library(object):
                     if ShowFixResult:
                         self.Log(DetectTarget.getDisplayMsg())
 
-                    SendMessage = DetectTarget.getResponse().getSendMessaget()
-                    Refresh = DetectTarget.getResponse().needRefresh
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
                     
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -768,7 +769,7 @@ class Library(object):
 
         MaxPushLength = 45
 
-        self.__PushShow = [False * 5]
+        self.__PushShow = False
         PushList = []
         Temp = ''
 
@@ -884,9 +885,9 @@ class Library(object):
             self.Log('你被水桶惹 QQ')
             return ErrorCode.NoPermission
         elif CatchIndex == 4:
-            if not self.__PushShow[CatchIndex]:
+            if not self.__PushShow:
                 self.Log('作者本人使用箭頭')
-                self.__PushShow[CatchIndex] = True
+                self.__PushShow = True
             SendMessage = str(PushContent) + '\ry\r'
         elif CatchIndex == 5:
             self.Log('文章已經被刪除')
@@ -1251,8 +1252,8 @@ class Library(object):
                 if DetectTargetList[i].isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTargetList[i].getDisplayMsg())
 
-                    SendMessage = DetectTargetList[i].getResponse().getSendMessaget()
-                    Refresh = DetectTargetList[i].getResponse().needRefresh
+                    SendMessage = DetectTargetList[i].getResponse().getSendMessage()
+                    Refresh = DetectTargetList[i].getResponse().needRefresh()
                     
                     isDetectedTarget = True
                     if DetectTargetList[i].isBreakDetect():
@@ -1336,8 +1337,8 @@ class Library(object):
                 if DetectTargetList[i].isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTargetList[i].getDisplayMsg())
 
-                    SendMessage = DetectTargetList[i].getResponse().getSendMessaget()
-                    Refresh = DetectTargetList[i].getResponse().needRefresh
+                    SendMessage = DetectTargetList[i].getResponse().getSendMessage()
+                    Refresh = DetectTargetList[i].getResponse().needRefresh()
                     
                     isDetectedTarget = True
                     if DetectTargetList[i].isBreakDetect():
@@ -1390,8 +1391,8 @@ class Library(object):
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
 
-                    SendMessage = DetectTarget.getResponse().getSendMessaget()
-                    Refresh = DetectTarget.getResponse().needRefresh
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
                     
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -1454,8 +1455,8 @@ class Library(object):
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
 
-                    SendMessage = DetectTarget.getResponse().getSendMessaget()
-                    Refresh = DetectTarget.getResponse().needRefresh
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
                     
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -1574,8 +1575,8 @@ class Library(object):
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
 
-                    SendMessage = DetectTarget.getResponse().getSendMessaget()
-                    Refresh = DetectTarget.getResponse().needRefresh
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
                     
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -1599,7 +1600,9 @@ class Library(object):
 
         return ErrorCode.Success, result
     def getMail(self, MailIndex):
-
+        
+        MailIndex = int(MailIndex)
+        
         result = None
         ConnectIndex = 0
 
@@ -1614,6 +1617,12 @@ class Library(object):
             self.Log('錯誤的輸入: ' + str(MailIndex))
             return ErrorCode.ErrorInput, result
         
+        if NewestMailIndex == 0:
+            self.Log('信箱中沒有郵件')
+            return ErrorCode.Success, None
+        else:
+            self.Log('信箱中最新郵件編號: ' + str(NewestMailIndex), LogLevel.DEBUG)
+
         SendMessage = str(MailIndex) + '\r\r'
         Refresh = True
         isBreakDetect = False
@@ -1630,11 +1639,15 @@ class Library(object):
                 '讀取信件...',
                 '目前顯示', 
                 _ResponseUnit('', False),
-                BreakDetect=True,
-                ErrCode = ErrorCode.Success
             ),
         ]
         
+        FirstPage = ''
+        PageIndex = 2
+        LastPageIndex = 5
+        MailContentList = []
+        IPLine = ''
+
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
             if ErrCode == ErrorCode.WaitTimeout:
@@ -1648,18 +1661,48 @@ class Library(object):
 
             isDetectedTarget = False
 
+            if FirstPage == '':
+                FirstPage = self.__ReceiveData[ConnectIndex]
+            
             for DetectTarget in DetectTargetList:
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
-
-                    SendMessage = DetectTarget.getResponse().getSendMessaget()
-                    Refresh = DetectTarget.getResponse().needRefresh
                     
+                    # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                    
+                    CurrentPage = self.__ReceiveData[ConnectIndex]
+                    if CurrentPage.startswith('[2J'):
+                        CurrentPage = CurrentPage[3:]
+                    CurrentPageList = CurrentPage.split('\n')
+
+                    PageLineRange = CurrentPageList.pop()
+                    
+                    PageLineRange = re.findall(r'\d+', PageLineRange)
+                    PageLineRange = list(map(int, PageLineRange))[3:]
+                    
+                    OverlapLine = LastPageIndex - PageLineRange[0] + 1
+                    if OverlapLine >= 1 and LastPageIndex != 0:
+                        # print('重疊', OverlapLine, '行')
+                        CurrentPageList = CurrentPageList[OverlapLine:]
+                    
+                    LastPageIndex = PageLineRange[1]
+
+                    CurrentPage = '\n'.join(CurrentPageList)
+                    # self.Log(CurrentPage, LogLevel.DEBUG)
+                    MailContentList.append(CurrentPage)
+
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
+                        
+                        IPLine = CurrentPageList.pop()
+
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
-                    break
+                        break
+                    
+                    SendMessage = str(PageIndex) + '\r'
+                    Refresh = True
+                    PageIndex += 1
 
             if not isDetectedTarget:
                 self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
@@ -1668,10 +1711,10 @@ class Library(object):
         if ErrCode != ErrorCode.Success:
             return ErrCode, None
 
-        MailLineList = self.__ReceiveData[ConnectIndex].split('\n')
+        MailLineList = FirstPage.split('\n')
 
-        for line in MailLineList:
-            print('Q', line)
+        # for line in MailLineList:
+        #     print('Q', line)
 
         Target = '作者  '
         MailAuthor = MailLineList[0]
@@ -1694,113 +1737,23 @@ class Library(object):
         while MailDate.endswith(' '):
             MailDate = MailDate[:-1]
         
-        self.Log('MailAuthor: =' + MailAuthor + '=', LogLevel.DEBUG)
-        self.Log('MailTitle: =' + MailTitle + '=', LogLevel.DEBUG)
-        self.Log('MailDate: =' + MailDate + '=', LogLevel.DEBUG)
+        # self.Log('MailAuthor: =' + MailAuthor + '=', LogLevel.DEBUG)
+        # self.Log('MailTitle: =' + MailTitle + '=', LogLevel.DEBUG)
+        # self.Log('MailDate: =' + MailDate + '=', LogLevel.DEBUG)
 
+        MailContent = '\n'.join(MailContentList)
+        # self.Log('MailContent: =' + MailContent + '=', LogLevel.DEBUG)
+
+        MailIPList = list(map(str, re.findall(r'\d+', IPLine)))
+        
+        MailIP = '.'.join(MailIPList)
+
+        # self.Log('MailIP: =' + MailIP + '=', LogLevel.DEBUG)
+
+        result = Information.MailInformation(MailAuthor, MailTitle, MailDate, MailContent, MailIP)
+        
         return ErrorCode.Success, result
-        ###############################################
-        try:
-            MailIndex = int(inputMailIndex)
-        except ValueError:
-            self.Log('錯誤的信件編號: ' + str(inputMailIndex), LogLevel.INFO)
-            return self.ErrorInput, None
-
-        if MailIndex < 1:
-            self.Log('過小的信件編號: ' + str(MailIndex), LogLevel.INFO)
-            return self.ErrorInput, None
-
-        ErrCode = self.__gotoTop(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            print('無法移動至主選單: ' + str(ErrorCode))
-            return ErrCode, None
         
-        ErrCode, NewestMailIndex = self.getNewestMailIndex(ConnectIndex)
-        if ErrCode != ErrorCode.Success:
-            print('無法移動至主選單: ' + str(ErrorCode))
-            return ErrCode, None
-
-        if NewestMailIndex == 0:
-            self.Log('信箱中沒有郵件')
-            return ErrorCode.Success, None
-        else:
-            self.Log('信箱中最新郵件編號: ' + str(NewestMailIndex), LogLevel.DEBUG)
-
-        if inputMailIndex > NewestMailIndex:
-            self.Log('錯誤的輸入!輸入的郵件編號(' + str(inputMailIndex) + ')超過目前的郵件編號(' + str(NewestMailIndex) + ')')
-            return self.ErrorInput, None
-        
-        self.__CurrentTimeout[ConnectIndex] = 2
-        self.__readScreen(ConnectIndex, str(inputMailIndex) + '\r\r', ['瀏覽'])
-
-        # print(self.__ReceiveData[ConnectIndex])
-        
-        MailAuthor = self.__ReceiveData[ConnectIndex]
-        MailAuthor = MailAuthor[MailAuthor.find('作者 [0;44m ') + len('作者 [0;44m '):]
-        MailAuthor = MailAuthor[:MailAuthor.find('\r')]
-        while MailAuthor.endswith(' '):
-            MailAuthor = MailAuthor[:-1]
-
-        MailTitle = self.__ReceiveData[ConnectIndex]
-        MailTitle = MailTitle[MailTitle.find('標題 [0;44m ') + len('標題 [0;44m '):]
-        MailTitle = MailTitle[:MailTitle.find('\r')]
-        while MailTitle.endswith(' '):
-            MailTitle = MailTitle[:-1]
-        
-        MailDate = self.__ReceiveData[ConnectIndex]
-        MailDate = MailDate[MailDate.find('時間 [0;44m ') + len('時間 [0;44m '):]
-        MailDate = MailDate[:MailDate.find('\r')]
-        while MailDate.endswith(' '):
-            MailDate = MailDate[:-1]
-
-        MailContentTemp = []
-        MailContentTemp.append(self.__ReceiveData[ConnectIndex])
-        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[36m───────────────────────────────────────[37m ') + len('[36m───────────────────────────────────────[37m '):]
-        MailContentTemp[0] = MailContentTemp[0][MailContentTemp[0].find('[m') + len('[m'):]
-
-        MailContentTemp[0] = MailContentTemp[0][:MailContentTemp[0].find('瀏覽 第') - 11]
-
-        LastLineCount = [1, 22]
-        MailPage = 2
-        while '頁 (100%)' not in self.__ReceiveData[ConnectIndex]:
-            
-            self.__CurrentTimeout[ConnectIndex] = 2
-            self.__readScreen(ConnectIndex, str(MailPage) + '\r', ['瀏覽'])
-            MailPage += 1
-
-            MailContentTempTemp = self.__ReceiveData[ConnectIndex]
-            MailContentTempTemp = MailContentTempTemp[len('[H [2J'):]
-            MailContentTempTemp = MailContentTempTemp[:MailContentTempTemp.find('瀏覽 第') - 11]
-
-            LineCountTemp = self.__ReceiveData[ConnectIndex]
-            LineCountTemp = LineCountTemp[LineCountTemp.find('目前顯示: 第 ') + len('目前顯示: 第 '):]
-            LineCountTemp = LineCountTemp[:LineCountTemp.find(' 行')]
-            LastLineCountTemp = list(map(int, re.findall(r'\d+', LineCountTemp)))
-
-            # print(LastLineCount)
-            # print(LastLineCountTemp)
-            if LastLineCountTemp[0] != LastLineCount[1] + 1:
-                SubLine = (LastLineCount[1] + 1) - LastLineCountTemp[0]
-                # print('重疊: ' + str(SubLine) + ' 行')
-
-                for i in range(SubLine):
-                    MailContentTempTemp = MailContentTempTemp[MailContentTempTemp.find('\r') + 2:]
-            
-            MailContentTemp.append(MailContentTempTemp)
-            LastLineCount = LastLineCountTemp
-        MailContent = ''.join(MailContentTemp)
-        
-        MailIP = MailContent[MailContent.find('ptt.cc), 來自: ') + len('ptt.cc), 來自: '):]
-        MailIP = MailIP[:MailIP.find('[')]
-        MailIP = MailIP[:MailIP.find('\r')]
-        MailIP = MailIP.replace(' ', '')
-
-        MailContent = MailContent[:MailContent.find('※ 發信站: 批踢踢實業坊(ptt.cc), 來自:') - 5]
-        
-        result = MailInformation(MailAuthor, MailTitle, MailDate, MailContent, MailIP)
-
-        return ErrorCode.Success, result
-    
     def giveMoney(self, ID, Money, YourPassword):
 
         ConnectIndex = 0
