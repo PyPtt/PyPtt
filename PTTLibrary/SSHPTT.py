@@ -1017,15 +1017,192 @@ class Library(object):
             self.Log('文章編號與代碼輸入錯誤: 皆無輸入')
             return ErrorCode.ErrorInput, result
 
-        SendMessage = ''
-
-        if '看板《' + Board + '》' in self.__ReceiveData[ConnectIndex] and '文章選讀' in self.__ReceiveData[ConnectIndex]:
-            self.Log('已經位於 ' + Board + ' 板', LogLevel.DEBUG)
-        else:
-            # 前進至板面
-            SendMessage += '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
-        
+        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
         # 前進至文章
+        if PostID != '':
+            SendMessage += '#' + PostID + '\rQ'
+        elif PostIndex != -1:
+            SendMessage += str(PostIndex) + '\rQ'
+        
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '取得文章',
+                '請按任意鍵繼續', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        self.__isConnected[ConnectIndex] = True
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        break
+
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
+
+            if not isDetectedTarget:
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
+        
+        Lines = self.__ReceiveData[ConnectIndex].split('\n')
+        InfoLines = []
+        for Line in Lines:
+            # print('line: ' + Line)
+            if Line.startswith('  │ '):
+                # print('line: ' + Line)
+                InfoLines.append(Line)
+        if len(InfoLines) != 3:
+            return ErrorCode.ParseError, result
+
+        Target = '#'
+        PostID = InfoLines[0]
+        PostID = PostID[PostID.find(Target) + len(Target):]
+        PostID = PostID[:PostID.find(' ')]
+        while PostID.endswith(' '):
+            PostID = PostID[:-1]
+        
+        Target = '[ptt.cc] '
+        PostTitle = InfoLines[0]
+        PostTitle = PostTitle[PostTitle.find(Target) + len(Target):]
+        PostTitle = PostTitle[:PostTitle.find('│')]
+        while PostTitle.endswith(' '):
+            PostTitle = PostTitle[:-1]
+        
+        Target = '文章網址: '
+        PostWeb = InfoLines[1]
+        PostWeb = PostWeb[PostWeb.find(Target) + len(Target):]
+        PostWeb = PostWeb[:PostWeb.find(' ')]
+        while PostWeb.endswith(' '):
+            PostWeb = PostWeb[:-1]
+        
+        PostMoney = int(re.search(r'\d+', InfoLines[2]).group())
+        
+        self.Log('PostID: =' + PostID + '=')
+        self.Log('PostTitle: =' + PostTitle + '=')
+        self.Log('PostWeb: =' + PostWeb + '=')
+        self.Log('PostMoney: =' + str(PostMoney) + '=')
+
+        SendMessage = '\r\r'
+        
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '文章讀取完成',
+                '(100%)  目前顯示', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '讀取文章..',
+                '目前顯示: 第', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
+
+        FirstPage = ''
+        PageIndex = 2
+        # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
+        LastPageIndex = 5
+        PostContentList = []
+        IPLine = ''
+
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('超時')
+                return ErrCode, None
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode, None
+            
+            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+
+            isDetectedTarget = False
+
+            if FirstPage == '':
+                FirstPage = self.__ReceiveData[ConnectIndex]
+            
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
+                    
+                    # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                    
+                    CurrentPage = self.__ReceiveData[ConnectIndex]
+                    if CurrentPage.startswith('[2J'):
+                        CurrentPage = CurrentPage[3:]
+                    CurrentPageList = CurrentPage.split('\n')
+
+                    PageLineRange = CurrentPageList.pop()
+                    
+                    PageLineRange = re.findall(r'\d+', PageLineRange)
+                    PageLineRange = list(map(int, PageLineRange))[3:]
+                    
+                    OverlapLine = LastPageIndex - PageLineRange[0] + 1
+                    if OverlapLine >= 1 and LastPageIndex != 0:
+                        # print('重疊', OverlapLine, '行')
+                        CurrentPageList = CurrentPageList[OverlapLine:]
+                    
+                    LastPageIndex = PageLineRange[1]
+
+                    CurrentPage = '\n'.join(CurrentPageList)
+                    # self.Log(CurrentPage, LogLevel.DEBUG)
+                    PostContentList.append(CurrentPage)
+
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        
+                        IPLine = CurrentPageList.pop()
+
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        break
+                    
+                    SendMessage = str(PageIndex) + '\r'
+                    Refresh = True
+                    PageIndex += 1
+
+            if not isDetectedTarget:
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
+
+        PostContent = '\n'.join(PostContentList)
+        # print(PostContent)
+        PostIPList = list(map(str, re.findall(r'\d+', IPLine)))
+        PostIP = '.'.join(PostIPList)
+
+        self.Log('PostIP: =' + str(PostIP) + '=')
+
+        return ErrCode, result
 
         if PostID != '':
             SendMessage += '#' + PostID + '\rQ'
@@ -1750,7 +1927,6 @@ class Library(object):
         # self.Log('MailContent: =' + MailContent + '=', LogLevel.DEBUG)
 
         MailIPList = list(map(str, re.findall(r'\d+', IPLine)))
-        
         MailIP = '.'.join(MailIPList)
 
         # self.Log('MailIP: =' + MailIP + '=', LogLevel.DEBUG)
@@ -2039,8 +2215,14 @@ class Library(object):
         if not self.isLoginSuccess(ConnectIndex) and ConnectIndex > 0:
             self.__CrawLock.acquire()
             self.__connectRemote(ConnectIndex)
+            self.__EnableLoginCount += 1
             self.__CrawLock.release()
         
+        while self.__EnableLoginCount < self.__EnableLogin:
+            time.sleep(1)
+        
+        self.Log('頻道 ' + str(ConnectIndex) + ' 開始爬行')
+
         for PostIndex in range(StartIndex, EndIndex):
             # self.Log(PostIndex)
             ErrCode, Post = self.getPostInfo(Board, PostIndex=PostIndex, InputConnectIndex=ConnectIndex)
@@ -2051,7 +2233,8 @@ class Library(object):
             # self.Log(Post.getTitle())
             PostHandler(Post)
             self.__CrawLock.release()
-
+        
+        self.Log('頻道 ' + str(ConnectIndex) + ' 爬行完畢')
         return
     def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0):
         ErrCode = ErrorCode.Success
@@ -2106,136 +2289,15 @@ class Library(object):
             # self.__CrawPoolList.append([StartIndexTemp, EndIndexTemp])
             CrawThreadList.append(threading.Thread(target=self.crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp)))
         
+        self.__EnableLoginCount = 1
+
         for SubThread in CrawThreadList:
             SubThread.start()
         for SubThread in CrawThreadList:
             SubThread.join()
         
-        self.Log('爬行完成!')
         return ErrCode
-        self.__PostHandler = PostHandler
-    
-        DefaultThreadNumber = 32
         
-        self.Log('Into crawlBoard', LogLevel.DEBUG)
-        
-        self.__ShowProgressBar = ShowProgressBar
-        
-        if StartIndex == 0 and EndIndex == 0:
-            self.Log('爬行 ' + Board + ' 板所有文章')
-            
-            ErrCode, EndIndex = self.getNewestPostIndex(Board)
-            if ErrCode == ErrorCode.Success:
-                #self.Log('Get ' + Board + ' get newest post index success: ' + str(EndIndex))
-                pass
-            else:
-                self.Log('取得' + Board + '板最新文章編號錯誤')
-                return self.UnknowError
-            
-        if EndIndex < StartIndex:
-            self.Log('文章編號範圍錯誤: ' + str(StartIndex) + ' 到 ' + str(EndIndex))
-            return self.ErrorInput
-        
-        ConnectList = [0]
-        self.__CrawPoolLock = threading.Lock()
-        self.__TotalPost = EndIndex - StartIndex + 1
-
-        if not self.__isBackground and self.__ShowProgressBar:
-            self.__ProgressBar = progressbar.ProgressBar(max_value=self.__TotalPost)
-            self.__ProgressBarCount = 0
-        self.__SuccessPostCount = 0
-        
-        self.__RequestCount = 0
-        self.__MaxRequestCount = DefaultThreadNumber
-        self.__MinRequestCount = 4
-        
-        self.__ThreadLock = None
-        
-        if self.__MaxMultiLogin > 1 and EndIndex - StartIndex + 1 > 10:
-            self.__kickOtherLogin = False
-            self.Log('啟動多重登入模式')
-            for i in range(1, self.__MaxMultiLogin):
-                for ii in range(3):            
-                    if self.__connectRemote(i) == ErrorCode.Success:
-                        ConnectList.append(i)
-                        break
-        else:
-            self.Log('啟動單一登入模式')
-
-        ConnectListTemp = ''
-        
-        for ConnectIndex in ConnectList:
-            ConnectListTemp += str(ConnectIndex) + ' '
-        self.Log('已啟動連線 ' + ConnectListTemp)
-        
-        if StartIndex == 0:
-            StartIndex = 1
-        self.Log('開始爬行 ' + Board + ' 板編號 ' + str(StartIndex) + ' 到 ' + str(EndIndex) + ' 的文章')
-
-        ThreadUnit = int((EndIndex - StartIndex) / len(ConnectList))
-        
-        self.Log('總共 ' + str(self.__TotalPost) + ' 篇文章')
-        
-        self.__ConnectCount = len(ConnectList)
-        self.__SaveCount = DefaultThreadNumber
-        
-        ThreadUnitCount = 0
-        
-        self.__CurrentLogLevel = self.__LogLevel
-        
-        self.setLogLevel(LogLevel.CRITICAL)
-        
-        for ConnectIndex in ConnectList:
-        
-            ThreadStartIndex = 0
-            ThreadEndIndex = 0
-
-            if len(ConnectList) == 1:
-                ThreadStartIndex = StartIndex
-                ThreadEndIndex = EndIndex
-            elif ThreadUnitCount == 0:
-
-                ThreadStartIndex = StartIndex
-                ThreadEndIndex = StartIndex + ThreadUnit
-                
-            elif ConnectIndex == ConnectList[len(ConnectList) - 1]:
-                
-                ThreadStartIndex = StartIndex + ThreadUnitCount * ThreadUnit + 1
-                ThreadEndIndex = EndIndex
-            else:
-
-                ThreadStartIndex = StartIndex + ThreadUnitCount * ThreadUnit + 1
-                ThreadEndIndex = StartIndex + (ThreadUnitCount + 1) * ThreadUnit
-
-            # print('ThreadStartIndex: ' + str(ThreadStartIndex))
-            # print('ThreadEndIndex: ' + str(ThreadEndIndex))
-            
-            threading.Thread(target = self.crawlFindUrlThread, args = (Board, ThreadStartIndex, ThreadEndIndex, ConnectIndex) ).start()
-            
-            ThreadUnitCount += 1
-        
-        for ConnectIndex in range(DefaultThreadNumber):
-            threading.Thread(target = self.crawlSaveThread, args = (ConnectIndex, Board)).start()
-
-        while True:
-            time.sleep(1)
-            if self.__ConnectCount == 0:
-                if len(self.__CrawPool) == 0 and self.__SaveCount == 0:
-                    if not self.__isBackground and self.__ShowProgressBar:
-                        self.__ProgressBar.update(self.__TotalPost)
-                        self.__ProgressBar.finish()
-                    break
-
-        for ConnectIndex in ConnectList:
-            if ConnectIndex != 0:
-                self.logout(ConnectIndex)
-        
-        self.__LogLevel = self.__CurrentLogLevel
-        
-        self.Log('成功取得 ' + str(self.__SuccessPostCount) + ' 篇文章')
-        
-        return ErrorCode.Success
-    
     def readPostFile(self, FileName):
         return Util.readPostFile(FileName)
     def getVersion(self):
