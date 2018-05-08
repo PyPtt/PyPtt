@@ -65,9 +65,6 @@ class Library(object):
         self.__Password = Password
         self.__kickOtherLogin = kickOtherLogin
 
-        self.ReplyPost_Board =                  1
-        self.ReplyPost_Mail =                   2
-
         self.__LoginMode_Login =                1
         self.__LoginMode_Recover =              2
         self.__LoginMode_MultiLogin =           3
@@ -94,7 +91,7 @@ class Library(object):
         
         self.__Cursor =                       '>'
         
-        self.__MaxMultiLogin =                  3
+        self.__MaxMultiLogin =                  5
 
         self.__ConnectList = [None] * self.__MaxMultiLogin
         self.__ReceiveData = [''] * self.__MaxMultiLogin
@@ -104,6 +101,26 @@ class Library(object):
         self.__isBackground = False
 
         self.__gotoMainMenu = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
+
+        try:
+            self.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
+            self.__isBackground = False
+        except Exception:
+            self.Log('偵測到背景執行')
+            self.__isBackground = True
+        self.Log('使用者帳號: ' + ID)
+        TempPW = ''
+
+        for i in range(len(Password)):
+            TempPW += '*'
+        
+        self.Log('密碼: ' + TempPW)
+        
+        self.__SSHKey = ECDSAKey.generate()
+        self.Log('產生 SSH 金鑰完成')
+
+        self.__connectRemote(0)
+        
         ###############################
 
         self.__KickTimes =                      0
@@ -122,33 +139,13 @@ class Library(object):
         
         self.__CrawPool = []
         
-        try:
-            self.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
-            self.__isBackground = False
-        except Exception:
-            self.Log('偵測到背景執行')
-            self.__isBackground = True
-        self.Log('使用者帳號: ' + ID)
-        TempPW = ''
-
-        for i in range(len(Password)):
-            TempPW += '*'
-        
-        self.Log('密碼: ' + TempPW)
-        # if kickOtherLogin:
-        #     self.Log('此連線將"會"剔除其他登入')
-        # else :
-        #     self.Log('此連線將"不會"剔除其他登入')
-        
-        self.__connectRemote(0)
-    
     def __showScreen(self, ErrCode, CatchIndex, ConnectIndex=0):
         if self.__LogLevel == LogLevel.DEBUG or Debug:
             print('-' * 50)
             print(self.__PreReceiveData[ConnectIndex])
             print('-' * 50)
             print(self.__ReceiveData[ConnectIndex])
-            print('此畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
+            print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
             print('-' * 50)
             # print('ErrorCode: ' + str(ErrCode))
             # print('CatchIndex: ' + str(CatchIndex))
@@ -238,6 +235,10 @@ class Library(object):
             
         except socket.timeout:
             ErrCode = ErrorCode.WaitTimeout
+            return ErrCode, -1
+        except OSError:
+            ErrCode = ErrorCode.OSError
+            return ErrCode, -1
 
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
@@ -284,9 +285,6 @@ class Library(object):
         Retry = False
         ErrCode = ErrorCode.Success
 
-        SSHKey = ECDSAKey.generate()
-        self.Log('產生 SSH 金鑰完成')
-
         while not self.__isConnected[ConnectIndex]:
 
             if Retry:
@@ -309,7 +307,7 @@ class Library(object):
                 # self.__ConnectList[ConnectIndex].load_system_host_keys()
                 # self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
                 self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbsu', password = '', pkey = SSHKey)
+                self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbsu', password = '', pkey = self.__SSHKey)
                 
                 self.__ConnectList[ConnectIndex].channel = self.__ConnectList[ConnectIndex].invoke_shell(width = self.width, height = self.height)
             except paramiko.AuthenticationException:
@@ -338,7 +336,7 @@ class Library(object):
             # 先後順序代表偵測的優先順序
             DetectTargetList = [
                 _DetectUnit(
-                    '按任意鍵繼續',
+                    '',
                     '任意鍵', 
                     _ResponseUnit('\x1b\x4fD', False)
                 ),
@@ -362,7 +360,7 @@ class Library(object):
                     ErrCode = ErrorCode.WrongPassword
                 ),
                 _DetectUnit(
-                    '系統負荷過重，重新執行連線',
+                    '頻道 ' + str(ConnectIndex) + ' 系統負荷過重，重新執行連線',
                     '為避免系統負荷過重, 請稍後再試', 
                     _ResponseUnit(' ', False),
                     BreakDetect=True,
@@ -384,18 +382,18 @@ class Library(object):
                     _ResponseUnit('y\r', False)
                 ),
                 _DetectUnit(
-                    '登入成功',
+                    '頻道 ' + str(ConnectIndex) + ' 登入成功',
                     '【主功能表】', 
                     _ResponseUnit(' ', False),
                     BreakDetect=True,
                 ),
                 _DetectUnit(
-                    '輸入密碼',
+                    '頻道 ' + str(ConnectIndex) + ' 輸入密碼',
                     '請輸入您的密碼:', 
                     _ResponseUnit(self.__Password + '\r\r', False)
                 ),
                 _DetectUnit(
-                    '輸入帳號',
+                    '頻道 ' + str(ConnectIndex) + ' 輸入帳號',
                     '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
                     _ResponseUnit(self.__ID + '\r', True)
                 )
@@ -428,7 +426,6 @@ class Library(object):
                         
                         isDetectedTarget = True
                         if DetectTarget.isBreakDetect():
-                            self.__isConnected[ConnectIndex] = True
                             isBreakDetect = True
                             ErrCode = DetectTarget.getErrorCode()
                         break
@@ -437,6 +434,7 @@ class Library(object):
 
                     if LoginFailCount < MaxLoginFail:
                         self.Log('讀取 PTT 畫面..')
+                        Refresh = True
                         LoginFailCount += 1
                         continue
 
@@ -453,16 +451,18 @@ class Library(object):
             elif ErrCode != ErrorCode.Success:
                 return ErrCode
             
-        if '> (' in self.__ReceiveData[ConnectIndex]:
-            self.Log('新式游標模式')
-            self.__Cursor = '>'
-            
-        elif '●(' in self.__ReceiveData[ConnectIndex]:
-            self.Log('舊式游標模式')
-            self.__Cursor = '●'
-        else:
-            self.Log('無法偵測游標')
-            return ErrorCode.UnknowError
+            if '> (' in self.__ReceiveData[ConnectIndex]:
+                self.Log('新式游標模式')
+                self.__Cursor = '>'
+                self.__isConnected[ConnectIndex] = True
+                
+            elif '●(' in self.__ReceiveData[ConnectIndex]:
+                self.Log('舊式游標模式')
+                self.__Cursor = '●'
+                self.__isConnected[ConnectIndex] = True
+            else:
+                self.Log('頻道 ' + str(ConnectIndex) + ' 無法偵測游標。重新執行連線')
+                # return ErrorCode.UnknowError
         return ErrorCode.Success
     def logout(self, ConnectIndex=-1):
         
@@ -483,11 +483,7 @@ class Library(object):
                 Refresh = True
                 ExtraWait = 0
 
-                ErrCode, CatchIndex = self.__operatePTT(index, SendMessage=SendMessage, CatchTargetList=['按任意鍵繼續'], Refresh=Refresh, ExtraWait=ExtraWait)
-                if ErrCode != 0:
-                    # self.Log('頻道 ' + str(index) + ' 登出失敗 錯誤碼: ' + str(ErrCode))
-                    self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
-                    return ErrorCode.UnknowError
+                ErrCode, CatchIndex = self.__operatePTT(index, SendMessage=SendMessage)
                 self.Log('頻道 ' + str(index) + ' 登出成功')
                 
         return ErrorCode.Success
@@ -583,11 +579,6 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
-                '',
-                '本文已被刪除', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
-            ),
         ]
 
         ShowFixResult = False
@@ -631,11 +622,12 @@ class Library(object):
                         FindResult = True
                     else:
                         ShowFixResult = True
-                    break
+                        break
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
-                sys.exit()
+                continue
+                # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                # self.Log('無法解析的狀態 以上是最後兩個畫面')
+                # sys.exit()
             if FindResult:
                 break
 
@@ -1005,8 +997,8 @@ class Library(object):
         # print('PostContent:', PostContent, '==')
 
         return PostAuthor, PostTitle, PostDate, PostContent, PostIP, PushList
-    def getPostInfo(self, Board, PostID='', PostIndex=0):
-        ConnectIndex = 0
+    def getPostInfo(self, Board, PostID='', PostIndex=0, InputConnectIndex=0):
+        ConnectIndex = InputConnectIndex
         
         result = None
         
@@ -1082,16 +1074,17 @@ class Library(object):
                 
                 PostMoney = screen
                 # print(len(PostMoney))
-                print(PostMoney)
+                # print(PostMoney)
                 for c in '這一篇文章值':
                     if c in PostMoney:
                         PostMoney = PostMoney[PostMoney.find(c):]
-                print(PostMoney)
+                # print(PostMoney)
                 # 
                 try:
                     PostMoney = int(re.search(r'\d+', PostMoney).group())
                 except AttributeError:
-                    print('解析文章價錢失敗', screen)
+                    # print('解析文章價錢失敗', screen)
+                    pass
 
                 # print(screen)
         else:
@@ -1116,7 +1109,8 @@ class Library(object):
         if CatchIndex == 0:
             # print(self.__ReceiveData[ConnectIndex])
             # 
-            self.Log('進入文章成功')
+            # self.Log('進入文章成功')
+            pass
         elif CatchIndex == 1:
             SendMessage = 'n'
 
@@ -1137,9 +1131,10 @@ class Library(object):
             
             LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
             if '瀏覽' in LastLine or '目前顯示' in LastLine or '離開' in LastLine:
-                self.Log('進入文章成功')
+                # self.Log('進入文章成功')
+                pass
             else:
-                print('進入文章 error')
+                # print('進入文章 error')
                 return ErrorCode.UnknowError, result
 
         LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
@@ -1942,8 +1937,182 @@ class Library(object):
                 sys.exit()
 
         return ErrCode
-    def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0, ShowProgressBar=True):
-    
+    def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1):
+        ConnectIndex = 0
+        ErrCode = ErrorCode.Success
+
+        ReplyResponse = ''
+        if ReplyType == ReplyPostType.Board:
+            ReplyResponse = 'F'
+        elif ReplyType == ReplyPostType.Mail:
+            ReplyResponse = 'M'
+        elif ReplyType == ReplyPostType.Board_Mail:
+            ReplyResponse = 'B'
+        else:
+            self.Log('回文種類輸入錯誤', LogLevel.WARNING)
+            return ErrorCode.ErrorInput
+
+        if PostID == '' and Index == -1:
+            self.Log('輸入參數錯誤')
+            return ErrorCode.ErrorInput
+        
+        Board = str(Board)
+        Content = str(Content)
+        PostID = str(PostID)
+        Index = int(Index)
+
+         # 前進至主頁面
+        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
+        # 前進至文章
+        if PostID != '':
+            SendMessage += '#' + PostID + '\r\rr'
+        elif Index != -1:
+            SendMessage += str(Index) + '\r\rr'
+        
+        SendMessage += ReplyResponse + '\r'
+        SendMessage += 'y\ry\r'
+        
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '編輯文章',
+                '編輯文章', 
+                _ResponseUnit(Content + '\r\x18s\r0\r', False),
+            ),
+            _DetectUnit(
+                '送出回文',
+                '請按任意鍵繼續', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+            ),
+            _DetectUnit(
+                '自存底稿',
+                '是否自存底稿', 
+                _ResponseUnit('y\r', False),
+            ),
+            
+            _DetectUnit(
+                '',
+                '我是' + self.__ID, 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
+
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
+                    
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        self.__isConnected[ConnectIndex] = True
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        break
+            if not isDetectedTarget:
+
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                sys.exit()
+
+        return ErrCode
+    def crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex):
+        self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex))
+
+        if not self.isLoginSuccess(ConnectIndex) and ConnectIndex > 0:
+            self.__CrawLock.acquire()
+            self.__connectRemote(ConnectIndex)
+            self.__CrawLock.release()
+        
+        for PostIndex in range(StartIndex, EndIndex):
+            # self.Log(PostIndex)
+            ErrCode, Post = self.getPostInfo(Board, PostIndex=PostIndex, InputConnectIndex=ConnectIndex)
+            if ErrCode != ErrorCode.Success:
+                continue
+            
+            self.__CrawLock.acquire()
+            # self.Log(Post.getTitle())
+            PostHandler(Post)
+            self.__CrawLock.release()
+
+        return
+    def crawlBoard(self, Board, PostHandler, StartIndex=0, EndIndex=0):
+        ErrCode = ErrorCode.Success
+
+        Board = str(Board)
+        StartIndex = int(StartIndex)
+        EndIndex = int(EndIndex)
+
+        ErrCode, NewestIndex = self.getNewestPostIndex(Board)
+        if ErrCode != ErrorCode.Success:
+            return ErrCode
+        
+        if StartIndex == 0 and EndIndex == 0:
+            StartIndex = 1
+            EndIndex = NewestIndex
+        elif StartIndex < 1 or NewestIndex < StartIndex:
+            self.Log('文章編號區間輸入錯誤: 開始標記不在 ' + Board + ' 板範圍中', LogLevel.WARNING)
+            return ErrorCode.ErrorInput
+        elif EndIndex < 1 or NewestIndex < EndIndex:
+            self.Log('文章編號區間輸入錯誤: 結束標記不在 ' + Board + ' 板範圍中', LogLevel.WARNING)
+            return ErrorCode.ErrorInput
+        elif EndIndex < StartIndex:
+            self.Log('文章編號區間輸入錯誤: 開始標記比結束標記大', LogLevel.WARNING)
+            return ErrorCode.ErrorInput            
+
+        self.__CrawLock = threading.Lock()
+        self.__TotalPost = EndIndex - StartIndex + 1
+        self.__EnableLogin = 0
+
+        self.Log('總爬行文章: ' + str(self.__TotalPost) + ' 篇')
+        
+        MaxThreadPost = 40
+        TempStr = '啟動連線頻道 '
+        for i in range(self.__MaxMultiLogin):
+            if (i + 1) * MaxThreadPost <= self.__TotalPost:
+                self.__EnableLogin += 1
+                TempStr += str(i) + ' '
+        self.Log(TempStr)
+
+        self.__CrawPoolList = []
+        CrawThreadList = []
+        Basic = int(self.__TotalPost / self.__EnableLogin)
+        LastEndIndexTemp = StartIndex
+        for i in range(0, self.__EnableLogin):
+            StartIndexTemp = LastEndIndexTemp
+            EndIndexTemp = (i + 1) * Basic + StartIndex
+            if self.__TotalPost % self.__EnableLogin > i:
+                EndIndexTemp += 1
+            LastEndIndexTemp = EndIndexTemp
+
+            # self.Log(str(StartIndexTemp) + ' ' + str(EndIndexTemp) + ':' + str(EndIndexTemp - StartIndexTemp))
+            # self.__CrawPoolList.append([StartIndexTemp, EndIndexTemp])
+            CrawThreadList.append(threading.Thread(target=self.crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp)))
+        
+        for SubThread in CrawThreadList:
+            SubThread.start()
+        for SubThread in CrawThreadList:
+            SubThread.join()
+        
+        self.Log('爬行完成!')
+        return ErrCode
         self.__PostHandler = PostHandler
     
         DefaultThreadNumber = 32
@@ -2071,103 +2240,7 @@ class Library(object):
         return Util.readPostFile(FileName)
     def getVersion(self):
         return Version
-    def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1):
-        ConnectIndex = 0
-
-        if PostID == '' and Index == -1:
-            self.Log('輸入參數錯誤')
-            return self.ErrorInput
         
-        if PostID != '':
-            #def __gotoPostByID(self, Board, PostID, ConnectIndex = 0):
-            ErrCode = self.__gotoPostByID(Board, PostID, ConnectIndex)
-            if ErrCode != ErrorCode.Success:
-                self.Log('replyPost 1 移動至文章失敗', LogLevel.DEBUG)
-                return ErrorCode
-        elif Index != -1:
-            #def __gotoPostByIndex(self, Board, PostIndex, ConnectIndex=0):
-            ErrCode = self.__gotoPostByIndex(Board, Index, ConnectIndex)
-            if ErrCode != ErrorCode.Success:
-                self.Log('replyPost 2 移動至文章失敗', LogLevel.DEBUG)
-                return ErrorCode
-                
-        CaseList = [
-        '二者皆是', 
-        '很抱歉',
-        '採用原標題', 
-        '請問要引用原文嗎', 
-        '編輯文章', 
-        '確定要儲存檔案嗎',
-        'x=隨機', 
-        '請按任意鍵繼續', 
-        '看板《' + Board + '》',
-        '已順利寄出，是否自存底稿'
-        ]
-        SendMessage = 'rr'
-        Enter = False
-        self.__CurrentTimeout[ConnectIndex] = 10
-        
-        while True:
-            ErrCode, Index = self.__sendData(ConnectIndex, SendMessage, CaseList, Enter)
-            if ErrCode == self.WaitTimeout:
-                self.__showScreen()
-                self.Log('無法回文', LogLevel.DEBUG)
-                return self.WaitTimeout
-            if ErrCode != ErrorCode.Success:
-                self.Log('replyPost 2 error code: ' + str(ErrorCode), LogLevel.DEBUG)
-                return ErrorCode
-            if Index == 0:
-                if ReplyType == self.ReplyPost_Board:
-                    SendMessage = 'F'
-                    self.Log('replyPost 回應至 (F)看板', LogLevel.DEBUG)
-                elif ReplyType == self.ReplyPost_Mail:
-                    SendMessage = 'M'
-                    self.Log('replyPost 回應至 (M)作者信箱', LogLevel.DEBUG)
-                elif ReplyType == (self.ReplyPost_Board + self.ReplyPost_Mail):
-                    SendMessage = 'B'
-                    self.Log('replyPost 回應至 (B)二者皆是', LogLevel.DEBUG)
-                else:
-                    self.Log('replyPost 不支援的回文選項: ' + str(ReplyType), LogLevel.DEBUG)
-                self.__CurrentTimeout[ConnectIndex] = 10
-                Enter = True
-            if Index == 1:
-                SendMessage = 'Y'
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 10
-                self.Log('replyPost 回信給作者', LogLevel.DEBUG)
-            if Index == 2:
-                SendMessage = 'Y'
-                Enter = True
-                self.Log('replyPost 採用原標題', LogLevel.DEBUG)
-            if Index == 3:
-                SendMessage = 'Y'
-                Enter = True
-                self.Log('replyPost 引用原文', LogLevel.DEBUG)
-            if Index == 4:
-                SendMessage = Content + '\r\x18'
-                Enter = True
-                self.__CurrentTimeout[ConnectIndex] = 10
-                self.Log('replyPost 編輯文章', LogLevel.DEBUG)
-            if Index == 5:
-                SendMessage = 's'
-                Enter = True
-                self.Log('replyPost 儲存檔案', LogLevel.DEBUG)
-            if Index == 6:
-                SendMessage = str(0)
-                Enter = True
-            if Index == 7:
-                SendMessage = 'q'
-                Enter = False
-            if Index == 8:
-                #self.Log('Post Success')
-                break
-            if Index == 9:
-                SendMessage = 'Y'
-                Enter = True
-                self.Log('replyPost 已順利寄出', LogLevel.DEBUG)
-        
-        return ErrorCode.Success
-    
 if __name__ == '__main__':
 
     print('PTT Library v ' + Version)

@@ -21,3 +21,4 @@ class ErrorCode(object):
         self.SSHFail =                         16
         self.NoFastPush =                      17
         self.NoEnoughP =                       18
+        self.OSError =                         19
