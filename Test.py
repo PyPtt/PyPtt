@@ -141,7 +141,7 @@ def GetPostInfoDemo():
     # getContent            推文內文
     # getTime               推文時間
     
-    TryPost = 3
+    TryPost = 1
     
     # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
     BoardList = ['Wanted']
@@ -558,7 +558,7 @@ if __name__ == '__main__':
     # GetNewestPostIndexDemo()
     # PostDemo()
     # PushDemo()
-    # GetPostInfoDemo()
+    GetPostInfoDemo()
     # MailDemo()
     # GetTimeDemo()
     # GetMailDemo()
@@ -566,8 +566,7 @@ if __name__ == '__main__':
     # GiveMoneyDemo()
     # ChangePasswordDemo()
     # ReplyPostDemo()
-
-    CrawlBoardDemo()
+    # CrawlBoardDemo()
     
     # 請養成登出好習慣
     PTTBot.logout()
