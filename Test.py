@@ -2,6 +2,7 @@
 import time
 import json
 import getpass
+import codecs
 from PTTLibrary import SSHPTT as PTT
 
 # 如果你想要自動登入，建立 Account.txt
@@ -142,8 +143,8 @@ def GetPostInfoDemo():
     
     TryPost = 3
     
-    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    # BoardList = ['Wanted']
+    # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    BoardList = ['Wanted']
 
     for Board in BoardList:
         
@@ -354,18 +355,25 @@ def PostHandler(Post):
     # getPushContent            推文內文
     # getPushTime               推文時間
     
-    with open("CrawlBoardResult.txt", "a") as ResultFile:
+    with codecs.open("CrawlBoardResult.txt", "a", "utf-8") as ResultFile:
         ResultFile.write(Post.getTitle() + '\n')
     
 def CrawlBoardDemo():
     
-    #範例是從編號 1 爬到 編號 100 的文章
-    #如果想要取得所有文章可省略編號參數
-    #PTTBot.crawlBoard('Wanted', PostHandler)
-    #這樣就會全部文章都會爬下來
+    # 範例是爬最新的一百篇文章
+    # 如果想要取得所有文章可省略編號參數
+    # PTTBot.crawlBoard('Wanted', PostHandler)
+    # 這樣就會全部文章都會爬下來
+
+    ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
+    if ErrorCode == PTT.ErrorCode.Success:
+        PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號成功: ' + str(NewestIndex))
+    else:
+        PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號失敗')
+        return False    
     
-    ErrorCode = PTTBot.crawlBoard('Wanted', PostHandler, 1, 100)
-    if ErrorCode == PTTBot.Success:
+    ErrorCode = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - 99, EndIndex=NewestIndex)
+    if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('爬行成功')
         
 def GetUserInfoDemo():
@@ -428,13 +436,13 @@ def ReplyPostDemo():
      
     # 回傳 錯誤碼
 
-    ErrorCode = PTTBot.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
-    if ErrorCode == PTT.ErrorCode.Success:
-        PTTBot.Log('在 Test 板發文成功')
-    elif ErrorCode == PTT.ErrorCode.NoPermission:
-        PTTBot.Log('發文權限不足')
-    else:
-        PTTBot.Log('在 Test 板發文失敗')
+    # ErrorCode = PTTBot.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+    # if ErrorCode == PTT.ErrorCode.Success:
+    #     PTTBot.Log('在 Test 板發文成功')
+    # elif ErrorCode == PTT.ErrorCode.NoPermission:
+    #     PTTBot.Log('發文權限不足')
+    # else:
+    #     PTTBot.Log('在 Test 板發文失敗')
     
     ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Test')
     if ErrorCode == PTT.ErrorCode.Success:
@@ -443,19 +451,19 @@ def ReplyPostDemo():
         PTTBot.Log('取得 ' + 'Test' + ' 板最新文章編號失敗')
         return False
 
-    ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至板上', PTTBot.ReplyPost_Board, Index=NewestIndex)
+    ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至板上', PTT.ReplyPostType.Board, Index=NewestIndex)
     if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('在 Test 回文至板上成功!')
     else:
         PTTBot.Log('在 Test 回文至板上失敗 ' + str(ErrorCode))
     
-    ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至信箱', PTTBot.ReplyPost_Mail, Index=NewestIndex)
+    ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至信箱', PTT.ReplyPostType.Mail, Index=NewestIndex)
     if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('在 Test 回文至信箱成功!')
     else:
         PTTBot.Log('在 Test 回文至信箱失敗 ' + str(ErrorCode))
         
-    ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至版上與信箱', PTTBot.ReplyPost_Board + PTTBot.ReplyPost_Mail, Index=NewestIndex)
+    ErrorCode = PTTBot.replyPost('Test', '回文測試 回文至版上與信箱',PTT.ReplyPostType.Board_Mail, Index=NewestIndex)
     if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('在 Test 回文至版上與信箱成功!')
     else:
@@ -556,10 +564,10 @@ if __name__ == '__main__':
     # GetMailDemo()
     # GetUserInfoDemo()
     # GiveMoneyDemo()
-    ChangePasswordDemo()
-
+    # ChangePasswordDemo()
     # ReplyPostDemo()
-    # CrawlBoardDemo()
+
+    CrawlBoardDemo()
     
     # 請養成登出好習慣
     PTTBot.logout()
