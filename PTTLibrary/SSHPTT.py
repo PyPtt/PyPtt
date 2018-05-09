@@ -1402,9 +1402,9 @@ class Library(object):
             else:
                 MailContentList.append('\r'.join(MailContentListTemp))
                 break
-        
+        MailContentList.append('')
         SendMessage = self.__gotoMainMenu + 'M\rS\r' + UserID + '\r' + MailTitle + '\r'
-        # MailContent + '\x18s\r' + str(SignType) + '\ry\r'
+
         Refresh = True
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
@@ -1425,8 +1425,6 @@ class Library(object):
                 self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode
             
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-
             isDetectedTarget = False
 
             for i in range(len(DetectTargetList)):
@@ -1453,8 +1451,6 @@ class Library(object):
                             '編輯文章', 
                             _ResponseUnit('\r' + MailContentList[MailContentListIndex], True),
                         )
-
-                    break
 
             if not isDetectedTarget:
                 self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
