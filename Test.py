@@ -113,7 +113,7 @@ def showPost(Post):
     
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
     
-def GetPostInfoDemo():
+def GetPostDemo():
     
     # 這個範例是如何取得單一文章資訊
     # getPostInfo
@@ -141,10 +141,10 @@ def GetPostInfoDemo():
     # getContent            推文內文
     # getTime               推文時間
     
-    TryPost = 1
+    TryPost = 10
     
     # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    BoardList = ['Wanted']
+    BoardList = ['Gossiping']
 
     for Board in BoardList:
         
@@ -162,8 +162,8 @@ def GetPostInfoDemo():
             PTTBot.Log('-' * 50)    
             PTTBot.Log('測試 ' + Board + ' ' + str(NewestIndex - i))
 
-            ErrorCode, Post = PTTBot.getPostInfo(Board, PostIndex=NewestIndex - i)
-            # ErrorCode, Post = PTTBot.getPostInfo(Board, PostIndex=79756)
+            ErrorCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
+            # ErrorCode, Post = PTTBot.getPost(Board, PostIndex=785604)
             if ErrorCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')
                 continue
@@ -173,7 +173,7 @@ def GetPostInfoDemo():
             
             PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
 
-            ErrorCode, Post = PTTBot.getPostInfo(Board, PostID=Post.getID())
+            ErrorCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
             if ErrorCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')
                 continue
@@ -183,31 +183,6 @@ def GetPostInfoDemo():
 
             showPost(Post)
 
-def GetNewPostIndexListDemo():
-
-    # 這個範例是如何取得某版的最新文章編號清單
-    # 跟上一次使用 getPostInfoByIndex 比較
-    # 第一個參數是板面
-    # 第二個參數就是你上一次查詢的最新文章編號 代入 0 就會等到有PO文才會有清單結果
-    
-    # 詳細使用方式可以參考 範例程式中的 汪踢推文機器人
-    
-    # 回傳值 錯誤碼, 最新文章編號清單
-
-    ErrorCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
-    if ErrorCode != PTTBot.Success:
-        return False
-    
-    LastIndex = NewestIndex - 5
-    for i in range(3):
-        #Return new post list LastIndex ~ newest without LastIndex
-        ErrorCode, LastIndexList = PTTBot.getNewPostIndexList('Wanted', LastIndex)
-        if ErrorCode != PTTBot.Success:
-            return False
-        if not len(LastIndexList) == 0:
-            for NewPostIndex in LastIndexList:
-                PTTBot.Log('偵測到新文章編號 ' + str(NewPostIndex))
-            LastIndex = LastIndexList.pop()
 def PushDemo():
     
     # 這個範例是示範如何對特定文章推文
@@ -376,7 +351,7 @@ def CrawlBoardDemo():
     if ErrorCode == PTT.ErrorCode.Success:
         PTTBot.Log('爬行成功')
         
-def GetUserInfoDemo():
+def GetUserDemo():
     
     # 範例是追蹤特定 ID 的情況
     # 此API可以持續追蹤某ID的動態
@@ -400,7 +375,7 @@ def GetUserInfoDemo():
         
         PTTBot.Log('---------------------------')
         PTTBot.Log('Start query: ' + IDs)
-        ErrorCode, UserInfo = PTTBot.getUserInfo(IDs)
+        ErrorCode, UserInfo = PTTBot.getUser(IDs)
         if ErrorCode == PTT.ErrorCode.NoUser:
             # PTTBot.Log('')
             continue
@@ -558,15 +533,15 @@ if __name__ == '__main__':
     # GetNewestPostIndexDemo()
     # PostDemo()
     # PushDemo()
-    # GetPostInfoDemo()
+    # GetPostDemo()
     # MailDemo()
     # GetTimeDemo()
-    GetMailDemo()
-    # GetUserInfoDemo()
+    # GetMailDemo()
+    # GetUserDemo()
     # GiveMoneyDemo()
     # ChangePasswordDemo()
     # ReplyPostDemo()
-    # CrawlBoardDemo()
+    CrawlBoardDemo()
     
     # 請養成登出好習慣
     PTTBot.logout()
