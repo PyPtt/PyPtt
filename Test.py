@@ -282,10 +282,10 @@ def MailDemo():
     # 第四個參數是簽名檔選擇 0 不加簽名檔
     Content = ''
 
-    for i in range(128):
+    for i in range(3):
         Content += '測試行 ' + str(i) + '\r'
 
-    for i in range(3):
+    for i in range(1):
         ErrorCode = PTTBot.mail(ID, '自動寄信測試標題', '自動測試 如有誤寄打擾 抱歉QQ\r' + Content, 0)
         if ErrorCode == PTT.ErrorCode.Success:
             PTTBot.Log('寄信給 ' + ID + ' 成功')
@@ -558,8 +558,8 @@ if __name__ == '__main__':
     # GetNewestPostIndexDemo()
     # PostDemo()
     # PushDemo()
-    GetPostInfoDemo()
-    # MailDemo()
+    # GetPostInfoDemo()
+    MailDemo()
     # GetTimeDemo()
     # GetMailDemo()
     # GetUserInfoDemo()
