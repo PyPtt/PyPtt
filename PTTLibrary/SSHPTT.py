@@ -1790,7 +1790,7 @@ class Library(object):
         if ErrCode != ErrorCode.Success:
             self.Log('取得最新信箱編號失敗: ' + str(ErrCode))
             return ErrCode, result
-        if MailIndex >= NewestMailIndex:
+        if MailIndex > NewestMailIndex:
             self.Log('錯誤的輸入: ' + str(MailIndex))
             return ErrorCode.ErrorInput, result
         
