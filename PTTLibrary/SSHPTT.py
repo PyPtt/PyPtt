@@ -121,6 +121,8 @@ class Library(object):
 
         self.__connectRemote(0)
         
+        if self.isLoginSuccess():
+            threading.Thread(target=self.__AntiLogout)
         ###############################
 
         self.__KickTimes =                      0
@@ -138,7 +140,10 @@ class Library(object):
         self.__TimeoutCount = [0] * self.__MaxMultiLogin
         
         self.__CrawPool = []
-        
+    
+    def __AntiLogout(self):
+
+        return 
     def __showScreen(self, ErrCode, CatchIndex, ConnectIndex=0):
         if self.__LogLevel == LogLevel.DEBUG or Debug:
             print('-' * 50)
