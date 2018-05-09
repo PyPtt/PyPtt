@@ -64,7 +64,7 @@ class Library(object):
         self.__ID = ID
         self.__Password = Password
         self.__kickOtherLogin = kickOtherLogin
-
+        
         self.__LoginMode_Login =                1
         self.__LoginMode_Recover =              2
         self.__LoginMode_MultiLogin =           3
@@ -142,13 +142,17 @@ class Library(object):
     def __showScreen(self, ErrCode, CatchIndex, ConnectIndex=0):
         if self.__LogLevel == LogLevel.DEBUG or Debug:
             print('-' * 50)
-            print(self.__PreReceiveData[ConnectIndex])
+            try:
+                print(self.__PreReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+            except Exception:
+                print(self.__PreReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
             print('-' * 50)
-            print(self.__ReceiveData[ConnectIndex])
+            try:
+                print(self.__ReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+            except Exception:
+                print(self.__ReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
             print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
             print('-' * 50)
-            # print('ErrorCode: ' + str(ErrCode))
-            # print('CatchIndex: ' + str(CatchIndex))
                                     
     def setLogLevel(self, _LogLevel):
         if _LogLevel < LogLevel.DEBUG or LogLevel.SLIENT < _LogLevel:
@@ -338,22 +342,22 @@ class Library(object):
                 _DetectUnit(
                     '',
                     '任意鍵', 
-                    _ResponseUnit('\x1b\x4fD', False)
+                    _ResponseUnit(' ', True)
                 ),
                 _DetectUnit(
-                    '放棄未完成文章',
+                    '頻道 ' + str(ConnectIndex) + ' 放棄未完成文章',
                     '有一篇文章尚未完成', 
                     _ResponseUnit('q\r', False)
                 ),
                 _DetectUnit(
-                    '郵件已滿，無法執行任何功能',
+                    '頻道 ' + str(ConnectIndex) + ' 郵件已滿，無法執行任何功能',
                     '郵件選單', 
                     _ResponseUnit(' ', False),
                     BreakDetect=True,
                     ErrCode = ErrorCode.MailBoxFull
                 ),
                 _DetectUnit(
-                    '密碼錯誤',
+                    '頻道 ' + str(ConnectIndex) + ' 密碼錯誤',
                     '請檢查帳號及密碼大小寫有無輸入錯誤', 
                     _ResponseUnit(' ', False),
                     BreakDetect=True,
@@ -367,35 +371,35 @@ class Library(object):
                     ErrCode = ErrorCode.WaitTimeout
                 ),
                 _DetectUnit(
-                    '更新與同步線上使用者及好友名單',
+                    '頻道 ' + str(ConnectIndex) + ' 更新與同步線上使用者及好友名單',
                     '更新與同步線上使用者及好友名單', 
                     _ResponseUnit('\x1b\x4fD\x1b\x4fD', False)
                 ),
                 _DetectUnit(
-                    '刪除重複登入的連線' if self.__kickOtherLogin else '不刪除重複登入的連線',
+                    '頻道 ' + str(ConnectIndex) + ' 刪除重複登入的連線' if self.__kickOtherLogin else '不刪除重複登入的連線',
                     '刪除其他重複登入的連線', 
                     _ResponseUnit('y\r' if self.__kickOtherLogin else 'n\r', True)
                 ),
                 _DetectUnit(
-                    '刪除錯誤嘗試紀錄',
+                    '頻道 ' + str(ConnectIndex) + ' 刪除錯誤嘗試紀錄',
                     '您要刪除以上錯誤嘗試的記錄嗎', 
                     _ResponseUnit('y\r', False)
                 ),
                 _DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 登入成功',
-                    '【主功能表】', 
+                    '我是' + self.__ID, 
                     _ResponseUnit(' ', False),
                     BreakDetect=True,
                 ),
                 _DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 輸入密碼',
                     '請輸入您的密碼:', 
-                    _ResponseUnit(self.__Password + '\r\r', False)
+                    _ResponseUnit(self.__Password + '\r', False)
                 ),
                 _DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 輸入帳號',
                     '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
-                    _ResponseUnit(self.__ID + '\r', True)
+                    _ResponseUnit(self.__ID + '\r', False)
                 )
             ]
             
@@ -436,6 +440,7 @@ class Library(object):
                         self.Log('讀取 PTT 畫面..')
                         Refresh = True
                         LoginFailCount += 1
+                        SendMessage = ''
                         continue
 
                     self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
@@ -480,8 +485,6 @@ class Library(object):
                 self.Log('頻道 ' + str(index) + ' 登出', LogLevel.DEBUG)
                 
                 SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD g\ry\r'
-                Refresh = True
-                ExtraWait = 0
 
                 ErrCode, CatchIndex = self.__operatePTT(index, SendMessage=SendMessage)
                 self.Log('頻道 ' + str(index) + ' 登出成功')
@@ -997,8 +1000,16 @@ class Library(object):
         # print('PostContent:', PostContent, '==')
 
         return PostAuthor, PostTitle, PostDate, PostContent, PostIP, PushList
-    def getPostInfo(self, Board, PostID='', PostIndex=0, InputConnectIndex=0):
-        ConnectIndex = InputConnectIndex
+    def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0):
+        for i in range(3):
+            ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex)
+            if ErrCode == ErrorCode.ParseError:
+                continue
+            return ErrCode, Post
+        
+        return ErrCode, Post
+    def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0):
+        ConnectIndex = _ConnectIndex
         
         result = None
         
@@ -1035,7 +1046,22 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
+            _DetectUnit(
+                '取得文章',
+                '這一篇文章值', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '取得文章',
+                '文章代碼(AID):', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),   
         ]
+
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
             if ErrCode == ErrorCode.WaitTimeout:
@@ -1043,7 +1069,7 @@ class Library(object):
                 break
             elif ErrCode != ErrorCode.Success:
                 self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
-                return ErrCode
+                return ErrCode, None
 
             isDetectedTarget = False
 
@@ -1057,12 +1083,20 @@ class Library(object):
                         self.__isConnected[ConnectIndex] = True
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
-                        break
 
                     SendMessage = DetectTarget.getResponse().getSendMessage()
                     Refresh = DetectTarget.getResponse().needRefresh()
 
+                    break
+
             if not isDetectedTarget:
+                
+                for line in self.__ReceiveData[ConnectIndex].split('\n'):
+                    if line.startswith('>'):
+                        if '本文已被' in line[:line.find('[')]:
+                            return ErrorCode.PostDeleted, result
+                        # print('line: ' + line[:line.find('[')])
+
                 self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態 以上是最後兩個畫面')
                 sys.exit()
@@ -1084,13 +1118,6 @@ class Library(object):
         while PostID.endswith(' '):
             PostID = PostID[:-1]
         
-        Target = '[ptt.cc] '
-        PostTitle = InfoLines[0]
-        PostTitle = PostTitle[PostTitle.find(Target) + len(Target):]
-        PostTitle = PostTitle[:PostTitle.find('│')]
-        while PostTitle.endswith(' '):
-            PostTitle = PostTitle[:-1]
-        
         Target = '文章網址: '
         PostWeb = InfoLines[1]
         PostWeb = PostWeb[PostWeb.find(Target) + len(Target):]
@@ -1100,10 +1127,10 @@ class Library(object):
         
         PostMoney = int(re.search(r'\d+', InfoLines[2]).group())
         
-        self.Log('PostID: =' + PostID + '=')
-        self.Log('PostTitle: =' + PostTitle + '=')
-        self.Log('PostWeb: =' + PostWeb + '=')
-        self.Log('PostMoney: =' + str(PostMoney) + '=')
+        # self.Log('PostID: =' + PostID + '=')
+        # self.Log('PostTitle: =' + PostTitle + '=')
+        # self.Log('PostWeb: =' + PostWeb + '=')
+        # self.Log('PostMoney: =' + str(PostMoney) + '=')
 
         SendMessage = '\r\r'
         
@@ -1113,17 +1140,20 @@ class Library(object):
         DetectTargetList = [
             _DetectUnit(
                 '文章讀取完成',
-                '(100%)  目前顯示', 
+                '(100%)  目前', 
                 _ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
             _DetectUnit(
-                '讀取文章..',
+                '',
                 '目前顯示: 第', 
                 _ResponseUnit('', False),
-                BreakDetect=True,
-                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '',
+                '瀏覽 第', 
+                _ResponseUnit('', False),
             ),
         ]
 
@@ -1131,8 +1161,8 @@ class Library(object):
         PageIndex = 2
         # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
         LastPageIndex = 5
-        PostContentList = []
-        IPLine = ''
+        PostContentListTemp = []
+        PostIP = ''
 
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
@@ -1154,8 +1184,11 @@ class Library(object):
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
                     
-                    # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                    
+                    if len(PostIP) == 0:
+                        PostIP = re.findall( r'[0-9]+(?:\.[0-9]+){3}', self.__ReceiveData[ConnectIndex])
+                        if len(PostIP) > 0:
+                            PostIP = PostIP[0]
+                 
                     CurrentPage = self.__ReceiveData[ConnectIndex]
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
@@ -1173,35 +1206,102 @@ class Library(object):
                     
                     LastPageIndex = PageLineRange[1]
 
-                    CurrentPage = '\n'.join(CurrentPageList)
-                    # self.Log(CurrentPage, LogLevel.DEBUG)
-                    PostContentList.append(CurrentPage)
+                    # CurrentPage = '\n'.join(CurrentPageList)
+                    # PostContentListTemp.append(CurrentPage)
+                    PostContentListTemp.extend(CurrentPageList)
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
                         
-                        IPLine = CurrentPageList.pop()
-
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
-                        break
-                    
+
                     SendMessage = str(PageIndex) + '\r'
-                    Refresh = True
                     PageIndex += 1
+                    Refresh = True
+                    break
 
             if not isDetectedTarget:
                 self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態 以上是最後兩個畫面')
                 sys.exit()
+        
+        PostLineList = FirstPage.split('\n')
 
+        # for line in PostLineList:
+        #     print('Q', line)
+
+        Target = '作者  '
+        PostAuthor = PostLineList[0]
+        PostAuthor = PostAuthor[PostAuthor.find(Target) + len(Target):]
+        PostAuthor = PostAuthor[:PostAuthor.find(')') + 1]
+        while PostAuthor.endswith(' '):
+            PostAuthor = PostAuthor[:-1]
+        
+        Target = '標題  '
+        PostTitle = PostLineList[1]
+        PostTitle = PostTitle[PostTitle.find(Target) + len(Target):]
+        PostTitle = PostTitle[:PostTitle.find('\r')]
+        while PostTitle.endswith(' '):
+            PostTitle = PostTitle[:-1]
+
+        Target = '時間  '
+        PostDate = PostLineList[2]
+        PostDate = PostDate[PostDate.find(Target) + len(Target):]
+        PostDate = PostDate[:PostDate.find('\r')]
+        while PostDate.endswith(' '):
+            PostDate = PostDate[:-1]
+
+        PostContentList = []
+        PostPushList = []
+        for line in PostContentListTemp:
+            # print('! ' + line)
+            if len(PostContentList) == 0:
+                # print('QQ: ' + str(PostIP))
+                if PostIP in line:
+                    PostContentList = PostContentListTemp[:PostContentListTemp.index(line)]
+            else:
+                while line.startswith(' '):
+                    line = line[1:]
+                
+                CurrentPushType = PushType.Unknow
+
+                if line.startswith('推'):
+                    CurrentPushType = PushType.Push
+                elif line.startswith('噓'):
+                    CurrentPushType = PushType.Boo
+                elif line.startswith('→'):
+                    CurrentPushType = PushType.Arrow
+                
+                if CurrentPushType != PushType.Unknow:
+                    # print(line)
+
+                    PushAuthor = line
+                    PushAuthor = PushAuthor[2:]
+                    PushAuthor = PushAuthor[:PushAuthor.find(':')]
+                    while PushAuthor.endswith(' '):
+                        PushAuthor = PushAuthor[:-1]
+                    
+                    Target = ': '
+                    PushContent = line[:-11]
+                    PushContent = PushContent[PushContent.find(Target) + len(Target):]
+                    # PushContent = PushContent[:PushContent.find(' ')]
+                    while PushContent.endswith(' '):
+                        PushContent = PushContent[:-1]
+
+                    PushTime = line[-11:]
+                    # print('PushAuthor: =' + PushAuthor + '=')
+                    # print('PushContent: =' + PushContent + '=')
+                    # print('PushTime: =' + PushTime + '=')
+
+                    CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushTime)
+                    PostPushList.append(CurrentPush)
         PostContent = '\n'.join(PostContentList)
-        # print(PostContent)
-        PostIPList = list(map(str, re.findall(r'\d+', IPLine)))
-        PostIP = '.'.join(PostIPList)
 
-        self.Log('PostIP: =' + str(PostIP) + '=')
+        # self.Log('PostContent: =' + PostContent + '=')
+        # self.Log('PostIP: =' + PostIP + '=')
 
+        result = Information.PostInformation(Board, PostID, PostAuthor,PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList)
         return ErrCode, result
 
         if PostID != '':
@@ -1591,7 +1691,7 @@ class Library(object):
 
         return ErrorCode.Success, result
     
-    def getUserInfo(self, UserID):
+    def getUser(self, UserID):
         ConnectIndex = 0
 
         SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDT\rQ\r' + UserID + '\r'
@@ -1813,7 +1913,7 @@ class Library(object):
                 ErrCode = ErrorCode.Success
             ),
             _DetectUnit(
-                '讀取信件...',
+                '',
                 '目前顯示', 
                 _ResponseUnit('', False),
             ),
@@ -1855,15 +1955,15 @@ class Library(object):
 
                     PageLineRange = CurrentPageList.pop()
                     
-                    PageLineRange = re.findall(r'\d+', PageLineRange)
-                    PageLineRange = list(map(int, PageLineRange))[3:]
+                    PageLineRangeTemp = re.findall(r'\d+', PageLineRange)
+                    PageLineRangeTemp = list(map(int, PageLineRangeTemp))[3:]
                     
-                    OverlapLine = LastPageIndex - PageLineRange[0] + 1
+                    OverlapLine = LastPageIndex - PageLineRangeTemp[0] + 1
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
                     
-                    LastPageIndex = PageLineRange[1]
+                    LastPageIndex = PageLineRangeTemp[1]
 
                     CurrentPage = '\n'.join(CurrentPageList)
                     # self.Log(CurrentPage, LogLevel.DEBUG)
@@ -1871,7 +1971,7 @@ class Library(object):
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
-                        
+
                         IPLine = CurrentPageList.pop()
 
                         isBreakDetect = True
@@ -1922,6 +2022,10 @@ class Library(object):
         MailContent = '\n'.join(MailContentList)
         # self.Log('MailContent: =' + MailContent + '=', LogLevel.DEBUG)
 
+        if len(IPLine) < 7:
+            # 如果只有一頁的情況，IP 會顯示在第一頁
+            IPLine = MailLineList.pop()
+            IPLine = IPLine[:IPLine.find('瀏覽')]
         MailIPList = list(map(str, re.findall(r'\d+', IPLine)))
         MailIP = '.'.join(MailIPList)
 
@@ -2221,7 +2325,7 @@ class Library(object):
 
         for PostIndex in range(StartIndex, EndIndex):
             # self.Log(PostIndex)
-            ErrCode, Post = self.getPostInfo(Board, PostIndex=PostIndex, InputConnectIndex=ConnectIndex)
+            ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex)
             if ErrCode != ErrorCode.Success:
                 continue
             
