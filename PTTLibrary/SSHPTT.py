@@ -58,7 +58,7 @@ class _DetectUnit(object):
         return self.__ErrCode
 
 class Library(object):
-    def __init__(self, ID, Password, kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1):
+    def __init__(self, ID, Password, kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None):
 
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -127,19 +127,24 @@ class Library(object):
         self.__RunIdleThread =              False
         # self.__IdleLock = threading.Lock()
 
+        self.__WaterBallHandler = WaterBallHandler
+        if self.__WaterBallHandler != None:
+            self.__MaxIdleTime = 1
+
     def __AntiLogout(self):
         
         self.__RunIdleThread = True
 
         while self.__RunIdleThread:
             self.__IdleTime += 1
+            time.sleep(1)
             if self.__IdleTime < self.__MaxIdleTime:
-                
-                time.sleep(1)
-
                 continue
             # self.__IdleLock.acquire()
-            self.getTime()
+            ErrCode, result = self.getTime()
+            self.Log(result)
+            if result == None:
+                self.__showScreen(ErrCode, 0, ConnectIndex=0)
             self.__IdleTime = 0
             # self.__IdleLock.release()
 
@@ -245,6 +250,18 @@ class Library(object):
 
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
+        if self.__WaterBallHandler != None:
+            for line in self.__ReceiveData[ConnectIndex].split('\n'):
+                # if '★' in line:
+                if line.startswith('  ★'):
+                    line = line[3:]
+                    WaterBallAuthor = line[:line.find(' ')]
+                    WaterBallContent = line[line.find(' ') + 1:line.find(' [K')]
+                    # print('WaterBallAuthor: =' + WaterBallAuthor + '=')
+                    # print('WaterBallContent: =' + WaterBallContent + '=')
+                    CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent)
+                    self.__WaterBallHandler(CurrentWaterBall)
+
         for i in range(len(CatchTargetList)):
             if CatchTargetList[i] in self.__ReceiveData[ConnectIndex]:
                 self.__ConnectList[ConnectIndex].channel.settimeout(self.__DefaultTimeout)
@@ -329,7 +346,7 @@ class Library(object):
                 ErrCode = ErrorCode.UnknowError
                 continue
 
-            self.Log('建立互動通道成功')
+            self.Log('頻道 ' + str(ConnectIndex) + ' 建立互動通道成功')
             
             self.__ConnectList[ConnectIndex].channel.settimeout(self.__DefaultTimeout)
 
@@ -436,7 +453,7 @@ class Library(object):
                 if not isDetectedTarget:
 
                     if LoginFailCount < MaxLoginFail:
-                        self.Log('讀取 PTT 畫面..')
+                        self.Log('頻道 ' + str(ConnectIndex) + ' 讀取 PTT 畫面..')
                         Refresh = True
                         LoginFailCount += 1
                         SendMessage = ''
@@ -1654,11 +1671,19 @@ class Library(object):
 
         return ErrorCode.Success
     def getTime(self):
+        for i in range(3):
+            ErrCode, result = self.__getTime()
+            if ErrCode == ErrorCode.WaitTimeout or ErrCode == ErrorCode.Success:
+                break
+        return ErrCode, result
+
+    def __getTime(self):
         self.__IdleTime = 0
         ConnectIndex = 0
 
+        result = None
         # \x1b\x4fA (上, 下右左 BCD)
-        SendMessage = '\x1b\x4fC\x1b\x4fD'
+        SendMessage = self.__gotoMainMenu + 'P\x1b\x4fC\x1b\x4fD'
         Refresh = True
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
@@ -1679,7 +1704,7 @@ class Library(object):
                 break
             elif ErrCode != ErrorCode.Success:
                 self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
-                return ErrCode
+                return ErrCode, result
             
             # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
 
@@ -1699,14 +1724,17 @@ class Library(object):
                     break
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
-                sys.exit()
+                # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                # self.Log('無法解析的狀態 以上是最後兩個畫面')
+                # sys.exit()
+                return ErrorCode.ParseError, result
         if ErrCode != ErrorCode.Success:
-            return ErrCode
+            return ErrCode, result
         
         LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
         LastLineList = list(map(int, re.findall(r'\d+', LastLine)))
+        if len(LastLineList) < 3:
+            return ErrorCode.ParseError, result
         result = str(LastLineList[2]) + ':' + str(LastLineList[3])
         # print(result)
 

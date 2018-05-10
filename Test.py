@@ -508,6 +508,10 @@ def ThrowWaterBallDemo():
         PTTBot.Log('丟水球失敗! 錯誤碼: ' + str(ErrCode))
     return
 
+def WaterBallHandler(WaterBall):
+    print('WaterBallAuthor: =' + WaterBall.getAuthor() + '=')
+    print('WaterBallContent: =' + WaterBall.getContent() + '=')
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -534,7 +538,7 @@ if __name__ == '__main__':
     #     PTTBot.Log('-' * 50)
 
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True)
+    PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
 
     while True:
         ErrorCode = PTTBot.login()
@@ -545,7 +549,7 @@ if __name__ == '__main__':
         break
 
     # GetNewestPostIndexDemo()
-    PostDemo()
+    # PostDemo()
     # PushDemo()
     # GetPostDemo()
     # MailDemo()
@@ -558,7 +562,7 @@ if __name__ == '__main__':
     # CrawlBoardDemo()
     # ThrowWaterBallDemo()
 
-    # time.sleep(60 * 10)
+    time.sleep(60 * 10)
     
     # 請養成登出好習慣
     PTTBot.logout()
