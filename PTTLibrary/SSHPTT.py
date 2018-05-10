@@ -81,7 +81,7 @@ class Library(object):
         self.__LogLevel = LogLevel.INFO
 
         if _LogLevel != -1:
-            if _LogLevel < LogLevel.DEBUG or LogLevel.SLIENT < _LogLevel:
+            if _LogLevel < LogLevel.MinValue or LogLevel.MaxValue < _LogLevel:
                 self.Log('LogLevel error: ' + str(_LogLevel))
                 return None
             else:
@@ -125,7 +125,7 @@ class Library(object):
 
         self.__IdleThread =                 None
         self.__RunIdleThread =              False
-        self.__IdleLock = threading.Lock()
+        # self.__IdleLock = threading.Lock()
 
     def __AntiLogout(self):
         
@@ -157,19 +157,15 @@ class Library(object):
             except Exception:
                 print(self.__ReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
             print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
-            print('-' * 50)
-                                    
-    def setLogLevel(self, _LogLevel):
-        if _LogLevel < LogLevel.DEBUG or LogLevel.SLIENT < _LogLevel:
-            self.Log('LogLevel error')
-            return ErrorCode.ErrorInput
-        self.__LogLevel = _LogLevel
-        return ErrorCode.Success
+            print('-' * 50)                                    
+    
     def Log(self, Message, _LogLevel=-1):
         if _LogLevel == -1:
             _LogLevel = LogLevel.INFO
-        if _LogLevel < LogLevel.DEBUG or LogLevel.CRITICAL < _LogLevel:
-            self.Log('LogLevel error')
+        if _LogLevel < LogLevel.MinValue or LogLevel.MaxValue < _LogLevel:
+            print('[錯誤] MinValue error: ' + str(LogLevel.MinValue))
+            print('[錯誤] MaxValue error: ' + str(LogLevel.MaxValue))
+            print('[錯誤] LogLevel error: ' + str(_LogLevel))
             return ErrorCode.ErrorInput
         
         if self.__LogLevel <= _LogLevel:
@@ -460,12 +456,12 @@ class Library(object):
                 return ErrCode
             
             if '> (' in self.__ReceiveData[ConnectIndex]:
-                self.Log('新式游標模式')
+                self.Log('新式游標模式', LogLevel.DEBUG)
                 self.__Cursor = '>'
                 self.__isConnected[ConnectIndex] = True
                 
             elif '●(' in self.__ReceiveData[ConnectIndex]:
-                self.Log('舊式游標模式')
+                self.Log('舊式游標模式', LogLevel.DEBUG)
                 self.__Cursor = '●'
                 self.__isConnected[ConnectIndex] = True
             else:
@@ -2241,6 +2237,7 @@ class Library(object):
 
         return ErrCode
     def replyPost(self, Board, Content, ReplyType, PostID='', Index=-1):
+        self.__IdleTime = 0
         ConnectIndex = 0
         ErrCode = ErrorCode.Success
 
@@ -2264,7 +2261,7 @@ class Library(object):
         PostID = str(PostID)
         Index = int(Index)
 
-         # 前進至主頁面
+        # 前進至主頁面
         SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
         # 前進至文章
         if PostID != '':
@@ -2294,7 +2291,6 @@ class Library(object):
                 '是否自存底稿', 
                 _ResponseUnit('y\r', False),
             ),
-            
             _DetectUnit(
                 '',
                 '我是' + self.__ID, 
@@ -2339,7 +2335,7 @@ class Library(object):
     def crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex):
         self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex))
 
-        if not self.isLoginSuccess(ConnectIndex) and ConnectIndex > 0:
+        if not self.__isConnected[ConnectIndex] and ConnectIndex > 0:
             self.__CrawLock.acquire()
             self.__connectRemote(ConnectIndex)
             self.__EnableLoginCount += 1
@@ -2425,7 +2421,85 @@ class Library(object):
             SubThread.join()
         
         return ErrCode
+    
+    def throwWaterBall(self, WaterBallTarget, WaterBallContent):
+        self.__IdleTime = 0
+        ConnectIndex = 0
+        ErrCode = ErrorCode.Success
+
+        ErrCode, User = self.getUser(WaterBallTarget)
         
+        if ErrCode != ErrorCode.Success:
+            return ErrCode
+
+        # print(WaterBallTarget + ': ' + User.getState())
+        
+        if '不在站上' in User.getState():
+            return ErrorCode.NoUser
+        
+        # 前進至主頁面
+        SendMessage = self.__gotoMainMenu
+        SendMessage += 'T\rU\rs' + WaterBallTarget + '\rw'
+
+        Refresh = True
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '打開呼叫器',
+                '您的呼叫器目前設定為關閉', 
+                _ResponseUnit('y', True),
+            ),
+            _DetectUnit(
+                '丟 ' + WaterBallTarget + ' 水球',
+                '丟 ' + WaterBallTarget + ' 水球', 
+                _ResponseUnit(WaterBallContent + '\r\r', True),
+            ),
+            _DetectUnit(
+                '',
+                '', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
+
+        while not isBreakDetect:
+            # self.Log('SendMessage: \n' + SendMessage )
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    isDetectedTarget = True
+                    if DetectTarget.isBreakDetect():
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                    
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
+
+                    break
+            if not isDetectedTarget:
+
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                
+                self.logout()
+                sys.exit()
+
+        return ErrCode
     def readPostFile(self, FileName):
         self.__IdleTime = 0
         return Util.readPostFile(FileName)

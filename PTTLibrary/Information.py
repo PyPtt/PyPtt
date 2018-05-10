@@ -13,8 +13,8 @@ class LogLevel(object):
         self.CRITICAL =                     4
         self.SLIENT =                       5
 
-        self.MaxValue = self.DEBUG
-        self.MinValue = self.SLIENT
+        self.MaxValue = self.SLIENT
+        self.MinValue = self.DEBUG
 
 class PushType(object):
     def __init__(self):

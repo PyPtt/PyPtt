@@ -499,6 +499,15 @@ def ChangePasswordDemo():
     else:
         PTTBot.Log('changePassword 成功')
     return 
+def ThrowWaterBallDemo():
+    
+    ErrCode = PTTBot.throwWaterBall('CodingMan', 'PTT Library 丟水球測試')
+    if ErrCode == PTT.ErrorCode.Success:
+        PTTBot.Log('丟水球成功!')
+    else:
+        PTTBot.Log('丟水球失敗! 錯誤碼: ' + str(ErrCode))
+    return
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -525,14 +534,18 @@ if __name__ == '__main__':
     #     PTTBot.Log('-' * 50)
 
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
-    ErrorCode = PTTBot.login()
-    if ErrorCode != PTT.ErrorCode.Success:
-        PTTBot.Log('登入失敗')
-        sys.exit()
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=True)
+
+    while True:
+        ErrorCode = PTTBot.login()
+        if ErrorCode != PTT.ErrorCode.Success:
+            PTTBot.Log('登入失敗')
+            time.sleep(2)
+            continue
+        break
 
     # GetNewestPostIndexDemo()
-    # PostDemo()
+    PostDemo()
     # PushDemo()
     # GetPostDemo()
     # MailDemo()
@@ -543,8 +556,9 @@ if __name__ == '__main__':
     # ChangePasswordDemo()
     # ReplyPostDemo()
     # CrawlBoardDemo()
+    # ThrowWaterBallDemo()
 
-    time.sleep(30)
+    # time.sleep(60 * 10)
     
     # 請養成登出好習慣
     PTTBot.logout()
