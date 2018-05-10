@@ -58,7 +58,7 @@ class _DetectUnit(object):
         return self.__ErrCode
 
 class Library(object):
-    def __init__(self, ID, Password, kickOtherLogin=True, _LogLevel=-1):
+    def __init__(self, ID, Password, kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1):
 
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -102,6 +102,10 @@ class Library(object):
 
         self.__gotoMainMenu = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
 
+        self.__ShowProgressBar =             True
+
+        self.__IdleTime =                       0
+        self.__MaxIdleTime =                    MaxIdleTime
         try:
             self.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
             self.__isBackground = False
@@ -119,29 +123,25 @@ class Library(object):
         self.__SSHKey = ECDSAKey.generate()
         self.Log('產生 SSH 金鑰完成')
 
-        self.__connectRemote(0)
-        
-        if self.isLoginSuccess():
-            threading.Thread(target=self.__AntiLogout)
-        ###############################
+        self.__IdleThread =                 None
+        self.__RunIdleThread =              False
+        self.__IdleLock = threading.Lock()
 
-        self.__KickTimes =                      0
-        
-        self.__ShowProgressBar =             True
-        
-        self.__TimeoutCountMax =                3
-        
-        self.__RequestCount =                   0
-        self.__MaxRequestCount =                1
-        self.__MinRequestCount =                1
-                
-        self.__Timeout = [10] * self.__MaxMultiLogin
-        self.__SleepTime = [0.5] * self.__MaxMultiLogin
-        self.__TimeoutCount = [0] * self.__MaxMultiLogin
-        
-        self.__CrawPool = []
-    
     def __AntiLogout(self):
+        
+        self.__RunIdleThread = True
+
+        while self.__RunIdleThread:
+            self.__IdleTime += 1
+            if self.__IdleTime < self.__MaxIdleTime:
+                
+                time.sleep(1)
+
+                continue
+            # self.__IdleLock.acquire()
+            self.getTime()
+            self.__IdleTime = 0
+            # self.__IdleLock.release()
 
         return 
     def __showScreen(self, ErrCode, CatchIndex, ConnectIndex=0):
@@ -186,8 +186,6 @@ class Library(object):
             if len(Message) > 0:
                 Util.Log(Prefix + Message)
         return ErrorCode.Success
-    def isLoginSuccess(self, ConnectIndex=0):
-        return self.__isConnected[ConnectIndex]
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
@@ -474,7 +472,24 @@ class Library(object):
                 self.Log('頻道 ' + str(ConnectIndex) + ' 無法偵測游標。重新執行連線')
                 # return ErrorCode.UnknowError
         return ErrorCode.Success
-    def logout(self, ConnectIndex=-1):
+    
+    def login(self):
+        
+        self.__IdleTime = 0
+        
+        ErrCode = self.__connectRemote(0)
+        
+        if ErrCode == ErrorCode.Success:
+            self.__IdleThread = threading.Thread(target=self.__AntiLogout)
+            self.__IdleThread.start()
+
+        return ErrCode
+    def logout(self):
+        
+        ConnectIndex = -1
+        
+        self.__IdleTime = 0
+        self.__RunIdleThread = False
         
         if ConnectIndex == -1:
             
@@ -485,7 +500,6 @@ class Library(object):
             
             for index in range(self.__MaxMultiLogin):
                 if self.__ConnectList[index] == None:
-                    # self.Log('連線 ' + str(index) + ' 未連接')
                     continue
                 self.Log('頻道 ' + str(index) + ' 登出', LogLevel.DEBUG)
                 
@@ -496,6 +510,8 @@ class Library(object):
                 
         return ErrorCode.Success
     def getNewestPostIndex(self, Board):
+        
+        self.__IdleTime = 0
 
         for i in range(3):
             ErrCode, NewestIndex = self.__getNewestPostIndex(Board, ConnectIndex = 0)
@@ -643,6 +659,7 @@ class Library(object):
     def post(self, Board, Title, Content, PostType, SignType):
         
         ConnectIndex = 0
+        self.__IdleTime = 0
         
         # 前進至板面
 
@@ -761,6 +778,8 @@ class Library(object):
         return ErrorCode.Success
     def push(self, Board, inputPushType, PushContent, PostID='', PostIndex=0):
         
+        self.__IdleTime = 0
+
         PostIndex = int(PostIndex)
         PostID = str(PostID)
 
@@ -804,7 +823,7 @@ class Library(object):
             TempEndIndex = TempStartIndex + 1
         
         for Push in PushList:
-            print('Push:', Push)
+            # print('Push:', Push)
             ErrCode = self.__push(Board, inputPushType, Push, PostID=PostID, PostIndex=PostIndex)
 
             if ErrCode != ErrorCode.Success:
@@ -1006,6 +1025,7 @@ class Library(object):
 
         return PostAuthor, PostTitle, PostDate, PostContent, PostIP, PushList
     def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0):
+        self.__IdleTime = 0
         for i in range(3):
             ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex)
             if ErrCode == ErrorCode.ParseError:
@@ -1491,7 +1511,7 @@ class Library(object):
         result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostURL, PostMoney, PostContent, PostIP, PushList)
         return ErrorCode.Success, result
     def mail(self, UserID, MailTitle, MailContent, SignType):
-        
+        self.__IdleTime = 0
         ConnectIndex = 0
 
         MailContentListTemp = MailContent.split('\r')
@@ -1638,7 +1658,7 @@ class Library(object):
 
         return ErrorCode.Success
     def getTime(self):
-        
+        self.__IdleTime = 0
         ConnectIndex = 0
 
         # \x1b\x4fA (上, 下右左 BCD)
@@ -1648,8 +1668,8 @@ class Library(object):
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
             _DetectUnit(
-                '於主功能表取得系統時間',
-                '【主功能表】', 
+                '',
+                '我是' + self.__ID, 
                 _ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
@@ -1697,6 +1717,7 @@ class Library(object):
         return ErrorCode.Success, result
     
     def getUser(self, UserID):
+        self.__IdleTime = 0
         ConnectIndex = 0
 
         SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDT\rQ\r' + UserID + '\r'
@@ -1822,7 +1843,7 @@ class Library(object):
 
         return ErrorCode.Success, result
     def getNewestMailIndex(self):
-
+        self.__IdleTime = 0
         ConnectIndex = 0
         result = 0
 
@@ -1882,12 +1903,12 @@ class Library(object):
 
         return ErrorCode.Success, result
     def getMail(self, MailIndex):
-        
+        self.__IdleTime = 0
+        ConnectIndex = 0
         MailIndex = int(MailIndex)
 
         result = None
-        ConnectIndex = 0
-
+        
         if MailIndex <= 0:
             self.Log('錯誤的輸入: ' + str(MailIndex))
             return ErrorCode.ErrorInput, result
@@ -2041,7 +2062,7 @@ class Library(object):
         return ErrorCode.Success, result
         
     def giveMoney(self, ID, Money, YourPassword):
-
+        self.__IdleTime = 0
         ConnectIndex = 0
 
         # 前進至主頁面
@@ -2131,6 +2152,7 @@ class Library(object):
             
         return ErrCode
     def changePassword(self, OldPassword, NewPassword):
+        self.__IdleTime = 0
         ConnectIndex = 0
 
         ErrCode = ErrorCode.Success
@@ -2329,6 +2351,7 @@ class Library(object):
         self.Log('頻道 ' + str(ConnectIndex) + ' 開始爬行')
 
         for PostIndex in range(StartIndex, EndIndex):
+            self.__IdleTime = 0
             # self.Log(PostIndex)
             ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex)
             if ErrCode != ErrorCode.Success:
@@ -2404,8 +2427,10 @@ class Library(object):
         return ErrCode
         
     def readPostFile(self, FileName):
+        self.__IdleTime = 0
         return Util.readPostFile(FileName)
     def getVersion(self):
+        self.__IdleTime = 0
         return Version
         
 if __name__ == '__main__':
