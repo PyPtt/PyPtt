@@ -137,14 +137,14 @@ def GetPostDemo():
     
     ################## 推文資訊 Push information ##################
     # getType               推文類別 推噓箭頭
-    # getAuthor                 推文ID
+    # getAuthor             推文ID
     # getContent            推文內文
     # getTime               推文時間
     
     TryPost = 10
     
-    # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    BoardList = ['Gossiping']
+    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    # BoardList = ['Gossiping']
 
     for Board in BoardList:
         
@@ -524,9 +524,10 @@ if __name__ == '__main__':
     #     PTTBot.logout()
     #     PTTBot.Log('-' * 50)
 
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
-    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
-    if not PTTBot.isLoginSuccess():
+    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
+    ErrorCode = PTTBot.login()
+    if ErrorCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')
         sys.exit()
 
@@ -541,7 +542,9 @@ if __name__ == '__main__':
     # GiveMoneyDemo()
     # ChangePasswordDemo()
     # ReplyPostDemo()
-    CrawlBoardDemo()
+    # CrawlBoardDemo()
+
+    time.sleep(30)
     
     # 請養成登出好習慣
     PTTBot.logout()
