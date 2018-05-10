@@ -126,3 +126,13 @@ class PostInformation(object):
         return self.__IP
     def getPushList(self):
         return self.__PushList
+
+class WaterBallInformation(object):
+    def __init__(self, Author, PushContent):
+        self.__Author = str(Author)
+        self.__Content = str(PushContent)
+
+    def getAuthor(self):
+        return self.__Author
+    def getContent(self):
+        return self.__Content
