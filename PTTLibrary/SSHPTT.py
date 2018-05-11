@@ -59,7 +59,7 @@ class _DetectUnit(object):
 
 class Library(object):
     def __init__(self, ID, Password, kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None):
-
+    
         self.__host = 'ptt.cc'
         self.__ID = ID
         self.__Password = Password
@@ -142,9 +142,10 @@ class Library(object):
                 continue
             # self.__IdleLock.acquire()
             ErrCode, result = self.getTime()
-            self.Log(result)
-            if result == None:
-                self.__showScreen(ErrCode, 0, ConnectIndex=0)
+            # self.Log(result)
+            # self.Log(self.__RunIdleThread)
+            # if result == None:
+            #     self.__showScreen(ErrCode, 0, ConnectIndex=0)
             self.__IdleTime = 0
             # self.__IdleLock.release()
 
@@ -251,16 +252,19 @@ class Library(object):
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
         if self.__WaterBallHandler != None:
-            for line in self.__ReceiveData[ConnectIndex].split('\n'):
+            line = self.__ReceiveData[ConnectIndex].split('\n').pop()
                 # if '★' in line:
-                if line.startswith('  ★'):
-                    line = line[3:]
-                    WaterBallAuthor = line[:line.find(' ')]
-                    WaterBallContent = line[line.find(' ') + 1:line.find(' [K')]
-                    # print('WaterBallAuthor: =' + WaterBallAuthor + '=')
-                    # print('WaterBallContent: =' + WaterBallContent + '=')
-                    CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent)
+            if line.startswith('  ★'):
+                line = line[3:]
+                WaterBallAuthor = line[:line.find(' ')]
+                WaterBallContent = line[line.find(' ') + 1:line.find(' [K')]
+                # print('WaterBallAuthor: =' + WaterBallAuthor + '=')
+                # print('WaterBallContent: =' + WaterBallContent + '=')
+                CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent)
+                try:
                     self.__WaterBallHandler(CurrentWaterBall)
+                except TypeError:
+                    self.Log('WaterBallHandler 介面錯誤', LogLevel.WARNING)
 
         for i in range(len(CatchTargetList)):
             if CatchTargetList[i] in self.__ReceiveData[ConnectIndex]:
@@ -2383,7 +2387,10 @@ class Library(object):
             
             self.__CrawLock.acquire()
             # self.Log(Post.getTitle())
-            PostHandler(Post)
+            try:
+                PostHandler(Post)
+            except TypeError:
+                self.Log('PostHandler 介面錯誤', LogLevel.WARNING)
             self.__CrawLock.release()
         
         self.Log('頻道 ' + str(ConnectIndex) + ' 爬行完畢')
@@ -2523,7 +2530,105 @@ class Library(object):
 
                 self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態 以上是最後兩個畫面')
-                
+                self.logout()
+                sys.exit()
+
+        return ErrCode
+    
+    def delPost(self, Board, PostID='', PostIndex=0):
+        self.__IdleTime = 0
+        ConnectIndex = 0
+        ErrCode = ErrorCode.Success
+
+        PostIndex = int(PostIndex)
+        PostID = str(PostID)
+
+        if len(Board) == 0:
+            self.Log('看板名稱輸入錯誤: ' + str(Board))
+            return ErrorCode.ErrorInput
+
+        if PostIndex != 0 and PostID != '':
+            self.Log('文章編號與代碼輸入錯誤: 同時輸入')
+            return ErrorCode.ErrorInput
+
+        if PostIndex == 0 and PostID == '':
+            self.Log('文章編號與代碼輸入錯誤: 皆無輸入')
+            return ErrorCode.ErrorInput
+        
+        if PostID != '':
+            ErrCode, Post = self.getPost(Board, PostID=PostID)
+        if PostIndex != 0:
+            ErrCode, Post = self.getPost(Board, PostIndex=PostIndex)
+        
+        if ErrCode != ErrorCode.Success:
+            return ErrCode
+        if not Post.getAuthor().startswith(self.__ID):
+            print(self.__ID)
+            print(Post.getAuthor())
+            return ErrorCode.NoPermission
+
+        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
+        # 前進至文章
+        if PostID != '':
+            SendMessage += '#' + PostID + '\rd'
+        elif PostIndex != -1:
+            SendMessage += str(PostIndex) + '\rd'
+        
+        Refresh = False
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '確定刪除文章',
+                '請確定刪除(Y/N)?', 
+                _ResponseUnit('y\r', False),
+            ),
+            _DetectUnit(
+                '正在刪除文章',
+                '請按任意鍵繼續', 
+                _ResponseUnit(' ', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '',
+                '', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+        ]
+
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                return ErrCode
+
+            isDetectedTarget = False
+            
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    isDetectedTarget = True
+                    
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    if DetectTarget.isBreakDetect():
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
+
+                    break
+
+            if not isDetectedTarget:
+
+                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態 以上是最後兩個畫面')
                 self.logout()
                 sys.exit()
 
