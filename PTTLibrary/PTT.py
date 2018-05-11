@@ -18,8 +18,6 @@ except SystemError:
     import ErrorCode
     import Information
 
-Debug = True
-
 Version = Version.Ver
 LogLevel = Information.LogLevel()
 PushType = Information.PushType()
@@ -150,20 +148,21 @@ class Library(object):
             # self.__IdleLock.release()
 
         return 
-    def __showScreen(self, ErrCode, CatchIndex, ConnectIndex=0):
-        if self.__LogLevel == LogLevel.DEBUG or Debug:
-            print('-' * 50)
-            try:
-                print(self.__PreReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
-            except Exception:
-                print(self.__PreReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
-            print('-' * 50)
-            try:
-                print(self.__ReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
-            except Exception:
-                print(self.__ReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
-            print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
-            print('-' * 50)                                    
+    def __showScreen(self, ErrCode, FunctionName, ConnectIndex=0):
+        # if self.__LogLevel == LogLevel.DEBUG or Debug:
+        print('-' * 50)
+        try:
+            print(self.__PreReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+        except Exception:
+            print(self.__PreReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
+        print('-' * 50)
+        try:
+            print(self.__ReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+        except Exception:
+            print(self.__ReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
+        print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
+        print('錯誤在 ' + FunctionName + ' 函式發生')
+        print('-' * 50)
     
     def Log(self, Message, _LogLevel=-1):
         if _LogLevel == -1:
@@ -435,7 +434,7 @@ class Library(object):
                     self.Log('登入操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                     return ErrCode
                 
-                # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
                 isDetectedTarget = False
 
@@ -463,13 +462,13 @@ class Library(object):
                         SendMessage = ''
                         continue
 
-                    self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                    self.Log('無法解析的狀態 以上是最後兩個畫面')
+                    self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                    self.Log('無法解析的狀態! PTT Library 緊急停止')
+                    # Lines = self.__ReceiveData[ConnectIndex].split('\r')
+                    # for line in Lines:
+                    #     print('===' + line)
 
-                    Lines = self.__ReceiveData[ConnectIndex].split('\r')
-                    for line in Lines:
-                        print('===' + line)
-
+                    self.logout()
                     sys.exit()
             if ErrCode == ErrorCode.WaitTimeout:
                 Retry = True
@@ -666,8 +665,8 @@ class Library(object):
                         break
             if not isDetectedTarget:
                 continue
-                # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                # self.Log('無法解析的狀態 以上是最後兩個畫面')
+                # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                # self.Log('無法解析的狀態! PTT Library 緊急停止')
                 # sys.exit()
             if FindResult:
                 break
@@ -1139,8 +1138,9 @@ class Library(object):
                             return ErrorCode.PostDeleted, result
                         # print('line: ' + line[:line.find('[')])
 
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
         
         Lines = self.__ReceiveData[ConnectIndex].split('\n')
@@ -1215,7 +1215,7 @@ class Library(object):
                 self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode, None
             
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -1264,8 +1264,9 @@ class Library(object):
                     break
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
         
         PostLineList = FirstPage.split('\n')
@@ -1346,187 +1347,6 @@ class Library(object):
         result = Information.PostInformation(Board, PostID, PostAuthor,PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList)
         return ErrCode, result
 
-        if PostID != '':
-            SendMessage += '#' + PostID + '\rQ'
-        else:
-            SendMessage += str(PostIndex) + '\rQ'
-
-        CatchList = [
-            # 0
-            '找不到這個文章代碼',
-            # 1
-            '─  ─  ─  ─  ─  ─  ─  ─  ',
-
-        ]
-        
-        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
-        if ErrCode != ErrorCode.Success:
-            return ErrCode, result
-
-        # print(self.__ReceiveData[ConnectIndex])
-
-        if CatchIndex == 0:
-            self.Log('此文章代碼不存在')
-            return ErrorCode.PostNotFound, result
-        elif CatchIndex == 1:
-            # print(self.__ReceiveData[ConnectIndex])
-
-            InformationEnd = '└  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ─  ┘'
-            screen = self.__ReceiveData[ConnectIndex]
-            screen = screen[screen.find(CatchList[1]) + len(CatchList[1]):screen.find(InformationEnd)]
-
-            screen = screen[screen.find('文章代碼(AID): #') + len('文章代碼(AID): #'):]
-            if PostID == '':
-                PostID = screen[:screen.find(' ')]
-
-            PostTitle = screen[screen.find('ptt.cc') + len('ptt.cc') + 2:]
-            PostTitle = PostTitle[:PostTitle.find('│')]
-            while PostTitle.endswith(' ') or PostTitle.endswith('\r'):
-                PostTitle = PostTitle[:-1]
-            
-            PostURL = screen[screen.find('https://www.ptt.cc/bbs'):]
-            PostURL = PostURL[:PostURL.find(' ')]
-
-            if '價格記錄' in screen:
-                PostMoney = -1
-            else:
-                
-                PostMoney = screen
-                # print(len(PostMoney))
-                # print(PostMoney)
-                for c in '這一篇文章值':
-                    if c in PostMoney:
-                        PostMoney = PostMoney[PostMoney.find(c):]
-                # print(PostMoney)
-                # 
-                try:
-                    PostMoney = int(re.search(r'\d+', PostMoney).group())
-                except AttributeError:
-                    # print('解析文章價錢失敗', screen)
-                    pass
-
-                # print(screen)
-        else:
-            # print('-' * 50)
-            # print(self.__ReceiveData[ConnectIndex])
-            # self.Log('文章已經被刪除')
-            return ErrorCode.PostDeleted, result
-
-        SendMessage = '\x03\r'
-
-        CatchList = [
-            # 0
-            '(  ←)離開',
-            # 1
-            '這份文件是可播放的文字動畫',
-        ]
-        
-        ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
-        if ErrCode != ErrorCode.Success:
-            return ErrCode, result
-
-        if CatchIndex == 0:
-            # print(self.__ReceiveData[ConnectIndex])
-            # 
-            # self.Log('進入文章成功')
-            pass
-        elif CatchIndex == 1:
-            SendMessage = 'n'
-
-            CatchList = [
-                # 0
-                '(  ←)離開',
-            ]
-            
-            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
-            if ErrCode != ErrorCode.Success:
-                return ErrCode, result
-            if CatchIndex == 0:
-                self.Log('停止播放動畫')
-            else:
-                self.Log('停止播放動畫失敗')
-            
-        else:
-            
-            LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
-            if '瀏覽' in LastLine or '目前顯示' in LastLine or '離開' in LastLine:
-                # self.Log('進入文章成功')
-                pass
-            else:
-                # print('進入文章 error')
-                return ErrorCode.UnknowError, result
-
-        LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
-        # print(LastLine)
-        TotalPageTemp = re.findall(r'\d+', LastLine)
-        TotalPage = list(map(int, TotalPageTemp))[1]
-        # print(TotalPage)
-
-        PageIndex = 2
-        LastPageIndex = [1, 22]
-
-        PostList = self.__ReceiveData[ConnectIndex].split('\n')[:-1]
-
-        for i in range(TotalPage - 1):
-        # while not '(100%)  目前顯示:' in self.__ReceiveData[ConnectIndex]:
-            # print(PageIndex, TotalPage)
-            SendMessage = str(PageIndex) + '\r'
-            CatchList = [
-                # 0
-                '(  ←)離開',
-            ]
-            
-            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, CatchTargetList=CatchList, Refresh=True)
-            if ErrCode != ErrorCode.Success:
-                return ErrCode, result
-            # print('=' * 50)
-            # print(self.__ReceiveData[ConnectIndex])
-            
-            if CatchIndex == 0:
-                PageIndex += 1
-
-                Temp = self.__ReceiveData[ConnectIndex]
-                Temp = Temp.replace('[2J', '')
-                # while not PostContentTemp.startswith('推') and not PostContentTemp.startswith('→') and not PostContentTemp.startswith('噓'):
-                #     PostContentTemp = PostContentTemp[1:]
-
-                TempList = Temp.split('\n')
-                
-                PageLineRange = TempList.pop()
-                PageLineRange = re.findall(r'\d+', PageLineRange)
-                PageLineRange = list(map(int, PageLineRange))[3:]
-
-                # print('PageLineRange:', PageLineRange)
-                
-                OverlapLine = LastPageIndex[1] - PageLineRange[0] + 1
-                # print('OverlapLine:', OverlapLine)
-                if OverlapLine >= 1:
-                    # print('重疊', OverlapLine, '行')
-                    TempList = TempList[OverlapLine:]
-                
-                LastPageIndex = PageLineRange
-
-                PostList.extend(TempList)
-            else:
-                print('換頁錯誤')
-        
-        # for line in PostList:
-        #     print('list line:', line)
-        # return PostAuthor, PostTitle, PostTime, PostContent, PushList
-        PostAuthor, PostTitle, PostDate, PostContent, PostIP, PushList = self.__parsePostMail(PostList)
-
-        # print('PostID:', PostID)
-        # print('PostTitle:', PostTitle)
-        # print('PostURL:', PostURL)
-        # print('PostMoney:', PostMoney)
-        # print('PostAuthor:', PostAuthor)
-        # print('PostDate:', PostDate)
-        # print('PostContent:', PostContent + '=')
-        # print('PostIP:', PostIP + '=')
-        # print('-' * 50)
-
-        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostURL, PostMoney, PostContent, PostIP, PushList)
-        return ErrorCode.Success, result
     def mail(self, UserID, MailTitle, MailContent, SignType):
         self.__IdleTime = 0
         ConnectIndex = 0
@@ -1595,8 +1415,9 @@ class Library(object):
                         )
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
         if ErrCode != ErrorCode.Success:
             return ErrCode
@@ -1648,7 +1469,7 @@ class Library(object):
                 self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode
             
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -1667,8 +1488,9 @@ class Library(object):
                     break
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
         if ErrCode != ErrorCode.Success:
             return ErrCode
@@ -1710,7 +1532,7 @@ class Library(object):
                 self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode, result
             
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -1728,8 +1550,8 @@ class Library(object):
                     break
 
             if not isDetectedTarget:
-                # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                # self.Log('無法解析的狀態 以上是最後兩個畫面')
+                # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                # self.Log('無法解析的狀態! PTT Library 緊急停止')
                 # sys.exit()
                 return ErrorCode.ParseError, result
         if ErrCode != ErrorCode.Success:
@@ -1778,7 +1600,7 @@ class Library(object):
                 self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode, None
             
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -1796,8 +1618,9 @@ class Library(object):
                     break
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
         if ErrCode != ErrorCode.Success:
             return ErrCode, None
@@ -1898,7 +1721,7 @@ class Library(object):
                 self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode, None
             
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -1916,8 +1739,9 @@ class Library(object):
                     break
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
         if ErrCode != ErrorCode.Success:
             return ErrCode, None
@@ -1989,7 +1813,7 @@ class Library(object):
                 self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode, None
             
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -2000,7 +1824,7 @@ class Library(object):
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
                     
-                    # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+                    # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
                     
                     CurrentPage = self.__ReceiveData[ConnectIndex]
                     if CurrentPage.startswith('[2J'):
@@ -2037,8 +1861,9 @@ class Library(object):
                     PageIndex += 1
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
         if ErrCode != ErrorCode.Success:
             return ErrCode, None
@@ -2174,8 +1999,9 @@ class Library(object):
                         ErrCode = DetectTarget.getErrorCode()
                         break
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
             
         return ErrCode
@@ -2263,8 +2089,9 @@ class Library(object):
                         break
             if not isDetectedTarget:
 
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
 
         return ErrCode
@@ -2359,12 +2186,13 @@ class Library(object):
                         break
             if not isDetectedTarget:
 
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
                 sys.exit()
 
         return ErrCode
-    def crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex):
+    def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex):
         self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex))
 
         if not self.__isConnected[ConnectIndex] and ConnectIndex > 0:
@@ -2446,7 +2274,7 @@ class Library(object):
 
             # self.Log(str(StartIndexTemp) + ' ' + str(EndIndexTemp) + ':' + str(EndIndexTemp - StartIndexTemp))
             # self.__CrawPoolList.append([StartIndexTemp, EndIndexTemp])
-            CrawThreadList.append(threading.Thread(target=self.crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp)))
+            CrawThreadList.append(threading.Thread(target=self.__crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp)))
         
         self.__EnableLoginCount = 1
 
@@ -2508,7 +2336,7 @@ class Library(object):
             elif ErrCode != ErrorCode.Success:
                 self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
                 return ErrCode
-            # self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
+            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -2528,8 +2356,8 @@ class Library(object):
                     break
             if not isDetectedTarget:
 
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
                 self.logout()
                 sys.exit()
 
@@ -2627,8 +2455,8 @@ class Library(object):
 
             if not isDetectedTarget:
 
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態 以上是最後兩個畫面')
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
                 self.logout()
                 sys.exit()
 
