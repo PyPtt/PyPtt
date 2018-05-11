@@ -44,8 +44,8 @@ def PostDemo():
 わい、わい、わっしょい。ワ、ヰ、ウ、ヱ、ヲ。 \r\n\
 植木屋、井戸換へ、お祭りだ。\r\n"
 
-    #這個範例是如何PO文
-    #第一個參數是你要PO文的板
+    #這個範例是如何 po 文
+    #第一個參數是你要 po 文的板
     #第二個參數是文章標題
     #第三個參數是文章內文
     #第四個參數是發文類別       1
@@ -90,7 +90,7 @@ def showPost(Post):
 def GetPostDemo():
     
     # 這個範例是如何取得單一文章資訊
-    # getPostInfo
+    # getPost
     # 第一個固定參數是板面
     # 第二個參數就是你想查詢的文章編號或者文章代碼
         
@@ -99,21 +99,21 @@ def GetPostDemo():
     #文章資訊的資料結構可參考如下
     
     ################## 文章資訊 Post information ##################
-    # getBoard              文章所在版面
-    # getID                 文章 ID ex: 1PCBfel1
-    # getAuthor             作者
-    # getDate               文章發布時間
+    # getBoard                  文章所在版面
+    # getID                     文章 ID ex: 1PCBfel1
+    # getAuthor                 作者
+    # getDate                   文章發布時間
     # getTitle                  文章標題
-    # getContent            文章內文
+    # getContent                文章內文
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
     # getPushList               文章即時推文清單
     
     ################## 推文資訊 Push information ##################
-    # getType               推文類別 推噓箭頭
-    # getAuthor             推文ID
-    # getContent            推文內文
-    # getTime               推文時間
+    # getType                   推文類別 推噓箭頭
+    # getAuthor                 推文ID
+    # getContent                推文內文
+    # getTime                   推文時間
     
     TryPost = 10
     
@@ -137,7 +137,6 @@ def GetPostDemo():
             PTTBot.Log('測試 ' + Board + ' ' + str(NewestIndex - i))
 
             ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
-            # ErrCode, Post = PTTBot.getPost(Board, PostIndex=785604)
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')
                 continue
@@ -164,12 +163,12 @@ def PushDemo():
     # 第二個參數是推文類別
 
     ################## 推文種類 Push Type ##################
-    # PTTBot.PushType_Push      推
-    # PTTBot.PushType_Boo       噓
-    # PTTBot.PushType_Arrow     箭頭
+    # PTT.PushType.Push         推
+    # PTT.PushType.Boo          噓
+    # PTT.PushType.Arrow        箭頭
     
     # 第三個參數是推文內文
-    # 第四個參數是文章編號或者ID 端看你用 ByIndex 或 ByID
+    # 第四個參數是文章編號或者文章代碼 擇一使用
     
     # 回傳值 錯誤碼
 
@@ -225,7 +224,7 @@ def MailDemo():
     
     # 這個範例是如何寄信給某鄉民
 
-    # 第一個參數是你想寄信的ID
+    # 第一個參數是你想寄信的鄉民 ID
     # 第二個參數是信件標題
     # 第三個參數是信件內容
     # 第四個參數是簽名檔選擇 0 不加簽名檔
@@ -244,7 +243,7 @@ def GiveMoneyDemo():
 
     # 這個範例是如何送P幣給某鄉民
 
-    # 第一個參數是你想寄信的ID
+    # 第一個參數是你想送錢的鄉民 ID
     # 第二個參數是你想給予多少P幣
     # 第三個參數是你自己的密碼
     
@@ -269,7 +268,7 @@ def GiveMoneyDemo():
         PTTBot.Log('贊助又被拒絕了..可..可惡')
 def GetTimeDemo():
 
-    #這個範例是取得PTT的時間，有時需要跟PTT對時的需求，比如說 準點報時
+    #這個範例是取得PTT的時間，如果有需要跟 PTT 對時的需求，可以使用
         
     for i in range(3):
         ErrCode, Time = PTTBot.getTime()
@@ -306,6 +305,8 @@ def PostHandler(Post):
     
     with codecs.open("CrawlBoardResult.txt", "a", "utf-8") as ResultFile:
         ResultFile.write(Post.getTitle() + '\n')
+
+    # PTTBot.Log(Post.getTitle())
     
 def CrawlBoardDemo():
     
@@ -321,9 +322,9 @@ def CrawlBoardDemo():
         PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號失敗')
         return False    
     
-    ErrCode = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - 99, EndIndex=NewestIndex)
+    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - 499, EndIndex=NewestIndex)
     if ErrCode == PTT.ErrorCode.Success:
-        PTTBot.Log('爬行成功')
+        PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
         
 def GetUserDemo():
     
@@ -337,7 +338,8 @@ def GetUserDemo():
     # getID                     ID
     # getMoney                  使用者經濟狀況
     # getLoginTime              登入次數
-    # getPost                   有效文章數
+    # getLegalPost              有效文章數
+    # getIllegalPost            退文數
     # getState                  目前動態
     # getMail                   信箱狀態
     # getLastLogin              最後登入時間
@@ -379,9 +381,9 @@ def ReplyPostDemo():
     # 第三個參數是回文種類
 
     ################## 回文種類 ReplyPost information ##################
-    # PTTBot.ReplyPost_Board    回文至板上
-    # PTTBot.ReplyPost_Mail     回文至信箱
-    # PTTBot.ReplyPost_Board + PTTBot.ReplyPost_Mail 回文至信箱與板上
+    # PTT.ReplyPostType.Board               回文至板上
+    # PTT.ReplyPostType.Mail                回文至信箱
+    # PTT.ReplyPostType.Board_Mail          回文至信箱與板上
      
     # 回傳 錯誤碼
 
@@ -466,7 +468,12 @@ def GetMailDemo():
             return
     return 
 def ChangePasswordDemo():
-
+    # 用來更改密碼的 api
+    # 輸入原密碼 與 新密碼 即可自動更改你的密碼
+    # 回傳 錯誤碼
+    
+    # 範例為示範 所以新舊密碼皆設定為原密碼
+    
     ErrCode = PTTBot.changePassword(Password, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('changePassword 失敗 錯誤碼:' + str(ErrCode))
@@ -475,6 +482,12 @@ def ChangePasswordDemo():
     return 
 def ThrowWaterBallDemo():
     
+    # 用來丟水球的 api
+    # 輸入你要丟水球的鄉民 ID 與內容，即可騷擾!
+    # 回傳 錯誤碼
+    
+    # 請不要拿來狂丟我 謝謝
+
     ErrCode = PTTBot.throwWaterBall('CodingMan', 'PTT Library 丟水球測試')
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('丟水球成功!')
@@ -482,6 +495,13 @@ def ThrowWaterBallDemo():
         PTTBot.Log('丟水球失敗! 錯誤碼: ' + str(ErrCode))
     return
 def DelPostDemo():
+    
+    # 刪除文章的 API
+    # 輸入版面 與文章編號或者代碼
+    # 即可幫你快速刪文!
+    
+    # 注意: 版主使用此工具請小心
+
     Board = 'Test'
 
     for i in range(3):
@@ -516,9 +536,15 @@ def DelPostDemo():
             PTTBot.Log('在 ' + Board + ' 板刪除 ' + str(DelIndex) + '失敗')
 
     return 
-def WaterBallHandler(WaterBall, QQ):
+def WaterBallHandler(WaterBall):
+    
+    # 不建議在頻繁呼叫其他 API 的情況下，試圖接住水球
+
+    print('接到水球惹!!')
     print('WaterBallAuthor: =' + WaterBall.getAuthor() + '=')
     print('WaterBallContent: =' + WaterBall.getContent() + '=')
+
+    PTTBot.throwWaterBall(WaterBall.getAuthor(), WaterBall.getAuthor() + ' 我接住你的水球了!')
 
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
@@ -537,40 +563,32 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
-    # for i in range(10):
-    #     PTTBot = PTT.Library(ID, Password, kickOtherLogin=True, _LogLevel=PTT.LogLevel.DEBUG)
-    #     if not PTTBot.isLoginSuccess():
-    #         PTTBot.Log('登入失敗')
-    #         sys.exit()
-    #     PTTBot.logout()
-    #     PTTBot.Log('-' * 50)
-
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
+    # PTTBot = PTT.Library(ID, Password)
 
-    while True:
-        ErrCode = PTTBot.login()
-        if ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('登入失敗')
-            time.sleep(2)
-            continue
-        break
+    ErrCode = PTTBot.login()
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('登入失敗')
+        sys.exit()
 
-    # PostDemo()
-    # PushDemo()
-    # GetPostDemo()
-    # MailDemo()
-    # GetTimeDemo()
-    # GetMailDemo()
-    # GetUserDemo()
-    # GiveMoneyDemo()
-    # ChangePasswordDemo()
-    # ReplyPostDemo()
-    # CrawlBoardDemo()
-    # ThrowWaterBallDemo()
-    # DelPostDemo()
+    try:
+        PostDemo()
+        PushDemo()
+        GetPostDemo()
+        MailDemo()
+        GetTimeDemo()
+        GetMailDemo()
+        GetUserDemo()
+        GiveMoneyDemo()
+        ChangePasswordDemo()
+        ReplyPostDemo()
+        CrawlBoardDemo()
+        ThrowWaterBallDemo()
+        DelPostDemo()
 
-    # time.sleep(60 * 10)
-
+        # time.sleep(20)
+    except:
+        pass
     # 請養成登出好習慣
     PTTBot.logout()
