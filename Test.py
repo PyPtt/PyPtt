@@ -3,7 +3,7 @@ import time
 import json
 import getpass
 import codecs
-from PTTLibrary import SSHPTT as PTT
+from PTTLibrary import PTT
 
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
@@ -570,7 +570,7 @@ if __name__ == '__main__':
     # ThrowWaterBallDemo()
     # DelPostDemo()
 
-    time.sleep(60 * 10)
+    # time.sleep(60 * 10)
 
     # 請養成登出好習慣
     PTTBot.logout()
