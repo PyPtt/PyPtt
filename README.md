@@ -40,20 +40,7 @@ if ErrCode != PTT.ErrorCode.Success:
 # 請養成登出好習慣
 PTTBot.logout()
 ```
-###### 你可以參考範例程式，並佐以 Test.py 裡面有 API 的範例與說明
-
-範例程式
--------------------
-###### 歡迎開發者將使用 PTT Library 的程式連結加入
-[汪梯推文機器人](https://github.com/Truth0906/WantedPushCrawler)
-
-[五樓機器人](https://github.com/Truth0906/5FloorBot)
-
-[ID追蹤器](https://github.com/mi99202006/IDTracker)
-
-[文章爬蟲](https://github.com/Truth0906/PostCrawler)
-
-[準點報時機器人](https://github.com/Truth0906/ReportTimeBot)
+###### 你可以參考 Test.py 裡面有 API 的範例與說明
 
 詳細說明
 -------------------
