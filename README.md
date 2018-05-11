@@ -28,8 +28,9 @@ pip3 install PTTLibrary
 ```
 from PTTLibrary import PTT
 
-PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
-if not PTTBot.isLoginSuccess():
+PTTBot = PTT.Library(ID, Password)
+ErrCode = PTTBot.login()
+if ErrCode != PTT.ErrorCode.Success:
     PTTBot.Log('登入失敗')
     sys.exit()
 
@@ -68,7 +69,8 @@ PTTBot.logout()
 
 API
 -------------------
-###### logout 登出
+###### login                                 登入
+###### logout                                登出
 ###### post PO 文
 ###### pushByIndex 根據文章編號推文
 ###### pushByID 根據文章ID推文
