@@ -10,8 +10,9 @@
 
 ###### 這是一個讓開發者方便操作 PTT 的函式庫
 ###### 提供完整快速的 PTT 操作
+###### 舉凡貼文、推文、寄信、讀信、查ID、丟水球甚至接水球，都可以搞定
 ###### 根據網路速度動態調整操作速度、斷線自動恢復
-###### 如有功能未能詳盡 歡迎來信告知
+###### 如有功能未能詳盡 歡迎開啟 issue 區來許願
 
 版本
 -------------------
@@ -69,20 +70,22 @@ PTTBot.logout()
 
 API
 -------------------
+###### getVersion                            取得版本資訊
 ###### login                                 登入
 ###### logout                                登出
-###### post PO 文
-###### pushByIndex 根據文章編號推文
-###### pushByID 根據文章ID推文
-###### mail 寄信給使用者
-###### getPostInfoByID 根據文章ID 取得文章資訊 內含推文清單
-###### getPostInfoByIndex 根據文章編號 取得文章資訊 內含推文清單
-###### getNewestPostIndex 取得該看板最新的文章編號
-###### getNewPostIndexList 取得上次查詢之後才新增的文章清單
-###### giveMoney 給予使用者 P幣
-###### getTime 取得 PTT 系統時間
-###### getUserInfo 取得該使用者資訊
-###### crawlBoard 多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式
-###### getVersion 取得版本資訊
-###### getNewestMailIndex 取得最新信件編號
-###### getMail 取得信件資訊
+###### post                                  PO 文
+###### push                                  根據文章編號推文
+###### mail                                  寄信給使用者
+###### getPost                               取得文章資訊 內含推文清單
+###### getNewestPostIndex                    取得該看板最新的文章編號
+###### giveMoney                             給予使用者 P幣
+###### getTime                               取得 PTT 系統時間
+###### getUser                               取得該使用者資訊
+###### crawlBoard                            多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式
+###### getNewestMailIndex                    取得最新信件編號
+###### getMail                               取得信件資訊
+###### Log                                   顯示訊息
+###### changePassword                        修改密碼
+###### replyPost                             回覆文章
+###### throwWaterBall                        丟水球
+###### delPost                               刪除文章
