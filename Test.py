@@ -63,14 +63,14 @@ def PostDemo():
         else:
             PTTBot.Log('在 Test 板發文失敗')
 
-def GetNewestPostIndexDemo():
+def GetNewestIndexDemo():
     BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
     # BoardList = ['Gossiping']
 
     for Board in BoardList:
 
-        for i in range(100):
-            ErrCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
+        for i in range(1):
+            ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
             if ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
                 break
@@ -80,6 +80,12 @@ def GetNewestPostIndexDemo():
                 break
         
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+    
+    ErrCode, NewestMailIndex = PTTBot.getNewestIndex()
+    if ErrCode == PTT.ErrorCode.Success:
+        PTTBot.Log('取得最新信件編號成功 共有 ' + str(NewestMailIndex) + ' 封信')
+    else:
+        PTTBot.Log('取得最新信件編號失敗 錯誤碼: ' + str(ErrCode))
     return
 def showPost(Post):
     PTTBot.Log('文章代碼: ' + Post.getID())
@@ -140,7 +146,7 @@ def GetPostDemo():
 
     for Board in BoardList:
         
-        ErrCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
+        ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
         if ErrCode != PTT.ErrorCode.Success:
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
             return False
@@ -190,7 +196,7 @@ def PushDemo():
     
     # 回傳值 錯誤碼
 
-    ErrCode, NewestIndex = PTTBot.getNewestPostIndex('Test')
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Test')
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('取得最新文章編號失敗 錯誤碼: ' + str(ErrCode))
         return False
@@ -333,7 +339,7 @@ def CrawlBoardDemo():
     # PTTBot.crawlBoard('Wanted', PostHandler)
     # 這樣就會全部文章都會爬下來
 
-    ErrCode, NewestIndex = PTTBot.getNewestPostIndex('Wanted')
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號成功: ' + str(NewestIndex))
     else:
@@ -413,7 +419,7 @@ def ReplyPostDemo():
     # else:
     #     PTTBot.Log('在 Test 板發文失敗')
     
-    ErrCode, NewestIndex = PTTBot.getNewestPostIndex('Test')
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Test')
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + 'Test' + ' 板最新文章編號成功: ' + str(NewestIndex))
     else:
@@ -453,7 +459,7 @@ def GetMailDemo():
     # getContent                信件內文
     # getIP                     寄件IP
 
-    ErrCode, NewestMailIndex = PTTBot.getNewestMailIndex()
+    ErrCode, NewestMailIndex = PTTBot.getNewestIndex()
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得最新信件編號成功')
     else:
@@ -532,7 +538,7 @@ def DelPostDemo():
         else:
             PTTBot.Log('在 ' + Board + ' 板發文失敗')
 
-    ErrCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
         return False
@@ -593,7 +599,7 @@ if __name__ == '__main__':
     try:
         # PostDemo()
         # PushDemo()
-        GetNewestPostIndexDemo()
+        GetNewestIndexDemo()
         # GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
