@@ -354,6 +354,12 @@ class Library(object):
                 Retry = True
                 ErrCode = ErrorCode.UnknowError
                 continue
+            except:
+                self.Log('主機沒有回應')
+                Retry = True
+                ErrCode = ErrorCode.UnknowError
+                continue
+
 
             self.Log('頻道 ' + str(ConnectIndex) + ' 建立互動通道成功')
             
@@ -534,23 +540,7 @@ class Library(object):
                 self.Log('頻道 ' + str(index) + ' 登出成功')
                 
         return ErrorCode.Success
-    def getNewestPostIndex(self, Board):
-        
-        self.__IdleTime = 0
-
-        try:
-            Board = str(Board)
-        except:
-            self.Log('輸入錯誤', LogLevel.WARNING)
-            return ErrorCode.ErrorInput, 0
-
-        for i in range(3):
-            ErrCode, NewestIndex = self.__getNewestPostIndex(Board, ConnectIndex = 0)
-            if ErrCode == ErrorCode.Success:
-                return ErrCode, NewestIndex
-        return ErrCode, NewestIndex
     def __getNewestPostIndex(self, Board, ConnectIndex = 0):
-        
         result = 0
         
         CatchList = [
@@ -684,7 +674,6 @@ class Library(object):
                 # sys.exit()
             if FindResult:
                 break
-
         return ErrorCode.Success, result
     def post(self, Board, Title, Content, PostType, SignType):
         
@@ -1666,66 +1655,75 @@ class Library(object):
         result = Information.UserInformation(ID, Money, LoginTime, LegalPost, IllegalPost, State, Mail, LastLogin, LastIP, FiveChess, Chess)
 
         return ErrorCode.Success, result
-    def getNewestMailIndex(self):
+    def getNewestIndex(self, Board=''):
         self.__IdleTime = 0
         ConnectIndex = 0
         result = 0
-
-        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDM\rR\r0\r$'
-        Refresh = True
-        isBreakDetect = False
-        # 先後順序代表偵測的優先順序
-        DetectTargetList = [
-            _DetectUnit(
-                '進入信箱',
-                '郵件選單', 
-                _ResponseUnit('', False),
-                BreakDetect=True,
-                ErrCode = ErrorCode.Success
-            ),
-        ]
         
-        while not isBreakDetect:
-            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
-            if ErrCode == ErrorCode.WaitTimeout:
-                self.Log('超時')
-                return ErrCode, None
-            elif ErrCode != ErrorCode.Success:
-                self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
-                return ErrCode, None
+        Board = str(Board)
+
+        if Board == '':
+
+            SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDM\rR\r0\r$'
+            Refresh = True
+            isBreakDetect = False
+            # 先後順序代表偵測的優先順序
+            DetectTargetList = [
+                _DetectUnit(
+                    '進入信箱',
+                    '郵件選單', 
+                    _ResponseUnit('', False),
+                    BreakDetect=True,
+                    ErrCode = ErrorCode.Success
+                ),
+            ]
             
-            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+            while not isBreakDetect:
+                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+                if ErrCode == ErrorCode.WaitTimeout:
+                    self.Log('超時')
+                    return ErrCode, None
+                elif ErrCode != ErrorCode.Success:
+                    self.Log('操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                    return ErrCode, None
+                
+                # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
-            isDetectedTarget = False
+                isDetectedTarget = False
 
-            for DetectTarget in DetectTargetList:
-                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
-                    self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
+                for DetectTarget in DetectTargetList:
+                    if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                        self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
 
-                    SendMessage = DetectTarget.getResponse().getSendMessage()
-                    Refresh = DetectTarget.getResponse().needRefresh()
-                    
-                    isDetectedTarget = True
-                    if DetectTarget.isBreakDetect():
-                        isBreakDetect = True
-                        ErrCode = DetectTarget.getErrorCode()
-                    break
+                        SendMessage = DetectTarget.getResponse().getSendMessage()
+                        Refresh = DetectTarget.getResponse().needRefresh()
+                        
+                        isDetectedTarget = True
+                        if DetectTarget.isBreakDetect():
+                            isBreakDetect = True
+                            ErrCode = DetectTarget.getErrorCode()
+                        break
 
-            if not isDetectedTarget:
-                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
-                self.Log('無法解析的狀態! PTT Library 緊急停止')
-                self.logout()
-                sys.exit()
-        if ErrCode != ErrorCode.Success:
-            return ErrCode, None
+                if not isDetectedTarget:
+                    self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                    self.Log('無法解析的狀態! PTT Library 緊急停止')
+                    self.logout()
+                    sys.exit()
+            if ErrCode != ErrorCode.Success:
+                return ErrCode, None
 
-        MailBoxLineList = self.__ReceiveData[ConnectIndex].split('\n')
+            MailBoxLineList = self.__ReceiveData[ConnectIndex].split('\n')
 
-        # for i in range(len(MailBoxLineList)):
-        #     print('line', i,MailBoxLineList[i])
+            # for i in range(len(MailBoxLineList)):
+            #     print('line', i,MailBoxLineList[i])
 
-        result = list(map(int, re.findall(r'\d+', MailBoxLineList[3])))[0]
-
+            result = list(map(int, re.findall(r'\d+', MailBoxLineList[3])))[0]
+            
+        else:
+            for i in range(3):
+                ErrCode, result = self.__getNewestPostIndex(Board=Board)
+                if ErrCode == ErrorCode.Success:
+                    return ErrCode, result
         return ErrorCode.Success, result
     def getMail(self, MailIndex):
         self.__IdleTime = 0
@@ -1742,7 +1740,7 @@ class Library(object):
         if MailIndex <= 0:
             self.Log('錯誤的輸入: ' + str(MailIndex))
             return ErrorCode.ErrorInput, result
-        ErrCode, NewestMailIndex = self.getNewestMailIndex()
+        ErrCode, NewestMailIndex = self.getNewestIndex()
         if ErrCode != ErrorCode.Success:
             self.Log('取得最新信箱編號失敗: ' + str(ErrCode))
             return ErrCode, result
@@ -2263,7 +2261,7 @@ class Library(object):
         
         self.__MaxMultiLogin = MaxMultiLogin
 
-        ErrCode, NewestIndex = self.getNewestPostIndex(Board)
+        ErrCode, NewestIndex = self.getNewestIndex(Board=Board)
         if ErrCode != ErrorCode.Success:
             return ErrCode, 0
         
