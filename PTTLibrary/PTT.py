@@ -148,21 +148,25 @@ class Library(object):
             # self.__IdleLock.release()
 
         return 
-    def __showScreen(self, ErrCode, FunctionName, ConnectIndex=0):
-        # if self.__LogLevel == LogLevel.DEBUG or Debug:
-        print('-' * 50)
-        try:
-            print(self.__PreReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
-        except Exception:
-            print(self.__PreReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
-        print('-' * 50)
-        try:
-            print(self.__ReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
-        except Exception:
-            print(self.__ReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
-        print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
-        print('錯誤在 ' + FunctionName + ' 函式發生')
-        print('-' * 50)
+    def __showScreen(self, ErrCode, FunctionName, ConnectIndex=0, _LogLevel=-1):
+        
+        if _LogLevel == -1:
+            _LogLevel = self.__LogLevel
+        
+        if _LogLevel >= self.__LogLevel:
+            print('-' * 50)
+            try:
+                print(self.__PreReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+            except Exception:
+                print(self.__PreReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
+            print('-' * 50)
+            try:
+                print(self.__ReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+            except Exception:
+                print(self.__ReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
+            print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
+            print('錯誤在 ' + FunctionName + ' 函式發生')
+            print('-' * 50)
     
     def Log(self, Message, _LogLevel=-1):
         if _LogLevel == -1:
@@ -473,10 +477,6 @@ class Library(object):
 
                     self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
                     self.Log('無法解析的狀態! PTT Library 緊急停止')
-                    # Lines = self.__ReceiveData[ConnectIndex].split('\r')
-                    # for line in Lines:
-                    #     print('===' + line)
-
                     self.logout()
                     sys.exit()
             if ErrCode == ErrorCode.WaitTimeout:
@@ -537,6 +537,7 @@ class Library(object):
     def getNewestPostIndex(self, Board):
         
         self.__IdleTime = 0
+
         try:
             Board = str(Board)
         except:
@@ -575,7 +576,6 @@ class Library(object):
         AllIndex = re.findall(r'\d+ ', self.__ReceiveData[ConnectIndex])
         
         if len(AllIndex) == 0:
-            self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
             return ErrorCode.UnknowError, result
 
         AllIndex = list(set(map(int, AllIndex)))
@@ -671,7 +671,7 @@ class Library(object):
 
                         if result != TryResult:
                             if ShowFixResult:
-                                self.Log('修正結果為 ' + str(TryResult))
+                                self.Log('修正結果為 ' + str(TryResult), LogLevel.DEBUG)
                             result = TryResult
                         FindResult = True
                     else:
@@ -763,7 +763,7 @@ class Library(object):
                 self.Log('你被水桶惹 QQ')
                 return ErrorCode.NoPermission
             else:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex, _LogLevel=LogLevel.DEBUG)
                 return ErrorCode.UnknowError
 
         SendMessage = str(PostType) + '\r' + str(Title) + '\r' + str(Content) + '\x18'
@@ -785,7 +785,7 @@ class Library(object):
             self.Log('儲存檔案', LogLevel.DEBUG)
             SendMessage = 's\r'
         else:
-            self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
+            self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex, _LogLevel=LogLevel.DEBUG)
             return ErrorCode.UnknowError
 
         CatchList = [
@@ -812,7 +812,7 @@ class Library(object):
             elif CatchIndex == 2:
                 break
             else:
-                self.__showScreen(ErrCode, CatchIndex, ConnectIndex = ConnectIndex)
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex, _LogLevel=LogLevel.DEBUG)
                 return ErrorCode.UnknowError
         
         return ErrorCode.Success
@@ -968,7 +968,7 @@ class Library(object):
             self.Log('文章已經被刪除')
             return ErrorCode.PostDeleted
         else:
-            self.__showScreen(ErrCode, CatchIndex, ConnectIndex)
+            self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex, _LogLevel=LogLevel.DEBUG)
             return ErrorCode.UnknowError
         
         CatchList = []

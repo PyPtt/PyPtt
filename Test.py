@@ -63,6 +63,24 @@ def PostDemo():
         else:
             PTTBot.Log('在 Test 板發文失敗')
 
+def GetNewestPostIndexDemo():
+    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    # BoardList = ['Gossiping']
+
+    for Board in BoardList:
+
+        for i in range(100):
+            ErrCode, NewestIndex = PTTBot.getNewestPostIndex(Board)
+            if ErrCode != PTT.ErrorCode.Success:
+                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+                break
+            
+            if NewestIndex == -1:
+                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+                break
+        
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+    return
 def showPost(Post):
     PTTBot.Log('文章代碼: ' + Post.getID())
     PTTBot.Log('作者: ' + Post.getAuthor())
@@ -86,7 +104,7 @@ def showPost(Post):
             ArrowCount += 1
     
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
-    
+
 def GetPostDemo():
     
     # 這個範例是如何取得單一文章資訊
@@ -117,8 +135,8 @@ def GetPostDemo():
     
     TryPost = 10
     
-    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    # BoardList = ['Gossiping']
+    # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    BoardList = ['Gossiping']
 
     for Board in BoardList:
         
@@ -573,21 +591,20 @@ if __name__ == '__main__':
         sys.exit()
 
     try:
-        PostDemo()
-        PushDemo()
-        GetPostDemo()
-        MailDemo()
-        GetTimeDemo()
-        GetMailDemo()
-        GetUserDemo()
-        GiveMoneyDemo()
-        ChangePasswordDemo()
-        ReplyPostDemo()
-        CrawlBoardDemo()
-        ThrowWaterBallDemo()
-        DelPostDemo()
-
-        # time.sleep(20)
+        # PostDemo()
+        # PushDemo()
+        GetNewestPostIndexDemo()
+        # GetPostDemo()
+        # MailDemo()
+        # GetTimeDemo()
+        # GetMailDemo()
+        # GetUserDemo()
+        # GiveMoneyDemo()
+        # ChangePasswordDemo()
+        # ReplyPostDemo()
+        # CrawlBoardDemo()
+        # ThrowWaterBallDemo()
+        # DelPostDemo()
     except:
         pass
     # 請養成登出好習慣
