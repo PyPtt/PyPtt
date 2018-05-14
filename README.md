@@ -12,7 +12,7 @@
 ###### 提供完整快速的 PTT 操作
 ###### 舉凡貼文、推文、寄信、讀信、查ID、丟水球甚至接水球，都可以搞定
 ###### 根據網路速度動態調整操作速度、斷線自動恢復
-###### 如有功能未能詳盡 歡迎開啟 issue 區來許願
+###### 如有功能未能詳盡 歡迎開啟 issue 來許願
 
 版本
 -------------------
@@ -37,7 +37,6 @@ if ErrCode != PTT.ErrorCode.Success:
 
 ......
 
-# 請養成登出好習慣
 PTTBot.logout()
 ```
 ###### 你可以參考 Test.py 裡面有 API 的範例與說明
@@ -64,12 +63,11 @@ API
 ###### push                                  根據文章編號推文
 ###### mail                                  寄信給使用者
 ###### getPost                               取得文章資訊 內含推文清單
-###### getNewestPostIndex                    取得該看板最新的文章編號
-###### giveMoney                             給予使用者 P幣
+###### getNewestIndex                        取得該看板最新的文章編號或者信箱最新信件編號
+###### giveMoney                             給予使用者 P 幣
 ###### getTime                               取得 PTT 系統時間
 ###### getUser                               取得該使用者資訊
 ###### crawlBoard                            多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式
-###### getNewestMailIndex                    取得最新信件編號
 ###### getMail                               取得信件資訊
 ###### Log                                   顯示訊息
 ###### changePassword                        修改密碼
