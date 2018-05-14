@@ -14,36 +14,6 @@ PTTBot = None
 
 def PostDemo():
 
-    JapanText = "水馬赤いな。ア、イ、ウ、エ、オ。\r\n\
-浮藻に子蝦もおよいでる。 \r\n\
-\r\n\
-柿の木、栗の木。カ、キ、ク、ケ、コ。 \r\n\
-啄木鳥こつこつ、枯れけやき。 \r\n\
-\r\n\
-大角豆に醋をかけ、サ、シ、ス、セ、ソ。 \r\n\
-その魚浅瀬で刺しました。 \r\n\
-\r\n\
-立ちましょ、喇叭で、タ、チ、ツ、テ、ト。 \r\n\
-トテトテタッタと飛び立った。 \r\n\
-\r\n\
-蛞蝓のろのろ、ナ、ニ、ヌ、ネ、ノ。 \r\n\
-納戸にぬめって、なにねばる。 \r\n\
-\r\n\
-鳩ぽっぽ、ほろほろ。ハ、ヒ、フ、ヘ、ホ。 \r\n\
-日向のお部屋にや笛を吹く。 \r\n\
-\r\n\
-蝸牛、螺旋巻、マ、ミ、ム、メ、モ。 \r\n\
-梅の実落ちても見もしまい。 \r\n\
-\r\n\
-焼栗、ゆで栗。ヤ、イ、ユ、エ、ヨ。 \r\n\
-山田に灯のつく宵の家。 \r\n\
-\r\n\
-雷鳥は寒かろ、ラ、リ、ル、レ、ロ。 \r\n\
-蓮花が咲いたら、瑠璃の鳥。 \r\n\
-\r\n\
-わい、わい、わっしょい。ワ、ヰ、ウ、ヱ、ヲ。 \r\n\
-植木屋、井戸換へ、お祭りだ。\r\n"
-
     #這個範例是如何 po 文
     #第一個參數是你要 po 文的板
     #第二個參數是文章標題
@@ -55,7 +25,20 @@ def PostDemo():
 
     for i in range(3):
         
-        ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + JapanText, 1, 0)
+        Content = ''
+        
+        if i == 0:
+            for i in range(3):
+                Content += '測試行 ' + str(i) + '\r'
+        if i == 1:
+            for i in range(16):
+                Content += '測試行 ' + str(i) + '\r'
+        
+        if i == 2:
+            for i in range(128):
+                Content += '測試行 ' + str(i) + '\r'
+        
+        ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + Content, 1, 0)
         if ErrCode == PTT.ErrorCode.Success:
             PTTBot.Log('在 Test 板發文成功')
         elif ErrCode == PTT.ErrorCode.NoPermission:
@@ -67,9 +50,8 @@ def GetNewestIndexDemo():
     BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
     # BoardList = ['Gossiping']
 
-    for Board in BoardList:
-
-        for i in range(1):
+    for i in range(1):
+        for Board in BoardList:
             ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
             if ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
@@ -79,13 +61,16 @@ def GetNewestIndexDemo():
                 PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
                 break
         
-        PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+            PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
     
-    ErrCode, NewestMailIndex = PTTBot.getNewestIndex()
-    if ErrCode == PTT.ErrorCode.Success:
-        PTTBot.Log('取得最新信件編號成功 共有 ' + str(NewestMailIndex) + ' 封信')
-    else:
-        PTTBot.Log('取得最新信件編號失敗 錯誤碼: ' + str(ErrCode))
+    for i in range(1):
+        ErrCode, NewestMailIndex = PTTBot.getNewestIndex()
+        if ErrCode == PTT.ErrorCode.Success:
+            PTTBot.Log(str(i) + ' 取得最新信件編號成功 共有 ' + str(NewestMailIndex) + ' 封信')
+        else:
+            PTTBot.Log('取得最新信件編號失敗 錯誤碼: ' + str(ErrCode))
+    
+    PTTBot.Log('GetNewestIndexDemo 測試完成')
     return
 def showPost(Post):
     PTTBot.Log('文章代碼: ' + Post.getID())
@@ -141,8 +126,8 @@ def GetPostDemo():
     
     TryPost = 10
     
-    # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    BoardList = ['Gossiping']
+    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    # BoardList = ['Gossiping']
 
     for Board in BoardList:
         
@@ -353,8 +338,7 @@ def CrawlBoardDemo():
 def GetUserDemo():
     
     # 範例是追蹤特定 ID 的情況
-    # 此API可以持續追蹤某ID的動態
-    # 詳細可以參考 範例程式中的 ID追蹤器
+    # 此API可以追蹤某 ID 的動態
     
     # 使用者資訊資料結構可參考如下
     
