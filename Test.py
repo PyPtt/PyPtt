@@ -28,15 +28,14 @@ def PostDemo():
         Content = ''
         
         if i == 0:
-            for i in range(3):
-                Content += '測試行 ' + str(i) + '\r'
+            for ii in range(3):
+                Content += '測試行 ' + str(ii) + '\r'
         if i == 1:
-            for i in range(16):
-                Content += '測試行 ' + str(i) + '\r'
-        
+            for ii in range(16):
+                Content += '測試行 ' + str(ii) + '\r'
         if i == 2:
-            for i in range(128):
-                Content += '測試行 ' + str(i) + '\r'
+            for ii in range(128):
+                Content += '測試行 ' + str(ii) + '\r'
         
         ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + Content, 1, 0)
         if ErrCode == PTT.ErrorCode.Success:
@@ -47,8 +46,14 @@ def PostDemo():
             PTTBot.Log('在 Test 板發文失敗')
 
 def GetNewestIndexDemo():
+    
+    # 這個範例是如何取得信箱最新郵件編號或者某版最新文章編號
+    # 帶入版面則回傳該版面最新文章編號
+    # 若無 則回傳信箱最新郵件編號
+    
+    #回傳值 錯誤碼
+
     BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    # BoardList = ['Gossiping']
 
     for i in range(1):
         for Board in BoardList:
@@ -361,7 +366,7 @@ def GetUserDemo():
         PTTBot.Log('Start query: ' + IDs)
         ErrCode, UserInfo = PTTBot.getUser(IDs)
         if ErrCode == PTT.ErrorCode.NoUser:
-            # PTTBot.Log('')
+            PTTBot.Log('沒有此使用者')
             continue
         elif ErrCode != PTT.ErrorCode.Success:
             PTTBot.Log('getUserInfo fail error code: ' + str(ErrCode))
@@ -583,7 +588,7 @@ if __name__ == '__main__':
     try:
         # PostDemo()
         # PushDemo()
-        GetNewestIndexDemo()
+        # GetNewestIndexDemo()
         # GetPostDemo()
         # MailDemo()
         # GetTimeDemo()

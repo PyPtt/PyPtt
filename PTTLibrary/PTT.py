@@ -89,7 +89,7 @@ class Library(object):
         
         self.__Cursor =                       '>'
         
-        self.__MaxMultiLogin =                  2
+        self.__MaxMultiLogin =                  5
 
         self.__ConnectList = [None] * self.__MaxMultiLogin
         self.__ReceiveData = [''] * self.__MaxMultiLogin
@@ -127,7 +127,7 @@ class Library(object):
         self.__WaterBallHandler = WaterBallHandler
         if self.__WaterBallHandler != None:
             self.__MaxIdleTime = 2
-            
+
         self.__WaterBallList = []
 
         self.__APILock = [threading.Lock()] * self.__MaxMultiLogin
@@ -1006,7 +1006,7 @@ class Library(object):
     def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0):
         self.__IdleTime = 0
         
-        ConnectIndex = 0
+        ConnectIndex = _ConnectIndex
 
         try:
             Board = str(Board)
@@ -1017,6 +1017,7 @@ class Library(object):
             return ErrorCode.ErrorInput, None
 
         self.__APILock[ConnectIndex].acquire()
+
         for i in range(3):
             ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex)
             if ErrCode == ErrorCode.ParseError:
@@ -1027,11 +1028,12 @@ class Library(object):
             self.__APILock[ConnectIndex].release()
             return ErrCode, Post
 
-        self.__WaterBallProceeor()                
+        self.__WaterBallProceeor()
         self.__APILock[ConnectIndex].release()
 
         return ErrCode, Post
     def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0):
+        
         ConnectIndex = _ConnectIndex
         
         result = None
@@ -1118,6 +1120,8 @@ class Library(object):
                     if line.startswith('>'):
                         if '本文已被' in line[:line.find('[')]:
                             return ErrorCode.PostDeleted, result
+                        if '已被' in line[:line.find('<')] or '刪除' in line[:line.find('<')]:
+                            return ErrorCode.PostDeleted, result
                         # print('line: ' + line[:line.find('[')])
 
                 self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' part 1', ConnectIndex=ConnectIndex)
@@ -1170,6 +1174,13 @@ class Library(object):
                 ErrCode = ErrorCode.Success
             ),
             _DetectUnit(
+                '文章讀取完成',
+                '頁 (100%)', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
                 '',
                 '目前顯示: 第', 
                 _ResponseUnit('', True),
@@ -1214,7 +1225,7 @@ class Library(object):
             for DetectTarget in DetectTargetList:
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
-                    
+                                        
                     if len(PostIP) == 0:
                         PostIP = re.findall( r'[0-9]+(?:\.[0-9]+){3}', self.__ReceiveData[ConnectIndex])
                         if len(PostIP) > 0:
@@ -1230,6 +1241,10 @@ class Library(object):
                     PageLineRange = re.findall(r'\d+', PageLineRange)
                     PageLineRange = list(map(int, PageLineRange))[3:]
                     
+                    if len(PageLineRange) < 2:
+                        # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                        return ErrorCode.HasControlCode, None
+
                     OverlapLine = LastPageIndex - PageLineRange[0] + 1
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
@@ -1506,6 +1521,7 @@ class Library(object):
         ConnectIndex = 0
 
         self.__APILock[ConnectIndex].acquire()
+
         for i in range(3):
             ErrCode, result = self.__getTime()
             if ErrCode == ErrorCode.WaitTimeout or ErrCode == ErrorCode.Success:
@@ -1573,8 +1589,15 @@ class Library(object):
         LastLineList = list(map(int, re.findall(r'\d+', LastLine)))
         if len(LastLineList) < 3:
             return ErrorCode.ParseError, result
-        result = str(LastLineList[2]) + ':' + str(LastLineList[3])
-        # print(result)
+        
+        Hour = str(LastLineList[2])
+        Min = str(LastLineList[3])
+
+        if len(Hour) == 1:
+            Hour = '0' + Hour
+        if len(Min) == 1:
+            Min = '0' + Min
+        result = Hour + ':' + Min
 
         return ErrorCode.Success, result
     
@@ -2208,7 +2231,7 @@ class Library(object):
         Index = int(Index)
 
         # 前進至主頁面
-        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
+        SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
         # 前進至文章
         if PostID != '':
             SendMessage += '#' + PostID + '\r\rr'
@@ -2225,12 +2248,18 @@ class Library(object):
             _DetectUnit(
                 '編輯文章',
                 '編輯文章', 
-                _ResponseUnit(Content + '\r\x18s\r0\r', False),
+                _ResponseUnit(Content + '\r\x18s\r', True),
+                # 
+            ),
+            _DetectUnit(
+                '不加簽名檔',
+                'x=隨機', 
+                _ResponseUnit('0\r', False),
             ),
             _DetectUnit(
                 '送出回文',
                 '請按任意鍵繼續', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                _ResponseUnit(self.__gotoMainMenu, False),
             ),
             _DetectUnit(
                 '自存底稿',
@@ -2293,23 +2322,12 @@ class Library(object):
         
         while self.__EnableLoginCount < self.__EnableLogin:
             time.sleep(1)
-        
-        # 檢查各頻道與 PTT 連線狀態
-        
-        ErrCode, Time = self.getTime()
-
-        if ErrCode != ErrorCode.Success:
-            self.Log('頻道 ' + str(ConnectIndex) + ' 連線狀況異常')
-            if self.__MaxMultiLogin > 3:
-                self.Log('多重登入設定過大，建議調降多重登入上限')
-                self.logout()
-            return
 
         for PostIndex in range(StartIndex, EndIndex):
             self.__IdleTime = 0
-            # self.Log(PostIndex)
+
             ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex)
-            
+
             if not self.__isBackground:
                 self.__ProgressBarCount += 1
                 self.__ProgressBar.update(self.__ProgressBarCount)
@@ -2552,8 +2570,6 @@ class Library(object):
         if ErrCode != ErrorCode.Success:
             return ErrCode
         if not Post.getAuthor().startswith(self.__ID):
-            print(self.__ID)
-            print(Post.getAuthor())
             return ErrorCode.NoPermission
         
         self.__APILock[ConnectIndex].acquire()

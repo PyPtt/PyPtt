@@ -22,3 +22,4 @@ class ErrorCode(object):
         self.NoFastPush =                      17
         self.NoEnoughP =                       18
         self.OSError =                         19
+        self.HasControlCode =                  20
