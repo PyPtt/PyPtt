@@ -1,8 +1,8 @@
-﻿import sys
+import sys
 import time
 import json
 import getpass
-from PTTLibrary import SSHPTT
+from PTTLibrary import SSHPTT as PTT
 
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
@@ -12,6 +12,25 @@ PostIDList = ['1PC1YXYj', '1PCBfel1', '1D89C0oV']
 
 PTTBot = None
 
+def LoginOutTest():
+
+    try:
+        with open('Account.txt') as AccountFile:
+            Account = json.load(AccountFile)
+            ID = Account['ID']
+            Password = Account['Password']
+    except FileNotFoundError:
+        ID = input('請輸入帳號: ')
+        Password = getpass.getpass('請輸入密碼: ')
+
+    for i in range(3):
+        PTTBot = PTT.Library(ID, Password, kickOtherLogin=True)
+        if not PTTBot.isLoginSuccess():
+            PTTBot.Log('登入失敗')
+            sys.exit()
+        PTTBot.logout()
+    
+    print('登出登入壓力測試完成')
 def PostDemo():
 
     JapanText = "水馬赤いな。ア、イ、ウ、エ、オ。\r\n\
@@ -485,6 +504,8 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
+    # LoginOutTest()
+
     try:
         with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
@@ -493,11 +514,12 @@ if __name__ == '__main__':
     except FileNotFoundError:
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
-    
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False)
+
+    PTTBot = PTT.Library(ID, Password , kickOtherLogin=True)
     if not PTTBot.isLoginSuccess():
         PTTBot.Log('登入失敗')
         sys.exit()
+
     # PTTBot.setLogLevel(PTTBot.LogLevel_DEBUG)
     
     # GetNewestPostIndexDemo()
@@ -514,5 +536,5 @@ if __name__ == '__main__':
     # GetMailDemo()
 
     # 請養成登出好習慣
-    # PTTBot.logout()
+    PTTBot.logout()
     
