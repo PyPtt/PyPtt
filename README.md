@@ -6,13 +6,10 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
 
-#### Do you want PTT in Python? import PTT
+#### Do you want PTT in Python? import PTT !
 
-###### 這是一個讓開發者方便操作 PTT 的函式庫
-###### 提供完整快速的 PTT 操作
-###### 舉凡貼文、推文、寄信、讀信、查ID、丟水球甚至接水球，都可以搞定
-###### 根據網路速度動態調整操作速度、斷線自動恢復
-###### 如有功能未能詳盡 歡迎開啟 issue 來許願
+###### PTT Library 是一個由 Python 寫成用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
+###### 程式碼發布在 https://github.com/Truth0906/PTTLibrary
 
 版本
 -------------------
