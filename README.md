@@ -9,11 +9,12 @@
 #### Do you want PTT in Python? import PTT !
 
 ###### PTT Library 是一個由 Python 寫成用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
+###### 拋棄過往網頁形式的解析，直接登入 PTT 分析最即時的文章與推文，給你最快速的資訊!
 ###### 程式碼發布在 https://github.com/Truth0906/PTTLibrary
 
 版本
 -------------------
-###### 0.6.0
+###### 0.6.1
 
 安裝
 -------------------

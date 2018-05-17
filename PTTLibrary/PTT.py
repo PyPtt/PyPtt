@@ -222,7 +222,7 @@ class Library(object):
                 
                 TimeCout = 0
                 StartTime = time.time()
-                time.sleep(0.02)
+                time.sleep(0.05)
                 while not self.__ConnectList[ConnectIndex].channel.send_ready():
                     time.sleep(0.01)
 
@@ -240,7 +240,7 @@ class Library(object):
             
             TimeCout = 0
             StartTime = time.time()
-            time.sleep(0.02)
+            time.sleep(0.05)
             while not self.__ConnectList[ConnectIndex].channel.recv_ready():
                 time.sleep(0.01)
 
@@ -1084,7 +1084,21 @@ class Library(object):
                 _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
-            ),   
+            ),
+            _DetectUnit(
+                '含有控制碼',
+                '此頁內容會依閱讀者不同', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.HasControlCode
+            ),
+            _DetectUnit(
+                '含有控制碼',
+                '原文未必有您的資料', 
+                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.HasControlCode
+            ),
         ]
 
         while not isBreakDetect:
@@ -1197,6 +1211,13 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.ParseError
             ),
+            _DetectUnit(
+                '運作出錯',
+                '任意鍵', 
+                _ResponseUnit('', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.ParseError
+            ),
         ]
 
         FirstPage = ''
@@ -1236,13 +1257,24 @@ class Library(object):
                         CurrentPage = CurrentPage[3:]
                     CurrentPageList = CurrentPage.split('\n')
 
-                    PageLineRange = CurrentPageList.pop()
+                    PageLineRangeTemp = CurrentPageList.pop()
                     
-                    PageLineRange = re.findall(r'\d+', PageLineRange)
+                    PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
                     PageLineRange = list(map(int, PageLineRange))[3:]
                     
                     if len(PageLineRange) < 2:
-                        # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                        # self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' 檢查控制碼', ConnectIndex=ConnectIndex)
+                        # print('*' * 20)
+                        # print('*' * 20)
+                        # print('*' * 20)
+                        # print('*' * 20)
+                        # print('*' * 20)
+                        # print('*' * 20)
+                        # print('PageLineRangeTemp: ' + PageLineRangeTemp)
+                        # print('=' * 20)
+                        # print('=' * 20)
+                        # print('=' * 20)
+                        # sys.exit()
                         return ErrorCode.HasControlCode, None
 
                     OverlapLine = LastPageIndex - PageLineRange[0] + 1
@@ -1273,6 +1305,7 @@ class Library(object):
                 self.logout()
                 sys.exit()
         
+        FirstPage = FirstPage[FirstPage.find('[2J 作者'):]
         PostLineList = FirstPage.split('\n')
 
         # for line in PostLineList:

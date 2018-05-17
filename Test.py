@@ -146,8 +146,8 @@ def GetPostDemo():
             return False
         
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
-        for i in range(TryPost)[::-1]:
-            PTTBot.Log('-' * 50)    
+        for i in range(TryPost):
+            PTTBot.Log('-' * 50)
             PTTBot.Log('測試 ' + Board + ' ' + str(NewestIndex - i))
 
             ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
@@ -163,11 +163,12 @@ def GetPostDemo():
             ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')
-                continue
+                sys.exit()
             elif ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-                continue
-
+                sys.exit()
+            
+            # if '任意鍵' in Post.getTitle():
             showPost(Post)
 
 def PushDemo():
@@ -577,8 +578,8 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
 
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
-    PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
-    # PTTBot = PTT.Library(ID, Password)
+    # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
+    PTTBot = PTT.Library(ID, Password)
 
     ErrCode = PTTBot.login()
     if ErrCode != PTT.ErrorCode.Success:
