@@ -52,26 +52,35 @@ PTTBot.logout()
 ###### progressbar2
 ###### paramiko
 
+未來工作
+-------------------
+###### 加入搜尋條件
+###### 對於有控制碼的文章開發新方式解析
+###### 可蒐集使用者清單
+###### 支援 PTT2
+
 API
 -------------------
-###### getVersion                            取得版本資訊
-###### login                                 登入
-###### logout                                登出
-###### post                                  PO 文
-###### push                                  根據文章編號推文
-###### mail                                  寄信給使用者
-###### getPost                               取得文章資訊 內含推文清單
-###### getNewestIndex                        取得該看板最新的文章編號或者信箱最新信件編號
-###### giveMoney                             給予使用者 P 幣
-###### getTime                               取得 PTT 系統時間
-###### getUser                               取得該使用者資訊
-###### crawlBoard                            多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式
-###### getMail                               取得信件資訊
-###### Log                                   顯示訊息
-###### changePassword                        修改密碼
-###### replyPost                             回覆文章
-###### throwWaterBall                        丟水球
-###### delPost                               刪除文章
+| API  | 說明|
+| :---------- | -----------|
+| getVersion   | 取得版本資訊   |
+| login   | 登入   |
+| logout   | 登出   |
+| post   | 發佈文章   |
+| push   | 推文   |
+| mail   | 寄信   |
+| getPost   | 取得文章資訊   |
+| getNewestIndex   | 取得該看板最新的文章編號或者信箱最新信件編號   |
+| giveMoney   | 給予使用者 P 幣   |
+| getTime   | 取得 PTT 系統時間   |
+| getUser   | 取得使用者資訊   |
+| crawlBoard   | 多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式  |
+| getMail   | 取得信件資訊   |
+| Log   | 顯示訊息   |
+| changePassword   | 變更密碼   |
+| replyPost   | 回覆文章   |
+| throwWaterBall   | 丟水球   |
+| delPost   | 刪除文章   |
 
 贊助
 -------------------
