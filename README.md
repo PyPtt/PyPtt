@@ -1,3 +1,4 @@
+![PTTLibrary: A PTT Library in Python](https://i.imgur.com/B1kIMgR.png)
 # PTT Library
 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)
 [![Build Status](https://travis-ci.org/Truth0906/PTTLibrary.svg?branch=master)](https://travis-ci.org/Truth0906/PTTLibrary)
@@ -10,7 +11,9 @@
 
 ###### PTT Library 是一個由 Python 寫成用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
 ###### 拋棄過往網頁形式的解析，直接登入 PTT 分析最即時的文章與推文，給你最快速的資訊!
-###### 程式碼發布在 https://github.com/Truth0906/PTTLibrary
+###### 程式碼發布在
+###### github: https://github.com/Truth0906/PTTLibrary
+###### Pypi: https://pypi.org/project/PTTLibrary/
 
 版本
 -------------------
