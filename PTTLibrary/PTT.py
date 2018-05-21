@@ -132,6 +132,14 @@ class Library(object):
 
         self.__APILock = [threading.Lock()] * self.__MaxMultiLogin
 
+        self.__PTTBUGDetectUnit = _DetectUnit(
+            '遇到 PTT BUG!!',
+            'PttBug', 
+            _ResponseUnit(' ', False),
+            BreakDetect=True,
+            ErrCode = ErrorCode.PttBug
+        )
+
     def __AntiLogout(self):
         
         self.__RunIdleThread = True
@@ -170,12 +178,12 @@ class Library(object):
                 print(self.__PreReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
             except Exception:
                 print(self.__PreReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
+            print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])) + ' ' + str(len(self.__PreReceiveData[ConnectIndex])))
             print('-' * 50)
             try:
                 print(self.__ReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
             except Exception:
                 print(self.__ReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
-            print('頻道 ' + str(ConnectIndex) + ' 畫面長度為: ' + str(len(self.__ReceiveData[ConnectIndex])))
             print('錯誤在 ' + FunctionName + ' 函式發生')
             print('-' * 50)
     
@@ -205,6 +213,8 @@ class Library(object):
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
+        PreWait = 0.05
+        EveryWait = 0.01
 
         if CatchTargetList == None:
             CatchTargetList = []
@@ -222,9 +232,9 @@ class Library(object):
                 
                 TimeCout = 0
                 StartTime = time.time()
-                time.sleep(0.05)
+                time.sleep(PreWait)
                 while not self.__ConnectList[ConnectIndex].channel.send_ready():
-                    time.sleep(0.01)
+                    time.sleep(EveryWait)
 
                     if TimeCout >= 100:
                         TimeCout = 0
@@ -240,9 +250,9 @@ class Library(object):
             
             TimeCout = 0
             StartTime = time.time()
-            time.sleep(0.05)
+            time.sleep(PreWait)
             while not self.__ConnectList[ConnectIndex].channel.recv_ready():
-                time.sleep(0.01)
+                time.sleep(EveryWait)
 
                 if TimeCout >= 100:
                     TimeCout = 0
@@ -254,6 +264,7 @@ class Library(object):
             self.__ReceiveData[ConnectIndex] = self.__wait_str(ConnectIndex)
 
             while self.__ConnectList[ConnectIndex].channel.recv_ready():
+                time.sleep(EveryWait)
                 self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
             
         except socket.timeout:
@@ -443,7 +454,8 @@ class Library(object):
                     '頻道 ' + str(ConnectIndex) + ' 輸入帳號',
                     '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
                     _ResponseUnit(self.__ID + '\r', False)
-                )
+                ),
+                self.__PTTBUGDetectUnit
             ]
             
             LoginFailCount = 0
@@ -635,6 +647,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.UnknowError
             ),
+            self.__PTTBUGDetectUnit
         ]
 
         ShowFixResult = False
@@ -1099,6 +1112,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.HasControlCode
             ),
+            self.__PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -1183,14 +1197,14 @@ class Library(object):
             _DetectUnit(
                 '文章讀取完成',
                 '(100%)  目前', 
-                _ResponseUnit('', False),
+                _ResponseUnit('', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
             _DetectUnit(
                 '文章讀取完成',
                 '頁 (100%)', 
-                _ResponseUnit('', False),
+                _ResponseUnit('', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
@@ -1214,10 +1228,11 @@ class Library(object):
             _DetectUnit(
                 '運作出錯',
                 '任意鍵', 
-                _ResponseUnit('', False),
+                _ResponseUnit('', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.ParseError
             ),
+            self.__PTTBUGDetectUnit
         ]
 
         FirstPage = ''
@@ -1300,6 +1315,10 @@ class Library(object):
                     break
 
             if not isDetectedTarget:
+                
+                if len(self.__ReceiveData[ConnectIndex]) < 500:
+                    pass
+
                 self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' part 2', ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態! PTT Library 緊急停止')
                 self.logout()
@@ -1308,6 +1327,8 @@ class Library(object):
         FirstPage = FirstPage[FirstPage.find('[2J 作者'):]
         PostLineList = FirstPage.split('\n')
 
+        if len(PostLineList) < 3:
+            return ErrorCode.ParseError, None
         # for line in PostLineList:
         #     print('Q', line)
 
@@ -1425,6 +1446,7 @@ class Library(object):
                 '編輯文章', 
                 _ResponseUnit(MailContentList[MailContentListIndex], True),
             ),
+            self.__PTTBUGDetectUnit
         ]
         
         self.__APILock[ConnectIndex].acquire()
@@ -1510,6 +1532,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
+            self.__PTTBUGDetectUnit
         ]
         
         while not isBreakDetect:
@@ -1582,6 +1605,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
+            self.__PTTBUGDetectUnit
         ]
         
         while not isBreakDetect:
@@ -1664,6 +1688,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.NoUser
             ),
+            self.__PTTBUGDetectUnit
         ]
         
         while not isBreakDetect:
@@ -1795,6 +1820,7 @@ class Library(object):
                     BreakDetect=True,
                     ErrCode = ErrorCode.Success
                 ),
+                self.__PTTBUGDetectUnit
             ]
             
             while not isBreakDetect:
@@ -1899,6 +1925,7 @@ class Library(object):
                 '目前顯示', 
                 _ResponseUnit('', False),
             ),
+            self.__PTTBUGDetectUnit
         ]
         
         FirstPage = ''
@@ -2090,6 +2117,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
+            self.__PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -2188,6 +2216,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
+            self.__PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -2306,6 +2335,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
+            self.__PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -2529,6 +2559,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
+            self.__PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -2637,6 +2668,7 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
+            self.__PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:

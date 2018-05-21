@@ -129,10 +129,10 @@ def GetPostDemo():
     # getContent                推文內文
     # getTime                   推文時間
     
-    TryPost = 10
+    TryPost = 5000
     
-    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    # BoardList = ['Gossiping']
+    # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    BoardList = ['Gossiping']
 
     for Board in BoardList:
         
@@ -579,7 +579,7 @@ if __name__ == '__main__':
 
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
-    PTTBot = PTT.Library(ID, Password)
+    PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
 
     ErrCode = PTTBot.login()
     if ErrCode != PTT.ErrorCode.Success:
@@ -590,7 +590,7 @@ if __name__ == '__main__':
         # PostDemo()
         # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
