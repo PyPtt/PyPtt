@@ -131,8 +131,8 @@ def GetPostDemo():
     
     TryPost = 3
     
-    # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    BoardList = ['Gossiping']
+    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    # BoardList = ['Gossiping']
 
     for Board in BoardList:
         
@@ -591,7 +591,7 @@ if __name__ == '__main__':
         # PostDemo()
         # PushDemo()
         # GetNewestIndexDemo()
-        GetPostDemo()
+        # GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
