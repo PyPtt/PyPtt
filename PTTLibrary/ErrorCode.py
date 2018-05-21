@@ -23,3 +23,4 @@ class ErrorCode(object):
         self.NoEnoughP =                       18
         self.OSError =                         19
         self.HasControlCode =                  20
+        self.PttBug =                          21
