@@ -129,7 +129,7 @@ def GetPostDemo():
     # getContent                推文內文
     # getTime                   推文時間
     
-    TryPost = 5000
+    TryPost = 3
     
     # BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
     BoardList = ['Gossiping']
@@ -148,7 +148,7 @@ def GetPostDemo():
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         for i in range(TryPost):
             PTTBot.Log('-' * 50)
-            PTTBot.Log('測試 ' + Board + ' ' + str(NewestIndex - i))
+            PTTBot.Log(str(i) + ' 測試 ' + Board + ' ' + str(NewestIndex - i))
 
             ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
             if ErrCode == PTT.ErrorCode.PostDeleted:
@@ -160,6 +160,7 @@ def GetPostDemo():
             
             PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
 
+            # 使用 PostID 模式可能會撞到 PTT BUG
             ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')

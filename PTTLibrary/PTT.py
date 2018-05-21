@@ -213,7 +213,7 @@ class Library(object):
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
-        PreWait = 0.05
+        PreWait = 0.02
         EveryWait = 0.01
 
         if CatchTargetList == None:
@@ -263,9 +263,10 @@ class Library(object):
 
             self.__ReceiveData[ConnectIndex] = self.__wait_str(ConnectIndex)
 
-            while self.__ConnectList[ConnectIndex].channel.recv_ready():
-                time.sleep(EveryWait)
-                self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
+            for i in range(3):
+                while self.__ConnectList[ConnectIndex].channel.recv_ready():
+                    time.sleep(EveryWait)
+                    self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
             
         except socket.timeout:
             ErrCode = ErrorCode.WaitTimeout
@@ -1033,9 +1034,7 @@ class Library(object):
 
         for i in range(3):
             ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex)
-            if ErrCode == ErrorCode.ParseError:
-                continue
-            elif ErrCode == ErrorCode.WaitTimeout:
+            if ErrCode != ErrorCode.Success:
                 continue
             
             self.__APILock[ConnectIndex].release()
@@ -1066,7 +1065,7 @@ class Library(object):
             self.Log('文章編號與代碼輸入錯誤: 皆無輸入')
             return ErrorCode.ErrorInput, result
 
-        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 '
+        SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
         # 前進至文章
         if PostID != '':
             SendMessage += '#' + PostID + '\rQ'
@@ -1112,7 +1111,13 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.HasControlCode
             ),
-            self.__PTTBUGDetectUnit
+            _DetectUnit(
+                '遇到 PTT BUG!!',
+                'PttBug', 
+                _ResponseUnit(' ', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.PttBug
+            ),
         ]
 
         while not isBreakDetect:
@@ -1137,6 +1142,12 @@ class Library(object):
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
 
+                        if ErrCode == ErrorCode.PttBug:
+                            self.__connectRemote(ConnectIndex)
+                            return ErrCode, None
+
+                        break
+
                     SendMessage = DetectTarget.getResponse().getSendMessage()
                     Refresh = DetectTarget.getResponse().needRefresh()
 
@@ -1151,7 +1162,7 @@ class Library(object):
                         if '已被' in line[:line.find('<')] or '刪除' in line[:line.find('<')]:
                             return ErrorCode.PostDeleted, result
                         # print('line: ' + line[:line.find('[')])
-
+                
                 self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' part 1', ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態! PTT Library 緊急停止')
                 self.logout()
@@ -1180,8 +1191,14 @@ class Library(object):
         PostWeb = PostWeb[:PostWeb.find(' ')]
         while PostWeb.endswith(' '):
             PostWeb = PostWeb[:-1]
-        
-        PostMoney = int(re.search(r'\d+', InfoLines[2]).group())
+        try:
+            if '特殊文章，無價格記錄' in InfoLines[2]:
+                PostMoney = -1
+            else:
+                PostMoney = int(re.search(r'\d+', InfoLines[2]).group())
+        except:
+            PostMoney = -1
+            self.Log('取得文章價錢失敗: ' + InfoLines[2], LogLevel.DEBUG)
         
         # self.Log('PostID: =' + PostID + '=')
         # self.Log('PostTitle: =' + PostTitle + '=')
@@ -1359,7 +1376,7 @@ class Library(object):
             # print('! ' + line)
             if len(PostContentList) == 0:
                 # print('QQ: ' + str(PostIP))
-                if PostIP in line:
+                if str(PostIP) in line:
                     PostContentList = PostContentListTemp[:PostContentListTemp.index(line)]
             else:
                 while line.startswith(' '):
