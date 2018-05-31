@@ -580,13 +580,14 @@ if __name__ == '__main__':
 
     # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
-    PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
+    # PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password)
 
     ErrCode = PTTBot.login()
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')
         sys.exit()
-
+    
     try:
         # PostDemo()
         # PushDemo()
@@ -603,7 +604,8 @@ if __name__ == '__main__':
         # ThrowWaterBallDemo()
         # DelPostDemo()
         pass
-    except:
-        pass
+    except Exception as e:
+        print(e)
+        PTTBot.Log('接到例外 啟動緊急應變措施')
     # 請養成登出好習慣
     PTTBot.logout()
