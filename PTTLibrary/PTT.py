@@ -213,8 +213,11 @@ class Library(object):
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
-        PreWait = 0.02
+        PreWait = 0.01
         EveryWait = 0.01
+
+        MaxEveryWait = 0.05
+        MinEveryWait = 0.01
 
         if CatchTargetList == None:
             CatchTargetList = []
@@ -262,12 +265,32 @@ class Library(object):
                 TimeCout += 1
 
             self.__ReceiveData[ConnectIndex] = self.__wait_str(ConnectIndex)
+            while self.__ConnectList[ConnectIndex].channel.recv_ready():
+                time.sleep(EveryWait)
+                self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
 
-            for i in range(3):
-                while self.__ConnectList[ConnectIndex].channel.recv_ready():
-                    time.sleep(EveryWait)
-                    self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
             
+            DelateDetect = [False] * 5
+            while DelateDetect.count(True) == 5:
+                DelateDetect = [False] * 5
+                for i in range(5):
+                    time.sleep(PreWait)
+                    while self.__ConnectList[ConnectIndex].channel.recv_ready():
+                        DelateDetect[i] = True
+                        time.sleep(EveryWait)
+                        self.__ReceiveData[ConnectIndex] += self.__recv_str(ConnectIndex)
+            
+            DelateDetectCount = DelateDetect.count(True)
+
+            if DelateDetectCount > 3:
+                EveryWait += 0.01
+                if EveryWait > MaxEveryWait:
+                    EveryWait = MaxEveryWait
+            elif DelateDetectCount == 0:
+                EveryWait -= 0.01
+                if EveryWait < MinEveryWait:
+                    EveryWait = MinEveryWait
+                
         except socket.timeout:
             ErrCode = ErrorCode.WaitTimeout
             return ErrCode, -1
@@ -558,7 +581,7 @@ class Library(object):
                 self.Log('頻道 ' + str(index) + ' 登出成功')
                 
         return ErrorCode.Success
-    def __getNewestPostIndex(self, Board, ConnectIndex = 0):
+    def __getNewestPostIndex(self, Board, ConnectIndex=0, Search=''):
         result = 0
         
         CatchList = [
@@ -566,7 +589,12 @@ class Library(object):
             '文章選讀',
         ]
 
-        SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 0\r$'
+        # SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 0\r$'
+        
+        SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
+        if Search != '':
+            SendMessage += '/' + Search + '\r'
+        SendMessage += '0\r$'
         Refresh = True
         ExtraWait = 0
 
@@ -1017,7 +1045,7 @@ class Library(object):
 
         return ErrorCode.Success
 
-    def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0):
+    def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
         self.__IdleTime = 0
         
         ConnectIndex = _ConnectIndex
@@ -1026,32 +1054,12 @@ class Library(object):
             Board = str(Board)
             PostID = str(PostID)
             PostIndex = int(PostIndex)
+            Search = str(Search)
         except:
             self.Log('輸入錯誤', LogLevel.WARNING)
             return ErrorCode.ErrorInput, None
-
-        self.__APILock[ConnectIndex].acquire()
-
-        for i in range(3):
-            ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex)
-            if ErrCode != ErrorCode.Success:
-                continue
-            
-            self.__APILock[ConnectIndex].release()
-            return ErrCode, Post
-
-        self.__WaterBallProceeor()
-        self.__APILock[ConnectIndex].release()
-
-        return ErrCode, Post
-    def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0):
-        
-        ConnectIndex = _ConnectIndex
         
         result = None
-        
-        PostIndex = int(PostIndex)
-        PostID = str(PostID)
 
         if len(Board) == 0:
             self.Log('看板名稱輸入錯誤: ' + str(Board))
@@ -1065,11 +1073,34 @@ class Library(object):
             self.Log('文章編號與代碼輸入錯誤: 皆無輸入')
             return ErrorCode.ErrorInput, result
 
+        if PostID != '' and Search != '':
+            self.Log('使用文章代碼取得文章 搜尋條件失效', LogLevel.WARNING)
+
+        self.__APILock[ConnectIndex].acquire()
+
+        for i in range(3):
+            ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, Search)
+            if ErrCode != ErrorCode.Success:
+                continue
+            
+            self.__APILock[ConnectIndex].release()
+            return ErrCode, Post
+
+        self.__WaterBallProceeor()
+        self.__APILock[ConnectIndex].release()
+
+        return ErrCode, Post
+    def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
+        
+        ConnectIndex = _ConnectIndex
+        
         SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
         # 前進至文章
         if PostID != '':
             SendMessage += '#' + PostID + '\rQ'
         elif PostIndex != -1:
+            if Search != '':
+                SendMessage += '/' + Search + '\r'
             SendMessage += str(PostIndex) + '\rQ'
         
         Refresh = True
@@ -1156,7 +1187,7 @@ class Library(object):
             if not isDetectedTarget:
                 
                 for line in self.__ReceiveData[ConnectIndex].split('\n'):
-                    if line.startswith('>'):
+                    if line.startswith(self.__Cursor):
                         if '本文已被' in line[:line.find('[')]:
                             return ErrorCode.PostDeleted, result
                         if '已被' in line[:line.find('<')] or '刪除' in line[:line.find('<')]:
@@ -1815,12 +1846,16 @@ class Library(object):
         self.__APILock[ConnectIndex].release()
         self.__WaterBallProceeor()
         return ErrorCode.Success, result
-    def getNewestIndex(self, Board=''):
+    def getNewestIndex(self, Board='', Search=''):
         self.__IdleTime = 0
         ConnectIndex = 0
         result = 0
         
         Board = str(Board)
+        Search = str(Search)
+
+        if Board == '' and Search != '':
+            self.Log('郵件模式下無法使用搜尋條件', LogLevel.WARNING)
 
         self.__APILock[ConnectIndex].acquire()
         if Board == '':
@@ -1886,7 +1921,7 @@ class Library(object):
             
         else:
             for i in range(3):
-                ErrCode, result = self.__getNewestPostIndex(Board=Board)
+                ErrCode, result = self.__getNewestPostIndex(Board=Board, Search=Search)
                 if ErrCode == ErrorCode.Success:
                     self.__APILock[ConnectIndex].release()
                     return ErrCode, result
@@ -2391,8 +2426,8 @@ class Library(object):
         self.__APILock[ConnectIndex].release()
         self.__WaterBallProceeor()
         return ErrCode
-    def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex):
-        # self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex))
+    def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex, Search):
+        self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex) + ' ' + Search)
 
         if not self.__isConnected[ConnectIndex] and ConnectIndex > 0:
             # self.__CrawLock.acquire()
@@ -2406,7 +2441,7 @@ class Library(object):
         for PostIndex in range(StartIndex, EndIndex):
             self.__IdleTime = 0
 
-            ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex)
+            ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex, Search=Search)
 
             if not self.__isBackground:
                 self.__ProgressBarCount += 1
@@ -2434,13 +2469,14 @@ class Library(object):
         
         self.Log('頻道 ' + str(ConnectIndex) + ' 爬行完畢', LogLevel.DEBUG)
         return
-    def crawlBoard(self, Board, PostHandler, MaxMultiLogin=2, StartIndex=0, EndIndex=0):
+    def crawlBoard(self, Board, PostHandler, MaxMultiLogin=2, StartIndex=0, EndIndex=0, Search=''):
         ErrCode = ErrorCode.Success
         try:
             Board = str(Board)
             StartIndex = int(StartIndex)
             EndIndex = int(EndIndex)
             MaxMultiLogin = int(MaxMultiLogin)
+            Search = str(Search)
         except:
             self.Log('輸入錯誤', LogLevel.WARNING)
             return ErrorCode.ErrorInput, 0
@@ -2451,7 +2487,7 @@ class Library(object):
         
         self.__MaxMultiLogin = MaxMultiLogin
 
-        ErrCode, NewestIndex = self.getNewestIndex(Board=Board)
+        ErrCode, NewestIndex = self.getNewestIndex(Board=Board, Search=Search)
         if ErrCode != ErrorCode.Success:
             return ErrCode, 0
         
@@ -2470,7 +2506,7 @@ class Library(object):
 
         self.__CrawLock = threading.Lock()
         self.__TotalPost = EndIndex - StartIndex + 1
-        self.__EnableLogin = 0
+        self.__EnableLogin = 1
         self.__SuccessCrawCount = 0
         self.__DeleteCrawCount = 0
         self.__ErrorGetPostList = []
@@ -2502,7 +2538,7 @@ class Library(object):
 
             # self.Log(str(StartIndexTemp) + ' ' + str(EndIndexTemp) + ':' + str(EndIndexTemp - StartIndexTemp))
             # self.__CrawPoolList.append([StartIndexTemp, EndIndexTemp])
-            CrawThreadList.append(threading.Thread(target=self.__crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp)))
+            CrawThreadList.append(threading.Thread(target=self.__crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp, Search)))
         
         self.__EnableLoginCount = 1
 
