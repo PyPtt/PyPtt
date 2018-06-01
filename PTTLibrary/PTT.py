@@ -243,7 +243,9 @@ class Library(object):
                         TimeCout = 0
                         NowTime = time.time()
                         if (NowTime - StartTime) >= SendMessageTimeout:
-                            return ErrorCode.WaitTimeout, -1
+                            self.Log('超時斷線，重新連線')
+                            self.__connectRemote(ConnectIndex)
+                            return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
                     TimeCout += 1
 
                 self.__ConnectList[ConnectIndex].channel.send(SendMessage)
@@ -261,7 +263,9 @@ class Library(object):
                     TimeCout = 0
                     NowTime = time.time()
                     if (NowTime - StartTime) >= SendMessageTimeout:
-                        return ErrorCode.WaitTimeout, -1
+                        self.Log('超時斷線，重新連線')
+                        self.__connectRemote(ConnectIndex)
+                        return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
                 TimeCout += 1
 
             self.__ReceiveData[ConnectIndex] = self.__wait_str(ConnectIndex)
@@ -292,11 +296,17 @@ class Library(object):
                     EveryWait = MinEveryWait
                 
         except socket.timeout:
-            ErrCode = ErrorCode.WaitTimeout
-            return ErrCode, -1
+            self.Log('超時斷線，重新連線')
+            self.__connectRemote(ConnectIndex)
+            return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
         except OSError:
-            ErrCode = ErrorCode.OSError
-            return ErrCode, -1
+            self.Log('作業系統錯誤斷線，重新連線')
+            self.__connectRemote(ConnectIndex)
+            return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
+        except:
+            self.Log('斷線，重新連線')
+            self.__connectRemote(ConnectIndex)
+            return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
 
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
