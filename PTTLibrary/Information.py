@@ -1,4 +1,22 @@
 
+class OperateType(object):
+    Add =                                   1
+    Del =                                   2
+    Query =                                 3
+
+    MinValue = Add
+    MaxValue = Query
+
+class FriendListType(object):
+    GoodFriend =                            1
+    BadGuy =                                2
+    SuperFriend =                           3
+    LoginNotification =                     4
+    OtherSpecial =                          5
+
+    MinValue = GoodFriend
+    MaxValue = OtherSpecial
+
 class ReplyPostType(object):
     def __init__(self):
         self.Board =                        1

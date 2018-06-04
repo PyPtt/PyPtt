@@ -23,6 +23,8 @@ LogLevel = Information.LogLevel()
 PushType = Information.PushType()
 ErrorCode = ErrorCode.ErrorCode()
 ReplyPostType = Information.ReplyPostType()
+FriendListType = Information.FriendListType()
+OperateType = Information.OperateType()
 
 class _ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -99,6 +101,7 @@ class Library(object):
         self.__isBackground = False
 
         self.__gotoMainMenu = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
+        self.__delAllWord = '\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08'
 
         self.__ShowProgressBar =             True
 
@@ -144,7 +147,7 @@ class Library(object):
         
         self.__RunIdleThread = True
 
-        while self.__RunIdleThread:
+        while self.__RunIdleThread and threading.main_thread().is_alive():
             self.__IdleTime += 1
             time.sleep(1)
             if self.__IdleTime < self.__MaxIdleTime:
@@ -591,7 +594,7 @@ class Library(object):
                 self.Log('頻道 ' + str(index) + ' 登出成功')
                 
         return ErrorCode.Success
-    def __getNewestPostIndex(self, Board, ConnectIndex=0, Search=''):
+    def __getNewestPostIndex(self, Board, ConnectIndex=0, Search='', Author=''):
         result = 0
         
         CatchList = [
@@ -602,6 +605,8 @@ class Library(object):
         # SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 0\r$'
         
         SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
+        if Author != '':
+            SendMessage += 'a' + Author + '\r'
         if Search != '':
             SendMessage += '/' + Search + '\r'
         SendMessage += '0\r$'
@@ -2771,6 +2776,197 @@ class Library(object):
         self.__WaterBallProceeor()
         self.__APILock[ConnectIndex].release()
         return ErrCode
+    def operateFriendList(self, inputOperateType, inputFriendListType, SpecialListIndex=-1, ID='' , SpecialListName=''):
+        self.__IdleTime = 0
+        ErrCode = ErrorCode.Success
+        result = None
+        ConnectIndex = 0
+
+        try:
+            inputOperateType = int(inputOperateType)
+            inputFriendListType = int(inputFriendListType)
+            SpecialListIndex = int(SpecialListIndex)
+            ID = str(ID)
+            SpecialListName = str(SpecialListName)
+        except:
+            self.Log('輸入錯誤', LogLevel.WARNING)
+            return ErrorCode.ErrorInput, result
+
+        if inputFriendListType < FriendListType.MinValue or FriendListType.MaxValue < inputFriendListType:
+            self.Log('輸入錯誤: FriendListType 錯誤', LogLevel.WARNING)
+            return ErrorCode.ErrorInput, result
+        
+        if inputFriendListType == FriendListType.OtherSpecial:
+            if SpecialListIndex < 0 or 9 < SpecialListIndex:
+                self.Log('輸入錯誤: SpecialListIndex 錯誤', LogLevel.WARNING)
+                return ErrorCode.ErrorInput, result
+        
+        if inputOperateType < OperateType.MinValue or OperateType.MaxValue < inputOperateType:
+            self.Log('輸入錯誤: OperateType 錯誤', LogLevel.WARNING)
+            return ErrorCode.ErrorInput, result
+        if inputOperateType == OperateType.Add or inputOperateType == OperateType.Del:
+            if ID == '':
+                self.Log('輸入錯誤: 新增或刪除模式下，需要輸入 ID', LogLevel.WARNING)
+                return ErrorCode.ErrorInput, result
+        
+        if inputOperateType == OperateType.Add:
+            ErrCode, User = self.getUser(ID)
+            if ErrCode == ErrorCode.NoUser:
+                self.Log('沒有此使用者', LogLevel.WARNING)
+                return ErrCode, result
+            elif ErrCode != ErrorCode.Success:
+                self.Log('取得使用者資訊錯誤 錯誤碼:' + str(ErrCode))
+                return ErrCode, result
+
+        self.__APILock[ConnectIndex].acquire()
+
+        SendMessage = self.__gotoMainMenu + 'N\r'
+
+        # 前進至個別選單
+        if inputFriendListType == FriendListType.GoodFriend:
+            SendMessage += 'O\r'
+        elif inputFriendListType == FriendListType.BadGuy:
+            SendMessage += 'B\r'
+        elif inputFriendListType == FriendListType.LoginNotification:
+            SendMessage += 'A\r'
+        elif inputFriendListType == FriendListType.OtherSpecial:
+            SendMessage += 'S\r' + str(SpecialListIndex) + '\r'
+
+        Refresh = True
+        isBreakDetect = False
+        if inputOperateType == OperateType.Add:
+            DetectTargetList = [
+                _DetectUnit(
+                    '系統正在更新清單...',
+                    '正在更新與同步線上使用者及好友名單', 
+                    _ResponseUnit(' ', False),
+                ),
+                _DetectUnit(
+                    '',
+                    '請為此特別名單取一個簡短名稱:' + SpecialListName, 
+                    _ResponseUnit('\r', False),
+                ),
+                _DetectUnit(
+                    '',
+                    '請為此特別名單取一個簡短名稱', 
+                    _ResponseUnit(self.__delAllWord + SpecialListName + '\r', False),
+                ),
+                _DetectUnit(
+                    '新增名單',
+                    '(A)增加', 
+                    _ResponseUnit('A\r' + ID + '\r\r', True),
+                ),
+                _DetectUnit(
+                    '退出名單',
+                    '【名單編輯】', 
+                    _ResponseUnit('\r', False),
+                    BreakDetect=True,
+                    ErrCode = ErrorCode.Success
+                ),
+                self.__PTTBUGDetectUnit
+            ]
+        elif inputOperateType == OperateType.Del:
+            DetectTargetList = [
+                _DetectUnit(
+                    '系統正在更新清單...',
+                    '正在更新與同步線上使用者及好友名單', 
+                    _ResponseUnit(' ', False),
+                ),
+                _DetectUnit(
+                    '',
+                    '請為此特別名單取一個簡短名稱:' + SpecialListName, 
+                    _ResponseUnit('\r', False),
+                ),
+                _DetectUnit(
+                    '',
+                    '請為此特別名單取一個簡短名稱', 
+                    _ResponseUnit(self.__delAllWord + SpecialListName + '\r', False),
+                ),
+                _DetectUnit(
+                    '刪除名單',
+                    '(D)刪除', 
+                    _ResponseUnit('D\r' + ID + '\r\r', True),
+                ),
+                _DetectUnit(
+                    '退出名單',
+                    '【名單編輯】', 
+                    _ResponseUnit('\r', False),
+                    BreakDetect=True,
+                    ErrCode = ErrorCode.Success
+                ),
+                self.__PTTBUGDetectUnit
+            ]
+        elif inputOperateType == OperateType.Query:
+            DetectTargetList = [
+                _DetectUnit(
+                    '解析名單',
+                    '名單上限', 
+                    _ResponseUnit('Q\r', False),
+                ),
+                _DetectUnit(
+                    '退出名單',
+                    '【名單編輯】', 
+                    _ResponseUnit('\r', False),
+                    BreakDetect=True,
+                    ErrCode = ErrorCode.Success
+                ),
+                self.__PTTBUGDetectUnit
+            ]
+
+        ListPage = ''
+
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                self.__APILock[ConnectIndex].release()
+                return ErrCode
+
+            isDetectedTarget = False
+            
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    isDetectedTarget = True
+                    
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    if '解析名單' == DetectTarget.getDisplayMsg():
+                        ListPage = self.__ReceiveData[ConnectIndex]
+
+                    if DetectTarget.isBreakDetect():
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        break
+
+                    SendMessage = DetectTarget.getResponse().getSendMessage()
+                    Refresh = DetectTarget.getResponse().needRefresh()
+
+                    break
+
+            if not isDetectedTarget:
+
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
+                sys.exit()
+        
+        if inputOperateType == OperateType.Query:
+            result = []
+            List = ListPage.split('\n')[2:]
+
+            for Line in List:
+                if Line.startswith('[K'):
+                    Line = Line[2:]
+                TempList = Line.split(' ')
+                TempList = list(filter(None, TempList))
+                result.extend(TempList)
+
+        self.__WaterBallProceeor()
+        self.__APILock[ConnectIndex].release()
+        return ErrCode, result
     def readPostFile(self, FileName):
         self.__IdleTime = 0
         return Util.readPostFile(FileName)

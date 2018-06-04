@@ -40,7 +40,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.6.4',  # Required
+    version='0.6.5',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -84,10 +84,11 @@ setup(
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
+        'Topic :: Communications :: BBS',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
         # Pick your license as you wish
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved :: MIT License',
         
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',

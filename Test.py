@@ -551,6 +551,52 @@ def DelPostDemo():
             PTTBot.Log('在 ' + Board + ' 板刪除 ' + str(DelIndex) + '失敗')
 
     return 
+def GetFriendListDemo():
+    # 這是用來新增刪除查詢各種好友特殊名單的 API
+
+    ################## 操作資訊 OperateType information ##################
+    # Add                       新增
+    # Del                       刪除
+    # Query                     查詢
+
+    ################## 好友清單類別 FriendListType information ##################
+    # GoodFriend                好友
+    # BadGuy                    壞人
+    # LoginNotification         上站通知
+    # OtherSpecial              特別清單
+
+    # 如果使用 PTT.FriendListType.OtherSpecial 則必須引入 SpecialListIndex 參數 SpecialListName 則為選用參數
+    # 如果使用 PTT.OperateType.Add 或者 PTT.OperateType.Del 則必須引入 ID 參數
+
+    # 測試帳號
+    # Bill7437 十里坡劍神 請收下我的膝蓋
+    # Sumade 蘇美戰神
+
+    ErrCode, List = PTTBot.operateFriendList(PTT.OperateType.Add, PTT.FriendListType.OtherSpecial, SpecialListIndex=9, ID='Bill7437', SpecialListName='測試清單名稱')
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('新增名單失敗')
+        return
+    ErrCode, List = PTTBot.operateFriendList(PTT.OperateType.Add, PTT.FriendListType.OtherSpecial, SpecialListIndex=9, ID='Sumade', SpecialListName='測試清單名稱')
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('新增名單失敗')
+        return
+    
+    ErrCode, FriendList = PTTBot.operateFriendList(PTT.OperateType.Query, PTT.FriendListType.OtherSpecial, SpecialListIndex=9)
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('查詢名單失敗')
+        return
+    
+    for Name in FriendList:
+        PTTBot.Log('名單: =' + Name + '=')
+
+    ErrCode, List = PTTBot.operateFriendList(PTT.OperateType.Del, PTT.FriendListType.OtherSpecial, SpecialListIndex=9, ID='Bill7437', SpecialListName='測試清單名稱')
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('刪除名單失敗')
+        return
+    ErrCode, List = PTTBot.operateFriendList(PTT.OperateType.Del, PTT.FriendListType.OtherSpecial, SpecialListIndex=9, ID='Sumade', SpecialListName='測試清單名稱')
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('刪除名單失敗')
+        return
 def WaterBallHandler(WaterBall):
     
     # 不建議在頻繁呼叫其他 API 的情況下，試圖接住水球
@@ -578,10 +624,10 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
-    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
     # PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
-    PTTBot = PTT.Library(ID, Password)
+    # PTTBot = PTT.Library(ID, Password)
 
     ErrCode = PTTBot.login()
     if ErrCode != PTT.ErrorCode.Success:
@@ -603,6 +649,7 @@ if __name__ == '__main__':
         # CrawlBoardDemo()
         # ThrowWaterBallDemo()
         # DelPostDemo()
+        GetFriendListDemo()
         pass
     except Exception as e:
         print(e)
