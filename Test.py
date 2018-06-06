@@ -597,6 +597,15 @@ def GetFriendListDemo():
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('刪除名單失敗')
         return
+def GetHistoricalWaterBallDemo():
+    ErrCode, WaterBallList = PTTBot.getHistoricalWaterBall()
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('取得歷史水球清單失敗')
+        return
+    if len(WaterBallList) == 0:
+        PTTBot.Log('取得歷史水球清單為空')
+
+        
 def WaterBallHandler(WaterBall):
     
     # 不建議在頻繁呼叫其他 API 的情況下，試圖接住水球
@@ -649,7 +658,8 @@ if __name__ == '__main__':
         # CrawlBoardDemo()
         # ThrowWaterBallDemo()
         # DelPostDemo()
-        GetFriendListDemo()
+        # GetFriendListDemo()
+        GetHistoricalWaterBallDemo()
         pass
     except Exception as e:
         print(e)

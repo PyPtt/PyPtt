@@ -146,10 +146,10 @@ class PostInformation(object):
         return self.__PushList
 
 class WaterBallInformation(object):
-    def __init__(self, Author, PushContent):
+    def __init__(self, Author, PushContent, Date=''):
         self.__Author = str(Author)
         self.__Content = str(PushContent)
-
+        self.__Date = str(Date)
     def getAuthor(self):
         return self.__Author
     def getContent(self):
