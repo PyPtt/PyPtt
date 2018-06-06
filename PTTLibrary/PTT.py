@@ -25,6 +25,7 @@ ErrorCode = ErrorCode.ErrorCode()
 ReplyPostType = Information.ReplyPostType()
 FriendListType = Information.FriendListType()
 OperateType = Information.OperateType()
+WaterBallOperateType = Information.WaterBallOperateType
 
 class _ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -306,6 +307,9 @@ class Library(object):
             self.Log('作業系統錯誤斷線，重新連線')
             self.__connectRemote(ConnectIndex)
             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
+        except KeyboardInterrupt:
+            self.Log('使用者中斷')
+            return UserInterrupt, -1
         except:
             self.Log('斷線，重新連線')
             self.__connectRemote(ConnectIndex)
@@ -1371,7 +1375,7 @@ class Library(object):
                         
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
-
+                        break
                     SendMessage = str(PageIndex) + '\r'
                     PageIndex += 1
                     Refresh = True
@@ -2760,6 +2764,7 @@ class Library(object):
                     if DetectTarget.isBreakDetect():
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
+                        break
 
                     SendMessage = DetectTarget.getResponse().getSendMessage()
                     Refresh = DetectTarget.getResponse().needRefresh()
@@ -2963,6 +2968,232 @@ class Library(object):
                 TempList = Line.split(' ')
                 TempList = list(filter(None, TempList))
                 result.extend(TempList)
+
+        self.__WaterBallProceeor()
+        self.__APILock[ConnectIndex].release()
+        return ErrCode, result
+
+    def getHistoricalWaterBall(self, WaterBallOperateType=0):
+        self.__IdleTime = 0
+        ErrCode = ErrorCode.Success
+        result = []
+        ConnectIndex = 0
+
+        try:
+            WaterBallOperateType = int(WaterBallOperateType)
+        except:
+            self.Log('輸入錯誤', LogLevel.WARNING)
+            return ErrorCode.ErrorInput, result
+
+        if WaterBallOperateType == 0:
+            WaterBallOperateType = Information.WaterBallOperateType.DoNothing
+        elif WaterBallOperateType < Information.WaterBallOperateType.MinValue or Information.WaterBallOperateType.MaxValue < WaterBallOperateType:
+            self.Log('錯誤的輸入: OperateType 輸入錯誤', LogLevel.WARNING)
+            return ErrorCode.ErrorInput, result
+
+        self.__APILock[ConnectIndex].acquire()
+
+        SendMessage = self.__gotoMainMenu + 'T\rD\r'
+
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            _DetectUnit(
+                '水球頁面讀取完成',
+                '(100%)  目前', 
+                _ResponseUnit('qC\rY\r', True),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '水球頁面讀取完成',
+                '頁 (100%)', 
+                _ResponseUnit('\x1b\x4fDC\rY\r', True),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '',
+                '目前顯示: 第', 
+                _ResponseUnit('', True),
+            ),
+            _DetectUnit(
+                '',
+                '瀏覽 第', 
+                _ResponseUnit('', True),
+            ),
+            _DetectUnit(
+                '無訊息記錄',
+                '◆ 暫無訊息記錄', 
+                _ResponseUnit('y\r', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            _DetectUnit(
+                '',
+                '按任意鍵繼續', 
+                _ResponseUnit(' ', False),
+                BreakDetect=True,
+                ErrCode = ErrorCode.Success
+            ),
+            self.__PTTBUGDetectUnit
+        ]
+        NoMsg = False
+        PageIndex = 2
+        # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
+        LastPageIndex = 0
+        WaterBallListTemp = []
+
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=True)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                self.__APILock[ConnectIndex].release()
+                return ErrCode
+
+            isDetectedTarget = False
+
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    isDetectedTarget = True
+                    
+                    self.Log(DetectTarget.getDisplayMsg())
+                    
+                    if '無訊息記錄' in DetectTarget.getDisplayMsg():
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        NoMsg = True
+                        break
+
+                    CurrentPage = self.__ReceiveData[ConnectIndex]
+                    if CurrentPage.startswith('[2J'):
+                        CurrentPage = CurrentPage[3:]
+
+                    CurrentPageList = CurrentPage.split('\n')
+                    
+                    PageLineRangeTemp = CurrentPageList[-1][CurrentPageList[-1].find('  瀏覽 第'):]
+                    
+                    PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
+                    PageLineRange = list(map(int, PageLineRange))[3:]
+
+                    OverlapLine = LastPageIndex - PageLineRange[0] + 1
+
+                    if OverlapLine >= 1 and LastPageIndex != 0:
+                        # print('重疊', OverlapLine, '行')
+                        CurrentPageList = CurrentPageList[OverlapLine:]
+
+                    LastPageIndex = PageLineRange[1]
+                    CurrentPageList[-1] = CurrentPageList[-1][:CurrentPageList[-1].rfind(']') + 1]
+
+                    WaterBallListTemp.extend(CurrentPageList)
+
+                    if DetectTarget.isBreakDetect():
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        break
+
+                    SendMessage = str(PageIndex) + '\r'
+                    PageIndex += 1
+
+                    break
+
+            if not isDetectedTarget:
+
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name + 'Part 1', ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
+                sys.exit()
+        
+        if not NoMsg:
+            for i in range(len(WaterBallListTemp)):
+                while WaterBallListTemp[i].startswith(' '):
+                    WaterBallListTemp[i] = WaterBallListTemp[i][1:]
+
+            for line in WaterBallListTemp:
+                if line.startswith('To'):
+                    continue
+                print('Catch water ball: ' + line)
+                WaterBallAuthor = line[1 : line.find(' ')]
+                WaterBallContent = line[line.find(' ') + 1 : line.rfind('[') - 1]
+                WaterBallDate = line[line.rfind('[') + 1 : line.rfind(']')]
+                print('WaterBallAuthor: =' + WaterBallAuthor + '=')
+                print('WaterBallContent: =' + WaterBallContent + '=')
+                print('WaterBallDate: =' + WaterBallDate + '=')
+                CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent, WaterBallDate)
+                result.append(CurrentWaterBall)
+            
+            isBreakDetect = False
+            # 先後順序代表偵測的優先順序
+            if WaterBallOperateType == Information.WaterBallOperateType.Clear:
+                SendMessage = 'qC\rY\r' + self.__gotoMainMenu
+                DetectTargetList = [
+                    _DetectUnit(
+                        '清除水球歷史紀錄完成',
+                        '我是' + self.__ID, 
+                        _ResponseUnit(' ', False),
+                        BreakDetect=True,
+                    ),
+                    self.__PTTBUGDetectUnit,
+                ]
+            elif WaterBallOperateType == Information.WaterBallOperateType.Mail:
+                SendMessage = 'qM\r' + self.__gotoMainMenu
+                DetectTargetList = [
+                    _DetectUnit(
+                        '水球歷史紀錄寄回信箱完成',
+                        '我是' + self.__ID, 
+                        _ResponseUnit(' ', False),
+                        BreakDetect=True,
+                    ),
+                    self.__PTTBUGDetectUnit,
+                ]
+            else:
+                SendMessage = 'qR\r' + self.__gotoMainMenu
+                DetectTargetList = [
+                    _DetectUnit(
+                        '保存水球歷史紀錄',
+                        '我是' + self.__ID, 
+                        _ResponseUnit(' ', False),
+                        BreakDetect=True,
+                    ),
+                    self.__PTTBUGDetectUnit,
+                ]
+
+            while not isBreakDetect:
+                ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=True)
+                if ErrCode == ErrorCode.WaitTimeout:
+                    self.Log('操作超時重新嘗試')
+                    break
+                elif ErrCode != ErrorCode.Success:
+                    self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                    self.__APILock[ConnectIndex].release()
+                    return ErrCode
+
+                isDetectedTarget = False
+                
+                for DetectTarget in DetectTargetList:
+                    if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                        isDetectedTarget = True
+                        
+                        self.Log(DetectTarget.getDisplayMsg())
+
+                        if DetectTarget.isBreakDetect():
+                            isBreakDetect = True
+                            ErrCode = DetectTarget.getErrorCode()
+                            break
+
+                        SendMessage = DetectTarget.getResponse().getSendMessage()
+                        
+                        break
+
+                if not isDetectedTarget:
+
+                    self.__showScreen(ErrCode, sys._getframe().f_code.co_name + 'Part 2', ConnectIndex=ConnectIndex)
+                    self.Log('無法解析的狀態! PTT Library 緊急停止')
+                    self.logout()
+                    sys.exit()
 
         self.__WaterBallProceeor()
         self.__APILock[ConnectIndex].release()
