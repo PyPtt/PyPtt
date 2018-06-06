@@ -1,4 +1,12 @@
 
+class WaterBallOperateType(object):
+    Clear =                                 1
+    Mail =                                  2
+    DoNothing =                             3
+
+    MinValue = Clear
+    MaxValue = DoNothing
+
 class OperateType(object):
     Add =                                   1
     Del =                                   2
@@ -154,3 +162,5 @@ class WaterBallInformation(object):
         return self.__Author
     def getContent(self):
         return self.__Content
+    def getDate(self):
+        return self.__Date
