@@ -597,9 +597,44 @@ def GetFriendListDemo():
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('刪除名單失敗')
         return
+def GetHistoricalWaterBallDemo():
+    
+    # 這是可取得歷史水球資訊的 api
+
+    ################## 歷史水球操作資訊 WaterBallOperateType information ##################
+    # Clear                     清除
+    # Mail                      存回信箱
+    # DoNothing                 不作任何事(保存)
+
+    ################## 水球類別 WaterBall Information ##################
+    # getAuthor                 取得作者
+    # getContent                取得水球內容
+    # getDate                   取得水球日期時間
+    
+    ErrCode, WaterBallList = PTTBot.getHistoricalWaterBall(WaterBallOperateType=PTT.WaterBallOperateType.DoNothing)
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('取得歷史水球清單失敗')
+        return
+    if len(WaterBallList) == 0:
+        PTTBot.Log('取得歷史水球清單為空')
+    else:
+        
+        for WaterBall in WaterBallList:
+            print('=' * 50)
+            print('Author: ' + WaterBall.getAuthor())
+            print('Content: ' + WaterBall.getContent())
+            print('Date: ' + WaterBall.getDate())
+        print('=' * 50)
+
+        
 def WaterBallHandler(WaterBall):
     
     # 不建議在頻繁呼叫其他 API 的情況下，試圖接住水球
+
+    ################## 水球類別 WaterBall Information ##################
+    # getAuthor                 取得作者
+    # getContent                取得水球內容
+    # getDate                   取得水球日期時間(使用 Handler 接住的水球會沒有時間資訊)
 
     print('接到水球惹!!')
     print('WaterBallAuthor: =' + WaterBall.getAuthor() + '=')
@@ -649,7 +684,8 @@ if __name__ == '__main__':
         # CrawlBoardDemo()
         # ThrowWaterBallDemo()
         # DelPostDemo()
-        GetFriendListDemo()
+        # GetFriendListDemo()
+        GetHistoricalWaterBallDemo()
         pass
     except Exception as e:
         print(e)

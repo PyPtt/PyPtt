@@ -24,3 +24,4 @@ class ErrorCode(object):
         self.OSError =                         19
         self.HasControlCode =                  20
         self.PttBug =                          21
+        self.UserInterrupt =                   22
