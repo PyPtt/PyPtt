@@ -11,13 +11,14 @@
 
 ###### PTT Library 是一個由 Python 寫成用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
 ###### 拋棄過往網頁形式的解析，直接登入 PTT 分析最即時的文章與推文，給你最快速的資訊!
-###### 程式碼發布在
+###### 測試平台: Windows, Ubuntu
+###### 原始碼
 ###### github: https://github.com/Truth0906/PTTLibrary
 ###### Pypi: https://pypi.org/project/PTTLibrary/
 
 版本
 -------------------
-###### 0.6.5
+###### 0.6.6
 
 安裝
 -------------------
@@ -84,6 +85,7 @@ API
 | throwWaterBall   | 丟水球   |
 | delPost   | 刪除文章   |
 | operateFriendList   | 操作好友壞人名單   |
+| getHistoricalWaterBall   | 查詢歷史水球紀錄   |
 
 贊助
 -------------------

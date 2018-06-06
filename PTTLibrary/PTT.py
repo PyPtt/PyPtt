@@ -25,6 +25,7 @@ ErrorCode = ErrorCode.ErrorCode()
 ReplyPostType = Information.ReplyPostType()
 FriendListType = Information.FriendListType()
 OperateType = Information.OperateType()
+WaterBallOperateType = Information.WaterBallOperateType
 
 class _ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -306,6 +307,9 @@ class Library(object):
             self.Log('作業系統錯誤斷線，重新連線')
             self.__connectRemote(ConnectIndex)
             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
+        except KeyboardInterrupt:
+            self.Log('使用者中斷')
+            return UserInterrupt, -1
         except:
             self.Log('斷線，重新連線')
             self.__connectRemote(ConnectIndex)
@@ -2968,20 +2972,23 @@ class Library(object):
         self.__WaterBallProceeor()
         self.__APILock[ConnectIndex].release()
         return ErrCode, result
-    def getHistoricalWaterBall(self, Option=''):
+
+    def getHistoricalWaterBall(self, WaterBallOperateType=0):
         self.__IdleTime = 0
         ErrCode = ErrorCode.Success
         result = []
         ConnectIndex = 0
 
-        Option = str(Option).upper()
+        try:
+            WaterBallOperateType = int(WaterBallOperateType)
+        except:
+            self.Log('輸入錯誤', LogLevel.WARNING)
+            return ErrorCode.ErrorInput, result
 
-        if Option == '':
-            Option = 'R'
-
-        if Option == 'C' or Option == 'M' or Option == 'R':
-            pass
-        else:
+        if WaterBallOperateType == 0:
+            WaterBallOperateType = Information.WaterBallOperateType.DoNothing
+        elif WaterBallOperateType < Information.WaterBallOperateType.MinValue or Information.WaterBallOperateType.MaxValue < WaterBallOperateType:
+            self.Log('錯誤的輸入: OperateType 輸入錯誤', LogLevel.WARNING)
             return ErrorCode.ErrorInput, result
 
         self.__APILock[ConnectIndex].acquire()
@@ -3069,14 +3076,13 @@ class Library(object):
                     
                     PageLineRangeTemp = CurrentPageList[-1][CurrentPageList[-1].find('  瀏覽 第'):]
                     
-                    print(PageLineRangeTemp)
                     PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
                     PageLineRange = list(map(int, PageLineRange))[3:]
-                    print(PageLineRange)
+
                     OverlapLine = LastPageIndex - PageLineRange[0] + 1
 
                     if OverlapLine >= 1 and LastPageIndex != 0:
-                        print('重疊', OverlapLine, '行')
+                        # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
 
                     LastPageIndex = PageLineRange[1]
@@ -3107,21 +3113,22 @@ class Library(object):
                     WaterBallListTemp[i] = WaterBallListTemp[i][1:]
 
             for line in WaterBallListTemp:
-                # print('Line: ' + line)
+                if line.startswith('To'):
+                    continue
+                print('Catch water ball: ' + line)
                 WaterBallAuthor = line[1 : line.find(' ')]
                 WaterBallContent = line[line.find(' ') + 1 : line.rfind('[') - 1]
                 WaterBallDate = line[line.rfind('[') + 1 : line.rfind(']')]
-                # print('WaterBallAuthor: =' + WaterBallAuthor + '=')
-                # print('WaterBallContent: =' + WaterBallContent + '=')
-                # print('WaterBallDate: =' + WaterBallDate + '=')
+                print('WaterBallAuthor: =' + WaterBallAuthor + '=')
+                print('WaterBallContent: =' + WaterBallContent + '=')
+                print('WaterBallDate: =' + WaterBallDate + '=')
                 CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent, WaterBallDate)
                 result.append(CurrentWaterBall)
             
-            SendMessage = 'q' + Option + '\rY\r' + self.__gotoMainMenu
-
             isBreakDetect = False
             # 先後順序代表偵測的優先順序
-            if Option == 'C':
+            if WaterBallOperateType == Information.WaterBallOperateType.Clear:
+                SendMessage = 'qC\rY\r' + self.__gotoMainMenu
                 DetectTargetList = [
                     _DetectUnit(
                         '清除水球歷史紀錄完成',
@@ -3131,7 +3138,8 @@ class Library(object):
                     ),
                     self.__PTTBUGDetectUnit,
                 ]
-            elif Option == 'M':
+            elif WaterBallOperateType == Information.WaterBallOperateType.Mail:
+                SendMessage = 'qM\r' + self.__gotoMainMenu
                 DetectTargetList = [
                     _DetectUnit(
                         '水球歷史紀錄寄回信箱完成',
@@ -3142,9 +3150,10 @@ class Library(object):
                     self.__PTTBUGDetectUnit,
                 ]
             else:
+                SendMessage = 'qR\r' + self.__gotoMainMenu
                 DetectTargetList = [
                     _DetectUnit(
-                        '水球歷史紀錄寄回信箱完成',
+                        '保存水球歷史紀錄',
                         '我是' + self.__ID, 
                         _ResponseUnit(' ', False),
                         BreakDetect=True,
