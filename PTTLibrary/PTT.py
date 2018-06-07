@@ -59,7 +59,7 @@ class _DetectUnit(object):
         return self.__ErrCode
 
 class Library(object):
-    def __init__(self, ID, Password, kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None):
+    def __init__(self, ID='', Password='', kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None):
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -562,9 +562,14 @@ class Library(object):
                 # return ErrorCode.UnknowError
         return ErrorCode.Success
     
-    def login(self):
+    def login(self, ID='', Password=''):
         
         self.__IdleTime = 0
+        
+        if ID != '':
+            self.__ID = ID
+        if Password != '':
+            self.__Password = Password
         
         ErrCode = self.__connectRemote(0)
         
