@@ -59,7 +59,7 @@ class _DetectUnit(object):
         return self.__ErrCode
 
 class Library(object):
-    def __init__(self, ID='', Password='', kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None):
+    def __init__(self, ID='', Password='', kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None, LogHandler=None):
     
         self.__host = 'ptt.cc'
         self.__ID = ID
@@ -79,6 +79,7 @@ class Library(object):
         self.screen = ''
         self.buf_size = self.width * self.height
 
+        self.__LogHandler = LogHandler
         self.__LogLevel = LogLevel.INFO
 
         if _LogLevel != -1:
@@ -131,7 +132,7 @@ class Library(object):
         self.__WaterBallHandler = WaterBallHandler
         if self.__WaterBallHandler != None:
             self.__MaxIdleTime = 2
-
+        
         self.__WaterBallList = []
 
         self.__APILock = [threading.Lock()] * self.__MaxMultiLogin
@@ -214,6 +215,14 @@ class Library(object):
             Message = str(Message)
             if len(Message) > 0:
                 Util.Log(Prefix + Message)
+                if self.__LogHandler != None:
+                    try:
+                        self.__LogHandler(Message)
+                    except TypeError:
+                        self.Log('LogHandler 介面錯誤', LogLevel.WARNING)
+                    except:
+                        self.Log('LogHandler 未知錯誤', LogLevel.WARNING)
+                    
         return ErrorCode.Success
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
@@ -604,7 +613,7 @@ class Library(object):
                     continue
                 self.Log('頻道 ' + str(index) + ' 登出', LogLevel.DEBUG)
                 
-                SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD g\ry\r'
+                SendMessage = self.__gotoMainMenu + ' g\ry\r'
 
                 ErrCode, CatchIndex = self.__operatePTT(index, SendMessage=SendMessage)
                 self.Log('頻道 ' + str(index) + ' 登出成功')

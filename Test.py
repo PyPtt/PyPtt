@@ -626,7 +626,11 @@ def GetHistoricalWaterBallDemo():
             print('Date: ' + WaterBall.getDate())
         print('=' * 50)
 
-        
+def LogHandler(Message):
+    # 訊息接收
+    # 你可以相信每一個進來的 Message 都是 str 型態
+    print('Log: ' + Message)
+    
 def WaterBallHandler(WaterBall):
     
     # 不建議在頻繁呼叫其他 API 的情況下，試圖接住水球
@@ -658,11 +662,15 @@ if __name__ == '__main__':
     except FileNotFoundError:
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
-
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    
+    # 不會把重複的登入踢掉，設定 Log level 為 除錯等級
+    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    # 水球接收器，不過沒長時間測試，大量API呼叫的時候可能不穩
     # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
     # PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
-    # PTTBot = PTT.Library(ID, Password)
+    # Log 接收器，如果有需要把內部顯示抓出來的需求可以用這個
+    # PTTBot = PTT.Library(ID, Password, LogHandler=LogHandler)
+    PTTBot = PTT.Library(ID, Password)
 
     ErrCode = PTTBot.login()
     if ErrCode != PTT.ErrorCode.Success:
@@ -685,7 +693,7 @@ if __name__ == '__main__':
         # ThrowWaterBallDemo()
         # DelPostDemo()
         # GetFriendListDemo()
-        GetHistoricalWaterBallDemo()
+        # GetHistoricalWaterBallDemo()
         pass
     except Exception as e:
         print(e)
