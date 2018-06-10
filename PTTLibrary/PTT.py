@@ -88,11 +88,11 @@ class Library(object):
                 return None
             else:
                 self.__LogLevel = _LogLevel
-
+        
+        self.__isMailBoxFull = False
+        self.__MailFullAPILock = False
         self.__DefaultTimeout =                 5
-        
         self.__Cursor =                       '>'
-        
         self.__MaxMultiLogin =                  5
 
         self.__ConnectList = [None] * self.__MaxMultiLogin
@@ -172,7 +172,14 @@ class Library(object):
                 self.Log('WaterBallHandler 介面錯誤', LogLevel.WARNING)
             except:
                 self.Log('WaterBallHandler 未知錯誤', LogLevel.WARNING)
-
+    def __APICheck(self):
+        if self.__MailFullAPILock:
+            self.Log('機器人已被卡在信箱區，僅能取得信件與最新信件編號與寄信', LogLevel.CRITICAL)
+            self.Log('請清理信箱並重新登入機器人', LogLevel.CRITICAL)
+            self.__ErrorCode = ErrorCode.MailBoxFull
+            return False
+        self.__ErrorCode = ErrorCode.Success
+        return True
     def __showScreen(self, ErrCode, FunctionName, ConnectIndex=0, _LogLevel=-1):
         
         if _LogLevel == -1:
@@ -452,7 +459,12 @@ class Library(object):
             # 先後順序代表偵測的優先順序
             DetectTargetList = [
                 _DetectUnit(
-                    '',
+                    '頻道 ' + str(ConnectIndex) + ' 郵件已滿',
+                    '您保存信件數目', 
+                    _ResponseUnit(self.__gotoMainMenu, True),
+                ),
+                _DetectUnit(
+                    '任意鍵繼續',
                     '任意鍵', 
                     _ResponseUnit(' ', True)
                 ),
@@ -460,13 +472,6 @@ class Library(object):
                     '頻道 ' + str(ConnectIndex) + ' 放棄未完成文章',
                     '有一篇文章尚未完成', 
                     _ResponseUnit('q\r', False)
-                ),
-                _DetectUnit(
-                    '頻道 ' + str(ConnectIndex) + ' 郵件已滿，無法執行任何功能',
-                    '郵件選單', 
-                    _ResponseUnit(' ', False),
-                    BreakDetect=True,
-                    ErrCode = ErrorCode.MailBoxFull
                 ),
                 _DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 密碼錯誤',
@@ -538,6 +543,9 @@ class Library(object):
 
                         LoginFailCount = 0
                         self.Log(DetectTarget.getDisplayMsg())
+
+                        if '郵件已滿' in DetectTarget.getDisplayMsg():
+                            self.__isMailBoxFull = True
 
                         SendMessage = DetectTarget.getResponse().getSendMessage()
                         Refresh = DetectTarget.getResponse().needRefresh()
@@ -789,6 +797,9 @@ class Library(object):
         ConnectIndex = 0
         self.__IdleTime = 0
 
+        if not self.__APICheck():
+            return self.__ErrorCode
+
         try:
             Board = str(Board)
             Title = str(Title)
@@ -956,6 +967,10 @@ class Library(object):
         
         self.__IdleTime = 0
         ConnectIndex = 0
+        
+        if not self.__APICheck():
+            return self.__ErrorCode
+
         try:
             Board = str(Board)
             inputPushType = int(inputPushType)
@@ -1156,6 +1171,8 @@ class Library(object):
         ConnectIndex = _ConnectIndex
         result = None
 
+        if not self.__APICheck():
+            return self.__ErrorCode, result
         try:
             Board = str(Board)
             PostID = str(PostID)
@@ -1167,8 +1184,6 @@ class Library(object):
             self.__ErrorCode = ErrCode
             return ErrCode, result
         
-        
-
         if len(Board) == 0:
             self.Log('看板名稱輸入錯誤: ' + str(Board))
             ErrCode = ErrorCode.ErrorInput
@@ -1586,6 +1601,9 @@ class Library(object):
     def mail(self, UserID, MailTitle, MailContent, SignType):
         self.__IdleTime = 0
         ConnectIndex = 0
+        if self.__isMailBoxFull:
+            self.__MailFullAPILock = True
+            self.Log('信箱已滿，已鎖定其他 API，請盡速清理信箱')
 
         ErrCode = ErrorCode.Success
         try:
@@ -1613,7 +1631,11 @@ class Library(object):
                 MailContentList.append('\r'.join(MailContentListTemp))
                 break
         MailContentList.append('')
-        SendMessage = self.__gotoMainMenu + 'M\rS\r' + UserID + '\r' + MailTitle + '\r'
+
+        if self.__MailFullAPILock:
+            SendMessage = self.__gotoMainMenu + ' S\r' + UserID + '\r' + MailTitle + '\r'
+        else:
+            SendMessage = self.__gotoMainMenu + 'M\rS\r' + UserID + '\r' + MailTitle + '\r'
 
         Refresh = True
         isBreakDetect = False
@@ -1667,7 +1689,7 @@ class Library(object):
                         )
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' part 1', ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態! PTT Library 緊急停止')
                 self.logout()
                 sys.exit()
@@ -1697,6 +1719,17 @@ class Library(object):
                 '自存底稿',
                 '是否自存底稿', 
                 _ResponseUnit('y\r', True),
+            ),
+            # 選擇簽名檔
+            _DetectUnit(
+                '選擇第 ' + str(SignType) + ' 簽名檔',
+                '選擇簽名檔', 
+                _ResponseUnit(str(SignType) + '\r', True),
+            ),
+            _DetectUnit(
+                '選擇第 ' + str(SignType) + ' 簽名檔',
+                'x=隨機', 
+                _ResponseUnit(str(SignType) + '\r', True),
             ),
             _DetectUnit(
                 '電子郵件選單',
@@ -1745,7 +1778,7 @@ class Library(object):
                     break
 
             if not isDetectedTarget:
-                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' part 2', ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態! PTT Library 緊急停止')
                 self.logout()
                 sys.exit()
@@ -1758,6 +1791,10 @@ class Library(object):
     def getTime(self):
         
         ConnectIndex = 0
+        result = None
+
+        if not self.__APICheck():
+            return self.__ErrorCode, result
 
         self.__APILock[ConnectIndex].acquire()
 
@@ -1856,6 +1893,10 @@ class Library(object):
         ConnectIndex = 0
 
         result = None
+
+        if not self.__APICheck():
+            return self.__ErrorCode, result
+
         try:
             UserID = str(UserID)
         except:
@@ -2015,7 +2056,7 @@ class Library(object):
         self.__APILock[ConnectIndex].acquire()
         if Board == '':
 
-            SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fDM\rR\r0\r$'
+            SendMessage = self.__gotoMainMenu + ' \x1aM0\r$'
             Refresh = True
             isBreakDetect = False
             # 先後順序代表偵測的優先順序
@@ -2027,6 +2068,7 @@ class Library(object):
                     BreakDetect=True,
                     ErrCode = ErrorCode.Success
                 ),
+                # 
                 self.__PTTBUGDetectUnit
             ]
             
@@ -2080,6 +2122,11 @@ class Library(object):
             result = list(map(int, re.findall(r'\d+', MailBoxLineList[3])))[0]
             
         else:
+            
+            if not self.__APICheck():
+                self.__APILock[ConnectIndex].release()
+                return self.__ErrorCode, result
+
             for i in range(3):
                 ErrCode, result = self.__getNewestPostIndex(Board=Board, Search=Search)
                 if ErrCode == ErrorCode.Success:
@@ -2098,6 +2145,8 @@ class Library(object):
         ConnectIndex = 0
         result = None
 
+        # 此 api 不受 MailFulllock 影響
+
         try:
             MailIndex = int(MailIndex)
         except:
@@ -2111,6 +2160,7 @@ class Library(object):
             ErrCode = ErrorCode.ErrorInput
             self.__ErrorCode = ErrCode
             return ErrCode, result
+
         ErrCode, NewestMailIndex = self.getNewestIndex()
         if ErrCode != ErrorCode.Success:
             self.Log('取得最新信箱編號失敗: ' + str(ErrCode))
@@ -2288,6 +2338,9 @@ class Library(object):
         self.__IdleTime = 0
         ConnectIndex = 0
 
+        if not self.__APICheck():
+            return self.__ErrorCode
+
         try:
             ID = str(ID)
             Money = int(Money)
@@ -2401,6 +2454,9 @@ class Library(object):
 
         ErrCode = ErrorCode.Success
 
+        if not self.__APICheck():
+            return self.__ErrorCode
+
         try:
             OldPassword = str(OldPassword)
             NewPassword = str(NewPassword)
@@ -2507,6 +2563,9 @@ class Library(object):
         self.__IdleTime = 0
         ConnectIndex = 0
         ErrCode = ErrorCode.Success
+
+        if not self.__APICheck():
+            return self.__ErrorCode
 
         try:
             Board = str(Board)
@@ -2677,6 +2736,10 @@ class Library(object):
         return
     def crawlBoard(self, Board, PostHandler, MaxMultiLogin=2, StartIndex=0, EndIndex=0, Search=''):
         ErrCode = ErrorCode.Success
+
+        if not self.__APICheck():
+            return self.__ErrorCode, 0, 0
+
         try:
             Board = str(Board)
             StartIndex = int(StartIndex)
@@ -2788,6 +2851,9 @@ class Library(object):
         ConnectIndex = 0
         ErrCode = ErrorCode.Success
 
+        if not self.__APICheck():
+            return self.__ErrorCode
+
         try:
             WaterBallTarget = str(WaterBallTarget)
             WaterBallContent = str(WaterBallContent)
@@ -2887,6 +2953,9 @@ class Library(object):
         self.__IdleTime = 0
         ConnectIndex = 0
         ErrCode = ErrorCode.Success
+
+        if not self.__APICheck():
+            return self.__ErrorCode
 
         try:
             Board = str(Board)
@@ -3012,6 +3081,9 @@ class Library(object):
         ErrCode = ErrorCode.Success
         result = None
         ConnectIndex = 0
+
+        if not self.__APICheck():
+            return self.__ErrorCode
 
         try:
             inputOperateType = int(inputOperateType)
@@ -3222,6 +3294,9 @@ class Library(object):
         ErrCode = ErrorCode.Success
         result = []
         ConnectIndex = 0
+
+        if not self.__APICheck():
+            return self.__ErrorCode, result
 
         try:
             WaterBallOperateType = int(WaterBallOperateType)
