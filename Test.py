@@ -68,7 +68,7 @@ def GetNewestIndexDemo():
         
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
     
-    for i in range(1):
+    for i in range(3):
         ErrCode, NewestMailIndex = PTTBot.getNewestIndex()
         if ErrCode == PTT.ErrorCode.Success:
             PTTBot.Log(str(i) + ' 取得最新信件編號成功 共有 ' + str(NewestMailIndex) + ' 封信')
@@ -680,7 +680,7 @@ if __name__ == '__main__':
     try:
         # PostDemo()
         # PushDemo()
-        # GetNewestIndexDemo()
+        GetNewestIndexDemo()
         # GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
