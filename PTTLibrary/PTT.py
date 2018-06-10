@@ -221,7 +221,7 @@ class Library(object):
         PreWait = 0.01
         EveryWait = 0.01
 
-        MaxEveryWait = 0.05
+        MaxEveryWait = 0.1
         MinEveryWait = 0.01
 
         if CatchTargetList == None:
@@ -310,7 +310,8 @@ class Library(object):
             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
         except KeyboardInterrupt:
             self.Log('使用者中斷')
-            return UserInterrupt, -1
+            self.__ErrorCode = ErrorCode.UserInterrupt
+            return self.__ErrorCode, -1
         except:
             self.Log('斷線，重新連線')
             self.__connectRemote(ConnectIndex)
@@ -403,24 +404,27 @@ class Library(object):
             except paramiko.AuthenticationException:
                 # print('... Authentication failed')
                 self.Log('連接至 ' + self.__host + ' SSH 認證失敗')
+                self.__ErrorCode = ErrorCode.SSHFail
                 return ErrorCode.SSHFail
             except Exception as e:
                 # print('... Connection failed:', str(e))
                 self.Log('連接至 ' + self.__host + ' 連線失敗')
-                Retry = True
-                ErrCode = ErrorCode.UnknowError
-                continue
+                self.__ErrorCode = ErrorCode.RemoteHostDown
+                return ErrorCode.RemoteHostDown
             except paramiko.SSHException:
-                self.Log('建立互動通道失敗')
-                Retry = True
-                ErrCode = ErrorCode.UnknowError
-                continue
+                self.Log('建立 SSH 通道失敗')
+                self.__ErrorCode = ErrorCode.SSHFail
+                return ErrorCode.SSHFail
+            except KeyboardInterrupt:
+                self.Log('使用者中斷')
+                self.__ErrorCode = ErrorCode.UserInterrupt
+                return ErrorCode.UserInterrupt
             except:
                 self.Log('主機沒有回應')
                 Retry = True
+                self.__ErrorCode = ErrorCode.UnknowError
                 ErrCode = ErrorCode.UnknowError
                 continue
-
 
             self.Log('頻道 ' + str(ConnectIndex) + ' 建立互動通道成功')
             

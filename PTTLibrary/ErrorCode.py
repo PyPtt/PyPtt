@@ -25,3 +25,4 @@ class ErrorCode(object):
         self.HasControlCode =                  20
         self.PttBug =                          21
         self.UserInterrupt =                   22
+        self.RemoteHostDown =                  23
