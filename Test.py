@@ -4,6 +4,7 @@ import json
 import getpass
 import codecs
 from PTTLibrary import PTT
+from PTTLibrary import Big5uao
 
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
@@ -11,6 +12,7 @@ from PTTLibrary import PTT
 BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
 
 PTTBot = None
+ResPath = './OldBug/'
 
 def PostDemo():
 
@@ -68,7 +70,7 @@ def GetNewestIndexDemo():
         
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
     
-    for i in range(1):
+    for i in range(3):
         ErrCode, NewestMailIndex = PTTBot.getNewestIndex()
         if ErrCode == PTT.ErrorCode.Success:
             PTTBot.Log(str(i) + ' 取得最新信件編號成功 共有 ' + str(NewestMailIndex) + ' 封信')
@@ -625,7 +627,30 @@ def GetHistoricalWaterBallDemo():
             print('Content: ' + WaterBall.getContent())
             print('Date: ' + WaterBall.getDate())
         print('=' * 50)
+def Big5uaoDemo():
+    # PTT 原始編碼是 big5uao
+    # 你可以 from PTTLibrary import Big5uao
+    # 就可以使用 decode("Big5uao") or encode("Big5uao")
 
+    Big5FileName = ResPath + 'Big5.txt'
+    UTF8OutFileName = ResPath + 'Utf8Out.txt'
+    Big5OutFileName = ResPath + 'Big5uaoOut.txt'
+
+    s = open(Big5FileName,"rb").read().decode("Big5uao").encode("utf8")
+    open(UTF8OutFileName,"wb").write(s)
+
+    if open(UTF8OutFileName,"r", encoding = 'utf-8').read() != '哈囉世界這是大五中文測試':
+        print('Big5uao decode error')
+        return False
+    
+    s = open(UTF8OutFileName,"rb").read().decode("utf8").encode("Big5uao")
+    open(Big5OutFileName,"wb").write(s)
+
+    if open(Big5OutFileName,"r", encoding = 'big5').read() != '哈囉世界這是大五中文測試':
+        print('Big5uao encode error')
+        return False
+    
+    return True
 def LogHandler(Message):
     # 訊息接收
     # 你可以相信每一個進來的 Message 都是 str 型態
@@ -694,6 +719,7 @@ if __name__ == '__main__':
         # DelPostDemo()
         # GetFriendListDemo()
         # GetHistoricalWaterBallDemo()
+        # Big5uaoDemo()
         pass
     except Exception as e:
         print(e)

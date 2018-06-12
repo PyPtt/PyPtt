@@ -11,14 +11,14 @@
 
 ###### PTT Library 是一個由 Python 寫成用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
 ###### 拋棄過往網頁形式的解析，直接登入 PTT 分析最即時的文章與推文，給你最快速的資訊!
-###### 測試平台: Windows, Ubuntu
+###### 測試平台: Windows 10, Ubuntu 18.04
 ###### 原始碼
 ###### github: https://github.com/Truth0906/PTTLibrary
 ###### Pypi: https://pypi.org/project/PTTLibrary/
 
 版本
 -------------------
-###### 0.6.9
+###### 0.6.10
 
 安裝
 -------------------
@@ -31,8 +31,8 @@ pip3 install PTTLibrary
 ```
 from PTTLibrary import PTT
 
-PTTBot = PTT.Library(ID, Password)
-ErrCode = PTTBot.login()
+PTTBot = PTT.Library()
+ErrCode = PTTBot.login(ID, Password)
 if ErrCode != PTT.ErrorCode.Success:
     PTTBot.Log('登入失敗')
     sys.exit()
