@@ -50,12 +50,13 @@ class PushType(object):
         self.Arrow =                        3
 
 class MailInformation(object):
-    def __init__(self, Author, Title, Date, Content, IP):
+    def __init__(self, Author, Title, Date, Content, IP, RawContent):
         self.__Author = str(Author)
         self.__Title = str(Title)
         self.__Date = str(Date)
         self.__Content = str(Content)
         self.__IP = str(IP)
+        self.__RawContent = str(RawContent)
     def getAuthor(self):
         return self.__Author
     def getTitle(self):
@@ -66,6 +67,8 @@ class MailInformation(object):
         return self.__Content
     def getIP(self):
         return self.__IP
+    def getRawContent(self):
+        return self.__RawContent
 
 class UserInformation(object):
     def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State, Mail, LastLogin, LastIP, FiveChess, Chess):
@@ -120,7 +123,7 @@ class PushInformation(object):
         return self.__Time
         
 class PostInformation(object):
-    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, IP, PushList):
+    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, IP, PushList, RawData):
         self.__Board = str(Board)
         self.__PostID = str(PostID)
         self.__Author = str(Author)
@@ -131,7 +134,8 @@ class PostInformation(object):
         self.__WebUrl = str(WebUrl)
         self.__IP = str(IP)
         self.__PushList = PushList
-        
+        self.__RawData = str(RawData)
+
     def getBoard(self):
         return self.__Board
     def getID(self):
@@ -152,6 +156,8 @@ class PostInformation(object):
         return self.__IP
     def getPushList(self):
         return self.__PushList
+    def getRawData(self):
+        return self.__RawData
 
 class WaterBallInformation(object):
     def __init__(self, Author, PushContent, Date=''):

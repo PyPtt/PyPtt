@@ -97,6 +97,8 @@ class Library(object):
 
         self.__ConnectList = [None] * self.__MaxMultiLogin
         self.__ReceiveData = [''] * self.__MaxMultiLogin
+        self.__ReceiveRawData = [''] * self.__MaxMultiLogin
+        
         self.__PreReceiveData = [''] * self.__MaxMultiLogin
         self.__isConnected = [False] * self.__MaxMultiLogin
 
@@ -271,9 +273,6 @@ class Library(object):
 
                 self.__ConnectList[ConnectIndex].channel.send(SendMessage)
             
-            # if ExtraWait != 0:
-            #     time.sleep(ExtraWait)
-            
             TimeCout = 0
             StartTime = time.time()
             time.sleep(PreWait)
@@ -332,7 +331,8 @@ class Library(object):
             self.Log('斷線，重新連線')
             self.__connectRemote(ConnectIndex)
             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
-
+        
+        self.__ReceiveRawData[ConnectIndex] = self.__ReceiveData[ConnectIndex]
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
         if self.__WaterBallHandler != None:
@@ -1224,7 +1224,8 @@ class Library(object):
     def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
         
         ConnectIndex = _ConnectIndex
-        
+        result = None
+
         SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
         # 前進至文章
         if PostID != '':
@@ -1428,6 +1429,7 @@ class Library(object):
         # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
         LastPageIndex = 5
         PostContentListTemp = []
+        PostRawContentListTemp = []
         PostIP = ''
 
         while not isBreakDetect:
@@ -1454,11 +1456,15 @@ class Library(object):
                             PostIP = PostIP[0]
                  
                     CurrentPage = self.__ReceiveData[ConnectIndex]
+                    CurrentRawPage = self.__ReceiveRawData[ConnectIndex]
+
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
                     CurrentPageList = CurrentPage.split('\n')
+                    CurrentRawPageList = CurrentRawPage.split('\n')
 
                     PageLineRangeTemp = CurrentPageList.pop()
+                    CurrentRawPageList.pop()
                     
                     PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
                     PageLineRange = list(map(int, PageLineRange))[3:]
@@ -1484,12 +1490,12 @@ class Library(object):
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
+                        CurrentRawPageList = CurrentRawPageList[OverlapLine:]
                     
                     LastPageIndex = PageLineRange[1]
 
-                    # CurrentPage = '\n'.join(CurrentPageList)
-                    # PostContentListTemp.append(CurrentPage)
                     PostContentListTemp.extend(CurrentPageList)
+                    PostRawContentListTemp.extend(CurrentRawPageList)
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -1587,12 +1593,14 @@ class Library(object):
 
                     CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushTime)
                     PostPushList.append(CurrentPush)
+
         PostContent = '\n'.join(PostContentList)
+        PosRawData = '\n'.join(PostRawContentListTemp)
 
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')
 
-        result = Information.PostInformation(Board, PostID, PostAuthor,PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList)
+        result = Information.PostInformation(Board, PostID, PostAuthor,PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData)
 
         self.__WaterBallProceeor()
         self.__ErrorCode = ErrCode
@@ -2209,6 +2217,7 @@ class Library(object):
         # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
         LastPageIndex = 5
         MailContentList = []
+        MailRawContentList = []
         IPLine = ''
 
         while not isBreakDetect:
@@ -2240,11 +2249,15 @@ class Library(object):
                     # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
                     
                     CurrentPage = self.__ReceiveData[ConnectIndex]
+                    CureentRAWPage = self.__ReceiveRawData[ConnectIndex]
+
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
                     CurrentPageList = CurrentPage.split('\n')
+                    CureentRAWPageList = CureentRAWPage.split('\n')
 
                     PageLineRange = CurrentPageList.pop()
+                    CureentRAWPageList.pop()
                     
                     PageLineRangeTemp = re.findall(r'\d+', PageLineRange)
                     PageLineRangeTemp = list(map(int, PageLineRangeTemp))[3:]
@@ -2253,12 +2266,14 @@ class Library(object):
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
+                        CureentRAWPageList = CureentRAWPageList[OverlapLine:]
                     
                     LastPageIndex = PageLineRangeTemp[1]
 
                     CurrentPage = '\n'.join(CurrentPageList)
-                    # self.Log(CurrentPage, LogLevel.DEBUG)
+                    CureentRAWPage = '\n'.join(CureentRAWPageList)
                     MailContentList.append(CurrentPage)
+                    MailRawContentList.append(CureentRAWPage)
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -2314,6 +2329,7 @@ class Library(object):
         # self.Log('MailDate: =' + MailDate + '=', LogLevel.DEBUG)
 
         MailContent = '\n'.join(MailContentList)
+        MailRawContent = '\n'.join(MailRawContentList)
         # self.Log('MailContent: =' + MailContent + '=', LogLevel.DEBUG)
 
         if len(IPLine) < 7:
@@ -2325,7 +2341,7 @@ class Library(object):
 
         # self.Log('MailIP: =' + MailIP + '=', LogLevel.DEBUG)
 
-        result = Information.MailInformation(MailAuthor, MailTitle, MailDate, MailContent, MailIP)
+        result = Information.MailInformation(MailAuthor, MailTitle, MailDate, MailContent, MailIP, MailRawContent)
 
         self.__APILock[ConnectIndex].release()
         self.__WaterBallProceeor()
