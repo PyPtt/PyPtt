@@ -101,10 +101,10 @@ def showPost(Post):
         elif Push.getType() == PTT.PushType.Arrow:
             ArrowCount += 1
         
-        Author = Push.getAuthor()
-        Content = Push.getContent()
-
-        print(Author + ': ' + Content)
+        # Author = Push.getAuthor()
+        # Content = Push.getContent()
+        
+        # print(Author + ': ' + Content)
     
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
 
