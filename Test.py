@@ -90,10 +90,6 @@ def showPost(Post):
 
     # PTTBot.Log('內文: ' + Post.getContent())
 
-    # print('-' * 20 + 'Raw data start' + '-' * 20)
-    # print(Post.getRawData())
-    # print('=' * 20 + 'Raw data end' + '=' * 20)
-
     PushCount = 0
     BooCount = 0
     ArrowCount = 0
@@ -104,6 +100,7 @@ def showPost(Post):
             BooCount += 1
         elif Push.getType() == PTT.PushType.Arrow:
             ArrowCount += 1
+        
         Author = Push.getAuthor()
         Content = Push.getContent()
 
