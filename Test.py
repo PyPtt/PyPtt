@@ -90,6 +90,10 @@ def showPost(Post):
 
     # PTTBot.Log('內文: ' + Post.getContent())
 
+    # print('-' * 20 + 'Raw data start' + '-' * 20)
+    # print(Post.getRawData())
+    # print('=' * 20 + 'Raw data end' + '=' * 20)
+
     PushCount = 0
     BooCount = 0
     ArrowCount = 0
@@ -469,6 +473,8 @@ def GetMailDemo():
         MailStartIndex = NewestMailIndex - 3
     else:
         MailStartIndex = 1
+    
+    MailStartIndex = NewestMailIndex - 1
 
     for i in range(MailStartIndex, NewestMailIndex):
         MailIndex = i + 1
@@ -479,10 +485,12 @@ def GetMailDemo():
             PTTBot.Log('信件作者: ' + Mail.getAuthor())
             PTTBot.Log('信件標題: ' + Mail.getTitle())
             PTTBot.Log('信件日期: ' + Mail.getDate())
-            # PTTBot.Log('信件內文: ' + Mail.getContent())
             PTTBot.Log('信件IP: ' + Mail.getIP())
+            PTTBot.Log('信件內文: ' + Mail.getContent())
 
-            PTTBot.Log('=' * 30)
+            # print('-' * 20)
+            # print(Mail.getRawContent())
+            # PTTBot.Log('=' * 30)
 
         else:
             PTTBot.Log('取得編號 ' + str(MailIndex) + ' 信件失敗 錯誤碼: ' + str(ErrCode))
