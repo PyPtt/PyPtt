@@ -1438,6 +1438,9 @@ class Library(object):
         PostRawContentListTemp = []
         PostIP = ''
 
+        NewLine, _ = uao.encode('\n')
+        NewLineByte = NewLine[0]
+
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
             if ErrCode != ErrorCode.Success:
@@ -1467,27 +1470,20 @@ class Library(object):
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
                     CurrentPageList = CurrentPage.split('\n')
-                    CurrentRawPageList = CurrentRawPage.split('\n')
 
                     PageLineRangeTemp = CurrentPageList.pop()
-                    CurrentRawPageList.pop()
-                    
+                    # CurrentRawPageList.pop()
+                    # 自幹一個 list pop
+                    LastIndex = 0
+                    for i in range(len(CurrentRawPage)):
+                        if CurrentRawPage[i] == NewLineByte:
+                            LastIndex = i
+                    CurrentRawPage = CurrentRawPage[:LastIndex]
+
                     PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
                     PageLineRange = list(map(int, PageLineRange))[3:]
                     
                     if len(PageLineRange) < 2:
-                        # self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' 檢查控制碼', ConnectIndex=ConnectIndex)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('PageLineRangeTemp: ' + PageLineRangeTemp)
-                        # print('=' * 20)
-                        # print('=' * 20)
-                        # print('=' * 20)
-                        # sys.exit()
                         ErrCode = ErrorCode.HasControlCode
                         self.__ErrorCode = ErrCode
                         return ErrCode, None
@@ -1496,12 +1492,18 @@ class Library(object):
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
-                        CurrentRawPageList = CurrentRawPageList[OverlapLine:]
+                        # CurrentRawPageList = CurrentRawPageList[OverlapLine:]
+
+                        for i in range(OverlapLine):
+                            for ii in range(len(CurrentRawPage)):
+                                if CurrentRawPage[ii] == NewLineByte:
+                                    CurrentRawPage = CurrentRawPage[ii:]
+                                    break
                     
                     LastPageIndex = PageLineRange[1]
 
                     PostContentListTemp.extend(CurrentPageList)
-                    PostRawContentListTemp.extend(CurrentRawPageList)
+                    PostRawContentListTemp.extend(CurrentRawPage)
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -1601,7 +1603,7 @@ class Library(object):
                     PostPushList.append(CurrentPush)
 
         PostContent = '\n'.join(PostContentList)
-        PosRawData = '\n'.join(PostRawContentListTemp)
+        PosRawData = PostRawContentListTemp
 
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')
