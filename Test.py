@@ -3,8 +3,8 @@ import time
 import json
 import getpass
 import codecs
+import traceback
 from PTTLibrary import PTT
-from PTTLibrary import Big5uao
 
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
@@ -100,6 +100,10 @@ def showPost(Post):
             BooCount += 1
         elif Push.getType() == PTT.PushType.Arrow:
             ArrowCount += 1
+        Author = Push.getAuthor()
+        Content = Push.getContent()
+
+        print(Author + ': ' + Content)
     
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
 
@@ -689,13 +693,13 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
     
     # 不會把重複的登入踢掉，設定 Log level 為 除錯等級
-    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # 水球接收器，不過沒長時間測試，大量API呼叫的時候可能不穩
     # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
     # PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
     # Log 接收器，如果有需要把內部顯示抓出來的需求可以用這個
     # PTTBot = PTT.Library(ID, Password, LogHandler=LogHandler)
-    PTTBot = PTT.Library(ID, Password)
+    # PTTBot = PTT.Library(ID, Password)
 
     ErrCode = PTTBot.login()
     if ErrCode != PTT.ErrorCode.Success:
@@ -706,7 +710,7 @@ if __name__ == '__main__':
         # PostDemo()
         # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
@@ -722,6 +726,8 @@ if __name__ == '__main__':
         # Big5uaoDemo()
         pass
     except Exception as e:
+        
+        traceback.print_tb(e.__traceback__)
         print(e)
         PTTBot.Log('接到例外 啟動緊急應變措施')
     # 請養成登出好習慣
