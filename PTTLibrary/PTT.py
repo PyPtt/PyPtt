@@ -6,6 +6,8 @@ import progressbar
 import socket
 import paramiko
 from paramiko import ECDSAKey
+from uao import Big5UAOCodec
+uao = Big5UAOCodec()
 
 try:
     from . import Util
@@ -250,7 +252,6 @@ class Library(object):
 
         try:
             if SendMessage != '':
-
                 if Refresh:
                     SendMessage += self.__Refresh
                 
@@ -268,8 +269,9 @@ class Library(object):
                             self.__connectRemote(ConnectIndex)
                             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
                     TimeCout += 1
-
-                self.__ConnectList[ConnectIndex].channel.send(SendMessage)
+                
+                EncodeMessage, Len = uao.encode(SendMessage)
+                self.__ConnectList[ConnectIndex].channel.send(EncodeMessage)
             
             # if ExtraWait != 0:
             #     time.sleep(ExtraWait)
@@ -333,6 +335,9 @@ class Library(object):
             self.__connectRemote(ConnectIndex)
             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
 
+        # self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex].decode(encoding='big5',errors='ignore')
+        self.__ReceiveRawData[ConnectIndex] = self.__ReceiveData[ConnectIndex]
+        self.__ReceiveData[ConnectIndex], Len = uao.decode(self.__ReceiveData[ConnectIndex])
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
         if self.__WaterBallHandler != None:
@@ -375,9 +380,11 @@ class Library(object):
             ch = self.__ConnectList[ConnectIndex].channel.recv(1)
             if ch:
                 break
-        return self.__dec_bytes(ch)
+        # return self.__dec_bytes(ch)
+        return ch
     def __recv_str(self, ConnectIndex):
-        return self.__dec_bytes(self.__ConnectList[ConnectIndex].channel.recv(self.buf_size))
+        # return self.__dec_bytes(self.__ConnectList[ConnectIndex].channel.recv(self.buf_size))
+        return self.__ConnectList[ConnectIndex].channel.recv(self.buf_size)
     # decode byte array to UTF-8 string
     def __dec_bytes(self, bytes):
         return bytes.decode('utf-8', errors = 'ignore')
@@ -414,7 +421,7 @@ class Library(object):
                 # self.__ConnectList[ConnectIndex].load_system_host_keys()
                 # self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
                 self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbsu', password = '', pkey = self.__SSHKey)
+                self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbs', password = '', pkey = self.__SSHKey)
                 
                 self.__ConnectList[ConnectIndex].channel = self.__ConnectList[ConnectIndex].invoke_shell(width = self.width, height = self.height)
             except paramiko.AuthenticationException:
@@ -515,7 +522,7 @@ class Library(object):
                 ),
                 _DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 輸入帳號',
-                    '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
+                    '請輸入代號，或以 guest 參觀，或以 new 註冊', 
                     _ResponseUnit(self.__ID + '\r', False)
                 ),
                 self.__PTTBUGDetectUnit
@@ -1341,8 +1348,8 @@ class Library(object):
         InfoLines = []
         for Line in Lines:
             # print('line: ' + Line)
-            if Line.startswith('  │ '):
-                # print('line: ' + Line)
+            if Line.startswith('│'):
+                # print('InfoLines: ' + Line)
                 InfoLines.append(Line)
         if len(InfoLines) != 3:
             ErrCode = ErrorCode.ParseError
