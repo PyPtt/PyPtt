@@ -6,6 +6,9 @@ import codecs
 import traceback
 from PTTLibrary import PTT
 
+from uao import Big5UAOCodec
+uao = Big5UAOCodec()
+
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
 
@@ -93,6 +96,14 @@ def showPost(Post):
     PushCount = 0
     BooCount = 0
     ArrowCount = 0
+
+    print('-' * 20)
+    # print(Post.getRawData())
+    print('=' * 20)
+    Big5Data, _ = uao.decode(Post.getRawData())
+    print(Big5Data)
+
+    print('三' * 20)
     for Push in Post.getPushList():
         if Push.getType() == PTT.PushType.Push:
             PushCount += 1
@@ -136,22 +147,23 @@ def GetPostDemo():
     # getContent                推文內文
     # getTime                   推文時間
     
-    TryPost = 3
+    TryPost = 1
     
     BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    # BoardList = ['Gossiping']
+    BoardList = ['Gossiping']
 
     for Board in BoardList:
         
-        ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
-        if ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-            return False
+        # ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+        # if ErrCode != PTT.ErrorCode.Success:
+        #     PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        #     return False
         
-        if NewestIndex == -1:
-            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-            return False
+        # if NewestIndex == -1:
+        #     PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        #     return False
         
+        NewestIndex = 794161
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         for i in range(TryPost):
             PTTBot.Log('-' * 50)
@@ -165,16 +177,16 @@ def GetPostDemo():
                 PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
                 continue
             
-            PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
+            # PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
 
-            # 使用 PostID 模式可能會撞到 PTT BUG
-            ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
-            if ErrCode == PTT.ErrorCode.PostDeleted:
-                PTTBot.Log('文章已經被刪除')
-                sys.exit()
-            elif ErrCode != PTT.ErrorCode.Success:
-                PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-                sys.exit()
+            # # 使用 PostID 模式可能會撞到 PTT BUG
+            # ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
+            # if ErrCode == PTT.ErrorCode.PostDeleted:
+            #     PTTBot.Log('文章已經被刪除')
+            #     sys.exit()
+            # elif ErrCode != PTT.ErrorCode.Success:
+            #     PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+            #     sys.exit()
             
             # if '任意鍵' in Post.getTitle():
             showPost(Post)

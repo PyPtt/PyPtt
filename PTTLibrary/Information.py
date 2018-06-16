@@ -1,3 +1,5 @@
+import array
+
 
 class WaterBallOperateType(object):
     Clear =                                 1
@@ -134,7 +136,9 @@ class PostInformation(object):
         self.__WebUrl = str(WebUrl)
         self.__IP = str(IP)
         self.__PushList = PushList
-        self.__RawData = str(RawData)
+        self.__RawData = array.array('B', RawData).tostring()
+
+        
 
     def getBoard(self):
         return self.__Board
