@@ -4,6 +4,7 @@ import re
 import threading
 import progressbar
 import socket
+import array
 import paramiko
 from paramiko import ECDSAKey
 from uao import Big5UAOCodec
@@ -1431,15 +1432,19 @@ class Library(object):
         ]
 
         FirstPage = ''
+        FirstRawLine = []
         PageIndex = 2
         # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
         LastPageIndex = 5
         PostContentListTemp = []
         PostRawContentListTemp = []
+        isFirstPage = True
         PostIP = ''
 
-        NewLine, _ = uao.encode('\n')
+        NewLine, _ = uao.encode('\r')
         NewLineByte = NewLine[0]
+
+        print(NewLineByte)
 
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
@@ -1454,7 +1459,12 @@ class Library(object):
 
             if FirstPage == '':
                 FirstPage = self.__ReceiveData[ConnectIndex]
-            
+                CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
+                for i in range(len(CurrentRawPage)):
+                    if CurrentRawPage[i] == NewLineByte:
+                        FirstRawLine = CurrentRawPage[:i]
+                        break
+                        
             for DetectTarget in DetectTargetList:
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
@@ -1465,7 +1475,7 @@ class Library(object):
                             PostIP = PostIP[0]
                  
                     CurrentPage = self.__ReceiveData[ConnectIndex]
-                    CurrentRawPage = self.__ReceiveRawData[ConnectIndex]
+                    CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
 
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
@@ -1489,11 +1499,28 @@ class Library(object):
                         return ErrCode, None
 
                     OverlapLine = LastPageIndex - PageLineRange[0] + 1
+                    
+                    # if PageIndex == 3:
+
+                    #     print('-' * 20)
+                    #     print(CurrentRawPage)
+                    #     print('=' * 20)
+                    #     for B in CurrentRawPage:
+                            
+                    #         print(chr(B), end=' ')
+                            
+                    #     print('三' * 20)
+                    #     Q = array.array('B', CurrentRawPage).tostring()
+                    #     QQ, _ = uao.decode(Q)
+                    #     print(QQ)
+                        
+                    #     print('四' * 20)
+
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
                         # CurrentRawPageList = CurrentRawPageList[OverlapLine:]
-
+                        
                         for i in range(OverlapLine):
                             for ii in range(len(CurrentRawPage)):
                                 if CurrentRawPage[ii] == NewLineByte:
@@ -1507,13 +1534,13 @@ class Library(object):
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
-                        
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                         break
                     SendMessage = str(PageIndex) + '\r'
                     PageIndex += 1
                     Refresh = True
+                    isFirstPage = False
                     break
 
             if not isDetectedTarget:
@@ -1603,7 +1630,8 @@ class Library(object):
                     PostPushList.append(CurrentPush)
 
         PostContent = '\n'.join(PostContentList)
-        PosRawData = PostRawContentListTemp
+        FirstRawLine.extend(PostRawContentListTemp)
+        PosRawData = FirstRawLine
 
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')
@@ -2228,6 +2256,9 @@ class Library(object):
         MailRawContentList = []
         IPLine = ''
 
+        NewLine, _ = uao.encode('\n')
+        NewLineByte = NewLine[0]
+
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
             if ErrCode == ErrorCode.WaitTimeout:
@@ -2257,15 +2288,20 @@ class Library(object):
                     # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
                     
                     CurrentPage = self.__ReceiveData[ConnectIndex]
-                    CureentRAWPage = self.__ReceiveRawData[ConnectIndex]
+                    CurrentRawPage = self.__ReceiveRawData[ConnectIndex]
 
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
                     CurrentPageList = CurrentPage.split('\n')
-                    CureentRAWPageList = CureentRAWPage.split('\n')
+
 
                     PageLineRange = CurrentPageList.pop()
-                    CureentRAWPageList.pop()
+                    # CurrentRawPage.pop()
+                    LastIndex = 0
+                    for i in range(len(CurrentRawPage)):
+                        if CurrentRawPage[i] == NewLineByte:
+                            LastIndex = i
+                    CurrentRawPage = CurrentRawPage[:LastIndex]
                     
                     PageLineRangeTemp = re.findall(r'\d+', PageLineRange)
                     PageLineRangeTemp = list(map(int, PageLineRangeTemp))[3:]
@@ -2274,14 +2310,19 @@ class Library(object):
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
-                        CureentRAWPageList = CureentRAWPageList[OverlapLine:]
+                        
+                        for i in range(OverlapLine):
+                            for ii in range(len(CurrentRawPage)):
+                                if CurrentRawPage[ii] == NewLineByte:
+                                    CurrentRawPage = CurrentRawPage[ii:]
+                                    break
                     
                     LastPageIndex = PageLineRangeTemp[1]
 
                     CurrentPage = '\n'.join(CurrentPageList)
-                    CureentRAWPage = '\n'.join(CureentRAWPageList)
+                    
                     MailContentList.append(CurrentPage)
-                    MailRawContentList.append(CureentRAWPage)
+                    MailRawContentList.extend(CurrentRawPage)
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -2337,7 +2378,7 @@ class Library(object):
         # self.Log('MailDate: =' + MailDate + '=', LogLevel.DEBUG)
 
         MailContent = '\n'.join(MailContentList)
-        MailRawContent = '\n'.join(MailRawContentList)
+        MailRawContent = MailRawContentList
         # self.Log('MailContent: =' + MailContent + '=', LogLevel.DEBUG)
 
         if len(IPLine) < 7:
