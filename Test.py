@@ -3,8 +3,11 @@ import time
 import json
 import getpass
 import codecs
+import traceback
 from PTTLibrary import PTT
-from PTTLibrary import Big5uao
+
+from uao import Big5UAOCodec
+uao = Big5UAOCodec()
 
 # 如果你想要自動登入，建立 Account.txt
 # 然後裡面填上 {"ID":"YourID", "Password":"YourPW"}
@@ -93,6 +96,9 @@ def showPost(Post):
     PushCount = 0
     BooCount = 0
     ArrowCount = 0
+
+    # open('Big5Data.txt',"wb").write(Post.getRawData())
+
     for Push in Post.getPushList():
         if Push.getType() == PTT.PushType.Push:
             PushCount += 1
@@ -101,11 +107,11 @@ def showPost(Post):
         elif Push.getType() == PTT.PushType.Arrow:
             ArrowCount += 1
         
-        Author = Push.getAuthor()
-        Content = Push.getContent()
-
-        print(Author + ': ' + Content)
-    
+        # Author = Push.getAuthor()
+        # Content = Push.getContent()
+        
+        # print(Author + ': ' + Content)
+        
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
 
 def GetPostDemo():
@@ -139,7 +145,6 @@ def GetPostDemo():
     TryPost = 3
     
     BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    # BoardList = ['Gossiping']
 
     for Board in BoardList:
         
@@ -176,7 +181,6 @@ def GetPostDemo():
                 PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
                 sys.exit()
             
-            # if '任意鍵' in Post.getTitle():
             showPost(Post)
 
 def PushDemo():
@@ -270,7 +274,7 @@ def GiveMoneyDemo():
     # 第二個參數是你想給予多少P幣
     # 第三個參數是你自己的密碼
     
-    WhoAreUwantToGiveMoney = 'CodingMan'
+    WhoAreUwantToGiveMoney = 'DeepLearning'
     try:
         PTTBot.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
         Donate = input('請問願意贊助作者 10 P幣嗎？[Y/n] ').lower()
@@ -409,13 +413,13 @@ def ReplyPostDemo():
      
     # 回傳 錯誤碼
 
-    # ErrCode = PTTBot.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
-    # if ErrCode == PTT.ErrorCode.Success:
-    #     PTTBot.Log('在 Test 板發文成功')
-    # elif ErrCode == PTT.ErrorCode.NoPermission:
-    #     PTTBot.Log('發文權限不足')
-    # else:
-    #     PTTBot.Log('在 Test 板發文失敗')
+    ErrCode = PTTBot.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+    if ErrCode == PTT.ErrorCode.Success:
+        PTTBot.Log('在 Test 板發文成功')
+    elif ErrCode == PTT.ErrorCode.NoPermission:
+        PTTBot.Log('發文權限不足')
+    else:
+        PTTBot.Log('在 Test 板發文失敗')
     
     ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Test')
     if ErrCode == PTT.ErrorCode.Success:
@@ -469,9 +473,7 @@ def GetMailDemo():
     if NewestMailIndex > 3:
         MailStartIndex = NewestMailIndex - 3
     else:
-        MailStartIndex = 1
-    
-    MailStartIndex = NewestMailIndex - 1
+        MailStartIndex = NewestMailIndex - 1
 
     for i in range(MailStartIndex, NewestMailIndex):
         MailIndex = i + 1
@@ -489,6 +491,8 @@ def GetMailDemo():
             # print(Mail.getRawContent())
             # PTTBot.Log('=' * 30)
 
+            # open('Big5Data.txt',"wb").write(Mail.getRawData())
+
         else:
             PTTBot.Log('取得編號 ' + str(MailIndex) + ' 信件失敗 錯誤碼: ' + str(ErrCode))
             return
@@ -499,13 +503,13 @@ def ChangePasswordDemo():
     # 回傳 錯誤碼
     
     # 範例為示範 所以新舊密碼皆設定為原密碼
-    
-    ErrCode = PTTBot.changePassword(Password, Password)
-    if ErrCode != PTT.ErrorCode.Success:
-        PTTBot.Log('changePassword 失敗 錯誤碼:' + str(ErrCode))
-    else:
-        PTTBot.Log('changePassword 成功')
-    return 
+    for i in range(1):
+        ErrCode = PTTBot.changePassword(Password, Password)
+        if ErrCode != PTT.ErrorCode.Success:
+            PTTBot.Log('changePassword 失敗 錯誤碼:' + str(ErrCode))
+            return
+        else:
+            PTTBot.Log('changePassword 成功')
 def ThrowWaterBallDemo():
     
     # 用來丟水球的 api
@@ -517,6 +521,10 @@ def ThrowWaterBallDemo():
     ErrCode = PTTBot.throwWaterBall('CodingMan', 'PTT Library 丟水球測試')
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('丟水球成功!')
+    elif ErrCode == PTT.ErrorCode.UserNotOnline:
+        PTTBot.Log('使用者不在站上!')
+    elif ErrCode == PTT.ErrorCode.NoUser:
+        PTTBot.Log('無該使用者!')
     else:
         PTTBot.Log('丟水球失敗! 錯誤碼: ' + str(ErrCode))
     return
@@ -632,34 +640,16 @@ def GetHistoricalWaterBallDemo():
         
         for WaterBall in WaterBallList:
             print('=' * 50)
+            if WaterBall.getType() == PTT.WaterBallType.Catch:
+                print('接到水球')
+            elif WaterBall.getType() == PTT.WaterBallType.Send:
+                print('送出水球')
+            
             print('Author: ' + WaterBall.getAuthor())
             print('Content: ' + WaterBall.getContent())
             print('Date: ' + WaterBall.getDate())
         print('=' * 50)
-def Big5uaoDemo():
-    # PTT 原始編碼是 big5uao
-    # 你可以 from PTTLibrary import Big5uao
-    # 就可以使用 decode("Big5uao") or encode("Big5uao")
 
-    Big5FileName = ResPath + 'Big5.txt'
-    UTF8OutFileName = ResPath + 'Utf8Out.txt'
-    Big5OutFileName = ResPath + 'Big5uaoOut.txt'
-
-    s = open(Big5FileName,"rb").read().decode("Big5uao").encode("utf8")
-    open(UTF8OutFileName,"wb").write(s)
-
-    if open(UTF8OutFileName,"r", encoding = 'utf-8').read() != '哈囉世界這是大五中文測試':
-        print('Big5uao decode error')
-        return False
-    
-    s = open(UTF8OutFileName,"rb").read().decode("utf8").encode("Big5uao")
-    open(Big5OutFileName,"wb").write(s)
-
-    if open(Big5OutFileName,"r", encoding = 'big5').read() != '哈囉世界這是大五中文測試':
-        print('Big5uao encode error')
-        return False
-    
-    return True
 def LogHandler(Message):
     # 訊息接收
     # 你可以相信每一個進來的 Message 都是 str 型態
@@ -698,13 +688,13 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
     
     # 不會把重複的登入踢掉，設定 Log level 為 除錯等級
-    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # 水球接收器，不過沒長時間測試，大量API呼叫的時候可能不穩
     # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
     # PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
     # Log 接收器，如果有需要把內部顯示抓出來的需求可以用這個
     # PTTBot = PTT.Library(ID, Password, LogHandler=LogHandler)
-    PTTBot = PTT.Library(ID, Password)
+    # PTTBot = PTT.Library(ID, Password)
 
     ErrCode = PTTBot.login()
     if ErrCode != PTT.ErrorCode.Success:
@@ -728,9 +718,10 @@ if __name__ == '__main__':
         # DelPostDemo()
         # GetFriendListDemo()
         # GetHistoricalWaterBallDemo()
-        # Big5uaoDemo()
         pass
     except Exception as e:
+        
+        traceback.print_tb(e.__traceback__)
         print(e)
         PTTBot.Log('接到例外 啟動緊急應變措施')
     # 請養成登出好習慣

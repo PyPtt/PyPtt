@@ -4,8 +4,11 @@ import re
 import threading
 import progressbar
 import socket
+import array
 import paramiko
 from paramiko import ECDSAKey
+from uao import Big5UAOCodec
+uao = Big5UAOCodec()
 
 try:
     from . import Util
@@ -26,6 +29,7 @@ ReplyPostType = Information.ReplyPostType()
 FriendListType = Information.FriendListType()
 OperateType = Information.OperateType()
 WaterBallOperateType = Information.WaterBallOperateType
+WaterBallType = Information.WaterBallType
 
 class _ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -252,7 +256,6 @@ class Library(object):
 
         try:
             if SendMessage != '':
-
                 if Refresh:
                     SendMessage += self.__Refresh
                 
@@ -270,8 +273,9 @@ class Library(object):
                             self.__connectRemote(ConnectIndex)
                             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
                     TimeCout += 1
-
-                self.__ConnectList[ConnectIndex].channel.send(SendMessage)
+                
+                EncodeMessage, Len = uao.encode(SendMessage)
+                self.__ConnectList[ConnectIndex].channel.send(EncodeMessage)
             
             TimeCout = 0
             StartTime = time.time()
@@ -331,8 +335,10 @@ class Library(object):
             self.Log('斷線，重新連線')
             self.__connectRemote(ConnectIndex)
             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
-        
+
+        # self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex].decode(encoding='big5',errors='ignore')
         self.__ReceiveRawData[ConnectIndex] = self.__ReceiveData[ConnectIndex]
+        self.__ReceiveData[ConnectIndex], Len = uao.decode(self.__ReceiveData[ConnectIndex])
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
 
         if self.__WaterBallHandler != None:
@@ -344,7 +350,7 @@ class Library(object):
                 WaterBallContent = line[line.find(' ') + 1:line.find(' [K')]
                 # print('WaterBallAuthor: =' + WaterBallAuthor + '=')
                 # print('WaterBallContent: =' + WaterBallContent + '=')
-                CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent)
+                CurrentWaterBall = Information.WaterBallInformation(WaterBallType.Catch, WaterBallAuthor, WaterBallContent)
                 self.__WaterBallList.append(CurrentWaterBall)
                 
         for i in range(len(CatchTargetList)):
@@ -375,9 +381,11 @@ class Library(object):
             ch = self.__ConnectList[ConnectIndex].channel.recv(1)
             if ch:
                 break
-        return self.__dec_bytes(ch)
+        # return self.__dec_bytes(ch)
+        return ch
     def __recv_str(self, ConnectIndex):
-        return self.__dec_bytes(self.__ConnectList[ConnectIndex].channel.recv(self.buf_size))
+        # return self.__dec_bytes(self.__ConnectList[ConnectIndex].channel.recv(self.buf_size))
+        return self.__ConnectList[ConnectIndex].channel.recv(self.buf_size)
     # decode byte array to UTF-8 string
     def __dec_bytes(self, bytes):
         return bytes.decode('utf-8', errors = 'ignore')
@@ -414,7 +422,7 @@ class Library(object):
                 # self.__ConnectList[ConnectIndex].load_system_host_keys()
                 # self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.WarningPolicy())
                 self.__ConnectList[ConnectIndex].set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbsu', password = '', pkey = self.__SSHKey)
+                self.__ConnectList[ConnectIndex].connect('ptt.cc', username = 'bbs', password = '', pkey = self.__SSHKey)
                 
                 self.__ConnectList[ConnectIndex].channel = self.__ConnectList[ConnectIndex].invoke_shell(width = self.width, height = self.height)
             except paramiko.AuthenticationException:
@@ -515,7 +523,7 @@ class Library(object):
                 ),
                 _DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 輸入帳號',
-                    '請輸入代號，或以 guest 參觀，或以 new 註冊:', 
+                    '請輸入代號，或以 guest 參觀，或以 new 註冊', 
                     _ResponseUnit(self.__ID + '\r', False)
                 ),
                 self.__PTTBUGDetectUnit
@@ -1342,8 +1350,8 @@ class Library(object):
         InfoLines = []
         for Line in Lines:
             # print('line: ' + Line)
-            if Line.startswith('  │ '):
-                # print('line: ' + Line)
+            if Line.startswith('│'):
+                # print('InfoLines: ' + Line)
                 InfoLines.append(Line)
         if len(InfoLines) != 3:
             ErrCode = ErrorCode.ParseError
@@ -1430,7 +1438,11 @@ class Library(object):
         LastPageIndex = 5
         PostContentListTemp = []
         PostRawContentListTemp = []
+        isFirstPage = True
         PostIP = ''
+
+        NewLine, _ = uao.encode('\n')
+        NewLineByte = NewLine[0]
 
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
@@ -1445,7 +1457,7 @@ class Library(object):
 
             if FirstPage == '':
                 FirstPage = self.__ReceiveData[ConnectIndex]
-            
+                        
             for DetectTarget in DetectTargetList:
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
                     self.Log(DetectTarget.getDisplayMsg(), _LogLevel=LogLevel.DEBUG)
@@ -1456,56 +1468,61 @@ class Library(object):
                             PostIP = PostIP[0]
                  
                     CurrentPage = self.__ReceiveData[ConnectIndex]
-                    CurrentRawPage = self.__ReceiveRawData[ConnectIndex]
+                    CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
 
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
+                        CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
-                    CurrentRawPageList = CurrentRawPage.split('\n')
 
                     PageLineRangeTemp = CurrentPageList.pop()
-                    CurrentRawPageList.pop()
-                    
+                    # CurrentRawPageList.pop()
+                    # 自幹一個 list pop
+                    LastIndex = 0
+                    for i in range(len(CurrentRawPage)):
+                        if CurrentRawPage[i] == NewLineByte:
+                            LastIndex = i
+                    if LastIndex != 0:
+                        CurrentRawPage = CurrentRawPage[:LastIndex]
+
                     PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
-                    PageLineRange = list(map(int, PageLineRange))[3:]
-                    
-                    if len(PageLineRange) < 2:
-                        # self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' 檢查控制碼', ConnectIndex=ConnectIndex)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('*' * 20)
-                        # print('PageLineRangeTemp: ' + PageLineRangeTemp)
-                        # print('=' * 20)
-                        # print('=' * 20)
-                        # print('=' * 20)
-                        # sys.exit()
+                    if len(PageLineRange) <= 3:
                         ErrCode = ErrorCode.HasControlCode
                         self.__ErrorCode = ErrCode
                         return ErrCode, None
 
+                    PageLineRange = list(map(int, PageLineRange))[-2:]
+                    
                     OverlapLine = LastPageIndex - PageLineRange[0] + 1
+
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
-                        CurrentRawPageList = CurrentRawPageList[OverlapLine:]
+                        # CurrentRawPageList = CurrentRawPageList[OverlapLine:]
+                        if not isFirstPage:
+                            for i in range(OverlapLine):
+                                for ii in range(len(CurrentRawPage)):
+                                    if CurrentRawPage[ii] == NewLineByte:
+                                        CurrentRawPage = CurrentRawPage[ii + 1:]
+                                        break
                     
                     LastPageIndex = PageLineRange[1]
 
                     PostContentListTemp.extend(CurrentPageList)
-                    PostRawContentListTemp.extend(CurrentRawPageList)
+                    if not isFirstPage:
+                        PostRawContentListTemp.extend([NewLineByte])
+                    PostRawContentListTemp.extend(CurrentRawPage)
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
-                        
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                         break
+
                     SendMessage = str(PageIndex) + '\r'
                     PageIndex += 1
                     Refresh = True
+                    isFirstPage = False
                     break
 
             if not isDetectedTarget:
@@ -1595,7 +1612,7 @@ class Library(object):
                     PostPushList.append(CurrentPush)
 
         PostContent = '\n'.join(PostContentList)
-        PosRawData = '\n'.join(PostRawContentListTemp)
+        PosRawData = PostRawContentListTemp
 
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')
@@ -2218,7 +2235,11 @@ class Library(object):
         LastPageIndex = 5
         MailContentList = []
         MailRawContentList = []
+        isFirstPage = True
         IPLine = ''
+
+        NewLine, _ = uao.encode('\n')
+        NewLineByte = NewLine[0]
 
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
@@ -2249,31 +2270,46 @@ class Library(object):
                     # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
                     
                     CurrentPage = self.__ReceiveData[ConnectIndex]
-                    CureentRAWPage = self.__ReceiveRawData[ConnectIndex]
+                    CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
 
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
+                        CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
-                    CureentRAWPageList = CureentRAWPage.split('\n')
+
 
                     PageLineRange = CurrentPageList.pop()
-                    CureentRAWPageList.pop()
+                    # CurrentRawPage.pop()
+                    LastIndex = 0
+                    for i in range(len(CurrentRawPage)):
+                        if CurrentRawPage[i] == NewLineByte:
+                            LastIndex = i
+                    if LastIndex != 0:
+                        CurrentRawPage = CurrentRawPage[:LastIndex]
                     
                     PageLineRangeTemp = re.findall(r'\d+', PageLineRange)
-                    PageLineRangeTemp = list(map(int, PageLineRangeTemp))[3:]
+                    PageLineRangeTemp = list(map(int, PageLineRangeTemp))[-2:]
                     
                     OverlapLine = LastPageIndex - PageLineRangeTemp[0] + 1
                     if OverlapLine >= 1 and LastPageIndex != 0:
-                        # print('重疊', OverlapLine, '行')
+                        print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
-                        CureentRAWPageList = CureentRAWPageList[OverlapLine:]
+
+                        if not isFirstPage:
+                            for i in range(OverlapLine):
+                                for ii in range(len(CurrentRawPage)):
+                                    if CurrentRawPage[ii] == NewLineByte:
+                                        CurrentRawPage = CurrentRawPage[ii + 1:]
+                                        break
                     
                     LastPageIndex = PageLineRangeTemp[1]
 
                     CurrentPage = '\n'.join(CurrentPageList)
-                    CureentRAWPage = '\n'.join(CureentRAWPageList)
+                    
                     MailContentList.append(CurrentPage)
-                    MailRawContentList.append(CureentRAWPage)
+                    if not isFirstPage:
+                        MailRawContentList.extend([NewLineByte])
+                    MailRawContentList.extend(CurrentRawPage)
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -2286,6 +2322,7 @@ class Library(object):
                     
                     SendMessage = str(PageIndex) + '\r'
                     Refresh = True
+                    isFirstPage = False
                     PageIndex += 1
 
             if not isDetectedTarget:
@@ -2329,7 +2366,7 @@ class Library(object):
         # self.Log('MailDate: =' + MailDate + '=', LogLevel.DEBUG)
 
         MailContent = '\n'.join(MailContentList)
-        MailRawContent = '\n'.join(MailRawContentList)
+        MailRawContent = MailRawContentList
         # self.Log('MailContent: =' + MailContent + '=', LogLevel.DEBUG)
 
         if len(IPLine) < 7:
@@ -2888,7 +2925,7 @@ class Library(object):
         # print(WaterBallTarget + ': ' + User.getState())
         
         if '不在站上' in User.getState():
-            ErrCode = ErrorCode.NoUser
+            ErrCode = ErrorCode.UserNotOnline
             self.__ErrorCode = ErrCode
             return ErrCode
         
@@ -3456,17 +3493,23 @@ class Library(object):
                     WaterBallListTemp[i] = WaterBallListTemp[i][1:]
 
             for line in WaterBallListTemp:
+                Type = 0
                 if line.startswith('To'):
-                    continue
-                print('Catch water ball: ' + line)
-                WaterBallAuthor = line[1 : line.find(' ')]
-                WaterBallContent = line[line.find(' ') + 1 : line.rfind('[') - 1]
-                WaterBallDate = line[line.rfind('[') + 1 : line.rfind(']')]
-                print('WaterBallAuthor: =' + WaterBallAuthor + '=')
-                print('WaterBallContent: =' + WaterBallContent + '=')
-                print('WaterBallDate: =' + WaterBallDate + '=')
-                CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent, WaterBallDate)
-                result.append(CurrentWaterBall)
+                    # print('Send water ball: ' + line)
+                    Type = WaterBallType.Send
+                    WaterBallAuthor = line[3 : line.find(':')]
+                elif line.startswith('★'):
+                    # print('Catch water ball: ' + line)
+                    Type = WaterBallType.Catch
+                    WaterBallAuthor = line[1 : line.find(' ')]
+
+                if Type != 0:
+                    
+                    WaterBallContent = line[line.find(' ') + 1 : line.rfind('[') - 1]
+                    WaterBallDate = line[line.rfind('[') + 1 : line.rfind(']')]
+
+                    CurrentWaterBall = Information.WaterBallInformation(Type, WaterBallAuthor, WaterBallContent, WaterBallDate)
+                    result.append(CurrentWaterBall)
             
             isBreakDetect = False
             # 先後順序代表偵測的優先順序
