@@ -1441,10 +1441,8 @@ class Library(object):
         isFirstPage = True
         PostIP = ''
 
-        NewLine, _ = uao.encode('\r')
+        NewLine, _ = uao.encode('\n')
         NewLineByte = NewLine[0]
-
-        print(NewLineByte)
 
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
@@ -1459,11 +1457,6 @@ class Library(object):
 
             if FirstPage == '':
                 FirstPage = self.__ReceiveData[ConnectIndex]
-                CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
-                for i in range(len(CurrentRawPage)):
-                    if CurrentRawPage[i] == NewLineByte:
-                        FirstRawLine = CurrentRawPage[:i]
-                        break
                         
             for DetectTarget in DetectTargetList:
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
@@ -1479,6 +1472,7 @@ class Library(object):
 
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
+                        CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
 
                     PageLineRangeTemp = CurrentPageList.pop()
@@ -1488,48 +1482,35 @@ class Library(object):
                     for i in range(len(CurrentRawPage)):
                         if CurrentRawPage[i] == NewLineByte:
                             LastIndex = i
-                    CurrentRawPage = CurrentRawPage[:LastIndex]
+                    if LastIndex != 0:
+                        CurrentRawPage = CurrentRawPage[:LastIndex]
 
                     PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
-                    PageLineRange = list(map(int, PageLineRange))[3:]
-                    
-                    if len(PageLineRange) < 2:
+                    if len(PageLineRange) <= 3:
                         ErrCode = ErrorCode.HasControlCode
                         self.__ErrorCode = ErrCode
                         return ErrCode, None
 
-                    OverlapLine = LastPageIndex - PageLineRange[0] + 1
+                    PageLineRange = list(map(int, PageLineRange))[-2:]
                     
-                    # if PageIndex == 3:
-
-                    #     print('-' * 20)
-                    #     print(CurrentRawPage)
-                    #     print('=' * 20)
-                    #     for B in CurrentRawPage:
-                            
-                    #         print(chr(B), end=' ')
-                            
-                    #     print('三' * 20)
-                    #     Q = array.array('B', CurrentRawPage).tostring()
-                    #     QQ, _ = uao.decode(Q)
-                    #     print(QQ)
-                        
-                    #     print('四' * 20)
+                    OverlapLine = LastPageIndex - PageLineRange[0] + 1
 
                     if OverlapLine >= 1 and LastPageIndex != 0:
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
                         # CurrentRawPageList = CurrentRawPageList[OverlapLine:]
-                        
-                        for i in range(OverlapLine):
-                            for ii in range(len(CurrentRawPage)):
-                                if CurrentRawPage[ii] == NewLineByte:
-                                    CurrentRawPage = CurrentRawPage[ii:]
-                                    break
+                        if not isFirstPage:
+                            for i in range(OverlapLine):
+                                for ii in range(len(CurrentRawPage)):
+                                    if CurrentRawPage[ii] == NewLineByte:
+                                        CurrentRawPage = CurrentRawPage[ii + 1:]
+                                        break
                     
                     LastPageIndex = PageLineRange[1]
 
                     PostContentListTemp.extend(CurrentPageList)
+                    if not isFirstPage:
+                        PostRawContentListTemp.extend([NewLineByte])
                     PostRawContentListTemp.extend(CurrentRawPage)
 
                     isDetectedTarget = True
@@ -1537,6 +1518,7 @@ class Library(object):
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                         break
+
                     SendMessage = str(PageIndex) + '\r'
                     PageIndex += 1
                     Refresh = True
@@ -1630,8 +1612,7 @@ class Library(object):
                     PostPushList.append(CurrentPush)
 
         PostContent = '\n'.join(PostContentList)
-        FirstRawLine.extend(PostRawContentListTemp)
-        PosRawData = FirstRawLine
+        PosRawData = PostRawContentListTemp
 
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')

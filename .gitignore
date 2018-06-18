@@ -6,3 +6,4 @@ dist/
 /.pypirc
 PTTLibrary.egg-info/
 *Out.txt
+/Big5Data.txt
