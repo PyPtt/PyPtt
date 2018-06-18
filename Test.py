@@ -97,11 +97,13 @@ def showPost(Post):
     BooCount = 0
     ArrowCount = 0
 
-    print('-' * 20)
-    # print(Post.getRawData())
-    print('=' * 20)
-    Big5Data, _ = uao.decode(Post.getRawData())
-    print(Big5Data)
+    # print('-' * 20)
+    # # print(Post.getRawData())
+    # print('=' * 20)
+    # Big5Data, _ = uao.decode(Post.getRawData())
+    # print(Big5Data)
+
+    open('Big5Data.txt',"wb").write(Post.getRawData())
 
     print('三' * 20)
     for Push in Post.getPushList():
@@ -150,7 +152,7 @@ def GetPostDemo():
     TryPost = 1
     
     BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-    BoardList = ['Gossiping']
+    BoardList = ['Wanted']
 
     for Board in BoardList:
         
@@ -163,7 +165,7 @@ def GetPostDemo():
         #     PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
         #     return False
         
-        NewestIndex = 794161
+        NewestIndex = 78364
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         for i in range(TryPost):
             PTTBot.Log('-' * 50)
