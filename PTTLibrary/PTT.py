@@ -29,6 +29,7 @@ ReplyPostType = Information.ReplyPostType()
 FriendListType = Information.FriendListType()
 OperateType = Information.OperateType()
 WaterBallOperateType = Information.WaterBallOperateType
+WaterBallType = Information.WaterBallType
 
 class _ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -349,7 +350,7 @@ class Library(object):
                 WaterBallContent = line[line.find(' ') + 1:line.find(' [K')]
                 # print('WaterBallAuthor: =' + WaterBallAuthor + '=')
                 # print('WaterBallContent: =' + WaterBallContent + '=')
-                CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent)
+                CurrentWaterBall = Information.WaterBallInformation(WaterBallType.Catch, WaterBallAuthor, WaterBallContent)
                 self.__WaterBallList.append(CurrentWaterBall)
                 
         for i in range(len(CatchTargetList)):
@@ -1432,7 +1433,6 @@ class Library(object):
         ]
 
         FirstPage = ''
-        FirstRawLine = []
         PageIndex = 2
         # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
         LastPageIndex = 5
@@ -2235,6 +2235,7 @@ class Library(object):
         LastPageIndex = 5
         MailContentList = []
         MailRawContentList = []
+        isFirstPage = True
         IPLine = ''
 
         NewLine, _ = uao.encode('\n')
@@ -2269,10 +2270,11 @@ class Library(object):
                     # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
                     
                     CurrentPage = self.__ReceiveData[ConnectIndex]
-                    CurrentRawPage = self.__ReceiveRawData[ConnectIndex]
+                    CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
 
                     if CurrentPage.startswith('[2J'):
                         CurrentPage = CurrentPage[3:]
+                        CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
 
 
@@ -2282,27 +2284,31 @@ class Library(object):
                     for i in range(len(CurrentRawPage)):
                         if CurrentRawPage[i] == NewLineByte:
                             LastIndex = i
-                    CurrentRawPage = CurrentRawPage[:LastIndex]
+                    if LastIndex != 0:
+                        CurrentRawPage = CurrentRawPage[:LastIndex]
                     
                     PageLineRangeTemp = re.findall(r'\d+', PageLineRange)
-                    PageLineRangeTemp = list(map(int, PageLineRangeTemp))[3:]
+                    PageLineRangeTemp = list(map(int, PageLineRangeTemp))[-2:]
                     
                     OverlapLine = LastPageIndex - PageLineRangeTemp[0] + 1
                     if OverlapLine >= 1 and LastPageIndex != 0:
-                        # print('重疊', OverlapLine, '行')
+                        print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
-                        
-                        for i in range(OverlapLine):
-                            for ii in range(len(CurrentRawPage)):
-                                if CurrentRawPage[ii] == NewLineByte:
-                                    CurrentRawPage = CurrentRawPage[ii:]
-                                    break
+
+                        if not isFirstPage:
+                            for i in range(OverlapLine):
+                                for ii in range(len(CurrentRawPage)):
+                                    if CurrentRawPage[ii] == NewLineByte:
+                                        CurrentRawPage = CurrentRawPage[ii + 1:]
+                                        break
                     
                     LastPageIndex = PageLineRangeTemp[1]
 
                     CurrentPage = '\n'.join(CurrentPageList)
                     
                     MailContentList.append(CurrentPage)
+                    if not isFirstPage:
+                        MailRawContentList.extend([NewLineByte])
                     MailRawContentList.extend(CurrentRawPage)
 
                     isDetectedTarget = True
@@ -2316,6 +2322,7 @@ class Library(object):
                     
                     SendMessage = str(PageIndex) + '\r'
                     Refresh = True
+                    isFirstPage = False
                     PageIndex += 1
 
             if not isDetectedTarget:
@@ -2918,7 +2925,7 @@ class Library(object):
         # print(WaterBallTarget + ': ' + User.getState())
         
         if '不在站上' in User.getState():
-            ErrCode = ErrorCode.NoUser
+            ErrCode = ErrorCode.UserNotOnline
             self.__ErrorCode = ErrCode
             return ErrCode
         
@@ -3486,17 +3493,23 @@ class Library(object):
                     WaterBallListTemp[i] = WaterBallListTemp[i][1:]
 
             for line in WaterBallListTemp:
+                Type = 0
                 if line.startswith('To'):
-                    continue
-                print('Catch water ball: ' + line)
-                WaterBallAuthor = line[1 : line.find(' ')]
-                WaterBallContent = line[line.find(' ') + 1 : line.rfind('[') - 1]
-                WaterBallDate = line[line.rfind('[') + 1 : line.rfind(']')]
-                print('WaterBallAuthor: =' + WaterBallAuthor + '=')
-                print('WaterBallContent: =' + WaterBallContent + '=')
-                print('WaterBallDate: =' + WaterBallDate + '=')
-                CurrentWaterBall = Information.WaterBallInformation(WaterBallAuthor, WaterBallContent, WaterBallDate)
-                result.append(CurrentWaterBall)
+                    # print('Send water ball: ' + line)
+                    Type = WaterBallType.Send
+                    WaterBallAuthor = line[3 : line.find(':')]
+                elif line.startswith('★'):
+                    # print('Catch water ball: ' + line)
+                    Type = WaterBallType.Catch
+                    WaterBallAuthor = line[1 : line.find(' ')]
+
+                if Type != 0:
+                    
+                    WaterBallContent = line[line.find(' ') + 1 : line.rfind('[') - 1]
+                    WaterBallDate = line[line.rfind('[') + 1 : line.rfind(']')]
+
+                    CurrentWaterBall = Information.WaterBallInformation(Type, WaterBallAuthor, WaterBallContent, WaterBallDate)
+                    result.append(CurrentWaterBall)
             
             isBreakDetect = False
             # 先後順序代表偵測的優先順序
