@@ -1,3 +1,11 @@
+import array
+
+class WaterBallType(object):
+    Catch =                                 1
+    Send =                                  2
+
+    MinValue = Catch
+    MaxValue = Send
 
 class WaterBallOperateType(object):
     Clear =                                 1
@@ -50,13 +58,13 @@ class PushType(object):
         self.Arrow =                        3
 
 class MailInformation(object):
-    def __init__(self, Author, Title, Date, Content, IP, RawContent):
+    def __init__(self, Author, Title, Date, Content, IP, RawData):
         self.__Author = str(Author)
         self.__Title = str(Title)
         self.__Date = str(Date)
         self.__Content = str(Content)
         self.__IP = str(IP)
-        self.__RawContent = str(RawContent)
+        self.__RawData = array.array('B', RawData).tostring()
     def getAuthor(self):
         return self.__Author
     def getTitle(self):
@@ -67,8 +75,8 @@ class MailInformation(object):
         return self.__Content
     def getIP(self):
         return self.__IP
-    def getRawContent(self):
-        return self.__RawContent
+    def getRawData(self):
+        return self.__RawData
 
 class UserInformation(object):
     def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State, Mail, LastLogin, LastIP, FiveChess, Chess):
@@ -134,7 +142,9 @@ class PostInformation(object):
         self.__WebUrl = str(WebUrl)
         self.__IP = str(IP)
         self.__PushList = PushList
-        self.__RawData = str(RawData)
+        self.__RawData = array.array('B', RawData).tostring()
+
+        
 
     def getBoard(self):
         return self.__Board
@@ -160,7 +170,8 @@ class PostInformation(object):
         return self.__RawData
 
 class WaterBallInformation(object):
-    def __init__(self, Author, PushContent, Date=''):
+    def __init__(self, Type, Author, PushContent, Date=''):
+        self.__Type = int(Type)
         self.__Author = str(Author)
         self.__Content = str(PushContent)
         self.__Date = str(Date)
@@ -170,3 +181,5 @@ class WaterBallInformation(object):
         return self.__Content
     def getDate(self):
         return self.__Date
+    def getType(self):
+        return self.__Type

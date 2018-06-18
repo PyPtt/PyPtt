@@ -26,3 +26,4 @@ class ErrorCode(object):
         self.PttBug =                          21
         self.UserInterrupt =                   22
         self.RemoteHostDown =                  23
+        self.UserNotOnline =                   24
