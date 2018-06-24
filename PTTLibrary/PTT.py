@@ -121,13 +121,17 @@ class Library(object):
         except Exception:
             self.Log('偵測到背景執行')
             self.__isBackground = True
-        self.Log('使用者帳號: ' + ID)
-        TempPW = ''
-
-        for i in range(len(Password)):
-            TempPW += '*'
         
-        self.Log('密碼: ' + TempPW)
+        if ID != '':
+            self.Log('使用者帳號: ' + ID)
+        
+        if Password != '':
+            TempPW = ''
+
+            for i in range(len(Password)):
+                TempPW += '*'
+            
+            self.Log('密碼: ' + TempPW)
         
         self.__SSHKey = ECDSAKey.generate()
         self.Log('產生 SSH 金鑰完成')
@@ -603,8 +607,15 @@ class Library(object):
 
         if ID != '':
             self.__ID = ID
+            self.Log('使用者帳號: ' + ID)
         if Password != '':
             self.__Password = Password
+            TempPW = ''
+
+            for i in range(len(Password)):
+                TempPW += '*'
+            
+            self.Log('密碼: ' + TempPW)
         
         ErrCode = self.__connectRemote(0)
         
