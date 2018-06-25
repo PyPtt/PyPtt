@@ -688,13 +688,13 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
     
     # 不會把重複的登入踢掉，設定 Log level 為 除錯等級
-    PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
     # 水球接收器，不過沒長時間測試，大量API呼叫的時候可能不穩
     # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
     # PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
     # Log 接收器，如果有需要把內部顯示抓出來的需求可以用這個
     # PTTBot = PTT.Library(ID, Password, LogHandler=LogHandler)
-    # PTTBot = PTT.Library(ID, Password)
+    PTTBot = PTT.Library(ID, Password)
 
     ErrCode = PTTBot.login()
     if ErrCode != PTT.ErrorCode.Success:
@@ -711,7 +711,7 @@ if __name__ == '__main__':
         # GetMailDemo()
         # GetUserDemo()
         # GiveMoneyDemo()
-        # ChangePasswordDemo()
+        ChangePasswordDemo()
         # ReplyPostDemo()
         # CrawlBoardDemo()
         # ThrowWaterBallDemo()
