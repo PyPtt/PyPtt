@@ -41,12 +41,16 @@ class _ResponseUnit(object):
         return self.__Refresh
 
 class _DetectUnit(object):
-    def __init__(self, DisplayMsg, DetectTarget, Response, BreakDetect=False, ErrCode=0):
+    def __init__(self, DisplayMsg, DetectTarget, Response, BreakDetect=False, ErrCode=0, LogLV=0):
         self.__DisplayMsg = DisplayMsg
         self.__DetectTarget = DetectTarget
         self.__Response = Response
         self.__BreakDetect = BreakDetect
         self.__ErrCode = ErrCode
+        if LogLV == 0:
+            self.__LogLevel = LogLevel.INFO
+        else:
+            self.__LogLevel = LogLV
     def isMatch(self, Screen):
         if self.__DetectTarget in Screen:
             return True
@@ -61,6 +65,8 @@ class _DetectUnit(object):
         return self.__BreakDetect
     def getErrorCode(self):
         return self.__ErrCode
+    def getLogLevel(self):
+        return self.__LogLevel
 
 class Library(object):
     def __init__(self, ID='', Password='', kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None, LogHandler=None):
@@ -2540,26 +2546,37 @@ class Library(object):
                 '輸入舊密碼',
                 '請輸入原密碼', 
                 _ResponseUnit(OldPassword + '\r', False),
+                LogLV = LogLevel.DEBUG,
             ),
             _DetectUnit(
                 '輸入新密碼',
                 '請設定新密碼', 
                 _ResponseUnit(NewPassword + '\r', False),
+                LogLV = LogLevel.DEBUG,
             ),
             _DetectUnit(
                 '確認新密碼',
                 '請檢查新密碼', 
                 _ResponseUnit(NewPassword + '\r', False),
+                LogLV = LogLevel.DEBUG,
             ),
             _DetectUnit(
                 '確認',
                 '您確定(Y/N)', 
                 _ResponseUnit('y\r', True),
+                LogLV = LogLevel.DEBUG,
             ),
             _DetectUnit(
                 '注意！您已將舊密碼更換為新密碼(' + NewPassword + ')',
                 '我是' + self.__ID, 
                 _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+            ),
+            _DetectUnit(
+                '密碼不正確',
+                '您輸入的密碼不正確', 
+                _ResponseUnit('y\r', True),
+                BreakDetect=True,
+                ErrCode = ErrorCode.WrongPassword
             ),
             _DetectUnit(
                 '',
@@ -2588,7 +2605,7 @@ class Library(object):
             for DetectTarget in DetectTargetList:
                 if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
 
-                    self.Log(DetectTarget.getDisplayMsg())
+                    self.Log(DetectTarget.getDisplayMsg(), DetectTarget.getLogLevel())
 
                     SendMessage = DetectTarget.getResponse().getSendMessage()
                     Refresh = DetectTarget.getResponse().needRefresh()
@@ -2599,6 +2616,8 @@ class Library(object):
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                         break
+                        
+                    break
             if not isDetectedTarget:
 
                 self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
