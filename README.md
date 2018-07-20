@@ -89,6 +89,7 @@ API
 | operateFriendList   | 操作好友壞人名單   |
 | getHistoricalWaterBall   | 查詢歷史水球紀錄   |
 | getErrorCode   | 取得錯誤碼   |
+| setConnectionSettings   | 設定連線參數   |
 
 贊助
 -------------------

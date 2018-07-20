@@ -121,6 +121,12 @@ class Library(object):
 
         self.__IdleTime =                       0
         self.__MaxIdleTime =                    MaxIdleTime
+
+        self.__PreWait = 0.01
+        self.__EveryWait = 0.01
+
+        self.__MaxEveryWait = 0.1
+        self.__MinEveryWait = 0.01
         try:
             self.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
             self.__isBackground = False
@@ -250,11 +256,11 @@ class Library(object):
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
-        PreWait = 0.01
-        EveryWait = 0.01
+        PreWait = self.__PreWait
+        EveryWait = self.__EveryWait
 
-        MaxEveryWait = 0.1
-        MinEveryWait = 0.01
+        MaxEveryWait = self.__MaxEveryWait
+        MinEveryWait = self.__MinEveryWait
 
         if CatchTargetList == None:
             CatchTargetList = []
@@ -3626,6 +3632,11 @@ class Library(object):
     def getVersion(self):
         self.__IdleTime = 0
         return Version
+    def setConnectionSettings(self, PreWait, EveryWait, MaxEveryWait, MinEveryWait):
+        self.__PreWait = PreWait
+        self.__EveryWait = EveryWait
+        self.__MaxEveryWait = MaxEveryWait
+        self.__MinEveryWait = MinEveryWait
         
 if __name__ == '__main__':
 

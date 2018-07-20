@@ -670,6 +670,20 @@ def WaterBallHandler(WaterBall):
 
     PTTBot.throwWaterBall(WaterBall.getAuthor(), WaterBall.getAuthor() + ' 我接住你的水球了!')
 
+def SetConnectionSettingsDemo():
+    
+    # 如使用者在在網路連線較差的環境下(如國外)，可自行依網路狀況調整連線參數
+
+    ################## 四個參數分別為 ##################
+    # PreWait                   傳送及接收資料前的等待時間，預設值: 0.01
+    # EveryWait                 每次嘗試傳送及接收資料的等待時間，預設值: 0.01
+    # MaxEveryWait              EveryWait允許的最大值，預設值: 0.1
+    # MinEveryWait              EveryWait的最小值，預設值: 0.01
+    ## (注) PTTLibrary會依照連線狀況動態調整EveryWait，後面兩參數為調整的上下界
+
+    PTTBot.Log('調整func')
+    PTTBot.setConnectionSettings(0.02, 0.05, 0.5, 0.02)
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -718,6 +732,7 @@ if __name__ == '__main__':
         # DelPostDemo()
         # GetFriendListDemo()
         # GetHistoricalWaterBallDemo()
+        # SetConnectionSettingsDemo()
         pass
     except Exception as e:
         
