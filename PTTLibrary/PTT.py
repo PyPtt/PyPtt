@@ -1035,7 +1035,7 @@ class Library(object):
         TempStartIndex = 0
         TempEndIndex = TempStartIndex + 1
 
-        while TempEndIndex < len(PushContent):
+        while TempEndIndex <= len(PushContent):
 
             Temp = ''
             while len(Temp.encode('big5')) < MaxPushLength:
