@@ -2314,7 +2314,7 @@ class Library(object):
                     OverlapLine = LastPageIndex - PageLineRangeTemp[0] + 1
 
                     # 處理分隔線造成的行數計算錯誤
-                    if PageLineRange[0] > 1 and PageLineRange[0] < 5:
+                    if PageLineRangeTemp[0] > 1 and PageLineRangeTemp[0] < 5:
                         OverlapLine += 1
 
                     if OverlapLine >= 1 and LastPageIndex != 0:
