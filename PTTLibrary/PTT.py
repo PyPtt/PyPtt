@@ -122,22 +122,22 @@ class Library(object):
         self.__IdleTime =                       0
         self.__MaxIdleTime =                    MaxIdleTime
 
-        if PreWait = 0:
+        if PreWait == 0:
             self.__PreWait = 0.01
         else:
             self.__PreWait = PreWait
         
-        if EveryWait = 0:
+        if EveryWait == 0:
             self.__EveryWait = 0.01
         else:
             self.__EveryWait = EveryWait
 
-        if MaxEveryWait = 0:
+        if MaxEveryWait == 0:
             self.__MaxEveryWait = 0.01
         else:
             self.__MaxEveryWait = MaxEveryWait
 
-        if MinEveryWait = 0:
+        if MinEveryWait == 0:
             self.__MinEveryWait = 0.01
         else:
             self.__MinEveryWait = MinEveryWait
