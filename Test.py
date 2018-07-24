@@ -711,7 +711,7 @@ if __name__ == '__main__':
         # GetMailDemo()
         # GetUserDemo()
         # GiveMoneyDemo()
-        ChangePasswordDemo()
+        # ChangePasswordDemo()
         # ReplyPostDemo()
         # CrawlBoardDemo()
         # ThrowWaterBallDemo()
