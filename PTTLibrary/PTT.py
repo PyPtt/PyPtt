@@ -69,8 +69,8 @@ class _DetectUnit(object):
         return self.__LogLevel
 
 class Library(object):
-    def __init__(self, ID='', Password='', kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None, LogHandler=None):
-    
+    def __init__(self, ID='', Password='', kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None, LogHandler=None, PreWait=0, EveryWait=0, MaxEveryWait=0, MinEveryWait=0):
+
         self.__host = 'ptt.cc'
         self.__ID = ID
         self.__Password = Password
@@ -121,6 +121,27 @@ class Library(object):
 
         self.__IdleTime =                       0
         self.__MaxIdleTime =                    MaxIdleTime
+
+        if PreWait = 0:
+            self.__PreWait = 0.01
+        else:
+            self.__PreWait = PreWait
+        
+        if EveryWait = 0:
+            self.__EveryWait = 0.01
+        else:
+            self.__EveryWait = EveryWait
+
+        if MaxEveryWait = 0:
+            self.__MaxEveryWait = 0.01
+        else:
+            self.__MaxEveryWait = MaxEveryWait
+
+        if MinEveryWait = 0:
+            self.__MinEveryWait = 0.01
+        else:
+            self.__MinEveryWait = MinEveryWait
+
         try:
             self.Log('偵測到前景執行使用編碼: ' + sys.stdin.encoding)
             self.__isBackground = False
@@ -250,11 +271,11 @@ class Library(object):
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
-        PreWait = 0.01
-        EveryWait = 0.01
+        PreWait = self.__PreWait
+        EveryWait = self.__EveryWait
 
-        MaxEveryWait = 0.1
-        MinEveryWait = 0.01
+        MaxEveryWait = self.__MaxEveryWait
+        MinEveryWait = self.__MinEveryWait
 
         if CatchTargetList == None:
             CatchTargetList = []
