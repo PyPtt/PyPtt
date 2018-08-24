@@ -11,6 +11,7 @@
 
 ###### PTT Library 是一個由 Python 寫成用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
 ###### 拋棄過往網頁形式的解析，直接登入 PTT 分析最即時的文章與推文，給你最快速的資訊!
+###### 支援開放 API，你可以直接使用開放 API 實作你的 PTT 操作指令
 ###### 測試平台: Windows 10, Ubuntu 18.04
 ###### 原始碼
 ###### github: https://github.com/Truth0906/PTTLibrary
@@ -18,7 +19,7 @@
 
 版本
 -------------------
-###### 0.7.4
+###### 0.7.5
 
 安裝
 -------------------
@@ -89,9 +90,11 @@ API
 | operateFriendList   | 操作好友壞人名單   |
 | getHistoricalWaterBall   | 查詢歷史水球紀錄   |
 | getErrorCode   | 取得錯誤碼   |
+| operatePTT   | 向 PTT 送出操作指令   |
+| showScreen   | 顯示輸出畫面   |
 
 贊助
 -------------------
-###### 如果這個專案減少了你的開發時間，你可以贊助我一杯咖啡 :D
+###### 如果你喜歡，你可以贊助這個專案
 ###### XMR 贊助位址
 ###### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
