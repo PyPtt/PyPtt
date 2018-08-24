@@ -616,6 +616,78 @@ def GetFriendListDemo():
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('刪除名單失敗')
         return
+def SendMessageDemo():
+    # 此指令可以讓開發者自行開發送給 PTT 的指令，並根據回傳畫面做出相對應的回應
+
+    ################## 操作指令資訊 Command information ##################
+
+    # 讓畫面回到最上層主選單
+    # GotoMainMenuCommand
+
+    # 更新 PTT 畫面，預設已經會做更新畫面
+    # 拉出來才發現預設了，對不起 請忽略我的恍神
+    # RefreshCommand
+    
+    # 上下左右方向鍵的操作
+    # MoveUpCommand
+    # MoveDownCommand
+    # MoveRightCommand
+    # MoveLeftCommand
+
+    # 如有未盡操作，請參考
+    # http://www.physics.udel.edu/~watson/scen103/ascii.html
+    # 如果你想為這個專案做出貢獻，那就送出你的 pull request 吧
+    # 每個 request 都會被我檢視整理後整入主線
+
+    Message = PTT.MoveUpCommand
+
+    # 你應該在 DetectTargetList 實作出應對所有情況的 DetectUnit
+    # 並且至少要有一個 DetectUnit 具備出口 ( BreakDetect=True 和 ErrCode = 你想要的錯誤碼 )
+
+    DetectTargetList = [
+        PTT.DetectUnit(
+            '更新 PTT 畫面',
+           '我是' + ID, 
+            PTT.ResponseUnit(PTT.GotoMainMenuCommand, True),
+            # 具備 BreakDetect=True 的 DetectUnit 會被視為出口
+            BreakDetect=True,
+            ErrCode = PTT.ErrorCode.Success
+        ),
+        PTT.PTTBUGDetectUnit
+    ]
+
+    isBreakDetect = False
+
+    while not isBreakDetect:
+        ErrCode, CatchIndex = PTTBot.operatePTT(Message)
+        if ErrCode == PTT.ErrorCode.WaitTimeout:
+            PTTBot.Log('操作超時重新嘗試')
+            return
+        elif ErrCode != PTT.ErrorCode.Success:
+            PTTBot.Log('操作失敗 錯誤碼: ' + str(ErrCode))
+            return
+        isDetectedTarget = False
+
+        for DetectTarget in DetectTargetList:
+            if DetectTarget.isMatch(PTTBot.ReceiveData):
+                isDetectedTarget = True
+
+                if DetectTarget.isBreakDetect():
+                    isBreakDetect = True
+                    ErrCode = DetectTarget.getErrorCode()
+                    break
+
+                break
+
+        if not isDetectedTarget:
+
+            PTTBot.showScreen(ErrCode, sys._getframe().f_code.co_name)
+            PTTBot.Log('無法解析的狀態! PTT Library 緊急停止')
+            PTTBot.logout()
+            sys.exit()
+
+    PTTBot.showScreen(ErrCode, sys._getframe().f_code.co_name)
+
 def GetHistoricalWaterBallDemo():
     
     # 這是可取得歷史水球資訊的 api
@@ -694,6 +766,9 @@ if __name__ == '__main__':
     # PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
     # Log 接收器，如果有需要把內部顯示抓出來的需求可以用這個
     # PTTBot = PTT.Library(ID, Password, LogHandler=LogHandler)
+    # 如果您的網路連線品質不佳，可以試著調整連線等待時間參數
+    # PTTBot = PTT.Library(ID, Password, PreWait=0.1, EveryWait=0.2, MaxEveryWait=1, MinEveryWait=1)
+
     PTTBot = PTT.Library(ID, Password)
 
     ErrCode = PTTBot.login()
@@ -718,6 +793,7 @@ if __name__ == '__main__':
         # DelPostDemo()
         # GetFriendListDemo()
         # GetHistoricalWaterBallDemo()
+        # SendMessageDemo()
         pass
     except Exception as e:
         

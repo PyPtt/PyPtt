@@ -31,7 +31,7 @@ OperateType = Information.OperateType()
 WaterBallOperateType = Information.WaterBallOperateType
 WaterBallType = Information.WaterBallType
 
-class _ResponseUnit(object):
+class ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
         self.__SendMessage = SendMessage
         self.__Refresh = Refresh
@@ -40,7 +40,7 @@ class _ResponseUnit(object):
     def needRefresh(self):
         return self.__Refresh
 
-class _DetectUnit(object):
+class DetectUnit(object):
     def __init__(self, DisplayMsg, DetectTarget, Response, BreakDetect=False, ErrCode=0, LogLV=0):
         self.__DisplayMsg = DisplayMsg
         self.__DetectTarget = DetectTarget
@@ -67,6 +67,22 @@ class _DetectUnit(object):
         return self.__ErrCode
     def getLogLevel(self):
         return self.__LogLevel
+
+PTTBUGDetectUnit = DetectUnit(
+    '遇到 PTT BUG!!',
+    'PttBug', 
+    ResponseUnit(' ', False),
+    BreakDetect=True,
+    ErrCode = ErrorCode.PttBug
+)
+
+GotoMainMenuCommand =               '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
+RefreshCommand =                    '\x0C'
+# \x1b\x4fA (上, 下右左 BCD)
+MoveUpCommand =                     '\x1b\x4fA'
+MoveDownCommand =                   '\x1b\x4fB'
+MoveRightCommand =                  '\x1b\x4fC'
+MoveLeftCommand =                   '\x1b\x4fD'
 
 class Library(object):
     def __init__(self, ID='', Password='', kickOtherLogin=True, MaxIdleTime=20, _LogLevel=-1, WaterBallHandler=None, LogHandler=None, PreWait=0, EveryWait=0, MaxEveryWait=0, MinEveryWait=0):
@@ -112,9 +128,10 @@ class Library(object):
         self.__PreReceiveData = [''] * self.__MaxMultiLogin
         self.__isConnected = [False] * self.__MaxMultiLogin
 
+        self.ReceiveData = ''
+
         self.__isBackground = False
 
-        self.__gotoMainMenu = '\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD'
         self.__delAllWord = '\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08'
 
         self.__ShowProgressBar =             True
@@ -174,14 +191,6 @@ class Library(object):
 
         self.__APILock = [threading.Lock()] * self.__MaxMultiLogin
 
-        self.__PTTBUGDetectUnit = _DetectUnit(
-            '遇到 PTT BUG!!',
-            'PttBug', 
-            _ResponseUnit(' ', False),
-            BreakDetect=True,
-            ErrCode = ErrorCode.PttBug
-        )
-
         self.__ErrorCode =                      ErrorCode.Success
     def __AntiLogout(self):
         
@@ -217,6 +226,14 @@ class Library(object):
             return False
         self.__ErrorCode = ErrorCode.Success
         return True
+    def showScreen(self, ErrCode, FunctionName):
+        ConnectIndex=0
+        self.Log('PTT 畫面輸出開始')
+        try:
+            print(self.__ReceiveData[ConnectIndex].encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
+        except Exception:
+            print(self.__ReceiveData[ConnectIndex].encode('utf-8', "replace").decode('utf-8'))
+        self.Log('PTT 畫面輸出結束')
     def __showScreen(self, ErrCode, FunctionName, ConnectIndex=0, _LogLevel=-1):
         
         if _LogLevel == -1:
@@ -268,6 +285,8 @@ class Library(object):
                         self.Log('LogHandler 未知錯誤', LogLevel.WARNING)
                     
         return ErrorCode.Success
+    def operatePTT(self, SendMessage):
+        return self.__operatePTT(0, SendMessage=SendMessage, Refresh=True)
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
@@ -371,6 +390,8 @@ class Library(object):
         self.__ReceiveRawData[ConnectIndex] = self.__ReceiveData[ConnectIndex]
         self.__ReceiveData[ConnectIndex], Len = uao.decode(self.__ReceiveData[ConnectIndex])
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
+        if ConnectIndex == 0:
+            self.ReceiveData = self.__ReceiveData[ConnectIndex]
 
         if self.__WaterBallHandler != None:
             line = self.__ReceiveData[ConnectIndex].split('\n').pop()
@@ -497,67 +518,67 @@ class Library(object):
             isBreakDetect = False
             # 先後順序代表偵測的優先順序
             DetectTargetList = [
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 郵件已滿',
                     '您保存信件數目', 
-                    _ResponseUnit(self.__gotoMainMenu, True),
+                    ResponseUnit(GotoMainMenuCommand, True),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '任意鍵繼續',
                     '任意鍵', 
-                    _ResponseUnit(' ', True)
+                    ResponseUnit(' ', True)
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 放棄未完成文章',
                     '有一篇文章尚未完成', 
-                    _ResponseUnit('q\r', False)
+                    ResponseUnit('q\r', False)
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 密碼錯誤',
                     '請檢查帳號及密碼大小寫有無輸入錯誤', 
-                    _ResponseUnit(' ', False),
+                    ResponseUnit(' ', False),
                     BreakDetect=True,
                     ErrCode = ErrorCode.WrongPassword
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 系統負荷過重，重新執行連線',
                     '為避免系統負荷過重, 請稍後再試', 
-                    _ResponseUnit(' ', False),
+                    ResponseUnit(' ', False),
                     BreakDetect=True,
                     ErrCode = ErrorCode.WaitTimeout
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 更新與同步線上使用者及好友名單',
                     '更新與同步線上使用者及好友名單', 
-                    _ResponseUnit('\x1b\x4fD\x1b\x4fD', False)
+                    ResponseUnit('\x1b\x4fD\x1b\x4fD', False)
                 ),
-                _DetectUnit(
+                DetectUnit(
                     KickMsg,
                     '刪除其他重複登入的連線', 
-                    _ResponseUnit(KickResponse, True)
+                    ResponseUnit(KickResponse, True)
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 刪除錯誤嘗試紀錄',
                     '您要刪除以上錯誤嘗試的記錄嗎', 
-                    _ResponseUnit('y\r', False)
+                    ResponseUnit('y\r', False)
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 登入成功',
                     '我是' + self.__ID, 
-                    _ResponseUnit(' ', False),
+                    ResponseUnit(' ', False),
                     BreakDetect=True,
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 輸入密碼',
                     '請輸入您的密碼:', 
-                    _ResponseUnit(self.__Password + '\r', False)
+                    ResponseUnit(self.__Password + '\r', False)
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 輸入帳號',
                     '請輸入代號，或以 guest 參觀，或以 new 註冊', 
-                    _ResponseUnit(self.__ID + '\r', False)
+                    ResponseUnit(self.__ID + '\r', False)
                 ),
-                self.__PTTBUGDetectUnit
+                PTTBUGDetectUnit
             ]
             
             LoginFailCount = 0
@@ -671,7 +692,7 @@ class Library(object):
                     continue
                 self.Log('頻道 ' + str(index) + ' 登出', LogLevel.DEBUG)
                 
-                SendMessage = self.__gotoMainMenu + ' g\ry\r'
+                SendMessage = GotoMainMenuCommand + ' g\ry\r'
 
                 ErrCode, CatchIndex = self.__operatePTT(index, SendMessage=SendMessage)
                 self.Log('頻道 ' + str(index) + ' 登出成功')
@@ -689,7 +710,7 @@ class Library(object):
 
         # SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 0\r$'
         
-        SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
+        SendMessage = GotoMainMenuCommand + 'qs' + Board + '\r\x03\x03 '
         if Author != '':
             SendMessage += 'a' + Author + '\r'
         if Search != '':
@@ -748,40 +769,40 @@ class Library(object):
             else: 
                 break
         
-        SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 ' + str(result) + '\rQ'
+        SendMessage = GotoMainMenuCommand + 'qs' + Board + '\r\x03\x03 ' + str(result) + '\rQ'
         Refresh = True
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '取得可閱讀文章',
                 '文章代碼', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '取得可閱讀文章',
                 '文章網址', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '取得可閱讀文章',
                 '這一篇文章值', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '請按任意鍵繼續', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.UnknowError
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
 
         ShowFixResult = False
@@ -1272,7 +1293,7 @@ class Library(object):
         ConnectIndex = _ConnectIndex
         result = None
 
-        SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
+        SendMessage = GotoMainMenuCommand + 'qs' + Board + '\r\x03\x03 '
         # 前進至文章
         if PostID != '':
             SendMessage += '#' + PostID + '\rQ'
@@ -1285,45 +1306,45 @@ class Library(object):
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '取得文章',
                 '請按任意鍵繼續', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '取得文章',
                 '這一篇文章值', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '取得文章',
                 '文章代碼(AID):', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '含有控制碼',
                 '此頁內容會依閱讀者不同', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.HasControlCode
             ),
-            _DetectUnit(
+            DetectUnit(
                 '含有控制碼',
                 '原文未必有您的資料', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.HasControlCode
             ),
-            _DetectUnit(
+            DetectUnit(
                 '遇到 PTT BUG!!',
                 'PttBug', 
-                _ResponseUnit(' ', False),
+                ResponseUnit(' ', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.PttBug
             ),
@@ -1429,45 +1450,45 @@ class Library(object):
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '文章讀取完成',
                 '(100%)  目前', 
-                _ResponseUnit('', True),
+                ResponseUnit('', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '文章讀取完成',
                 '頁 (100%)', 
-                _ResponseUnit('', True),
+                ResponseUnit('', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '目前顯示: 第', 
-                _ResponseUnit('', True),
+                ResponseUnit('', True),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '瀏覽 第', 
-                _ResponseUnit('', True),
+                ResponseUnit('', True),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '運作出錯',
                 '我是' + self.__ID, 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.ParseError
             ),
-            _DetectUnit(
+            DetectUnit(
                 '運作出錯',
                 '任意鍵', 
-                _ResponseUnit('', True),
+                ResponseUnit('', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.ParseError
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
 
         FirstPage = ''
@@ -1700,20 +1721,20 @@ class Library(object):
         MailContentList.append('')
 
         if self.__MailFullAPILock:
-            SendMessage = self.__gotoMainMenu + ' S\r' + UserID + '\r' + MailTitle + '\r'
+            SendMessage = GotoMainMenuCommand + ' S\r' + UserID + '\r' + MailTitle + '\r'
         else:
-            SendMessage = self.__gotoMainMenu + 'M\rS\r' + UserID + '\r' + MailTitle + '\r'
+            SendMessage = GotoMainMenuCommand + 'M\rS\r' + UserID + '\r' + MailTitle + '\r'
 
         Refresh = True
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '編輯文章 ' + str(int((MailContentListIndex + 1) * 100 / len(MailContentList))) + ' %',
                 '編輯文章', 
-                _ResponseUnit(MailContentList[MailContentListIndex], True),
+                ResponseUnit(MailContentList[MailContentListIndex], True),
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
         
         self.__APILock[ConnectIndex].acquire()
@@ -1749,10 +1770,10 @@ class Library(object):
                             isBreakDetect = True
                             break
 
-                        DetectTargetList[i] = _DetectUnit(
+                        DetectTargetList[i] = DetectUnit(
                             '編輯文章 ' + str(int((MailContentListIndex + 1) * 100 / len(MailContentList))) + ' %',
                             '編輯文章', 
-                            _ResponseUnit('\r' + MailContentList[MailContentListIndex], True),
+                            ResponseUnit('\r' + MailContentList[MailContentListIndex], True),
                         )
 
             if not isDetectedTarget:
@@ -1770,49 +1791,49 @@ class Library(object):
         isBreakDetect = False
         
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '任意鍵繼續',
                 '任意鍵', 
-                _ResponseUnit(self.__gotoMainMenu, False),
+                ResponseUnit(GotoMainMenuCommand, False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '儲存檔案',
                 '確定要儲存檔案嗎', 
-                _ResponseUnit('s\r', False),
+                ResponseUnit('s\r', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '自存底稿',
                 '是否自存底稿', 
-                _ResponseUnit('y\r', True),
+                ResponseUnit('y\r', True),
             ),
             # 選擇簽名檔
-            _DetectUnit(
+            DetectUnit(
                 '選擇第 ' + str(SignType) + ' 簽名檔',
                 '選擇簽名檔', 
-                _ResponseUnit(str(SignType) + '\r', True),
+                ResponseUnit(str(SignType) + '\r', True),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '選擇第 ' + str(SignType) + ' 簽名檔',
                 'x=隨機', 
-                _ResponseUnit(str(SignType) + '\r', True),
+                ResponseUnit(str(SignType) + '\r', True),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '電子郵件選單',
                 '【電子郵件】', 
-                _ResponseUnit('\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '電子郵件選單',
                 '【主功能表】', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
         
         while not isBreakDetect:
@@ -1882,19 +1903,19 @@ class Library(object):
 
         result = None
         # \x1b\x4fA (上, 下右左 BCD)
-        SendMessage = self.__gotoMainMenu + 'P\x1b\x4fC\x1b\x4fD'
+        SendMessage = GotoMainMenuCommand + 'P\x1b\x4fC\x1b\x4fD'
         Refresh = True
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '我是' + self.__ID, 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
         
         while not isBreakDetect:
@@ -1979,21 +2000,21 @@ class Library(object):
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '取得使用者資料頁面',
                 '任意鍵', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '查無該使用者',
                 '【聊天說話】', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.NoUser
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
         
         while not isBreakDetect:
@@ -2123,20 +2144,20 @@ class Library(object):
         self.__APILock[ConnectIndex].acquire()
         if Board == '':
 
-            SendMessage = self.__gotoMainMenu + ' \x1aM0\r$'
+            SendMessage = GotoMainMenuCommand + ' \x1aM0\r$'
             Refresh = True
             isBreakDetect = False
             # 先後順序代表偵測的優先順序
             DetectTargetList = [
-                _DetectUnit(
+                DetectUnit(
                     '進入信箱',
                     '郵件選單', 
-                    _ResponseUnit('', False),
+                    ResponseUnit('', False),
                     BreakDetect=True,
                     ErrCode = ErrorCode.Success
                 ),
                 # 
-                self.__PTTBUGDetectUnit
+                PTTBUGDetectUnit
             ]
             
             while not isBreakDetect:
@@ -2256,19 +2277,19 @@ class Library(object):
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '讀取信件完畢',
                 '(100%)  目前顯示: 第', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '目前顯示', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
         
         FirstPage = ''
@@ -2462,51 +2483,51 @@ class Library(object):
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
             #
-            _DetectUnit(
+            DetectUnit(
                 'P 幣不足',
                 '你沒有那麼多Ptt幣喔!', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.NoEnoughP
             ),
-            _DetectUnit(
+            DetectUnit(
                 '輸入幸運兒帳號',
                 '這位幸運兒的id', 
-                _ResponseUnit(ID + '\r', False),
+                ResponseUnit(ID + '\r', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '輸入金額',
                 '要給他多少Ptt幣呢?', 
-                _ResponseUnit('\t' + str(Money) + '\r', False),
+                ResponseUnit('\t' + str(Money) + '\r', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '確認身分',
                 '完成交易前要重新確認您的身份', 
-                _ResponseUnit(YourPassword + '\r', False),
+                ResponseUnit(YourPassword + '\r', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '等待交易進行中',
                 '交易正在進行中', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '要修改紅包袋嗎？', 
-                _ResponseUnit('\r', False),
+                ResponseUnit('\r', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '交易成功',
                 '按任意鍵繼續', 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '主功能表', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -2583,50 +2604,50 @@ class Library(object):
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '輸入舊密碼',
                 '請輸入原密碼', 
-                _ResponseUnit(OldPassword + '\r', False),
+                ResponseUnit(OldPassword + '\r', False),
                 LogLV = LogLevel.DEBUG,
             ),
-            _DetectUnit(
+            DetectUnit(
                 '輸入新密碼',
                 '請設定新密碼', 
-                _ResponseUnit(NewPassword + '\r', False),
+                ResponseUnit(NewPassword + '\r', False),
                 LogLV = LogLevel.DEBUG,
             ),
-            _DetectUnit(
+            DetectUnit(
                 '確認新密碼',
                 '請檢查新密碼', 
-                _ResponseUnit(NewPassword + '\r', False),
+                ResponseUnit(NewPassword + '\r', False),
                 LogLV = LogLevel.DEBUG,
             ),
-            _DetectUnit(
+            DetectUnit(
                 '確認',
                 '您確定(Y/N)', 
-                _ResponseUnit('y\r', True),
+                ResponseUnit('y\r', True),
                 LogLV = LogLevel.DEBUG,
             ),
-            _DetectUnit(
+            DetectUnit(
                 '注意！您已將舊密碼更換為新密碼(' + NewPassword + ')',
                 '我是' + self.__ID, 
-                _ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '密碼不正確',
                 '您輸入的密碼不正確', 
-                _ResponseUnit('y\r', True),
+                ResponseUnit('y\r', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.WrongPassword
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '主功能表', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -2719,7 +2740,7 @@ class Library(object):
         Index = int(Index)
 
         # 前進至主頁面
-        SendMessage = self.__gotoMainMenu + 'qs' + Board + '\r\x03\x03 '
+        SendMessage = GotoMainMenuCommand + 'qs' + Board + '\r\x03\x03 '
         # 前進至文章
         if PostID != '':
             SendMessage += '#' + PostID + '\r\rr'
@@ -2733,35 +2754,35 @@ class Library(object):
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '編輯文章',
                 '編輯文章', 
-                _ResponseUnit(Content + '\r\x18s\r', True),
+                ResponseUnit(Content + '\r\x18s\r', True),
                 # 
             ),
-            _DetectUnit(
+            DetectUnit(
                 '不加簽名檔',
                 'x=隨機', 
-                _ResponseUnit('0\r', False),
+                ResponseUnit('0\r', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '送出回文',
                 '請按任意鍵繼續', 
-                _ResponseUnit(self.__gotoMainMenu, False),
+                ResponseUnit(GotoMainMenuCommand, False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '自存底稿',
                 '是否自存底稿', 
-                _ResponseUnit('y\r', False),
+                ResponseUnit('y\r', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '我是' + self.__ID, 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -2992,31 +3013,31 @@ class Library(object):
         self.__APILock[ConnectIndex].acquire()
 
         # 前進至主頁面
-        SendMessage = self.__gotoMainMenu
+        SendMessage = GotoMainMenuCommand
         SendMessage += 'T\rU\rs' + WaterBallTarget + '\rw'
 
         Refresh = True
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '打開呼叫器',
                 '您的呼叫器目前設定為關閉', 
-                _ResponseUnit('y', True),
+                ResponseUnit('y', True),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '丟 ' + WaterBallTarget + ' 水球',
                 '丟 ' + WaterBallTarget + ' 水球', 
-                _ResponseUnit(WaterBallContent + '\r\r', True),
+                ResponseUnit(WaterBallContent + '\r\r', True),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -3125,26 +3146,26 @@ class Library(object):
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '確定刪除文章',
                 '請確定刪除(Y/N)?', 
-                _ResponseUnit('y\r', False),
+                ResponseUnit('y\r', False),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '正在刪除文章',
                 '請按任意鍵繼續', 
-                _ResponseUnit(' ', False),
+                ResponseUnit(' ', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '', 
-                _ResponseUnit('', False),
+                ResponseUnit('', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
 
         while not isBreakDetect:
@@ -3250,7 +3271,7 @@ class Library(object):
 
         self.__APILock[ConnectIndex].acquire()
 
-        SendMessage = self.__gotoMainMenu + 'N\r'
+        SendMessage = GotoMainMenuCommand + 'N\r'
 
         # 前進至個別選單
         if inputFriendListType == FriendListType.GoodFriend:
@@ -3266,81 +3287,81 @@ class Library(object):
         isBreakDetect = False
         if inputOperateType == OperateType.Add:
             DetectTargetList = [
-                _DetectUnit(
+                DetectUnit(
                     '系統正在更新清單...',
                     '正在更新與同步線上使用者及好友名單', 
-                    _ResponseUnit(' ', False),
+                    ResponseUnit(' ', False),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '',
                     '請為此特別名單取一個簡短名稱:' + SpecialListName, 
-                    _ResponseUnit('\r', False),
+                    ResponseUnit('\r', False),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '',
                     '請為此特別名單取一個簡短名稱', 
-                    _ResponseUnit(self.__delAllWord + SpecialListName + '\r', False),
+                    ResponseUnit(self.__delAllWord + SpecialListName + '\r', False),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '新增名單',
                     '(A)增加', 
-                    _ResponseUnit('A\r' + ID + '\r\r', True),
+                    ResponseUnit('A\r' + ID + '\r\r', True),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '退出名單',
                     '【名單編輯】', 
-                    _ResponseUnit('\r', False),
+                    ResponseUnit('\r', False),
                     BreakDetect=True,
                     ErrCode = ErrorCode.Success
                 ),
-                self.__PTTBUGDetectUnit
+                PTTBUGDetectUnit
             ]
         elif inputOperateType == OperateType.Del:
             DetectTargetList = [
-                _DetectUnit(
+                DetectUnit(
                     '系統正在更新清單...',
                     '正在更新與同步線上使用者及好友名單', 
-                    _ResponseUnit(' ', False),
+                    ResponseUnit(' ', False),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '',
                     '請為此特別名單取一個簡短名稱:' + SpecialListName, 
-                    _ResponseUnit('\r', False),
+                    ResponseUnit('\r', False),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '',
                     '請為此特別名單取一個簡短名稱', 
-                    _ResponseUnit(self.__delAllWord + SpecialListName + '\r', False),
+                    ResponseUnit(self.__delAllWord + SpecialListName + '\r', False),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '刪除名單',
                     '(D)刪除', 
-                    _ResponseUnit('D\r' + ID + '\r\r', True),
+                    ResponseUnit('D\r' + ID + '\r\r', True),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '退出名單',
                     '【名單編輯】', 
-                    _ResponseUnit('\r', False),
+                    ResponseUnit('\r', False),
                     BreakDetect=True,
                     ErrCode = ErrorCode.Success
                 ),
-                self.__PTTBUGDetectUnit
+                PTTBUGDetectUnit
             ]
         elif inputOperateType == OperateType.Query:
             DetectTargetList = [
-                _DetectUnit(
+                DetectUnit(
                     '解析名單',
                     '名單上限', 
-                    _ResponseUnit('Q\r', False),
+                    ResponseUnit('Q\r', False),
                 ),
-                _DetectUnit(
+                DetectUnit(
                     '退出名單',
                     '【名單編輯】', 
-                    _ResponseUnit('\r', False),
+                    ResponseUnit('\r', False),
                     BreakDetect=True,
                     ErrCode = ErrorCode.Success
                 ),
-                self.__PTTBUGDetectUnit
+                PTTBUGDetectUnit
             ]
 
         ListPage = ''
@@ -3431,50 +3452,50 @@ class Library(object):
 
         self.__APILock[ConnectIndex].acquire()
 
-        SendMessage = self.__gotoMainMenu + 'T\rD\r'
+        SendMessage = GotoMainMenuCommand + 'T\rD\r'
 
         isBreakDetect = False
         # 先後順序代表偵測的優先順序
         DetectTargetList = [
-            _DetectUnit(
+            DetectUnit(
                 '水球頁面讀取完成',
                 '(100%)  目前', 
-                _ResponseUnit('qC\rY\r', True),
+                ResponseUnit('qC\rY\r', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '水球頁面讀取完成',
                 '頁 (100%)', 
-                _ResponseUnit('\x1b\x4fDC\rY\r', True),
+                ResponseUnit('\x1b\x4fDC\rY\r', True),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '目前顯示: 第', 
-                _ResponseUnit('', True),
+                ResponseUnit('', True),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '瀏覽 第', 
-                _ResponseUnit('', True),
+                ResponseUnit('', True),
             ),
-            _DetectUnit(
+            DetectUnit(
                 '無訊息記錄',
                 '◆ 暫無訊息記錄', 
-                _ResponseUnit('y\r', False),
+                ResponseUnit('y\r', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            _DetectUnit(
+            DetectUnit(
                 '',
                 '按任意鍵繼續', 
-                _ResponseUnit(' ', False),
+                ResponseUnit(' ', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            self.__PTTBUGDetectUnit
+            PTTBUGDetectUnit
         ]
         NoMsg = False
         PageIndex = 2
@@ -3574,37 +3595,37 @@ class Library(object):
             isBreakDetect = False
             # 先後順序代表偵測的優先順序
             if WaterBallOperateType == Information.WaterBallOperateType.Clear:
-                SendMessage = 'qC\rY\r' + self.__gotoMainMenu
+                SendMessage = 'qC\rY\r' + GotoMainMenuCommand
                 DetectTargetList = [
-                    _DetectUnit(
+                    DetectUnit(
                         '清除水球歷史紀錄完成',
                         '我是' + self.__ID, 
-                        _ResponseUnit(' ', False),
+                        ResponseUnit(' ', False),
                         BreakDetect=True,
                     ),
-                    self.__PTTBUGDetectUnit,
+                    PTTBUGDetectUnit,
                 ]
             elif WaterBallOperateType == Information.WaterBallOperateType.Mail:
-                SendMessage = 'qM\r' + self.__gotoMainMenu
+                SendMessage = 'qM\r' + GotoMainMenuCommand
                 DetectTargetList = [
-                    _DetectUnit(
+                    DetectUnit(
                         '水球歷史紀錄寄回信箱完成',
                         '我是' + self.__ID, 
-                        _ResponseUnit(' ', False),
+                        ResponseUnit(' ', False),
                         BreakDetect=True,
                     ),
-                    self.__PTTBUGDetectUnit,
+                    PTTBUGDetectUnit,
                 ]
             else:
-                SendMessage = 'qR\r' + self.__gotoMainMenu
+                SendMessage = 'qR\r' + GotoMainMenuCommand
                 DetectTargetList = [
-                    _DetectUnit(
+                    DetectUnit(
                         '保存水球歷史紀錄',
                         '我是' + self.__ID, 
-                        _ResponseUnit(' ', False),
+                        ResponseUnit(' ', False),
                         BreakDetect=True,
                     ),
-                    self.__PTTBUGDetectUnit,
+                    PTTBUGDetectUnit,
                 ]
 
             while not isBreakDetect:
@@ -3648,6 +3669,7 @@ class Library(object):
 
         self.__ErrorCode = ErrCode
         return ErrCode, result
+        
     def getErrorCode(self):
         return self.__ErrorCode
     def readPostFile(self, FileName):
