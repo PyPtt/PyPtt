@@ -769,16 +769,20 @@ if __name__ == '__main__':
     # 如果您的網路連線品質不佳，可以試著調整連線等待時間參數
     # PTTBot = PTT.Library(ID, Password, PreWait=0.1, EveryWait=0.2, MaxEveryWait=1, MinEveryWait=1)
 
-    PTTBot = PTT.Library(ID, Password)
+    PTTBot = PTT.Library()
 
-    ErrCode = PTTBot.login()
+    # try:
+    #     PTTBot.register('NewID')
+    # except:
+
+    ErrCode = PTTBot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')
         sys.exit()
     
     try:
-        # PostDemo()
-        # PushDemo()
+        PostDemo()
+        PushDemo()
         # GetNewestIndexDemo()
         # GetPostDemo()
         # MailDemo()
@@ -794,6 +798,7 @@ if __name__ == '__main__':
         # GetFriendListDemo()
         # GetHistoricalWaterBallDemo()
         # SendMessageDemo()
+
         pass
     except Exception as e:
         

@@ -27,3 +27,4 @@ class ErrorCode(object):
         self.UserInterrupt =                   22
         self.RemoteHostDown =                  23
         self.UserNotOnline =                   24
+        self.MustRunBeforeLogin =              25

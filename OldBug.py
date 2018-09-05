@@ -4,39 +4,62 @@ import json
 import getpass
 import codecs
 from PTTLibrary import PTT
-from PTTLibrary import Big5uao
 
 PTTBot = None
 
 ResPath = './OldBug/'
+def End():
+    PTTBot.logout()
+    sys.exit()
 
-def Big5uaoTest():
+def FastPushError():
+
+    Board = 'Test'
+
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        End()
     
-    Big5FileName = ResPath + 'Big5.txt'
-    UTF8OutFileName = ResPath + 'Utf8Out.txt'
-    Big5OutFileName = ResPath + 'Big5uaoOut.txt'
+    if NewestIndex == -1:
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        End()
 
-    s = open(Big5FileName,"rb").read().decode("Big5uao").encode("utf8")
-    open(UTF8OutFileName,"wb").write(s)
+    PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
 
-    if open(UTF8OutFileName,"r", encoding = 'utf-8').read() != '哈囉世界這是大五中文測試':
-        print('Big5uao decode error')
-        return False
-    
-    s = open(UTF8OutFileName,"rb").read().decode("utf8").encode("Big5uao")
-    open(Big5OutFileName,"wb").write(s)
+    for i in range(100):
+        Stop = False
 
-    if open(Big5OutFileName,"r", encoding = 'big5').read() != '哈囉世界這是大五中文測試':
-        print('Big5uao encode error')
-        return False
-    
-    return True
+        while True:
 
+            PTTBot.Log('-----------------')
+            ErrCode = PTTBot.push(Board, PTT.PushType.Push, '快速推文測試 手速 400 ' + str(i), PostIndex=NewestIndex)
+            PTTBot.Log('-----------------=========')
+            if ErrCode == PTT.ErrorCode.Success:
+                PTTBot.Log('使用文章編號: 推文成功')
+                break
+            elif ErrCode == PTT.ErrorCode.ErrorInput:
+                PTTBot.Log('使用文章編號: 參數錯誤')
+                Stop = True
+                break
+            elif ErrCode == PTT.ErrorCode.NoPermission:
+                PTTBot.Log('使用文章編號: 無發文權限')
+                Stop = True
+                break
+            elif ErrCode == PTT.ErrorCode.NoFastPush:
+                PTTBot.Log('禁止快速推文 等待一秒後重試')
+                time.sleep(1)
+                PTTBot.Log('禁止快速推文 等待一秒後重試 QQ')
+            else:
+                PTTBot.Log('使用文章編號: 推文失敗 ErrCode: ' + str(ErrCode))
+                Stop = True
+                break
+
+        if Stop:
+            break
+    return
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
-
-    print('Big5uao 測試: ' + str(Big5uaoTest()))
-    sys.exit()
 
     try:
         with open('Account.txt') as AccountFile:
@@ -55,7 +78,7 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-
+        FastPushError()
         pass
     except Exception as e:
         print(e)
