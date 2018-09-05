@@ -218,7 +218,15 @@ class Library(object):
                 self.Log('WaterBallHandler 介面錯誤', LogLevel.WARNING)
             except:
                 self.Log('WaterBallHandler 未知錯誤', LogLevel.WARNING)
-    def __APICheck(self):
+    def __APICheck(self, API):
+        # sys._getframe().f_code.co_name
+        # self.__isConnected[ConnectIndex]
+        
+        if API == 'register' and self.__isConnected[0]:
+            self.Log('請勿在登入後，執行註冊功能', LogLevel.CRITICAL)
+            self.__ErrorCode = ErrorCode.MustRunBeforeLogin
+            return False
+
         if self.__MailFullAPILock:
             self.Log('機器人已被卡在信箱區，僅能取得信件與最新信件編號與寄信', LogLevel.CRITICAL)
             self.Log('請清理信箱並重新登入機器人', LogLevel.CRITICAL)
@@ -286,7 +294,18 @@ class Library(object):
                     
         return ErrorCode.Success
     def operatePTT(self, SendMessage):
-        return self.__operatePTT(0, SendMessage=SendMessage, Refresh=True)
+        
+        self.__IdleTime = 0
+        ConnectIndex = 0
+        
+        self.__APILock[ConnectIndex].acquire()
+
+        result = self.__operatePTT(0, SendMessage=SendMessage, Refresh=True)
+
+        self.__WaterBallProceeor()
+        self.__APILock[ConnectIndex].release()
+        
+        return result
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
@@ -647,6 +666,7 @@ class Library(object):
             else:
                 self.Log('頻道 ' + str(ConnectIndex) + ' 無法偵測游標。重新執行連線')
                 # return ErrorCode.UnknowError
+        
         return ErrorCode.Success
     
     def login(self, ID='', Password=''):
@@ -864,7 +884,7 @@ class Library(object):
         ConnectIndex = 0
         self.__IdleTime = 0
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
         try:
@@ -1035,7 +1055,7 @@ class Library(object):
         self.__IdleTime = 0
         ConnectIndex = 0
         
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
         try:
@@ -1103,6 +1123,8 @@ class Library(object):
 
             if ErrCode != ErrorCode.Success:
                 self.__ErrorCode = ErrCode
+                self.__WaterBallProceeor()
+                self.__APILock[ConnectIndex].release()
                 return ErrCode
 
         
@@ -1238,7 +1260,7 @@ class Library(object):
         ConnectIndex = _ConnectIndex
         result = None
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode, result
         try:
             Board = str(Board)
@@ -1881,7 +1903,7 @@ class Library(object):
         ConnectIndex = 0
         result = None
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode, result
 
         self.__APILock[ConnectIndex].acquire()
@@ -1982,7 +2004,7 @@ class Library(object):
 
         result = None
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode, result
 
         try:
@@ -2211,7 +2233,7 @@ class Library(object):
             
         else:
             
-            if not self.__APICheck():
+            if not self.__APICheck(sys._getframe().f_code.co_name):
                 self.__APILock[ConnectIndex].release()
                 return self.__ErrorCode, result
 
@@ -2459,7 +2481,7 @@ class Library(object):
         self.__IdleTime = 0
         ConnectIndex = 0
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
         try:
@@ -2575,7 +2597,7 @@ class Library(object):
 
         ErrCode = ErrorCode.Success
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
         try:
@@ -2698,7 +2720,7 @@ class Library(object):
         ConnectIndex = 0
         ErrCode = ErrorCode.Success
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
         try:
@@ -2871,7 +2893,7 @@ class Library(object):
     def crawlBoard(self, Board, PostHandler, MaxMultiLogin=2, StartIndex=0, EndIndex=0, Search=''):
         ErrCode = ErrorCode.Success
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode, 0, 0
 
         try:
@@ -2985,7 +3007,7 @@ class Library(object):
         ConnectIndex = 0
         ErrCode = ErrorCode.Success
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
         try:
@@ -3088,7 +3110,7 @@ class Library(object):
         ConnectIndex = 0
         ErrCode = ErrorCode.Success
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
         try:
@@ -3216,7 +3238,7 @@ class Library(object):
         result = None
         ConnectIndex = 0
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
         try:
@@ -3429,7 +3451,7 @@ class Library(object):
         result = []
         ConnectIndex = 0
 
-        if not self.__APICheck():
+        if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode, result
 
         try:
@@ -3669,7 +3691,72 @@ class Library(object):
 
         self.__ErrorCode = ErrCode
         return ErrCode, result
+    def register(self, newID):
+        self.__IdleTime = 0
+        ErrCode = ErrorCode.Success
+        ConnectIndex = 0
+
+        if not self.__APICheck(sys._getframe().f_code.co_name):
+            return self.__ErrorCode
+
+        try:
+            newID = str(newID)
+        except:
+            self.Log('輸入錯誤', LogLevel.WARNING)
+
+            ErrCode = ErrorCode.ErrorInput
+            self.__ErrorCode = ErrCode
+            return ErrCode
+
+        self.__APILock[ConnectIndex].acquire()
+
+        SendMessage = ''
         
+        Refresh = False
+        isBreakDetect = False
+        # 先後順序代表偵測的優先順序
+        DetectTargetList = [
+            PTTBUGDetectUnit
+        ]
+
+        while not isBreakDetect:
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                break
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                self.__APILock[ConnectIndex].release()
+
+                self.__ErrorCode = ErrCode
+                return ErrCode
+
+            isDetectedTarget = False
+            
+            for DetectTarget in DetectTargetList:
+                if DetectTarget.isMatch(self.__ReceiveData[ConnectIndex]):
+                    isDetectedTarget = True
+                    
+                    self.Log(DetectTarget.getDisplayMsg())
+
+                    if DetectTarget.isBreakDetect():
+                        isBreakDetect = True
+                        ErrCode = DetectTarget.getErrorCode()
+                        break
+
+                    break
+
+            if not isDetectedTarget:
+
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.Log('無法解析的狀態! PTT Library 緊急停止')
+                self.logout()
+                sys.exit()
+
+        self.__APILock[ConnectIndex].release()
+        
+        self.__ErrorCode = ErrCode
+        return ErrCode
     def getErrorCode(self):
         return self.__ErrorCode
     def readPostFile(self, FileName):
