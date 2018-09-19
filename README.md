@@ -17,6 +17,8 @@
 ###### github: https://github.com/Truth0906/PTTLibrary
 ###### Pypi: https://pypi.org/project/PTTLibrary/
 
+###### 徵求快樂開發夥伴，歡迎開 issue 討論新想法或者發起 pull request
+
 版本
 -------------------
 ###### 0.7.6
