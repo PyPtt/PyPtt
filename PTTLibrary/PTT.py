@@ -545,7 +545,7 @@ class Library(object):
                 DetectUnit(
                     '任意鍵繼續',
                     '任意鍵', 
-                    ResponseUnit(' ', True)
+                    ResponseUnit(GotoMainMenuCommand, True)
                 ),
                 DetectUnit(
                     '頻道 ' + str(ConnectIndex) + ' 放棄未完成文章',
@@ -605,7 +605,7 @@ class Library(object):
 
             while not isBreakDetect:
 
-                self.Log('SendMessage: ->' + SendMessage + '<-')
+                # self.Log('SendMessage: ->' + SendMessage + '<-')
                 ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
                 if ErrCode == ErrorCode.WaitTimeout:
                     self.Log('登入超時重新嘗試')
@@ -690,6 +690,9 @@ class Library(object):
         if len(self.__Password) > 8:
             self.__Password = self.__Password[:8]
         
+        self.__ID = self.__ID.replace('\r', '').replace('\n', '')
+        self.__Password = self.__Password.replace('\r', '').replace('\n', '')
+
         ErrCode = self.__connectRemote(0)
         
         if ErrCode == ErrorCode.Success:
