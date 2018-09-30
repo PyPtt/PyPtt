@@ -613,7 +613,7 @@ class Library(object):
                     self.__ErrorCode = ErrCode
                     return ErrCode
                 
-                # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+                self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
                 isDetectedTarget = False
 
