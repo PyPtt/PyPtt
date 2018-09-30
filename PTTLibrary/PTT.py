@@ -604,6 +604,8 @@ class Library(object):
             MaxLoginFail = 2
 
             while not isBreakDetect:
+
+                self.Log('SendMessage: ->' + SendMessage + '<-')
                 ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
                 if ErrCode == ErrorCode.WaitTimeout:
                     self.Log('登入超時重新嘗試')
@@ -684,6 +686,9 @@ class Library(object):
                 TempPW += '*'
             
             self.Log('密碼: ' + TempPW)
+        
+        if len(self.__Password) > 8:
+            self.__Password = self.__Password[:8]
         
         ErrCode = self.__connectRemote(0)
         
