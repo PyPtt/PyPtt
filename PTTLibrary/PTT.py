@@ -1374,9 +1374,6 @@ class Library(object):
                 return ErrorCode.ParseError, None
             if re.search("[0-9][0-9]/[0-9][0-9]", PushTime) == None:
                 return ErrorCode.ParseError, None
-            
-            # QQ = re.search("[0-9][0-9]/[0-9][0-9]", PushTime)
-            # print(QQ.group())
 
             # print('PushAuthor: =' + PushAuthor + '=')
             # print('PushContent: =' + PushContent + '=')
@@ -1656,14 +1653,6 @@ class Library(object):
 
                     if OverlapLine >= 1 and LastPageIndex != 0:
 
-                        # for line in CurrentPage.split('\r'):
-                        #     print("r line: " + line)
-                        # for line in CurrentPageList:
-                        #     print("line: " + line)
-                        # for line in FixedList:
-                        #     print("Fixed line: " + line)
-
-                        # print(CurrentPageList)
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
                         # print(CurrentPageList)
@@ -1740,7 +1729,7 @@ class Library(object):
         for line in PostContentListTemp:
             # print('! ' + line)
             PostContentList.append(line)
-            
+
             _, CurrentPush = self.__parsePush(line)
             if CurrentPush != None:
                 # print('PUSH!!!: ' + line)
