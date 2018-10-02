@@ -1,3 +1,5 @@
+from PTTLibrary import Version
+
 """A setuptools based setup module.
 
 See:
@@ -11,12 +13,12 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-here = path.abspath(path.dirname(__file__))
+# here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
-
+# with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+#     long_description = f.read()
+Version = Version.Ver
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
@@ -40,7 +42,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.5.0',  # Required
+    version=Version,  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -55,7 +57,7 @@ setup(
     #
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
-    long_description=long_description,  # Optional
+    # long_description=long_description,  # Optional
 
     # This should be a valid link to your project's main homepage.
     #
@@ -69,7 +71,7 @@ setup(
 
     # This should be a valid email address corresponding to the author listed
     # above.
-    author_email='thetruth0906@livemail.tw',  # Optional
+    author_email='thetruth0906@gmail.com',  # Optional
 
     # Classifiers help users find your project by categorizing it.
     #
@@ -84,10 +86,11 @@ setup(
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
+        'Topic :: Communications :: BBS',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
         # Pick your license as you wish
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved :: MIT License',
         
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
@@ -99,7 +102,7 @@ setup(
     # project page. What does your project relate to?
     #
     # Note that this is a string of words separated by whitespace, not a list.
-    keywords=['PTT', 'crawler', 'bot'],  # Optional
+    keywords=['PTT', 'crawler', 'bot', 'library'],  # Optional
 
     python_requires='>=3',
     # You can just specify package directories manually here if your project is
@@ -120,7 +123,7 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['requests', 'BeautifulSoup4', 'progressbar2'],  # Optional
+    install_requires=['progressbar2', 'paramiko', 'uao'],  # Optional
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
