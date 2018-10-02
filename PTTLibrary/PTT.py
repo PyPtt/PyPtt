@@ -134,7 +134,7 @@ class Library(object):
 
         self.__delAllWord = '\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08'
 
-        self.__ShowProgressBar =             True
+        self.__ShowProgressBar =                True
 
         self.__IdleTime =                       0
         self.__MaxIdleTime =                    MaxIdleTime
@@ -440,28 +440,18 @@ class Library(object):
         # self.Log('before: ' + str(screen))
         # # [6;5H
 
-        NewLineMark = 6
-        PreNewLineMark = NewLineMark - 1
-        while '[' + str(NewLineMark) + ';5H' in screen:
+        PreNewLineMark = -1
+        for NewLineMark in range(1, 30):
+            # print(NewLineMark)
+                if '[' + str(NewLineMark) + ';5H' in screen:
+                    if PreNewLineMark == -1:
+                        screen = screen.replace('[' + str(NewLineMark) + ';5H', '\n')
+                    else:
+                        screen = screen.replace('[' + str(NewLineMark) + ';5H', '\n' * (NewLineMark - PreNewLineMark))
 
-            # 找先前的換行標記，以判斷這次要多幾個換行
-            if '[' + str(NewLineMark) + ';5H' in screen:
-                # print('Find pre new line mark: ' + str(PreNewLineMark) + ' ~ ' + str(NewLineMark))
-                screen = screen.replace('[' + str(NewLineMark) + ';5H', '\n' * (NewLineMark - PreNewLineMark))
-
-            # 找下一個換行，可能會跳所以用 for 來找一下
-            FindNext = False
-            for NextNewLineMark in range(NewLineMark + 1, NewLineMark + 19):
-                
-                if '[' + str(NextNewLineMark) + ';5H' in screen:
-                    # print('Find new line mark: ' + str(NextNewLineMark))
                     PreNewLineMark = NewLineMark
-                    NewLineMark = NextNewLineMark
-                    FindNext = True
-                    break
-            
-            if not FindNext:
-                break
+
+        screen = screen.replace('[2J    ', '')
 
         screen = re.sub('\[[\d+;]*[mH]', '', screen)
         # remove carriage return
@@ -1351,8 +1341,7 @@ class Library(object):
         ErrCode = ErrorCode.Success
         CurrentPush = None
         
-        while line.startswith(' '):
-            line = line[1:]
+        line = line.lstrip()
         
         CurrentPushType = PushType.Unknow
 
