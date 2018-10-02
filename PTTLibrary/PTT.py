@@ -1369,6 +1369,15 @@ class Library(object):
                 PushContent = PushContent[:-1]
 
             PushTime = line[-11:]
+
+            if re.search("[0-9][0-9]:[0-9][0-9]", PushTime) == None:
+                return ErrorCode.ParseError, None
+            if re.search("[0-9][0-9]/[0-9][0-9]", PushTime) == None:
+                return ErrorCode.ParseError, None
+            
+            # QQ = re.search("[0-9][0-9]/[0-9][0-9]", PushTime)
+            # print(QQ.group())
+
             # print('PushAuthor: =' + PushAuthor + '=')
             # print('PushContent: =' + PushContent + '=')
             # print('PushTime: =' + PushTime + '=')
@@ -1729,49 +1738,14 @@ class Library(object):
         PostContentList = []
         PostPushList = []
         for line in PostContentListTemp:
-            print('! ' + line)
-            # if len(PostContentList) == 0:
-            #     # print('QQ: ' + str(PostIP))
-            #     if str(PostIP) in line:
-            #         PostContentList = PostContentListTemp[:PostContentListTemp.index(line)]
-            # else:
-            #     print('push: ' + line)
-            #     while line.startswith(' '):
-            #         line = line[1:]
-                
-            #     CurrentPushType = PushType.Unknow
-
-            #     if line.startswith('推'):
-            #         CurrentPushType = PushType.Push
-            #     elif line.startswith('噓'):
-            #         CurrentPushType = PushType.Boo
-            #     elif line.startswith('→'):
-            #         CurrentPushType = PushType.Arrow
-                
-            #     if CurrentPushType != PushType.Unknow:
-            #         # print(line)
-
-            #         PushAuthor = line
-            #         PushAuthor = PushAuthor[2:]
-            #         PushAuthor = PushAuthor[:PushAuthor.find(':')]
-            #         while PushAuthor.endswith(' '):
-            #             PushAuthor = PushAuthor[:-1]
-                    
-            #         Target = ': '
-            #         PushContent = line[:-11]
-            #         PushContent = PushContent[PushContent.find(Target) + len(Target):]
-            #         # PushContent = PushContent[:PushContent.find(' ')]
-            #         while PushContent.endswith(' '):
-            #             PushContent = PushContent[:-1]
-
-            #         PushTime = line[-11:]
-            #         # print('PushAuthor: =' + PushAuthor + '=')
-            #         # print('PushContent: =' + PushContent + '=')
-            #         # print('PushTime: =' + PushTime + '=')
-
-            #         CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushTime)
-            #         PostPushList.append(CurrentPush)
-
+            # print('! ' + line)
+            PostContentList.append(line)
+            
+            _, CurrentPush = self.__parsePush(line)
+            if CurrentPush != None:
+                # print('PUSH!!!: ' + line)
+                PostPushList.append(CurrentPush)
+            
         PostContent = '\n'.join(PostContentList)
         PosRawData = PostRawContentListTemp
 

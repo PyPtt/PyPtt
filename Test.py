@@ -109,7 +109,7 @@ def showPost(Post):
         
         Author = Push.getAuthor()
         Content = Push.getContent()
-        print(Author + ': ' + Content)
+        print('推文: ' + Author + ': ' + Content)
         
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
 
@@ -141,7 +141,7 @@ def GetPostDemo():
     # getContent                推文內文
     # getTime                   推文時間
 
-    Test = True
+    Test = False
 
     if not Test:
 
@@ -166,7 +166,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 778939
+            NewestIndex = 782449
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
 
         for i in range(TryPost):
@@ -181,16 +181,17 @@ def GetPostDemo():
                 PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
                 continue
             
-            PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
+            if not Test:
+                PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
 
-            # 使用 PostID 模式可能會撞到 PTT BUG
-            # ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
-            # if ErrCode == PTT.ErrorCode.PostDeleted:
-            #     PTTBot.Log('文章已經被刪除')
-            #     sys.exit()
-            # elif ErrCode != PTT.ErrorCode.Success:
-            #     PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-            #     sys.exit()
+                # 使用 PostID 模式可能會撞到 PTT BUG
+                ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
+                if ErrCode == PTT.ErrorCode.PostDeleted:
+                    PTTBot.Log('文章已經被刪除')
+                    sys.exit()
+                elif ErrCode != PTT.ErrorCode.Success:
+                    PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+                    sys.exit()
             
             showPost(Post)
 
