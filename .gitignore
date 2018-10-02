@@ -5,3 +5,5 @@ dist/
 /CrawlBoardResult.txt
 /.pypirc
 PTTLibrary.egg-info/
+*Out.txt
+/Big5Data.txt
