@@ -85,13 +85,13 @@ def GetNewestIndexDemo():
 def showPost(Post):
     PTTBot.Log('文章代碼: ' + Post.getID())
     PTTBot.Log('作者: ' + Post.getAuthor())
-    PTTBot.Log('時間: ' + Post.getDate())
     PTTBot.Log('標題: ' + Post.getTitle())
+    PTTBot.Log('時間: ' + Post.getDate())
     PTTBot.Log('價錢: ' + str(Post.getMoney()))
     PTTBot.Log('IP: ' + Post.getIP())
     PTTBot.Log('網址: ' + Post.getWebUrl())
 
-    # PTTBot.Log('內文: ' + Post.getContent())
+    PTTBot.Log('內文: ' + Post.getContent())
 
     PushCount = 0
     BooCount = 0
@@ -107,10 +107,9 @@ def showPost(Post):
         elif Push.getType() == PTT.PushType.Arrow:
             ArrowCount += 1
         
-        # Author = Push.getAuthor()
-        # Content = Push.getContent()
-        
-        # print(Author + ': ' + Content)
+        Author = Push.getAuthor()
+        Content = Push.getContent()
+        print(Author + ': ' + Content)
         
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
 
@@ -141,23 +140,35 @@ def GetPostDemo():
     # getAuthor                 推文ID
     # getContent                推文內文
     # getTime                   推文時間
-    
-    TryPost = 3
-    
-    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+
+    Test = True
+
+    if not Test:
+
+        TryPost = 3
+        BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    else:
+        # 測試用
+        BoardList = ['Gossiping']
+        TryPost = 1
 
     for Board in BoardList:
-        
-        ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
-        if ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-            return False
-        
-        if NewestIndex == -1:
-            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-            return False
-        
-        PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+
+        if not Test:
+            ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+            if ErrCode != PTT.ErrorCode.Success:
+                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+                return False
+            
+            if NewestIndex == -1:
+                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+                return False
+            
+            PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+        else:
+            NewestIndex = 778939
+            PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
+
         for i in range(TryPost):
             PTTBot.Log('-' * 50)
             PTTBot.Log(str(i) + ' 測試 ' + Board + ' ' + str(NewestIndex - i))
@@ -173,13 +184,13 @@ def GetPostDemo():
             PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
 
             # 使用 PostID 模式可能會撞到 PTT BUG
-            ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
-            if ErrCode == PTT.ErrorCode.PostDeleted:
-                PTTBot.Log('文章已經被刪除')
-                sys.exit()
-            elif ErrCode != PTT.ErrorCode.Success:
-                PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-                sys.exit()
+            # ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
+            # if ErrCode == PTT.ErrorCode.PostDeleted:
+            #     PTTBot.Log('文章已經被刪除')
+            #     sys.exit()
+            # elif ErrCode != PTT.ErrorCode.Success:
+            #     PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+            #     sys.exit()
             
             showPost(Post)
 
@@ -781,10 +792,10 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-        PostDemo()
-        PushDemo()
+        # PostDemo()
+        # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()

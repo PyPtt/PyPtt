@@ -437,6 +437,32 @@ class Library(object):
         if not screen:
             return screen
             # remove color codes
+        # self.Log('before: ' + str(screen))
+        # # [6;5H
+
+        NewLineMark = 6
+        PreNewLineMark = NewLineMark - 1
+        while '[' + str(NewLineMark) + ';5H' in screen:
+
+            # 找先前的換行標記，以判斷這次要多幾個換行
+            if '[' + str(NewLineMark) + ';5H' in screen:
+                # print('Find pre new line mark: ' + str(PreNewLineMark) + ' ~ ' + str(NewLineMark))
+                screen = screen.replace('[' + str(NewLineMark) + ';5H', '\n' * (NewLineMark - PreNewLineMark))
+
+            # 找下一個換行，可能會跳所以用 for 來找一下
+            FindNext = False
+            for NextNewLineMark in range(NewLineMark + 1, NewLineMark + 19):
+                
+                if '[' + str(NextNewLineMark) + ';5H' in screen:
+                    # print('Find new line mark: ' + str(NextNewLineMark))
+                    PreNewLineMark = NewLineMark
+                    NewLineMark = NextNewLineMark
+                    FindNext = True
+                    break
+            
+            if not FindNext:
+                break
+
         screen = re.sub('\[[\d+;]*[mH]', '', screen)
         # remove carriage return
         screen = re.sub(r'[\r]', '', screen)
@@ -445,6 +471,7 @@ class Library(object):
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         screen = re.sub(r'[\x0e-\x1f]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
+        # self.Log('after: ' + str(screen))
         return screen
     def __wait_str(self, ConnectIndex):
         ch = ''
@@ -1318,6 +1345,47 @@ class Library(object):
 
         self.__ErrorCode = ErrCode
         return ErrCode, Post
+    def __parsePush(self, line):
+        print('__parsePush line: ' + line)
+
+        ErrCode = ErrorCode.Success
+        CurrentPush = None
+        
+        while line.startswith(' '):
+            line = line[1:]
+        
+        CurrentPushType = PushType.Unknow
+
+        if line.startswith('推'):
+            CurrentPushType = PushType.Push
+        elif line.startswith('噓'):
+            CurrentPushType = PushType.Boo
+        elif line.startswith('→'):
+            CurrentPushType = PushType.Arrow
+        
+        if CurrentPushType != PushType.Unknow:
+            # print(line)
+
+            PushAuthor = line
+            PushAuthor = PushAuthor[2:]
+            PushAuthor = PushAuthor[:PushAuthor.find(':')]
+            while PushAuthor.endswith(' '):
+                PushAuthor = PushAuthor[:-1]
+            
+            Target = ': '
+            PushContent = line[:-11]
+            PushContent = PushContent[PushContent.find(Target) + len(Target):]
+            # PushContent = PushContent[:PushContent.find(' ')]
+            while PushContent.endswith(' '):
+                PushContent = PushContent[:-1]
+
+            PushTime = line[-11:]
+            # print('PushAuthor: =' + PushAuthor + '=')
+            # print('PushContent: =' + PushContent + '=')
+            # print('PushTime: =' + PushTime + '=')
+
+            CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushTime)
+        return ErrCode, CurrentPush
     def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
         
         ConnectIndex = _ConnectIndex
@@ -1563,8 +1631,8 @@ class Library(object):
                         CurrentPage = CurrentPage[3:]
                         CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
-
                     PageLineRangeTemp = CurrentPageList.pop()
+
                     # CurrentRawPageList.pop()
                     # 自幹一個 list pop
                     LastIndex = 0
@@ -1589,8 +1657,18 @@ class Library(object):
                         OverlapLine += 1
 
                     if OverlapLine >= 1 and LastPageIndex != 0:
+
+                        # for line in CurrentPage.split('\r'):
+                        #     print("r line: " + line)
+                        # for line in CurrentPageList:
+                        #     print("line: " + line)
+                        # for line in FixedList:
+                        #     print("Fixed line: " + line)
+
+                        # print(CurrentPageList)
                         # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
+                        # print(CurrentPageList)
                         # CurrentRawPageList = CurrentRawPageList[OverlapLine:]
                         if not isFirstPage:
                             for i in range(OverlapLine):
@@ -1662,47 +1740,48 @@ class Library(object):
         PostContentList = []
         PostPushList = []
         for line in PostContentListTemp:
-            # print('! ' + line)
-            if len(PostContentList) == 0:
-                # print('QQ: ' + str(PostIP))
-                if str(PostIP) in line:
-                    PostContentList = PostContentListTemp[:PostContentListTemp.index(line)]
-            else:
-                while line.startswith(' '):
-                    line = line[1:]
+            print('! ' + line)
+            # if len(PostContentList) == 0:
+            #     # print('QQ: ' + str(PostIP))
+            #     if str(PostIP) in line:
+            #         PostContentList = PostContentListTemp[:PostContentListTemp.index(line)]
+            # else:
+            #     print('push: ' + line)
+            #     while line.startswith(' '):
+            #         line = line[1:]
                 
-                CurrentPushType = PushType.Unknow
+            #     CurrentPushType = PushType.Unknow
 
-                if line.startswith('推'):
-                    CurrentPushType = PushType.Push
-                elif line.startswith('噓'):
-                    CurrentPushType = PushType.Boo
-                elif line.startswith('→'):
-                    CurrentPushType = PushType.Arrow
+            #     if line.startswith('推'):
+            #         CurrentPushType = PushType.Push
+            #     elif line.startswith('噓'):
+            #         CurrentPushType = PushType.Boo
+            #     elif line.startswith('→'):
+            #         CurrentPushType = PushType.Arrow
                 
-                if CurrentPushType != PushType.Unknow:
-                    # print(line)
+            #     if CurrentPushType != PushType.Unknow:
+            #         # print(line)
 
-                    PushAuthor = line
-                    PushAuthor = PushAuthor[2:]
-                    PushAuthor = PushAuthor[:PushAuthor.find(':')]
-                    while PushAuthor.endswith(' '):
-                        PushAuthor = PushAuthor[:-1]
+            #         PushAuthor = line
+            #         PushAuthor = PushAuthor[2:]
+            #         PushAuthor = PushAuthor[:PushAuthor.find(':')]
+            #         while PushAuthor.endswith(' '):
+            #             PushAuthor = PushAuthor[:-1]
                     
-                    Target = ': '
-                    PushContent = line[:-11]
-                    PushContent = PushContent[PushContent.find(Target) + len(Target):]
-                    # PushContent = PushContent[:PushContent.find(' ')]
-                    while PushContent.endswith(' '):
-                        PushContent = PushContent[:-1]
+            #         Target = ': '
+            #         PushContent = line[:-11]
+            #         PushContent = PushContent[PushContent.find(Target) + len(Target):]
+            #         # PushContent = PushContent[:PushContent.find(' ')]
+            #         while PushContent.endswith(' '):
+            #             PushContent = PushContent[:-1]
 
-                    PushTime = line[-11:]
-                    # print('PushAuthor: =' + PushAuthor + '=')
-                    # print('PushContent: =' + PushContent + '=')
-                    # print('PushTime: =' + PushTime + '=')
+            #         PushTime = line[-11:]
+            #         # print('PushAuthor: =' + PushAuthor + '=')
+            #         # print('PushContent: =' + PushContent + '=')
+            #         # print('PushTime: =' + PushTime + '=')
 
-                    CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushTime)
-                    PostPushList.append(CurrentPush)
+            #         CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushTime)
+            #         PostPushList.append(CurrentPush)
 
         PostContent = '\n'.join(PostContentList)
         PosRawData = PostRawContentListTemp
