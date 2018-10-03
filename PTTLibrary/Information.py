@@ -115,10 +115,11 @@ class UserInformation(object):
         return self.__Chess
         
 class PushInformation(object):
-    def __init__(self, PushType, Author, PushContent, PushTime):
+    def __init__(self, PushType, Author, PushContent, PushIP, PushTime):
         self.__Type = int(PushType)
         self.__Author = str(Author)
         self.__Content = str(PushContent)
+        self.__IP = str(PushIP)
         self.__Time = str(PushTime)
 
     def getType(self):
@@ -127,6 +128,8 @@ class PushInformation(object):
         return self.__Author
     def getContent(self):
         return self.__Content
+    def getIP(self):
+        return self.__IP
     def getTime(self):
         return self.__Time
         
