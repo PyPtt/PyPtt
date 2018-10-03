@@ -42,7 +42,7 @@ def PostDemo():
             for ii in range(128):
                 Content += '測試行 ' + str(ii) + '\r'
         
-        ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + Content, 1, 0)
+        ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試 ' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + Content, 1, 0)
         if ErrCode == PTT.ErrorCode.Success:
             PTTBot.Log('在 Test 板發文成功')
         elif ErrCode == PTT.ErrorCode.NoPermission:
@@ -187,7 +187,7 @@ def GetPostDemo():
             ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
             # Ex:
             # ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i, SearchType = PTT.PostSearchType.Keyword, Search='爆掛')
-            
+
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')
                 continue
@@ -369,14 +369,32 @@ def CrawlBoardDemo():
     # PTTBot.crawlBoard('Wanted', PostHandler)
     # 這樣就會全部文章都會爬下來
 
+    CrawPost = 100
+
     ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號成功: ' + str(NewestIndex))
     else:
         PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號失敗')
-        return False    
+        return False
     
-    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - 499, EndIndex=NewestIndex)
+    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost, EndIndex=NewestIndex)
+
+    # MaxMultiLogin             多重登入數量
+    # SearchType                搜尋種類
+
+    ################## 文章搜尋資訊 Post Search Type information ###
+    # Unknow                    不搜尋 無作用
+    # Keyword                   搜尋關鍵字
+    # Author                    搜尋作者
+    # Push                      搜尋推文數
+    # Mark                      搜尋標記 m or s
+    # Money                     搜尋稿酬
+    # ex: PTT.PostSearchType.Keyword
+    
+    # Search                    搜尋條件
+
+    # ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost - 1, EndIndex=NewestIndex, MaxMultiLogin=0)
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
         
@@ -811,13 +829,13 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-        # PostDemo()
-        # PushDemo()
+        PostDemo()
+        PushDemo()
         # GetNewestIndexDemo()
-        GetPostDemo()
+        # GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
-        GetMailDemo()
+        # GetMailDemo()
         # GetUserDemo()
         # GiveMoneyDemo()
         # ChangePasswordDemo()

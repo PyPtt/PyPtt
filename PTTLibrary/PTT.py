@@ -2948,7 +2948,7 @@ class Library(object):
 
         self.__ErrorCode = ErrCode
         return ErrCode
-    def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex, Search):
+    def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex, SearchType, Search):
         self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex) + ' ' + Search)
 
         if not self.__isConnected[ConnectIndex] and ConnectIndex > 0:
@@ -2963,7 +2963,7 @@ class Library(object):
         for PostIndex in range(StartIndex, EndIndex):
             self.__IdleTime = 0
 
-            ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex, Search=Search)
+            ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex, SearchType=SearchType, Search=Search)
 
             if not self.__isBackground:
                 self.__ProgressBarCount += 1
@@ -2991,7 +2991,7 @@ class Library(object):
         
         self.Log('頻道 ' + str(ConnectIndex) + ' 爬行完畢', LogLevel.DEBUG)
         return
-    def crawlBoard(self, Board, PostHandler, MaxMultiLogin=2, StartIndex=0, EndIndex=0, Search='', MaxThreadPost=100):
+    def crawlBoard(self, Board, PostHandler, MaxMultiLogin=0, StartIndex=0, EndIndex=0, SearchType=0, Search='', MaxThreadPost=100):
         ErrCode = ErrorCode.Success
 
         if not self.__APICheck(sys._getframe().f_code.co_name):
@@ -3011,7 +3011,7 @@ class Library(object):
             self.__ErrorCode = ErrCode
             return ErrCode, 0, 0
 
-        if MaxMultiLogin < 1 or 5 < MaxMultiLogin:
+        if MaxMultiLogin < 0 or 5 < MaxMultiLogin:
             self.Log('多重登入設定錯誤', LogLevel.WARNING)
             ErrCode = ErrorCode.ErrorInput
             self.__ErrorCode = ErrCode
@@ -3082,7 +3082,7 @@ class Library(object):
 
             # self.Log(str(StartIndexTemp) + ' ' + str(EndIndexTemp) + ':' + str(EndIndexTemp - StartIndexTemp))
             # self.__CrawPoolList.append([StartIndexTemp, EndIndexTemp])
-            CrawThreadList.append(threading.Thread(target=self.__crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp, Search)))
+            CrawThreadList.append(threading.Thread(target=self.__crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp, SearchType, Search)))
         
         self.__EnableLoginCount = 1
 
