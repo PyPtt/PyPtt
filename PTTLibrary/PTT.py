@@ -442,7 +442,7 @@ class Library(object):
 
         PreNewLineMark = -1
         for NewLineMark in range(1, 30):
-            for Type in ['1', '5']:
+            for Type in ['1', '3', '5']:
                 if '[' + str(NewLineMark) + ';' + Type + 'H' in screen:
                     if PreNewLineMark == -1:
                         screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', '\n')
@@ -746,7 +746,7 @@ class Library(object):
         ErrCode = ErrorCode.Success
         self.__ErrorCode = ErrCode
         return ErrCode
-    def __getNewestPostIndex(self, Board, ConnectIndex=0, Search='', Author=''):
+    def __getNewestPostIndex(self, Board, ConnectIndex=0, SearchType=0, Search=''):
         result = 0
         
         CatchList = [
@@ -757,10 +757,18 @@ class Library(object):
         # SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 0\r$'
         
         SendMessage = GotoMainMenuCommand + 'qs' + Board + '\r\x03\x03 '
-        if Author != '':
-            SendMessage += 'a' + Author + '\r'
-        if Search != '':
+
+        if SearchType == PostSearchType.Keyword:
             SendMessage += '/' + Search + '\r'
+        elif SearchType == PostSearchType.Author:
+            SendMessage += 'a' + Search + '\r'
+        elif SearchType == PostSearchType.Push:
+            SendMessage += 'Z' + Search + '\r'
+        elif SearchType == PostSearchType.Mark:
+            SendMessage += 'G' + Search + '\r'
+        elif SearchType == PostSearchType.Money:
+            SendMessage += 'A' + Search + '\r'
+
         SendMessage += '0\r$'
         Refresh = True
         ExtraWait = 0
