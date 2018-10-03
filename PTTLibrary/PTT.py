@@ -30,6 +30,7 @@ FriendListType = Information.FriendListType()
 OperateType = Information.OperateType()
 WaterBallOperateType = Information.WaterBallOperateType
 WaterBallType = Information.WaterBallType
+PostSearchType = Information.PostSearchType
 
 class ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -1279,7 +1280,7 @@ class Library(object):
         self.__ErrorCode = ErrCode
         return ErrCode
 
-    def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
+    def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, SearchType=0, Search=''):
         self.__IdleTime = 0
         
         ConnectIndex = _ConnectIndex
@@ -1291,6 +1292,7 @@ class Library(object):
             Board = str(Board)
             PostID = str(PostID)
             PostIndex = int(PostIndex)
+            SearchType = int(SearchType)
             Search = str(Search)
         except:
             self.Log('輸入錯誤', LogLevel.WARNING)
@@ -1316,13 +1318,43 @@ class Library(object):
             self.__ErrorCode = ErrCode
             return ErrCode, result
 
+        if SearchType < PostSearchType.MinValue or PostSearchType.MaxValue < SearchType:
+            self.Log('搜尋類型輸入錯誤: 無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
+            SearchType = PostSearchType.Unknow
+        
+        if Search != '' and SearchType == PostSearchType.Unknow:
+            self.Log('無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
+
         if PostID != '' and Search != '':
             self.Log('使用文章代碼取得文章 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
+        
+        if SearchType == PostSearchType.Keyword:
+            pass
+        elif SearchType == PostSearchType.Author:
+            pass
+        elif SearchType == PostSearchType.Push:
+            if not Search.isdigit():
+                self.Log('搜尋條件輸入錯誤: 搜尋推文數 但搜尋條件非數字 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
+        elif SearchType == PostSearchType.Mark:
+            if Search != 'm' and Search != 's':
+                self.Log('搜尋條件輸入錯誤: 搜尋標記 但搜尋條件非 m 或 s 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
+        elif SearchType == PostSearchType.Money:
+            if not Search.isdigit():
+                self.Log('搜尋條件輸入錯誤: 搜尋稿酬 但搜尋條件非數字 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
 
         self.__APILock[ConnectIndex].acquire()
 
         for i in range(3):
-            ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, Search)
+            ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, SearchType, Search)
             if ErrCode != ErrorCode.Success:
                 continue
             
@@ -1392,7 +1424,7 @@ class Library(object):
         CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushIP, PushTime)
 
         return ErrCode, CurrentPush
-    def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
+    def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, SearchType=0, Search=''):
         
         ConnectIndex = _ConnectIndex
         result = None
@@ -1403,7 +1435,17 @@ class Library(object):
             SendMessage += '#' + PostID + '\rQ'
         elif PostIndex != -1:
             if Search != '':
-                SendMessage += '/' + Search + '\r'
+                if SearchType == PostSearchType.Keyword:
+                    SendMessage += '/' + Search + '\r'
+                elif SearchType == PostSearchType.Author:
+                    SendMessage += 'a' + Search + '\r'
+                elif SearchType == PostSearchType.Push:
+                    SendMessage += 'Z' + Search + '\r'
+                elif SearchType == PostSearchType.Mark:
+                    SendMessage += 'G' + Search + '\r'
+                elif SearchType == PostSearchType.Money:
+                    SendMessage += 'A' + Search + '\r'
+
             SendMessage += str(PostIndex) + '\rQ'
         
         Refresh = True
