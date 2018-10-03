@@ -144,7 +144,15 @@ def GetPostDemo():
     # getIP                     推文IP
     # getTime                   推文時間
 
-    Test = True
+    ################## 文章搜尋資訊 Post Search Type information ###
+    # Unknow                    不搜尋 無作用
+    # Keyword                   搜尋關鍵字
+    # Author                    搜尋作者
+    # Push                      搜尋推文數
+    # Mark                      搜尋標記 m or s
+    # Money                     搜尋稿酬
+
+    Test = False
 
     if not Test:
 
@@ -177,6 +185,9 @@ def GetPostDemo():
             PTTBot.Log(str(i) + ' 測試 ' + Board + ' ' + str(NewestIndex - i))
 
             ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
+            # Ex:
+            # ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i, SearchType = PTT.PostSearchType.Keyword, Search='爆掛')
+            
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')
                 continue
