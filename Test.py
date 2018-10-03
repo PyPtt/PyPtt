@@ -160,7 +160,7 @@ def GetPostDemo():
         BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
     else:
         # 測試用
-        BoardList = ['Gossiping']
+        BoardList = ['Wanted']
         TryPost = 1
 
     for Board in BoardList:
@@ -177,7 +177,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 782449
+            NewestIndex = 78232
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
 
         for i in range(TryPost):
@@ -358,10 +358,10 @@ def PostHandler(Post):
     # getTime                   推文時間
     
     with codecs.open("CrawlBoardResult.txt", "a", "utf-8") as ResultFile:
-        ResultFile.write(Post.getTitle() + '\n')
+        # ResultFile.write(Post.getAuthor() + ' ' + Post.getTitle() + '\n')
+        # ResultFile.write(str(len(Post.getPushList())) + ' ' + Post.getTitle() + '\n')
+        ResultFile.write('P幣: ' + str(Post.getMoney()) + ' ' + Post.getTitle() + '\n')
 
-    # PTTBot.Log(Post.getTitle())
-    
 def CrawlBoardDemo():
     
     # 範例是爬最新的一百篇文章
@@ -379,9 +379,10 @@ def CrawlBoardDemo():
     # ex: PTT.PostSearchType.Keyword
 
     CrawPost = 100
-
+    inputSearchType = PTT.PostSearchType.Money
+    inputSearch = '5'
     # ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
-    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted', SearchType=PTT.PostSearchType.Keyword, Search='徵求')
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted', SearchType=inputSearchType, Search=inputSearch)
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號成功: ' + str(NewestIndex))
     else:
@@ -390,11 +391,10 @@ def CrawlBoardDemo():
     
     # MaxMultiLogin             多重登入數量
     # SearchType                搜尋種類
-
     # Search                    搜尋條件
 
     # ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost, EndIndex=NewestIndex)
-    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost - 1, EndIndex=NewestIndex, SearchType=PTT.PostSearchType.Keyword, Search='徵求')
+    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost + 1, EndIndex=NewestIndex, SearchType=inputSearchType, Search=inputSearch)
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
         
