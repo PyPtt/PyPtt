@@ -369,20 +369,6 @@ def CrawlBoardDemo():
     # PTTBot.crawlBoard('Wanted', PostHandler)
     # 這樣就會全部文章都會爬下來
 
-    CrawPost = 100
-
-    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
-    if ErrCode == PTT.ErrorCode.Success:
-        PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號成功: ' + str(NewestIndex))
-    else:
-        PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號失敗')
-        return False
-    
-    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost, EndIndex=NewestIndex)
-
-    # MaxMultiLogin             多重登入數量
-    # SearchType                搜尋種類
-
     ################## 文章搜尋資訊 Post Search Type information ###
     # Unknow                    不搜尋 無作用
     # Keyword                   搜尋關鍵字
@@ -391,10 +377,24 @@ def CrawlBoardDemo():
     # Mark                      搜尋標記 m or s
     # Money                     搜尋稿酬
     # ex: PTT.PostSearchType.Keyword
+
+    CrawPost = 100
+
+    # ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted', SearchType=PTT.PostSearchType.Keyword, Search='徵求')
+    if ErrCode == PTT.ErrorCode.Success:
+        PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號成功: ' + str(NewestIndex))
+    else:
+        PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號失敗')
+        return False
     
+    # MaxMultiLogin             多重登入數量
+    # SearchType                搜尋種類
+
     # Search                    搜尋條件
 
-    # ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost - 1, EndIndex=NewestIndex, MaxMultiLogin=0)
+    # ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost, EndIndex=NewestIndex)
+    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost - 1, EndIndex=NewestIndex, SearchType=PTT.PostSearchType.Keyword, Search='徵求')
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
         
@@ -829,8 +829,8 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-        PostDemo()
-        PushDemo()
+        # PostDemo()
+        # PushDemo()
         # GetNewestIndexDemo()
         # GetPostDemo()
         # MailDemo()
@@ -840,7 +840,7 @@ if __name__ == '__main__':
         # GiveMoneyDemo()
         # ChangePasswordDemo()
         # ReplyPostDemo()
-        # CrawlBoardDemo()
+        CrawlBoardDemo()
         # ThrowWaterBallDemo()
         # DelPostDemo()
         # GetFriendListDemo()

@@ -2249,16 +2249,52 @@ class Library(object):
         ErrCode = ErrorCode.Success
         self.__ErrorCode = ErrCode
         return ErrCode, result
-    def getNewestIndex(self, Board='', Search=''):
+    def getNewestIndex(self, Board='', SearchType=0, Search=''):
         self.__IdleTime = 0
         ConnectIndex = 0
         result = 0
+        try:
+            Board = str(Board)
+            SearchType = int(SearchType)
+            Search = str(Search)
+        except:
+            self.Log('輸入錯誤', LogLevel.WARNING)
+            ErrCode = ErrorCode.ErrorInput
+            self.__ErrorCode = ErrCode
+            return ErrCode, result
         
-        Board = str(Board)
-        Search = str(Search)
+        if SearchType < PostSearchType.MinValue or PostSearchType.MaxValue < SearchType:
+            self.Log('搜尋類型輸入錯誤: 無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
+            SearchType = PostSearchType.Unknow
+        
+        if (Search != '' and SearchType == PostSearchType.Unknow) or (Search == '' and SearchType != PostSearchType.Unknow):
+            self.Log('無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
 
         if Board == '' and Search != '':
             self.Log('郵件模式下無法使用搜尋條件', LogLevel.WARNING)
+            Search = ''
+        
+        if SearchType == PostSearchType.Keyword:
+            pass
+        elif SearchType == PostSearchType.Author:
+            pass
+        elif SearchType == PostSearchType.Push:
+            if not Search.isdigit():
+                self.Log('搜尋條件輸入錯誤: 搜尋推文數 但搜尋條件非數字 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
+        elif SearchType == PostSearchType.Mark:
+            if Search != 'm' and Search != 's':
+                self.Log('搜尋條件輸入錯誤: 搜尋標記 但搜尋條件非 m 或 s 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
+        elif SearchType == PostSearchType.Money:
+            if not Search.isdigit():
+                self.Log('搜尋條件輸入錯誤: 搜尋稿酬 但搜尋條件非數字 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
 
         self.__APILock[ConnectIndex].acquire()
         if Board == '':
@@ -2335,7 +2371,7 @@ class Library(object):
                 return self.__ErrorCode, result
 
             for i in range(3):
-                ErrCode, result = self.__getNewestPostIndex(Board=Board, Search=Search)
+                ErrCode, result = self.__getNewestPostIndex(Board=Board, SearchType=SearchType, Search=Search)
                 if ErrCode == ErrorCode.Success:
                     self.__APILock[ConnectIndex].release()
                     self.__ErrorCode = ErrCode
