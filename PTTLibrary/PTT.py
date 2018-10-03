@@ -1323,7 +1323,7 @@ class Library(object):
             Search = ''
             SearchType = PostSearchType.Unknow
         
-        if Search != '' and SearchType == PostSearchType.Unknow:
+        if (Search != '' and SearchType == PostSearchType.Unknow) or (Search == '' and SearchType != PostSearchType.Unknow):
             self.Log('無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
             Search = ''
 
