@@ -109,7 +109,8 @@ def showPost(Post):
         
         Author = Push.getAuthor()
         Content = Push.getContent()
-        print('推文: ' + Author + ': ' + Content)
+        # IP = Push.getIP()
+        PTTBot.Log('推文: ' + Author + ': ' + Content)
         
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
 
@@ -134,14 +135,16 @@ def GetPostDemo():
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
     # getPushList               文章即時推文清單
+    # getOriginalData           文章原始資料 (備份用)
     
     ################## 推文資訊 Push information ##################
     # getType                   推文類別 推噓箭頭
     # getAuthor                 推文ID
     # getContent                推文內文
+    # getIP                     推文IP
     # getTime                   推文時間
 
-    Test = False
+    Test = True
 
     if not Test:
 
@@ -325,22 +328,23 @@ def PostHandler(Post):
     
     #文章資料結構可參考如下
     ################## 文章資訊 Post information ##################
-    # getPostBoard              文章所在版面
-    # getPostID                 文章 ID ex: 1PCBfel1
-    # getPostAuthor             作者
-    # getPostDate               文章發布時間
+    # getBoard                  文章所在版面
+    # getID                     文章 ID ex: 1PCBfel1
+    # getAuthor                 作者
+    # getDate                   文章發布時間
     # getTitle                  文章標題
-    # getPostContent            文章內文
+    # getContent                文章內文
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
-    # getPushList               文章推文清單 備註: 推文是從網頁解析，極有可能不即時
-    # getOriginalData           文章網頁原始資料 (開發用)
+    # getPushList               文章即時推文清單
+    # getOriginalData           文章原始資料 (備份用)
     
     ################## 推文資訊 Push information ##################
-    # getPushType               推文類別 推噓箭頭?
-    # getPushID                 推文ID
-    # getPushContent            推文內文
-    # getPushTime               推文時間
+    # getType                   推文類別 推噓箭頭
+    # getAuthor                 推文ID
+    # getContent                推文內文
+    # getIP                     推文IP
+    # getTime                   推文時間
     
     with codecs.open("CrawlBoardResult.txt", "a", "utf-8") as ResultFile:
         ResultFile.write(Post.getTitle() + '\n')

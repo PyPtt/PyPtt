@@ -1336,7 +1336,7 @@ class Library(object):
         self.__ErrorCode = ErrCode
         return ErrCode, Post
     def __parsePush(self, line):
-        print('__parsePush line: ' + line)
+        # print('__parsePush line: ' + line)
 
         ErrCode = ErrorCode.Success
         CurrentPush = None
@@ -1352,34 +1352,45 @@ class Library(object):
         elif line.startswith('→'):
             CurrentPushType = PushType.Arrow
         
-        if CurrentPushType != PushType.Unknow:
-            # print(line)
+        if CurrentPushType == PushType.Unknow:
+            return ErrorCode.ParseError, None
 
-            PushAuthor = line
-            PushAuthor = PushAuthor[2:]
-            PushAuthor = PushAuthor[:PushAuthor.find(':')]
-            while PushAuthor.endswith(' '):
-                PushAuthor = PushAuthor[:-1]
-            
-            Target = ': '
-            PushContent = line[:-11]
-            PushContent = PushContent[PushContent.find(Target) + len(Target):]
-            # PushContent = PushContent[:PushContent.find(' ')]
-            while PushContent.endswith(' '):
-                PushContent = PushContent[:-1]
+        PushAuthor = line
+        PushAuthor = PushAuthor[2:]
+        PushAuthor = PushAuthor[:PushAuthor.find(':')]
+        while PushAuthor.endswith(' '):
+            PushAuthor = PushAuthor[:-1]
+        
+        Target = ': '
+        PushContent = line[:-11]
+        PushContent = PushContent[PushContent.find(Target) + len(Target):]
+        PushContent = PushContent.rstrip()
 
-            PushTime = line[-11:]
+        PushIP = None
 
-            if re.search("[0-9][0-9]:[0-9][0-9]", PushTime) == None:
-                return ErrorCode.ParseError, None
-            if re.search("[0-9][0-9]/[0-9][0-9]", PushTime) == None:
-                return ErrorCode.ParseError, None
+        IPIndex_start = PushContent.rfind(' ') + 1
+        IPTemp = PushContent[IPIndex_start:]
+        IPCheck = re.search("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", IPTemp)
 
-            # print('PushAuthor: =' + PushAuthor + '=')
-            # print('PushContent: =' + PushContent + '=')
-            # print('PushTime: =' + PushTime + '=')
+        # 檢查 IP 格式並檢查與冒號的距離，大於10 避免推文內容是 IP 被當成推文 IP的情況
+        if IPCheck != None and (PushContent.find(IPCheck.group()) - PushContent.find(': ') > 10):
+            PushIP = IPCheck.group()
+            PushContent = PushContent[:PushContent.find(PushIP)]
+            PushContent = PushContent.rstrip()
+          
+        PushTime = line[-11:]
 
-            CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushTime)
+        if re.search("[0-9][0-9]:[0-9][0-9]", PushTime) == None:
+            return ErrorCode.ParseError, None
+        if re.search("[0-9][0-9]/[0-9][0-9]", PushTime) == None:
+            return ErrorCode.ParseError, None
+
+        # print('PushAuthor: =' + PushAuthor + '=')
+        # print('PushContent: =' + PushContent + '=')
+        # print('PushTime: =' + PushTime + '=')
+
+        CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushIP, PushTime)
+
         return ErrCode, CurrentPush
     def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
         
@@ -2929,7 +2940,7 @@ class Library(object):
         
         self.Log('頻道 ' + str(ConnectIndex) + ' 爬行完畢', LogLevel.DEBUG)
         return
-    def crawlBoard(self, Board, PostHandler, MaxMultiLogin=2, StartIndex=0, EndIndex=0, Search=''):
+    def crawlBoard(self, Board, PostHandler, MaxMultiLogin=2, StartIndex=0, EndIndex=0, Search='', MaxThreadPost=100):
         ErrCode = ErrorCode.Success
 
         if not self.__APICheck(sys._getframe().f_code.co_name):
@@ -2941,6 +2952,7 @@ class Library(object):
             EndIndex = int(EndIndex)
             MaxMultiLogin = int(MaxMultiLogin)
             Search = str(Search)
+            MaxThreadPost = int(MaxThreadPost)
         except:
             self.Log('輸入錯誤', LogLevel.WARNING)
 
@@ -2954,6 +2966,12 @@ class Library(object):
             self.__ErrorCode = ErrCode
             return ErrCode, 0, 0
         
+        if MaxThreadPost < 1:
+            self.Log('每個線程負責文章數設定錯誤', LogLevel.WARNING)
+            ErrCode = ErrorCode.ErrorInput
+            self.__ErrorCode = ErrCode
+            return ErrCode, 0, 0
+
         self.__MaxMultiLogin = MaxMultiLogin
 
         ErrCode, NewestIndex = self.getNewestIndex(Board=Board, Search=Search)
@@ -2992,8 +3010,7 @@ class Library(object):
             self.__ProgressBarCount = 0
 
         self.Log('總爬行文章: ' + str(self.__TotalPost) + ' 篇')
-        
-        MaxThreadPost = 100
+
         TempStr = '啟動連線頻道 '
         for i in range(self.__MaxMultiLogin):
             if (i + 1) * MaxThreadPost <= self.__TotalPost:
