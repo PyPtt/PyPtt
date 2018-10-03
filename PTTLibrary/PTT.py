@@ -3847,6 +3847,9 @@ class Library(object):
         ErrCode = ErrorCode.Success
         ConnectIndex = 0
 
+        self.Log('因 PTT 關閉註冊功能 暫時無法提供註冊 API')
+        return ErrorCode.DeprecatedAPI
+
         if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
 
