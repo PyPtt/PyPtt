@@ -91,7 +91,7 @@ def showPost(Post):
     PTTBot.Log('IP: ' + Post.getIP())
     PTTBot.Log('網址: ' + Post.getWebUrl())
 
-    PTTBot.Log('內文: ' + Post.getContent())
+    PTTBot.Log('內文:\n' + Post.getContent())
 
     PushCount = 0
     BooCount = 0
@@ -490,6 +490,9 @@ def GetMailDemo():
         MailStartIndex = NewestMailIndex - 3
     else:
         MailStartIndex = NewestMailIndex - 1
+    
+    # MailStartIndex = 162
+    # NewestMailIndex = 163
 
     for i in range(MailStartIndex, NewestMailIndex):
         MailIndex = i + 1
@@ -501,7 +504,7 @@ def GetMailDemo():
             PTTBot.Log('信件標題: ' + Mail.getTitle())
             PTTBot.Log('信件日期: ' + Mail.getDate())
             PTTBot.Log('信件IP: ' + Mail.getIP())
-            PTTBot.Log('信件內文: ' + Mail.getContent())
+            PTTBot.Log('信件內文:\n' + Mail.getContent())
 
             # print('-' * 20)
             # print(Mail.getRawContent())
@@ -803,7 +806,7 @@ if __name__ == '__main__':
         GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
-        # GetMailDemo()
+        GetMailDemo()
         # GetUserDemo()
         # GiveMoneyDemo()
         # ChangePasswordDemo()

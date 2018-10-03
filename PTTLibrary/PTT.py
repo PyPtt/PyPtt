@@ -436,22 +436,22 @@ class Library(object):
     def __cleanScreen(self, screen):
         if not screen:
             return screen
-            # remove color codes
+
         # self.Log('before: ' + str(screen))
-        # # [6;5H
 
         PreNewLineMark = -1
         for NewLineMark in range(1, 30):
-            # print(NewLineMark)
-                if '[' + str(NewLineMark) + ';5H' in screen:
+            for Type in ['1', '5']:
+                if '[' + str(NewLineMark) + ';' + Type + 'H' in screen:
                     if PreNewLineMark == -1:
-                        screen = screen.replace('[' + str(NewLineMark) + ';5H', '\n')
+                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', '\n')
                     else:
-                        screen = screen.replace('[' + str(NewLineMark) + ';5H', '\n' * (NewLineMark - PreNewLineMark))
+                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', '\n' * (NewLineMark - PreNewLineMark))
 
                     PreNewLineMark = NewLineMark
 
         screen = screen.replace('[2J    ', '')
+        screen = screen.replace('[2J', '')
 
         screen = re.sub('\[[\d+;]*[mH]', '', screen)
         # remove carriage return
@@ -1597,8 +1597,7 @@ class Library(object):
 
         FirstPage = ''
         PageIndex = 2
-        # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
-        LastPageIndex = 5
+        LastPageIndex = 0
         PostContentListTemp = []
         PostRawContentListTemp = []
         isFirstPage = True
@@ -1704,36 +1703,42 @@ class Library(object):
                 self.logout()
                 sys.exit()
         
-        FirstPage = FirstPage[FirstPage.find('[2J 作者'):]
+        FirstPage = FirstPage[FirstPage.find('作者'):]
         PostLineList = FirstPage.split('\n')
 
-        if len(PostLineList) < 3:
-            ErrCode = ErrorCode.ParseError
-            self.__ErrorCode = ErrCode
-            return ErrCode, None
+        # if len(PostLineList) < 3:
+        #     ErrCode = ErrorCode.ParseError
+        #     self.__ErrorCode = ErrCode
+        #     return ErrCode, None
         # for line in PostLineList:
         #     print('Q', line)
 
         Target = '作者  '
-        PostAuthor = PostLineList[0]
-        PostAuthor = PostAuthor[PostAuthor.find(Target) + len(Target):]
-        PostAuthor = PostAuthor[:PostAuthor.find(')') + 1]
-        while PostAuthor.endswith(' '):
-            PostAuthor = PostAuthor[:-1]
+        if Target in FirstPage:
+            PostAuthor = PostLineList[0]
+            PostAuthor = PostAuthor[PostAuthor.find(Target) + len(Target):]
+            PostAuthor = PostAuthor[:PostAuthor.find(')') + 1]
+            PostAuthor = PostAuthor.rstrip()
+        else:
+            PostAuthor = None
         
         Target = '標題  '
-        PostTitle = PostLineList[1]
-        PostTitle = PostTitle[PostTitle.find(Target) + len(Target):]
-        PostTitle = PostTitle[:PostTitle.find('\r')]
-        while PostTitle.endswith(' '):
-            PostTitle = PostTitle[:-1]
+        if Target in FirstPage:
+            PostTitle = PostLineList[1]
+            PostTitle = PostTitle[PostTitle.find(Target) + len(Target):]
+            PostTitle = PostTitle[:PostTitle.find('\r')]
+            PostTitle = PostTitle.rstrip()
+        else:
+            PostTitle = None
 
         Target = '時間  '
-        PostDate = PostLineList[2]
-        PostDate = PostDate[PostDate.find(Target) + len(Target):]
-        PostDate = PostDate[:PostDate.find('\r')]
-        while PostDate.endswith(' '):
-            PostDate = PostDate[:-1]
+        if Target in FirstPage:
+            PostDate = PostLineList[2]
+            PostDate = PostDate[PostDate.find(Target) + len(Target):]
+            PostDate = PostDate[:PostDate.find('\r')]
+            PostDate = PostDate.rstrip()
+        else:
+            PostDate = None
 
         PostContentList = []
         PostPushList = []
@@ -2366,12 +2371,10 @@ class Library(object):
         
         FirstPage = ''
         PageIndex = 2
-        # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
-        LastPageIndex = 5
+        LastPageIndex = 0
         MailContentList = []
         MailRawContentList = []
         isFirstPage = True
-        IPLine = ''
 
         NewLine, _ = uao.encode('\n')
         NewLineByte = NewLine[0]
@@ -2407,11 +2410,7 @@ class Library(object):
                     CurrentPage = self.__ReceiveData[ConnectIndex]
                     CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
 
-                    if CurrentPage.startswith('[2J'):
-                        CurrentPage = CurrentPage[3:]
-                        CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
-
 
                     PageLineRange = CurrentPageList.pop()
                     # CurrentRawPage.pop()
@@ -2428,11 +2427,11 @@ class Library(object):
                     OverlapLine = LastPageIndex - PageLineRangeTemp[0] + 1
 
                     # 處理分隔線造成的行數計算錯誤
-                    if PageLineRangeTemp[0] > 1 and PageLineRangeTemp[0] < 5:
-                        OverlapLine += 1
+                    # if PageLineRangeTemp[0] > 1 and PageLineRangeTemp[0] < 5:
+                    #     OverlapLine += 1
 
                     if OverlapLine >= 1 and LastPageIndex != 0:
-                        print('重疊', OverlapLine, '行')
+                        # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
 
                         if not isFirstPage:
@@ -2444,9 +2443,7 @@ class Library(object):
                     
                     LastPageIndex = PageLineRangeTemp[1]
 
-                    CurrentPage = '\n'.join(CurrentPageList)
-                    
-                    MailContentList.append(CurrentPage)
+                    MailContentList.extend(CurrentPageList)
                     if not isFirstPage:
                         MailRawContentList.extend([NewLineByte])
                     MailRawContentList.extend(CurrentRawPage)
@@ -2477,44 +2474,56 @@ class Library(object):
 
         MailLineList = FirstPage.split('\n')
 
-        # for line in MailLineList:
-        #     print('Q', line)
-
         Target = '作者  '
-        MailAuthor = MailLineList[0]
-        MailAuthor = MailAuthor[MailAuthor.find(Target) + len(Target):]
-        MailAuthor = MailAuthor[:MailAuthor.find('\r')]
-        while MailAuthor.endswith(' '):
-            MailAuthor = MailAuthor[:-1]
+        if Target in FirstPage:
+            MailAuthor = MailLineList[0]
+            MailAuthor = MailAuthor[MailAuthor.find(Target) + len(Target):]
+            MailAuthor = MailAuthor[:MailAuthor.find('\r')]
+            MailAuthor = MailAuthor.rstrip()
+        else:
+            MailAuthor = None
         
         Target = '標題  '
-        MailTitle = MailLineList[1]
-        MailTitle = MailTitle[MailTitle.find(Target) + len(Target):]
-        MailTitle = MailTitle[:MailTitle.find('\r')]
-        while MailTitle.endswith(' '):
-            MailTitle = MailTitle[:-1]
+        if Target in FirstPage:
+            MailTitle = MailLineList[1]
+            MailTitle = MailTitle[MailTitle.find(Target) + len(Target):]
+            MailTitle = MailTitle[:MailTitle.find('\r')]
+            MailTitle = MailTitle.rstrip()
+        else:
+            MailTitle = None
         
         Target = '時間  '
-        MailDate = MailLineList[2]
-        MailDate = MailDate[MailDate.find(Target) + len(Target):]
-        MailDate = MailDate[:MailDate.find('\r')]
-        while MailDate.endswith(' '):
-            MailDate = MailDate[:-1]
+        if Target in FirstPage:
+            MailDate = MailLineList[2]
+            MailDate = MailDate[MailDate.find(Target) + len(Target):]
+            MailDate = MailDate[:MailDate.find('\r')]
+            MailDate = MailDate.rstrip()
+        else:
+            MailDate = None
         
         # self.Log('MailAuthor: =' + MailAuthor + '=', LogLevel.DEBUG)
         # self.Log('MailTitle: =' + MailTitle + '=', LogLevel.DEBUG)
         # self.Log('MailDate: =' + MailDate + '=', LogLevel.DEBUG)
 
+        MailIP = None
+
+        for line in MailContentList:
+            # print('! ' + line)
+            if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自' in line:
+                IPCheck = re.search("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
+                if IPCheck != None:
+                    MailIP = IPCheck.group()
+
         MailContent = '\n'.join(MailContentList)
         MailRawContent = MailRawContentList
         # self.Log('MailContent: =' + MailContent + '=', LogLevel.DEBUG)
 
-        if len(IPLine) < 7:
-            # 如果只有一頁的情況，IP 會顯示在第一頁
-            IPLine = MailLineList.pop()
-            IPLine = IPLine[:IPLine.find('瀏覽')]
-        MailIPList = list(map(str, re.findall(r'\d+', IPLine)))
-        MailIP = '.'.join(MailIPList)
+        # if len(IPLine) < 7:
+        #     # 如果只有一頁的情況，IP 會顯示在第一頁
+        #     IPLine = MailLineList.pop()
+        #     IPLine = IPLine[:IPLine.find('瀏覽')]
+        # MailIPList = list(map(str, re.findall(r'\d+', IPLine)))
+        # MailIP = '.'.join(MailIPList)
 
         # self.Log('MailIP: =' + MailIP + '=', LogLevel.DEBUG)
 
