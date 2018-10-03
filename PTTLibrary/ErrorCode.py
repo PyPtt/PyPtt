@@ -28,3 +28,4 @@ class ErrorCode(object):
         self.RemoteHostDown =                  23
         self.UserNotOnline =                   24
         self.MustRunBeforeLogin =              25
+        self.DeprecatedAPI =                   26
