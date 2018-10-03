@@ -1,5 +1,21 @@
 import array
 
+class PostSearchType(object):
+    # 搜尋關鍵字    / ?
+    # 搜尋作者      a
+    # 搜尋推文數    Z
+    # 搜尋標記      G
+    # 搜尋稿酬      A
+    Unknow =                                0
+    Keyword =                               1
+    Author =                                2
+    Push =                                  3
+    Mark =                                  4
+    Money =                                 5
+
+    MinValue = Unknow
+    MaxValue = Money
+
 class WaterBallType(object):
     Catch =                                 1
     Send =                                  2
