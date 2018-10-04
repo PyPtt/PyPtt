@@ -438,7 +438,7 @@ class Library(object):
         if not screen:
             return screen
 
-        # self.Log('before: ' + str(screen))
+        self.Log('before: ' + str(screen))
 
         PreNewLineMark = -1
         for NewLineMark in range(1, 30):
@@ -462,7 +462,7 @@ class Library(object):
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         screen = re.sub(r'[\x0e-\x1f]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
-        # self.Log('after: ' + str(screen))
+        self.Log('after: ' + str(screen))
         return screen
     def __wait_str(self, ConnectIndex):
         ch = ''
@@ -1481,20 +1481,20 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            DetectUnit(
-                '含有控制碼',
-                '此頁內容會依閱讀者不同', 
-                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
-                BreakDetect=True,
-                ErrCode = ErrorCode.HasControlCode
-            ),
-            DetectUnit(
-                '含有控制碼',
-                '原文未必有您的資料', 
-                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
-                BreakDetect=True,
-                ErrCode = ErrorCode.HasControlCode
-            ),
+            # DetectUnit(
+            #     '含有控制碼',
+            #     '此頁內容會依閱讀者不同', 
+            #     ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+            #     BreakDetect=True,
+            #     ErrCode = ErrorCode.HasControlCode
+            # ),
+            # DetectUnit(
+            #     '含有控制碼',
+            #     '原文未必有您的資料', 
+            #     ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
+            #     BreakDetect=True,
+            #     ErrCode = ErrorCode.HasControlCode
+            # ),
             DetectUnit(
                 '遇到 PTT BUG!!',
                 'PttBug', 
@@ -1682,9 +1682,6 @@ class Library(object):
                     CurrentPage = self.__ReceiveData[ConnectIndex]
                     CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
 
-                    if CurrentPage.startswith('[2J'):
-                        CurrentPage = CurrentPage[3:]
-                        CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
                     PageLineRangeTemp = CurrentPageList.pop()
 
@@ -1708,8 +1705,8 @@ class Library(object):
                     OverlapLine = LastPageIndex - PageLineRange[0] + 1
 
                     # 處理分隔線造成的行數計算錯誤
-                    if PageLineRange[0] > 1 and PageLineRange[0] < 5:
-                        OverlapLine += 1
+                    # if PageLineRange[0] > 1 and PageLineRange[0] < 5:
+                    #     OverlapLine += 1
 
                     if OverlapLine >= 1 and LastPageIndex != 0:
 
