@@ -152,7 +152,13 @@ def GetPostDemo():
     # Mark                      搜尋標記 m or s
     # Money                     搜尋稿酬
 
-    Test = False
+    EnableSearchCondition = False
+    # 搜尋類別
+    inputSearchType = PTT.PostSearchType.Keyword
+    # 搜尋條件
+    inputSearch = '公告'
+
+    Test = True
 
     if not Test:
 
@@ -166,7 +172,12 @@ def GetPostDemo():
     for Board in BoardList:
 
         if not Test:
-            ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+
+            if EnableSearchCondition:
+                ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board, SearchType=inputSearchType, Search=inputSearch)
+            else:
+                ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+
             if ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
                 return False
@@ -177,16 +188,17 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 78232
+            NewestIndex = 72323 - 1
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
 
         for i in range(TryPost):
             PTTBot.Log('-' * 50)
             PTTBot.Log(str(i) + ' 測試 ' + Board + ' ' + str(NewestIndex - i))
 
-            ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
-            # Ex:
-            # ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i, SearchType = PTT.PostSearchType.Keyword, Search='爆掛')
+            if EnableSearchCondition:
+                ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i, SearchType=inputSearchType, Search=inputSearch)
+            else:
+                ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
 
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')
@@ -379,10 +391,16 @@ def CrawlBoardDemo():
     # ex: PTT.PostSearchType.Keyword
 
     CrawPost = 100
+
+    EnableSearchCondition = False
     inputSearchType = PTT.PostSearchType.Money
     inputSearch = '5'
-    # ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
-    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted', SearchType=inputSearchType, Search=inputSearch)
+
+    if EnableSearchCondition:
+        ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted', SearchType=inputSearchType, Search=inputSearch)
+    else:
+        ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
+    
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號成功: ' + str(NewestIndex))
     else:
@@ -392,9 +410,11 @@ def CrawlBoardDemo():
     # MaxMultiLogin             多重登入數量
     # SearchType                搜尋種類
     # Search                    搜尋條件
-
-    # ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost, EndIndex=NewestIndex)
-    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost + 1, EndIndex=NewestIndex, SearchType=inputSearchType, Search=inputSearch)
+    if EnableSearchCondition:
+        ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost + 1, EndIndex=NewestIndex, SearchType=inputSearchType, Search=inputSearch)
+    else:
+        ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost, EndIndex=NewestIndex)
+    
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
         
@@ -832,7 +852,7 @@ if __name__ == '__main__':
         # PostDemo()
         # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
@@ -840,7 +860,7 @@ if __name__ == '__main__':
         # GiveMoneyDemo()
         # ChangePasswordDemo()
         # ReplyPostDemo()
-        CrawlBoardDemo()
+        # CrawlBoardDemo()
         # ThrowWaterBallDemo()
         # DelPostDemo()
         # GetFriendListDemo()
