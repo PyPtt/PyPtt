@@ -42,7 +42,7 @@ def PostDemo():
             for ii in range(128):
                 Content += '測試行 ' + str(ii) + '\r'
         
-        ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + Content, 1, 0)
+        ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試 ' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + Content, 1, 0)
         if ErrCode == PTT.ErrorCode.Success:
             PTTBot.Log('在 Test 板發文成功')
         elif ErrCode == PTT.ErrorCode.NoPermission:
@@ -85,13 +85,13 @@ def GetNewestIndexDemo():
 def showPost(Post):
     PTTBot.Log('文章代碼: ' + Post.getID())
     PTTBot.Log('作者: ' + Post.getAuthor())
-    PTTBot.Log('時間: ' + Post.getDate())
     PTTBot.Log('標題: ' + Post.getTitle())
+    PTTBot.Log('時間: ' + Post.getDate())
     PTTBot.Log('價錢: ' + str(Post.getMoney()))
     PTTBot.Log('IP: ' + Post.getIP())
     PTTBot.Log('網址: ' + Post.getWebUrl())
 
-    # PTTBot.Log('內文: ' + Post.getContent())
+    PTTBot.Log('內文:\n' + Post.getContent())
 
     PushCount = 0
     BooCount = 0
@@ -107,10 +107,10 @@ def showPost(Post):
         elif Push.getType() == PTT.PushType.Arrow:
             ArrowCount += 1
         
-        # Author = Push.getAuthor()
-        # Content = Push.getContent()
-        
-        # print(Author + ': ' + Content)
+        Author = Push.getAuthor()
+        Content = Push.getContent()
+        # IP = Push.getIP()
+        PTTBot.Log('推文: ' + Author + ': ' + Content)
         
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
 
@@ -135,34 +135,71 @@ def GetPostDemo():
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
     # getPushList               文章即時推文清單
+    # getOriginalData           文章原始資料 (備份用)
     
     ################## 推文資訊 Push information ##################
     # getType                   推文類別 推噓箭頭
     # getAuthor                 推文ID
     # getContent                推文內文
+    # getIP                     推文IP
     # getTime                   推文時間
-    
-    TryPost = 3
-    
-    BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+
+    ################## 文章搜尋資訊 Post Search Type information ###
+    # Unknow                    不搜尋 無作用
+    # Keyword                   搜尋關鍵字
+    # Author                    搜尋作者
+    # Push                      搜尋推文數
+    # Mark                      搜尋標記 m or s
+    # Money                     搜尋稿酬
+
+    EnableSearchCondition = False
+    # 搜尋類別
+    inputSearchType = PTT.PostSearchType.Keyword
+    # 搜尋條件
+    inputSearch = '公告'
+
+    Test = False
+
+    if not Test:
+
+        TryPost = 3
+        BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+    else:
+        # 測試用
+        BoardList = ['Wanted']
+        TryPost = 1
 
     for Board in BoardList:
-        
-        ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
-        if ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-            return False
-        
-        if NewestIndex == -1:
-            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-            return False
-        
-        PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+
+        if not Test:
+
+            if EnableSearchCondition:
+                ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board, SearchType=inputSearchType, Search=inputSearch)
+            else:
+                ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+
+            if ErrCode != PTT.ErrorCode.Success:
+                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+                return False
+            
+            if NewestIndex == -1:
+                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+                return False
+            
+            PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+        else:
+            NewestIndex = 72323
+            PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
+
         for i in range(TryPost):
             PTTBot.Log('-' * 50)
             PTTBot.Log(str(i) + ' 測試 ' + Board + ' ' + str(NewestIndex - i))
 
-            ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
+            if EnableSearchCondition:
+                ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i, SearchType=inputSearchType, Search=inputSearch)
+            else:
+                ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
+
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 PTTBot.Log('文章已經被刪除')
                 continue
@@ -170,16 +207,17 @@ def GetPostDemo():
                 PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
                 continue
             
-            PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
+            if not Test:
+                PTTBot.Log('測試 ' + Board + ' ' + Post.getID())
 
-            # 使用 PostID 模式可能會撞到 PTT BUG
-            ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
-            if ErrCode == PTT.ErrorCode.PostDeleted:
-                PTTBot.Log('文章已經被刪除')
-                sys.exit()
-            elif ErrCode != PTT.ErrorCode.Success:
-                PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-                sys.exit()
+                # 使用 PostID 模式可能會撞到 PTT BUG
+                ErrCode, Post = PTTBot.getPost(Board, PostID=Post.getID())
+                if ErrCode == PTT.ErrorCode.PostDeleted:
+                    PTTBot.Log('文章已經被刪除')
+                    sys.exit()
+                elif ErrCode != PTT.ErrorCode.Success:
+                    PTTBot.Log('使用文章代碼取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+                    sys.exit()
             
             showPost(Post)
 
@@ -313,28 +351,29 @@ def PostHandler(Post):
     
     #文章資料結構可參考如下
     ################## 文章資訊 Post information ##################
-    # getPostBoard              文章所在版面
-    # getPostID                 文章 ID ex: 1PCBfel1
-    # getPostAuthor             作者
-    # getPostDate               文章發布時間
+    # getBoard                  文章所在版面
+    # getID                     文章 ID ex: 1PCBfel1
+    # getAuthor                 作者
+    # getDate                   文章發布時間
     # getTitle                  文章標題
-    # getPostContent            文章內文
+    # getContent                文章內文
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
-    # getPushList               文章推文清單 備註: 推文是從網頁解析，極有可能不即時
-    # getOriginalData           文章網頁原始資料 (開發用)
+    # getPushList               文章即時推文清單
+    # getOriginalData           文章原始資料 (備份用)
     
     ################## 推文資訊 Push information ##################
-    # getPushType               推文類別 推噓箭頭?
-    # getPushID                 推文ID
-    # getPushContent            推文內文
-    # getPushTime               推文時間
+    # getType                   推文類別 推噓箭頭
+    # getAuthor                 推文ID
+    # getContent                推文內文
+    # getIP                     推文IP
+    # getTime                   推文時間
     
     with codecs.open("CrawlBoardResult.txt", "a", "utf-8") as ResultFile:
-        ResultFile.write(Post.getTitle() + '\n')
+        # ResultFile.write(Post.getAuthor() + ' ' + Post.getTitle() + '\n')
+        # ResultFile.write(str(len(Post.getPushList())) + ' ' + Post.getTitle() + '\n')
+        ResultFile.write('P幣: ' + str(Post.getMoney()) + ' ' + Post.getTitle() + '\n')
 
-    # PTTBot.Log(Post.getTitle())
-    
 def CrawlBoardDemo():
     
     # 範例是爬最新的一百篇文章
@@ -342,14 +381,40 @@ def CrawlBoardDemo():
     # PTTBot.crawlBoard('Wanted', PostHandler)
     # 這樣就會全部文章都會爬下來
 
-    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
+    ################## 文章搜尋資訊 Post Search Type information ###
+    # Unknow                    不搜尋 無作用
+    # Keyword                   搜尋關鍵字
+    # Author                    搜尋作者
+    # Push                      搜尋推文數
+    # Mark                      搜尋標記 m or s
+    # Money                     搜尋稿酬
+    # ex: PTT.PostSearchType.Keyword
+
+    CrawPost = 100
+
+    EnableSearchCondition = False
+    inputSearchType = PTT.PostSearchType.Money
+    inputSearch = '5'
+
+    if EnableSearchCondition:
+        ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted', SearchType=inputSearchType, Search=inputSearch)
+    else:
+        ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted')
+    
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號成功: ' + str(NewestIndex))
     else:
         PTTBot.Log('取得 ' + 'Wanted' + ' 板最新文章編號失敗')
-        return False    
+        return False
     
-    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - 499, EndIndex=NewestIndex)
+    # MaxMultiLogin             多重登入數量
+    # SearchType                搜尋種類
+    # Search                    搜尋條件
+    if EnableSearchCondition:
+        ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost + 1, EndIndex=NewestIndex, SearchType=inputSearchType, Search=inputSearch)
+    else:
+        ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost + 1, EndIndex=NewestIndex)
+    
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
         
@@ -474,6 +539,9 @@ def GetMailDemo():
         MailStartIndex = NewestMailIndex - 3
     else:
         MailStartIndex = NewestMailIndex - 1
+    
+    # MailStartIndex = 162
+    # NewestMailIndex = 163
 
     for i in range(MailStartIndex, NewestMailIndex):
         MailIndex = i + 1
@@ -485,7 +553,7 @@ def GetMailDemo():
             PTTBot.Log('信件標題: ' + Mail.getTitle())
             PTTBot.Log('信件日期: ' + Mail.getDate())
             PTTBot.Log('信件IP: ' + Mail.getIP())
-            PTTBot.Log('信件內文: ' + Mail.getContent())
+            PTTBot.Log('信件內文:\n' + Mail.getContent())
 
             # print('-' * 20)
             # print(Mail.getRawContent())
@@ -770,11 +838,6 @@ if __name__ == '__main__':
     # PTTBot = PTT.Library(ID, Password, PreWait=0.1, EveryWait=0.2, MaxEveryWait=1, MinEveryWait=1)
 
     PTTBot = PTT.Library()
-
-    # try:
-    #     PTTBot.register('NewID')
-    # except:
-
     ErrCode = PTTBot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')

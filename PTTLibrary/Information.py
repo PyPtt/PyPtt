@@ -1,5 +1,21 @@
 import array
 
+class PostSearchType(object):
+    # 搜尋關鍵字    / ?
+    # 搜尋作者      a
+    # 搜尋推文數    Z
+    # 搜尋標記      G
+    # 搜尋稿酬      A
+    Unknow =                                0
+    Keyword =                               1
+    Author =                                2
+    Push =                                  3
+    Mark =                                  4
+    Money =                                 5
+
+    MinValue = Unknow
+    MaxValue = Money
+
 class WaterBallType(object):
     Catch =                                 1
     Send =                                  2
@@ -115,10 +131,11 @@ class UserInformation(object):
         return self.__Chess
         
 class PushInformation(object):
-    def __init__(self, PushType, Author, PushContent, PushTime):
+    def __init__(self, PushType, Author, PushContent, PushIP, PushTime):
         self.__Type = int(PushType)
         self.__Author = str(Author)
         self.__Content = str(PushContent)
+        self.__IP = str(PushIP)
         self.__Time = str(PushTime)
 
     def getType(self):
@@ -127,6 +144,8 @@ class PushInformation(object):
         return self.__Author
     def getContent(self):
         return self.__Content
+    def getIP(self):
+        return self.__IP
     def getTime(self):
         return self.__Time
         
