@@ -1799,14 +1799,18 @@ class Library(object):
 
         PostContentList = []
         PostPushList = []
+        PushMode = False
         for line in PostContentListTemp:
             # print('! ' + line)
             PostContentList.append(line)
 
-            _, CurrentPush = self.__parsePush(line)
-            if CurrentPush != None:
-                # print('PUSH!!!: ' + line)
-                PostPushList.append(CurrentPush)
+            if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自:' in line or '※ 文章網址:' in line:
+                PushMode = True
+                
+            if PushMode:
+                _, CurrentPush = self.__parsePush(line)
+                if CurrentPush != None:
+                    PostPushList.append(CurrentPush)
             
         PostContent = '\n'.join(PostContentList)
         PosRawData = PostRawContentListTemp
