@@ -30,6 +30,7 @@ FriendListType = Information.FriendListType()
 OperateType = Information.OperateType()
 WaterBallOperateType = Information.WaterBallOperateType
 WaterBallType = Information.WaterBallType
+PostSearchType = Information.PostSearchType
 
 class ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -134,7 +135,7 @@ class Library(object):
 
         self.__delAllWord = '\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08'
 
-        self.__ShowProgressBar =             True
+        self.__ShowProgressBar =                True
 
         self.__IdleTime =                       0
         self.__MaxIdleTime =                    MaxIdleTime
@@ -436,7 +437,23 @@ class Library(object):
     def __cleanScreen(self, screen):
         if not screen:
             return screen
-            # remove color codes
+
+        # self.Log('before: ' + str(screen))
+
+        PreNewLineMark = -1
+        for NewLineMark in range(1, 30):
+            for Type in ['1', '3', '5']:
+                if '[' + str(NewLineMark) + ';' + Type + 'H' in screen:
+                    if PreNewLineMark == -1:
+                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', '\n')
+                    else:
+                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', '\n' * (NewLineMark - PreNewLineMark))
+
+                    PreNewLineMark = NewLineMark
+
+        screen = screen.replace('[2J    ', '')
+        screen = screen.replace('[2J', '')
+
         screen = re.sub('\[[\d+;]*[mH]', '', screen)
         # remove carriage return
         screen = re.sub(r'[\r]', '', screen)
@@ -445,6 +462,7 @@ class Library(object):
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         screen = re.sub(r'[\x0e-\x1f]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
+        # self.Log('after: ' + str(screen))
         return screen
     def __wait_str(self, ConnectIndex):
         ch = ''
@@ -728,7 +746,7 @@ class Library(object):
         ErrCode = ErrorCode.Success
         self.__ErrorCode = ErrCode
         return ErrCode
-    def __getNewestPostIndex(self, Board, ConnectIndex=0, Search='', Author=''):
+    def __getNewestPostIndex(self, Board, ConnectIndex=0, SearchType=0, Search=''):
         result = 0
         
         CatchList = [
@@ -739,10 +757,18 @@ class Library(object):
         # SendMessage = '\x1b\x4fD\x1b\x4fD\x1b\x4fDqs' + Board + '\r\x03\x03 0\r$'
         
         SendMessage = GotoMainMenuCommand + 'qs' + Board + '\r\x03\x03 '
-        if Author != '':
-            SendMessage += 'a' + Author + '\r'
-        if Search != '':
+
+        if SearchType == PostSearchType.Keyword:
             SendMessage += '/' + Search + '\r'
+        elif SearchType == PostSearchType.Author:
+            SendMessage += 'a' + Search + '\r'
+        elif SearchType == PostSearchType.Push:
+            SendMessage += 'Z' + Search + '\r'
+        elif SearchType == PostSearchType.Mark:
+            SendMessage += 'G' + Search + '\r'
+        elif SearchType == PostSearchType.Money:
+            SendMessage += 'A' + Search + '\r'
+
         SendMessage += '0\r$'
         Refresh = True
         ExtraWait = 0
@@ -1262,7 +1288,7 @@ class Library(object):
         self.__ErrorCode = ErrCode
         return ErrCode
 
-    def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
+    def getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, SearchType=0, Search=''):
         self.__IdleTime = 0
         
         ConnectIndex = _ConnectIndex
@@ -1274,6 +1300,7 @@ class Library(object):
             Board = str(Board)
             PostID = str(PostID)
             PostIndex = int(PostIndex)
+            SearchType = int(SearchType)
             Search = str(Search)
         except:
             self.Log('輸入錯誤', LogLevel.WARNING)
@@ -1299,13 +1326,43 @@ class Library(object):
             self.__ErrorCode = ErrCode
             return ErrCode, result
 
+        if SearchType < PostSearchType.MinValue or PostSearchType.MaxValue < SearchType:
+            self.Log('搜尋類型輸入錯誤: 無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
+            SearchType = PostSearchType.Unknow
+        
+        if (Search != '' and SearchType == PostSearchType.Unknow) or (Search == '' and SearchType != PostSearchType.Unknow):
+            self.Log('無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
+
         if PostID != '' and Search != '':
             self.Log('使用文章代碼取得文章 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
+        
+        if SearchType == PostSearchType.Keyword:
+            pass
+        elif SearchType == PostSearchType.Author:
+            pass
+        elif SearchType == PostSearchType.Push:
+            if not Search.isdigit():
+                self.Log('搜尋條件輸入錯誤: 搜尋推文數 但搜尋條件非數字 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
+        elif SearchType == PostSearchType.Mark:
+            if Search != 'm' and Search != 's':
+                self.Log('搜尋條件輸入錯誤: 搜尋標記 但搜尋條件非 m 或 s 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
+        elif SearchType == PostSearchType.Money:
+            if not Search.isdigit():
+                self.Log('搜尋條件輸入錯誤: 搜尋稿酬 但搜尋條件非數字 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
 
         self.__APILock[ConnectIndex].acquire()
 
         for i in range(3):
-            ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, Search)
+            ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, SearchType, Search)
             if ErrCode != ErrorCode.Success:
                 continue
             
@@ -1318,7 +1375,64 @@ class Library(object):
 
         self.__ErrorCode = ErrCode
         return ErrCode, Post
-    def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, Search=''):
+    def __parsePush(self, line):
+        # print('__parsePush line: ' + line)
+
+        ErrCode = ErrorCode.Success
+        CurrentPush = None
+        
+        line = line.lstrip()
+        
+        CurrentPushType = PushType.Unknow
+
+        if line.startswith('推'):
+            CurrentPushType = PushType.Push
+        elif line.startswith('噓'):
+            CurrentPushType = PushType.Boo
+        elif line.startswith('→'):
+            CurrentPushType = PushType.Arrow
+        
+        if CurrentPushType == PushType.Unknow:
+            return ErrorCode.ParseError, None
+
+        PushAuthor = line
+        PushAuthor = PushAuthor[2:]
+        PushAuthor = PushAuthor[:PushAuthor.find(':')]
+        while PushAuthor.endswith(' '):
+            PushAuthor = PushAuthor[:-1]
+        
+        Target = ': '
+        PushContent = line[:-11]
+        PushContent = PushContent[PushContent.find(Target) + len(Target):]
+        PushContent = PushContent.rstrip()
+
+        PushIP = None
+
+        IPIndex_start = PushContent.rfind(' ') + 1
+        IPTemp = PushContent[IPIndex_start:]
+        IPCheck = re.search("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", IPTemp)
+
+        # 檢查 IP 格式並檢查與冒號的距離，大於10 避免推文內容是 IP 被當成推文 IP的情況
+        if IPCheck != None and (PushContent.find(IPCheck.group()) - PushContent.find(': ') > 10):
+            PushIP = IPCheck.group()
+            PushContent = PushContent[:PushContent.find(PushIP)]
+            PushContent = PushContent.rstrip()
+          
+        PushTime = line[-11:]
+
+        if re.search("[0-9][0-9]:[0-9][0-9]", PushTime) == None:
+            return ErrorCode.ParseError, None
+        if re.search("[0-9][0-9]/[0-9][0-9]", PushTime) == None:
+            return ErrorCode.ParseError, None
+
+        # print('PushAuthor: =' + PushAuthor + '=')
+        # print('PushContent: =' + PushContent + '=')
+        # print('PushTime: =' + PushTime + '=')
+
+        CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushIP, PushTime)
+
+        return ErrCode, CurrentPush
+    def __getPost(self, Board, PostID='', PostIndex=0, _ConnectIndex=0, SearchType=0, Search=''):
         
         ConnectIndex = _ConnectIndex
         result = None
@@ -1329,7 +1443,17 @@ class Library(object):
             SendMessage += '#' + PostID + '\rQ'
         elif PostIndex != -1:
             if Search != '':
-                SendMessage += '/' + Search + '\r'
+                if SearchType == PostSearchType.Keyword:
+                    SendMessage += '/' + Search + '\r'
+                elif SearchType == PostSearchType.Author:
+                    SendMessage += 'a' + Search + '\r'
+                elif SearchType == PostSearchType.Push:
+                    SendMessage += 'Z' + Search + '\r'
+                elif SearchType == PostSearchType.Mark:
+                    SendMessage += 'G' + Search + '\r'
+                elif SearchType == PostSearchType.Money:
+                    SendMessage += 'A' + Search + '\r'
+
             SendMessage += str(PostIndex) + '\rQ'
         
         Refresh = True
@@ -1356,20 +1480,6 @@ class Library(object):
                 ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
-            ),
-            DetectUnit(
-                '含有控制碼',
-                '此頁內容會依閱讀者不同', 
-                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
-                BreakDetect=True,
-                ErrCode = ErrorCode.HasControlCode
-            ),
-            DetectUnit(
-                '含有控制碼',
-                '原文未必有您的資料', 
-                ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
-                BreakDetect=True,
-                ErrCode = ErrorCode.HasControlCode
             ),
             DetectUnit(
                 '遇到 PTT BUG!!',
@@ -1523,8 +1633,7 @@ class Library(object):
 
         FirstPage = ''
         PageIndex = 2
-        # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
-        LastPageIndex = 5
+        LastPageIndex = 0
         PostContentListTemp = []
         PostRawContentListTemp = []
         isFirstPage = True
@@ -1533,6 +1642,8 @@ class Library(object):
         NewLine, _ = uao.encode('\n')
         NewLineByte = NewLine[0]
 
+        ControlCodeMode = False
+        FirstControlCodePage = True
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
             if ErrCode != ErrorCode.Success:
@@ -1559,12 +1670,9 @@ class Library(object):
                     CurrentPage = self.__ReceiveData[ConnectIndex]
                     CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
 
-                    if CurrentPage.startswith('[2J'):
-                        CurrentPage = CurrentPage[3:]
-                        CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
-
                     PageLineRangeTemp = CurrentPageList.pop()
+
                     # CurrentRawPageList.pop()
                     # 自幹一個 list pop
                     LastIndex = 0
@@ -1576,44 +1684,68 @@ class Library(object):
 
                     PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
                     if len(PageLineRange) <= 3:
-                        ErrCode = ErrorCode.HasControlCode
-                        self.__ErrorCode = ErrCode
-                        return ErrCode, None
+                        if not ControlCodeMode:
+                            # print(PageIndex)
+                            self.Log('控制碼擷取文章模式啟動')
+                            FirstControlCodePage = True
+                        ControlCodeMode = True
+                        
+                    if not ControlCodeMode:
 
-                    PageLineRange = list(map(int, PageLineRange))[-2:]
+                        PageLineRange = list(map(int, PageLineRange))[-2:]
+                        OverlapLine = LastPageIndex - PageLineRange[0] + 1
+
+                        if OverlapLine >= 1 and LastPageIndex != 0:
+                            # print('重疊', OverlapLine, '行')
+                            CurrentPageList = CurrentPageList[OverlapLine:]
+                            if not isFirstPage:
+                                for i in range(OverlapLine):
+                                    for ii in range(len(CurrentRawPage)):
+                                        if CurrentRawPage[ii] == NewLineByte:
+                                            CurrentRawPage = CurrentRawPage[ii + 1:]
+                                            break
                     
-                    OverlapLine = LastPageIndex - PageLineRange[0] + 1
-
-                    # 處理分隔線造成的行數計算錯誤
-                    if PageLineRange[0] > 1 and PageLineRange[0] < 5:
-                        OverlapLine += 1
-
-                    if OverlapLine >= 1 and LastPageIndex != 0:
-                        # print('重疊', OverlapLine, '行')
-                        CurrentPageList = CurrentPageList[OverlapLine:]
-                        # CurrentRawPageList = CurrentRawPageList[OverlapLine:]
+                        LastPageIndex = PageLineRange[1]
+                        PostContentListTemp.extend(CurrentPageList)
                         if not isFirstPage:
-                            for i in range(OverlapLine):
-                                for ii in range(len(CurrentRawPage)):
-                                    if CurrentRawPage[ii] == NewLineByte:
-                                        CurrentRawPage = CurrentRawPage[ii + 1:]
-                                        break
-                    
-                    LastPageIndex = PageLineRange[1]
+                            PostRawContentListTemp.extend([NewLineByte])
+                        PostRawContentListTemp.extend(CurrentRawPage)
 
-                    PostContentListTemp.extend(CurrentPageList)
-                    if not isFirstPage:
-                        PostRawContentListTemp.extend([NewLineByte])
-                    PostRawContentListTemp.extend(CurrentRawPage)
+                    else:
+                        if FirstControlCodePage:
+                            OverlapLine = 0
+                            for i in range(len(CurrentPageList)):
+                                # print('FirstControlCodePage: ' + CurrentPageList[i])
+                                if CurrentPageList[i] in PostContentListTemp:
+                                    # print('!!!OverlapLine: ' + CurrentPageList[i])
+                                    OverlapLine = i + 1
+                            
+                            CurrentPageList = CurrentPageList[OverlapLine:]
+                            FirstControlCodePage = False
+                            PostContentListTemp.extend(CurrentPageList)
+                        else:
+                            if not CurrentPageList[-3] in PostContentListTemp:
+                                # print('ControModeLine: ' + CurrentPageList[-3])
+                                PostContentListTemp.append(CurrentPageList[-3])
+                            if not CurrentPageList[-2] in PostContentListTemp:
+                                # print('ControModeLine: ' + CurrentPageList[-2])
+                                PostContentListTemp.append(CurrentPageList[-2])
+                            if not CurrentPageList[-1] in PostContentListTemp:
+                                # print('ControModeLine: ' + CurrentPageList[-1])
+                                PostContentListTemp.append(CurrentPageList[-1])
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                         break
+                    
+                    if not ControlCodeMode:
+                        SendMessage = str(PageIndex) + '\r'
+                        PageIndex += 1
+                    else:
+                        SendMessage = MoveDownCommand
 
-                    SendMessage = str(PageIndex) + '\r'
-                    PageIndex += 1
                     Refresh = True
                     isFirstPage = False
                     break
@@ -1628,82 +1760,54 @@ class Library(object):
                 self.logout()
                 sys.exit()
         
-        FirstPage = FirstPage[FirstPage.find('[2J 作者'):]
+        FirstPage = FirstPage[FirstPage.find('作者'):]
         PostLineList = FirstPage.split('\n')
 
-        if len(PostLineList) < 3:
-            ErrCode = ErrorCode.ParseError
-            self.__ErrorCode = ErrCode
-            return ErrCode, None
+        # if len(PostLineList) < 3:
+        #     ErrCode = ErrorCode.ParseError
+        #     self.__ErrorCode = ErrCode
+        #     return ErrCode, None
         # for line in PostLineList:
         #     print('Q', line)
 
         Target = '作者  '
-        PostAuthor = PostLineList[0]
-        PostAuthor = PostAuthor[PostAuthor.find(Target) + len(Target):]
-        PostAuthor = PostAuthor[:PostAuthor.find(')') + 1]
-        while PostAuthor.endswith(' '):
-            PostAuthor = PostAuthor[:-1]
+        if Target in FirstPage:
+            PostAuthor = PostLineList[0]
+            PostAuthor = PostAuthor[PostAuthor.find(Target) + len(Target):]
+            PostAuthor = PostAuthor[:PostAuthor.find(')') + 1]
+            PostAuthor = PostAuthor.rstrip()
+        else:
+            PostAuthor = None
         
         Target = '標題  '
-        PostTitle = PostLineList[1]
-        PostTitle = PostTitle[PostTitle.find(Target) + len(Target):]
-        PostTitle = PostTitle[:PostTitle.find('\r')]
-        while PostTitle.endswith(' '):
-            PostTitle = PostTitle[:-1]
+        if Target in FirstPage:
+            PostTitle = PostLineList[1]
+            PostTitle = PostTitle[PostTitle.find(Target) + len(Target):]
+            PostTitle = PostTitle[:PostTitle.find('\r')]
+            PostTitle = PostTitle.rstrip()
+        else:
+            PostTitle = None
 
         Target = '時間  '
-        PostDate = PostLineList[2]
-        PostDate = PostDate[PostDate.find(Target) + len(Target):]
-        PostDate = PostDate[:PostDate.find('\r')]
-        while PostDate.endswith(' '):
-            PostDate = PostDate[:-1]
+        if Target in FirstPage:
+            PostDate = PostLineList[2]
+            PostDate = PostDate[PostDate.find(Target) + len(Target):]
+            PostDate = PostDate[:PostDate.find('\r')]
+            PostDate = PostDate.rstrip()
+        else:
+            PostDate = None
 
         PostContentList = []
         PostPushList = []
         for line in PostContentListTemp:
             # print('! ' + line)
-            if len(PostContentList) == 0:
-                # print('QQ: ' + str(PostIP))
-                if str(PostIP) in line:
-                    PostContentList = PostContentListTemp[:PostContentListTemp.index(line)]
-            else:
-                while line.startswith(' '):
-                    line = line[1:]
-                
-                CurrentPushType = PushType.Unknow
+            PostContentList.append(line)
 
-                if line.startswith('推'):
-                    CurrentPushType = PushType.Push
-                elif line.startswith('噓'):
-                    CurrentPushType = PushType.Boo
-                elif line.startswith('→'):
-                    CurrentPushType = PushType.Arrow
-                
-                if CurrentPushType != PushType.Unknow:
-                    # print(line)
-
-                    PushAuthor = line
-                    PushAuthor = PushAuthor[2:]
-                    PushAuthor = PushAuthor[:PushAuthor.find(':')]
-                    while PushAuthor.endswith(' '):
-                        PushAuthor = PushAuthor[:-1]
-                    
-                    Target = ': '
-                    PushContent = line[:-11]
-                    PushContent = PushContent[PushContent.find(Target) + len(Target):]
-                    # PushContent = PushContent[:PushContent.find(' ')]
-                    while PushContent.endswith(' '):
-                        PushContent = PushContent[:-1]
-
-                    PushTime = line[-11:]
-                    # print('PushAuthor: =' + PushAuthor + '=')
-                    # print('PushContent: =' + PushContent + '=')
-                    # print('PushTime: =' + PushTime + '=')
-
-                    CurrentPush = Information.PushInformation(CurrentPushType, PushAuthor, PushContent, PushTime)
-                    PostPushList.append(CurrentPush)
-
+            _, CurrentPush = self.__parsePush(line)
+            if CurrentPush != None:
+                # print('PUSH!!!: ' + line)
+                PostPushList.append(CurrentPush)
+            
         PostContent = '\n'.join(PostContentList)
         PosRawData = PostRawContentListTemp
 
@@ -2160,16 +2264,52 @@ class Library(object):
         ErrCode = ErrorCode.Success
         self.__ErrorCode = ErrCode
         return ErrCode, result
-    def getNewestIndex(self, Board='', Search=''):
+    def getNewestIndex(self, Board='', SearchType=0, Search=''):
         self.__IdleTime = 0
         ConnectIndex = 0
         result = 0
+        try:
+            Board = str(Board)
+            SearchType = int(SearchType)
+            Search = str(Search)
+        except:
+            self.Log('輸入錯誤', LogLevel.WARNING)
+            ErrCode = ErrorCode.ErrorInput
+            self.__ErrorCode = ErrCode
+            return ErrCode, result
         
-        Board = str(Board)
-        Search = str(Search)
+        if SearchType < PostSearchType.MinValue or PostSearchType.MaxValue < SearchType:
+            self.Log('搜尋類型輸入錯誤: 無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
+            SearchType = PostSearchType.Unknow
+        
+        if (Search != '' and SearchType == PostSearchType.Unknow) or (Search == '' and SearchType != PostSearchType.Unknow):
+            self.Log('無法判別搜尋類型 搜尋條件失效', LogLevel.WARNING)
+            Search = ''
 
         if Board == '' and Search != '':
             self.Log('郵件模式下無法使用搜尋條件', LogLevel.WARNING)
+            Search = ''
+        
+        if SearchType == PostSearchType.Keyword:
+            pass
+        elif SearchType == PostSearchType.Author:
+            pass
+        elif SearchType == PostSearchType.Push:
+            if not Search.isdigit():
+                self.Log('搜尋條件輸入錯誤: 搜尋推文數 但搜尋條件非數字 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
+        elif SearchType == PostSearchType.Mark:
+            if Search != 'm' and Search != 's':
+                self.Log('搜尋條件輸入錯誤: 搜尋標記 但搜尋條件非 m 或 s 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
+        elif SearchType == PostSearchType.Money:
+            if not Search.isdigit():
+                self.Log('搜尋條件輸入錯誤: 搜尋稿酬 但搜尋條件非數字 搜尋條件失效', LogLevel.WARNING)
+                Search = ''
+                SearchType = PostSearchType.Unknow
 
         self.__APILock[ConnectIndex].acquire()
         if Board == '':
@@ -2246,7 +2386,7 @@ class Library(object):
                 return self.__ErrorCode, result
 
             for i in range(3):
-                ErrCode, result = self.__getNewestPostIndex(Board=Board, Search=Search)
+                ErrCode, result = self.__getNewestPostIndex(Board=Board, SearchType=SearchType, Search=Search)
                 if ErrCode == ErrorCode.Success:
                     self.__APILock[ConnectIndex].release()
                     self.__ErrorCode = ErrCode
@@ -2324,12 +2464,10 @@ class Library(object):
         
         FirstPage = ''
         PageIndex = 2
-        # 預設先把第一頁的前五行拿掉 分別為 作者 標題 時間 分隔線與一行空白
-        LastPageIndex = 5
+        LastPageIndex = 0
         MailContentList = []
         MailRawContentList = []
         isFirstPage = True
-        IPLine = ''
 
         NewLine, _ = uao.encode('\n')
         NewLineByte = NewLine[0]
@@ -2365,11 +2503,7 @@ class Library(object):
                     CurrentPage = self.__ReceiveData[ConnectIndex]
                     CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
 
-                    if CurrentPage.startswith('[2J'):
-                        CurrentPage = CurrentPage[3:]
-                        CurrentRawPage = CurrentRawPage[7:]
                     CurrentPageList = CurrentPage.split('\n')
-
 
                     PageLineRange = CurrentPageList.pop()
                     # CurrentRawPage.pop()
@@ -2386,11 +2520,11 @@ class Library(object):
                     OverlapLine = LastPageIndex - PageLineRangeTemp[0] + 1
 
                     # 處理分隔線造成的行數計算錯誤
-                    if PageLineRangeTemp[0] > 1 and PageLineRangeTemp[0] < 5:
-                        OverlapLine += 1
+                    # if PageLineRangeTemp[0] > 1 and PageLineRangeTemp[0] < 5:
+                    #     OverlapLine += 1
 
                     if OverlapLine >= 1 and LastPageIndex != 0:
-                        print('重疊', OverlapLine, '行')
+                        # print('重疊', OverlapLine, '行')
                         CurrentPageList = CurrentPageList[OverlapLine:]
 
                         if not isFirstPage:
@@ -2402,9 +2536,7 @@ class Library(object):
                     
                     LastPageIndex = PageLineRangeTemp[1]
 
-                    CurrentPage = '\n'.join(CurrentPageList)
-                    
-                    MailContentList.append(CurrentPage)
+                    MailContentList.extend(CurrentPageList)
                     if not isFirstPage:
                         MailRawContentList.extend([NewLineByte])
                     MailRawContentList.extend(CurrentRawPage)
@@ -2435,44 +2567,56 @@ class Library(object):
 
         MailLineList = FirstPage.split('\n')
 
-        # for line in MailLineList:
-        #     print('Q', line)
-
         Target = '作者  '
-        MailAuthor = MailLineList[0]
-        MailAuthor = MailAuthor[MailAuthor.find(Target) + len(Target):]
-        MailAuthor = MailAuthor[:MailAuthor.find('\r')]
-        while MailAuthor.endswith(' '):
-            MailAuthor = MailAuthor[:-1]
+        if Target in FirstPage:
+            MailAuthor = MailLineList[0]
+            MailAuthor = MailAuthor[MailAuthor.find(Target) + len(Target):]
+            MailAuthor = MailAuthor[:MailAuthor.find('\r')]
+            MailAuthor = MailAuthor.rstrip()
+        else:
+            MailAuthor = None
         
         Target = '標題  '
-        MailTitle = MailLineList[1]
-        MailTitle = MailTitle[MailTitle.find(Target) + len(Target):]
-        MailTitle = MailTitle[:MailTitle.find('\r')]
-        while MailTitle.endswith(' '):
-            MailTitle = MailTitle[:-1]
+        if Target in FirstPage:
+            MailTitle = MailLineList[1]
+            MailTitle = MailTitle[MailTitle.find(Target) + len(Target):]
+            MailTitle = MailTitle[:MailTitle.find('\r')]
+            MailTitle = MailTitle.rstrip()
+        else:
+            MailTitle = None
         
         Target = '時間  '
-        MailDate = MailLineList[2]
-        MailDate = MailDate[MailDate.find(Target) + len(Target):]
-        MailDate = MailDate[:MailDate.find('\r')]
-        while MailDate.endswith(' '):
-            MailDate = MailDate[:-1]
+        if Target in FirstPage:
+            MailDate = MailLineList[2]
+            MailDate = MailDate[MailDate.find(Target) + len(Target):]
+            MailDate = MailDate[:MailDate.find('\r')]
+            MailDate = MailDate.rstrip()
+        else:
+            MailDate = None
         
         # self.Log('MailAuthor: =' + MailAuthor + '=', LogLevel.DEBUG)
         # self.Log('MailTitle: =' + MailTitle + '=', LogLevel.DEBUG)
         # self.Log('MailDate: =' + MailDate + '=', LogLevel.DEBUG)
 
+        MailIP = None
+
+        for line in MailContentList:
+            # print('! ' + line)
+            if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自' in line:
+                IPCheck = re.search("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", line)
+                if IPCheck != None:
+                    MailIP = IPCheck.group()
+
         MailContent = '\n'.join(MailContentList)
         MailRawContent = MailRawContentList
         # self.Log('MailContent: =' + MailContent + '=', LogLevel.DEBUG)
 
-        if len(IPLine) < 7:
-            # 如果只有一頁的情況，IP 會顯示在第一頁
-            IPLine = MailLineList.pop()
-            IPLine = IPLine[:IPLine.find('瀏覽')]
-        MailIPList = list(map(str, re.findall(r'\d+', IPLine)))
-        MailIP = '.'.join(MailIPList)
+        # if len(IPLine) < 7:
+        #     # 如果只有一頁的情況，IP 會顯示在第一頁
+        #     IPLine = MailLineList.pop()
+        #     IPLine = IPLine[:IPLine.find('瀏覽')]
+        # MailIPList = list(map(str, re.findall(r'\d+', IPLine)))
+        # MailIP = '.'.join(MailIPList)
 
         # self.Log('MailIP: =' + MailIP + '=', LogLevel.DEBUG)
 
@@ -2855,8 +2999,8 @@ class Library(object):
 
         self.__ErrorCode = ErrCode
         return ErrCode
-    def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex, Search):
-        self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex) + ' ' + Search)
+    def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex, SearchType, Search):
+        self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex))
 
         if not self.__isConnected[ConnectIndex] and ConnectIndex > 0:
             # self.__CrawLock.acquire()
@@ -2870,7 +3014,7 @@ class Library(object):
         for PostIndex in range(StartIndex, EndIndex):
             self.__IdleTime = 0
 
-            ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex, Search=Search)
+            ErrCode, Post = self.getPost(Board, PostIndex=PostIndex, _ConnectIndex=ConnectIndex, SearchType=SearchType, Search=Search)
 
             if not self.__isBackground:
                 self.__ProgressBarCount += 1
@@ -2898,7 +3042,7 @@ class Library(object):
         
         self.Log('頻道 ' + str(ConnectIndex) + ' 爬行完畢', LogLevel.DEBUG)
         return
-    def crawlBoard(self, Board, PostHandler, MaxMultiLogin=2, StartIndex=0, EndIndex=0, Search=''):
+    def crawlBoard(self, Board, PostHandler, MaxMultiLogin=0, StartIndex=0, EndIndex=0, SearchType=0, Search='', MaxThreadPost=100):
         ErrCode = ErrorCode.Success
 
         if not self.__APICheck(sys._getframe().f_code.co_name):
@@ -2910,6 +3054,7 @@ class Library(object):
             EndIndex = int(EndIndex)
             MaxMultiLogin = int(MaxMultiLogin)
             Search = str(Search)
+            MaxThreadPost = int(MaxThreadPost)
         except:
             self.Log('輸入錯誤', LogLevel.WARNING)
 
@@ -2917,15 +3062,21 @@ class Library(object):
             self.__ErrorCode = ErrCode
             return ErrCode, 0, 0
 
-        if MaxMultiLogin < 1 or 5 < MaxMultiLogin:
+        if MaxMultiLogin < 0 or 5 < MaxMultiLogin:
             self.Log('多重登入設定錯誤', LogLevel.WARNING)
             ErrCode = ErrorCode.ErrorInput
             self.__ErrorCode = ErrCode
             return ErrCode, 0, 0
         
+        if MaxThreadPost < 1:
+            self.Log('每個線程負責文章數設定錯誤', LogLevel.WARNING)
+            ErrCode = ErrorCode.ErrorInput
+            self.__ErrorCode = ErrCode
+            return ErrCode, 0, 0
+
         self.__MaxMultiLogin = MaxMultiLogin
 
-        ErrCode, NewestIndex = self.getNewestIndex(Board=Board, Search=Search)
+        ErrCode, NewestIndex = self.getNewestIndex(Board=Board, SearchType=SearchType, Search=Search)
         if ErrCode != ErrorCode.Success:
             self.__ErrorCode = ErrCode
             return ErrCode, 0, 0
@@ -2961,8 +3112,7 @@ class Library(object):
             self.__ProgressBarCount = 0
 
         self.Log('總爬行文章: ' + str(self.__TotalPost) + ' 篇')
-        
-        MaxThreadPost = 100
+
         TempStr = '啟動連線頻道 '
         for i in range(self.__MaxMultiLogin):
             if (i + 1) * MaxThreadPost <= self.__TotalPost:
@@ -2983,7 +3133,7 @@ class Library(object):
 
             # self.Log(str(StartIndexTemp) + ' ' + str(EndIndexTemp) + ':' + str(EndIndexTemp - StartIndexTemp))
             # self.__CrawPoolList.append([StartIndexTemp, EndIndexTemp])
-            CrawThreadList.append(threading.Thread(target=self.__crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp, Search)))
+            CrawThreadList.append(threading.Thread(target=self.__crawlBoardThread, args=(i, Board, PostHandler, StartIndexTemp, EndIndexTemp, SearchType, Search)))
         
         self.__EnableLoginCount = 1
 
@@ -3703,6 +3853,9 @@ class Library(object):
         self.__IdleTime = 0
         ErrCode = ErrorCode.Success
         ConnectIndex = 0
+
+        self.Log('因 PTT 關閉註冊功能 暫時無法提供註冊 API')
+        return ErrorCode.DeprecatedAPI
 
         if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode
