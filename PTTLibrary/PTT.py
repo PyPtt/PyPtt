@@ -438,7 +438,7 @@ class Library(object):
         if not screen:
             return screen
 
-        self.Log('before: ' + str(screen))
+        # self.Log('before: ' + str(screen))
 
         PreNewLineMark = -1
         for NewLineMark in range(1, 30):
@@ -462,7 +462,7 @@ class Library(object):
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         screen = re.sub(r'[\x0e-\x1f]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
-        self.Log('after: ' + str(screen))
+        # self.Log('after: ' + str(screen))
         return screen
     def __wait_str(self, ConnectIndex):
         ch = ''
@@ -1481,20 +1481,6 @@ class Library(object):
                 BreakDetect=True,
                 ErrCode = ErrorCode.Success
             ),
-            # DetectUnit(
-            #     '含有控制碼',
-            #     '此頁內容會依閱讀者不同', 
-            #     ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
-            #     BreakDetect=True,
-            #     ErrCode = ErrorCode.HasControlCode
-            # ),
-            # DetectUnit(
-            #     '含有控制碼',
-            #     '原文未必有您的資料', 
-            #     ResponseUnit('\x1b\x4fD\x1b\x4fD\x1b\x4fD\x1b\x4fD', False),
-            #     BreakDetect=True,
-            #     ErrCode = ErrorCode.HasControlCode
-            # ),
             DetectUnit(
                 '遇到 PTT BUG!!',
                 'PttBug', 
@@ -1656,6 +1642,8 @@ class Library(object):
         NewLine, _ = uao.encode('\n')
         NewLineByte = NewLine[0]
 
+        ControlCodeMode = False
+        FirstControlCodePage = True
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
             if ErrCode != ErrorCode.Success:
@@ -1696,46 +1684,68 @@ class Library(object):
 
                     PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
                     if len(PageLineRange) <= 3:
-                        ErrCode = ErrorCode.HasControlCode
-                        self.__ErrorCode = ErrCode
-                        return ErrCode, None
+                        if not ControlCodeMode:
+                            # print(PageIndex)
+                            self.Log('控制碼擷取文章模式啟動')
+                            FirstControlCodePage = True
+                        ControlCodeMode = True
+                        
+                    if not ControlCodeMode:
 
-                    PageLineRange = list(map(int, PageLineRange))[-2:]
+                        PageLineRange = list(map(int, PageLineRange))[-2:]
+                        OverlapLine = LastPageIndex - PageLineRange[0] + 1
+
+                        if OverlapLine >= 1 and LastPageIndex != 0:
+                            # print('重疊', OverlapLine, '行')
+                            CurrentPageList = CurrentPageList[OverlapLine:]
+                            if not isFirstPage:
+                                for i in range(OverlapLine):
+                                    for ii in range(len(CurrentRawPage)):
+                                        if CurrentRawPage[ii] == NewLineByte:
+                                            CurrentRawPage = CurrentRawPage[ii + 1:]
+                                            break
                     
-                    OverlapLine = LastPageIndex - PageLineRange[0] + 1
-
-                    # 處理分隔線造成的行數計算錯誤
-                    # if PageLineRange[0] > 1 and PageLineRange[0] < 5:
-                    #     OverlapLine += 1
-
-                    if OverlapLine >= 1 and LastPageIndex != 0:
-
-                        # print('重疊', OverlapLine, '行')
-                        CurrentPageList = CurrentPageList[OverlapLine:]
-                        # print(CurrentPageList)
-                        # CurrentRawPageList = CurrentRawPageList[OverlapLine:]
+                        LastPageIndex = PageLineRange[1]
+                        PostContentListTemp.extend(CurrentPageList)
                         if not isFirstPage:
-                            for i in range(OverlapLine):
-                                for ii in range(len(CurrentRawPage)):
-                                    if CurrentRawPage[ii] == NewLineByte:
-                                        CurrentRawPage = CurrentRawPage[ii + 1:]
-                                        break
-                    
-                    LastPageIndex = PageLineRange[1]
+                            PostRawContentListTemp.extend([NewLineByte])
+                        PostRawContentListTemp.extend(CurrentRawPage)
 
-                    PostContentListTemp.extend(CurrentPageList)
-                    if not isFirstPage:
-                        PostRawContentListTemp.extend([NewLineByte])
-                    PostRawContentListTemp.extend(CurrentRawPage)
+                    else:
+                        if FirstControlCodePage:
+                            OverlapLine = 0
+                            for i in range(len(CurrentPageList)):
+                                # print('FirstControlCodePage: ' + CurrentPageList[i])
+                                if CurrentPageList[i] in PostContentListTemp:
+                                    # print('!!!OverlapLine: ' + CurrentPageList[i])
+                                    OverlapLine = i + 1
+                            
+                            CurrentPageList = CurrentPageList[OverlapLine:]
+                            FirstControlCodePage = False
+                            PostContentListTemp.extend(CurrentPageList)
+                        else:
+                            if not CurrentPageList[-3] in PostContentListTemp:
+                                # print('ControModeLine: ' + CurrentPageList[-3])
+                                PostContentListTemp.append(CurrentPageList[-3])
+                            if not CurrentPageList[-2] in PostContentListTemp:
+                                # print('ControModeLine: ' + CurrentPageList[-2])
+                                PostContentListTemp.append(CurrentPageList[-2])
+                            if not CurrentPageList[-1] in PostContentListTemp:
+                                # print('ControModeLine: ' + CurrentPageList[-1])
+                                PostContentListTemp.append(CurrentPageList[-1])
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                         break
+                    
+                    if not ControlCodeMode:
+                        SendMessage = str(PageIndex) + '\r'
+                        PageIndex += 1
+                    else:
+                        SendMessage = MoveDownCommand
 
-                    SendMessage = str(PageIndex) + '\r'
-                    PageIndex += 1
                     Refresh = True
                     isFirstPage = False
                     break
@@ -2990,7 +3000,7 @@ class Library(object):
         self.__ErrorCode = ErrCode
         return ErrCode
     def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex, SearchType, Search):
-        self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex) + ' ' + Search)
+        self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex))
 
         if not self.__isConnected[ConnectIndex] and ConnectIndex > 0:
             # self.__CrawLock.acquire()
@@ -3066,7 +3076,7 @@ class Library(object):
 
         self.__MaxMultiLogin = MaxMultiLogin
 
-        ErrCode, NewestIndex = self.getNewestIndex(Board=Board, Search=Search)
+        ErrCode, NewestIndex = self.getNewestIndex(Board=Board, SearchType=SearchType, Search=Search)
         if ErrCode != ErrorCode.Success:
             self.__ErrorCode = ErrCode
             return ErrCode, 0, 0

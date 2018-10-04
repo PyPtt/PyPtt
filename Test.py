@@ -158,7 +158,7 @@ def GetPostDemo():
     # 搜尋條件
     inputSearch = '公告'
 
-    Test = True
+    Test = False
 
     if not Test:
 
@@ -188,7 +188,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 72323 - 1
+            NewestIndex = 72323
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
 
         for i in range(TryPost):
@@ -413,7 +413,7 @@ def CrawlBoardDemo():
     if EnableSearchCondition:
         ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost + 1, EndIndex=NewestIndex, SearchType=inputSearchType, Search=inputSearch)
     else:
-        ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost, EndIndex=NewestIndex)
+        ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost + 1, EndIndex=NewestIndex)
     
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
@@ -838,21 +838,16 @@ if __name__ == '__main__':
     # PTTBot = PTT.Library(ID, Password, PreWait=0.1, EveryWait=0.2, MaxEveryWait=1, MinEveryWait=1)
 
     PTTBot = PTT.Library()
-
-    # try:
-    #     PTTBot.register('NewID')
-    # except:
-
     ErrCode = PTTBot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')
         sys.exit()
     
     try:
-        # PostDemo()
-        # PushDemo()
+        PostDemo()
+        PushDemo()
         # GetNewestIndexDemo()
-        GetPostDemo()
+        # GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
