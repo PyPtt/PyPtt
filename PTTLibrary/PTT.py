@@ -1799,15 +1799,18 @@ class Library(object):
 
         PostContentList = []
         PostPushList = []
-        PushMode = False
-        for line in PostContentListTemp:
-            # print('! ' + line)
+        
+        LastPostEndMarkIndex = 0
+        for i in range(len(PostContentListTemp)):
+            line = PostContentListTemp[i]
+            if '※' in line and ('發信站' in line or '批踢踢實業坊' in line):
+                LastPostEndMarkIndex = i
+
+        for i in range(len(PostContentListTemp)):
+            line = PostContentListTemp[i]
             PostContentList.append(line)
 
-            if '※ 發信站: 批踢踢實業坊(ptt.cc), 來自:' in line or '※ 文章網址:' in line:
-                PushMode = True
-                
-            if PushMode:
+            if i > LastPostEndMarkIndex:
                 _, CurrentPush = self.__parsePush(line)
                 if CurrentPush != None:
                     PostPushList.append(CurrentPush)

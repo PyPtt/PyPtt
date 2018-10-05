@@ -166,7 +166,7 @@ def GetPostDemo():
         BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
     else:
         # 測試用
-        BoardList = ['Wanted']
+        BoardList = ['BuyTogether']
         TryPost = 1
 
     for Board in BoardList:
@@ -188,7 +188,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 72323
+            NewestIndex = 79974
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
 
         for i in range(TryPost):
