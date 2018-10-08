@@ -442,23 +442,29 @@ class Library(object):
         # self.Log('before: ' + str(screen))
 
         PreNewLineMark = -1
-        for NewLineMark in range(1, 30):
-            for Type in ['1', '3', '5']:
+        PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
+        for NewLineMark in range(1, 25):
+            for Type in ['1', '3', '5', '6']:
                 if '[' + str(NewLineMark) + ';' + Type + 'H' in screen:
                     if PreNewLineMark == -1:
-                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', '\n')
+                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', PTTLibraryNewLineMark)
                     else:
-                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', '\n' * (NewLineMark - PreNewLineMark))
+                        NewLineMarkCount = NewLineMark - PreNewLineMark
+                        NewLineCount = screen[screen.rfind(PTTLibraryNewLineMark) : screen.find('[' + str(NewLineMark) + ';' + Type + 'H')].count('\n')
+
+                        NewLine = NewLineMarkCount - NewLineCount
+
+                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', PTTLibraryNewLineMark * NewLine)
 
                     PreNewLineMark = NewLineMark
-
+        
+        screen = screen.replace(PTTLibraryNewLineMark, '\n')
         screen = screen.replace('[2J    ', '')
         screen = screen.replace('[2J', '')
 
         screen = re.sub('\[[\d+;]*[mH]', '', screen)
-        # remove carriage return
+
         screen = re.sub(r'[\r]', '', screen)
-        # remove escape cahracters, capabale of partial replace
         screen = re.sub(r'[\x00-\x08]', '', screen)
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         screen = re.sub(r'[\x0e-\x1f]', '', screen)
@@ -1537,7 +1543,7 @@ class Library(object):
                     # 78369    10/08 -            □ (本文已被刪除) [QQ1]
                     # 77579 s  10/06 -            □ (本文已被刪除) <QQ2>
                     if line.startswith(self.__Cursor):
-                        print('deleted line: ' + line)
+                        # print('deleted line: ' + line)
                         CheckDeleteList = ['本文', '已被', '刪除']
                         CheckDeleteResult = [False] * len(CheckDeleteList)
                         for i in range(len(CheckDeleteList)):
