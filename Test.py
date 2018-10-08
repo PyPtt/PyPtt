@@ -166,7 +166,7 @@ def GetPostDemo():
         BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
     else:
         # 測試用
-        BoardList = ['BuyTogether']
+        BoardList = ['Wanted']
         TryPost = 1
 
     for Board in BoardList:
@@ -188,7 +188,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 79974
+            NewestIndex = 78369
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
 
         for i in range(TryPost):
@@ -201,7 +201,10 @@ def GetPostDemo():
                 ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
 
             if ErrCode == PTT.ErrorCode.PostDeleted:
-                PTTBot.Log('文章已經被刪除')
+                if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+                    PTTBot.Log('文章被原 PO 刪掉了')
+                elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+                    PTTBot.Log('文章被版主刪掉了')
                 continue
             elif ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
@@ -844,10 +847,10 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-        PostDemo()
-        PushDemo()
+        # PostDemo()
+        # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
