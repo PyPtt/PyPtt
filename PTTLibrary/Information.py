@@ -1,5 +1,10 @@
 import array
 
+def ParseParameter(type, input):
+    if input == None:
+        return None
+    return type(input)
+
 class PostSearchType(object):
     # 搜尋關鍵字    / ?
     # 搜尋作者      a
@@ -75,11 +80,11 @@ class PushType(object):
 
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP, RawData):
-        self.__Author = str(Author)
-        self.__Title = str(Title)
-        self.__Date = str(Date)
-        self.__Content = str(Content)
-        self.__IP = str(IP)
+        self.__Author = ParseParameter(str, Author)
+        self.__Title = ParseParameter(str, Title)
+        self.__Date = ParseParameter(str, Date)
+        self.__Content = ParseParameter(str, Content)
+        self.__IP = ParseParameter(str, IP)
         self.__RawData = array.array('B', RawData).tostring()
     def getAuthor(self):
         return self.__Author
@@ -96,17 +101,17 @@ class MailInformation(object):
 
 class UserInformation(object):
     def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State, Mail, LastLogin, LastIP, FiveChess, Chess):
-        self.__ID = str(ID)
-        self.__Money = str(Money)
-        self.__LoginTime = int(LoginTime)
-        self.__LegalPost = int(LegalPost)
-        self.__IllegalPost = int(IllegalPost)
-        self.__State = str(State)
-        self.__Mail = str(Mail)
-        self.__LastLogin = str(LastLogin)
-        self.__LastIP = str(LastIP)
-        self.__FiveChess = FiveChess
-        self.__Chess = Chess
+        self.__ID = ParseParameter(str, ID)
+        self.__Money = ParseParameter(str, Money)
+        self.__LoginTime = ParseParameter(int, LoginTime)
+        self.__LegalPost = ParseParameter(int, LegalPost)
+        self.__IllegalPost = ParseParameter(int, IllegalPost)
+        self.__State = ParseParameter(str, State)
+        self.__Mail = ParseParameter(str, Mail)
+        self.__LastLogin = ParseParameter(str, LastLogin)
+        self.__LastIP = ParseParameter(str, LastIP)
+        self.__FiveChess = ParseParameter(str, FiveChess)
+        self.__Chess = ParseParameter(str, Chess)
     def getID(self):
         return self.__ID
     def getMoney(self):
@@ -132,11 +137,11 @@ class UserInformation(object):
         
 class PushInformation(object):
     def __init__(self, PushType, Author, PushContent, PushIP, PushTime):
-        self.__Type = int(PushType)
-        self.__Author = str(Author)
-        self.__Content = str(PushContent)
-        self.__IP = str(PushIP)
-        self.__Time = str(PushTime)
+        self.__Type = ParseParameter(int, PushType)
+        self.__Author = ParseParameter(str, Author)
+        self.__Content = ParseParameter(str, PushContent)
+        self.__IP = ParseParameter(str, PushIP)
+        self.__Time = ParseParameter(str, PushTime)
 
     def getType(self):
         return self.__Type
@@ -148,23 +153,31 @@ class PushInformation(object):
         return self.__IP
     def getTime(self):
         return self.__Time
-        
+
+class PostDeleteStatus(object):
+    NotDeleted =                            0
+    ByAuthor =                              1
+    ByModerator =                           2
+
+    MinValue = NotDeleted
+    MaxValue = ByModerator
 class PostInformation(object):
-    def __init__(self, Board, PostID, Author, Date, Title, WebUrl, Money, PostContent, IP, PushList, RawData):
-        self.__Board = str(Board)
-        self.__PostID = str(PostID)
-        self.__Author = str(Author)
-        self.__Date = str(Date)
-        self.__Title = str(Title)
-        self.__PostContent = str(PostContent)
-        self.__Money = int(Money)
-        self.__WebUrl = str(WebUrl)
-        self.__IP = str(IP)
+    def __init__(self, Board=None, PostID=None, Author=None, Date=None, Title=None, WebUrl=None, Money=None, PostContent=None, IP=None, PushList=None, RawData=None, DeleteStatus=0):
+        self.__Board = ParseParameter(str, Board)        
+        self.__PostID = ParseParameter(str, PostID)
+        self.__Author = ParseParameter(str, Author)
+        self.__Date = ParseParameter(str, Date)
+        self.__Title = ParseParameter(str, Title)
+        self.__PostContent = ParseParameter(str, PostContent)
+        self.__Money = ParseParameter(int, Money)
+        self.__WebUrl = ParseParameter(str, WebUrl)
+        self.__IP = ParseParameter(str, IP)
         self.__PushList = PushList
-        self.__RawData = array.array('B', RawData).tostring()
-
-        
-
+        if RawData == None:
+            self.__RawData = None
+        else:
+            self.__RawData = array.array('B', RawData).tostring()
+        self.__DeleteStatus = DeleteStatus
     def getBoard(self):
         return self.__Board
     def getID(self):
@@ -187,13 +200,15 @@ class PostInformation(object):
         return self.__PushList
     def getRawData(self):
         return self.__RawData
+    def getDeleteStatus(self):
+        return self.__DeleteStatus
 
 class WaterBallInformation(object):
     def __init__(self, Type, Author, PushContent, Date=''):
-        self.__Type = int(Type)
-        self.__Author = str(Author)
-        self.__Content = str(PushContent)
-        self.__Date = str(Date)
+        self.__Type = ParseParameter(int, Type)
+        self.__Author = ParseParameter(str, Author)
+        self.__Content = ParseParameter(str, PushContent)
+        self.__Date = ParseParameter(str, Date)
     def getAuthor(self):
         return self.__Author
     def getContent(self):

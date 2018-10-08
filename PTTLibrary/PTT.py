@@ -31,6 +31,7 @@ OperateType = Information.OperateType()
 WaterBallOperateType = Information.WaterBallOperateType
 WaterBallType = Information.WaterBallType
 PostSearchType = Information.PostSearchType
+PostDeleteStatus = Information.PostDeleteStatus
 
 class ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
@@ -1363,6 +1364,10 @@ class Library(object):
 
         for i in range(3):
             ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, SearchType, Search)
+            if ErrCode == ErrorCode.PostDeleted:
+                self.__APILock[ConnectIndex].release()
+                self.__ErrorCode = ErrCode
+                return ErrCode, Post
             if ErrCode != ErrorCode.Success:
                 continue
             
@@ -1529,16 +1534,32 @@ class Library(object):
             if not isDetectedTarget:
                 
                 for line in self.__ReceiveData[ConnectIndex].split('\n'):
+                    # 78369    10/08 -            □ (本文已被刪除) [QQ1]
+                    # 77579 s  10/06 -            □ (本文已被刪除) <QQ2>
                     if line.startswith(self.__Cursor):
-                        if '本文已被' in line[:line.find('[')]:
+                        print('deleted line: ' + line)
+                        CheckDeleteList = ['本文', '已被', '刪除']
+                        CheckDeleteResult = [False] * len(CheckDeleteList)
+                        for i in range(len(CheckDeleteList)):
+                            DeletedKeyword = CheckDeleteList[i]
+                            if DeletedKeyword in line:
+                                CheckDeleteResult[i] = True
+                        
+                        if CheckDeleteResult.count(True) >= 2:
+                            if '<' in line:
+                                PostAuthor = line[line.find('<') + 1:]
+                                PostAuthor = PostAuthor[:PostAuthor.find('>')]
+                                # print('被版主刪除兒: >' + PostAuthor + '<')
+                                result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByModerator)
+                            elif '[' in line:
+                                PostAuthor = line[line.find('[') + 1:]
+                                PostAuthor = PostAuthor[:PostAuthor.find(']')]
+                                # print('自己刪除兒: >' + PostAuthor + '<')
+                                result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByAuthor)
+
                             ErrCode = ErrorCode.PostDeleted
                             self.__ErrorCode = ErrCode
                             return ErrCode, result
-                        if '已被' in line[:line.find('<')] or '刪除' in line[:line.find('<')]:
-                            ErrCode = ErrorCode.PostDeleted
-                            self.__ErrorCode = ErrCode
-                            return ErrCode, result
-                        # print('line: ' + line[:line.find('[')])
                 
                 self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' part 1', ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態! PTT Library 緊急停止')
@@ -1821,7 +1842,7 @@ class Library(object):
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')
 
-        result = Information.PostInformation(Board, PostID, PostAuthor,PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData)
+        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData)
 
         self.__WaterBallProceeor()
         self.__ErrorCode = ErrCode
