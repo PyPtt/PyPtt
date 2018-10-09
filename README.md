@@ -21,7 +21,7 @@
 
 版本
 -------------------
-###### 0.7.12
+###### 0.7.13
 
 安裝
 -------------------
@@ -80,7 +80,7 @@ API
 | giveMoney   | 給予使用者 P 幣   |
 | getTime   | 取得 PTT 系統時間   |
 | getUser   | 取得使用者資訊   |
-| crawlBoard   | 多線程爬蟲 以多重登入增加爬蟲速度 可傳入 call back 自訂存檔格式  |
+| crawlBoard   | 爬蟲 API 可傳入 call back 自訂存檔格式  |
 | getMail   | 取得信件資訊   |
 | Log   | 顯示訊息   |
 | changePassword   | 變更密碼   |
