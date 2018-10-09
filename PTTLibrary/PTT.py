@@ -1371,6 +1371,8 @@ class Library(object):
         for i in range(3):
             ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, SearchType, Search)
             if ErrCode == ErrorCode.PostDeleted:
+                if Post == None:
+                    continue
                 self.__APILock[ConnectIndex].release()
                 self.__ErrorCode = ErrCode
                 return ErrCode, Post
@@ -1562,6 +1564,21 @@ class Library(object):
                                 PostAuthor = PostAuthor[:PostAuthor.find(']')]
                                 # print('自己刪除兒: >' + PostAuthor + '<')
                                 result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByAuthor)
+                            else:
+                                # print('無法判斷誰刪除: ' + line)
+                                FakeAuthor = line
+                                FakeAuthor = FakeAuthor[FakeAuthor.find(') ') + 2:]
+                                FakeAuthor = FakeAuthor[:FakeAuthor.find(']')]
+                                # print('FakeAuthor: ' + FakeAuthor)
+                                RawData = self.__ReceiveRawData[ConnectIndex].decode(encoding='big5',errors='ignore')
+                                if '[H' + FakeAuthor + ']' in RawData:
+                                    # print('Author: H' + FakeAuthor)
+                                    PostAuthor = 'H' + FakeAuthor
+                                    result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByAuthor)
+                                if '[m' + FakeAuthor + ']' in RawData:
+                                    # print('Author: m' + FakeAuthor)
+                                    PostAuthor = 'm' + FakeAuthor
+                                    result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByAuthor)
 
                             ErrCode = ErrorCode.PostDeleted
                             self.__ErrorCode = ErrCode

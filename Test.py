@@ -162,11 +162,11 @@ def GetPostDemo():
 
     if not Test:
 
-        TryPost = 3
         BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
+        TryPost = 3
     else:
         # 測試用
-        BoardList = ['Minecraft']
+        BoardList = ['Wanted']
         TryPost = 1
 
     for Board in BoardList:
@@ -190,7 +190,7 @@ def GetPostDemo():
         else:
             NewestIndex = 6395
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
-
+        
         for i in range(TryPost):
             PTTBot.Log('-' * 50)
             PTTBot.Log(str(i) + ' 測試 ' + Board + ' ' + str(NewestIndex - i))
@@ -205,6 +205,8 @@ def GetPostDemo():
                     PTTBot.Log('文章被原 PO 刪掉了')
                 elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
                     PTTBot.Log('文章被版主刪掉了')
+                
+                PTTBot.Log('作者: ' + Post.getAuthor())
                 continue
             elif ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
