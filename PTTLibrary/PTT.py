@@ -444,8 +444,13 @@ class Library(object):
         PreNewLineMark = -1
         PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
         for NewLineMark in range(1, 25):
-            for Type in ['1', '3', '5', '6']:
+            for Type in ['1', '3', '5', '6' , '31']:
                 if '[' + str(NewLineMark) + ';' + Type + 'H' in screen:
+
+                    if Type == '31':
+                        PreNewLineMark = NewLineMark
+                        continue
+
                     if PreNewLineMark == -1:
                         screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', PTTLibraryNewLineMark)
                     else:
@@ -453,6 +458,9 @@ class Library(object):
                         NewLineCount = screen[screen.rfind(PTTLibraryNewLineMark) : screen.find('[' + str(NewLineMark) + ';' + Type + 'H')].count('\n')
 
                         NewLine = NewLineMarkCount - NewLineCount
+                        if NewLine <= 0:
+                            # print('幹 BUG 是你')
+                            NewLine = 1
 
                         screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', PTTLibraryNewLineMark * NewLine)
 
@@ -462,7 +470,7 @@ class Library(object):
         screen = screen.replace('[2J    ', '')
         screen = screen.replace('[2J', '')
 
-        screen = re.sub('\[[\d+;]*[mH]', '', screen)
+        screen = re.sub('\[[\d+;]*[mH]', '', screen)
 
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
@@ -1730,7 +1738,7 @@ class Library(object):
                     if len(PageLineRange) <= 3:
                         if not ControlCodeMode:
                             # print(PageIndex)
-                            self.Log('控制碼擷取文章模式啟動')
+                            self.Log('控制碼擷取文章模式啟動', _LogLevel=LogLevel.DEBUG)
                             FirstControlCodePage = True
                         ControlCodeMode = True
                         
@@ -1865,7 +1873,7 @@ class Library(object):
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')
 
-        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData)
+        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData, DeleteStatus=PostDeleteStatus.ByAuthor)
 
         self.__WaterBallProceeor()
         self.__ErrorCode = ErrCode
@@ -2726,6 +2734,11 @@ class Library(object):
                 ResponseUnit('\t' + str(Money) + '\r', False),
             ),
             DetectUnit(
+                '無需密碼',
+                '認證尚未過期',
+                ResponseUnit('y\r', False),
+            ),
+            DetectUnit(
                 '確認身分',
                 '完成交易前要重新確認您的身份', 
                 ResponseUnit(YourPassword + '\r', False),
@@ -3051,7 +3064,7 @@ class Library(object):
         self.__ErrorCode = ErrCode
         return ErrCode
     def __crawlBoardThread(self, ConnectIndex, Board, PostHandler, StartIndex, EndIndex, SearchType, Search):
-        self.Log(str(ConnectIndex) + ' ' + Board + ' ' + str(StartIndex) + ' ' + str(EndIndex))
+        self.Log('連線頻道 ' + str(ConnectIndex) + ' ' + Board + ' 爬行 ' + str(StartIndex) + ' ' + str(EndIndex))
 
         if not self.__isConnected[ConnectIndex] and ConnectIndex > 0:
             # self.__CrawLock.acquire()
@@ -3073,7 +3086,6 @@ class Library(object):
             
             if ErrCode == ErrorCode.PostDeleted:
                 self.__DeleteCrawCount += 1
-                continue
             elif ErrCode != ErrorCode.Success:
                 self.__ErrorGetPostList.append([ErrCode, Board, PostIndex])
                 continue
@@ -3164,12 +3176,14 @@ class Library(object):
 
         self.Log('總爬行文章: ' + str(self.__TotalPost) + ' 篇')
 
-        TempStr = '啟動連線頻道 '
-        for i in range(self.__MaxMultiLogin):
-            if (i + 1) * MaxThreadPost <= self.__TotalPost:
-                self.__EnableLogin += 1
-                TempStr += str(i) + ' '
-        self.Log(TempStr)
+        if self.__MaxMultiLogin > 0:
+
+            TempStr = '啟動連線頻道 '
+            for i in range(self.__MaxMultiLogin):
+                if (i + 1) * MaxThreadPost <= self.__TotalPost:
+                    self.__EnableLogin += 1
+                    TempStr += str(i) + ' '
+            self.Log(TempStr)
 
         self.__CrawPoolList = []
         CrawThreadList = []
