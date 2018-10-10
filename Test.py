@@ -166,7 +166,7 @@ def GetPostDemo():
         TryPost = 3
     else:
         # 測試用
-        BoardList = ['Wanted']
+        BoardList = ['Minecraft']
         TryPost = 1
 
     for Board in BoardList:
@@ -188,7 +188,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 78578
+            NewestIndex = 6395
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
@@ -849,10 +849,10 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-        PostDemo()
-        PushDemo()
+        # PostDemo()
+        # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()

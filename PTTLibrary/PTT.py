@@ -445,24 +445,25 @@ class Library(object):
         PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
         for NewLineMark in range(1, 25):
             for Type in ['1', '3', '5', '6' , '31']:
-                if '[' + str(NewLineMark) + ';' + Type + 'H' in screen:
+                Target = '[' + str(NewLineMark) + ';' + Type + 'H'
+                if Target in screen:
 
                     if Type == '31':
                         PreNewLineMark = NewLineMark
                         continue
 
                     if PreNewLineMark == -1:
-                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', PTTLibraryNewLineMark)
+                        screen = screen.replace(Target, PTTLibraryNewLineMark)
                     else:
                         NewLineMarkCount = NewLineMark - PreNewLineMark
-                        NewLineCount = screen[screen.rfind(PTTLibraryNewLineMark) : screen.find('[' + str(NewLineMark) + ';' + Type + 'H')].count('\n')
+                        NewLineCount = screen[screen.rfind(PTTLibraryNewLineMark) : screen.find(Target)].count('\n')
 
                         NewLine = NewLineMarkCount - NewLineCount
                         if NewLine <= 0:
                             # print('幹 BUG 是你')
                             NewLine = 1
 
-                        screen = screen.replace('[' + str(NewLineMark) + ';' + Type + 'H', PTTLibraryNewLineMark * NewLine)
+                        screen = screen.replace(Target, PTTLibraryNewLineMark * NewLine)
 
                     PreNewLineMark = NewLineMark
         
@@ -1554,7 +1555,7 @@ class Library(object):
                     # 77579 s  10/06 -            □ (本文已被刪除) <QQ2>
                     if line.startswith(self.__Cursor):
                         # print('deleted line: ' + line)
-                        CheckDeleteList = ['本文', '已被', '刪除']
+                        CheckDeleteList = ['本文', '已被', '刪除', '吃掉']
                         CheckDeleteResult = [False] * len(CheckDeleteList)
                         for i in range(len(CheckDeleteList)):
                             DeletedKeyword = CheckDeleteList[i]
