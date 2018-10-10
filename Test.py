@@ -188,7 +188,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 6395
+            NewestIndex = 78578
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
