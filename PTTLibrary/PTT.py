@@ -1554,7 +1554,6 @@ class Library(object):
                     # 78369    10/08 -            □ (本文已被刪除) [QQ1]
                     # 77579 s  10/06 -            □ (本文已被刪除) <QQ2>
                     if line.startswith(self.__Cursor):
-                        # print('deleted line: ' + line)
                         CheckDeleteList = ['本文', '已被', '刪除', '吃掉']
                         CheckDeleteResult = [False] * len(CheckDeleteList)
                         for i in range(len(CheckDeleteList)):
@@ -1563,6 +1562,7 @@ class Library(object):
                                 CheckDeleteResult[i] = True
                         
                         if CheckDeleteResult.count(True) >= 2:
+                            # print('deleted line: ' + line)
                             if '<' in line:
                                 PostAuthor = line[line.find('<') + 1:]
                                 PostAuthor = PostAuthor[:PostAuthor.find('>')]
@@ -1874,7 +1874,7 @@ class Library(object):
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')
 
-        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData, DeleteStatus=PostDeleteStatus.ByAuthor)
+        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData, DeleteStatus=PostDeleteStatus.NotDeleted)
 
         self.__WaterBallProceeor()
         self.__ErrorCode = ErrCode
