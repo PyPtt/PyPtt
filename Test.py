@@ -166,7 +166,7 @@ def GetPostDemo():
         TryPost = 3
     else:
         # 測試用
-        BoardList = ['Wanted']
+        BoardList = ['Minecraft']
         TryPost = 1
 
     for Board in BoardList:
@@ -188,7 +188,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 78578
+            NewestIndex = 6395
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
@@ -833,16 +833,16 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
     
     # 不會把重複的登入踢掉，設定 Log level 為 除錯等級
-    # PTTBot = PTT.Library(ID, Password, kickOtherLogin=False, _LogLevel=PTT.LogLevel.DEBUG)
+    # PTTBot = PTT.Library(kickOtherLogin=False, _LogLevel=PTT.LogLevel.SLIENT)
     # 水球接收器，不過沒長時間測試，大量API呼叫的時候可能不穩
-    # PTTBot = PTT.Library(ID, Password, WaterBallHandler=WaterBallHandler)
-    # PTTBot = PTT.Library(ID, Password, _LogLevel=PTT.LogLevel.DEBUG)
+    # PTTBot = PTT.Library(WaterBallHandler=WaterBallHandler)
+    # PTTBot = PTT.Library(_LogLevel=PTT.LogLevel.DEBUG)
     # Log 接收器，如果有需要把內部顯示抓出來的需求可以用這個
-    # PTTBot = PTT.Library(ID, Password, LogHandler=LogHandler)
+    # PTTBot = PTT.Library(LogHandler=LogHandler)
     # 如果您的網路連線品質不佳，可以試著調整連線等待時間參數
-    # PTTBot = PTT.Library(ID, Password, PreWait=0.1, EveryWait=0.2, MaxEveryWait=1, MinEveryWait=1)
+    # PTTBot = PTT.Library(PreWait=0.1, EveryWait=0.2, MaxEveryWait=1, MinEveryWait=1)
 
-    PTTBot = PTT.Library()
+    # PTTBot = PTT.Library()
     ErrCode = PTTBot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')
