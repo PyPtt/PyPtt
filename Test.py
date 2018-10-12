@@ -158,7 +158,7 @@ def GetPostDemo():
     # 搜尋條件
     inputSearch = '公告'
 
-    Test = True
+    Test = False
 
     if not Test:
 
@@ -849,10 +849,10 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-        # PostDemo()
-        # PushDemo()
+        PostDemo()
+        PushDemo()
         # GetNewestIndexDemo()
-        GetPostDemo()
+        # GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
