@@ -438,8 +438,9 @@ class Library(object):
     def __cleanScreen(self, screen):
         if not screen:
             return screen
-
-        # self.Log('before: ' + str(screen))
+        
+        if '批踢踢實業坊' in screen:
+            self.Log('before: ' + str(screen))
 
         PreNewLineMark = -1
         PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
@@ -1704,7 +1705,7 @@ class Library(object):
                 self.__ErrorCode = ErrCode
                 return ErrCode, None
             
-            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+            self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -1749,7 +1750,9 @@ class Library(object):
                         OverlapLine = LastPageIndex - PageLineRange[0] + 1
 
                         if OverlapLine >= 1 and LastPageIndex != 0:
-                            # print('重疊', OverlapLine, '行')
+                            print('重疊', OverlapLine, '行')
+                            print(CurrentPageList)
+                            print(str(len(CurrentPageList)))
                             CurrentPageList = CurrentPageList[OverlapLine:]
                             if not isFirstPage:
                                 for i in range(OverlapLine):
@@ -1757,6 +1760,7 @@ class Library(object):
                                         if CurrentRawPage[ii] == NewLineByte:
                                             CurrentRawPage = CurrentRawPage[ii + 1:]
                                             break
+                            print(CurrentPageList)
                     
                         LastPageIndex = PageLineRange[1]
                         PostContentListTemp.extend(CurrentPageList)

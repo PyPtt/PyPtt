@@ -158,7 +158,7 @@ def GetPostDemo():
     # 搜尋條件
     inputSearch = '公告'
 
-    Test = False
+    Test = True
 
     if not Test:
 
@@ -166,7 +166,7 @@ def GetPostDemo():
         TryPost = 3
     else:
         # 測試用
-        BoardList = ['Minecraft']
+        BoardList = ['Wanted']
         TryPost = 1
 
     for Board in BoardList:
@@ -188,7 +188,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 6395
+            NewestIndex = 80089
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
@@ -842,17 +842,17 @@ if __name__ == '__main__':
     # 如果您的網路連線品質不佳，可以試著調整連線等待時間參數
     # PTTBot = PTT.Library(PreWait=0.1, EveryWait=0.2, MaxEveryWait=1, MinEveryWait=1)
 
-    # PTTBot = PTT.Library()
+    PTTBot = PTT.Library()
     ErrCode = PTTBot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')
         sys.exit()
     
     try:
-        PostDemo()
-        PushDemo()
+        # PostDemo()
+        # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
