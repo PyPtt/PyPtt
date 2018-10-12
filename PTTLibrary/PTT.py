@@ -439,29 +439,30 @@ class Library(object):
         if not screen:
             return screen
         
-        if '批踢踢實業坊' in screen:
-            self.Log('before: ' + str(screen))
+        # if 'QQ' in screen:
+        #     self.Log('========================')
+        #     self.Log(str(screen))
 
         PreNewLineMark = -1
         PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
         for NewLineMark in range(1, 25):
-            for Type in ['1', '3', '5', '6' , '31']:
+            for Type in ['1', '3', '5', '6']:
                 Target = '[' + str(NewLineMark) + ';' + Type + 'H'
                 if Target in screen:
 
-                    if Type == '31':
-                        PreNewLineMark = NewLineMark
-                        continue
-
                     if PreNewLineMark == -1:
-                        screen = screen.replace(Target, PTTLibraryNewLineMark)
+                        NewLineCount = screen.count('\n')
+
+                        NewLine = NewLineMark - NewLineCount - 1
+                        if NewLine < 1:
+                            NewLine = 1                        
+                        screen = screen.replace(Target, PTTLibraryNewLineMark * NewLine)
                     else:
                         NewLineMarkCount = NewLineMark - PreNewLineMark
                         NewLineCount = screen[screen.rfind(PTTLibraryNewLineMark) : screen.find(Target)].count('\n')
 
                         NewLine = NewLineMarkCount - NewLineCount
-                        if NewLine <= 0:
-                            # print('幹 BUG 是你')
+                        if NewLine < 1:
                             NewLine = 1
 
                         screen = screen.replace(Target, PTTLibraryNewLineMark * NewLine)
@@ -1705,7 +1706,7 @@ class Library(object):
                 self.__ErrorCode = ErrCode
                 return ErrCode, None
             
-            self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
+            # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
             isDetectedTarget = False
 
@@ -1749,18 +1750,21 @@ class Library(object):
                         PageLineRange = list(map(int, PageLineRange))[-2:]
                         OverlapLine = LastPageIndex - PageLineRange[0] + 1
 
-                        if OverlapLine >= 1 and LastPageIndex != 0:
-                            print('重疊', OverlapLine, '行')
-                            print(CurrentPageList)
-                            print(str(len(CurrentPageList)))
-                            CurrentPageList = CurrentPageList[OverlapLine:]
-                            if not isFirstPage:
-                                for i in range(OverlapLine):
-                                    for ii in range(len(CurrentRawPage)):
-                                        if CurrentRawPage[ii] == NewLineByte:
-                                            CurrentRawPage = CurrentRawPage[ii + 1:]
-                                            break
-                            print(CurrentPageList)
+                        AppendLine = PageLineRange[1] - LastPageIndex
+
+                        if AppendLine > 0 and LastPageIndex != 0:
+                                                        
+                            # print('附加', AppendLine, '行')
+                            # print(CurrentPageList[-AppendLine:])
+                            # print('重疊', OverlapLine, '行')
+                            # CurrentPageList = CurrentPageList[OverlapLine:]
+                            CurrentPageList = CurrentPageList[-AppendLine:]
+                            # if not isFirstPage:
+                            #     for i in range(OverlapLine):
+                            #         for ii in range(len(CurrentRawPage)):
+                            #             if CurrentRawPage[ii] == NewLineByte:
+                            #                 CurrentRawPage = CurrentRawPage[ii + 1:]
+                            #                 break
                     
                         LastPageIndex = PageLineRange[1]
                         PostContentListTemp.extend(CurrentPageList)
