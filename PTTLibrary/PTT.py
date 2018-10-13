@@ -446,16 +446,20 @@ class Library(object):
         PreNewLineMark = -1
         PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
         for NewLineMark in range(1, 25):
-            for Type in ['1', '3', '5', '6']:
-                Target = '[' + str(NewLineMark) + ';' + Type + 'H'
+            for Type in range(1, 6):
+                Target = '[' + str(NewLineMark) + ';' + str(Type) + 'H'
                 if Target in screen:
 
                     if PreNewLineMark == -1:
-                        NewLineCount = screen.count('\n')
+                        NewLineCount = screen[:screen.find(Target)].count('\n')
 
                         NewLine = NewLineMark - NewLineCount - 1
+                        # if 'QQ' in screen:
+                        #     print('NewLineMark', NewLineMark)
+                        #     print('NewLineCount', NewLineCount)
+                        #     print('NewLine', NewLine)
                         if NewLine < 1:
-                            NewLine = 1                        
+                            NewLine = 1
                         screen = screen.replace(Target, PTTLibraryNewLineMark * NewLine)
                     else:
                         NewLineMarkCount = NewLineMark - PreNewLineMark
