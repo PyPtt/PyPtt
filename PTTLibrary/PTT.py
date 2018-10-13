@@ -444,7 +444,7 @@ class Library(object):
         PreNewLineMark = -1
         PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
         for NewLineMark in range(1, 25):
-            for Type in ['1', '3', '5', '6' , '31']:
+            for Type in ['1', '3', '4', '5', '6' , '31']:
                 Target = '[' + str(NewLineMark) + ';' + Type + 'H'
                 if Target in screen:
 
