@@ -158,7 +158,7 @@ def GetPostDemo():
     # 搜尋條件
     inputSearch = '公告'
 
-    Test = False
+    Test = True
 
     if not Test:
 
@@ -188,7 +188,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 80089
+            NewestIndex = 80595
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
@@ -849,10 +849,10 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-        PostDemo()
-        PushDemo()
+        # PostDemo()
+        # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()
