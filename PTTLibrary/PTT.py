@@ -408,8 +408,12 @@ class Library(object):
             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
 
         # self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex].decode(encoding='big5',errors='ignore')
-        self.__ReceiveRawData[ConnectIndex] = self.__ReceiveData[ConnectIndex]
-        self.__ReceiveData[ConnectIndex], Len = uao.decode(self.__ReceiveData[ConnectIndex])
+        # self.__ReceiveRawData[ConnectIndex] = self.__ReceiveData[ConnectIndex]
+        self.__ReceiveRawData[ConnectIndex], Len = uao.decode(self.__ReceiveData[ConnectIndex])
+
+        self.__ReceiveData[ConnectIndex] = self.__ReceiveRawData[ConnectIndex]
+
+        self.__ReceiveRawData[ConnectIndex] = self.__cleanScreen(self.__ReceiveRawData[ConnectIndex], NoColor=False)
         self.__ReceiveData[ConnectIndex] = self.__cleanScreen(self.__ReceiveData[ConnectIndex])
         if ConnectIndex == 0:
             self.ReceiveData = self.__ReceiveData[ConnectIndex]
@@ -435,18 +439,24 @@ class Library(object):
 
         self.__ErrorCode = ErrCode
         return ErrCode, -1
-    def __cleanScreen(self, screen):
+    def __cleanScreen(self, screen, NoColor=True):
         if not screen:
             return screen
+        # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
         
-        # if 'QQ' in screen:
+        # ShowTarget = '洗髮用品、洗臉卸粧用品、沐浴用品、香皂類'
+        # if ShowTarget in screen:
         #     self.Log('========================')
         #     self.Log(str(screen))
+        #     self.Log('========================')
+
+        # if '[2J' in screen:
+        #     screen = screen[screen.find('[2J'):]
 
         PreNewLineMark = -1
         PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
         for NewLineMark in range(1, 25):
-            for Type in range(1, 6):
+            for Type in range(1, 26):
                 Target = '[' + str(NewLineMark) + ';' + str(Type) + 'H'
                 if Target in screen:
 
@@ -454,7 +464,7 @@ class Library(object):
                         NewLineCount = screen[:screen.find(Target)].count('\n')
 
                         NewLine = NewLineMark - NewLineCount - 1
-                        # if 'QQ' in screen:
+                        # if ShowTarget in screen:
                         #     print('NewLineMark', NewLineMark)
                         #     print('NewLineCount', NewLineCount)
                         #     print('NewLine', NewLine)
@@ -464,8 +474,12 @@ class Library(object):
                     else:
                         NewLineMarkCount = NewLineMark - PreNewLineMark
                         NewLineCount = screen[screen.rfind(PTTLibraryNewLineMark) : screen.find(Target)].count('\n')
-
                         NewLine = NewLineMarkCount - NewLineCount
+                        # if ShowTarget in screen:
+                        #     print('NewLineMark', NewLineMark)
+                        #     print('NewLineCount', NewLineCount)
+                        #     print('NewLine', NewLine)
+
                         if NewLine < 1:
                             NewLine = 1
 
@@ -474,10 +488,15 @@ class Library(object):
                     PreNewLineMark = NewLineMark
         
         screen = screen.replace(PTTLibraryNewLineMark, '\n')
-        screen = screen.replace('[2J    ', '')
+        # if ShowTarget in screen:
+        #     self.Log('----------------------')
+        #     self.Log(str(screen))
+        #     self.Log('----------------------')
+        # screen = screen.replace('[2J    ', '')
         screen = screen.replace('[2J', '')
 
-        screen = re.sub('\[[\d+;]*[mH]', '', screen)
+        if NoColor:
+            screen = re.sub('\[[\d+;]*[mH]', '', screen)
 
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
@@ -1727,19 +1746,12 @@ class Library(object):
                             PostIP = PostIP[0]
                  
                     CurrentPage = self.__ReceiveData[ConnectIndex]
-                    CurrentRawPage = list(self.__ReceiveRawData[ConnectIndex])
+                    CurrentRawPage = self.__ReceiveRawData[ConnectIndex]
 
                     CurrentPageList = CurrentPage.split('\n')
+                    CurrentRawPageList = CurrentRawPage.split('\n')
                     PageLineRangeTemp = CurrentPageList.pop()
-
-                    # CurrentRawPageList.pop()
-                    # 自幹一個 list pop
-                    LastIndex = 0
-                    for i in range(len(CurrentRawPage)):
-                        if CurrentRawPage[i] == NewLineByte:
-                            LastIndex = i
-                    if LastIndex != 0:
-                        CurrentRawPage = CurrentRawPage[:LastIndex]
+                    CurrentRawPageList.pop()
 
                     PageLineRange = re.findall(r'\d+', PageLineRangeTemp)
                     if len(PageLineRange) <= 3:
@@ -1752,17 +1764,20 @@ class Library(object):
                     if not ControlCodeMode:
 
                         PageLineRange = list(map(int, PageLineRange))[-2:]
-                        OverlapLine = LastPageIndex - PageLineRange[0] + 1
+                        # OverlapLine = LastPageIndex - PageLineRange[0] + 1
 
                         AppendLine = PageLineRange[1] - LastPageIndex
 
                         if AppendLine > 0 and LastPageIndex != 0:
-                                                        
-                            # print('附加', AppendLine, '行')
-                            # print(CurrentPageList[-AppendLine:])
-                            # print('重疊', OverlapLine, '行')
-                            # CurrentPageList = CurrentPageList[OverlapLine:]
+                            # ShowTarget = '洗髮用品、洗臉卸粧用品、沐浴用品、香皂類'
+                            # if ShowTarget in CurrentPage:
+                            #     print(CurrentPageList)
+                            #     print(len(CurrentPageList))
+                            #     print('附加', AppendLine, '行')
+                            #     print(CurrentPageList[-AppendLine:])
+
                             CurrentPageList = CurrentPageList[-AppendLine:]
+                            CurrentRawPageList = CurrentRawPageList[-AppendLine:]
                             # if not isFirstPage:
                             #     for i in range(OverlapLine):
                             #         for ii in range(len(CurrentRawPage)):
@@ -1772,9 +1787,7 @@ class Library(object):
                     
                         LastPageIndex = PageLineRange[1]
                         PostContentListTemp.extend(CurrentPageList)
-                        if not isFirstPage:
-                            PostRawContentListTemp.extend([NewLineByte])
-                        PostRawContentListTemp.extend(CurrentRawPage)
+                        PostRawContentListTemp.extend(CurrentRawPageList)
 
                     else:
                         if FirstControlCodePage:
@@ -1786,18 +1799,23 @@ class Library(object):
                                     OverlapLine = i + 1
                             
                             CurrentPageList = CurrentPageList[OverlapLine:]
+                            CurrentRawPageList = CurrentRawPageList[OverlapLine:]
                             FirstControlCodePage = False
                             PostContentListTemp.extend(CurrentPageList)
+                            PostRawContentListTemp.extend(CurrentRawPageList)
                         else:
                             if not CurrentPageList[-3] in PostContentListTemp:
                                 # print('ControModeLine: ' + CurrentPageList[-3])
                                 PostContentListTemp.append(CurrentPageList[-3])
+                                PostRawContentListTemp.append(CurrentRawPageList[-3])
                             if not CurrentPageList[-2] in PostContentListTemp:
                                 # print('ControModeLine: ' + CurrentPageList[-2])
                                 PostContentListTemp.append(CurrentPageList[-2])
+                                PostRawContentListTemp.append(CurrentRawPageList[-2])
                             if not CurrentPageList[-1] in PostContentListTemp:
                                 # print('ControModeLine: ' + CurrentPageList[-1])
                                 PostContentListTemp.append(CurrentPageList[-1])
+                                PostRawContentListTemp.append(CurrentRawPageList[-1])
 
                     isDetectedTarget = True
                     if DetectTarget.isBreakDetect():
@@ -1881,7 +1899,7 @@ class Library(object):
                     PostPushList.append(CurrentPush)
             
         PostContent = '\n'.join(PostContentList)
-        PosRawData = PostRawContentListTemp
+        PosRawData = '\n'.join(PostRawContentListTemp)
 
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')

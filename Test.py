@@ -114,6 +114,8 @@ def showPost(Post):
         
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
 
+    # PTTBot.Log('原始資料:\n' + Post.getRawData())
+
 def GetPostDemo():
     
     # 這個範例是如何取得單一文章資訊
