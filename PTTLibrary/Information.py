@@ -173,10 +173,7 @@ class PostInformation(object):
         self.__WebUrl = ParseParameter(str, WebUrl)
         self.__IP = ParseParameter(str, IP)
         self.__PushList = PushList
-        if RawData == None:
-            self.__RawData = None
-        else:
-            self.__RawData = array.array('B', RawData).tostring()
+        self.__RawData = ParseParameter(str, RawData)
         self.__DeleteStatus = DeleteStatus
     def getBoard(self):
         return self.__Board
