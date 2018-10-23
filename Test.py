@@ -97,14 +97,14 @@ def showPost(Post):
     BooCount = 0
     ArrowCount = 0
 
-    # open('Big5Data.txt',"wb").write(Post.getRawData())
-
     for Push in Post.getPushList():
-        if Push.getType() == PTT.PushType.Push:
+        PushType = Push.getType()
+
+        if PushType == PTT.PushType.Push:
             PushCount += 1
-        elif Push.getType() == PTT.PushType.Boo:
+        elif PushType == PTT.PushType.Boo:
             BooCount += 1
-        elif Push.getType() == PTT.PushType.Arrow:
+        elif PushType == PTT.PushType.Arrow:
             ArrowCount += 1
         
         Author = Push.getAuthor()
@@ -113,8 +113,6 @@ def showPost(Post):
         PTTBot.Log('推文: ' + Author + ': ' + Content)
         
     PTTBot.Log('共有 ' + str(PushCount) + ' 推 ' + str(BooCount) + ' 噓 ' + str(ArrowCount) + ' 箭頭')
-
-    # PTTBot.Log('原始資料:\n' + Post.getRawData())
 
 def GetPostDemo():
     
@@ -128,7 +126,7 @@ def GetPostDemo():
     #文章資訊的資料結構可參考如下
     
     ################## 文章資訊 Post information ##################
-    # getBoard                  文章所在版面
+    # getBoard                  文章所在的版
     # getID                     文章 ID ex: 1PCBfel1
     # getAuthor                 作者
     # getDate                   文章發布時間
@@ -137,7 +135,7 @@ def GetPostDemo():
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
     # getPushList               文章即時推文清單
-    # getOriginalData           文章原始資料 (備份用)
+    # getOriginalData           文章原始資料 (備份色碼用)
     
     ################## 推文資訊 Push information ##################
     # getType                   推文類別 推噓箭頭
@@ -400,8 +398,8 @@ def CrawlBoardDemo():
     CrawPost = 100
 
     EnableSearchCondition = False
-    inputSearchType = PTT.PostSearchType.Money
-    inputSearch = '5'
+    inputSearchType = PTT.PostSearchType.Keyword
+    inputSearch = '[公告]'
 
     if EnableSearchCondition:
         ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Wanted', SearchType=inputSearchType, Search=inputSearch)
@@ -417,6 +415,7 @@ def CrawlBoardDemo():
     # MaxMultiLogin             多重登入數量
     # SearchType                搜尋種類
     # Search                    搜尋條件
+    
     if EnableSearchCondition:
         ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard('Wanted', PostHandler, StartIndex=NewestIndex - CrawPost + 1, EndIndex=NewestIndex, SearchType=inputSearchType, Search=inputSearch)
     else:
