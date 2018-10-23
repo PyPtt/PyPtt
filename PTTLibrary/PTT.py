@@ -2180,21 +2180,17 @@ class Library(object):
             self.__ErrorCode = ErrCode
             return ErrCode, result
         
-        LastLine = self.__ReceiveData[ConnectIndex].split('\n').pop()
-        LastLineList = list(map(int, re.findall(r'\d+', LastLine)))
-        if len(LastLineList) < 3:
+        LastLine = self.__ReceiveData[ConnectIndex].split('\n')
+        LastLine = [x for x in LastLine if x.strip().startswith('[')]
+        
+        if len(LastLine) == 0:
             ErrCode = ErrorCode.ParseError
             self.__ErrorCode = ErrCode
             return ErrCode, result
-        
-        Hour = str(LastLineList[2])
-        Min = str(LastLineList[3])
-
-        if len(Hour) == 1:
-            Hour = '0' + Hour
-        if len(Min) == 1:
-            Min = '0' + Min
-        result = Hour + ':' + Min
+        result = LastLine[0]
+        result = result[:result.find(']')]
+        result = result[result.find(' ') + 1:]
+        result = result[result.find(' ') + 1:]
 
         ErrCode = ErrorCode.Success
         self.__ErrorCode = ErrCode
