@@ -1588,16 +1588,22 @@ class Library(object):
                         
                         if CheckDeleteResult.count(True) >= 2:
                             # print('deleted line: ' + line)
+                            
+                            ListDate = line
+                            SlashIndex = ListDate.find('/')
+                            ListDate = ListDate[SlashIndex -2 : SlashIndex + 3].strip()
+                            # print('ListDate >' + ListDate + '<')
+
                             if '<' in line:
                                 PostAuthor = line[line.find('<') + 1:]
                                 PostAuthor = PostAuthor[:PostAuthor.find('>')]
                                 # print('被版主刪除兒: >' + PostAuthor + '<')
-                                result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByModerator)
+                                result = Information.PostInformation(Board=Board, Author=PostAuthor, ListDate=ListDate, DeleteStatus=PostDeleteStatus.ByModerator)
                             elif '[' in line:
                                 PostAuthor = line[line.find('[') + 1:]
                                 PostAuthor = PostAuthor[:PostAuthor.find(']')]
                                 # print('自己刪除兒: >' + PostAuthor + '<')
-                                result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByAuthor)
+                                result = Information.PostInformation(Board=Board, Author=PostAuthor, ListDate=ListDate, DeleteStatus=PostDeleteStatus.ByAuthor)
                             else:
                                 # print('無法判斷誰刪除: ' + line)
                                 FakeAuthor = line
@@ -1608,12 +1614,12 @@ class Library(object):
                                 if '[H' + FakeAuthor + ']' in RawData:
                                     # print('Author: H' + FakeAuthor)
                                     PostAuthor = 'H' + FakeAuthor
-                                    result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByAuthor)
+                                    result = Information.PostInformation(Board=Board, Author=PostAuthor, ListDate=ListDate, DeleteStatus=PostDeleteStatus.ByAuthor)
                                 if '[m' + FakeAuthor + ']' in RawData:
                                     # print('Author: m' + FakeAuthor)
                                     PostAuthor = 'm' + FakeAuthor
-                                    result = Information.PostInformation(Board=Board, Author=PostAuthor, DeleteStatus=PostDeleteStatus.ByAuthor)
-
+                                    result = Information.PostInformation(Board=Board, Author=PostAuthor, ListDate=ListDate, DeleteStatus=PostDeleteStatus.ByAuthor)
+                            
                             ErrCode = ErrorCode.PostDeleted
                             self.__ErrorCode = ErrCode
                             return ErrCode, result
@@ -1630,6 +1636,15 @@ class Library(object):
             if Line.startswith('│'):
                 # print('InfoLines: ' + Line)
                 InfoLines.append(Line)
+            if Line.startswith(self.__Cursor):
+                # print('List line: ' + Line)
+                SlashIndex = Line.find('/')
+                ListDate = Line[SlashIndex -2 : SlashIndex + 3]
+                # print('ListDate: >' + ListDate + '<')
+
+                ListAuthor = Line[SlashIndex + 4:]
+                ListAuthor = ListAuthor[:ListAuthor.find(' ')]
+                # print('ListAuthor: >' + ListAuthor + '<')
         if len(InfoLines) != 3:
             ErrCode = ErrorCode.ParseError
             self.__ErrorCode = ErrCode
@@ -1714,11 +1729,7 @@ class Library(object):
         LastPageIndex = 0
         PostContentListTemp = []
         PostRawContentListTemp = []
-        isFirstPage = True
         PostIP = ''
-
-        NewLine, _ = uao.encode('\n')
-        NewLineByte = NewLine[0]
 
         ControlCodeMode = False
         FirstControlCodePage = True
@@ -1860,7 +1871,7 @@ class Library(object):
             PostAuthor = PostAuthor[:PostAuthor.find(')') + 1]
             PostAuthor = PostAuthor.rstrip()
         else:
-            PostAuthor = None
+            PostAuthor = ListAuthor
         
         Target = '標題  '
         if Target in FirstPage:
@@ -1904,7 +1915,7 @@ class Library(object):
         # self.Log('PostContent: =' + PostContent + '=')
         # self.Log('PostIP: =' + PostIP + '=')
 
-        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData, DeleteStatus=PostDeleteStatus.NotDeleted)
+        result = Information.PostInformation(Board, PostID, PostAuthor, PostDate, PostTitle, PostWeb, PostMoney,PostContent, PostIP, PostPushList, PosRawData, ListDate=ListDate, DeleteStatus=PostDeleteStatus.NotDeleted)
 
         self.__WaterBallProceeor()
         self.__ErrorCode = ErrCode
