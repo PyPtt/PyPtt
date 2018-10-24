@@ -90,6 +90,7 @@ def showPost(Post):
     PTTBot.Log('價錢: ' + str(Post.getMoney()))
     PTTBot.Log('IP: ' + Post.getIP())
     PTTBot.Log('網址: ' + Post.getWebUrl())
+    PTTBot.Log('文章列表日期: ' + Post.getListDate())
 
     PTTBot.Log('內文:\n' + Post.getContent())
 
@@ -135,6 +136,7 @@ def GetPostDemo():
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
     # getPushList               文章即時推文清單
+    # getListDate               文章列表的日期
     # getOriginalData           文章原始資料 (備份色碼用)
     
     ################## 推文資訊 Push information ##################
@@ -188,7 +190,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 80595
+            NewestIndex = 79280
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
@@ -207,6 +209,7 @@ def GetPostDemo():
                     PTTBot.Log('文章被版主刪掉了')
                 
                 PTTBot.Log('作者: ' + Post.getAuthor())
+                PTTBot.Log('文章列表日期: ' + Post.getListDate())
                 continue
             elif ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
@@ -365,6 +368,7 @@ def PostHandler(Post):
     # getMoney                  文章P幣
     # getWebUrl                 文章網址
     # getPushList               文章即時推文清單
+    # ListDate                  文章列表的日期
     # getOriginalData           文章原始資料 (備份用)
     
     ################## 推文資訊 Push information ##################

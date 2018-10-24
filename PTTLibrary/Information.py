@@ -162,7 +162,7 @@ class PostDeleteStatus(object):
     MinValue = NotDeleted
     MaxValue = ByModerator
 class PostInformation(object):
-    def __init__(self, Board=None, PostID=None, Author=None, Date=None, Title=None, WebUrl=None, Money=None, PostContent=None, IP=None, PushList=None, RawData=None, DeleteStatus=0):
+    def __init__(self, Board=None, PostID=None, Author=None, Date=None, Title=None, WebUrl=None, Money=None, PostContent=None, IP=None, PushList=None, RawData=None, ListDate=None, DeleteStatus=0):
         self.__Board = ParseParameter(str, Board)        
         self.__PostID = ParseParameter(str, PostID)
         self.__Author = ParseParameter(str, Author)
@@ -175,6 +175,7 @@ class PostInformation(object):
         self.__PushList = PushList
         self.__RawData = ParseParameter(str, RawData)
         self.__DeleteStatus = DeleteStatus
+        self.__ListDate = ParseParameter(str, ListDate)
     def getBoard(self):
         return self.__Board
     def getID(self):
@@ -199,6 +200,8 @@ class PostInformation(object):
         return self.__RawData
     def getDeleteStatus(self):
         return self.__DeleteStatus
+    def getListDate(self):
+        return self.__ListDate
 
 class WaterBallInformation(object):
     def __init__(self, Type, Author, PushContent, Date=''):
