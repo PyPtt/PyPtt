@@ -404,7 +404,10 @@ class Library(object):
             return self.__ErrorCode, -1
         except:
             self.Log('斷線，重新連線')
-            self.__connectRemote(ConnectIndex)
+            if self.__ErrorCode != ErrorCode.UserInterrupt:
+                self.__connectRemote(ConnectIndex)
+            else:
+                return self.__ErrorCode, -1
             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
 
         # self.__ReceiveData[ConnectIndex] = self.__ReceiveData[ConnectIndex].decode(encoding='big5',errors='ignore')
@@ -1334,6 +1337,7 @@ class Library(object):
         
         ConnectIndex = _ConnectIndex
         result = None
+        ErrCode = ErrorCode.Success
 
         if not self.__APICheck(sys._getframe().f_code.co_name):
             return self.__ErrorCode, result
@@ -1403,13 +1407,19 @@ class Library(object):
         self.__APILock[ConnectIndex].acquire()
 
         for i in range(3):
+
             ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, SearchType, Search)
+            
+            while ErrCode == ErrorCode.CaCaBeastEatPost:
+                ErrCode, Post = self.__getPost(Board, PostID, PostIndex, _ConnectIndex, SearchType, Search)
+
             if ErrCode == ErrorCode.PostDeleted:
                 if Post == None:
                     continue
                 self.__APILock[ConnectIndex].release()
                 self.__ErrorCode = ErrCode
                 return ErrCode, Post
+            
             if ErrCode != ErrorCode.Success:
                 continue
             
@@ -1604,21 +1614,15 @@ class Library(object):
                                 PostAuthor = PostAuthor[:PostAuthor.find(']')]
                                 # print('自己刪除兒: >' + PostAuthor + '<')
                                 result = Information.PostInformation(Board=Board, Author=PostAuthor, ListDate=ListDate, DeleteStatus=PostDeleteStatus.ByAuthor)
+                            elif '本文已被吃掉' in line:
+                                ErrCode = ErrorCode.CaCaBeastEatPost
+                                self.__ErrorCode = ErrCode
+                                return ErrCode, result
                             else:
-                                # print('無法判斷誰刪除: ' + line)
-                                FakeAuthor = line
-                                FakeAuthor = FakeAuthor[FakeAuthor.find(') ') + 2:]
-                                FakeAuthor = FakeAuthor[:FakeAuthor.find(']')]
-                                # print('FakeAuthor: ' + FakeAuthor)
-                                RawData = self.__ReceiveRawData[ConnectIndex].decode(encoding='big5',errors='ignore')
-                                if '[H' + FakeAuthor + ']' in RawData:
-                                    # print('Author: H' + FakeAuthor)
-                                    PostAuthor = 'H' + FakeAuthor
-                                    result = Information.PostInformation(Board=Board, Author=PostAuthor, ListDate=ListDate, DeleteStatus=PostDeleteStatus.ByAuthor)
-                                if '[m' + FakeAuthor + ']' in RawData:
-                                    # print('Author: m' + FakeAuthor)
-                                    PostAuthor = 'm' + FakeAuthor
-                                    result = Information.PostInformation(Board=Board, Author=PostAuthor, ListDate=ListDate, DeleteStatus=PostDeleteStatus.ByAuthor)
+                                print('無法判斷誰刪除: ' + line)
+                                ErrCode = ErrorCode.UnknowError
+                                self.__ErrorCode = ErrCode
+                                return ErrCode, result
                             
                             ErrCode = ErrorCode.PostDeleted
                             self.__ErrorCode = ErrCode
@@ -3034,7 +3038,6 @@ class Library(object):
                 '編輯文章',
                 '編輯文章', 
                 ResponseUnit(Content + '\r\x18s\r', True),
-                # 
             ),
             DetectUnit(
                 '不加簽名檔',
@@ -3061,6 +3064,8 @@ class Library(object):
             PTTBUGDetectUnit
         ]
 
+        WaitSavePost = False
+
         while not isBreakDetect:
             ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=Refresh)
             if ErrCode == ErrorCode.WaitTimeout:
@@ -3080,6 +3085,9 @@ class Library(object):
 
                     self.Log(DetectTarget.getDisplayMsg())
 
+                    if '編輯文章' in DetectTarget.getDisplayMsg():
+                        WaitSavePost = True
+
                     SendMessage = DetectTarget.getResponse().getSendMessage()
                     Refresh = DetectTarget.getResponse().needRefresh()
                     
@@ -3089,7 +3097,16 @@ class Library(object):
                         isBreakDetect = True
                         ErrCode = DetectTarget.getErrorCode()
                         break
+
             if not isDetectedTarget:
+
+                if WaitSavePost and not isBreakDetect:
+                    # self.__showScreen(ErrCode, sys._getframe().f_code.co_name + ' WaitSavePost', ConnectIndex=ConnectIndex)
+
+                    time.sleep(1)
+                    SendMessage = ' '
+                    Refresh = True
+                    continue
 
                 self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
                 self.Log('無法解析的狀態! PTT Library 緊急停止')
