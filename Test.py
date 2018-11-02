@@ -488,38 +488,92 @@ def ReplyPostDemo():
      
     # 回傳 錯誤碼
 
-    ErrCode = PTTBot.post('Test', '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
-    if ErrCode == PTT.ErrorCode.Success:
-        PTTBot.Log('在 Test 板發文成功')
-    elif ErrCode == PTT.ErrorCode.NoPermission:
-        PTTBot.Log('發文權限不足')
-    else:
-        PTTBot.Log('在 Test 板發文失敗')
-    
-    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board='Test')
-    if ErrCode == PTT.ErrorCode.Success:
-        PTTBot.Log('取得 ' + 'Test' + ' 板最新文章編號成功: ' + str(NewestIndex))
-    else:
-        PTTBot.Log('取得 ' + 'Test' + ' 板最新文章編號失敗')
-        return False
+    Board = 'Test'
 
-    ErrCode = PTTBot.replyPost('Test', '回文測試 回文至板上', PTT.ReplyPostType.Board, Index=NewestIndex)
+    ReplyContent = '批踢踢實業坊，簡稱批踢踢、PTT，是一個臺灣電子布告欄（BBS），採用Telnet BBS技術運作，建立在台灣學術網路的資源之上，以學術性質為原始目的，提供線上言論空間。目前由國立臺灣大學電子布告欄系統研究社管理，大部份的系統原始碼由國立臺灣大學資訊工程學系的學生與校友進行維護，並且邀請法律專業人士擔任法律顧問。它有兩個分站，分別為批踢踢兔與批踢踢參。目前在批踢踢實業坊與批踢踢兔註冊總人數約150萬人，尖峰時段兩站超過15萬名使用者同時上線，擁有超過2萬個不同主題的看板，每日超過2萬篇新文章及50萬則推文被發表，是台灣使用人次最多的網路論壇之一。'
+
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+    if ErrCode == PTT.ErrorCode.Success:
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號成功: ' + str(NewestIndex))
+    else:
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        return False
+    
+    TestIndex = 0
+
+    for i in range(20):
+        ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
+
+        if ErrCode == PTT.ErrorCode.PostDeleted:
+            if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+                PTTBot.Log('文章被原 PO 刪掉了')
+            elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+                PTTBot.Log('文章被版主刪掉了')
+            
+            PTTBot.Log('作者: ' + Post.getAuthor())
+            continue
+        elif ErrCode != PTT.ErrorCode.Success:
+            PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+            continue
+        PTTBot.Log('ID: ' + ID)
+        PTTBot.Log('作者: ' + Post.getAuthor())
+
+        if ID in Post.getAuthor():
+            TestIndex = NewestIndex - i
+            break
+    
+    if TestIndex == 0:
+        ErrCode = PTTBot.post(Board, '自動回文測試文章', '標準測試流程，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu', 1, 0)
+        if ErrCode == PTT.ErrorCode.Success:
+            PTTBot.Log('在 ' + Board + ' 板發文成功')
+        elif ErrCode == PTT.ErrorCode.NoPermission:
+            PTTBot.Log('發文權限不足')
+        else:
+            PTTBot.Log('在 ' + Board + ' 板發文失敗')
+        
+        for i in range(5):
+            ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
+
+            if ErrCode == PTT.ErrorCode.PostDeleted:
+                if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+                    PTTBot.Log('文章被原 PO 刪掉了')
+                elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+                    PTTBot.Log('文章被版主刪掉了')
+                
+                PTTBot.Log('作者: ' + Post.getAuthor())
+                continue
+            elif ErrCode != PTT.ErrorCode.Success:
+                PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+                continue
+            
+            PTTBot.Log('ID: ' + ID)
+            PTTBot.Log('作者: ' + Post.getAuthor())
+            if ID in Post.getAuthor():
+                TestIndex = NewestIndex - i
+                break
+    
+    if TestIndex == 0:
+        PTTBot.Log('沒找到測試文章!!')
+        return
+    PTTBot.Log('找到測試文章 編號: ' + str(TestIndex))
+
+    ErrCode = PTTBot.replyPost(Board, ReplyContent, PTT.ReplyPostType.Board, Index=TestIndex)
     if ErrCode == PTT.ErrorCode.Success:
         PTTBot.Log('在 Test 回文至板上成功!')
     else:
         PTTBot.Log('在 Test 回文至板上失敗 ' + str(ErrCode))
     
-    ErrCode = PTTBot.replyPost('Test', '回文測試 回文至信箱', PTT.ReplyPostType.Mail, Index=NewestIndex)
-    if ErrCode == PTT.ErrorCode.Success:
-        PTTBot.Log('在 Test 回文至信箱成功!')
-    else:
-        PTTBot.Log('在 Test 回文至信箱失敗 ' + str(ErrCode))
+    # ErrCode = PTTBot.replyPost('Test', ReplyContent, PTT.ReplyPostType.Mail, Index=NewestIndex)
+    # if ErrCode == PTT.ErrorCode.Success:
+    #     PTTBot.Log('在 Test 回文至信箱成功!')
+    # else:
+    #     PTTBot.Log('在 Test 回文至信箱失敗 ' + str(ErrCode))
         
-    ErrCode = PTTBot.replyPost('Test', '回文測試 回文至版上與信箱',PTT.ReplyPostType.Board_Mail, Index=NewestIndex)
-    if ErrCode == PTT.ErrorCode.Success:
-        PTTBot.Log('在 Test 回文至版上與信箱成功!')
-    else:
-        PTTBot.Log('在 Test 回文至版上與信箱失敗 ' + str(ErrCode))
+    # ErrCode = PTTBot.replyPost('Test', ReplyContent,PTT.ReplyPostType.Board_Mail, Index=NewestIndex)
+    # if ErrCode == PTT.ErrorCode.Success:
+    #     PTTBot.Log('在 Test 回文至版上與信箱成功!')
+    # else:
+    #     PTTBot.Log('在 Test 回文至版上與信箱失敗 ' + str(ErrCode))
 
 def GetMailDemo():
     
@@ -820,6 +874,138 @@ def WaterBallHandler(WaterBall):
 
     PTTBot.throwWaterBall(WaterBall.getAuthor(), WaterBall.getAuthor() + ' 我接住你的水球了!')
 
+from datetime import date, timedelta
+Board = 'Wanted'
+
+def findCurrentDateFirst(NewestIndex, CurrentDate, show=False):
+
+    if len(CurrentDate) < 5:
+        CurrentDate = '0' + CurrentDate
+    
+    for i in range(40):
+        PassDay = date.today() - timedelta(i)
+
+        PassDate = PassDay.strftime("%m/%d")
+        # if PassDate.startswith('0'):
+        #     PassDate = PassDate[1:]
+        
+        # print('=>', CurrentDate)
+        # print('=>', PassDate)
+
+        if PassDate == CurrentDate:
+            LastDate = (date.today() - timedelta(1 + i)).strftime("%m/%d")
+            # if LastDate.startswith('0'):
+            #     LastDate = LastDate[1:]
+            if show:
+                print('>' + LastDate + '<')
+            break
+    LastDateCount = int(LastDate.replace('/', ''))
+    CurrentCount = int(CurrentDate.replace('/', ''))
+
+    TargetCount =  LastDateCount + CurrentCount
+
+    StartIndex = 1
+    EndIndex = NewestIndex
+    
+    CurrentIndex = int((StartIndex + EndIndex) / 2)
+
+    RetryIndex = 0
+
+    while True:
+        if show:
+            PTTBot.Log('嘗試: ' + str(CurrentIndex))
+        ErrCode, Post = PTTBot.getPost(Board, PostIndex=CurrentIndex)
+
+        if ErrCode == PTT.ErrorCode.PostDeleted:
+            pass
+        elif ErrCode != PTT.ErrorCode.Success:
+            PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+            CurrentIndex = StartIndex + RetryIndex
+            RetryIndex += 1
+            continue
+        elif Post.getDate() == None:
+            CurrentIndex = StartIndex + RetryIndex
+            RetryIndex += 1
+            continue
+        
+        RetryIndex = 0
+        for i in range(1, 100):
+
+            ErrCode, LastPost = PTTBot.getPost(Board, PostIndex=CurrentIndex - i)
+
+            if ErrCode == PTT.ErrorCode.PostDeleted:
+                pass
+            elif ErrCode != PTT.ErrorCode.Success:
+                if show:
+                    PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+                continue
+            elif LastPost == None:
+                continue
+            elif LastPost.getDate() == None:
+                continue
+
+            if show:
+                PTTBot.Log('找到上一篇: ' + str(CurrentIndex - i))
+            break
+        
+        P0 = LastPost.getListDate()
+        P1 = Post.getListDate()
+
+        P0Count = int(P0.replace('/', ''))
+        P1Count = int(P1.replace('/', ''))
+
+        CurrentCount =  P0Count + P1Count
+
+        if show:
+            print('P0: ' + P0)
+            print('P1: ' + P1)
+            print(StartIndex)
+            print(EndIndex)
+        
+        if CurrentCount == TargetCount:
+            break
+        elif CurrentCount < TargetCount:
+            StartIndex = CurrentIndex + 1
+        elif CurrentCount > TargetCount:
+            EndIndex = CurrentIndex - 1  
+        CurrentIndex = int((StartIndex + EndIndex) / 2)
+
+    # print(CurrentIndex)
+    return CurrentIndex
+
+def findPostRrange(HowDayBefore, show=False):
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+
+    if ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        sys.exit()
+    
+    if NewestIndex == -1:
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        sys.exit()
+    
+    if HowDayBefore < 1:
+        return None
+    
+    PassDay_0 = date.today() - timedelta(HowDayBefore)
+    PassDate_0 = PassDay_0.strftime("%m/%d")
+    if PassDate_0.startswith('0'):
+        PassDate_0 = PassDate_0[1:]
+    
+    PassDay_1 = date.today() - timedelta(HowDayBefore - 1)
+    PassDate_1 = PassDay_1.strftime("%m/%d")
+    if PassDate_1.startswith('0'):
+        PassDate_1 = PassDate_1[1:]
+    
+    if show:
+        print(PassDate_0)
+        print(PassDate_1)
+
+    start = findCurrentDateFirst(NewestIndex, PassDate_0, show=False)
+    end = findCurrentDateFirst(NewestIndex, PassDate_1, show=True)
+
+    print(HowDayBefore, '天前文章範圍為', start, '~', end)
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -847,15 +1033,16 @@ if __name__ == '__main__':
     # 如果您的網路連線品質不佳，可以試著調整連線等待時間參數
     # PTTBot = PTT.Library(PreWait=0.1, EveryWait=0.2, MaxEveryWait=1, MinEveryWait=1)
 
-    PTTBot = PTT.Library()
+    PTTBot = PTT.Library(kickOtherLogin=False)
     ErrCode = PTTBot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')
         sys.exit()
     
     try:
-        PostDemo()
-        PushDemo()
+        findPostRrange(1)
+        # PostDemo()
+        # PushDemo()
         # GetNewestIndexDemo()
         # GetPostDemo()
         # MailDemo()

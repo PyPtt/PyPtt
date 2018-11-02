@@ -29,3 +29,4 @@ class ErrorCode(object):
         self.UserNotOnline =                   24
         self.MustRunBeforeLogin =              25
         self.DeprecatedAPI =                   26
+        self.CaCaBeastEatPost =                27
