@@ -7,3 +7,4 @@ dist/
 PTTLibrary.egg-info/
 *Out.txt
 /Big5Data.txt
+PTTLibrary-*/
