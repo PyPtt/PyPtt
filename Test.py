@@ -190,7 +190,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 79280
+            NewestIndex = 78516
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
@@ -1040,11 +1040,11 @@ if __name__ == '__main__':
         sys.exit()
     
     try:
-        findPostRrange(1)
+        # findPostRrange(1)
         # PostDemo()
         # PushDemo()
         # GetNewestIndexDemo()
-        # GetPostDemo()
+        GetPostDemo()
         # MailDemo()
         # GetTimeDemo()
         # GetMailDemo()

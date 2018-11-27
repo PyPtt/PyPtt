@@ -1859,39 +1859,33 @@ class Library(object):
                 sys.exit()
         
         FirstPage = FirstPage[FirstPage.find('作者'):]
-        PostLineList = FirstPage.split('\n')
 
-        # if len(PostLineList) < 3:
-        #     ErrCode = ErrorCode.ParseError
-        #     self.__ErrorCode = ErrCode
-        #     return ErrCode, None
-        # for line in PostLineList:
-        #     print('Q', line)
+        # print(FirstPage)
 
         Target = '作者  '
         if Target in FirstPage:
-            PostAuthor = PostLineList[0]
+            PostAuthor = FirstPage
             PostAuthor = PostAuthor[PostAuthor.find(Target) + len(Target):]
             PostAuthor = PostAuthor[:PostAuthor.find(')') + 1]
-            PostAuthor = PostAuthor.rstrip()
+            PostAuthor = PostAuthor.strip()
         else:
             PostAuthor = ListAuthor
         
         Target = '標題  '
         if Target in FirstPage:
-            PostTitle = PostLineList[1]
+            PostTitle = FirstPage
             PostTitle = PostTitle[PostTitle.find(Target) + len(Target):]
-            PostTitle = PostTitle[:PostTitle.find('\r')]
-            PostTitle = PostTitle.rstrip()
+            PostTitle = PostTitle[:PostTitle.find('\n 時間')]
+            PostTitle = PostTitle.strip()
         else:
             PostTitle = None
 
         Target = '時間  '
         if Target in FirstPage:
-            PostDate = PostLineList[2]
+            PostDate = FirstPage
             PostDate = PostDate[PostDate.find(Target) + len(Target):]
-            PostDate = PostDate[:PostDate.find('\r')]
-            PostDate = PostDate.rstrip()
+            PostDate = PostDate[:PostDate.find('\n')]
+            PostDate = PostDate.strip()
         else:
             PostDate = None
 
