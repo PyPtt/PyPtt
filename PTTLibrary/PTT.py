@@ -1768,6 +1768,7 @@ class Library(object):
                             ErrCode = ErrorCode.ParseError
                             self.__ErrorCode = ErrCode
                             self.__WaterBallProceeor()
+                            return ErrCode, None
 
                         Title = Parts[1]
                         Title = Title[:Title.rfind('(')].strip()
