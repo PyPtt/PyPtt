@@ -158,9 +158,12 @@ class PostDeleteStatus(object):
     NotDeleted =                            0
     ByAuthor =                              1
     ByModerator =                           2
+    ByUnknow =                              3
 
     MinValue = NotDeleted
-    MaxValue = ByModerator
+    MaxValue = ByUnknow
+
+
 class PostInformation(object):
     def __init__(self, Board=None, PostID=None, Author=None, Date=None, Title=None, WebUrl=None, Money=None, PostContent=None, IP=None, PushList=None, RawData=None, ListDate=None, DeleteStatus=0):
         self.__Board = ParseParameter(str, Board)        

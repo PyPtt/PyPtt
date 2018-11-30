@@ -154,18 +154,20 @@ def GetPostDemo():
     # Mark                      搜尋標記 m or s
     # Money                     搜尋稿酬
 
-    EnableSearchCondition = False
+    EnableSearchCondition = True
     # 搜尋類別
     inputSearchType = PTT.PostSearchType.Keyword
     # 搜尋條件
-    inputSearch = '公告'
+    inputSearch = '(Wanted)'
 
     Test = False
 
     if not Test:
 
         BoardList = ['Wanted', 'Gossiping', 'Test', 'NBA', 'Baseball', 'LOL', 'C_Chat']
-        TryPost = 3
+        BoardList = ['ALLPOST']
+
+        TryPost = 1
     else:
         # 測試用
         BoardList = ['Wanted']
@@ -190,7 +192,7 @@ def GetPostDemo():
             
             PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
         else:
-            NewestIndex = 78516
+            NewestIndex = 79630
             PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
@@ -198,7 +200,7 @@ def GetPostDemo():
             PTTBot.Log(str(i) + ' 測試 ' + Board + ' ' + str(NewestIndex - i))
 
             if EnableSearchCondition:
-                ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i, SearchType=inputSearchType, Search=inputSearch)
+                ErrCode, Post = PTTBot.getPost(Board, PostIndex=1427, SearchType=inputSearchType, Search=inputSearch)
             else:
                 ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
 
