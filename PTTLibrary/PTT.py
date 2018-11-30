@@ -1660,13 +1660,14 @@ class Library(object):
         PostID = PostID[:PostID.find(' ')]
         while PostID.endswith(' '):
             PostID = PostID[:-1]
-        
         Target = '文章網址: '
-        PostWeb = InfoLines[1]
-        PostWeb = PostWeb[PostWeb.find(Target) + len(Target):]
-        PostWeb = PostWeb[:PostWeb.find(' ')]
-        while PostWeb.endswith(' '):
-            PostWeb = PostWeb[:-1]
+        if Target in InfoLines[1]:
+            PostWeb = InfoLines[1]
+            PostWeb = PostWeb[PostWeb.find(Target) + len(Target):]
+            PostWeb = PostWeb[:PostWeb.find(' ')].strip()
+        else:
+            PostWeb = None
+
         try:
             if '特殊文章，無價格記錄' in InfoLines[2]:
                 PostMoney = -1
@@ -1677,7 +1678,6 @@ class Library(object):
             self.Log('取得文章價錢失敗: ' + InfoLines[2], LogLevel.DEBUG)
         
         # self.Log('PostID: =' + PostID + '=')
-        # self.Log('PostTitle: =' + PostTitle + '=')
         # self.Log('PostWeb: =' + PostWeb + '=')
         # self.Log('PostMoney: =' + str(PostMoney) + '=')
 
@@ -1746,6 +1746,46 @@ class Library(object):
             
             # self.__showScreen(ErrCode, sys._getframe().f_code.co_name, ConnectIndex=ConnectIndex)
 
+            if '◆ 此文章無內容' in self.__ReceiveData[ConnectIndex]:
+                for line in Lines:
+                    line = line.strip()
+                    if line.startswith(self.__Cursor):
+                        Parts = line.split(' ')
+                        Parts = [x.strip() for x in Parts if len(x) > 0]
+                        # print('='.join(Parts))
+
+                        ListDate = Parts[2]
+                        Author = Parts[3]
+
+                        Parts = line.split('□')
+                        Parts = [x.strip() for x in Parts if len(x) > 0]
+
+                        Title = Parts[1]
+
+                        # print('ListDate >' + ListDate + '<')
+                        # print('Author >' + Author + '<')
+                        # print('Title >' + Title + '<')
+                        # print('PostID >' + PostID + '<')
+                        # print('PostWeb >' + str(PostWeb) + '<')
+                        # print('PostMoney >' + str(PostMoney) + '<')
+
+                        if 'ALLPOST' == Board:
+                            Board = Title[Title.rfind('(')+1:].replace(')', '')
+                            # print('Board >' + Board + '<')
+
+                        result = Information.PostInformation(Board=Board, 
+                                                             PostID=PostID,
+                                                             Author=Author, 
+                                                             Title=Title,
+                                                             Money=PostMoney,
+                                                             ListDate=ListDate, 
+                                                             DeleteStatus=PostDeleteStatus.ByUnknow)
+                        
+                        ErrCode = ErrorCode.PostDeleted
+                        self.__ErrorCode = ErrCode
+                        self.__WaterBallProceeor()
+                        return ErrCode, result
+
             isDetectedTarget = False
 
             if FirstPage == '':
@@ -1779,26 +1819,13 @@ class Library(object):
                     if not ControlCodeMode:
 
                         PageLineRange = list(map(int, PageLineRange))[-2:]
-                        # OverlapLine = LastPageIndex - PageLineRange[0] + 1
 
                         AppendLine = PageLineRange[1] - LastPageIndex
 
                         if AppendLine > 0 and LastPageIndex != 0:
-                            # ShowTarget = '洗髮用品、洗臉卸粧用品、沐浴用品、香皂類'
-                            # if ShowTarget in CurrentPage:
-                            #     print(CurrentPageList)
-                            #     print(len(CurrentPageList))
-                            #     print('附加', AppendLine, '行')
-                            #     print(CurrentPageList[-AppendLine:])
 
                             CurrentPageList = CurrentPageList[-AppendLine:]
                             CurrentRawPageList = CurrentRawPageList[-AppendLine:]
-                            # if not isFirstPage:
-                            #     for i in range(OverlapLine):
-                            #         for ii in range(len(CurrentRawPage)):
-                            #             if CurrentRawPage[ii] == NewLineByte:
-                            #                 CurrentRawPage = CurrentRawPage[ii + 1:]
-                            #                 break
                     
                         LastPageIndex = PageLineRange[1]
                         PostContentListTemp.extend(CurrentPageList)
@@ -1859,7 +1886,6 @@ class Library(object):
                 sys.exit()
         
         FirstPage = FirstPage[FirstPage.find('作者'):]
-
         # print(FirstPage)
 
         Target = '作者  '
