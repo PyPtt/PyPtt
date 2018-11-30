@@ -181,29 +181,29 @@ def GetPostDemo():
     else:
         # 測試用
         BoardList = ['ALLPOST']
-        TryPost = 1000
+        TryPost = 2000
 
     for Board in BoardList:
 
-        if not Test:
-
-            if EnableSearchCondition:
-                ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board, SearchType=inputSearchType, Search=inputSearch)
-            else:
-                ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
-
-            if ErrCode != PTT.ErrorCode.Success:
-                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-                return False
-            
-            if NewestIndex == -1:
-                PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-                return False
-            
-            PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+        if EnableSearchCondition:
+            ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board, SearchType=inputSearchType, Search=inputSearch)
         else:
-            NewestIndex = 2901
-            PTTBot.Log('使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
+            ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+
+        if ErrCode != PTT.ErrorCode.Success:
+            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+            return False
+        
+        if NewestIndex == -1:
+            PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+            return False
+        
+        PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+
+        if Test:
+            pass
+            NewestIndex = 2304
+            PTTBot.Log('改使用 ' + Board + ' 板文章編號: ' + str(NewestIndex))
         
         for i in range(TryPost):
             PTTBot.Log('-' * 50)

@@ -1,9 +1,14 @@
 import array
 
+
 def ParseParameter(type, input):
-    if input == None:
+    if input is None:
         return None
-    return type(input)
+    result = type(input)
+    if isinstance(result, str):
+        result = result.rstrip()
+    return result
+
 
 class PostSearchType(object):
     # 搜尋關鍵字    / ?

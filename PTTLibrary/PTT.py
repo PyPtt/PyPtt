@@ -1763,6 +1763,11 @@ class Library(object):
 
                         Parts = line.split('□')
                         Parts = [x.strip() for x in Parts if len(x) > 0]
+                        
+                        if len(Parts) < 2:
+                            ErrCode = ErrorCode.ParseError
+                            self.__ErrorCode = ErrCode
+                            self.__WaterBallProceeor()
 
                         Title = Parts[1]
                         Title = Title[:Title.rfind('(')].strip()
