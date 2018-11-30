@@ -1755,12 +1755,17 @@ class Library(object):
                         # print('='.join(Parts))
 
                         ListDate = Parts[2]
-                        Author = Parts[3]
+                        if ListDate == '+':
+                            ListDate = Parts[3]
+                            Author = Parts[4]
+                        else:
+                            Author = Parts[3]
 
                         Parts = line.split('□')
                         Parts = [x.strip() for x in Parts if len(x) > 0]
 
                         Title = Parts[1]
+                        Title = Title[:Title.rfind('(')].strip()
 
                         # print('ListDate >' + ListDate + '<')
                         # print('Author >' + Author + '<')
