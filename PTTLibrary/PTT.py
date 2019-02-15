@@ -6,6 +6,7 @@ import progressbar
 import socket
 import array
 import paramiko
+import traceback
 from paramiko import ECDSAKey
 from uao import Big5UAOCodec
 uao = Big5UAOCodec()
@@ -344,8 +345,10 @@ class Library(object):
                             self.__connectRemote(ConnectIndex)
                             return self.__operatePTT(ConnectIndex, SendMessage, CatchTargetList, Refresh, ExtraWait)
                     TimeCout += 1
-                
-                EncodeMessage, Len = uao.encode(SendMessage)
+                try:
+                    EncodeMessage, Len = uao.encode(SendMessage)
+                except:
+                    EncodeMessage = SendMessage.encode('big5', 'replace')
                 self.__ConnectList[ConnectIndex].channel.send(EncodeMessage)
             
             TimeCout = 0
@@ -402,7 +405,9 @@ class Library(object):
             self.Log('使用者中斷')
             self.__ErrorCode = ErrorCode.UserInterrupt
             return self.__ErrorCode, -1
-        except:
+        except Exception as e:
+            traceback.print_tb(e.__traceback__)
+            print(e)
             self.Log('斷線，重新連線')
             if self.__ErrorCode != ErrorCode.UserInterrupt:
                 self.__connectRemote(ConnectIndex)
