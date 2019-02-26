@@ -887,137 +887,25 @@ def WaterBallHandler(WaterBall):
 
     PTTBot.throwWaterBall(WaterBall.getAuthor(), WaterBall.getAuthor() + ' 我接住你的水球了!')
 
-from datetime import date, timedelta
-Board = 'Wanted'
-
-def findCurrentDateFirst(NewestIndex, CurrentDate, show=False):
-
-    if len(CurrentDate) < 5:
-        CurrentDate = '0' + CurrentDate
+def CallStatusDemo():
+    ErrCode, Result = PTTBot.getCallStatus()
+    if Result == PTT.CallStatus.On:
+        print('您現在的呼叫器狀態是: 打開')
+    elif Result == PTT.CallStatus.Off:
+        print('您現在的呼叫器狀態是: 關掉')
+    elif Result == PTT.CallStatus.Unplug:
+        print('您現在的呼叫器狀態是: 拔掉')
+    elif Result == PTT.CallStatus.Waterproof:
+        print('您現在的呼叫器狀態是: 防水')
+    elif Result == PTT.CallStatus.Friend:
+        print('您現在的呼叫器狀態是: 好友')
     
-    for i in range(40):
-        PassDay = date.today() - timedelta(i)
+    ErrCode = PTTBot.setCallStatus(PTT.CallStatus.On)
+    if ErrCode == PTT.ErrorCode.Success:
+        print('變更呼叫器狀態成功')
+    else:
+        print('變更呼叫器狀態失敗 Error Code: ' + str(ErrCode))
 
-        PassDate = PassDay.strftime("%m/%d")
-        # if PassDate.startswith('0'):
-        #     PassDate = PassDate[1:]
-        
-        # print('=>', CurrentDate)
-        # print('=>', PassDate)
-
-        if PassDate == CurrentDate:
-            LastDate = (date.today() - timedelta(1 + i)).strftime("%m/%d")
-            # if LastDate.startswith('0'):
-            #     LastDate = LastDate[1:]
-            if show:
-                print('>' + LastDate + '<')
-            break
-    LastDateCount = int(LastDate.replace('/', ''))
-    CurrentCount = int(CurrentDate.replace('/', ''))
-
-    TargetCount =  LastDateCount + CurrentCount
-
-    StartIndex = 1
-    EndIndex = NewestIndex
-    
-    CurrentIndex = int((StartIndex + EndIndex) / 2)
-
-    RetryIndex = 0
-
-    while True:
-        if show:
-            PTTBot.Log('嘗試: ' + str(CurrentIndex))
-        ErrCode, Post = PTTBot.getPost(Board, PostIndex=CurrentIndex)
-
-        if ErrCode == PTT.ErrorCode.PostDeleted:
-            pass
-        elif ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-            CurrentIndex = StartIndex + RetryIndex
-            RetryIndex += 1
-            continue
-        elif Post.getDate() == None:
-            CurrentIndex = StartIndex + RetryIndex
-            RetryIndex += 1
-            continue
-        
-        RetryIndex = 0
-        for i in range(1, 100):
-
-            ErrCode, LastPost = PTTBot.getPost(Board, PostIndex=CurrentIndex - i)
-
-            if ErrCode == PTT.ErrorCode.PostDeleted:
-                pass
-            elif ErrCode != PTT.ErrorCode.Success:
-                if show:
-                    PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-                continue
-            elif LastPost == None:
-                continue
-            elif LastPost.getDate() == None:
-                continue
-
-            if show:
-                PTTBot.Log('找到上一篇: ' + str(CurrentIndex - i))
-            break
-        
-        P0 = LastPost.getListDate()
-        P1 = Post.getListDate()
-
-        P0Count = int(P0.replace('/', ''))
-        P1Count = int(P1.replace('/', ''))
-
-        CurrentCount =  P0Count + P1Count
-
-        if show:
-            print('P0: ' + P0)
-            print('P1: ' + P1)
-            print(StartIndex)
-            print(EndIndex)
-        
-        if CurrentCount == TargetCount:
-            break
-        elif CurrentCount < TargetCount:
-            StartIndex = CurrentIndex + 1
-        elif CurrentCount > TargetCount:
-            EndIndex = CurrentIndex - 1  
-        CurrentIndex = int((StartIndex + EndIndex) / 2)
-
-    # print(CurrentIndex)
-    return CurrentIndex
-
-def findPostRrange(HowDayBefore, show=False):
-    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
-
-    if ErrCode != PTT.ErrorCode.Success:
-        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-        sys.exit()
-    
-    if NewestIndex == -1:
-        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
-        sys.exit()
-    
-    if HowDayBefore < 1:
-        return None
-    
-    PassDay_0 = date.today() - timedelta(HowDayBefore)
-    PassDate_0 = PassDay_0.strftime("%m/%d")
-    if PassDate_0.startswith('0'):
-        PassDate_0 = PassDate_0[1:]
-    
-    PassDay_1 = date.today() - timedelta(HowDayBefore - 1)
-    PassDate_1 = PassDay_1.strftime("%m/%d")
-    if PassDate_1.startswith('0'):
-        PassDate_1 = PassDate_1[1:]
-    
-    if show:
-        print(PassDate_0)
-        print(PassDate_1)
-
-    start = findCurrentDateFirst(NewestIndex, PassDate_0, show=False)
-    end = findCurrentDateFirst(NewestIndex, PassDate_1, show=True)
-
-    print(HowDayBefore, '天前文章範圍為', start, '~', end)
 
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
@@ -1070,6 +958,7 @@ if __name__ == '__main__':
         # GetFriendListDemo()
         # GetHistoricalWaterBallDemo()
         # SendMessageDemo()
+        # CallStatusDemo()
 
         pass
     except Exception as e:
