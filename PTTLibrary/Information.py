@@ -10,6 +10,23 @@ def ParseParameter(type, input):
     return result
 
 
+class CallStatus(object):
+    # 打開
+    On = 1
+    # 關掉
+    Off = 2
+    # 拔掉
+    Unplug = 3
+    # 防水
+    Waterproof = 4
+    # 好友
+    Friend = 5
+
+    MinValue = On
+    MaxValue = Friend
+
+
+
 class PostSearchType(object):
     # 搜尋關鍵字    / ?
     # 搜尋作者      a
@@ -25,6 +42,7 @@ class PostSearchType(object):
 
     MinValue = Unknow
     MaxValue = Money
+
 
 class WaterBallType(object):
     Catch =                                 1

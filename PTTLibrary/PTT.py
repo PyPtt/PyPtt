@@ -22,6 +22,7 @@ except SystemError:
     import ErrorCode
     import Information
 
+
 Version = Version.Ver
 LogLevel = Information.LogLevel()
 PushType = Information.PushType()
@@ -33,15 +34,20 @@ WaterBallOperateType = Information.WaterBallOperateType
 WaterBallType = Information.WaterBallType
 PostSearchType = Information.PostSearchType
 PostDeleteStatus = Information.PostDeleteStatus
+CallStatus = Information.CallStatus
+
 
 class ResponseUnit(object):
     def __init__(self, SendMessage, Refresh):
         self.__SendMessage = SendMessage
         self.__Refresh = Refresh
+
     def getSendMessage(self):
         return self.__SendMessage
+
     def needRefresh(self):
         return self.__Refresh
+
 
 class DetectUnit(object):
     def __init__(self, DisplayMsg, DetectTarget, Response, BreakDetect=False, ErrCode=0, LogLV=0):
@@ -195,6 +201,8 @@ class Library(object):
         self.__APILock = [threading.Lock()] * self.__MaxMultiLogin
 
         self.__ErrorCode =                      ErrorCode.Success
+
+
     def __AntiLogout(self):
         
         self.__RunIdleThread = True
@@ -309,6 +317,8 @@ class Library(object):
         self.__APILock[ConnectIndex].release()
         
         return result
+
+
     def __operatePTT(self, ConnectIndex, SendMessage='', CatchTargetList=[], Refresh=False, ExtraWait=0):
         
         SendMessageTimeout = 10.0
@@ -764,6 +774,7 @@ class Library(object):
         
         if ErrCode == ErrorCode.Success:
             self.__IdleThread = threading.Thread(target=self.__AntiLogout)
+            self.__IdleThread.daemon = True
             self.__IdleThread.start()
         
         self.__ErrorCode = ErrCode
@@ -3294,6 +3305,7 @@ class Library(object):
         self.__EnableLoginCount = 1
 
         for SubThread in CrawThreadList:
+            SubThread.daemon = True
             SubThread.start()
         for SubThread in CrawThreadList:
             SubThread.join()
@@ -4005,6 +4017,72 @@ class Library(object):
 
         self.__ErrorCode = ErrCode
         return ErrCode, result
+    
+
+    def getCallStatus(self):
+        ErrCode = ErrorCode.Success
+        ConnectIndex = 0
+
+        result = None
+
+        ErrCode, _ = self.getTime()
+
+        if ErrCode != ErrorCode.Success:
+            self.__ErrorCode = ErrCode
+            return ErrCode, None
+
+        if '[呼叫器]打開' in self.__ReceiveData[ConnectIndex]:
+            result = CallStatus.On
+        if '[呼叫器]關掉' in self.__ReceiveData[ConnectIndex]:
+            result = CallStatus.Off
+        if '[呼叫器]拔掉' in self.__ReceiveData[ConnectIndex]:
+            result = CallStatus.Unplug
+        if '[呼叫器]防水' in self.__ReceiveData[ConnectIndex]:
+            result = CallStatus.Waterproof
+        if '[呼叫器]好友' in self.__ReceiveData[ConnectIndex]:
+            result = CallStatus.Friend
+
+        return ErrCode, result
+    
+    def setCallStatus(self, callstatus):
+
+        ConnectIndex = 0
+
+        if not CallStatus.MinValue <= callstatus <= CallStatus.MaxValue:
+            return ErrorCode.ErrorInput
+
+        ErrCode, CurrentCallStatus = self.getCallStatus()
+        if ErrCode != ErrorCode.Success:
+            self.__ErrorCode = ErrCode
+            return ErrCode
+
+        if CurrentCallStatus == callstatus:
+            self.__ErrorCode = ErrorCode.Success
+            return ErrorCode.Success
+        
+        SendMessage = GotoMainMenuCommand + '\x15p'
+
+        for i in range(5):
+            ErrCode, CatchIndex = self.__operatePTT(ConnectIndex, SendMessage=SendMessage, Refresh=True)
+            if ErrCode == ErrorCode.WaitTimeout:
+                self.Log('操作超時重新嘗試')
+                return ErrCode
+            elif ErrCode != ErrorCode.Success:
+                self.Log('操作操作失敗 錯誤碼: ' + str(ErrCode), LogLevel.DEBUG)
+                self.__ErrorCode = ErrCode
+                return ErrCode
+            
+            ErrCode, CurrentCallStatus = self.getCallStatus()
+            if ErrCode != ErrorCode.Success:
+                self.__ErrorCode = ErrCode
+                return ErrCode
+
+            if CurrentCallStatus == callstatus:
+                self.__ErrorCode = ErrorCode.Success
+                return ErrorCode.Success
+
+        return ErrCode
+
     def register(self, newID):
         self.__IdleTime = 0
         ErrCode = ErrorCode.Success
