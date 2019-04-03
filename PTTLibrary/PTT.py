@@ -1605,14 +1605,14 @@ class Library(object):
                     # 78369    10/08 -            □ (本文已被刪除) [QQ1]
                     # 77579 s  10/06 -            □ (本文已被刪除) <QQ2>
                     if line.startswith(self.__Cursor):
-                        CheckDeleteList = ['本文', '已被', '刪除', '吃掉']
+                        CheckDeleteList = ['本文', '已被', '刪除', '吃掉', '-□', '<', '>']
                         CheckDeleteResult = [False] * len(CheckDeleteList)
                         for i in range(len(CheckDeleteList)):
                             DeletedKeyword = CheckDeleteList[i]
                             if DeletedKeyword in line:
                                 CheckDeleteResult[i] = True
                         
-                        if CheckDeleteResult.count(True) >= 2:
+                        if CheckDeleteResult.count(True) > 2:
                             # print('deleted line: ' + line)
                             
                             ListDate = line

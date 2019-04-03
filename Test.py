@@ -127,6 +127,7 @@ def showPost(Post):
     else:
         PTTBot.Log('無推文清單')
 
+
 def GetPostDemo():
     
     # 這個範例是如何取得單一文章資訊
