@@ -19,6 +19,7 @@
 
 ###### 徵求快樂開發夥伴，歡迎開 issue 討論新想法或者發起 pull request
 
+介紹影片
 [![](http://img.youtube.com/vi/ng48ITuePlg/0.jpg)](http://www.youtube.com/watch?v=ng48ITuePlg "")
 
 版本
