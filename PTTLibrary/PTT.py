@@ -1182,7 +1182,7 @@ class Library(object):
             self.__ErrorCode = ErrCode
             return ErrCode
 
-        MaxPushLength = 45
+        MaxPushLength = 50
 
         self.__PushShow = False
         PushList = []
