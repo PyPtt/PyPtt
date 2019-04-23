@@ -42,7 +42,21 @@ def PostDemo():
             for ii in range(128):
                 Content += '測試行 ' + str(ii) + '\r'
         
-        ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試 ' + str(i), '自動PO文測試，如有打擾請告知。\r\n\r\n使用PTT Library 測試\r\n\r\nhttps://goo.gl/5hdAqu\r\n\r\n' + Content, 1, 0)
+        BasicContent = '''自動PO文測試，如有打擾請告知。\r\n
+\r\n
+使用PTT Library 測試\r\n
+\r\n
+Github:\r\n
+https://goo.gl/5hdAqu\r\n
+介紹影片:\r\n
+https://www.youtube.com/watch?v=ng48ITuePlg\r\n
+\r\n
+'''
+        Content = BasicContent + Content
+
+        # https://www.youtube.com/watch?v=ng48ITuePlg
+        
+        ErrCode = PTTBot.post('Test', 'Python 機器人自動PO文測試 ' + str(i), Content, 1, 0)
         if ErrCode == PTT.ErrorCode.Success:
             PTTBot.Log('在 Test 板發文成功')
         elif ErrCode == PTT.ErrorCode.NoPermission:
@@ -266,7 +280,7 @@ def PushDemo():
     PTTBot.Log('最新文章編號: ' + str(NewestIndex))
     
     for i in range(10):
-        ErrCode = PTTBot.push('Test', PTT.PushType.Push, 'PTT Library Push API https://goo.gl/5hdAqu', PostIndex=NewestIndex)
+        ErrCode = PTTBot.push('Test', PTT.PushType.Push, 'PTT Library Push API Github: https://goo.gl/5hdAqu', PostIndex=NewestIndex)
         if ErrCode == PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號: 推文成功')
         elif ErrCode == PTT.ErrorCode.ErrorInput:
