@@ -10,9 +10,9 @@
 #### Do you want PTT in Python? import PTT !
 
 ###### PTT Library 是一個由 Python 寫成用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
-###### 拋棄過往網頁形式的解析，直接登入 PTT 分析最即時的文章與推文，給你最快速的資訊!
+###### 直接登入 PTT 解析最即時推文，給你最快速的資訊!
 ###### 支援開放 API，你可以直接使用開放 API 實作你的 PTT 操作指令
-###### 測試平台: Windows 10, Ubuntu 18.04
+###### 測試平台: Windows 10, Ubuntu 18.04, Mac
 ###### 原始碼
 ###### github: https://github.com/Truth0906/PTTLibrary
 ###### Pypi: https://pypi.org/project/PTTLibrary/
@@ -25,7 +25,7 @@
 
 版本
 -------------------
-###### 0.7.28
+###### 1.0 beta
 
 安裝
 -------------------
@@ -63,7 +63,7 @@ PTTBot.logout()
 ###### paramiko
 ###### uao
 
-未來工作
+正在工作
 -------------------
 ###### 支援 i18
 ###### 重構
