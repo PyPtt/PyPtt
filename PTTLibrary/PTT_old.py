@@ -5,8 +5,8 @@ import threading
 import progressbar
 import socket
 import array
-import paramiko
 import traceback
+import paramiko
 from paramiko import ECDSAKey
 from uao import Big5UAOCodec
 uao = Big5UAOCodec()

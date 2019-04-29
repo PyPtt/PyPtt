@@ -316,3 +316,13 @@ class WaterBallInformation(object):
         
     def getType(self):
         return self.__Type
+
+
+class Language(object):
+
+    Chinese = 1
+    English = 2
+
+    MinValue = Chinese
+    MaxValue = English
+    
