@@ -1,12 +1,12 @@
 
 
 try:
-    from . import Util
     from . import Config
+    from . import Util
     from . import i18n
 except:
-    import Util
     import Config
+    import Util
     import i18n
 
 

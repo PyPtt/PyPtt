@@ -17,6 +17,11 @@ class SynchronizeAllMethod:
     def __init_subclass__(cls, **kwargs):
         sychronizer = synchronized(Lock())
         for name in cls.__dict__:
+            if name.startswith('_'):
+                continue
+            # print(name)
             attr = getattr(cls, name)
             if callable(attr):
                 setattr(cls, name, sychronizer(attr))
+        
+        # print('Synchronize complete')

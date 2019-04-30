@@ -1,12 +1,43 @@
+import os
 import sys
 import time
 from time import gmtime, strftime
-from functools import wraps
-from threading import Lock
+
+try:
+    from . import DataType
+    from . import Config
+    from . import Util
+except:
+    import DataType
+    import Config
+    import Util
 
 
 def log(InputMessage):
-    TotalMessage = "[" + strftime("%m-%d %H:%M:%S") + "]" + InputMessage
+    if isinstance(InputMessage, list):
+
+        if Config.Language == DataType.Language.Chinese:
+
+            LetterList = 'abcdefghijklmnopqrstuvwxyz'
+        
+            for i in range(len(InputMessage)):
+                Msg = InputMessage[i]
+                EnglistStr = True
+
+                for letter in Msg:
+                    letter = letter.lower()
+                    if letter not in LetterList:
+                        EnglistStr = False
+                        break
+                if EnglistStr:
+                    InputMessage[i] = ' ' + InputMessage[i].strip() + ' '
+
+            InputMessage = ''.join(InputMessage)
+        else:
+            InputMessage = ' '.join(InputMessage)
+
+    InputMessage = InputMessage.replace('  ', ' ')
+    TotalMessage = "[" + strftime("%m-%d %H:%M:%S") + "] " + InputMessage
 
     try:
         print(TotalMessage.encode(sys.stdin.encoding, 
@@ -21,6 +52,27 @@ def getTime():
 
 def showValue(Msg, Value):
 
+    if isinstance(Msg, list):
+
+        if Config.Language == DataType.Language.Chinese:
+            LetterList = 'abcdefghijklmnopqrstuvwxyz'
+        
+            for i in range(len(Msg)):
+                Temp = Msg[i]
+                EnglistStr = True
+                
+                for letter in Temp:
+                    letter = letter.lower()
+                    if letter not in LetterList:
+                        EnglistStr = False
+                        break
+                if EnglistStr:
+                    Msg[i] = ' ' + Msg[i].strip() + ' '
+
+            Msg = ''.join(Msg)
+        else:
+            Msg = ' '.join(Msg)
+
     TotalMessage = []
     TotalMessage.append(Msg)
     TotalMessage.append(' [')
@@ -30,20 +82,13 @@ def showValue(Msg, Value):
     log(''.join(TotalMessage))
 
 
-def synchronized(lock):
-    def wrapper(f):
-        @wraps(f)
-        def inner_wrapper(*args, **kwargs):
-            with lock:
-                return f(*args, **kwargs)
-        return inner_wrapper
-    return wrapper
+def checkRange(DefineObj, Value):
+    if Value < DefineObj.MinValue or DefineObj.MaxValue < Value:
+        return False
+    return True
 
 
-class SynchronizeAllMethod:
-    def __init_subclass__(cls, **kwargs):
-        sychronizer = synchronized(Lock())
-        for name in cls.__dict__:
-            attr = getattr(cls, name)
-            if callable(attr):
-                setattr(cls, name, sychronizer(attr))
+def getFileName(String):
+    result = os.path.basename(String)
+    result = result[:result.find('.')]
+    return result

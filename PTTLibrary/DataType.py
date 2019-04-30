@@ -1,3 +1,4 @@
+
 import array
 from uao import register_uao
 register_uao()
@@ -325,4 +326,12 @@ class Language(object):
 
     MinValue = Chinese
     MaxValue = English
-    
+
+
+class ConnectionMode(object):
+
+    Telnet = 1
+    WebSocket = 2
+
+    MinValue = Telnet
+    MaxValue = WebSocket
