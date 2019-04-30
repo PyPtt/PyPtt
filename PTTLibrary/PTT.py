@@ -16,7 +16,7 @@ except:
 Version = Config.Version
 
 
-class Library(object):
+class Library(Util.SynchronizeAllMethod):
 
     def __init__(self):
         pass
