@@ -52,6 +52,7 @@ PTTBot.logout()
 詳細說明
 -------------------
 ###### 請參考 Test.py 有 API 的範例與說明
+###### [爬蟲教學](https://dotblogs.com.tw/codinghouse/2018/10/22/pttcrawler)
 
 需求
 -------------------
