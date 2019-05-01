@@ -1,5 +1,3 @@
-
-
 try:
     from . import Config
     from . import Util

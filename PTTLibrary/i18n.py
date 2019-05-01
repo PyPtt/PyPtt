@@ -2,138 +2,175 @@
 
 try:
     from . import DataType
-    from . import Config
     from . import Util
     from . import Exceptions
+    from . import Log
 except:
     import DataType
-    import Config
     import Util
     import Exceptions
+    import Log
+
+
+class Language(object):
+
+    Chinese = 1
+    English = 2
+
+    MinValue = Chinese
+    MaxValue = English
+
 
 LanguageList = [
-    DataType.Language.Chinese,
-    DataType.Language.English,
+    Language.Chinese,
+    Language.English,
 ]
 
 
-def SpecificLoad(Language, LangList):
+def SpecificLoad(inputLanguage, LangList):
     global LanguageList
 
     if len(LanguageList) != len(LangList):
-        Util.log('SpecificLoad error')
-        Util.log('length error')
+        Log.log(Log.Level.INFO, 'SpecificLoad error')
+        Log.log(Log.Level.INFO, 'length error')
         return None
     
-    if Language not in LanguageList:
-        Util.log('SpecificLoad error')
-        Util.showValue('Unknow language', Language)
+    if inputLanguage not in LanguageList:
+        Log.log(Log.Level.INFO, 'SpecificLoad error')
+        Log.showValue(Log.Level.INFO, 'Unknow language', inputLanguage)
         return None
-    return LangList[LanguageList.index(Language)]
+    return LangList[LanguageList.index(inputLanguage)]
 
 
-def load(Language):
-    if not (DataType.Language.MinValue <=
-            Language <= DataType.Language.MaxValue):
-        Util.showValue('Error Language valve', Language)
-        return ErrorCode.ErrorInput
+def load(inputLanguage):
+    if not Util.checkRange(Language, inputLanguage):
+        Log.showValue(Log.Level.INFO, 'Error Language valve', inputLanguage)
+        raise Exceptions.ParameterError('Language', inputLanguage)
     
     global Connect
     Connect = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '連線',
-            'Connection',
+            'Connect',
         ])
 
     global Start
     Start = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '開始',
             'Start',
         ])
 
     global ConnectMode
     ConnectMode = SpecificLoad(
-        Language, [
+        inputLanguage, [
             Connect + '模式',
             Connect + 'mode',
         ])
     
     global ConnectMode_Telnet
     ConnectMode_Telnet = SpecificLoad(
-        Language, [
+        inputLanguage, [
             'Telnet',
             'Telnet',
         ])
     
     global ConnectMode_WebSocket
     ConnectMode_WebSocket = SpecificLoad(
-        Language, [
+        inputLanguage, [
             'WebSocket',
             'WebSocket',
         ])
 
     global Active
     Active = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '啟動',
             'Active',
         ])
     
     global ErrorParameter
     ErrorParameter = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '參數錯誤',
             'Wrong parameter',
         ])
     
-    global Core
-    Core = SpecificLoad(
-        Language, [
-            '核心',
-            'Core',
+    global ConnectCore
+    ConnectCore = SpecificLoad(
+        inputLanguage, [
+            '連線核心',
+            'Connect Core',
         ])
     
     global PTT
     PTT = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '批踢踢',
             'PTT',
         ])
     
     global Init
     Init = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '初始化',
             'Initialization',
         ])
 
     global Done
     Done = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '完成',
             'Done',
         ])
 
     global i18n
     i18n = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '多國語系',
             'i18n',
         ])
     
     global Library
     Library = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '函式庫',
             'Library',
         ])
     
     global Fail
     Fail = SpecificLoad(
-        Language, [
+        inputLanguage, [
             '失敗',
             'Fail',
+        ])
+    
+    global Prepare
+    Prepare = SpecificLoad(
+        inputLanguage, [
+            '準備',
+            'Prepare',
+        ])
+    
+    global Info
+    Info = SpecificLoad(
+        inputLanguage, [
+            '資訊',
+            'INFO',
+        ])
+    
+    global Debug
+    Debug = SpecificLoad(
+        inputLanguage, [
+            '除錯',
+            'DBUG',
+        ])
+    
+    global Again
+    Again = SpecificLoad(
+        inputLanguage, [
+            '重新',
+            'Re',
         ])
 
     # Final check
@@ -146,6 +183,12 @@ def load(Language):
         if v is None:
             raise Exceptions.InitError(
                 Util.getFileName(__file__), k + ' is None')
+    
+    Log.showValue(Log.Level.INFO, [
+            i18n,
+        ],
+        Active
+    )
 
 
 def _createlist():
@@ -163,5 +206,5 @@ def _createlist():
         F.write('\n'.join(i18nStrList))
 
 if __name__ == '__main__':
-    load(Config.Language)
+    # load(Config.Language)
     _createlist()
