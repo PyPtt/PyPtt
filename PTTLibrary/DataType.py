@@ -108,18 +108,6 @@ class ReplyPostType(object):
     MaxValue = Board_Mail
 
 
-class LogLevel(object):
-    
-    DEBUG = 1
-    WARNING = 2
-    INFO = 3
-    CRITICAL = 4
-    SLIENT = 5
-
-    MaxValue = SLIENT
-    MinValue = DEBUG
-
-
 class PushType(object):
     Push = 1
     Boo = 2
@@ -127,7 +115,7 @@ class PushType(object):
 
     MaxValue = Push
     MinValue = Arrow
-        
+
 
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP, RawData):
@@ -317,21 +305,3 @@ class WaterBallInformation(object):
         
     def getType(self):
         return self.__Type
-
-
-class Language(object):
-
-    Chinese = 1
-    English = 2
-
-    MinValue = Chinese
-    MaxValue = English
-
-
-class ConnectionMode(object):
-
-    Telnet = 1
-    WebSocket = 2
-
-    MinValue = Telnet
-    MaxValue = WebSocket
