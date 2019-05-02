@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 import time
 
 try:
@@ -28,6 +28,7 @@ ErrorCode = ErrorCode.ErrorCode()
 Language = i18n.Language
 ConnectMode = ConnectCore.ConnectMode
 LogLevel = Log.Level
+Command = ConnectCore.Command
 
 
 class Library(Synchronize.SynchronizeAllMethod):
@@ -65,14 +66,36 @@ class Library(Synchronize.SynchronizeAllMethod):
             i18n.Library,
             ' v ' + Version,
             ],
-            i18n.Active
+            i18n.Init
         )
 
     def login(self, ID: str, Password: str):
 
         self._ConnectCore.connect()
-        qqq
-        return ErrCode
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.ErrorIDPW,
+                '密碼不對或無此帳號',
+                '',
+                BreakDetect=True
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SigningUnPleaseWait,
+                '登入中，請稍候',
+                ' ',
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SigningUpdate,
+                '正在更新與同步線上使用者及好友名單',
+                ' ',
+            ),
+        ]
+
+        Msg = ID + ',' + ConnectCore.Command.Enter + Password + ConnectCore.Command.Enter
+        self._ConnectCore.send(Msg, TargetList)
+
+        return
 
     def logout(self):
         pass

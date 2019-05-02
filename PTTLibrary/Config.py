@@ -14,6 +14,7 @@ Host = 'ptt.cc'
 Port = '23'
 
 RetryWaitTime = 3
+SleepTime = 1
 
 Language = i18n.Language.Chinese
 ConnectMode = ConnectCore.ConnectMode.Telnet
