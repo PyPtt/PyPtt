@@ -9,8 +9,12 @@ except:
 
 
 class ParameterError(Exception):
-    def __init__(self, message, Value):
-        self.message = message + ' [' + str(Value) + ']'
+    def __init__(self, message, Value=None):
+
+        if Value is not None:
+            self.message = message + ' [' + str(Value) + ']'
+        else:
+            self.message = message
 
     def __str__(self):
         return self.message
@@ -22,3 +26,5 @@ class InitError(Exception):
 
     def __str__(self):
         return self.message
+
+

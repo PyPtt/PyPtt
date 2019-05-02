@@ -24,7 +24,7 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
     
     # PTTBot = PTT.Library()
-    PTTBot = PTT.Library(Language=PTT.Language.English)
+    PTTBot = PTT.Library(LogLevel=PTT.LogLevel.DEBUG)
     ErrCode = PTTBot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.log('登入失敗')

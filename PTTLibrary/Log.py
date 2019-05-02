@@ -31,7 +31,7 @@ def log(LogLevel, Msg):
 
     if isinstance(Msg, list):
 
-        if Config.Language == DataType.Language.Chinese:
+        if Config.Language == i18n.Language.Chinese:
 
             for i in range(len(Msg)):
                 if Msg[i].isalnum():
@@ -42,7 +42,14 @@ def log(LogLevel, Msg):
             Msg = ' '.join(Msg)
 
     Msg = Msg.replace('  ', ' ')
-    TotalMessage = "[" + strftime("%m-%d %H:%M:%S") + "] " + Msg
+
+    TotalMessage = '[' + strftime('%m%d %H:%M:%S') + ']'
+    if LogLevel == Level.DEBUG:
+        TotalMessage += '[' + i18n.Debug + '] ' + Msg
+    elif LogLevel == Level.INFO:
+        TotalMessage += '[' + i18n.Info + '] ' + Msg
+
+    # [' +  + '] ' + Msg
 
     try:
         print(TotalMessage.encode(sys.stdin.encoding,
