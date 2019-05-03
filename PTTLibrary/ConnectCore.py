@@ -28,7 +28,7 @@ except ModuleNotFoundError:
 def _showScreen(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.DEBUG:
         return
-    
+
     if isinstance(ScreenQueue, list):
         for Screen in ScreenQueue:
             print('-' * 50)
@@ -46,7 +46,7 @@ def _showScreen(ScreenQueue, FunctionName=None):
                     sys.stdin.encoding))
         except Exception:
             print(ScreenQueue.encode('utf-8', "replace").decode('utf-8'))
-        
+
         print('len:' + str(len(ScreenQueue)))
     if FunctionName is not None:
         print('錯誤在 ' + FunctionName + ' 函式發生')
@@ -166,7 +166,7 @@ class API(object):
                     str(Config.RetryWaitTime - i)
                 )
                 time.sleep(1)
-        
+
         Log.showValue(Log.Level.INFO, [
             i18n.ConnectCore,
             ],
@@ -216,9 +216,9 @@ class API(object):
                 )
                 _wait()
                 continue
-            
+
             break
-        
+
         if not ConnectSuccess:
             raise ConnectError()
 
@@ -276,7 +276,7 @@ class API(object):
                 ReceiveDataTemp = ReceiveDataTemp.decode(
                     'utf-8', errors='ignore')
                 ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)
-                
+
                 ReceiveData.append(ReceiveDataTemp)
                 Screen = ''.join(ReceiveData)
 
@@ -308,12 +308,15 @@ class API(object):
             if not FindTarget:
                 raise NoMatchTargetError(self._ReceiveDataQueue)
         raise NoMatchTargetError(self._ReceiveDataQueue)
-
+    
+    def close(self):
+        self._Core.close()
+        
     def _cleanScreen(self, screen, NoColor=True):
         if not screen:
             return screen
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
-        
+
         PreNewLineMark = -1
         PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
         for NewLineMark in range(1, 25):
@@ -352,7 +355,7 @@ class API(object):
                                                 PTTLibraryNewLineMark*NewLine)
 
                     PreNewLineMark = NewLineMark
-        
+
         screen = screen.replace(PTTLibraryNewLineMark, '\n')
         # if ShowTarget in screen:
         #     self.Log('----------------------')

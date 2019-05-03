@@ -29,6 +29,7 @@ Language = i18n.Language
 ConnectMode = ConnectCore.ConnectMode
 LogLevel = Log.Level
 Command = ConnectCore.Command
+Exceptions = Exceptions
 
 
 class Library(Synchronize.SynchronizeAllMethod):
@@ -37,6 +38,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                  ConnectMode: int=0,
                  LogLevel: int=0,
                  ):
+        Config.load()
+
         if LogLevel == 0:
             LogLevel = Config.LogLevel
         elif not Util.checkRange(Log.Level, LogLevel):
@@ -54,7 +57,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         if ConnectMode == 0:
             ConnectMode = Config.ConnectMode
-        elif not Util.checkRange(DataType.ConnectMode, ConnectMode):
+        elif not Util.checkRange(ConnectCore.ConnectMode, ConnectMode):
             raise Exceptions.ParameterError('Unknow ConnectMode',
                                             ConnectMode)
         else:
@@ -75,7 +78,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             if Config.KickOtherLogin:
                 return i18n.KickOtherLogin
             return i18n.NotKickOtherLogin
-        
+
         def KickOtherLoginResponse(Screen):
             if Config.KickOtherLogin:
                 return 'y' + ConnectCore.Command.Enter
@@ -83,7 +86,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         if len(Password) > 8:
             Password = Password[:8]
-        
+
         ID = ID.strip()
         Password = Password.strip()
 
@@ -104,7 +107,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ),
             ConnectCore.TargetUnit(
                 i18n.SystemBusyTryLater,
-                '系統負荷過重, 請稍後再試', 
+                '系統負荷過重, 請稍後再試',
                 BreakDetect=True,
             ),
             ConnectCore.TargetUnit(
@@ -114,12 +117,12 @@ class Library(Synchronize.SynchronizeAllMethod):
             ),
             ConnectCore.TargetUnit(
                 i18n.DelWrongPWRecord,
-                '您要刪除以上錯誤嘗試的記錄嗎', 
+                '您要刪除以上錯誤嘗試的記錄嗎',
                 Response='y' + ConnectCore.Command.Enter,
             ),
             ConnectCore.TargetUnit(
                 i18n.MailBoxFull,
-                '您保存信件數目', 
+                '您保存信件數目',
                 Response=ConnectCore.Command.GoMainMenu,
             ),
             ConnectCore.TargetUnit(
@@ -186,6 +189,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         ]
 
         index = self._ConnectCore.send(Cmd, TargetList)
+        self._ConnectCore.close()
         if index != 0:
             raise ConnectCore.LoginError()
         return ErrorCode.Success

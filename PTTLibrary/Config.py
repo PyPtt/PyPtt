@@ -22,3 +22,19 @@ Language = i18n.Language.Chinese
 ConnectMode = ConnectCore.ConnectMode.WebSocket
 LogLevel = Log.Level.INFO
 KickOtherLogin = False
+
+
+def load():
+    global RetryWaitTime
+    RetryWaitTime = 3
+    global ScreenTimeOut
+    ScreenTimeOut = 3.0
+
+    global Language
+    Language = i18n.Language.Chinese
+    global ConnectMode
+    ConnectMode = ConnectCore.ConnectMode.WebSocket
+    global LogLevel
+    LogLevel = Log.Level.INFO
+    global KickOtherLogin
+    KickOtherLogin = False

@@ -23,5 +23,5 @@ class SynchronizeAllMethod:
             attr = getattr(cls, name)
             if callable(attr):
                 setattr(cls, name, sychronizer(attr))
-        
+
         # print('Synchronize complete')

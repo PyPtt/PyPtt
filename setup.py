@@ -91,7 +91,7 @@ setup(
         'Topic :: Internet',
         # Pick your license as you wish
         'License :: OSI Approved :: MIT License',
-        
+
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
@@ -115,7 +115,7 @@ setup(
     # py_modules=["PTTLibrary.py"],
     #
     packages=['PTTLibrary'],  # Required
-    
+
     # package_dir={'PTTLibrary': 'PTT'},
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is

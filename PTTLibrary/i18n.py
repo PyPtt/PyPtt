@@ -3,10 +3,12 @@ from time import gmtime, strftime
 try:
     import DataType
     import Util
+    import Config
     import Exceptions
 except ModuleNotFoundError:
     from . import DataType
     from . import Util
+    from . import Config
     from . import Exceptions
 
 
@@ -30,7 +32,7 @@ def SpecificLoad(inputLanguage, LangList):
 
     if len(LanguageList) != len(LangList):
         raise Exceptions.ParameterError('SpecificLoad LangList legnth error')
-    
+
     if inputLanguage not in LanguageList:
         raise Exceptions.ParameterError('SpecificLoad Unknow language',
                                         inputLanguage)
@@ -41,7 +43,7 @@ def load(inputLanguage):
     if not Util.checkRange(Language, inputLanguage):
         Log.showValue(Log.Level.INFO, 'Error Language valve', inputLanguage)
         raise Exceptions.ParameterError('Language', inputLanguage)
-    
+
     global Connect
     Connect = SpecificLoad(inputLanguage, [
         '連線',
@@ -59,13 +61,13 @@ def load(inputLanguage):
         Connect + '模式',
         Connect + 'mode',
     ])
-    
+
     global ConnectMode_Telnet
     ConnectMode_Telnet = SpecificLoad(inputLanguage, [
         'Telnet',
         'Telnet',
     ])
-    
+
     global ConnectMode_WebSocket
     ConnectMode_WebSocket = SpecificLoad(inputLanguage, [
         'WebSocket',
@@ -77,25 +79,25 @@ def load(inputLanguage):
         '啟動',
         'Active',
     ])
-    
+
     global ErrorParameter
     ErrorParameter = SpecificLoad(inputLanguage, [
         '參數錯誤',
         'Wrong parameter',
     ])
-    
+
     global ConnectCore
     ConnectCore = SpecificLoad(inputLanguage, [
         '連線核心',
         'Connect Core',
     ])
-    
+
     global PTT
     PTT = SpecificLoad(inputLanguage, [
         '批踢踢',
         'PTT',
     ])
-    
+
     global Init
     Init = SpecificLoad(inputLanguage, [
         '初始化',
@@ -113,13 +115,13 @@ def load(inputLanguage):
         '多國語系',
         'i18n',
     ])
-    
+
     global Library
     Library = SpecificLoad(inputLanguage, [
         '函式庫',
         'Library',
     ])
-    
+
     global Fail
     Fail = SpecificLoad(inputLanguage, [
         '失敗',
@@ -131,37 +133,37 @@ def load(inputLanguage):
         '成功',
         'Success',
     ])
-    
+
     global Prepare
     Prepare = SpecificLoad(inputLanguage, [
         '準備',
         'Prepare',
     ])
-    
+
     global Info
     Info = SpecificLoad(inputLanguage, [
         '資訊',
         'INFO',
     ])
-    
+
     global Debug
     Debug = SpecificLoad(inputLanguage, [
         '除錯',
         'DBUG',
     ])
-    
+
     global Again
     Again = SpecificLoad(inputLanguage, [
         '重新',
         'Re',
     ])
-    
+
     global ErrorIDPW
     ErrorIDPW = SpecificLoad(inputLanguage, [
         '密碼不對或無此帳號',
         'Wrong password or no such id',
     ])
-    
+
     global ScreenNoMatchTarget
     ScreenNoMatchTarget = SpecificLoad(inputLanguage, [
         '畫面無法辨識',
@@ -270,9 +272,10 @@ def load(inputLanguage):
         if v is None:
             raise Exceptions.InitError(
                 Util.getFileName(__file__), k + ' is None')
-
-    print('[' + strftime('%m%d %H:%M:%S') + '][' + Info + '] ' + i18n + 
-          ' [' + Init + ']')
+    
+    if Config.LogLevel <= 2:
+        print('[' + strftime('%m%d %H:%M:%S') + '][' + Info + '] ' + i18n +
+            ' [' + Init + ']')
 
 
 def _createlist():
