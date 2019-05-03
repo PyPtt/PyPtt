@@ -24,6 +24,7 @@ except ModuleNotFoundError:
     from . import Exceptions
     from . import Log
 
+
 def _showScreen(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.DEBUG:
         return
@@ -55,8 +56,6 @@ def _showScreen(ScreenQueue, FunctionName=None):
 class Command(object):
     Enter = '\r'
     Refresh = '\x0C'
-
-    # \x1b\x4fA (上, 下右左 BCD)
     Up = '\x1b\x4fA'
     Down = '\x1b\x4fB'
     Right = '\x1b\x4fC'
@@ -193,24 +192,32 @@ class API(object):
 
         for _ in range(2):
 
-            if self._ConnectMode == ConnectMode.Telnet:
-                try:
-                    self._Connect = telnetlib.Telnet(Config.Host, Config.Port)
-                    ConnectSuccess = True
-                except:
-                    Log.showValue(Log.Level.INFO, [
-                        i18n.Connect,
-                        i18n.PTT,
-                        ],
-                        i18n.Fail
-                    )
-                    _wait()
-                    continue
-                break
-            elif self._ConnectMode == ConnectMode.WebSocket:
-                # Do something
+            try:
 
-                break
+                if self._ConnectMode == ConnectMode.Telnet:
+                    self._Core = telnetlib.Telnet(Config.Host, Config.Port)
+                else:
+                    self._Core = asyncio.get_event_loop().run_until_complete(
+                        websockets.connect(
+                            'wss://ws.ptt.cc/bbs/',
+                            origin='https://www.ptt.cc'
+                        ))
+
+                ConnectSuccess = True
+            except Exception as e:
+                traceback.print_tb(e.__traceback__)
+                print(e)
+            # except:
+                Log.showValue(Log.Level.INFO, [
+                    i18n.Connect,
+                    i18n.PTT,
+                    ],
+                    i18n.Fail
+                )
+                _wait()
+                continue
+            
+            break
         
         if not ConnectSuccess:
             raise ConnectError()
@@ -243,21 +250,29 @@ class API(object):
                 Msg)
 
             if self._ConnectMode == ConnectMode.Telnet:
-                self._Connect.read_very_eager()
-                self._Connect.write(Msg)
+                self._Core.read_very_eager()
+                self._Core.write(Msg)
                 # raise ConnectError()
             else:
-                pass
+                asyncio.get_event_loop().run_until_complete(
+                    self._Core.send(Msg)
+                )
             Msg = ' '
             CycleTime = 0
-            CycleWait = 0.1
+            CycleWait = 0.05
             ReceiveData = []
 
             while CycleTime * CycleWait < Config.ScreenTimeOut:
                 time.sleep(CycleWait)
                 CycleTime += 1
 
-                ReceiveDataTemp = self._Connect.read_very_eager()
+                if self._ConnectMode == ConnectMode.Telnet:
+                    ReceiveDataTemp = self._Core.read_very_eager()
+                else:
+                    ReceiveDataTemp = (
+                        asyncio.get_event_loop().run_until_complete(
+                            self._Core.recv()))
+
                 ReceiveDataTemp = ReceiveDataTemp.decode(
                     'utf-8', errors='ignore')
                 ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)

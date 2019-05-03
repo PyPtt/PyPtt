@@ -19,6 +19,6 @@ RetryWaitTime = 3
 ScreenTimeOut = 3.0
 
 Language = i18n.Language.Chinese
-ConnectMode = ConnectCore.ConnectMode.Telnet
+ConnectMode = ConnectCore.ConnectMode.WebSocket
 LogLevel = Log.Level.INFO
 KickOtherLogin = False
