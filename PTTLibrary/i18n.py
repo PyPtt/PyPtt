@@ -99,7 +99,7 @@ def load(inputLanguage):
     global Init
     Init = SpecificLoad(inputLanguage, [
         '初始化',
-        'Initialization',
+        'initialize',
     ])
 
     global Done
@@ -124,6 +124,12 @@ def load(inputLanguage):
     Fail = SpecificLoad(inputLanguage, [
         '失敗',
         'Fail',
+    ])
+
+    global Success
+    Success = SpecificLoad(inputLanguage, [
+        '成功',
+        'Success',
     ])
     
     global Prepare
@@ -186,7 +192,41 @@ def load(inputLanguage):
         'Send Msg',
     ])
 
-    # 正在更新與同步線上使用者及好友名單，系統負荷量大時會需時較久
+    global KickOtherLogin
+    KickOtherLogin = SpecificLoad(inputLanguage, [
+        '剔除其他登入',
+        'Kick other login',
+    ])
+
+    global NotKickOtherLogin
+    NotKickOtherLogin = SpecificLoad(inputLanguage, [
+        '不剔除其他登入',
+        'Not kick other login',
+    ])
+
+    global AnyKeyContinue
+    AnyKeyContinue = SpecificLoad(inputLanguage, [
+        '請按任意鍵繼續',
+        'Any key to continue',
+    ])
+
+    global Login
+    Login = SpecificLoad(inputLanguage, [
+        '登入',
+        'Login',
+    ])
+
+    global LoginSuccess
+    LoginSuccess = SpecificLoad(inputLanguage, [
+        Login + Success,
+        Login + ' ' + Success,
+    ])
+
+    global LoginFail
+    LoginFail = SpecificLoad(inputLanguage, [
+        Login + Fail,
+        Login + ' ' + Fail,
+    ])
 
     # Final check
     for k, v in globals().items():
