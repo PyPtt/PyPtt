@@ -1,13 +1,13 @@
 try:
-    from . import DataType
-    from . import Log
-    from . import i18n
-    from . import ConnectCore
-except:
     import DataType
     import Log
     import i18n
     import ConnectCore
+except ModuleNotFoundError:
+    from . import DataType
+    from . import Log
+    from . import i18n
+    from . import ConnectCore
 
 Version = '0.8.0 beta'
 Host = 'ptt.cc'

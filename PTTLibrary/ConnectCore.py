@@ -2,26 +2,27 @@
 import sys
 import time
 import telnetlib
+import asyncio
+import websockets
 import re
 import traceback
 from uao import register_uao
 register_uao()
 
 try:
-    from . import DataType
-    from . import Config
-    from . import Util
-    from . import i18n
-    from . import Exceptions
-    from . import Log
-except:
     import DataType
     import Config
     import Util
     import i18n
     import Exceptions
     import Log
-
+except ModuleNotFoundError:
+    from . import DataType
+    from . import Config
+    from . import Util
+    from . import i18n
+    from . import Exceptions
+    from . import Log
 
 def _showScreen(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.DEBUG:
@@ -206,7 +207,7 @@ class API(object):
                     _wait()
                     continue
                 break
-            elif self._ConnectMode == DataType.ConnectionMode.WebSocket:
+            elif self._ConnectMode == ConnectMode.WebSocket:
                 # Do something
 
                 break

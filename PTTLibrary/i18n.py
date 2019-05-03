@@ -1,13 +1,13 @@
 from time import gmtime, strftime
 
 try:
-    from . import DataType
-    from . import Util
-    from . import Exceptions
-except:
     import DataType
     import Util
     import Exceptions
+except ModuleNotFoundError:
+    from . import DataType
+    from . import Util
+    from . import Exceptions
 
 
 class Language(object):
