@@ -81,6 +81,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                 return 'y' + ConnectCore.Command.Enter
             return 'n' + ConnectCore.Command.Enter
 
+        if len(Password) > 8:
+            Password = Password[:8]
+        
+        ID = ID.replace('\r', '').replace('\n', '')
+        Password = Password.replace('\r', '').replace('\n', '')
+
         Config.KickOtherLogin = KickOtherLogin
 
         self._ConnectCore.connect()
@@ -97,21 +103,42 @@ class Library(Synchronize.SynchronizeAllMethod):
                 BreakDetect=True
             ),
             ConnectCore.TargetUnit(
+                i18n.SystemBusyTryLater,
+                '系統負荷過重, 請稍後再試', 
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.DelWrongPWRecord,
+                '您要刪除以上錯誤嘗試的記錄嗎', 
+                Response='y' + ConnectCore.Command.Enter,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.MailBoxFull,
+                '您保存信件數目', 
+                Response=ConnectCore.Command.GoMainMenu,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.PostNotFinish,
+                '有一篇文章尚未完成', 
+                Response='q' + ConnectCore.Command.Enter,
+            ),
+            ConnectCore.TargetUnit(
                 i18n.SigningUnPleaseWait,
                 '登入中，請稍候',
             ),
             ConnectCore.TargetUnit(
                 KickOtherLoginDisplayMsg,
                 '您想刪除其他重複登入的連線嗎',
-                KickOtherLoginResponse,
+                Response=KickOtherLoginResponse,
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUpdate,
                 '正在更新與同步線上使用者及好友名單',
             ),
             ConnectCore.TargetUnit(
-                i18n.SigningUpdate,
-                '任意鍵繼續',
+                i18n.AnyKeyContinue,
+                '任意鍵',
+                Response=' '
             ),
         ]
 
