@@ -1,17 +1,17 @@
 import sys
 from time import gmtime, strftime
 try:
-    from . import DataType
-    from . import Config
-    from . import Util
-    from . import i18n
-    from . import Exceptions
-except:
     import DataType
     import Config
     import Util
     import i18n
     import Exceptions
+except ModuleNotFoundError:
+    from . import DataType
+    from . import Config
+    from . import Util
+    from . import i18n
+    from . import Exceptions
 
 
 class Level(object):

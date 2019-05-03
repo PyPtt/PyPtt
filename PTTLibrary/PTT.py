@@ -2,16 +2,6 @@
 import time
 
 try:
-    from . import DataType
-    from . import Config
-    from . import Util
-    from . import i18n
-    from . import Exceptions
-    from . import ConnectCore
-    from . import ErrorCode
-    from . import Log
-    from . import Synchronize
-except FileNotFoundError:
     import DataType
     import Config
     import Util
@@ -21,6 +11,16 @@ except FileNotFoundError:
     import ErrorCode
     import Log
     import Synchronize
+except ModuleNotFoundError:
+    from . import DataType
+    from . import Config
+    from . import Util
+    from . import i18n
+    from . import Exceptions
+    from . import ConnectCore
+    from . import ErrorCode
+    from . import Log
+    from . import Synchronize
 
 Version = Config.Version
 

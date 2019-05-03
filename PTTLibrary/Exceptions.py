@@ -1,12 +1,11 @@
 try:
-    from . import Config
-    from . import Util
-    from . import i18n
-except:
     import Config
     import Util
     import i18n
-
+except ModuleNotFoundError:
+    from . import Config
+    from . import Util
+    from . import i18n
 
 class ParameterError(Exception):
     def __init__(self, message, Value=None):
