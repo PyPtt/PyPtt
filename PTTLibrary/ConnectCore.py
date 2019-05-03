@@ -96,10 +96,11 @@ class LoginError(Exception):
 
 class NoMatchTargetError(Exception):
     def __init__(self, ScreenQueue: list):
-        self.message = ScreenQueue
+        self.ScreenQueue = ScreenQueue
 
     def __str__(self):
-        return '\n' + i18n.ScreenNoMatchTarget
+        Screens = ('-' * 50 + '\n').join(self.ScreenQueue)
+        return Screens + '\n' + i18n.ScreenNoMatchTarget
 
 
 class TargetUnit(object):
@@ -224,7 +225,7 @@ class API(object):
 
         self._ReceiveDataQueue = []
 
-        for _ in range(len(TargetList)):
+        for _ in range(len(TargetList) + 1):
             self.ReceiveData = ''
 
             try:
@@ -247,6 +248,7 @@ class API(object):
             else:
                 pass
 
+            Msg = ' '
             CycleTime = 0
             CycleWait = 0.05
 
@@ -265,7 +267,6 @@ class API(object):
 
                 if len(self.ReceiveData) > 0:
                     self._ReceiveDataQueue.append(self.ReceiveData)
-                    _showScreen(self.ReceiveData)
 
                 FindTarget = False
                 for i in range(len(TargetList)):

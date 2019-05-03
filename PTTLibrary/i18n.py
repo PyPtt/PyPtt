@@ -182,8 +182,8 @@ def load(inputLanguage):
 
     global SigningUpdate
     SigningUpdate = SpecificLoad(inputLanguage, [
-        '正在更新與同步線上使用者及好友名單，系統負荷量大時會需時較久',
-        'Updating and synchronizing online users and friends list, it will take longer when the system load is large',
+        '更新與同步線上使用者及好友名單',
+        'Updating and synchronizing online users and friends list',
     ])
 
     global SendMsg
@@ -250,6 +250,12 @@ def load(inputLanguage):
     DelWrongPWRecord = SpecificLoad(inputLanguage, [
         '刪除以上錯誤嘗試的記錄',
         'Delete the record of the wrong password',
+    ])
+
+    global Logout
+    Logout = SpecificLoad(inputLanguage, [
+        '登出',
+        'Logout',
     ])
 
     # 您要刪除以上錯誤嘗試的記錄嗎

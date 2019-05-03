@@ -24,24 +24,28 @@ class Level(object):
     MaxValue = SLIENT
 
 
-def log(LogLevel, Msg):
-
-    if not Util.checkRange(Level, LogLevel):
-        raise Exceptions.ParameterError('LogLevel', LogLevel)
-
+def _merge(Msg):
     if isinstance(Msg, list):
-
         if Config.Language == i18n.Language.Chinese:
-
             for i in range(len(Msg)):
-                if Msg[i].isalnum():
+                if Msg[i].upper() != Msg[i].lower():
                     Msg[i] = ' ' + Msg[i].strip() + ' '
 
             Msg = ''.join(Msg)
         else:
             Msg = ' '.join(Msg)
-
+    Msg = str(Msg)
     Msg = Msg.replace('  ', ' ')
+    
+    return Msg
+
+
+def log(LogLevel, Msg):
+
+    if not Util.checkRange(Level, LogLevel):
+        raise Exceptions.ParameterError('LogLevel', LogLevel)
+
+    Msg = _merge(Msg)
 
     TotalMessage = '[' + strftime('%m%d %H:%M:%S') + ']'
     if LogLevel == Level.DEBUG:
@@ -66,20 +70,13 @@ def showValue(LogLevel, Msg, Value):
     if Config.LogLevel > LogLevel:
         return
 
-    if isinstance(Msg, list):
-        if Config.Language == i18n.Language.Chinese:
-            for i in range(len(Msg)):
-                if Msg[i].upper() != Msg[i].lower():
-                    Msg[i] = ' ' + Msg[i].strip() + ' '
-
-            Msg = ''.join(Msg)
-        else:
-            Msg = ' '.join(Msg)
+    Msg = _merge(Msg)
+    Value = _merge(Value)
 
     TotalMessage = []
     TotalMessage.append(Msg)
     TotalMessage.append(' [')
-    TotalMessage.append(str(Value))
+    TotalMessage.append(Value)
     TotalMessage.append(']')
 
     log(LogLevel, ''.join(TotalMessage))
