@@ -36,7 +36,7 @@ def _merge(Msg):
             Msg = ' '.join(Msg)
     Msg = str(Msg)
     Msg = Msg.replace('  ', ' ')
-    
+
     return Msg
 
 
@@ -80,4 +80,3 @@ def showValue(LogLevel, Msg, Value):
     TotalMessage.append(']')
 
     log(LogLevel, ''.join(TotalMessage))
-

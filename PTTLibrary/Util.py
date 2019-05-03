@@ -10,8 +10,8 @@ except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
-    
-    
+
+
 def checkRange(DefineObj, Value):
     if Value < DefineObj.MinValue or DefineObj.MaxValue < Value:
         return False

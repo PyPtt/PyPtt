@@ -7,6 +7,7 @@ except ModuleNotFoundError:
     from . import Util
     from . import i18n
 
+
 class ParameterError(Exception):
     def __init__(self, message, Value=None):
 
@@ -25,5 +26,3 @@ class InitError(Exception):
 
     def __str__(self):
         return self.message
-
-
