@@ -228,6 +228,32 @@ def load(inputLanguage):
         Login + ' ' + Fail,
     ])
 
+    global MailBoxFull
+    MailBoxFull = SpecificLoad(inputLanguage, [
+        '郵件已滿',
+        'Mail box is full',
+    ])
+
+    global PostNotFinish
+    PostNotFinish = SpecificLoad(inputLanguage, [
+        '文章尚未完成',
+        'Post is not finish',
+    ])
+
+    global SystemBusyTryLater
+    SystemBusyTryLater = SpecificLoad(inputLanguage, [
+        '系統負荷過重, 請稍後再試',
+        'System is overloaded, please try again later',
+    ])
+
+    global DelWrongPWRecord
+    DelWrongPWRecord = SpecificLoad(inputLanguage, [
+        '刪除以上錯誤嘗試的記錄',
+        'Delete the record of the wrong password',
+    ])
+
+    # 您要刪除以上錯誤嘗試的記錄嗎
+
     # Final check
     for k, v in globals().items():
         # System Var

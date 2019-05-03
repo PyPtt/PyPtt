@@ -4,9 +4,6 @@ import time
 import telnetlib
 import re
 import traceback
-# import paramiko
-# from paramiko import ECDSAKey
-
 from uao import register_uao
 register_uao()
 
@@ -16,7 +13,6 @@ try:
     from . import Util
     from . import i18n
     from . import Exceptions
-    # from . import ErrorCode
     from . import Log
 except:
     import DataType
@@ -24,7 +20,6 @@ except:
     import Util
     import i18n
     import Exceptions
-    # import ErrorCode
     import Log
 
 
@@ -59,6 +54,13 @@ def _showScreen(ScreenQueue, FunctionName=None):
 class Command(object):
     Enter = '\r'
     Refresh = '\x0C'
+
+    # \x1b\x4fA (上, 下右左 BCD)
+    Up = '\x1b\x4fA'
+    Down = '\x1b\x4fB'
+    Right = '\x1b\x4fC'
+    Left = '\x1b\x4fD'
+    GoMainMenu = Left * 5
 
 
 class ConnectMode(object):
@@ -253,7 +255,10 @@ class API(object):
                 CycleTime += 1
 
                 ReceiveData = self._Connect.read_very_eager()
-                ReceiveData = ReceiveData.decode('utf-8', errors='ignore')
+                try:
+                    ReceiveData = ReceiveData.decode('utf-8')
+                except UnicodeDecodeError:
+                    ReceiveData = ReceiveData.decode('big5-uao')
                 ReceiveData = self._cleanScreen(ReceiveData)
 
                 self.ReceiveData += ReceiveData
