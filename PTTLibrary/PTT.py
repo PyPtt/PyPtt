@@ -119,7 +119,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ),
             ConnectCore.TargetUnit(
                 i18n.PostNotFinish,
-                '有一篇文章尚未完成', 
+                '有一篇文章尚未完成',
                 Response='q' + ConnectCore.Command.Enter,
             ),
             ConnectCore.TargetUnit(
@@ -142,8 +142,16 @@ class Library(Synchronize.SynchronizeAllMethod):
             ),
         ]
 
-        Msg = ID + ',' + ConnectCore.Command.Enter + Password + ConnectCore.Command.Enter
-        index = self._ConnectCore.send(Msg, TargetList)
+        CmdList = []
+        CmdList.append(ID)
+        CmdList.append(',')
+        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(Password)
+        CmdList.append(ConnectCore.Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        index = self._ConnectCore.send(Cmd, TargetList)
         # Log.showValue(Log.Level.INFO, 'index', index)
 
         if index != 0:
@@ -151,7 +159,31 @@ class Library(Synchronize.SynchronizeAllMethod):
         return ErrorCode.Success
 
     def logout(self):
-        pass
+
+        CmdList = []
+        CmdList.append(ConnectCore.Command.GoMainMenu)
+        CmdList.append('g')
+        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append('y')
+        CmdList.append(ConnectCore.Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.Logout,
+                    i18n.Success,
+                ],
+                '任意鍵',
+                BreakDetect=True
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
+        if index != 0:
+            raise ConnectCore.LoginError()
+        return ErrorCode.Success
 
     def log(self, Msg):
         Log.log(Log.Level.INFO, Msg)
