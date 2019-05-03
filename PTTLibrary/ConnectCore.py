@@ -1,4 +1,5 @@
 
+import sys
 import time
 import telnetlib
 import re
@@ -26,7 +27,33 @@ except:
     # import ErrorCode
     import Log
 
-# ErrorCode = ErrorCode.ErrorCode()
+
+def _showScreen(ScreenQueue, FunctionName=None):
+    if Config.LogLevel != Log.Level.DEBUG:
+        return
+    
+    if isinstance(ScreenQueue, list):
+        for Screen in ScreenQueue:
+            print('-' * 50)
+            try:
+                print(Screen.encode(
+                    sys.stdin.encoding, "replace").decode(
+                        sys.stdin.encoding))
+            except Exception:
+                print(Screen.encode('utf-8', "replace").decode('utf-8'))
+    else:
+        print('-' * 50)
+        try:
+            print(ScreenQueue.encode(
+                sys.stdin.encoding, "replace").decode(
+                    sys.stdin.encoding))
+        except Exception:
+            print(ScreenQueue.encode('utf-8', "replace").decode('utf-8'))
+        
+        print('len:' + str(len(ScreenQueue)))
+    if FunctionName is not None:
+        print('錯誤在 ' + FunctionName + ' 函式發生')
+    print('-' * 50)
 
 
 class Command(object):
@@ -54,27 +81,35 @@ class ConnectError(Exception):
         return ' '.join(self.message)
 
 
-class NoMatchTargetError(Exception):
-    def __init__(self, Screen):
-        self.message = [Screen, i18n.ScreenNoMatchTarget]
+class LoginError(Exception):
+    def __init__(self):
+        self.message = [i18n.LoginFail]
 
     def __str__(self):
-        return '\n'.join(self.message)
+
+        if Config.Language == i18n.Language.Chinese:
+            return ''.join(self.message)
+        return ' '.join(self.message)
+
+
+class NoMatchTargetError(Exception):
+    def __init__(self, ScreenQueue: list):
+        self.message = ScreenQueue
+
+    def __str__(self):
+        return '\n' + i18n.ScreenNoMatchTarget
 
 
 class TargetUnit(object):
     def __init__(self,
-                 DisplayMsg: str,
+                 DisplayMsg,
                  DetectTarget: str,
-                 Response=None,
+                 Response=' ',
                  BreakDetect=False):
 
         self._DisplayMsg = DisplayMsg
         self._DetectTarget = DetectTarget
-        if BreakDetect:
-            self._Response = ''
-        else:
-            self._Response = Response
+        self._Response = Response
         self._BreakDetect = BreakDetect
 
     def isMatch(self, Screen: str):
@@ -83,6 +118,8 @@ class TargetUnit(object):
         return False
 
     def getDisplayMsg(self):
+        if callable(self._DisplayMsg):
+            return self._DisplayMsg()
         return self._DisplayMsg
 
     def getDetectTarget(self):
@@ -107,7 +144,6 @@ class API(object):
     def __init__(self, ConnectMode: int):
 
         self._ConnectMode = ConnectMode
-        self._SleepQueue = [Config.SleepTime] * 5
 
         Log.showValue(Log.Level.INFO, [
             i18n.ConnectCore,
@@ -127,6 +163,12 @@ class API(object):
                     str(Config.RetryWaitTime - i)
                 )
                 time.sleep(1)
+        
+        Log.showValue(Log.Level.INFO, [
+            i18n.ConnectCore,
+            ],
+            i18n.Active
+        )
 
         ConnectSuccess = False
 
@@ -168,11 +210,6 @@ class API(object):
         
         if not ConnectSuccess:
             raise ConnectError()
-        Log.showValue(Log.Level.INFO, [
-            i18n.ConnectCore,
-            ],
-            i18n.Active
-        )
 
     def send(self, Msg: str, TargetList: list):
 
@@ -189,9 +226,10 @@ class API(object):
             self.ReceiveData = ''
 
             try:
-                Msg = Msg.encode("big5-uao", 'replace')
+                Msg = Msg.encode('big5-uao', 'replace')
+            except AttributeError:
+                pass
             except Exception as e:
-        
                 traceback.print_tb(e.__traceback__)
                 print(e)
                 Msg = Msg.encode('big5', 'replace')
@@ -207,11 +245,12 @@ class API(object):
             else:
                 pass
 
-            StartTime = time.time()
-            # 超過等待時間五倍判定為沒有結果
-            CurrentSleep = sum(self._SleepQueue) / 5.0
-            for _ in range(5):
-                time.sleep(CurrentSleep)
+            CycleTime = 0
+            CycleWait = 0.05
+
+            while CycleTime * CycleWait < Config.ScreenTimeOut:
+                time.sleep(CycleWait)
+                CycleTime += 1
 
                 ReceiveData = self._Connect.read_very_eager()
                 ReceiveData = ReceiveData.decode('utf-8', errors='ignore')
@@ -219,31 +258,32 @@ class API(object):
 
                 self.ReceiveData += ReceiveData
 
+                if len(self.ReceiveData) > 0:
+                    self._ReceiveDataQueue.append(self.ReceiveData)
+                    _showScreen(self.ReceiveData)
+
                 FindTarget = False
                 for i in range(len(TargetList)):
                     Target = TargetList[i]
                     if Target.getDetectTarget() in self.ReceiveData:
-                        EndTime = time.time()
                         FindTarget = True
-                        self._SleepQueue.pop(0)
-                        self._SleepQueue.append(EndTime - StartTime)
-                        self._ReceiveDataQueue.append(self.ReceiveData)
+
+                        Log.showValue(Log.Level.INFO, [
+                            i18n.PTT,
+                            i18n.Msg
+                        ],
+                            Target.getDisplayMsg()
+                        )
 
                         if Target.isBreak():
                             return i
 
-                        Log.showValue(Log.Level.INFO, [
-                            i18n.PTT, 
-                            i18n.Msg
-                        ], 
-                            Target.getDisplayMsg()
-                        )
                         Msg = Target.getResponse(self.ReceiveData)
                         break
                 
                 if FindTarget:
                     break
-        raise NoMatchTargetError(self.ReceiveData)
+        raise NoMatchTargetError(self._ReceiveDataQueue)
 
     def _cleanScreen(self, screen, NoColor=True):
         if not screen:

@@ -25,7 +25,7 @@ if __name__ == '__main__':
     
     # PTTBot = PTT.Library()
     PTTBot = PTT.Library(LogLevel=PTT.LogLevel.DEBUG)
-    ErrCode = PTTBot.login(ID, Password)
+    ErrCode = PTTBot.login(ID, Password, KickOtherLogin=False)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.log('登入失敗')
         sys.exit()
