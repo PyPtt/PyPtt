@@ -84,8 +84,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         if len(Password) > 8:
             Password = Password[:8]
         
-        ID = ID.replace('\r', '').replace('\n', '')
-        Password = Password.replace('\r', '').replace('\n', '')
+        ID = ID.strip()
+        Password = Password.strip()
 
         Config.KickOtherLogin = KickOtherLogin
 
@@ -105,6 +105,11 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.SystemBusyTryLater,
                 '系統負荷過重, 請稍後再試', 
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SystemBusyTryLater,
+                '系統過載',
                 BreakDetect=True,
             ),
             ConnectCore.TargetUnit(
@@ -132,13 +137,13 @@ class Library(Synchronize.SynchronizeAllMethod):
                 Response=KickOtherLoginResponse,
             ),
             ConnectCore.TargetUnit(
-                i18n.SigningUpdate,
-                '正在更新與同步線上使用者及好友名單',
-            ),
-            ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
                 '任意鍵',
                 Response=' '
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SigningUpdate,
+                '正在更新與同步線上使用者及好友名單',
             ),
         ]
 

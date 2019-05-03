@@ -164,7 +164,7 @@ def load(inputLanguage):
     
     global ScreenNoMatchTarget
     ScreenNoMatchTarget = SpecificLoad(inputLanguage, [
-        '此畫面無法辨識',
+        '畫面無法辨識',
         'This screen is not recognized',
     ])
 

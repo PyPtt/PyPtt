@@ -226,7 +226,6 @@ class API(object):
         self._ReceiveDataQueue = []
 
         for _ in range(len(TargetList) + 1):
-            self.ReceiveData = ''
 
             try:
                 Msg = Msg.encode('big5-uao', 'replace')
@@ -245,33 +244,34 @@ class API(object):
             if self._ConnectMode == ConnectMode.Telnet:
                 self._Connect.read_very_eager()
                 self._Connect.write(Msg)
+                # raise ConnectError()
             else:
                 pass
-
             Msg = ' '
             CycleTime = 0
-            CycleWait = 0.05
+            CycleWait = 0.1
+            ReceiveData = []
 
             while CycleTime * CycleWait < Config.ScreenTimeOut:
                 time.sleep(CycleWait)
                 CycleTime += 1
 
-                ReceiveData = self._Connect.read_very_eager()
-                try:
-                    ReceiveData = ReceiveData.decode('utf-8')
-                except UnicodeDecodeError:
-                    ReceiveData = ReceiveData.decode('big5-uao')
-                ReceiveData = self._cleanScreen(ReceiveData)
+                ReceiveDataTemp = self._Connect.read_very_eager()
+                ReceiveDataTemp = ReceiveDataTemp.decode(
+                    'utf-8', errors='ignore')
+                ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)
+                
+                ReceiveData.append(ReceiveDataTemp)
+                Screen = ''.join(ReceiveData)
 
-                self.ReceiveData += ReceiveData
-
-                if len(self.ReceiveData) > 0:
-                    self._ReceiveDataQueue.append(self.ReceiveData)
+                if len(Screen) > 0:
+                    self._ReceiveDataQueue.append(Screen)
 
                 FindTarget = False
                 for i in range(len(TargetList)):
                     Target = TargetList[i]
-                    if Target.getDetectTarget() in self.ReceiveData:
+
+                    if Target.getDetectTarget() in Screen:
                         FindTarget = True
 
                         Log.showValue(Log.Level.INFO, [
@@ -284,11 +284,13 @@ class API(object):
                         if Target.isBreak():
                             return i
 
-                        Msg = Target.getResponse(self.ReceiveData)
+                        Msg = Target.getResponse(Screen)
                         break
-                
+
                 if FindTarget:
                     break
+            if not FindTarget:
+                raise NoMatchTargetError(self._ReceiveDataQueue)
         raise NoMatchTargetError(self._ReceiveDataQueue)
 
     def _cleanScreen(self, screen, NoColor=True):
