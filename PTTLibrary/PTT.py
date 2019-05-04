@@ -76,6 +76,9 @@ class Library(Synchronize.SynchronizeAllMethod):
             i18n.Init
         )
 
+    def getVersion(self) -> str:
+        return Config.Version
+
     def login(self, ID: str, Password: str, KickOtherLogin: bool=False):
 
         def KickOtherLoginDisplayMsg():
