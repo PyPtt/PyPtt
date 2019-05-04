@@ -5,13 +5,11 @@ try:
     import Config
     import Util
     import i18n
-    import Exceptions
 except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
     from . import i18n
-    from . import Exceptions
 
 
 class Level(object):
@@ -43,7 +41,7 @@ def _merge(Msg):
 def log(LogLevel, Msg):
 
     if not Util.checkRange(Level, LogLevel):
-        raise Exceptions.ParameterError('LogLevel', LogLevel)
+        raise ValueError('LogLevel', LogLevel)
 
     Msg = _merge(Msg)
 
@@ -65,7 +63,7 @@ def log(LogLevel, Msg):
 def showValue(LogLevel, Msg, Value):
 
     if not Util.checkRange(Level, LogLevel):
-        raise Exceptions.ParameterError('LogLevel', LogLevel)
+        raise ValueError('LogLevel', LogLevel)
 
     if Config.LogLevel > LogLevel:
         return

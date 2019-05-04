@@ -13,28 +13,29 @@ Version = '0.8.0 beta'
 Host = 'ptt.cc'
 Port = '23'
 
-# RetryWaitTime 秒後重新連線
-RetryWaitTime = 3
-# ScreenTimeOut 秒後判定此畫面沒有可辨識的目標
-ScreenTimeOut = 3.0
-
-Language = i18n.Language.Chinese
-ConnectMode = ConnectCore.ConnectMode.WebSocket
-LogLevel = Log.Level.INFO
-KickOtherLogin = False
-
 
 def load():
+    
+    # RetryWaitTime 秒後重新連線
     global RetryWaitTime
     RetryWaitTime = 3
+
+    # ScreenTimeOut 秒後判定此畫面沒有可辨識的目標
     global ScreenTimeOut
     ScreenTimeOut = 3.0
 
+    # 預設語言
     global Language
     Language = i18n.Language.Chinese
+
+    # 預設連線模式
     global ConnectMode
     ConnectMode = ConnectCore.ConnectMode.WebSocket
+
+    # 預設 Log 等級
     global LogLevel
     LogLevel = Log.Level.INFO
+
+    # 預設是否剔除其他登入
     global KickOtherLogin
     KickOtherLogin = False
