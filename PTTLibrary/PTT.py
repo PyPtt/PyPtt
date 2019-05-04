@@ -6,7 +6,6 @@ try:
     import Config
     import Util
     import i18n
-    import Exceptions
     import ConnectCore
     import ErrorCode
     import Log
@@ -16,7 +15,6 @@ except ModuleNotFoundError:
     from . import Config
     from . import Util
     from . import i18n
-    from . import Exceptions
     from . import ConnectCore
     from . import ErrorCode
     from . import Log
@@ -29,7 +27,6 @@ Language = i18n.Language
 ConnectMode = ConnectCore.ConnectMode
 LogLevel = Log.Level
 Command = ConnectCore.Command
-Exceptions = Exceptions
 
 
 class Library(Synchronize.SynchronizeAllMethod):
@@ -40,17 +37,25 @@ class Library(Synchronize.SynchronizeAllMethod):
                  ):
         Config.load()
 
+        if not isinstance(Language, int):
+            raise TypeError('Language must be integer')
+        if not isinstance(ConnectMode, int):
+            raise TypeError('ConnectMode must be integer')
+        if not isinstance(LogLevel, int):
+            raise TypeError('LogLevel must be integer')
+
         if LogLevel == 0:
             LogLevel = Config.LogLevel
         elif not Util.checkRange(Log.Level, LogLevel):
-            raise Exceptions.ParameterError('Unknow LogLevel', LogLevel)
+            raise ValueError('Unknow LogLevel', LogLevel)
+
         else:
             Config.LogLevel = LogLevel
 
         if Language == 0:
             Language = Config.Language
         elif not Util.checkRange(i18n.Language, Language):
-            raise Exceptions.ParameterError('Unknow language', Language)
+            raise ValueError('Unknow language', Language)
         else:
             Config.Language = Language
         i18n.load(Language)
@@ -58,8 +63,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         if ConnectMode == 0:
             ConnectMode = Config.ConnectMode
         elif not Util.checkRange(ConnectCore.ConnectMode, ConnectMode):
-            raise Exceptions.ParameterError('Unknow ConnectMode',
-                                            ConnectMode)
+            raise ValueError('Unknow ConnectMode', ConnectMode)
         else:
             Config.ConnectMode = ConnectMode
         self._ConnectCore = ConnectCore.API(ConnectMode)

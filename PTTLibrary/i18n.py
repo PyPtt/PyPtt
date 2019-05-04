@@ -4,12 +4,10 @@ try:
     import DataType
     import Util
     import Config
-    import Exceptions
 except ModuleNotFoundError:
     from . import DataType
     from . import Util
     from . import Config
-    from . import Exceptions
 
 
 class Language(object):
@@ -31,18 +29,16 @@ def SpecificLoad(inputLanguage, LangList):
     global LanguageList
 
     if len(LanguageList) != len(LangList):
-        raise Exceptions.ParameterError('SpecificLoad LangList legnth error')
+        raise ValueError('SpecificLoad LangList legnth error')
 
     if inputLanguage not in LanguageList:
-        raise Exceptions.ParameterError('SpecificLoad Unknow language',
-                                        inputLanguage)
+        raise ValueError('SpecificLoad Unknow language', inputLanguage)
     return LangList[LanguageList.index(inputLanguage)]
 
 
 def load(inputLanguage):
     if not Util.checkRange(Language, inputLanguage):
-        Log.showValue(Log.Level.INFO, 'Error Language valve', inputLanguage)
-        raise Exceptions.ParameterError('Language', inputLanguage)
+        raise ValueError('Language', inputLanguage)
 
     global Connect
     Connect = SpecificLoad(inputLanguage, [

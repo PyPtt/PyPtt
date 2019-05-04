@@ -3,6 +3,7 @@ import time
 import json
 import getpass
 import traceback
+import PTTLibrary
 from PTTLibrary import PTT
 
 
@@ -31,10 +32,19 @@ def Init():
     try:
         print('===語言 99===')
         PTT.Library(Language=99)
-    except PTT.Exceptions.ParameterError:
+    except ValueError:
         print('通過')
-    print('===英文顯示===')
-    PTT.Library(Language='PTT.Language.English')
+    except:
+        print('沒通過')
+        return
+    print('===語言放字串===')
+    try:
+        PTT.Library(Language='PTT.Language.English')
+    except TypeError:
+        print('通過')
+    except:
+        print('沒通過')
+        return
     # print('===Telnet===')
     # PTT.Library(ConnectMode=PTT.ConnectMode.Telnet)
     # print('===WebSocket===')

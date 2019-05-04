@@ -14,14 +14,12 @@ try:
     import Config
     import Util
     import i18n
-    import Exceptions
     import Log
 except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
     from . import i18n
-    from . import Exceptions
     from . import Log
 
 
@@ -136,12 +134,6 @@ class TargetUnit(object):
     def isBreak(self):
         return self._BreakDetect
 
-    def getErrorCode(self):
-        return self._ErrCode
-
-    def getLogLevel(self):
-        return self._LogLevel
-
 
 class API(object):
     def __init__(self, ConnectMode: int):
@@ -228,8 +220,7 @@ class API(object):
             Msg = Msg + Command.Refresh
 
         if not all(isinstance(T, TargetUnit) for T in TargetList):
-            raise Exceptions.ParameterError(
-                'Item of TargetList must be TargetUnit')
+            raise ValueError('Item of TargetList must be TargetUnit')
 
         self._ReceiveDataQueue = []
 
@@ -259,8 +250,9 @@ class API(object):
                 )
             Msg = ' '
             CycleTime = 0
-            CycleWait = 0.05
-            ReceiveData = []
+            CycleWait = 0.01
+            ReceiveDataUTF8 = []
+            ReceiveDataBIG5UAO = []
 
             while CycleTime * CycleWait < Config.ScreenTimeOut:
                 time.sleep(CycleWait)
@@ -273,21 +265,54 @@ class API(object):
                         asyncio.get_event_loop().run_until_complete(
                             self._Core.recv()))
 
-                ReceiveDataTemp = ReceiveDataTemp.decode(
-                    'utf-8', errors='ignore')
-                ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)
+                MixingDetect = False
+                MixingDetectEncoding = None
+                try:
+                    ReceiveDataTempUTF8 = ReceiveDataTemp.decode(
+                        'utf-8'
+                    )
+                except UnicodeDecodeError:
+                    # 可能有 UTF8 與 Big5UAO的資料出現
+                    MixingDetect = True
 
-                ReceiveData.append(ReceiveDataTemp)
-                Screen = ''.join(ReceiveData)
+                if MixingDetect:
 
-                if len(Screen) > 0:
-                    self._ReceiveDataQueue.append(Screen)
+                    ReceiveDataTempBIG5UAO = ReceiveDataTemp.decode(
+                        'big5-uao', errors='ignore'
+                    )
+                    ReceiveDataTempBIG5UAO = self._cleanScreen(
+                        ReceiveDataTempBIG5UAO
+                    )
+                    ReceiveDataBIG5UAO.append(ReceiveDataTempBIG5UAO)
+                    ScreenBIG5UAO = ''.join(ReceiveDataBIG5UAO)
+
+                    ReceiveDataTempUTF8 = ReceiveDataTemp.decode(
+                        'utf-8', errors='ignore'
+                    )
+
+                ReceiveDataTempUTF8 = self._cleanScreen(ReceiveDataTempUTF8)
+                ReceiveDataUTF8.append(ReceiveDataTempUTF8)
+                ScreenUTF8 = ''.join(ReceiveDataUTF8)
+
+                # if len(Screen) > 0:
+                #     self._ReceiveDataQueue.append(Screen)
 
                 FindTarget = False
                 for i in range(len(TargetList)):
                     Target = TargetList[i]
 
-                    if Target.getDetectTarget() in Screen:
+                    Condition = Target.getDetectTarget() in ScreenUTF8
+                    if (not Condition) and MixingDetect:
+                        Condition = Target.getDetectTarget() in ScreenBIG5UAO
+                        MixingDetectEncoding = 'BIG5UAO'
+                        if len(ScreenBIG5UAO) > 0:
+                            self._ReceiveDataQueue.append(ScreenBIG5UAO)
+                    else:
+                        MixingDetectEncoding = 'UTF8'
+                        if len(ScreenUTF8) > 0:
+                            self._ReceiveDataQueue.append(ScreenUTF8)
+
+                    if Condition:
                         FindTarget = True
 
                         Log.showValue(Log.Level.INFO, [
@@ -300,11 +325,17 @@ class API(object):
                         if Target.isBreak():
                             return i
 
-                        Msg = Target.getResponse(Screen)
+                        if MixingDetectEncoding == 'UTF8':
+                            Msg = Target.getResponse(ScreenUTF8)
+                        else:
+                            Msg = Target.getResponse(ScreenBIG5UAO)
                         break
 
                 if FindTarget:
                     break
+                else:
+                    if len(ScreenUTF8) > 0:
+                        self._ReceiveDataQueue.append(ScreenUTF8)
             if not FindTarget:
                 raise NoMatchTargetError(self._ReceiveDataQueue)
         raise NoMatchTargetError(self._ReceiveDataQueue)
