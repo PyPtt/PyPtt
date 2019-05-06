@@ -41,6 +41,11 @@ def LoginLogout():
     PTTBot.log('登入成功')
     PTTBot.logout()
 
+
+def GetTime():
+    PTT_TIME = PTTBot.getTime()
+    print(PTT_TIME)
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -54,3 +59,15 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
 
     LoginLogout()
+
+    PTTBot = PTT.Library()
+    try:
+        PTTBot.login(ID, Password)
+    except PTTLibrary.ConnectCore.LoginError:
+        PTTBot.log('登入失敗')
+        sys.exit()
+    PTTBot.log('登入成功')
+
+    GetTime()
+
+    PTTBot.logout()

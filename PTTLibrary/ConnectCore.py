@@ -4,6 +4,7 @@ import time
 import telnetlib
 import asyncio
 import websockets
+import ssl
 import re
 import traceback
 from uao import register_uao
@@ -33,7 +34,9 @@ def _showScreen(ScreenQueue, FunctionName=None):
             try:
                 print(Screen.encode(
                     sys.stdin.encoding, "replace").decode(
-                        sys.stdin.encoding))
+                        sys.stdin.encoding
+                    )
+                )
             except Exception:
                 print(Screen.encode('utf-8', "replace").decode('utf-8'))
     else:
@@ -97,14 +100,14 @@ class NoMatchTargetError(Exception):
         self.ScreenQueue = ScreenQueue
 
     def __str__(self):
-        Screens = ('-' * 50 + '\n').join(self.ScreenQueue)
+        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue)
         return Screens + '\n' + i18n.ScreenNoMatchTarget
 
 
 class TargetUnit(object):
     def __init__(self,
                  DisplayMsg,
-                 DetectTarget: str,
+                 DetectTarget,
                  Response=' ',
                  BreakDetect=False):
 
@@ -114,9 +117,15 @@ class TargetUnit(object):
         self._BreakDetect = BreakDetect
 
     def isMatch(self, Screen: str):
-        if self._DetectTarget in Screen:
+        if isinstance(self._DetectTarget, str):
+            if self._DetectTarget in Screen:
+                return True
+            return False
+        elif isinstance(self._DetectTarget, list):
+            for Target in self._DetectTarget:
+                if Target not in Screen:
+                    return False
             return True
-        return False
 
     def getDisplayMsg(self):
         if callable(self._DisplayMsg):
@@ -141,7 +150,7 @@ class API(object):
         self._ConnectMode = ConnectMode
 
         Log.showValue(Log.Level.INFO, [
-            i18n.ConnectCore,
+                i18n.ConnectCore,
             ],
             i18n.Init
         )
@@ -214,7 +223,7 @@ class API(object):
         if not ConnectSuccess:
             raise ConnectError()
 
-    def send(self, Msg: str, TargetList: list):
+    def send(self, Msg: str, TargetList: list) ->int:
 
         if not Msg.endswith(Command.Refresh):
             Msg = Msg + Command.Refresh
@@ -238,7 +247,10 @@ class API(object):
             Log.showValue(Log.Level.DEBUG, [
                     i18n.SendMsg
                 ],
-                Msg)
+                Msg
+            )
+
+            self._ReceiveDataQueue.append('[' + str(Msg) + ']')
 
             if self._ConnectMode == ConnectMode.Telnet:
                 self._Core.read_very_eager()
@@ -248,12 +260,13 @@ class API(object):
                 asyncio.get_event_loop().run_until_complete(
                     self._Core.send(Msg)
                 )
-            Msg = ' '
+            Msg = b' '
             CycleTime = 0
-            CycleWait = 0.01
+            CycleWait = 0.02
             ReceiveDataUTF8 = []
             ReceiveDataBIG5UAO = []
 
+            StartTime = time.time()
             while CycleTime * CycleWait < Config.ScreenTimeOut:
                 time.sleep(CycleWait)
                 CycleTime += 1
@@ -263,7 +276,9 @@ class API(object):
                 else:
                     ReceiveDataTemp = (
                         asyncio.get_event_loop().run_until_complete(
-                            self._Core.recv()))
+                            self._Core.recv()
+                        )
+                    )
 
                 MixingDetect = False
                 MixingDetectEncoding = None
@@ -274,9 +289,6 @@ class API(object):
                 except UnicodeDecodeError:
                     # 可能有 UTF8 與 Big5UAO的資料出現
                     MixingDetect = True
-
-                if MixingDetect:
-
                     ReceiveDataTempBIG5UAO = ReceiveDataTemp.decode(
                         'big5-uao', errors='ignore'
                     )
@@ -294,16 +306,12 @@ class API(object):
                 ReceiveDataUTF8.append(ReceiveDataTempUTF8)
                 ScreenUTF8 = ''.join(ReceiveDataUTF8)
 
-                # if len(Screen) > 0:
-                #     self._ReceiveDataQueue.append(Screen)
-
                 FindTarget = False
-                for i in range(len(TargetList)):
-                    Target = TargetList[i]
+                for Target in TargetList:
 
-                    Condition = Target.getDetectTarget() in ScreenUTF8
-                    if (not Condition) and MixingDetect:
-                        Condition = Target.getDetectTarget() in ScreenBIG5UAO
+                    Condition = Target.isMatch(ScreenUTF8)
+                    if MixingDetect and (not Condition):
+                        Condition = Target.isMatch(ScreenBIG5UAO)
                         MixingDetectEncoding = 'BIG5UAO'
                         if len(ScreenBIG5UAO) > 0:
                             self._ReceiveDataQueue.append(ScreenBIG5UAO)
@@ -323,7 +331,7 @@ class API(object):
                         )
 
                         if Target.isBreak():
-                            return i
+                            return TargetList.index(Target)
 
                         if MixingDetectEncoding == 'UTF8':
                             Msg = Target.getResponse(ScreenUTF8)
@@ -332,6 +340,12 @@ class API(object):
                         break
 
                 if FindTarget:
+                    EndTime = time.time()
+                    Log.showValue(Log.Level.DEBUG, [
+                        i18n.SpendTime,
+                    ],
+                        round(EndTime - StartTime, 2)
+                    )
                     break
                 else:
                     if len(ScreenUTF8) > 0:
@@ -339,17 +353,17 @@ class API(object):
             if not FindTarget:
                 raise NoMatchTargetError(self._ReceiveDataQueue)
         raise NoMatchTargetError(self._ReceiveDataQueue)
-    
+
     def close(self):
         self._Core.close()
-        
-    def _cleanScreen(self, screen, NoColor=True):
+
+    def _cleanScreen(self, screen: str, NoColor=True) ->str:
         if not screen:
             return screen
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
 
         PreNewLineMark = -1
-        PTTLibraryNewLineMark = '==PTTLibraryNewLineMark=='
+        PTTLibraryNewLineMark = '==PTTLibNewLineMark=='
         for NewLineMark in range(1, 25):
             for Type in range(1, 26):
                 Target = '[' + str(NewLineMark) + ';' + str(Type) + 'H'
@@ -405,3 +419,6 @@ class API(object):
         screen = re.sub(r'[\x7f-\xff]', '', screen)
         # self.Log('after: ' + str(screen))
         return screen
+
+    def getScreenQueue(self) ->list:
+        return self._ReceiveDataQueue

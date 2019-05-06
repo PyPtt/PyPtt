@@ -1,5 +1,6 @@
 ﻿import sys
 import time
+import re
 
 try:
     import DataType
@@ -80,6 +81,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         return Config.Version
 
     def login(self, ID: str, Password: str, KickOtherLogin: bool=False):
+
+        Config.KickOtherLogin = KickOtherLogin
 
         def KickOtherLoginDisplayMsg():
             if Config.KickOtherLogin:
@@ -203,6 +206,46 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def log(self, Msg):
         Log.log(Log.Level.INFO, Msg)
+
+    def getTime(self) -> str:
+
+        CmdList = []
+        CmdList.append(ConnectCore.Command.GoMainMenu)
+        CmdList.append('P')
+        CmdList.append(ConnectCore.Command.Right)
+        CmdList.append(ConnectCore.Command.Left)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    'QQQQQ',
+                    i18n.Success,
+                ],
+                [
+                    '[呼叫器]',
+                    '【主功能表】',
+                ],
+                BreakDetect=True
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
+        if index != 0:
+            print('QQ')
+
+        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+
+        pattern = re.compile('[\d]+:[\d][\d]')
+        Result = pattern.search(OriScreen)
+        # print(OriScreen)
+        # print(Result)
+        # print(Result.group(0))
+
+        if Result is not None:
+            return Result.group(0)
+        return None
 
 if __name__ == '__main__':
 

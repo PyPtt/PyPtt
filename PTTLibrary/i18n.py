@@ -256,6 +256,12 @@ def load(inputLanguage):
         'Logout',
     ])
 
+    global SpendTime
+    SpendTime = SpecificLoad(inputLanguage, [
+        '花費時間',
+        'Spend time',
+    ])
+
     # 您要刪除以上錯誤嘗試的記錄嗎
 
     # Final check
@@ -271,7 +277,7 @@ def load(inputLanguage):
     
     if Config.LogLevel <= 2:
         print('[' + strftime('%m%d %H:%M:%S') + '][' + Info + '] ' + i18n +
-            ' [' + Init + ']')
+              ' [' + Init + ']')
 
 
 def _createlist():
