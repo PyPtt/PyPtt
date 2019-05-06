@@ -15,14 +15,15 @@ Port = '23'
 
 
 def load():
-    
+
     # RetryWaitTime 秒後重新連線
     global RetryWaitTime
     RetryWaitTime = 3
 
     # ScreenTimeOut 秒後判定此畫面沒有可辨識的目標
+    # 建議不要低於 10 秒，剔除其他登入最長可能會花費約 六七秒
     global ScreenTimeOut
-    ScreenTimeOut = 3.0
+    ScreenTimeOut = 10.0
 
     # 預設語言
     global Language
