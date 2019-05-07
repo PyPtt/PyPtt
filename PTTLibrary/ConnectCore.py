@@ -64,6 +64,13 @@ class Command(object):
     GoMainMenu = Left * 5
 
 
+class ScreenTarget(object):
+    MainMenu = [
+        '人, 我是',
+        '[呼叫器]',
+    ]
+
+
 class ConnectMode(object):
 
     Telnet = 1
@@ -250,8 +257,6 @@ class API(object):
                 Msg
             )
 
-            self._ReceiveDataQueue.append('[' + str(Msg) + ']')
-
             if self._ConnectMode == ConnectMode.Telnet:
                 self._Core.read_very_eager()
                 self._Core.write(Msg)
@@ -262,23 +267,28 @@ class API(object):
                 )
             Msg = b' '
             CycleTime = 0
-            CycleWait = 0.02
+            CycleWait = 0
             ReceiveDataUTF8 = []
             ReceiveDataBIG5UAO = []
 
             StartTime = time.time()
-            while CycleTime * CycleWait < Config.ScreenTimeOut:
-                time.sleep(CycleWait)
-                CycleTime += 1
+            MidTime = time.time()
+            while MidTime - StartTime < Config.ScreenTimeOut:
 
                 if self._ConnectMode == ConnectMode.Telnet:
-                    ReceiveDataTemp = self._Core.read_very_eager()
+                    try:
+                        ReceiveDataTemp = self._Core.read_very_eager()
+                    except EOFError:
+                        return -1
                 else:
-                    ReceiveDataTemp = (
-                        asyncio.get_event_loop().run_until_complete(
-                            self._Core.recv()
+                    try:
+                        ReceiveDataTemp = (
+                            asyncio.get_event_loop().run_until_complete(
+                                self._Core.recv()
+                            )
                         )
-                    )
+                    except websockets.exceptions.ConnectionClosed:
+                        return -1
 
                 MixingDetect = False
                 MixingDetectEncoding = None
@@ -306,6 +316,8 @@ class API(object):
                 ReceiveDataUTF8.append(ReceiveDataTempUTF8)
                 ScreenUTF8 = ''.join(ReceiveDataUTF8)
 
+                # _showScreen(ScreenUTF8)
+
                 FindTarget = False
                 for Target in TargetList:
 
@@ -315,6 +327,7 @@ class API(object):
                         MixingDetectEncoding = 'BIG5UAO'
                         if len(ScreenBIG5UAO) > 0:
                             self._ReceiveDataQueue.append(ScreenBIG5UAO)
+
                     else:
                         MixingDetectEncoding = 'UTF8'
                         if len(ScreenUTF8) > 0:
@@ -330,6 +343,13 @@ class API(object):
                             Target.getDisplayMsg()
                         )
 
+                        EndTime = time.time()
+                        Log.showValue(Log.Level.DEBUG, [
+                            i18n.SpendTime,
+                        ],
+                            round(EndTime - StartTime, 2)
+                        )
+
                         if Target.isBreak():
                             return TargetList.index(Target)
 
@@ -340,16 +360,12 @@ class API(object):
                         break
 
                 if FindTarget:
-                    EndTime = time.time()
-                    Log.showValue(Log.Level.DEBUG, [
-                        i18n.SpendTime,
-                    ],
-                        round(EndTime - StartTime, 2)
-                    )
                     break
-                else:
-                    if len(ScreenUTF8) > 0:
-                        self._ReceiveDataQueue.append(ScreenUTF8)
+                if len(ScreenUTF8) > 0:
+                    self._ReceiveDataQueue.append(ScreenUTF8)
+                
+                MidTime = time.time()
+                
             if not FindTarget:
                 raise NoMatchTargetError(self._ReceiveDataQueue)
         raise NoMatchTargetError(self._ReceiveDataQueue)

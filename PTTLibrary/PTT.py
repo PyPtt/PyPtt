@@ -70,9 +70,9 @@ class Library(Synchronize.SynchronizeAllMethod):
         self._ConnectCore = ConnectCore.API(ConnectMode)
 
         Log.showValue(Log.Level.INFO, [
-            i18n.PTT,
-            i18n.Library,
-            ' v ' + Version,
+                i18n.PTT,
+                i18n.Library,
+                ' v ' + Version,
             ],
             i18n.Init
         )
@@ -107,7 +107,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         TargetList = [
             ConnectCore.TargetUnit(
                 i18n.LoginSuccess,
-                '我是' + ID,
+                ConnectCore.ScreenTarget.MainMenu,
                 BreakDetect=True
             ),
             ConnectCore.TargetUnit(
@@ -116,8 +116,13 @@ class Library(Synchronize.SynchronizeAllMethod):
                 BreakDetect=True
             ),
             ConnectCore.TargetUnit(
-                i18n.SystemBusyTryLater,
-                '系統負荷過重, 請稍後再試',
+                i18n.ErrorIDPW,
+                '密碼不對或無此帳號',
+                BreakDetect=True
+            ),
+            ConnectCore.TargetUnit(
+                i18n.LoginTooOften,
+                '登入太頻繁',
                 BreakDetect=True,
             ),
             ConnectCore.TargetUnit(
@@ -152,7 +157,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
                 '任意鍵',
-                Response=' '
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUpdate,
@@ -184,6 +188,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         CmdList.append(ConnectCore.Command.Enter)
         CmdList.append('y')
         CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(ConnectCore.Command.Enter)
 
         Cmd = ''.join(CmdList)
 
@@ -194,14 +199,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.Success,
                 ],
                 '任意鍵',
-                BreakDetect=True
+                BreakDetect=True,
             ),
         ]
 
         index = self._ConnectCore.send(Cmd, TargetList)
         self._ConnectCore.close()
-        if index != 0:
-            raise ConnectCore.LoginError()
         return ErrorCode.Success
 
     def log(self, Msg):
@@ -220,20 +223,17 @@ class Library(Synchronize.SynchronizeAllMethod):
         TargetList = [
             ConnectCore.TargetUnit(
                 [
-                    'QQQQQ',
+                    i18n.GetPTTTime,
                     i18n.Success,
                 ],
-                [
-                    '[呼叫器]',
-                    '【主功能表】',
-                ],
+                ConnectCore.ScreenTarget.MainMenu,
                 BreakDetect=True
             ),
         ]
 
         index = self._ConnectCore.send(Cmd, TargetList)
         if index != 0:
-            print('QQ')
+            return None
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 

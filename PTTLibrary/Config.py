@@ -21,7 +21,7 @@ def load():
     RetryWaitTime = 3
 
     # ScreenTimeOut 秒後判定此畫面沒有可辨識的目標
-    # 建議不要低於 10 秒，剔除其他登入最長可能會花費約 六七秒
+    # 建議不要低於 10 秒，剔除其他登入最長可能會花費約六到七秒
     global ScreenTimeOut
     ScreenTimeOut = 10.0
 

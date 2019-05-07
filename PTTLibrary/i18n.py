@@ -262,7 +262,19 @@ def load(inputLanguage):
         'Spend time',
     ])
 
-    # 您要刪除以上錯誤嘗試的記錄嗎
+    global GetPTTTime
+    GetPTTTime = SpecificLoad(inputLanguage, [
+        '取得批踢踢時間',
+        'Get PTT time',
+    ])
+
+    global LoginTooOften
+    LoginTooOften = SpecificLoad(inputLanguage, [
+        '登入太頻繁',
+        'Login too often',
+    ])
+
+    # Login too often
 
     # Final check
     for k, v in globals().items():
