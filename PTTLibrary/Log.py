@@ -51,8 +51,6 @@ def log(LogLevel, Msg):
     elif LogLevel == Level.INFO:
         TotalMessage += '[' + i18n.Info + '] ' + Msg
 
-    # [' +  + '] ' + Msg
-
     try:
         print(TotalMessage.encode(sys.stdin.encoding,
                                   "replace").decode(sys.stdin.encoding))

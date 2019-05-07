@@ -59,8 +59,12 @@ def Init():
 
 
 def Loginout():
+
+    print('WebSocket 登入登出測試')
+
     PTTBot = PTT.Library(
-        ConnectMode=PTT.ConnectMode.WebSocket
+        ConnectMode=PTT.ConnectMode.WebSocket,
+        # LogLevel=PTT.LogLevel.DEBUG
     )
     try:
         PTTBot.login(ID, Password, KickOtherLogin=True)
@@ -69,14 +73,15 @@ def Loginout():
         sys.exit()
     PTTBot.log('登入成功')
     PTTBot.logout()
+    PTTBot.log('登出成功')
 
-    for i in reversed(range(5)):
-        time.sleep(1)
-        print(i + 1)
+    print('等待五秒')
+    time.sleep(5)
 
+    print('Telnet 登入登出測試')
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.Telnet,
-        LogLevel=PTT.LogLevel.DEBUG
+        # LogLevel=PTT.LogLevel.DEBUG
     )
     try:
         PTTBot.login(ID, Password, KickOtherLogin=True)
@@ -85,22 +90,25 @@ def Loginout():
         sys.exit()
     PTTBot.log('登入成功')
     PTTBot.logout()
+    PTTBot.log('登出成功')
 
 
 def PerformanceTest():
 
+    TestTime = 1000
+    print(f'效能測試 getTime {TestTime} 次')
+
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.WebSocket,
-        LogLevel=PTT.LogLevel.SLIENT
+        LogLevel=PTT.LogLevel.SLIENT,
+        # LogLevel=PTT.LogLevel.DEBUG,
     )
     try:
-        PTTBot.login(ID, Password)
+        PTTBot.login(ID, Password, KickOtherLogin=True)
     except PTTLibrary.ConnectCore.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
-
-    TestTime = 100
 
     StartTime = time.time()
     for _ in range(TestTime):
@@ -114,12 +122,16 @@ def PerformanceTest():
     PTTBot.logout()
     print('Performance Test WebSocket', round(EndTime - StartTime, 2), 's')
 
+    print('等待五秒')
+    time.sleep(5)
+
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.Telnet,
-        LogLevel=PTT.LogLevel.SLIENT
+        LogLevel=PTT.LogLevel.SLIENT,
+        # LogLevel=PTT.LogLevel.DEBUG,
     )
     try:
-        PTTBot.login(ID, Password)
+        PTTBot.login(ID, Password, KickOtherLogin=True)
     except PTTLibrary.ConnectCore.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
@@ -157,8 +169,8 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
 
     try:
-        Loginout()
-        # PerformanceTest()
+        # Loginout()
+        PerformanceTest()
         
 
         pass

@@ -84,18 +84,24 @@ setup(
         #   5 - Production/Stable
         'Development Status :: 4 - Beta',
 
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: MacOS :: MacOS X'
+        'Operating System :: Microsoft :: Windows :: Windows 10',
+
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Communications :: BBS',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
+        'Topic :: Terminals :: Telnet'
         # Pick your license as you wish
         'License :: OSI Approved :: MIT License',
 
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+
+        'Natural Language :: Chinese (Traditional)',
+        'Natural Language :: English',
     ],
 
     # This field adds keywords for your project which will appear on the
