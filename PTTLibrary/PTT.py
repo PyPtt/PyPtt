@@ -82,6 +82,25 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def login(self, ID: str, Password: str, KickOtherLogin: bool=False):
 
+        if not isinstance(ID, str):
+            raise TypeError(Log.merge([
+                i18n.ID,
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(Password, str):
+            raise TypeError(Log.merge([
+                i18n.Password,
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(KickOtherLogin, bool):
+            raise TypeError(Log.merge([
+                'KickOtherLogin',
+                i18n.MustBe,
+                i18n.Boolean
+            ]))
+
         Config.KickOtherLogin = KickOtherLogin
 
         def KickOtherLoginDisplayMsg():
@@ -174,8 +193,6 @@ class Library(Synchronize.SynchronizeAllMethod):
         Cmd = ''.join(CmdList)
 
         index = self._ConnectCore.send(Cmd, TargetList)
-        # Log.showValue(Log.Level.INFO, 'index', index)
-
         if index != 0:
             raise ConnectCore.LoginError()
         return ErrorCode.Success
@@ -239,13 +256,88 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         pattern = re.compile('[\d]+:[\d][\d]')
         Result = pattern.search(OriScreen)
-        # print(OriScreen)
-        # print(Result)
-        # print(Result.group(0))
 
         if Result is not None:
             return Result.group(0)
         return None
+
+    def getPost(self, Board: str,
+                PostID: str=None,
+                PostIndex: int=0,
+                SearchType: int=0,
+                SearchCondition: str=None):
+
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PostID, str) and PostID is not None:
+            raise TypeError(Log.merge([
+                'PostID',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PostIndex, int):
+            raise TypeError(Log.merge([
+                'PostIndex',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        if not isinstance(SearchType, int):
+            raise TypeError(Log.merge([
+                'SearchType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if (not isinstance(SearchCondition, str) and
+           SearchCondition is not None):
+            raise TypeError(Log.merge([
+                'SearchCondition',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if len(Board) == 0:
+            raise ValueError(Log.merge([
+                i18n.Board,
+                i18n.ErrorParameter,
+                Board
+            ]))
+
+        if PostIndex != 0 and isinstance(PostID, str):
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostID',
+                i18n.ErrorParameter,
+                i18n.BothInput
+            ]))
+
+        if PostIndex == 0 and PostID is None:
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostID',
+                i18n.ErrorParameter,
+                i18n.NoInput
+            ]))
+        
+        if (SearchType != 0 and
+           not Util.checkRange(DataType.SearchType, SearchType)):
+            raise ValueError(Log.merge([
+                'SearchType',
+                i18n.ErrorParameter,
+            ]))
+        
+        if SearchCondition is not None and SearchType == 0:
+            raise ValueError(Log.merge([
+                'SearchType',
+                i18n.ErrorParameter,
+            ]))
+        
+        pass
+
 
 if __name__ == '__main__':
 

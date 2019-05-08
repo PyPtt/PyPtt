@@ -9,17 +9,17 @@
 
 #### Do you want PTT in Python? import PTT !
 
-##### PTT Library 是一個由 Python 開發，用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
+##### PTT Library 是一個由 Python 開發，用來操作 PTT 的函式庫，你可以在任何支援 Python 的環境，執行你的 PTT 機器人。
 ##### 直接登入 PTT 解析最即時推文，給你最快速的資訊!
 ##### 支援經典的 Telnet 與最新的 WebSocket 連線模式
-##### 支援多國語系，讓你在無法顯示中文的環境，一樣順順跑
+##### 支援多國語系
 ##### 支援開放 API，你可以直接使用開放 API 實作你的 PTT 操作指令
 ##### 測試平台: Windows 10, Ubuntu 18.04, Mac
 ##### 原始碼
 ##### github: https://github.com/Truth0906/PTTLibrary
 ##### Pypi: https://pypi.org/project/PTTLibrary/
 
-##### 徵求快樂開發夥伴，歡迎開 issue 討論新想法或者發起 pull request
+##### 徵求快樂開發夥伴，歡迎開 issue 討論或者發起 pull request
 
 ## 介紹影片
 
@@ -58,7 +58,7 @@ PTTBot.logout()
 
 詳細說明
 -------------------
-##### 請參考 Demo.py 有 API 的詳細範例與說明
+##### 請參考 Demo.py 有 API 的詳細範例與參數說明
 
 需求
 -------------------
@@ -86,7 +86,8 @@ API
 
 贊助
 -------------------
-##### 如果你喜歡，你可以贊助這個專案，
+##### 在這個 github 的小園地，用熱血的心為您打造在 PTT 翱翔的翅膀，
+##### 如果您願意，可以贊助這雙翅膀，讓我們一起飛得更遠，
 ##### Paypal
 ##### [贊助連結](http://paypal.me/CodingMan)
 ##### XMR

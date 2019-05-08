@@ -274,6 +274,60 @@ def load(inputLanguage):
         'Login too often',
     ])
 
+    global MustBe
+    MustBe = SpecificLoad(inputLanguage, [
+        '必須是',
+        'must be',
+    ])
+
+    global String
+    String = SpecificLoad(inputLanguage, [
+        '字串',
+        'String',
+    ])
+
+    global Integer
+    Integer = SpecificLoad(inputLanguage, [
+        '整數',
+        'Integer',
+    ])
+
+    global Boolean
+    Boolean = SpecificLoad(inputLanguage, [
+        '布林值',
+        'Boolean',
+    ])
+
+    global ID
+    ID = SpecificLoad(inputLanguage, [
+        '帳號',
+        'ID',
+    ])
+
+    global Password
+    Password = SpecificLoad(inputLanguage, [
+        '密碼',
+        'Password',
+    ])
+
+    global Board
+    Board = SpecificLoad(inputLanguage, [
+        '看板',
+        'Board',
+    ])
+
+    global BothInput
+    BothInput = SpecificLoad(inputLanguage, [
+        '同時輸入',
+        'Both input',
+    ])
+
+    global NoInput
+    NoInput = SpecificLoad(inputLanguage, [
+        '沒有輸入',
+        'No input',
+    ])
+
     # Login too often
 
     # Final check
@@ -305,6 +359,7 @@ def _createlist():
 
     with open('i18n.txt', 'w') as F:
         F.write('\n'.join(i18nStrList))
+
 
 if __name__ == '__main__':
     load(Language.Chinese)

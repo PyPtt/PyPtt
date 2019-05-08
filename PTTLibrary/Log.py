@@ -22,7 +22,7 @@ class Level(object):
     MaxValue = SLIENT
 
 
-def _merge(Msg):
+def merge(Msg) ->str:
     if isinstance(Msg, list):
         if Config.Language == i18n.Language.Chinese:
             for i in range(len(Msg)):
@@ -43,7 +43,7 @@ def log(LogLevel, Msg):
     if not Util.checkRange(Level, LogLevel):
         raise ValueError('LogLevel', LogLevel)
 
-    Msg = _merge(Msg)
+    Msg = merge(Msg)
 
     TotalMessage = '[' + strftime('%m%d %H:%M:%S') + ']'
     if LogLevel == Level.DEBUG:
@@ -66,8 +66,8 @@ def showValue(LogLevel, Msg, Value):
     if Config.LogLevel > LogLevel:
         return
 
-    Msg = _merge(Msg)
-    Value = _merge(Value)
+    Msg = merge(Msg)
+    Value = merge(Value)
 
     TotalMessage = []
     TotalMessage.append(Msg)
