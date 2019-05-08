@@ -168,7 +168,7 @@ def GetPost():
         sys.exit()
     PTTBot.log('登入成功')
 
-    PTTBot.getPost('Gossiping', PostIndex=783347)
+    PTTBot.getPost('Gossiping', PostIndex=784462)
 
     PTTBot.logout()
 
