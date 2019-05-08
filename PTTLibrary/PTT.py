@@ -413,7 +413,43 @@ class Library(Synchronize.SynchronizeAllMethod):
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
         print(self._ConnectCore.getScreenQueue()[-1])
 
-        if index == 0:
+        if index == 1:
+            # 文章被刪除
+            Log.log(Log.Level.DEBUG, i18n.PostDeled)
+            PostDelStatus = 0
+
+            for line in OriScreen.split('\n'):
+                if (line.startswith(DataType.Cursor.NewType) or
+                   line.startswith(DataType.Cursor.OldType)):
+                    # print(f'line: {line}')
+
+                    pattern = re.compile('[\d]+\/[\d]+')
+                    PatternResult = pattern.search(line)
+                    ListDate = PatternResult.group(0)
+
+                    pattern = re.compile('\[[\w]+\]')
+                    PatternResult = pattern.search(line)
+                    if PatternResult is not None:
+                        PostDelStatus = DataType.PostDeleteStatus.ByAuthor
+                    else:
+                        pattern = re.compile('<[\w]+>')
+                        PatternResult = pattern.search(line)
+                        PostDelStatus = DataType.PostDeleteStatus.ByModerator
+
+                    PostAuthor = PatternResult.group(0)[1:-1]
+                    Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
+                    break
+
+            Log.showValue(Log.Level.INFO, 'ListDate', ListDate)
+            Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
+            Log.showValue(Log.Level.INFO, 'PostDelStatus', PostDelStatus)
+
+            return DataType.PostInfo(Board=Board,
+                                     Author=PostAuthor,
+                                     ListDate=ListDate,
+                                     DeleteStatus=PostDelStatus)
+
+        elif index == 0:
 
             pattern = re.compile('#[\w]+')
             PatternResult = pattern.search(OriScreen)
@@ -436,26 +472,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             Log.showValue(Log.Level.INFO, 'AID', AID)
             Log.showValue(Log.Level.INFO, 'PostWeb', PostWeb)
             Log.showValue(Log.Level.INFO, 'PoPostMoneystWeb', PostMoney)
-
-        if index == 1:
-            # 文章被刪除
-            Log.log(Log.Level.INFO, i18n.PostDeled)
-
-            for line in OriScreen.split('\n'):
-                if (line.startswith(DataType.Cursor.NewType) or
-                   line.startswith(DataType.Cursor.OldType)):
-                    # print(f'line: {line}')
-                    pattern = re.compile('\[[\w]+\]')
-                    PatternResult = pattern.search(line)
-                    if PatternResult is None:
-                        pattern = re.compile('<[\w]+>')
-                        PatternResult = pattern.search(line)
-
-                    PostAuthor = PatternResult.group(0)[1:-1]
-                    Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
-
-                    break
-
+        
 if __name__ == '__main__':
 
     print('PTT Library v ' + Version)
