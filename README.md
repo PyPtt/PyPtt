@@ -32,7 +32,7 @@
 
 安裝
 -------------------
-### [<span style="color:red;">更新前注意</span>] 0.8 不支援 0.7 之前的版本
+### [更新前注意] 0.8 不支援 0.7 之前的版本
 ```
 pip3 install PTTLibrary
 ```
@@ -88,6 +88,6 @@ API
 -------------------
 ##### 如果你喜歡，你可以贊助這個專案，
 ##### Paypal
-##### paypal.me/CodingMan
+##### [GitHub](http://paypal.me/CodingMan)
 ##### XMR
 ##### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
