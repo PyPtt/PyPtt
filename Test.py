@@ -120,9 +120,9 @@ def PerformanceTest():
         # print(PTT_TIME)
     EndTime = time.time()
     PTTBot.logout()
-    print('Performance Test WebSocket', round(EndTime - StartTime, 2), 's')
+    PTTBot.log('Performance Test WebSocket ' + str(round(EndTime - StartTime, 2)) + ' s')
 
-    print('等待五秒')
+    PTTBot.log('等待五秒')
     time.sleep(5)
 
     PTTBot = PTT.Library(
@@ -147,7 +147,7 @@ def PerformanceTest():
         # print(PTT_TIME)
     EndTime = time.time()
     PTTBot.logout()
-    print('Performance Test Telnet', round(EndTime - StartTime, 2), 's')
+    PTTBot.log('Performance Test Telnet ' + str(round(EndTime - StartTime, 2)) + ' s')
 
     print('Performance Test finish')
 

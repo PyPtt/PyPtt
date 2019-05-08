@@ -9,16 +9,17 @@
 
 #### Do you want PTT in Python? import PTT !
 
-###### PTT Library 是一個由 Python 寫成用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
-###### 直接登入 PTT 解析最即時推文，給你最快速的資訊!
-###### 可自由選擇快速的 Telnet 或者安全的 WebSocket 連線模式
-###### 支援開放 API，你可以直接使用開放 API 實作你的 PTT 操作指令
-###### 測試平台: Windows 10, Ubuntu 18.04, Mac
-###### 原始碼
-###### github: https://github.com/Truth0906/PTTLibrary
-###### Pypi: https://pypi.org/project/PTTLibrary/
+##### PTT Library 是一個由 Python 開發，用來操作 PTT 的函式庫，你可以在任何可以使用 Python 的地方，執行你的 PTT 機器人。
+##### 直接登入 PTT 解析最即時推文，給你最快速的資訊!
+##### 支援經典的 Telnet 與最新的 WebSocket 連線模式
+##### 支援多國語系，讓你在無法顯示中文的環境，一樣順順跑
+##### 支援開放 API，你可以直接使用開放 API 實作你的 PTT 操作指令
+##### 測試平台: Windows 10, Ubuntu 18.04, Mac
+##### 原始碼
+##### github: https://github.com/Truth0906/PTTLibrary
+##### Pypi: https://pypi.org/project/PTTLibrary/
 
-###### 徵求快樂開發夥伴，歡迎開 issue 討論新想法或者發起 pull request
+##### 徵求快樂開發夥伴，歡迎開 issue 討論新想法或者發起 pull request
 
 ## 介紹影片
 
@@ -26,12 +27,12 @@
 
 版本
 -------------------
-###### 0.8 beta
-###### 穩定後版號將進入 1.0 正式版
+##### 0.8 beta
+##### 穩定後版號將進入 1.0 正式版
 
 安裝
 -------------------
-###### 注意! 0.8 不支援 0.7 之前的版本
+### [<font color="red">注意</font>] 0.8 不支援 0.7 之前的版本
 ```
 pip3 install PTTLibrary
 ```
@@ -57,23 +58,23 @@ PTTBot.logout()
 
 詳細說明
 -------------------
-###### 請參考 Demo.py 有 API 的範例與說明
+##### 請參考 Demo.py 有 API 的詳細範例與說明
 
 需求
 -------------------
-###### Python 3.6
+##### Python ≥ 3.6
 
 相依函式庫
 -------------------
-###### progressbar2
-###### websockets
-###### uao
+##### progressbar2
+##### websockets
+##### uao
 
 正在工作
 -------------------
-###### 支援 i18n
-###### 重構
-###### 同時支援 WebSocket 與 Telnet 連線
+##### 支援 i18n
+##### 重構
+##### 同時支援 WebSocket 與 Telnet 連線
 
 API
 -------------------
@@ -85,6 +86,8 @@ API
 
 贊助
 -------------------
-###### 如果你喜歡，你可以贊助這個專案
-###### XMR 贊助位址
-###### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
+##### 如果你喜歡，你可以贊助這個專案，
+##### Paypal
+##### paypal.me/CodingMan
+##### XMR
+##### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
