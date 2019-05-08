@@ -146,7 +146,7 @@ class MailInformation(object):
 
 
 class UserInformation(object):
-    def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State, 
+    def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State,
                  Mail, LastLogin, LastIP, FiveChess, Chess):
         self.__ID = ParseParameter(str, ID)
         self.__Money = ParseParameter(str, Money)
@@ -228,12 +228,12 @@ class PostDeleteStatus(object):
     MaxValue = ByUnknow
 
 
-class PostInformation(object):
-    def __init__(self, Board=None, PostID=None, Author=None, Date=None, 
-                 Title=None, WebUrl=None, Money=None, PostContent=None, 
-                 IP=None, PushList=None, RawData=None, ListDate=None, 
+class PostInfo(object):
+    def __init__(self, Board=None, PostID=None, Author=None, Date=None,
+                 Title=None, WebUrl=None, Money=None, PostContent=None,
+                 IP=None, PushList=None, RawData=None, ListDate=None,
                  DeleteStatus=0):
-        self.__Board = ParseParameter(str, Board)        
+        self.__Board = ParseParameter(str, Board)
         self.__PostID = ParseParameter(str, PostID)
         self.__Author = ParseParameter(str, Author)
         self.__Date = ParseParameter(str, Date)
