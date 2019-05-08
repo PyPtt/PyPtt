@@ -328,6 +328,18 @@ def load(inputLanguage):
         'No input',
     ])
 
+    global CatchPost
+    CatchPost = SpecificLoad(inputLanguage, [
+        '取得文章',
+        'Catch post',
+    ])
+
+    global PostDeled
+    PostDeled = SpecificLoad(inputLanguage, [
+        '文章已經被刪除',
+        'Post has been deleted',
+    ])
+
     # Login too often
 
     # Final check

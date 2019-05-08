@@ -56,6 +56,8 @@ def _showScreen(ScreenQueue, FunctionName=None):
 
 class Command(object):
     Enter = '\r'
+    Ctrl_C = '\x03'
+    QueryPost = 'Q'
     Refresh = '\x0C'
     Up = '\x1b\x4fA'
     Down = '\x1b\x4fB'
@@ -68,6 +70,17 @@ class ScreenTarget(object):
     MainMenu = [
         '人, 我是',
         '[呼叫器]',
+    ]
+
+    QueryPost = [
+        '請按任意鍵繼續',
+        '這一篇文章值',
+    ]
+
+    InBoard = [
+        '文章選讀',
+        '進板畫面',
+        '【板主'
     ]
 
 
@@ -107,7 +120,7 @@ class NoMatchTargetError(Exception):
         self.ScreenQueue = ScreenQueue
 
     def __str__(self):
-        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue)
+        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue[-3:])
         return Screens + '\n' + i18n.ScreenNoMatchTarget
 
 
@@ -115,7 +128,7 @@ class TargetUnit(object):
     def __init__(self,
                  DisplayMsg,
                  DetectTarget,
-                 Response=' ',
+                 Response='',
                  BreakDetect=False):
 
         self._DisplayMsg = DisplayMsg
@@ -232,9 +245,6 @@ class API(object):
 
     def send(self, Msg: str, TargetList: list) ->int:
 
-        if not Msg.endswith(Command.Refresh):
-            Msg = Msg + Command.Refresh
-
         if not all(isinstance(T, TargetUnit) for T in TargetList):
             raise ValueError('Item of TargetList must be TargetUnit')
 
@@ -242,8 +252,11 @@ class API(object):
 
         for _ in range(len(TargetList) + 1):
 
+            if not Msg.endswith(Command.Refresh):
+                Msg = Msg + Command.Refresh
             try:
                 Msg = Msg.encode('big5-uao', 'replace')
+
             except AttributeError:
                 pass
             except Exception as e:
@@ -265,7 +278,7 @@ class API(object):
                 asyncio.get_event_loop().run_until_complete(
                     self._Core.send(Msg)
                 )
-            Msg = b' '
+            Msg = ''
             CycleTime = 0
             CycleWait = 0
             ReceiveDataUTF8 = []
@@ -363,9 +376,9 @@ class API(object):
                     break
                 if len(ScreenUTF8) > 0:
                     self._ReceiveDataQueue.append(ScreenUTF8)
-                
+
                 MidTime = time.time()
-                
+
             if not FindTarget:
                 raise NoMatchTargetError(self._ReceiveDataQueue)
         raise NoMatchTargetError(self._ReceiveDataQueue)
@@ -433,8 +446,11 @@ class API(object):
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         screen = re.sub(r'[\x0e-\x1f]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
-        # self.Log('after: ' + str(screen))
-        return screen
+
+        screen = screen.split('\n')
+        screen = filter(None, screen)
+
+        return '\n'.join(screen)
 
     def getScreenQueue(self) ->list:
         return self._ReceiveDataQueue

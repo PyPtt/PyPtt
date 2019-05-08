@@ -176,6 +176,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
                 '任意鍵',
+                Response=ConnectCore.Command.GoMainMenu,
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUpdate,
@@ -262,7 +263,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         return None
 
     def getPost(self, Board: str,
-                PostID: str=None,
+                PostAID: str=None,
                 PostIndex: int=0,
                 SearchType: int=0,
                 SearchCondition: str=None):
@@ -273,9 +274,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.MustBe,
                 i18n.String
             ]))
-        if not isinstance(PostID, str) and PostID is not None:
+        if not isinstance(PostAID, str) and PostAID is not None:
             raise TypeError(Log.merge([
-                'PostID',
+                'PostAID',
                 i18n.MustBe,
                 i18n.String
             ]))
@@ -307,37 +308,153 @@ class Library(Synchronize.SynchronizeAllMethod):
                 Board
             ]))
 
-        if PostIndex != 0 and isinstance(PostID, str):
+        if PostIndex != 0 and isinstance(PostAID, str):
             raise ValueError(Log.merge([
                 'PostIndex',
-                'PostID',
+                'PostAID',
                 i18n.ErrorParameter,
                 i18n.BothInput
             ]))
 
-        if PostIndex == 0 and PostID is None:
+        if PostIndex == 0 and PostAID is None:
             raise ValueError(Log.merge([
                 'PostIndex',
-                'PostID',
+                'PostAID',
                 i18n.ErrorParameter,
                 i18n.NoInput
             ]))
-        
+
         if (SearchType != 0 and
            not Util.checkRange(DataType.SearchType, SearchType)):
             raise ValueError(Log.merge([
                 'SearchType',
                 i18n.ErrorParameter,
             ]))
-        
+
         if SearchCondition is not None and SearchType == 0:
             raise ValueError(Log.merge([
                 'SearchType',
                 i18n.ErrorParameter,
             ]))
-        
-        pass
 
+        if PostAID is not None and SearchCondition is not None:
+            raise ValueError(Log.merge([
+                'PostAID',
+                'SearchCondition',
+                i18n.ErrorParameter,
+                i18n.BothInput,
+            ]))
+
+        return self._getPost(Board,
+                             PostAID,
+                             PostIndex,
+                             SearchType,
+                             SearchCondition)
+
+    def _getPost(self, Board: str,
+                 PostAID: str=None,
+                 PostIndex: int=0,
+                 SearchType: int=0,
+                 SearchCondition: str=None):
+        CmdList = []
+        CmdList.append(ConnectCore.Command.GoMainMenu)
+        CmdList.append('qs')
+        CmdList.append(Board)
+        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(ConnectCore.Command.Ctrl_C * 2)
+
+        if SearchCondition is not None:
+            CmdList.append('#' + PostAID)
+
+        elif PostIndex != 0:
+            if SearchCondition is not None:
+                if SearchType == DataType.PostSearchType.Keyword:
+                    CmdList.append('/')
+                elif SearchType == DataType.PostSearchType.Author:
+                    CmdList.append('a')
+                elif SearchType == DataType.PostSearchType.Push:
+                    CmdList.append('Z')
+                elif SearchType == DataType.PostSearchType.Mark:
+                    CmdList.append('G')
+                elif SearchType == DataType.PostSearchType.Money:
+                    CmdList.append('A')
+
+                CmdList.append(SearchCondition)
+                CmdList.append(ConnectCore.Command.Enter)
+
+            CmdList.append(str(PostIndex))
+
+        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(ConnectCore.Command.QueryPost)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.CatchPost,
+                    i18n.Success,
+                ],
+                ConnectCore.ScreenTarget.QueryPost,
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.CatchPost,
+                    i18n.Success,
+                ],
+                ConnectCore.ScreenTarget.InBoard,
+                BreakDetect=True,
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
+
+        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+        print(self._ConnectCore.getScreenQueue()[-1])
+
+        if index == 0:
+
+            pattern = re.compile('#[\w]+')
+            PatternResult = pattern.search(OriScreen)
+            AID = PatternResult.group(0)[1:]
+
+            pattern = re.compile('https:[\S]+html')
+            PatternResult = pattern.search(OriScreen)
+            PostWeb = PatternResult.group(0)
+
+            pattern = re.compile('這一篇文章值 [\d]+ Ptt幣')
+            PatternResult = pattern.search(OriScreen)
+            if PatternResult is None:
+                # 特殊文章無價格
+                PostMoney = -1
+            else:
+                PostMoney = PatternResult.group(0)[7:]
+                PostMoney = PostMoney[:PostMoney.find(' ')]
+                PostMoney = int(PostMoney)
+
+            Log.showValue(Log.Level.INFO, 'AID', AID)
+            Log.showValue(Log.Level.INFO, 'PostWeb', PostWeb)
+            Log.showValue(Log.Level.INFO, 'PoPostMoneystWeb', PostMoney)
+
+        if index == 1:
+            # 文章被刪除
+            Log.log(Log.Level.INFO, i18n.PostDeled)
+
+            for line in OriScreen.split('\n'):
+                if (line.startswith(DataType.Cursor.NewType) or
+                   line.startswith(DataType.Cursor.OldType)):
+                    # print(f'line: {line}')
+                    pattern = re.compile('\[[\w]+\]')
+                    PatternResult = pattern.search(line)
+                    if PatternResult is None:
+                        pattern = re.compile('<[\w]+>')
+                        PatternResult = pattern.search(line)
+
+                    PostAuthor = PatternResult.group(0)[1:-1]
+                    Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
+
+                    break
 
 if __name__ == '__main__':
 

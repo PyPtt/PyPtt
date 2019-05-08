@@ -302,6 +302,12 @@ class WaterBallInformation(object):
 
     def getDate(self):
         return self.__Date
-        
+
     def getType(self):
         return self.__Type
+
+
+class Cursor(object):
+
+    OldType = '●'
+    NewType = '>'

@@ -9,7 +9,7 @@
 
 #### Do you want PTT in Python? import PTT !
 
-##### PTT Library 是一個由 Python 開發，用來操作 PTT 的函式庫，你可以在任何支援 Python 的環境，執行你的 PTT 機器人。
+##### PTT Library 是一個由 Python 所開發，用來操作 PTT 的函式庫，你可以在任何支援 Python 的環境，執行你的 PTT 機器人。
 ##### 直接登入 PTT 解析最即時推文，給你最快速的資訊!
 ##### 支援經典的 Telnet 與最新的 WebSocket 連線模式
 ##### 支援多國語系
@@ -87,7 +87,7 @@ API
 贊助
 -------------------
 ##### 在這個 github 的小園地，用熱血的心為您打造在 PTT 翱翔的翅膀，
-##### 如果您願意，可以贊助這雙翅膀，讓我們一起飛得更遠，
+##### 如果可以，您可以贊助這雙翅膀，讓我們一起飛得更遠，
 ##### Paypal
 ##### [贊助連結](http://paypal.me/CodingMan)
 ##### XMR
