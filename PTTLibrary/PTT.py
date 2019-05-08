@@ -1,7 +1,9 @@
 ﻿import sys
 import time
 import re
-
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 try:
     import DataType
     import Config
@@ -410,6 +412,9 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         index = self._ConnectCore.send(Cmd, TargetList)
 
+        if index < 0:
+            return None
+
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
         print(self._ConnectCore.getScreenQueue()[-1])
 
@@ -437,7 +442,6 @@ class Library(Synchronize.SynchronizeAllMethod):
                         PostDelStatus = DataType.PostDeleteStatus.ByModerator
 
                     PostAuthor = PatternResult.group(0)[1:-1]
-                    Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
                     break
 
             Log.showValue(Log.Level.INFO, 'ListDate', ListDate)
@@ -469,9 +473,43 @@ class Library(Synchronize.SynchronizeAllMethod):
                 PostMoney = PostMoney[:PostMoney.find(' ')]
                 PostMoney = int(PostMoney)
 
+            for line in OriScreen.split('\n'):
+                if (line.startswith(DataType.Cursor.NewType) or
+                   line.startswith(DataType.Cursor.OldType)):
+
+                    pattern = re.compile('[\d]+\/[\d]+')
+                    PatternResult = pattern.search(line)
+                    ListDate = PatternResult.group(0)
+
             Log.showValue(Log.Level.INFO, 'AID', AID)
             Log.showValue(Log.Level.INFO, 'PostWeb', PostWeb)
             Log.showValue(Log.Level.INFO, 'PoPostMoneystWeb', PostMoney)
+            Log.showValue(Log.Level.INFO, 'ListDate', ListDate)
+
+        res = requests.get(
+            url=PostWeb,
+            cookies={'over18': '1'},
+            timeout=3
+        )
+
+        PageSource = res.text
+        print(PageSource)
+
+        UnitList = Util.findValues(
+            PageSource,
+            '<span class="article-meta-value">',
+            '</span>'
+        )
+        
+        print('\n'.join(UnitList))
+
+        PostAuthor = UnitList[0]
+        PostTitle = UnitList[2]
+        PostDate = UnitList[3]
+
+        Log.showValue(Log.Level.INFO, 'AID', AID)
+        Log.showValue(Log.Level.INFO, 'PostWeb', PostWeb)
+        Log.showValue(Log.Level.INFO, 'PoPostMoneystWeb', PostMoney)
         
 if __name__ == '__main__':
 
