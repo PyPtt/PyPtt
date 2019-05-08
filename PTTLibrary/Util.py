@@ -22,3 +22,17 @@ def getFileName(String):
     result = os.path.basename(String)
     result = result[:result.find('.')]
     return result
+
+
+def findValues(MainString, StartTarget, EndTarget):
+
+    result = []
+    TempMainString = MainString
+
+    while StartTarget in TempMainString:
+        TempMainString = TempMainString[TempMainString.find(StartTarget) + len(StartTarget):]
+        Temp = TempMainString[:TempMainString.find(EndTarget)]
+        result.append(Temp)
+        TempMainString = TempMainString[1:]
+
+    return result

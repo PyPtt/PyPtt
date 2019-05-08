@@ -64,10 +64,13 @@ def Loginout():
 
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.WebSocket,
-        # LogLevel=PTT.LogLevel.DEBUG
+        LogLevel=PTT.LogLevel.DEBUG
     )
     try:
-        PTTBot.login(ID, Password, KickOtherLogin=True)
+        PTTBot.login(ID, 
+                     Password,
+                     # KickOtherLogin=True
+                     )
     except PTTLibrary.ConnectCore.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
@@ -77,6 +80,7 @@ def Loginout():
 
     print('等待五秒')
     time.sleep(5)
+    return
 
     print('Telnet 登入登出測試')
     PTTBot = PTT.Library(
@@ -146,10 +150,27 @@ def PerformanceTest():
             break
         # print(PTT_TIME)
     EndTime = time.time()
-    PTTBot.logout()
+    
     PTTBot.log('Performance Test Telnet ' + str(round(EndTime - StartTime, 2)) + ' s')
 
     print('Performance Test finish')
+
+
+def GetPost():
+    PTTBot = PTT.Library(
+        ConnectMode=PTT.ConnectMode.WebSocket,
+        # LogLevel=PTT.LogLevel.DEBUG,
+    )
+    try:
+        PTTBot.login(ID, Password)
+    except PTTLibrary.ConnectCore.LoginError:
+        PTTBot.log('登入失敗')
+        sys.exit()
+    PTTBot.log('登入成功')
+
+    PTTBot.getPost('Gossiping', PostIndex=783347)
+
+    PTTBot.logout()
 
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -170,10 +191,9 @@ if __name__ == '__main__':
 
     try:
         # Loginout()
-        PerformanceTest()
-        
+        # PerformanceTest()
+        GetPost()
 
-        pass
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
