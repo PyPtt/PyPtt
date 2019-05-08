@@ -493,23 +493,73 @@ class Library(Synchronize.SynchronizeAllMethod):
         )
 
         PageSource = res.text
-        print(PageSource)
 
         UnitList = Util.findValues(
             PageSource,
             '<span class="article-meta-value">',
             '</span>'
         )
-        
-        print('\n'.join(UnitList))
 
         PostAuthor = UnitList[0]
         PostTitle = UnitList[2]
         PostDate = UnitList[3]
 
-        Log.showValue(Log.Level.INFO, 'AID', AID)
-        Log.showValue(Log.Level.INFO, 'PostWeb', PostWeb)
-        Log.showValue(Log.Level.INFO, 'PoPostMoneystWeb', PostMoney)
+        UnitList = Util.findValues(
+            PageSource,
+            PostDate + '</span></div>',
+            '<span class="f2">※ 發信站'
+        )
+        # print('\n'.join(UnitList))
+        Content = UnitList[0]
+
+        pattern = re.compile('<a(..)+a>')
+        while pattern.search(Content) is not None:
+            PatternResult = pattern.search(Content)
+            HTML = PatternResult.group(0)
+
+            UrlPattern = re.compile(
+                '(https|http):[\S]+(html|htm|jpg|png|jpeg)'
+            )
+            UrlPatternResult = UrlPattern.search(HTML)
+            URL = UrlPatternResult.group(0)
+            Content = Content.replace(HTML, URL)
+
+        pattern = re.compile('<d(..)+v>')
+        while pattern.search(Content) is not None:
+            PatternResult = pattern.search(Content)
+            HTML = PatternResult.group(0)
+
+            Content = Content.replace(HTML, '')
+
+        UnitList = Util.findValues(
+            Content,
+            '<',
+            '>'
+        )
+
+        # print('\n'.join(UnitList))
+
+        for Element in UnitList:
+            Remove = False
+            if 'div' in Element:
+                Remove = True
+            elif 'span' in Element:
+                Remove = True
+            elif 'src=' in Element:
+                Remove = True
+            elif 'class' in Element:
+                Remove = True
+            
+            if Remove:
+                Content = Content.replace('<' + Element + '>', '')
+        Content = Content.strip()
+
+        Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
+        Log.showValue(Log.Level.INFO, 'PostTitle', PostTitle)
+        Log.showValue(Log.Level.INFO, 'PostDate', PostDate)
+        Log.showValue(Log.Level.INFO, 'Content', Content)
+
+        
         
 if __name__ == '__main__':
 
