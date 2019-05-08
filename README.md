@@ -88,6 +88,6 @@ API
 -------------------
 ##### 如果你喜歡，你可以贊助這個專案，
 ##### Paypal
-##### [GitHub](http://paypal.me/CodingMan)
+##### [贊助連結](http://paypal.me/CodingMan)
 ##### XMR
 ##### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
