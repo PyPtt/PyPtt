@@ -340,6 +340,48 @@ def load(inputLanguage):
         'Post has been deleted',
     ])
 
+    global BrowsePost
+    BrowsePost = SpecificLoad(inputLanguage, [
+        '瀏覽文章',
+        'Browse post',
+    ])
+
+    global CatchIP
+    CatchIP = SpecificLoad(inputLanguage, [
+        '取得 IP',
+        'Catch IP',
+    ])
+
+    global GetPush
+    GetPush = SpecificLoad(inputLanguage, [
+        '取得推文',
+        'Get push',
+    ])
+
+    global Update
+    Update = SpecificLoad(inputLanguage, [
+        '更新',
+        'Update',
+    ])
+
+    global Push
+    Push = SpecificLoad(inputLanguage, [
+        '推文',
+        'Push',
+    ])
+
+    global Date
+    Date = SpecificLoad(inputLanguage, [
+        '日期',
+        'Date',
+    ])
+
+    global Content
+    Content = SpecificLoad(inputLanguage, [
+        '內文',
+        'Content',
+    ])
+
     # Login too often
 
     # Final check

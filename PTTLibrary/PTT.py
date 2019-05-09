@@ -38,6 +38,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                  ConnectMode: int=0,
                  LogLevel: int=0,
                  ):
+        print(f'PTT Library v {Version}')
+
         Config.load()
 
         if not isinstance(Language, int):
@@ -188,7 +190,6 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         CmdList = []
         CmdList.append(ID)
-        CmdList.append(',')
         CmdList.append(ConnectCore.Command.Enter)
         CmdList.append(Password)
         CmdList.append(ConnectCore.Command.Enter)
@@ -416,7 +417,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             return None
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        print(self._ConnectCore.getScreenQueue()[-1])
+        # print(self._ConnectCore.getScreenQueue()[-1])
 
         if index == 1:
             # 文章被刪除
@@ -459,9 +460,9 @@ class Library(Synchronize.SynchronizeAllMethod):
             PatternResult = pattern.search(OriScreen)
             AID = PatternResult.group(0)[1:]
 
-            pattern = re.compile('https:[\S]+html')
+            pattern = re.compile('文章網址: https:[\S]+html')
             PatternResult = pattern.search(OriScreen)
-            PostWeb = PatternResult.group(0)
+            PostWeb = PatternResult.group(0)[6:]
 
             pattern = re.compile('這一篇文章值 [\d]+ Ptt幣')
             PatternResult = pattern.search(OriScreen)
@@ -486,79 +487,211 @@ class Library(Synchronize.SynchronizeAllMethod):
             Log.showValue(Log.Level.INFO, 'PoPostMoneystWeb', PostMoney)
             Log.showValue(Log.Level.INFO, 'ListDate', ListDate)
 
-        res = requests.get(
-            url=PostWeb,
-            cookies={'over18': '1'},
-            timeout=3
+        Cmd = ConnectCore.Command.Enter * 2
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.CatchIP,
+                    i18n.Success,
+                ],
+                ConnectCore.ScreenTarget.IP,
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.BrowsePost,
+                ],
+                ConnectCore.ScreenTarget.InPost,
+                Response=ConnectCore.Command.Down,
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
+        LastScreen = self._ConnectCore.getScreenQueue()[-1]
+
+        pattern = re.compile(
+            '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+.[\d]+.[\d]+.[\d]+'
         )
+        PatternResult = pattern.search(LastScreen)
+        IP = PatternResult.group(0)[25:]
 
-        PageSource = res.text
+        Cmd = ConnectCore.Command.Right
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetPush,
+                    i18n.Done,
+                ],
+                ConnectCore.ScreenTarget.PostEnd,
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetPush,
+                ],
+                ConnectCore.ScreenTarget.InPost,
+                BreakDetect=True,
+            ),
+        ]
 
-        UnitList = Util.findValues(
-            PageSource,
-            '<span class="article-meta-value">',
-            '</span>'
-        )
+        index = -1
+        MaxLine = 0
+        NewIPPattern = re.compile('\([\d]+.[\d]+.[\d]+.[\d]+\)')
+        PushIDPattern = re.compile('[推|噓|→] [\w]+:')
+        PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
+        PushIPPattern = re.compile('[\d]+.[\d]+.[\d]+.[\d]+')
 
-        PostAuthor = UnitList[0]
-        PostTitle = UnitList[2]
-        PostDate = UnitList[3]
+        # 
+        while index != 0:
+            index = self._ConnectCore.send(Cmd, TargetList)
+            LastScreen = self._ConnectCore.getScreenQueue()[-1]
 
-        UnitList = Util.findValues(
-            PageSource,
-            PostDate + '</span></div>',
-            '<span class="f2">※ 發信站'
-        )
-        # print('\n'.join(UnitList))
-        Content = UnitList[0]
+            Lines = LastScreen.split('\n')
+            LastLine = Lines[-1]
+            Lines.pop()
 
-        pattern = re.compile('<a(..)+a>')
-        while pattern.search(Content) is not None:
-            PatternResult = pattern.search(Content)
-            HTML = PatternResult.group(0)
+            pattern = re.compile('[\d]+~[\d]+')
+            PatternResult = pattern.search(LastScreen)
+            # LineFrom = int(PatternResult.group(0).split('~')[0])
+            LineTo = int(PatternResult.group(0).split('~')[1])
 
-            UrlPattern = re.compile(
-                '(https|http):[\S]+(html|htm|jpg|png|jpeg)'
-            )
-            UrlPatternResult = UrlPattern.search(HTML)
-            URL = UrlPatternResult.group(0)
-            Content = Content.replace(HTML, URL)
+            if MaxLine != 0:
+                CutLine = LineTo - MaxLine
+                Lines = Lines[-CutLine:]
+            MaxLine = LineTo
 
-        pattern = re.compile('<d(..)+v>')
-        while pattern.search(Content) is not None:
-            PatternResult = pattern.search(Content)
-            HTML = PatternResult.group(0)
+            for line in Lines:
+                line = line.strip()
+                PushType = 0
+                if line.startswith('※ 編輯'):
+                    if IP in line:
+                        continue
+                    PatternResult = NewIPPattern.search(line)
+                    IP = PatternResult.group(0)[1:-1]
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        [
+                            i18n.Update,
+                            'IP'
+                        ],
+                        IP
+                    )
+                elif line.startswith('推'):
+                    PushType = DataType.PushType.Push
+                elif line.startswith('噓'):
+                    PushType = DataType.PushType.Boo
+                elif line.startswith('→'):
+                    PushType = DataType.PushType.Arrow
+                else:
+                    pass
+                
+                if PushType != 0:
+                    Result = PushIDPattern.search(line)
+                    PushID = Result.group(0)[2:-1]
+                    Log.showValue(Log.Level.DEBUG, [
+                            i18n.Push,
+                            i18n.ID,
+                        ],
+                        PushID
+                    )
 
-            Content = Content.replace(HTML, '')
+                    Result = PushDatePattern.search(line)
+                    PushDate = Result.group(0)
+                    Log.showValue(Log.Level.DEBUG, [
+                            i18n.Push,
+                            i18n.Date,
+                        ],
+                        PushDate
+                    )
 
-        UnitList = Util.findValues(
-            Content,
-            '<',
-            '>'
-        )
+                    PushIP = None
+                    Result = PushIPPattern.search(line)
+                    if Result is not None:
+                        PushIP = Result.group(0)
+                        Log.showValue(Log.Level.DEBUG, [
+                                i18n.Push,
+                                'IP',
+                            ],
+                            PushIP
+                        )
 
-        # print('\n'.join(UnitList))
+                    PushContent = line[line.find(PushID) + len(PushID):]
+                    PushContent = PushContent.replace(PushDate, '')
+                    if PushIP is not None:
+                        PushContent = PushContent.replace(PushIP, '')
+                    PushContent = PushContent[2:].strip()
 
-        for Element in UnitList:
-            Remove = False
-            if 'div' in Element:
-                Remove = True
-            elif 'span' in Element:
-                Remove = True
-            elif 'src=' in Element:
-                Remove = True
-            elif 'class' in Element:
-                Remove = True
-            
-            if Remove:
-                Content = Content.replace('<' + Element + '>', '')
-        Content = Content.strip()
+                    Log.showValue(Log.Level.DEBUG, [
+                            i18n.Push,
+                            i18n.Content,
+                        ],
+                        PushContent
+                    )
+                
+                Log.showValue(Log.Level.DEBUG, [
+                        'line'
+                    ],
+                    line
+                )
+            print('$' * 20)
 
-        Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
-        Log.showValue(Log.Level.INFO, 'PostTitle', PostTitle)
-        Log.showValue(Log.Level.INFO, 'PostDate', PostDate)
-        Log.showValue(Log.Level.INFO, 'Content', Content)
+        # res = requests.get(
+        #     url=PostWeb,
+        #     cookies={'over18': '1'},
+        #     timeout=3
+        # )
 
+        # PageSource = res.text
+
+        # UnitList = Util.findValues(
+        #     PageSource,
+        #     '<span class="article-meta-value">',
+        #     '</span>'
+        # )
+
+        # PostAuthor = UnitList[0]
+        # PostTitle = UnitList[2]
+        # PostDate = UnitList[3]
+
+        # UnitList = Util.findValues(
+        #     PageSource,
+        #     PostDate + '</span></div>',
+        #     '<span class="f2">※ 發信站'
+        # )
+        # Content = UnitList[0]
+
+        # ResultList = re.findall(r'<a(.+)</a>', Content)
+
+        # for a in ResultList:
+        #     HTML = '<a' + a + '</a>'
+        #     Log.showValue(Log.Level.DEBUG, 'HTML', HTML)
+
+        #     UrlPattern = re.compile(
+        #         '(https|http):[\S]+<'
+        #     )
+        #     UrlPatternResult = UrlPattern.search(HTML)
+        #     if UrlPatternResult is None:
+        #         Content = Content.replace(HTML, '')
+        #         continue
+        #     URL = UrlPatternResult.group(0)[:-1]
+
+        #     Log.showValue(Log.Level.DEBUG, 'URL', URL)
+        #     Content = Content.replace(HTML, URL)
+        
+        # ResultList = re.findall(r'<(.+)>', Content)
+
+        # for h in ResultList:
+        #     HTML = '<' + h + '>'
+        #     Log.showValue(Log.Level.DEBUG, 'HTML', HTML)
+        #     Content = Content.replace(HTML, '')
+
+        # Content = Content.strip()
+
+        # Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
+        # Log.showValue(Log.Level.INFO, 'PostTitle', PostTitle)
+        # Log.showValue(Log.Level.INFO, 'PostDate', PostDate)
+        # Log.showValue(Log.Level.INFO, 'Content', Content)
+        Log.showValue(Log.Level.INFO, 'IP', IP)
         
         
 if __name__ == '__main__':
