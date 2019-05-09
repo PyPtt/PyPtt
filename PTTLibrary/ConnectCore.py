@@ -83,6 +83,22 @@ class ScreenTarget(object):
         '【板主'
     ]
 
+    InPost = [
+        '瀏覽 第',
+        '目前顯示: 第',
+        '離開'
+    ]
+
+    PostEnd = [
+        '瀏覽 第',
+        '(100%)  目前顯示: 第',
+        '離開'
+    ]
+
+    IP = [
+        '發信站: 批踢踢實業坊(ptt.cc), 來自:'
+    ]
+
 
 class ConnectMode(object):
 
@@ -250,7 +266,7 @@ class API(object):
 
         self._ReceiveDataQueue = []
 
-        for _ in range(len(TargetList) + 1):
+        while True:
 
             if not Msg.endswith(Command.Refresh):
                 Msg = Msg + Command.Refresh
@@ -281,8 +297,7 @@ class API(object):
             Msg = ''
             CycleTime = 0
             CycleWait = 0
-            ReceiveDataUTF8 = []
-            ReceiveDataBIG5UAO = []
+            ReceiveData = []
 
             StartTime = time.time()
             MidTime = time.time()
@@ -303,50 +318,24 @@ class API(object):
                     except websockets.exceptions.ConnectionClosed:
                         return -1
 
-                MixingDetect = False
-                MixingDetectEncoding = None
-                try:
-                    ReceiveDataTempUTF8 = ReceiveDataTemp.decode(
-                        'utf-8'
-                    )
-                except UnicodeDecodeError:
-                    # 可能有 UTF8 與 Big5UAO的資料出現
-                    MixingDetect = True
-                    ReceiveDataTempBIG5UAO = ReceiveDataTemp.decode(
-                        'big5-uao', errors='ignore'
-                    )
-                    ReceiveDataTempBIG5UAO = self._cleanScreen(
-                        ReceiveDataTempBIG5UAO
-                    )
-                    ReceiveDataBIG5UAO.append(ReceiveDataTempBIG5UAO)
-                    ScreenBIG5UAO = ''.join(ReceiveDataBIG5UAO)
+                ReceiveDataTemp = ReceiveDataTemp.decode(
+                    'big5-uao', errors='ignore'
+                )
 
-                    ReceiveDataTempUTF8 = ReceiveDataTemp.decode(
-                        'utf-8', errors='ignore'
-                    )
+                ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)
+                ReceiveData.append(ReceiveDataTemp)
+                Screen = ''.join(ReceiveData)
 
-                ReceiveDataTempUTF8 = self._cleanScreen(ReceiveDataTempUTF8)
-                ReceiveDataUTF8.append(ReceiveDataTempUTF8)
-                ScreenUTF8 = ''.join(ReceiveDataUTF8)
-
-                # _showScreen(ScreenUTF8)
+                _showScreen(Screen)
 
                 FindTarget = False
                 for Target in TargetList:
 
-                    Condition = Target.isMatch(ScreenUTF8)
-                    if MixingDetect and (not Condition):
-                        Condition = Target.isMatch(ScreenBIG5UAO)
-                        MixingDetectEncoding = 'BIG5UAO'
-                        if len(ScreenBIG5UAO) > 0:
-                            self._ReceiveDataQueue.append(ScreenBIG5UAO)
-
-                    else:
-                        MixingDetectEncoding = 'UTF8'
-                        if len(ScreenUTF8) > 0:
-                            self._ReceiveDataQueue.append(ScreenUTF8)
-
+                    Condition = Target.isMatch(Screen)
                     if Condition:
+                        if len(Screen) > 0:
+                            self._ReceiveDataQueue.append(Screen)
+
                         FindTarget = True
 
                         Log.showValue(Log.Level.INFO, [
@@ -366,16 +355,13 @@ class API(object):
                         if Target.isBreak():
                             return TargetList.index(Target)
 
-                        if MixingDetectEncoding == 'UTF8':
-                            Msg = Target.getResponse(ScreenUTF8)
-                        else:
-                            Msg = Target.getResponse(ScreenBIG5UAO)
+                        Msg = Target.getResponse(Screen)
                         break
 
                 if FindTarget:
                     break
-                if len(ScreenUTF8) > 0:
-                    self._ReceiveDataQueue.append(ScreenUTF8)
+                if len(Screen) > 0:
+                    self._ReceiveDataQueue.append(Screen)
 
                 MidTime = time.time()
 
@@ -389,68 +375,32 @@ class API(object):
     def _cleanScreen(self, screen: str, NoColor=True) ->str:
         if not screen:
             return screen
+        
+        # Log.log(Log.Level.INFO, screen)
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
 
-        PreNewLineMark = -1
-        PTTLibraryNewLineMark = '==PTTLibNewLineMark=='
-        for NewLineMark in range(1, 25):
-            for Type in range(1, 26):
-                Target = '[' + str(NewLineMark) + ';' + str(Type) + 'H'
-                if Target in screen:
-
-                    if PreNewLineMark == -1:
-                        NewLineCount = screen[:screen.find(Target)].count('\n')
-
-                        NewLine = NewLineMark - NewLineCount - 1
-                        # if ShowTarget in screen:
-                        #     print('NewLineMark', NewLineMark)
-                        #     print('NewLineCount', NewLineCount)
-                        #     print('NewLine', NewLine)
-                        if NewLine < 1:
-                            NewLine = 1
-                        screen = screen.replace(Target,
-                                                PTTLibraryNewLineMark*NewLine)
-                    else:
-                        NewLineMarkCount = NewLineMark - PreNewLineMark
-                        NewLineCount = screen[
-                            screen.rfind(PTTLibraryNewLineMark):
-                            screen.find(Target)].count('\n')
-
-                        NewLine = NewLineMarkCount - NewLineCount
-                        # if ShowTarget in screen:
-                        #     print('NewLineMark', NewLineMark)
-                        #     print('NewLineCount', NewLineCount)
-                        #     print('NewLine', NewLine)
-
-                        if NewLine < 1:
-                            NewLine = 1
-
-                        screen = screen.replace(Target,
-                                                PTTLibraryNewLineMark*NewLine)
-
-                    PreNewLineMark = NewLineMark
-
-        screen = screen.replace(PTTLibraryNewLineMark, '\n')
-        # if ShowTarget in screen:
-        #     self.Log('----------------------')
-        #     self.Log(str(screen))
-        #     self.Log('----------------------')
-        # screen = screen.replace('[2J    ', '')
-        screen = screen.replace('[2J', '')
-
         if NoColor:
+            # print(screen)
             screen = re.sub('\[[\d+;]*[mH]', '', screen)
+            screen = re.sub('\[[\d+;]*[mH]', '', screen)
+
+            # pattern = re.compile('\[[\d]+;[\d]+m')
+            # PatternResult = pattern.search(screen)
+            # if PatternResult is not None:
+            #     print(f'QQQQ {PatternResult.group(0)}')
+            #     screen = screen.replace('[' + PatternResult.group(0), '')
 
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         screen = re.sub(r'[\x0e-\x1f]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
+        screen = screen.replace('[K\n', '')
+        screen = screen.replace('[K', '')
+        screen = screen.replace('[2J\n', '')
+        screen = screen.replace('[2J', '')
 
-        screen = screen.split('\n')
-        screen = filter(None, screen)
-
-        return '\n'.join(screen)
+        return screen
 
     def getScreenQueue(self) ->list:
         return self._ReceiveDataQueue

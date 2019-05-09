@@ -159,7 +159,7 @@ def PerformanceTest():
 def GetPost():
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.WebSocket,
-        # LogLevel=PTT.LogLevel.DEBUG,
+        LogLevel=PTT.LogLevel.DEBUG,
     )
     try:
         PTTBot.login(ID, Password)
@@ -168,7 +168,7 @@ def GetPost():
         sys.exit()
     PTTBot.log('登入成功')
 
-    PTTBot.getPost('Gossiping', PostIndex=784462)
+    PTTBot.getPost('Beauty', PostIndex=58399)
 
     PTTBot.logout()
 
