@@ -406,7 +406,7 @@ def load(inputLanguage):
         if v is None:
             raise Exceptions.InitError(
                 Util.getFileName(__file__), k + ' is None')
-    
+
     if Config.LogLevel <= 2:
         print('[' + strftime('%m%d %H:%M:%S') + '][' + Info + '] ' + i18n +
               ' [' + Init + ']')
