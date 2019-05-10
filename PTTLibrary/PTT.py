@@ -30,7 +30,7 @@ Language = i18n.Language
 ConnectMode = ConnectCore.ConnectMode
 LogLevel = Log.Level
 Command = ConnectCore.Command
-
+PushType = DataType.PushType
 
 class Library(Synchronize.SynchronizeAllMethod):
     def __init__(self,
@@ -400,6 +400,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 ],
                 ConnectCore.ScreenTarget.QueryPost,
                 BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 [
@@ -408,6 +409,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 ],
                 ConnectCore.ScreenTarget.InBoard,
                 BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
             ),
         ]
 
@@ -445,9 +447,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                     PostAuthor = PatternResult.group(0)[1:-1]
                     break
 
-            Log.showValue(Log.Level.INFO, 'ListDate', ListDate)
-            Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
-            Log.showValue(Log.Level.INFO, 'PostDelStatus', PostDelStatus)
+            Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
+            Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
+            Log.showValue(Log.Level.DEBUG, 'PostDelStatus', PostDelStatus)
 
             return DataType.PostInfo(Board=Board,
                                      Author=PostAuthor,
@@ -458,7 +460,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             pattern = re.compile('#[\w]+')
             PatternResult = pattern.search(OriScreen)
-            AID = PatternResult.group(0)[1:]
+            PostAID = PatternResult.group(0)[1:]
 
             pattern = re.compile('文章網址: https:[\S]+html')
             PatternResult = pattern.search(OriScreen)
@@ -482,39 +484,129 @@ class Library(Synchronize.SynchronizeAllMethod):
                     PatternResult = pattern.search(line)
                     ListDate = PatternResult.group(0)
 
-            Log.showValue(Log.Level.INFO, 'AID', AID)
-            Log.showValue(Log.Level.INFO, 'PostWeb', PostWeb)
-            Log.showValue(Log.Level.INFO, 'PoPostMoneystWeb', PostMoney)
-            Log.showValue(Log.Level.INFO, 'ListDate', ListDate)
+            Log.showValue(Log.Level.DEBUG, 'PostAID', PostAID)
+            Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
+            Log.showValue(Log.Level.DEBUG, 'PostMoney', PostMoney)
+            Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
 
         Cmd = ConnectCore.Command.Enter * 2
         TargetList = [
             ConnectCore.TargetUnit(
                 [
-                    i18n.CatchIP,
-                    i18n.Success,
-                ],
-                ConnectCore.ScreenTarget.IP,
-                BreakDetect=True,
-            ),
-            ConnectCore.TargetUnit(
-                [
                     i18n.BrowsePost,
                 ],
                 ConnectCore.ScreenTarget.InPost,
-                Response=ConnectCore.Command.Down,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
             ),
         ]
 
-        index = self._ConnectCore.send(Cmd, TargetList)
-        LastScreen = self._ConnectCore.getScreenQueue()[-1]
+        PostAuthor = None
+        PostAuthorPattern = re.compile('作者  (.+) 看板  ' + Board)
+        PostTitle = None
+        PostTitlePattern = re.compile('標題  (.+)')
+        PostDate = None
+        PostDatePattern = re.compile('時間  (.+)')
+        PostContent = []
 
-        pattern = re.compile(
-            '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+.[\d]+.[\d]+.[\d]+'
-        )
-        PatternResult = pattern.search(LastScreen)
-        IP = PatternResult.group(0)[25:]
+        LineFromTopattern = re.compile('[\d]+~[\d]+')
 
+        index = -1
+        FirstPage = True
+        while True:
+            index = self._ConnectCore.send(Cmd, TargetList)
+            Cmd = ConnectCore.Command.Down
+            LastScreen = self._ConnectCore.getScreenQueue()[-1]
+            # print(LastScreen)
+            Lines = LastScreen.split('\n')
+            LastLine = Lines[-1]
+            Lines.pop()
+            LastScreen = '\n'.join(Lines)
+
+            if FirstPage:
+                
+                PatternResult = PostAuthorPattern.search(LastScreen)
+                PostAuthor = PatternResult.group(0)
+                PostAuthor = PostAuthor.replace('看板  ' + Board, '')
+                PostAuthor = PostAuthor[4:].strip()
+
+                Log.showValue(Log.Level.DEBUG, i18n.Author, PostAuthor)
+
+                PatternResult = PostTitlePattern.search(LastScreen)
+                PostTitle = PatternResult.group(0)
+                PostTitle = PostTitle[4:].strip()
+
+                Log.showValue(Log.Level.DEBUG, i18n.Title, PostTitle)
+
+                PatternResult = PostDatePattern.search(LastScreen)
+                PostDate = PatternResult.group(0)
+                PostDate = PostDate[4:].strip()
+
+                Log.showValue(Log.Level.DEBUG, i18n.Date, PostDate)
+
+                PostContentTemp = LastScreen
+                StartTarget = '───────────────────────────────────────'
+                PostContentTemp = PostContentTemp[
+                    PostContentTemp.find(StartTarget) + len(StartTarget):
+                ]
+
+                PostContent.append(PostContentTemp)
+
+                PatternResult = LineFromTopattern.search(LastLine)
+                LastReadLine = int(PatternResult.group(0).split('~')[1])
+
+            if '※ 發信站: 批踢踢實業坊(ptt.cc)' in LastScreen:
+
+                pattern = re.compile(
+                    '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+\.[\d]+\.[\d]+\.[\d]+'
+                )
+                PatternResult = pattern.search(LastScreen)
+                IP = PatternResult.group(0)[25:]
+
+                Log.showValue(Log.Level.DEBUG, 'IP', IP)
+
+                if not FirstPage:
+                    PostContentTemp = LastScreen
+
+                    EndTarget = '※ 發信站: 批踢踢實業坊(ptt.cc)'
+                    PostContentTemp = PostContentTemp[
+                        :PostContentTemp.find(EndTarget)
+                    ].strip()
+
+                    PostContent.append(PostContentTemp)
+                    PostContent = '\n'.join(PostContent).strip()
+                else:
+
+                    PostContent = '\n'.join(PostContent).strip()
+                    EndTarget = '※ 發信站: 批踢踢實業坊(ptt.cc)'
+                    PostContent = PostContentTemp[
+                        :PostContent.find(EndTarget)
+                    ].strip()
+                
+                Log.showValue(Log.Level.DEBUG, i18n.Content, PostContent)
+
+                break
+            elif not FirstPage:
+
+                PatternResult = LineFromTopattern.search(LastLine)
+                LastReadLineTemp = int(PatternResult.group(0).split('~')[1])
+
+                GetLine = LastReadLineTemp - LastReadLine
+                
+                NewContentPart = '\n'.join(Lines[-GetLine:])
+                
+                # print(f'GetLine: {GetLine}')
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'NewContentPart',
+                    NewContentPart
+                )
+
+                PostContent.append(NewContentPart)
+                LastReadLine = LastReadLineTemp
+            
+            FirstPage = False
+        
         Cmd = ConnectCore.Command.Right
         TargetList = [
             ConnectCore.TargetUnit(
@@ -524,6 +616,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 ],
                 ConnectCore.ScreenTarget.PostEnd,
                 BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 [
@@ -531,17 +624,22 @@ class Library(Synchronize.SynchronizeAllMethod):
                 ],
                 ConnectCore.ScreenTarget.InPost,
                 BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
             ),
         ]
 
+        ContentLastScreen = LastScreen
+        # print(ContentLastScreen)
+
         index = -1
         MaxLine = 0
-        NewIPPattern = re.compile('\([\d]+.[\d]+.[\d]+.[\d]+\)')
-        PushIDPattern = re.compile('[推|噓|→] [\w]+:')
+        NewIPPattern = re.compile('\([\d]+\.[\d]+\.[\d]+\.[\d]+\)')
+        PushAuthorPattern = re.compile('[推|噓|→] [\w]+:')
         PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
-        PushIPPattern = re.compile('[\d]+.[\d]+.[\d]+.[\d]+')
+        PushIPPattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+        
+        PushList = []
 
-        # 
         while index != 0:
             index = self._ConnectCore.send(Cmd, TargetList)
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
@@ -550,14 +648,21 @@ class Library(Synchronize.SynchronizeAllMethod):
             LastLine = Lines[-1]
             Lines.pop()
 
-            pattern = re.compile('[\d]+~[\d]+')
-            PatternResult = pattern.search(LastScreen)
+            PatternResult = LineFromTopattern.search(LastScreen)
             # LineFrom = int(PatternResult.group(0).split('~')[0])
             LineTo = int(PatternResult.group(0).split('~')[1])
 
             if MaxLine != 0:
                 CutLine = LineTo - MaxLine
-                Lines = Lines[-CutLine:]
+                if CutLine > 0:
+                    Lines = Lines[-CutLine:]
+            else:
+                CutLine = LineTo - LastReadLine
+                if CutLine > 0:
+                    Lines = Lines[-CutLine:]
+                    LastScreen = '\n'.join(Lines)
+                    LastScreen = ContentLastScreen + '\n' + LastScreen
+                    Lines = LastScreen.split('\n')
             MaxLine = LineTo
 
             for line in Lines:
@@ -586,13 +691,13 @@ class Library(Synchronize.SynchronizeAllMethod):
                     pass
                 
                 if PushType != 0:
-                    Result = PushIDPattern.search(line)
-                    PushID = Result.group(0)[2:-1]
+                    Result = PushAuthorPattern.search(line)
+                    PushAuthor = Result.group(0)[2:-1]
                     Log.showValue(Log.Level.DEBUG, [
                             i18n.Push,
                             i18n.ID,
                         ],
-                        PushID
+                        PushAuthor
                     )
 
                     Result = PushDatePattern.search(line)
@@ -615,7 +720,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                             PushIP
                         )
 
-                    PushContent = line[line.find(PushID) + len(PushID):]
+                    PushContent = line[
+                        line.find(PushAuthor) + len(PushAuthor):
+                    ]
                     PushContent = PushContent.replace(PushDate, '')
                     if PushIP is not None:
                         PushContent = PushContent.replace(PushIP, '')
@@ -627,13 +734,22 @@ class Library(Synchronize.SynchronizeAllMethod):
                         ],
                         PushContent
                     )
-                
+
+                    CurrentPush = DataType.PushInfo(
+                        PushType,
+                        PushAuthor,
+                        PushContent,
+                        PushIP,
+                        PushDate
+                    )
+                    PushList.append(CurrentPush)
+                    
                 Log.showValue(Log.Level.DEBUG, [
                         'line'
                     ],
                     line
                 )
-            print('$' * 20)
+            # print('$' * 20)
 
         # res = requests.get(
         #     url=PostWeb,
@@ -687,12 +803,26 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         # Content = Content.strip()
 
-        # Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
-        # Log.showValue(Log.Level.INFO, 'PostTitle', PostTitle)
-        # Log.showValue(Log.Level.INFO, 'PostDate', PostDate)
-        # Log.showValue(Log.Level.INFO, 'Content', Content)
+        Log.showValue(Log.Level.INFO, 'PostAuthor', PostAuthor)
+        Log.showValue(Log.Level.INFO, 'PostTitle', PostTitle)
+        Log.showValue(Log.Level.INFO, 'PostDate', PostDate)
+        Log.showValue(Log.Level.INFO, 'PostContent', PostContent)
         Log.showValue(Log.Level.INFO, 'IP', IP)
         
+        Post = DataType.PostInfo(
+            Board=Board,
+            AID=PostAID,
+            Author=PostAuthor,
+            Date=PostDate,
+            Title=PostTitle,
+            WebUrl=PostWeb,
+            Money=PostMoney,
+            Content=PostContent,
+            IP=IP,
+            PushList=PushList,
+            ListDate=ListDate
+        )
+        return Post
         
 if __name__ == '__main__':
 

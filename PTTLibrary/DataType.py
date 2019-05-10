@@ -119,103 +119,103 @@ class PushType(object):
 
 class MailInformation(object):
     def __init__(self, Author, Title, Date, Content, IP, RawData):
-        self.__Author = ParseParameter(str, Author)
-        self.__Title = ParseParameter(str, Title)
-        self.__Date = ParseParameter(str, Date)
-        self.__Content = ParseParameter(str, Content)
-        self.__IP = ParseParameter(str, IP)
-        self.__RawData = array.array('B', RawData).tostring()
+        self._Author = ParseParameter(str, Author)
+        self._Title = ParseParameter(str, Title)
+        self._Date = ParseParameter(str, Date)
+        self._Content = ParseParameter(str, Content)
+        self._IP = ParseParameter(str, IP)
+        self._RawData = array.array('B', RawData).tostring()
 
     def getAuthor(self):
-        return self.__Author
+        return self._Author
 
     def getTitle(self):
-        return self.__Title
+        return self._Title
 
     def getDate(self):
-        return self.__Date
+        return self._Date
 
     def getContent(self):
-        return self.__Content
+        return self._Content
 
     def getIP(self):
-        return self.__IP
+        return self._IP
 
     def getRawData(self):
-        return self.__RawData
+        return self._RawData
 
 
 class UserInformation(object):
     def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State,
                  Mail, LastLogin, LastIP, FiveChess, Chess):
-        self.__ID = ParseParameter(str, ID)
-        self.__Money = ParseParameter(str, Money)
-        self.__LoginTime = ParseParameter(int, LoginTime)
-        self.__LegalPost = ParseParameter(int, LegalPost)
-        self.__IllegalPost = ParseParameter(int, IllegalPost)
-        self.__State = ParseParameter(str, State)
-        self.__Mail = ParseParameter(str, Mail)
-        self.__LastLogin = ParseParameter(str, LastLogin)
-        self.__LastIP = ParseParameter(str, LastIP)
-        self.__FiveChess = ParseParameter(str, FiveChess)
-        self.__Chess = ParseParameter(str, Chess)
+        self._ID = ParseParameter(str, ID)
+        self._Money = ParseParameter(str, Money)
+        self._LoginTime = ParseParameter(int, LoginTime)
+        self._LegalPost = ParseParameter(int, LegalPost)
+        self._IllegalPost = ParseParameter(int, IllegalPost)
+        self._State = ParseParameter(str, State)
+        self._Mail = ParseParameter(str, Mail)
+        self._LastLogin = ParseParameter(str, LastLogin)
+        self._LastIP = ParseParameter(str, LastIP)
+        self._FiveChess = ParseParameter(str, FiveChess)
+        self._Chess = ParseParameter(str, Chess)
 
     def getID(self):
-        return self.__ID
+        return self._ID
 
     def getMoney(self):
-        return self.__Money
+        return self._Money
 
     def getLoginTime(self):
-        return self.__LoginTime
+        return self._LoginTime
 
     def getLegalPost(self):
-        return self.__LegalPost
+        return self._LegalPost
 
     def getIllegalPost(self):
-        return self.__IllegalPost
+        return self._IllegalPost
 
     def getState(self):
-        return self.__State
+        return self._State
 
     def getMail(self):
-        return self.__Mail
+        return self._Mail
 
     def getLastLogin(self):
-        return self.__LastLogin
+        return self._LastLogin
 
     def getLastIP(self):
-        return self.__LastIP
+        return self._LastIP
 
     def getFiveChess(self):
-        return self.__FiveChess
+        return self._FiveChess
 
     def getChess(self):
-        return self.__Chess
+        return self._Chess
 
 
-class PushInformation(object):
+class PushInfo(object):
     def __init__(self, PushType, Author, PushContent, PushIP, PushTime):
-        self.__Type = ParseParameter(int, PushType)
-        self.__Author = ParseParameter(str, Author)
-        self.__Content = ParseParameter(str, PushContent)
-        self.__IP = ParseParameter(str, PushIP)
-        self.__Time = ParseParameter(str, PushTime)
+        self._Type = ParseParameter(int, PushType)
+        self._Author = ParseParameter(str, Author)
+        self._Content = ParseParameter(str, PushContent)
+        self._IP = ParseParameter(str, PushIP)
+        self._Time = ParseParameter(str, PushTime)
 
     def getType(self):
-        return self.__Type
+        return self._Type
 
     def getAuthor(self):
-        return self.__Author
+        return self._Author
 
     def getContent(self):
-        return self.__Content
+        return self._Content
 
     def getIP(self):
-        return self.__IP
+        return self._IP
 
     def getTime(self):
-        return self.__Time
+        return self._Time
 
 
 class PostDeleteStatus(object):
@@ -229,82 +229,78 @@ class PostDeleteStatus(object):
 
 
 class PostInfo(object):
-    def __init__(self, Board=None, PostID=None, Author=None, Date=None,
-                 Title=None, WebUrl=None, Money=None, PostContent=None,
-                 IP=None, PushList=None, RawData=None, ListDate=None,
+    def __init__(self, Board=None, AID=None, Author=None, Date=None,
+                 Title=None, WebUrl=None, Money=None, Content=None,
+                 IP=None, PushList=None, ListDate=None,
                  DeleteStatus=0):
-        self.__Board = ParseParameter(str, Board)
-        self.__PostID = ParseParameter(str, PostID)
-        self.__Author = ParseParameter(str, Author)
-        self.__Date = ParseParameter(str, Date)
-        self.__Title = ParseParameter(str, Title)
-        self.__PostContent = ParseParameter(str, PostContent)
-        self.__Money = ParseParameter(int, Money)
-        self.__WebUrl = ParseParameter(str, WebUrl)
-        self.__IP = ParseParameter(str, IP)
-        self.__PushList = PushList
-        self.__RawData = ParseParameter(str, RawData)
-        self.__DeleteStatus = DeleteStatus
-        self.__ListDate = ParseParameter(str, ListDate)
+        self._Board = ParseParameter(str, Board)
+        self._AID = ParseParameter(str, AID)
+        self._Author = ParseParameter(str, Author)
+        self._Date = ParseParameter(str, Date)
+        self._Title = ParseParameter(str, Title)
+        self._Content = ParseParameter(str, Content)
+        self._Money = ParseParameter(int, Money)
+        self._WebUrl = ParseParameter(str, WebUrl)
+        self._IP = ParseParameter(str, IP)
+        self._PushList = PushList
+        self._DeleteStatus = DeleteStatus
+        self._ListDate = ParseParameter(str, ListDate)
 
     def getBoard(self):
-        return self.__Board
+        return self._Board
 
-    def getID(self):
-        return self.__PostID
+    def getAID(self):
+        return self._AID
 
     def getAuthor(self):
-        return self.__Author
+        return self._Author
 
     def getDate(self):
-        return self.__Date
+        return self._Date
 
     def getTitle(self):
-        return self.__Title
+        return self._Title
 
     def getContent(self):
-        return self.__PostContent
+        return self._Content
 
     def getMoney(self):
-        return self.__Money
+        return self._Money
 
     def getWebUrl(self):
-        return self.__WebUrl
+        return self._WebUrl
 
     def getIP(self):
-        return self.__IP
+        return self._IP
 
     def getPushList(self):
-        return self.__PushList
-
-    def getRawData(self):
-        return self.__RawData
+        return self._PushList
 
     def getDeleteStatus(self):
-        return self.__DeleteStatus
+        return self._DeleteStatus
 
     def getListDate(self):
-        return self.__ListDate
+        return self._ListDate
 
 
 class WaterBallInformation(object):
     def __init__(self, Type, Author, PushContent, Date=''):
-        self.__Type = ParseParameter(int, Type)
-        self.__Author = ParseParameter(str, Author)
-        self.__Content = ParseParameter(str, PushContent)
-        self.__Date = ParseParameter(str, Date)
+        self._Type = ParseParameter(int, Type)
+        self._Author = ParseParameter(str, Author)
+        self._Content = ParseParameter(str, PushContent)
+        self._Date = ParseParameter(str, Date)
 
     def getAuthor(self):
-        return self.__Author
+        return self._Author
 
     def getContent(self):
-        return self.__Content
+        return self._Content
 
     def getDate(self):
-        return self.__Date
+        return self._Date
 
     def getType(self):
-        return self.__Type
+        return self._Type
 
 
 class Cursor(object):
