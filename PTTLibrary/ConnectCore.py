@@ -25,7 +25,7 @@ except ModuleNotFoundError:
 
 
 def _showScreen(ScreenQueue, FunctionName=None):
-    if Config.LogLevel != Log.Level.DEBUG:
+    if Config.LogLevel != Log.Level.TRACE:
         return
 
     if isinstance(ScreenQueue, list):
@@ -84,18 +84,18 @@ class ScreenTarget(object):
     ]
 
     InPost = [
-        '瀏覽 第',
-        '目前顯示: 第',
+        '瀏覽',
+        '目前顯示',
         '離開'
     ]
 
     PostEnd = [
-        '瀏覽 第',
-        '(100%)  目前顯示: 第',
+        '瀏覽',
+        '(100%)  目前顯示',
         '離開'
     ]
 
-    IP = [
+    PostIP = [
         '發信站: 批踢踢實業坊(ptt.cc), 來自:'
     ]
 
@@ -144,11 +144,16 @@ class TargetUnit(object):
     def __init__(self,
                  DisplayMsg,
                  DetectTarget,
+                 LogLevel=0,
                  Response='',
                  BreakDetect=False):
 
         self._DisplayMsg = DisplayMsg
         self._DetectTarget = DetectTarget
+        if LogLevel == 0:
+            self._LogLevel = Log.Level.INFO
+        else:
+            self._LogLevel = LogLevel
         self._Response = Response
         self._BreakDetect = BreakDetect
 
@@ -170,6 +175,9 @@ class TargetUnit(object):
 
     def getDetectTarget(self):
         return self._DetectTarget
+
+    def getLogLevel(self):
+        return self._LogLevel
 
     def getResponse(self, Screen: str):
         if callable(self._Response):
@@ -338,17 +346,17 @@ class API(object):
 
                         FindTarget = True
 
-                        Log.showValue(Log.Level.INFO, [
-                            i18n.PTT,
-                            i18n.Msg
-                        ],
+                        Log.showValue(Target.getLogLevel(), [
+                                i18n.PTT,
+                                i18n.Msg
+                            ],
                             Target.getDisplayMsg()
                         )
 
                         EndTime = time.time()
                         Log.showValue(Log.Level.DEBUG, [
-                            i18n.SpendTime,
-                        ],
+                                i18n.SpendTime,
+                            ],
                             round(EndTime - StartTime, 2)
                         )
 
@@ -379,16 +387,16 @@ class API(object):
         # Log.log(Log.Level.INFO, screen)
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
 
+        NewLineMarkList = re.findall('\[(\d+);4H', screen)
+        for M in NewLineMarkList:
+            NewLineCount = int(M) - screen[:screen.find(f'[{M};4H')].count('\n') - 1
+
+            screen = screen.replace(f'[{M};4H', '\n' * NewLineCount)
+
         if NoColor:
             # print(screen)
             screen = re.sub('\[[\d+;]*[mH]', '', screen)
             screen = re.sub('\[[\d+;]*[mH]', '', screen)
-
-            # pattern = re.compile('\[[\d]+;[\d]+m')
-            # PatternResult = pattern.search(screen)
-            # if PatternResult is not None:
-            #     print(f'QQQQ {PatternResult.group(0)}')
-            #     screen = screen.replace('[' + PatternResult.group(0), '')
 
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)

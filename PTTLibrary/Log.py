@@ -14,11 +14,12 @@ except ModuleNotFoundError:
 
 class Level(object):
 
-    DEBUG = 1
-    INFO = 2
-    SLIENT = 3
+    TRACE = 1
+    DEBUG = 2
+    INFO = 3
+    SLIENT = 4
 
-    MinValue = DEBUG
+    MinValue = TRACE
     MaxValue = SLIENT
 
 
@@ -47,6 +48,10 @@ def log(LogLevel, Msg):
     if not Util.checkRange(Level, LogLevel):
         raise ValueError('LogLevel', LogLevel)
 
+    if Config.LogLevel > LogLevel:
+        return
+    if len(Msg) == 0:
+        return
     Msg = merge(Msg)
 
     TotalMessage = '[' + strftime('%m%d %H:%M:%S') + ']'
@@ -56,8 +61,12 @@ def log(LogLevel, Msg):
         TotalMessage += '[' + i18n.Info + '] ' + Msg
 
     try:
-        print(TotalMessage.encode(sys.stdin.encoding,
-                                  "replace").decode(sys.stdin.encoding))
+        print(TotalMessage.encode(
+            sys.stdin.encoding,
+            'replace'
+        ).decode(
+                sys.stdin.encoding
+            ))
     except Exception:
         print(TotalMessage.encode('utf-8', "replace").decode('utf-8'))
 
@@ -68,6 +77,8 @@ def showValue(LogLevel, Msg, Value):
         raise ValueError('LogLevel', LogLevel)
 
     if Config.LogLevel > LogLevel:
+        return
+    if len(Msg) == 0:
         return
 
     Msg = merge(Msg)

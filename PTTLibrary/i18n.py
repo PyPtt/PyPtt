@@ -382,6 +382,18 @@ def load(inputLanguage):
         'Content',
     ])
 
+    global Author
+    Author = SpecificLoad(inputLanguage, [
+        '作者',
+        'Author',
+    ])
+
+    global Title
+    Title = SpecificLoad(inputLanguage, [
+        '標題',
+        'Title',
+    ])
+
     # Login too often
 
     # Final check
