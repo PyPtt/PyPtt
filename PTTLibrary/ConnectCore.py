@@ -383,14 +383,15 @@ class API(object):
     def _cleanScreen(self, screen: str, NoColor=True) ->str:
         if not screen:
             return screen
-        
+
         # Log.log(Log.Level.INFO, screen)
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
 
         NewLineMarkList = re.findall('\[(\d+);4H', screen)
         for M in NewLineMarkList:
-            NewLineCount = int(M) - screen[:screen.find(f'[{M};4H')].count('\n') - 1
-
+            NewLineCount = (int(M) -
+                            screen[:screen.find(f'[{M};4H')].count('\n') -
+                            1)
             screen = screen.replace(f'[{M};4H', '\n' * NewLineCount)
 
         if NoColor:

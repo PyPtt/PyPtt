@@ -67,7 +67,7 @@ def Loginout():
         LogLevel=PTT.LogLevel.DEBUG
     )
     try:
-        PTTBot.login(ID, 
+        PTTBot.login(ID,
                      Password,
                      # KickOtherLogin=True
                      )
@@ -150,7 +150,7 @@ def PerformanceTest():
             break
         # print(PTT_TIME)
     EndTime = time.time()
-    
+
     PTTBot.log('Performance Test Telnet ' + str(round(EndTime - StartTime, 2)) + ' s')
 
     print('Performance Test finish')
@@ -159,7 +159,7 @@ def PerformanceTest():
 def GetPost():
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.WebSocket,
-        # LogLevel=PTT.LogLevel.DEBUG,
+        LogLevel=PTT.LogLevel.TRACE,
     )
     try:
         PTTBot.login(ID, Password)
@@ -168,7 +168,7 @@ def GetPost():
         sys.exit()
 
     try:
-        Post = PTTBot.getPost('Beauty', PostIndex=58448)
+        Post = PTTBot.getPost('Wanted', PostIndex=80641)
 
         if Post is not None:
             print('Board: ' + Post.getBoard())
@@ -188,7 +188,7 @@ def GetPost():
             PushCount = 0
             BooCount = 0
             ArrowCount = 0
-            
+
             for Push in Post.getPushList():
             #     print(Push.getType())
             #     print(Push.getAuthor())
@@ -202,7 +202,7 @@ def GetPost():
                     BooCount += 1
                 if Push.getType() == PTT.PushType.Arrow:
                     ArrowCount += 1
-            
+
             print(f'{PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
     except Exception as e:
 

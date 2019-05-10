@@ -33,7 +33,7 @@ def merge(Msg) ->str:
                 if (Msg[i][-1].upper() != Msg[i][-1].lower() and
                    i != len(Msg) - 1):
                     Msg[i] = Msg[i].rstrip() + ' '
-                
+
             Msg = ''.join(Msg)
         else:
             Msg = ' '.join(Msg)
