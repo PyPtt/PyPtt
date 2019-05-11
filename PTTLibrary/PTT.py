@@ -13,6 +13,7 @@ try:
     import ErrorCode
     import Log
     import Synchronize
+    import Screens
 except ModuleNotFoundError:
     from . import DataType
     from . import Config
@@ -22,6 +23,7 @@ except ModuleNotFoundError:
     from . import ErrorCode
     from . import Log
     from . import Synchronize
+    from . import Screens
 
 Version = Config.Version
 
@@ -131,7 +133,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         TargetList = [
             ConnectCore.TargetUnit(
                 i18n.LoginSuccess,
-                ConnectCore.ScreenTarget.MainMenu,
+                Screens.Target.MainMenu,
                 BreakDetect=True
             ),
             ConnectCore.TargetUnit(
@@ -248,7 +250,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.GetPTTTime,
                     i18n.Success,
                 ],
-                ConnectCore.ScreenTarget.MainMenu,
+                Screens.Target.MainMenu,
                 BreakDetect=True
             ),
         ]
@@ -399,7 +401,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.CatchPost,
                     i18n.Success,
                 ],
-                ConnectCore.ScreenTarget.QueryPost,
+                Screens.Target.QueryPost,
                 BreakDetect=True,
                 LogLevel=Log.Level.DEBUG
             ),
@@ -408,7 +410,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.CatchPost,
                     i18n.Success,
                 ],
-                ConnectCore.ScreenTarget.InBoard,
+                Screens.Target.InBoard,
                 BreakDetect=True,
                 LogLevel=Log.Level.DEBUG
             ),
@@ -495,8 +497,17 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 [
                     i18n.BrowsePost,
+                    i18n.Done,
                 ],
-                ConnectCore.ScreenTarget.InPost,
+                Screens.Target.PostEnd,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.BrowsePost,
+                ],
+                Screens.Target.InPost,
                 BreakDetect=True,
                 LogLevel=Log.Level.DEBUG
             ),
@@ -558,8 +569,8 @@ class Library(Synchronize.SynchronizeAllMethod):
 
                 LastReadLine = LastReadLineTemp
 
-            if '※ 發信站: 批踢踢實業坊(ptt.cc)' in LastScreen:
-
+            if index == 0:
+            
                 pattern = re.compile(
                     '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+\.[\d]+\.[\d]+\.[\d]+'
                 )
@@ -609,151 +620,151 @@ class Library(Synchronize.SynchronizeAllMethod):
 
                 PostContent.append(NewContentPart)
                 LastReadLine = LastReadLineTemp
-
+            
             FirstPage = False
 
-        Cmd = ConnectCore.Command.Right
-        TargetList = [
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetPush,
-                    i18n.Done,
-                ],
-                ConnectCore.ScreenTarget.PostEnd,
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
-            ),
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetPush,
-                ],
-                ConnectCore.ScreenTarget.InPost,
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
-            ),
-        ]
+        # Cmd = ConnectCore.Command.Right
+        # TargetList = [
+        #     ConnectCore.TargetUnit(
+        #         [
+        #             i18n.GetPush,
+        #             i18n.Done,
+        #         ],
+        #         Screens.Target.PostEnd,
+        #         BreakDetect=True,
+        #         LogLevel=Log.Level.DEBUG
+        #     ),
+        #     ConnectCore.TargetUnit(
+        #         [
+        #             i18n.GetPush,
+        #         ],
+        #         Screens.Target.InPost,
+        #         BreakDetect=True,
+        #         LogLevel=Log.Level.DEBUG
+        #     ),
+        # ]
 
-        ContentLastScreen = LastScreen
-        # print(ContentLastScreen)
+        # ContentLastScreen = LastScreen
+        # # print(ContentLastScreen)
 
-        index = -1
-        MaxLine = 0
-        NewIPPattern = re.compile('\([\d]+\.[\d]+\.[\d]+\.[\d]+\)')
-        PushAuthorPattern = re.compile('[推|噓|→] [\w]+:')
-        PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
-        PushIPPattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+        # index = -1
+        # MaxLine = 0
+        # NewIPPattern = re.compile('\([\d]+\.[\d]+\.[\d]+\.[\d]+\)')
+        # PushAuthorPattern = re.compile('[推|噓|→] [\w]+:')
+        # PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
+        # PushIPPattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
-        PushList = []
+        # PushList = []
 
-        while index != 0:
-            index = self._ConnectCore.send(Cmd, TargetList)
-            LastScreen = self._ConnectCore.getScreenQueue()[-1]
+        # while index != 0:
+        #     index = self._ConnectCore.send(Cmd, TargetList)
+        #     LastScreen = self._ConnectCore.getScreenQueue()[-1]
 
-            Lines = LastScreen.split('\n')
-            LastLine = Lines[-1]
-            Lines.pop()
+        #     Lines = LastScreen.split('\n')
+        #     LastLine = Lines[-1]
+        #     Lines.pop()
 
-            PatternResult = LineFromTopattern.search(LastScreen)
-            # LineFrom = int(PatternResult.group(0).split('~')[0])
-            LineTo = int(PatternResult.group(0).split('~')[1])
+        #     PatternResult = LineFromTopattern.search(LastScreen)
+        #     # LineFrom = int(PatternResult.group(0).split('~')[0])
+        #     LineTo = int(PatternResult.group(0).split('~')[1])
 
-            if MaxLine != 0:
-                CutLine = LineTo - MaxLine
-                if CutLine > 0:
-                    Lines = Lines[-CutLine:]
-            else:
-                CutLine = LineTo - LastReadLine
-                if CutLine > 0:
-                    Lines = Lines[-CutLine:]
-                    LastScreen = '\n'.join(Lines)
-                    LastScreen = ContentLastScreen + '\n' + LastScreen
-                    Lines = LastScreen.split('\n')
-            MaxLine = LineTo
+        #     if MaxLine != 0:
+        #         CutLine = LineTo - MaxLine
+        #         if CutLine > 0:
+        #             Lines = Lines[-CutLine:]
+        #     else:
+        #         CutLine = LineTo - LastReadLine
+        #         if CutLine > 0:
+        #             Lines = Lines[-CutLine:]
+        #             LastScreen = '\n'.join(Lines)
+        #             LastScreen = ContentLastScreen + '\n' + LastScreen
+        #             Lines = LastScreen.split('\n')
+        #     MaxLine = LineTo
 
-            for line in Lines:
-                line = line.strip()
-                PushType = 0
-                if line.startswith('※ 編輯'):
-                    if IP in line:
-                        continue
-                    PatternResult = NewIPPattern.search(line)
-                    IP = PatternResult.group(0)[1:-1]
-                    Log.showValue(
-                        Log.Level.DEBUG,
-                        [
-                            i18n.Update,
-                            'IP'
-                        ],
-                        IP
-                    )
-                elif line.startswith('推'):
-                    PushType = DataType.PushType.Push
-                elif line.startswith('噓'):
-                    PushType = DataType.PushType.Boo
-                elif line.startswith('→'):
-                    PushType = DataType.PushType.Arrow
-                else:
-                    pass
+        #     for line in Lines:
+        #         line = line.strip()
+        #         PushType = 0
+        #         if line.startswith('※ 編輯'):
+        #             if IP in line:
+        #                 continue
+        #             PatternResult = NewIPPattern.search(line)
+        #             IP = PatternResult.group(0)[1:-1]
+        #             Log.showValue(
+        #                 Log.Level.DEBUG,
+        #                 [
+        #                     i18n.Update,
+        #                     'IP'
+        #                 ],
+        #                 IP
+        #             )
+        #         elif line.startswith('推'):
+        #             PushType = DataType.PushType.Push
+        #         elif line.startswith('噓'):
+        #             PushType = DataType.PushType.Boo
+        #         elif line.startswith('→'):
+        #             PushType = DataType.PushType.Arrow
+        #         else:
+        #             pass
 
-                if PushType != 0:
-                    Result = PushAuthorPattern.search(line)
-                    PushAuthor = Result.group(0)[2:-1]
-                    Log.showValue(Log.Level.DEBUG, [
-                            i18n.Push,
-                            i18n.ID,
-                        ],
-                        PushAuthor
-                    )
+        #         if PushType != 0:
+        #             Result = PushAuthorPattern.search(line)
+        #             PushAuthor = Result.group(0)[2:-1]
+        #             Log.showValue(Log.Level.DEBUG, [
+        #                     i18n.Push,
+        #                     i18n.ID,
+        #                 ],
+        #                 PushAuthor
+        #             )
 
-                    Result = PushDatePattern.search(line)
-                    PushDate = Result.group(0)
-                    Log.showValue(Log.Level.DEBUG, [
-                            i18n.Push,
-                            i18n.Date,
-                        ],
-                        PushDate
-                    )
+        #             Result = PushDatePattern.search(line)
+        #             PushDate = Result.group(0)
+        #             Log.showValue(Log.Level.DEBUG, [
+        #                     i18n.Push,
+        #                     i18n.Date,
+        #                 ],
+        #                 PushDate
+        #             )
 
-                    PushIP = None
-                    Result = PushIPPattern.search(line)
-                    if Result is not None:
-                        PushIP = Result.group(0)
-                        Log.showValue(Log.Level.DEBUG, [
-                                i18n.Push,
-                                'IP',
-                            ],
-                            PushIP
-                        )
+        #             PushIP = None
+        #             Result = PushIPPattern.search(line)
+        #             if Result is not None:
+        #                 PushIP = Result.group(0)
+        #                 Log.showValue(Log.Level.DEBUG, [
+        #                         i18n.Push,
+        #                         'IP',
+        #                     ],
+        #                     PushIP
+        #                 )
 
-                    PushContent = line[
-                        line.find(PushAuthor) + len(PushAuthor):
-                    ]
-                    PushContent = PushContent.replace(PushDate, '')
-                    if PushIP is not None:
-                        PushContent = PushContent.replace(PushIP, '')
-                    PushContent = PushContent[2:].strip()
+        #             PushContent = line[
+        #                 line.find(PushAuthor) + len(PushAuthor):
+        #             ]
+        #             PushContent = PushContent.replace(PushDate, '')
+        #             if PushIP is not None:
+        #                 PushContent = PushContent.replace(PushIP, '')
+        #             PushContent = PushContent[2:].strip()
 
-                    Log.showValue(Log.Level.DEBUG, [
-                            i18n.Push,
-                            i18n.Content,
-                        ],
-                        PushContent
-                    )
+        #             Log.showValue(Log.Level.DEBUG, [
+        #                     i18n.Push,
+        #                     i18n.Content,
+        #                 ],
+        #                 PushContent
+        #             )
 
-                    CurrentPush = DataType.PushInfo(
-                        PushType,
-                        PushAuthor,
-                        PushContent,
-                        PushIP,
-                        PushDate
-                    )
-                    PushList.append(CurrentPush)
+        #             CurrentPush = DataType.PushInfo(
+        #                 PushType,
+        #                 PushAuthor,
+        #                 PushContent,
+        #                 PushIP,
+        #                 PushDate
+        #             )
+        #             PushList.append(CurrentPush)
 
-                Log.showValue(Log.Level.DEBUG, [
-                        'line'
-                    ],
-                    line
-                )
+        #         Log.showValue(Log.Level.DEBUG, [
+        #                 'line'
+        #             ],
+        #             line
+        #         )
             # print('$' * 20)
 
         # res = requests.get(
