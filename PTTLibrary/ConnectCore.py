@@ -16,42 +16,14 @@ try:
     import Util
     import i18n
     import Log
+    import Screens
 except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
     from . import i18n
     from . import Log
-
-
-def _showScreen(ScreenQueue, FunctionName=None):
-    if Config.LogLevel != Log.Level.TRACE:
-        return
-
-    if isinstance(ScreenQueue, list):
-        for Screen in ScreenQueue:
-            print('-' * 50)
-            try:
-                print(Screen.encode(
-                    sys.stdin.encoding, "replace").decode(
-                        sys.stdin.encoding
-                    )
-                )
-            except Exception:
-                print(Screen.encode('utf-8', "replace").decode('utf-8'))
-    else:
-        print('-' * 50)
-        try:
-            print(ScreenQueue.encode(
-                sys.stdin.encoding, "replace").decode(
-                    sys.stdin.encoding))
-        except Exception:
-            print(ScreenQueue.encode('utf-8', "replace").decode('utf-8'))
-
-        print('len:' + str(len(ScreenQueue)))
-    if FunctionName is not None:
-        print('錯誤在 ' + FunctionName + ' 函式發生')
-    print('-' * 50)
+    from . import Screens
 
 
 class Command(object):
@@ -64,40 +36,6 @@ class Command(object):
     Right = '\x1b\x4fC'
     Left = '\x1b\x4fD'
     GoMainMenu = Left * 5
-
-
-class ScreenTarget(object):
-    MainMenu = [
-        '人, 我是',
-        '[呼叫器]',
-    ]
-
-    QueryPost = [
-        '請按任意鍵繼續',
-        '這一篇文章值',
-    ]
-
-    InBoard = [
-        '文章選讀',
-        '進板畫面',
-        '【板主'
-    ]
-
-    InPost = [
-        '瀏覽',
-        '目前顯示',
-        '離開'
-    ]
-
-    PostEnd = [
-        '瀏覽',
-        '(100%)  目前顯示',
-        '離開'
-    ]
-
-    PostIP = [
-        '發信站: 批踢踢實業坊(ptt.cc), 來自:'
-    ]
 
 
 class ConnectMode(object):
@@ -186,6 +124,19 @@ class TargetUnit(object):
 
     def isBreak(self):
         return self._BreakDetect
+
+_WSRecvData = None
+
+async def WebsocketRecvFunc(Core):
+    global _WSRecvData
+    _WSRecvData = await Core.recv()
+
+async def WebsocketReceiver(Core):
+    # Wait for at most 1 second
+    await asyncio.wait_for(
+        WebsocketRecvFunc(Core),
+        timeout=Config.ScreenTimeOut
+    )
 
 
 class API(object):
@@ -297,11 +248,11 @@ class API(object):
             if self._ConnectMode == ConnectMode.Telnet:
                 self._Core.read_very_eager()
                 self._Core.write(Msg)
-                # raise ConnectError()
             else:
                 asyncio.get_event_loop().run_until_complete(
                     self._Core.send(Msg)
                 )
+
             Msg = ''
             CycleTime = 0
             CycleWait = 0
@@ -318,12 +269,20 @@ class API(object):
                         return -1
                 else:
                     try:
-                        ReceiveDataTemp = (
-                            asyncio.get_event_loop().run_until_complete(
-                                self._Core.recv()
-                            )
+                        # ReceiveDataTemp = (
+                        #     asyncio.get_event_loop().run_until_complete(
+                        #         self._Core.recv()
+                        #     )
+                        # )
+
+                        asyncio.get_event_loop().run_until_complete(
+                            WebsocketReceiver(self._Core)
                         )
+                        ReceiveDataTemp = _WSRecvData
+
                     except websockets.exceptions.ConnectionClosed:
+                        return -1
+                    except asyncio.TimeoutError:
                         return -1
 
                 ReceiveDataTemp = ReceiveDataTemp.decode(
@@ -334,7 +293,7 @@ class API(object):
                 ReceiveData.append(ReceiveDataTemp)
                 Screen = ''.join(ReceiveData)
 
-                _showScreen(Screen)
+                Screens.show(Screen)
 
                 FindTarget = False
                 for Target in TargetList:
