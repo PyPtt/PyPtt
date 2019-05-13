@@ -224,7 +224,7 @@ class API(object):
             raise ValueError('Item of TargetList must be TargetUnit')
         
         if ScreenTimeout == 0:
-            CurrentScreenTimeout = Config.ScreenTimeout
+            CurrentScreenTimeout = Config.ScreenTimeOut
         else:
             CurrentScreenTimeout = ScreenTimeout
 
