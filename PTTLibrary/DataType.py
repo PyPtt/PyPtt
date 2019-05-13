@@ -232,7 +232,7 @@ class PostInfo(object):
     def __init__(self, Board=None, AID=None, Author=None, Date=None,
                  Title=None, WebUrl=None, Money=None, Content=None,
                  IP=None, PushList=None, ListDate=None,
-                 DeleteStatus=0):
+                 DeleteStatus=0, ControlCode=False):
         self._Board = ParseParameter(str, Board)
         self._AID = ParseParameter(str, AID)
         self._Author = ParseParameter(str, Author)
@@ -245,6 +245,7 @@ class PostInfo(object):
         self._PushList = PushList
         self._DeleteStatus = DeleteStatus
         self._ListDate = ParseParameter(str, ListDate)
+        self._ControlCode = ControlCode
 
     def getBoard(self):
         return self._Board
@@ -282,8 +283,11 @@ class PostInfo(object):
     def getListDate(self):
         return self._ListDate
 
+    def hasControlCode(self):
+        return self._ControlCode
 
-class WaterBallInformation(object):
+
+class WaterBallInfo(object):
     def __init__(self, Type, Author, PushContent, Date=''):
         self._Type = ParseParameter(int, Type)
         self._Author = ParseParameter(str, Author)
