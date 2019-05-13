@@ -540,6 +540,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         PushList = []
 
+        ControlCodeMode = False
         ContentFinish = False
         index = -1
         FirstPage = True
@@ -554,7 +555,13 @@ class Library(Synchronize.SynchronizeAllMethod):
             # print(LastScreen)
 
             PatternResult = LineFromTopattern.search(LastLine)
-            LastReadLineTemp = int(PatternResult.group(0).split('~')[1])
+            if PatternResult is None:
+                ControlCodeMode = True
+            else:
+                LastReadLineTemp = int(PatternResult.group(0).split('~')[1])
+                if ControlCodeMode:
+                    LastReadLine = LastReadLineTemp - 1
+                ControlCodeMode = False
 
             if FirstPage:
 
@@ -584,13 +591,15 @@ class Library(Synchronize.SynchronizeAllMethod):
                 ]
 
                 PostContent.append(PostContentTemp)
-
-                LastReadLine = LastReadLineTemp
+                if not ControlCodeMode:
+                    LastReadLine = LastReadLineTemp
             else:
-                GetLine = LastReadLineTemp - LastReadLine
-                if GetLine > 0:
-                    NewContentPart = '\n'.join(Lines[-GetLine:])
-
+                if not ControlCodeMode:
+                    GetLine = LastReadLineTemp - LastReadLine
+                    if GetLine > 0:
+                        NewContentPart = '\n'.join(Lines[-GetLine:])
+                else:
+                    NewContentPart = Lines[-1]
                 Log.showValue(
                     Log.Level.DEBUG,
                     'NewContentPart',
@@ -716,8 +725,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                 break
             
             FirstPage = False
-            LastReadLine = LastReadLineTemp
-            if ContentFinish:
+            if not ControlCodeMode:
+                LastReadLine = LastReadLineTemp
+
+            if ControlCodeMode:
+                Cmd = ConnectCore.Command.Down
+            elif ContentFinish:
                 Cmd = ConnectCore.Command.Right
             else:
                 Cmd = ConnectCore.Command.Down
