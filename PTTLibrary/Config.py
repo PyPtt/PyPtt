@@ -9,7 +9,7 @@ except ModuleNotFoundError:
     from . import i18n
     from . import ConnectCore
 
-Version = '0.8.0 beta'
+Version = '0.8.1 beta'
 Host = 'ptt.cc'
 Port = '23'
 
@@ -20,10 +20,15 @@ def load():
     global RetryWaitTime
     RetryWaitTime = 3
 
-    # ScreenTimeOut 秒後判定此畫面沒有可辨識的目標
+    # ScreenLongTimeOut 秒後判定此畫面沒有可辨識的目標
+    # 適用於需要特別等待的情況，例如: 剔除其他登入、發文等等
     # 建議不要低於 10 秒，剔除其他登入最長可能會花費約六到七秒
+    global ScreenLongTimeOut
+    ScreenLongTimeOut = 10.0
+
+    # ScreenLTimeOut 秒後判定此畫面沒有可辨識的目標
     global ScreenTimeOut
-    ScreenTimeOut = 10.0
+    ScreenTimeOut = 3.0
 
     # 預設語言
     global Language
