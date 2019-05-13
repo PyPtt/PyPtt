@@ -40,6 +40,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                  Language: int=0,
                  ConnectMode: int=0,
                  LogLevel: int=0,
+                 ScreenTimeOut: int=0,
+                 ScreenLongTimeOut: int=0,
                  ):
         print(f'PTT Library v {Version}')
 
@@ -51,6 +53,15 @@ class Library(Synchronize.SynchronizeAllMethod):
             raise TypeError('ConnectMode must be integer')
         if not isinstance(LogLevel, int):
             raise TypeError('LogLevel must be integer')
+        if not isinstance(ScreenTimeOut, int):
+            raise TypeError('ScreenTimeOut must be integer')
+        if not isinstance(ScreenLongTimeOut, int):
+            raise TypeError('ScreenLongTimeOut must be integer')
+
+        if ScreenTimeOut != 0:
+            Config.ScreenTimeOut = ScreenTimeOut
+        if ScreenLongTimeOut != 0:
+            Config.ScreenLongTimeOut = ScreenLongTimeOut
 
         if LogLevel == 0:
             LogLevel = Config.LogLevel
@@ -422,7 +433,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             return None
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        print(self._ConnectCore.getScreenQueue()[-1])
+        # print(self._ConnectCore.getScreenQueue()[-1])
 
         if index == 1:
             # 文章被刪除
@@ -523,11 +534,15 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         LineFromTopattern = re.compile('[\d]+~[\d]+')
 
+        ContentFinish = False
         index = -1
         FirstPage = True
         while True:
             index = self._ConnectCore.send(Cmd, TargetList)
-            Cmd = ConnectCore.Command.Down
+            if ContentFinish:
+                Cmd = ConnectCore.Command.Right
+            else:
+                Cmd = ConnectCore.Command.Down
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
             # print(LastScreen)
             Lines = LastScreen.split('\n')
@@ -568,8 +583,26 @@ class Library(Synchronize.SynchronizeAllMethod):
                 PostContent.append(PostContentTemp)
 
                 LastReadLine = LastReadLineTemp
+            else:
+                GetLine = LastReadLineTemp - LastReadLine
+                if GetLine > 0:
+                    NewContentPart = '\n'.join(Lines[-GetLine:])
 
-            if Screens.isMatch(LastScreen, Screens.Target.PostIP):
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'NewContentPart',
+                    NewContentPart
+                )
+
+                if not ContentFinish:
+                    PostContent.append(NewContentPart)
+                else:
+                    LastScreen = NewContentPart + '\n' + LastScreen
+
+            if (not ContentFinish and
+               Screens.isMatch(LastScreen, Screens.Target.PostIP)):
+                ContentFinish = True
+
                 pattern = re.compile(
                     '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+\.[\d]+\.[\d]+\.[\d]+'
                 )
@@ -578,20 +611,24 @@ class Library(Synchronize.SynchronizeAllMethod):
 
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
-                if not FirstPage:
-                    GetLine = LastReadLineTemp - LastReadLine
-                    if GetLine > 0:
-                        NewContentPart = '\n'.join(Lines[-GetLine:])
+                if FirstPage:
+                    PostContent = '\n'.join(PostContent)
+                else:
+                    PostContent = '\n'.join(PostContent)
+                
+                PostContent = PostContent[
+                    :PostContent.find('※ 發信站: 批踢踢實業坊(ptt.cc)')
+                ].strip()
+                
+                Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
+            elif ContentFinish:
 
-                    Log.showValue(
-                        Log.Level.DEBUG,
-                        'NewContentPart',
-                        NewContentPart
-                    )
-
-                    # PostContent.append(NewContentPart)
+                print(LastScreen)
+            if index == 0:
+                break
             
             FirstPage = False
+            LastReadLine = LastReadLineTemp
 
         # Cmd = ConnectCore.Command.Right
         # TargetList = [
@@ -789,26 +826,26 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         # Content = Content.strip()
 
-        Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
-        Log.showValue(Log.Level.DEBUG, 'PostTitle', PostTitle)
-        Log.showValue(Log.Level.DEBUG, 'PostDate', PostDate)
-        Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
-        Log.showValue(Log.Level.DEBUG, 'IP', IP)
+        # Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
+        # Log.showValue(Log.Level.DEBUG, 'PostTitle', PostTitle)
+        # Log.showValue(Log.Level.DEBUG, 'PostDate', PostDate)
+        # Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
+        # Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
-        Post = DataType.PostInfo(
-            Board=Board,
-            AID=PostAID,
-            Author=PostAuthor,
-            Date=PostDate,
-            Title=PostTitle,
-            WebUrl=PostWeb,
-            Money=PostMoney,
-            Content=PostContent,
-            IP=IP,
-            PushList=PushList,
-            ListDate=ListDate
-        )
-        return Post
+        # Post = DataType.PostInfo(
+        #     Board=Board,
+        #     AID=PostAID,
+        #     Author=PostAuthor,
+        #     Date=PostDate,
+        #     Title=PostTitle,
+        #     WebUrl=PostWeb,
+        #     Money=PostMoney,
+        #     Content=PostContent,
+        #     IP=IP,
+        #     PushList=PushList,
+        #     ListDate=ListDate
+        # )
+        # return Post
 
 if __name__ == '__main__':
 
