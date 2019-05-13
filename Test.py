@@ -1,4 +1,5 @@
 ﻿import sys
+import os
 import time
 import json
 import getpass
@@ -160,7 +161,7 @@ def GetPost():
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.WebSocket,
         # LogLevel=PTT.LogLevel.TRACE,
-        LogLevel=PTT.LogLevel.DEBUG,
+        # LogLevel=PTT.LogLevel.DEBUG,
     )
     try:
         PTTBot.login(ID, Password)
@@ -169,42 +170,42 @@ def GetPost():
         sys.exit()
 
     try:
-        Post = PTTBot.getPost('Wanted', PostIndex=78847)
+        Post = PTTBot.getPost('Gossiping', PostIndex=779864)
 
-        # if Post is not None:
-        #     print('Board: ' + Post.getBoard())
-        #     print('AID: ' + Post.getAID())
-        #     print('Author: ' + Post.getAuthor())
-        #     print('Date: ' + Post.getDate())
-        #     print('Title: ' + Post.getTitle())
-        #     print('Content: ' + Post.getContent())
-        #     print('Money: ' + str(Post.getMoney()))
-        #     print('URL: ' + Post.getWebUrl())
-        #     print('IP: ' + Post.getIP())
-        #     # 在文章列表上的日期
-        #     print('List Date' + Post.getListDate())
+        if Post is not None:
+            print('Board: ' + Post.getBoard())
+            print('AID: ' + Post.getAID())
+            print('Author: ' + Post.getAuthor())
+            print('Date: ' + Post.getDate())
+            print('Title: ' + Post.getTitle())
+            print('Content: ' + Post.getContent())
+            print('Money: ' + str(Post.getMoney()))
+            print('URL: ' + Post.getWebUrl())
+            print('IP: ' + Post.getIP())
+            # 在文章列表上的日期
+            print('List Date' + Post.getListDate())
 
-        #     print(f'{len(Post.getPushList())} pushs')
+            print(f'{len(Post.getPushList())} pushs')
 
-        #     PushCount = 0
-        #     BooCount = 0
-        #     ArrowCount = 0
+            PushCount = 0
+            BooCount = 0
+            ArrowCount = 0
 
-        #     for Push in Post.getPushList():
-        #     #     print(Push.getType())
-        #     #     print(Push.getAuthor())
-        #     #     print(Push.getContent())
-        #     #     print(Push.getIP())
-        #     #     print(Push.getTime())
+            for Push in Post.getPushList():
+            #     print(Push.getType())
+            #     print(Push.getAuthor())
+            #     print(Push.getContent())
+            #     print(Push.getIP())
+            #     print(Push.getTime())
 
-        #         if Push.getType() == PTT.PushType.Push:
-        #             PushCount += 1
-        #         if Push.getType() == PTT.PushType.Boo:
-        #             BooCount += 1
-        #         if Push.getType() == PTT.PushType.Arrow:
-        #             ArrowCount += 1
+                if Push.getType() == PTT.PushType.Push:
+                    PushCount += 1
+                if Push.getType() == PTT.PushType.Boo:
+                    BooCount += 1
+                if Push.getType() == PTT.PushType.Arrow:
+                    ArrowCount += 1
 
-        #     print(f'{PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
+            print(f'{PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
@@ -213,6 +214,7 @@ def GetPost():
     PTTBot.logout()
 
 if __name__ == '__main__':
+    os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
 
     if len(sys.argv) == 2:
