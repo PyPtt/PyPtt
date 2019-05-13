@@ -543,6 +543,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         PushList = []
 
+        HasControlCode = False
         ControlCodeMode = False
         ContentFinish = False
         index = -1
@@ -560,6 +561,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             PatternResult = LineFromTopattern.search(LastLine)
             if PatternResult is None:
                 ControlCodeMode = True
+                HasControlCode = True
             else:
                 LastReadLineTemp = int(PatternResult.group(0).split('~')[1])
                 if ControlCodeMode:
@@ -807,7 +809,8 @@ class Library(Synchronize.SynchronizeAllMethod):
             Content=PostContent,
             IP=IP,
             PushList=PushList,
-            ListDate=ListDate
+            ListDate=ListDate,
+            ControlCode=HasControlCode
         )
         return Post
 
