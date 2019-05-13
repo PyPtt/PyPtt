@@ -169,7 +169,7 @@ def GetPost():
         sys.exit()
 
     try:
-        Post = PTTBot.getPost('Wanted', PostIndex=80643)
+        Post = PTTBot.getPost('Wanted', PostIndex=77863)
 
         if Post is not None:
             print('Board: ' + Post.getBoard())

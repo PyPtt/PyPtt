@@ -13,7 +13,7 @@
 ##### 直接登入 PTT 解析最即時推文，給你最快速的資訊!
 ##### 支援經典的 Telnet 與最新的 WebSocket 連線模式
 ##### 支援多國語系，繁體中文與英文
-##### 歡迎發起 pull request，提交你開發的 API!
+##### 歡迎發起 pull request，提交你開發的 API
 ##### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
 ##### 原始碼
 ##### github: https://github.com/Truth0906/PTTLibrary
@@ -25,7 +25,7 @@
 
 版本
 -------------------
-##### 0.8 beta
+##### 0.8.1 beta
 ##### 穩定後版號將進入 1.0 正式版
 
 取得

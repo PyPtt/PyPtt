@@ -569,8 +569,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
                 LastReadLine = LastReadLineTemp
 
-            if index == 0:
-            
+            if Screens.isMatch(LastScreen, Screens.Target.PostIP):
                 pattern = re.compile(
                     '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+\.[\d]+\.[\d]+\.[\d]+'
                 )
@@ -580,46 +579,17 @@ class Library(Synchronize.SynchronizeAllMethod):
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
                 if not FirstPage:
-
                     GetLine = LastReadLineTemp - LastReadLine
                     if GetLine > 0:
                         NewContentPart = '\n'.join(Lines[-GetLine:])
 
-                    PostContentTemp = NewContentPart
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        'NewContentPart',
+                        NewContentPart
+                    )
 
-                    EndTarget = '※ 發信站: 批踢踢實業坊(ptt.cc)'
-                    PostContentTemp = PostContentTemp[
-                        :PostContentTemp.find(EndTarget)
-                    ].strip()
-
-                    PostContent.append(PostContentTemp)
-                    PostContent = '\n'.join(PostContent).strip()
-                else:
-
-                    PostContent = '\n'.join(PostContent).strip()
-                    EndTarget = '※ 發信站: 批踢踢實業坊(ptt.cc)'
-                    PostContent = PostContentTemp[
-                        :PostContent.find(EndTarget)
-                    ].strip()
-
-                Log.showValue(Log.Level.DEBUG, i18n.Content, PostContent)
-
-                break
-            elif not FirstPage:
-
-                GetLine = LastReadLineTemp - LastReadLine
-                if GetLine > 0:
-                    NewContentPart = '\n'.join(Lines[-GetLine:])
-
-                # print(f'GetLine: {GetLine}')
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    'NewContentPart',
-                    NewContentPart
-                )
-
-                PostContent.append(NewContentPart)
-                LastReadLine = LastReadLineTemp
+                    # PostContent.append(NewContentPart)
             
             FirstPage = False
 

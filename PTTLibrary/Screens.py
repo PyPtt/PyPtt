@@ -80,7 +80,7 @@ def show(ScreenQueue, FunctionName=None):
     print('-' * 50)
 
 
-def isScreenMatch(Screen: str, Target):
+def isMatch(Screen: str, Target):
 
     if isinstance(Target, str):
         return Target in Screen
