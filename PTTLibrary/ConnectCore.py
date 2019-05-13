@@ -82,8 +82,8 @@ class TargetUnit(object):
     def __init__(self,
                  DisplayMsg,
                  DetectTarget,
-                 LogLevel=0,
-                 Response='',
+                 LogLevel: int=0,
+                 Response: str='',
                  BreakDetect=False):
 
         self._DisplayMsg = DisplayMsg
@@ -131,11 +131,11 @@ async def WebsocketRecvFunc(Core):
     global _WSRecvData
     _WSRecvData = await Core.recv()
 
-async def WebsocketReceiver(Core):
+async def WebsocketReceiver(Core, ScreenTimeOut):
     # Wait for at most 1 second
     await asyncio.wait_for(
         WebsocketRecvFunc(Core),
-        timeout=Config.ScreenTimeOut
+        timeout=ScreenTimeOut
     )
 
 
@@ -218,10 +218,15 @@ class API(object):
         if not ConnectSuccess:
             raise ConnectError()
 
-    def send(self, Msg: str, TargetList: list) ->int:
+    def send(self, Msg: str, TargetList: list, ScreenTimeout: int=0) ->int:
 
         if not all(isinstance(T, TargetUnit) for T in TargetList):
             raise ValueError('Item of TargetList must be TargetUnit')
+        
+        if ScreenTimeout == 0:
+            CurrentScreenTimeout = Config.ScreenTimeout
+        else:
+            CurrentScreenTimeout = ScreenTimeout
 
         self._ReceiveDataQueue = []
 
@@ -260,7 +265,7 @@ class API(object):
 
             StartTime = time.time()
             MidTime = time.time()
-            while MidTime - StartTime < Config.ScreenTimeOut:
+            while MidTime - StartTime < CurrentScreenTimeout:
 
                 if self._ConnectMode == ConnectMode.Telnet:
                     try:
@@ -276,7 +281,7 @@ class API(object):
                         # )
 
                         asyncio.get_event_loop().run_until_complete(
-                            WebsocketReceiver(self._Core)
+                            WebsocketReceiver(self._Core, CurrentScreenTimeout)
                         )
                         ReceiveDataTemp = _WSRecvData
 
