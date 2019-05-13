@@ -161,7 +161,7 @@ def GetPost():
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.WebSocket,
         # LogLevel=PTT.LogLevel.TRACE,
-        # LogLevel=PTT.LogLevel.DEBUG,
+        LogLevel=PTT.LogLevel.DEBUG,
     )
     try:
         PTTBot.login(ID, Password)
@@ -170,7 +170,7 @@ def GetPost():
         sys.exit()
 
     try:
-        Post = PTTBot.getPost('Gossiping', PostIndex=779864)
+        Post = PTTBot.getPost('Test', PostIndex=318)
 
         if Post is not None:
             print('Board: ' + Post.getBoard())
