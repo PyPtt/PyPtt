@@ -222,7 +222,7 @@ class API(object):
 
         if not all(isinstance(T, TargetUnit) for T in TargetList):
             raise ValueError('Item of TargetList must be TargetUnit')
-        
+
         if ScreenTimeout == 0:
             CurrentScreenTimeout = Config.ScreenTimeOut
         else:

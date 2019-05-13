@@ -160,8 +160,8 @@ def PerformanceTest():
 def GetPost():
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.WebSocket,
-        # LogLevel=PTT.LogLevel.TRACE,
-        LogLevel=PTT.LogLevel.DEBUG,
+        LogLevel=PTT.LogLevel.TRACE,
+        # LogLevel=PTT.LogLevel.DEBUG,
     )
     try:
         PTTBot.login(ID, Password)

@@ -210,7 +210,11 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         Cmd = ''.join(CmdList)
 
-        index = self._ConnectCore.send(Cmd, TargetList)
+        index = self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
         if index != 0:
             raise ConnectCore.LoginError()
         return ErrorCode.Success
@@ -237,8 +241,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 BreakDetect=True,
             ),
         ]
-
-        index = self._ConnectCore.send(Cmd, TargetList)
+        self._ConnectCore.send(Cmd, TargetList)
         self._ConnectCore.close()
         return ErrorCode.Success
 
@@ -627,13 +630,13 @@ class Library(Synchronize.SynchronizeAllMethod):
                 PostContent = PostContent[
                     :PostContent.find('※ 發信站: 批踢踢實業坊(ptt.cc)')
                 ].strip()
-                
+
                 Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
 
                 LastScreen = LastScreen[
                     LastScreen.find('發信站: 批踢踢實業坊(ptt.cc)'):
                 ]
-            
+
             if ContentFinish:
                 Lines = LastScreen.split('\n')
                 for line in Lines:
@@ -644,7 +647,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                         ],
                         line
                     )
-                    
+
                     PushType = 0
                     if line.startswith('※ 編輯'):
                         if IP in line:
@@ -723,7 +726,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                         PushList.append(CurrentPush)
             if index == 0:
                 break
-            
+
             FirstPage = False
             if not ControlCodeMode:
                 LastReadLine = LastReadLineTemp
