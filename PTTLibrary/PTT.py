@@ -33,6 +33,7 @@ ConnectMode = ConnectCore.ConnectMode
 LogLevel = Log.Level
 Command = ConnectCore.Command
 PushType = DataType.PushType
+PostSearchType = DataType.PostSearchType
 
 
 class Library(Synchronize.SynchronizeAllMethod):
@@ -345,7 +346,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ]))
 
         if (SearchType != 0 and
-           not Util.checkRange(DataType.SearchType, SearchType)):
+           not Util.checkRange(DataType.PostSearchType, SearchType)):
             raise ValueError(Log.merge([
                 'SearchType',
                 i18n.ErrorParameter,
@@ -383,7 +384,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         CmdList.append(ConnectCore.Command.Enter)
         CmdList.append(ConnectCore.Command.Ctrl_C * 2)
 
-        if SearchCondition is not None:
+        if PostAID is not None:
             CmdList.append('#' + PostAID)
 
         elif PostIndex != 0:
@@ -433,6 +434,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         index = self._ConnectCore.send(Cmd, TargetList)
 
         if index < 0:
+            Screens.show(self._ConnectCore.getScreenQueue())
+            Log.log(Log.Level.DEBUG, i18n.UnknowError)
             return None
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]

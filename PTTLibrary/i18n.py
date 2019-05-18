@@ -394,6 +394,12 @@ def load(inputLanguage):
         'Title',
     ])
 
+    global UnknowError
+    UnknowError = SpecificLoad(inputLanguage, [
+        '未知錯誤',
+        'Unknow Error',
+    ])
+
     # Login too often
 
     # Final check
