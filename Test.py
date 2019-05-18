@@ -125,7 +125,8 @@ def PerformanceTest():
         # print(PTT_TIME)
     EndTime = time.time()
     PTTBot.logout()
-    PTTBot.log('Performance Test WebSocket ' + str(round(EndTime - StartTime, 2)) + ' s')
+    PTTBot.log('Performance Test WebSocket ' + str(
+        round(EndTime - StartTime, 2)) + ' s')
 
     PTTBot.log('等待五秒')
     time.sleep(5)
@@ -161,7 +162,7 @@ def GetPost():
     PTTBot = PTT.Library(
         ConnectMode=PTT.ConnectMode.WebSocket,
         # LogLevel=PTT.LogLevel.TRACE,
-        # LogLevel=PTT.LogLevel.DEBUG,
+        LogLevel=PTT.LogLevel.DEBUG,
     )
     try:
         PTTBot.login(ID, Password)
@@ -170,7 +171,11 @@ def GetPost():
         sys.exit()
 
     try:
-        Post = PTTBot.getPost('Test', PostIndex=318)
+        Post = PTTBot.getPost(
+            'Wanted',
+            PostIndex=7172,
+            SearchType=PTT.PostSearchType.Keyword,
+            SearchCondition='公告')
 
         if Post is not None:
             print('Board: ' + Post.getBoard())
