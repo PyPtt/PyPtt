@@ -4,6 +4,7 @@ import re
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 try:
     import DataType
     import Config
@@ -14,6 +15,7 @@ try:
     import Log
     import Synchronize
     import Screens
+    import Exceptions
 except ModuleNotFoundError:
     from . import DataType
     from . import Config
@@ -24,6 +26,7 @@ except ModuleNotFoundError:
     from . import Log
     from . import Synchronize
     from . import Screens
+    from . import Exceptions
 
 Version = Config.Version
 
@@ -45,6 +48,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                  ScreenLongTimeOut: int=0,
                  ):
         print(f'PTT Library v {Version}')
+        print('Developed by PTT CodingMan')
+        self._Login = False
 
         Config.load()
 
@@ -99,7 +104,10 @@ class Library(Synchronize.SynchronizeAllMethod):
     def getVersion(self) -> str:
         return Config.Version
 
-    def login(self, ID: str, Password: str, KickOtherLogin: bool=False):
+    def _login(self, ID: str, Password: str, KickOtherLogin: bool=False):
+
+        if self._Login:
+            self.logout()
 
         if not isinstance(ID, str):
             raise TypeError(Log.merge([
@@ -218,10 +226,17 @@ class Library(Synchronize.SynchronizeAllMethod):
         )
         if index != 0:
             raise ConnectCore.LoginError()
+        
+        self._Login = True
         return ErrorCode.Success
 
+    def login(self, ID: str, Password: str, KickOtherLogin: bool=False):
+        return self._login(ID, Password, KickOtherLogin=KickOtherLogin)
+    
     def logout(self):
 
+        if not self._Login:
+            return ErrorCode.Success
         CmdList = []
         CmdList.append(ConnectCore.Command.GoMainMenu)
         CmdList.append('g')
@@ -244,12 +259,16 @@ class Library(Synchronize.SynchronizeAllMethod):
         ]
         self._ConnectCore.send(Cmd, TargetList)
         self._ConnectCore.close()
+        self._Login = False
         return ErrorCode.Success
 
     def log(self, Msg):
         Log.log(Log.Level.INFO, Msg)
 
     def getTime(self) -> str:
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CmdList = []
         CmdList.append(ConnectCore.Command.GoMainMenu)
@@ -288,7 +307,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 PostIndex: int=0,
                 SearchType: int=0,
                 SearchCondition: str=None):
-
+        
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
                 'Board',
@@ -377,6 +396,10 @@ class Library(Synchronize.SynchronizeAllMethod):
                  PostIndex: int=0,
                  SearchType: int=0,
                  SearchCondition: str=None):
+        
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
         CmdList = []
         CmdList.append(ConnectCore.Command.GoMainMenu)
         CmdList.append('qs')
@@ -435,8 +458,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         if index < 0:
             Screens.show(self._ConnectCore.getScreenQueue())
-            Log.log(Log.Level.DEBUG, i18n.UnknowError)
-            return None
+            raise Exceptions.UnknowError(i18n.UnknowError)
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
         # print(self._ConnectCore.getScreenQueue()[-1])
@@ -816,6 +838,44 @@ class Library(Synchronize.SynchronizeAllMethod):
             ControlCode=HasControlCode
         )
         return Post
+    
+    def post(self, Board, Title, Content, PostType, SignType):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        CmdList = []
+        CmdList.append(ConnectCore.Command.GoMainMenu)
+        CmdList.append('qs')
+        CmdList.append(Board)
+        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(ConnectCore.Command.Ctrl_C * 2)
+        CmdList.append(ConnectCore.Command.Ctrl_P)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.HasPostPermission,
+                '發表文章於【',
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoPermission,
+                '使用者不可發言',
+                BreakDetect=True,
+            )
+        ]
+        index = self._ConnectCore.send(Cmd, TargetList)
+        if index < 0:
+            Screens.show(self._ConnectCore.getScreenQueue())
+            raise Exceptions.UnknowError(i18n.UnknowError)
+        
+        if index == 1:
+            raise Exceptions.NoPermission(i18n.NoPermission)
+        Screens.show(self._ConnectCore.getScreenQueue())
+
+        return ErrorCode.Success
 
 if __name__ == '__main__':
 
