@@ -76,7 +76,10 @@ PTTBot.logout()
 -------------------
 #### 在這個 github 的小園地，用熱血的心為您打造在 PTT 翱翔的翅膀。
 #### 希望您可以贊助這雙翅膀，讓我們一起飛得更遠，
-### Paypal
+-------------------
+#### Paypal
 #### [贊助連結](http://paypal.me/CodingMan)
-### XMR
+-------------------
+#### XMR
 #### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
+-------------------
