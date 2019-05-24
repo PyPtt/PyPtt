@@ -211,7 +211,9 @@ def GetPost():
 
 def Post():
     global PTTBot
-    PTTBot.post('Test', 'PTT Library 自動測試', '測試貼文', 0, 0)
+    
+    for i in range(3):
+        PTTBot.post('Test', 'PTT Library 自動測試 ' + str(i), '測試貼文', 1, 0)
 
 if __name__ == '__main__':
     os.system('cls')

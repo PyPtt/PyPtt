@@ -418,6 +418,18 @@ def load(inputLanguage):
         'User Has No Permission',
     ])
 
+    global SaveFile
+    SaveFile = SpecificLoad(inputLanguage, [
+        '儲存檔案',
+        'Save File',
+    ])
+    
+    global SelectSignature
+    SelectSignature = SpecificLoad(inputLanguage, [
+        '選擇簽名檔',
+        'Select Signature',
+    ])
+
 
 def _createlist():
 
