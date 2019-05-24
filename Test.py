@@ -159,16 +159,8 @@ def PerformanceTest():
 
 
 def GetPost():
-    PTTBot = PTT.Library(
-        ConnectMode=PTT.ConnectMode.WebSocket,
-        # LogLevel=PTT.LogLevel.TRACE,
-        LogLevel=PTT.LogLevel.DEBUG,
-    )
-    try:
-        PTTBot.login(ID, Password)
-    except PTTLibrary.ConnectCore.LoginError:
-        PTTBot.log('登入失敗')
-        sys.exit()
+
+    global PTTBot
 
     try:
         Post = PTTBot.getPost(
@@ -216,7 +208,10 @@ def GetPost():
         traceback.print_tb(e.__traceback__)
         print(e)
 
-    PTTBot.logout()
+
+def Post():
+    global PTTBot
+    PTTBot.post('Test', 'PTT Library 自動測試', '測試貼文', 0, 0)
 
 if __name__ == '__main__':
     os.system('cls')
@@ -239,9 +234,24 @@ if __name__ == '__main__':
     try:
         # Loginout()
         # PerformanceTest()
-        GetPost()
+
+        PTTBot = PTT.Library(
+            ConnectMode=PTT.ConnectMode.WebSocket,
+            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.DEBUG,
+        )
+        try:
+            PTTBot.login(ID, Password)
+        except PTTLibrary.ConnectCore.LoginError:
+            PTTBot.log('登入失敗')
+            sys.exit()
+        
+        # GetPost()
+        Post()
 
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
         print(e)
+    
+    PTTBot.logout()

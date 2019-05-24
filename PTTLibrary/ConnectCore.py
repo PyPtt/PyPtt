@@ -29,12 +29,13 @@ except ModuleNotFoundError:
 class Command(object):
     Enter = '\r'
     Ctrl_C = '\x03'
-    QueryPost = 'Q'
+    Ctrl_P = '\x10'
     Refresh = '\x0C'
     Up = '\x1b\x4fA'
     Down = '\x1b\x4fB'
     Right = '\x1b\x4fC'
     Left = '\x1b\x4fD'
+    QueryPost = 'Q'
     GoMainMenu = Left * 5
 
 
@@ -274,12 +275,6 @@ class API(object):
                         return -1
                 else:
                     try:
-                        # ReceiveDataTemp = (
-                        #     asyncio.get_event_loop().run_until_complete(
-                        #         self._Core.recv()
-                        #     )
-                        # )
-
                         asyncio.get_event_loop().run_until_complete(
                             WebsocketReceiver(self._Core, CurrentScreenTimeout)
                         )

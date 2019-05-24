@@ -400,22 +400,23 @@ def load(inputLanguage):
         'Unknow Error',
     ])
 
-    # Login too often
+    global RequireLogin
+    RequireLogin = SpecificLoad(inputLanguage, [
+        '請先' + Login,
+        'Please ' + Login + ' first',
+    ])
 
-    # Final check
-    for k, v in globals().items():
-        # System Var
-        if k.startswith('__'):
-            continue
-        # print(k)
-        # print(v)
-        if v is None:
-            raise Exceptions.InitError(
-                Util.getFileName(__file__), k + ' is None')
+    global HasPostPermission
+    HasPostPermission = SpecificLoad(inputLanguage, [
+        '使用者擁有貼文權限',
+        'User Has Post Permission',
+    ])
 
-    if Config.LogLevel <= 2:
-        print('[' + strftime('%m%d %H:%M:%S') + '][' + Info + '] ' + i18n +
-              ' [' + Init + ']')
+    global NoPermission
+    NoPermission = SpecificLoad(inputLanguage, [
+        '使用者沒有貼文權限',
+        'User Has No Permission',
+    ])
 
 
 def _createlist():
@@ -436,3 +437,4 @@ def _createlist():
 if __name__ == '__main__':
     load(Language.Chinese)
     _createlist()
+
