@@ -226,13 +226,13 @@ class Library(Synchronize.SynchronizeAllMethod):
         )
         if index != 0:
             raise ConnectCore.LoginError()
-        
+
         self._Login = True
         return ErrorCode.Success
 
     def login(self, ID: str, Password: str, KickOtherLogin: bool=False):
         return self._login(ID, Password, KickOtherLogin=KickOtherLogin)
-    
+
     def logout(self):
 
         if not self._Login:
@@ -307,7 +307,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 PostIndex: int=0,
                 SearchType: int=0,
                 SearchCondition: str=None):
-        
+
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
                 'Board',
@@ -396,7 +396,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                  PostIndex: int=0,
                  SearchType: int=0,
                  SearchCondition: str=None):
-        
+
         if not self._Login:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -838,8 +838,48 @@ class Library(Synchronize.SynchronizeAllMethod):
             ControlCode=HasControlCode
         )
         return Post
-    
-    def post(self, Board, Title, Content, PostType, SignType):
+
+    def post(self,
+             Board: str,
+             Title: str,
+             Content: str,
+             PostType: int,
+             SignType: int):
+
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(Title, str):
+            raise TypeError(Log.merge([
+                'Title',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(Content, str):
+            raise TypeError(Log.merge([
+                'Content',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(PostType, int):
+            raise TypeError(Log.merge([
+                'PostType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        if not isinstance(SignType, int):
+            raise TypeError(Log.merge([
+                'SignType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
 
         if not self._Login:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -870,10 +910,38 @@ class Library(Synchronize.SynchronizeAllMethod):
         if index < 0:
             Screens.show(self._ConnectCore.getScreenQueue())
             raise Exceptions.UnknowError(i18n.UnknowError)
-        
         if index == 1:
             raise Exceptions.NoPermission(i18n.NoPermission)
+
         Screens.show(self._ConnectCore.getScreenQueue())
+
+        CmdList = []
+        CmdList.append(str(PostType))
+        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(str(Title))
+        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(str(Content))
+        CmdList.append(ConnectCore.Command.Ctrl_X)
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.AnyKeyContinue,
+                '任意鍵繼續',
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SaveFile,
+                '確定要儲存檔案嗎',
+                Response='s' + ConnectCore.Command.Enter,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SelectSignature,
+                'x=隨機',
+                Response=str(SignType) + ConnectCore.Command.Enter,
+            ),
+        ]
+        index = self._ConnectCore.send(Cmd, TargetList)
 
         return ErrorCode.Success
 
