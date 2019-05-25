@@ -16,6 +16,7 @@ try:
     import Synchronize
     import Screens
     import Exceptions
+    import Command
 except ModuleNotFoundError:
     from . import DataType
     from . import Config
@@ -27,6 +28,7 @@ except ModuleNotFoundError:
     from . import Synchronize
     from . import Screens
     from . import Exceptions
+    from . import Command
 
 Version = Config.Version
 
@@ -34,7 +36,7 @@ ErrorCode = ErrorCode.ErrorCode()
 Language = i18n.Language
 ConnectMode = ConnectCore.ConnectMode
 LogLevel = Log.Level
-Command = ConnectCore.Command
+Command = Command
 PushType = DataType.PushType
 PostSearchType = DataType.PostSearchType
 
@@ -137,8 +139,8 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         def KickOtherLoginResponse(Screen):
             if Config.KickOtherLogin:
-                return 'y' + ConnectCore.Command.Enter
-            return 'n' + ConnectCore.Command.Enter
+                return 'y' + Command.Enter
+            return 'n' + Command.Enter
 
         if len(Password) > 8:
             Password = Password[:8]
@@ -179,17 +181,17 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.DelWrongPWRecord,
                 '您要刪除以上錯誤嘗試的記錄嗎',
-                Response='y' + ConnectCore.Command.Enter,
+                Response='y' + Command.Enter,
             ),
             ConnectCore.TargetUnit(
                 i18n.MailBoxFull,
                 '您保存信件數目',
-                Response=ConnectCore.Command.GoMainMenu,
+                Response=Command.GoMainMenu,
             ),
             ConnectCore.TargetUnit(
                 i18n.PostNotFinish,
                 '有一篇文章尚未完成',
-                Response='q' + ConnectCore.Command.Enter,
+                Response='q' + Command.Enter,
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUnPleaseWait,
@@ -203,7 +205,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
                 '任意鍵',
-                Response=ConnectCore.Command.GoMainMenu,
+                Response=Command.GoMainMenu,
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUpdate,
@@ -213,9 +215,9 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         CmdList = []
         CmdList.append(ID)
-        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(Command.Enter)
         CmdList.append(Password)
-        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(Command.Enter)
 
         Cmd = ''.join(CmdList)
 
@@ -238,12 +240,12 @@ class Library(Synchronize.SynchronizeAllMethod):
         if not self._Login:
             return ErrorCode.Success
         CmdList = []
-        CmdList.append(ConnectCore.Command.GoMainMenu)
+        CmdList.append(Command.GoMainMenu)
         CmdList.append('g')
-        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(Command.Enter)
         CmdList.append('y')
-        CmdList.append(ConnectCore.Command.Enter)
-        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Enter)
 
         Cmd = ''.join(CmdList)
 
@@ -271,10 +273,10 @@ class Library(Synchronize.SynchronizeAllMethod):
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CmdList = []
-        CmdList.append(ConnectCore.Command.GoMainMenu)
+        CmdList.append(Command.GoMainMenu)
         CmdList.append('P')
-        CmdList.append(ConnectCore.Command.Right)
-        CmdList.append(ConnectCore.Command.Left)
+        CmdList.append(Command.Right)
+        CmdList.append(Command.Left)
 
         Cmd = ''.join(CmdList)
 
@@ -401,11 +403,11 @@ class Library(Synchronize.SynchronizeAllMethod):
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CmdList = []
-        CmdList.append(ConnectCore.Command.GoMainMenu)
+        CmdList.append(Command.GoMainMenu)
         CmdList.append('qs')
         CmdList.append(Board)
-        CmdList.append(ConnectCore.Command.Enter)
-        CmdList.append(ConnectCore.Command.Ctrl_C * 2)
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Ctrl_C * 2)
 
         if PostAID is not None:
             CmdList.append('#' + PostAID)
@@ -424,12 +426,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                     CmdList.append('A')
 
                 CmdList.append(SearchCondition)
-                CmdList.append(ConnectCore.Command.Enter)
+                CmdList.append(Command.Enter)
 
             CmdList.append(str(PostIndex))
 
-        CmdList.append(ConnectCore.Command.Enter)
-        CmdList.append(ConnectCore.Command.QueryPost)
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.QueryPost)
 
         Cmd = ''.join(CmdList)
 
@@ -531,7 +533,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             Log.showValue(Log.Level.DEBUG, 'PostMoney', PostMoney)
             Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
 
-        Cmd = ConnectCore.Command.Enter * 2
+        Cmd = Command.Enter * 2
         TargetList = [
             ConnectCore.TargetUnit(
                 [
@@ -759,11 +761,11 @@ class Library(Synchronize.SynchronizeAllMethod):
                 LastReadLine = LastReadLineTemp
 
             if ControlCodeMode:
-                Cmd = ConnectCore.Command.Down
+                Cmd = Command.Down
             elif ContentFinish:
-                Cmd = ConnectCore.Command.Right
+                Cmd = Command.Right
             else:
-                Cmd = ConnectCore.Command.Down
+                Cmd = Command.Down
 
         # res = requests.get(
         #     url=PostWeb,
@@ -885,12 +887,12 @@ class Library(Synchronize.SynchronizeAllMethod):
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CmdList = []
-        CmdList.append(ConnectCore.Command.GoMainMenu)
+        CmdList.append(Command.GoMainMenu)
         CmdList.append('qs')
         CmdList.append(Board)
-        CmdList.append(ConnectCore.Command.Enter)
-        CmdList.append(ConnectCore.Command.Ctrl_C * 2)
-        CmdList.append(ConnectCore.Command.Ctrl_P)
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Ctrl_C * 2)
+        CmdList.append(Command.Ctrl_P)
 
         Cmd = ''.join(CmdList)
 
@@ -917,11 +919,11 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         CmdList = []
         CmdList.append(str(PostType))
-        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(Command.Enter)
         CmdList.append(str(Title))
-        CmdList.append(ConnectCore.Command.Enter)
+        CmdList.append(Command.Enter)
         CmdList.append(str(Content))
-        CmdList.append(ConnectCore.Command.Ctrl_X)
+        CmdList.append(Command.Ctrl_X)
         Cmd = ''.join(CmdList)
 
         TargetList = [
@@ -933,12 +935,12 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.SaveFile,
                 '確定要儲存檔案嗎',
-                Response='s' + ConnectCore.Command.Enter,
+                Response='s' + Command.Enter,
             ),
             ConnectCore.TargetUnit(
                 i18n.SelectSignature,
                 'x=隨機',
-                Response=str(SignType) + ConnectCore.Command.Enter,
+                Response=str(SignType) + Command.Enter,
             ),
         ]
         index = self._ConnectCore.send(Cmd, TargetList)
