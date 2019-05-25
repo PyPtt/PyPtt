@@ -212,8 +212,9 @@ def GetPost():
 def Post():
     global PTTBot
     
-    for i in range(3):
-        PTTBot.post('Test', 'PTT Library 自動測試 ' + str(i), '測試貼文', 1, 0)
+    # for i in range(3):
+    #     PTTBot.post('Test', 'PTT Library 自動測試 ' + str(i), '測試貼文', 1, 0)
+
 
 if __name__ == '__main__':
     os.system('cls')
@@ -243,8 +244,11 @@ if __name__ == '__main__':
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
-            PTTBot.login(ID, Password)
-        except PTTLibrary.ConnectCore.LoginError:
+            PTTBot.login(ID,
+                         Password,
+                        #  KickOtherLogin=True
+                         )
+        except PTTLibrary.Exceptions.LoginError:
             PTTBot.log('登入失敗')
             sys.exit()
         

@@ -35,3 +35,13 @@ class NoPermission(Exception):
     def __str__(self):
         return self.message
 
+
+class LoginError(Exception):
+    def __init__(self):
+        self.message = [i18n.LoginFail]
+
+    def __str__(self):
+
+        if Config.Language == i18n.Language.Chinese:
+            return ''.join(self.message)
+        return ' '.join(self.message)

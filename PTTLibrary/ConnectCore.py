@@ -17,6 +17,7 @@ try:
     import i18n
     import Log
     import Screens
+    import Command
 except ModuleNotFoundError:
     from . import DataType
     from . import Config
@@ -24,20 +25,7 @@ except ModuleNotFoundError:
     from . import i18n
     from . import Log
     from . import Screens
-
-
-class Command(object):
-    Enter = '\r'
-    Ctrl_C = '\x03'
-    Ctrl_P = '\x10'
-    Refresh = '\x0C'
-    Ctrl_X = '\x18'
-    Up = '\x1b\x4fA'
-    Down = '\x1b\x4fB'
-    Right = '\x1b\x4fC'
-    Left = '\x1b\x4fD'
-    QueryPost = 'Q'
-    GoMainMenu = Left * 5
+    from . import Command
 
 
 class ConnectMode(object):
@@ -52,17 +40,6 @@ class ConnectMode(object):
 class ConnectError(Exception):
     def __init__(self):
         self.message = [i18n.Connect, i18n.Fail]
-
-    def __str__(self):
-
-        if Config.Language == i18n.Language.Chinese:
-            return ''.join(self.message)
-        return ' '.join(self.message)
-
-
-class LoginError(Exception):
-    def __init__(self):
-        self.message = [i18n.LoginFail]
 
     def __str__(self):
 
