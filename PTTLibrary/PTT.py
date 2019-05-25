@@ -191,7 +191,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.PostNotFinish,
                 '有一篇文章尚未完成',
-                Response='q' + Command.Enter,
+                Response='Q' + Command.Enter,
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUnPleaseWait,

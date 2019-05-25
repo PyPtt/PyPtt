@@ -215,6 +215,10 @@ def Post():
     # for i in range(3):
     #     PTTBot.post('Test', 'PTT Library 自動測試 ' + str(i), '測試貼文', 1, 0)
 
+    PTTBot.post('Test',
+                'PTT Library 自動測試',
+                PTT.Command.ControlCode + 's',
+                1, 0)
 
 if __name__ == '__main__':
     os.system('cls')
