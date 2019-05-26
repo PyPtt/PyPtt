@@ -35,7 +35,7 @@ pip install PTTLibrary
 ```
 pip3 install PTTLibrary
 ```
-## 更新
+#### 更新
 #### [更新前注意] 0.8 不支援 0.7 之前的版本
 ```
 pip3 install PTTLibrary --upgrade
@@ -66,7 +66,6 @@ PTTBot.logout()
 #### Python ≥ 3.6
 
 ## 相依函式庫
-*****
 #### progressbar2
 #### websockets
 #### requests
