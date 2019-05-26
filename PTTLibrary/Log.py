@@ -70,6 +70,8 @@ def log(LogLevel, Msg):
     except Exception:
         print(TotalMessage.encode('utf-8', "replace").decode('utf-8'))
 
+LastValue = None
+
 
 def showValue(LogLevel, Msg, Value):
 
@@ -80,9 +82,14 @@ def showValue(LogLevel, Msg, Value):
         return
     if len(Msg) == 0:
         return
+    global LastValue
 
+    CheckPTTMsg = merge([i18n.PTT, i18n.Msg])
     Msg = merge(Msg)
     Value = merge(Value)
+
+    if CheckPTTMsg == Msg and Value == LastValue:
+        return
 
     TotalMessage = []
     TotalMessage.append(Msg)
@@ -91,3 +98,5 @@ def showValue(LogLevel, Msg, Value):
     TotalMessage.append(']')
 
     log(LogLevel, ''.join(TotalMessage))
+
+    LastValue = Value

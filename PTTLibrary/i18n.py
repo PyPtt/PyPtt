@@ -423,7 +423,7 @@ def load(inputLanguage):
         '儲存檔案',
         'Save File',
     ])
-    
+
     global SelectSignature
     SelectSignature = SpecificLoad(inputLanguage, [
         '選擇簽名檔',
@@ -435,6 +435,19 @@ def load(inputLanguage):
         '找到最新編號',
         'Find Newest Index',
     ])
+
+    # global List
+    # List = []
+
+    # for k, v in globals().items():
+    #     # System Var
+    #     if k.startswith('_'):
+    #         continue
+
+    #     print(f'k {k}')
+    #     print(f'v {v}')
+    #     if isinstance(k, str) and isinstance(v, str):
+    #         List.append(k)
 
 
 def _createlist():
