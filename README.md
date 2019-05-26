@@ -62,6 +62,10 @@ PTTBot.logout()
 ## 詳細說明
 #### 請參考 Demo.py 有 API 的詳細範例與參數說明
 
+## 回報問題
+#### 1. 請參考 Demo.py 將 Log level 調整成 TRACE 後並截圖
+#### 2. 可以開 [issue](https://github.com/Truth0906/PTTLibrary/issues) 也可以直接在 gitter 上問我 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
+
 ## 需求
 #### Python ≥ 3.6
 
