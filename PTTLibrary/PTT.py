@@ -862,7 +862,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.MustBe,
                 i18n.Integer
             ]))
-        if (SearchCondition is not None and 
+        if (SearchCondition is not None and
            not isinstance(SearchCondition, str)):
             raise TypeError(Log.merge([
                 'SearchCondition',
@@ -872,7 +872,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         if (SearchType != 0 and
            not Util.checkRange(DataType.PostSearchType, SearchType)):
             raise ValueError('Unknow PostSearchType', PostSearchType)
-        
+
         if IndexType == DataType.IndexType.Board:
             CmdList = []
             CmdList.append(Command.GoMainMenu)
@@ -893,10 +893,10 @@ class Library(Synchronize.SynchronizeAllMethod):
                     CmdList.append('G')
                 elif SearchType == DataType.PostSearchType.Money:
                     CmdList.append('A')
-                
+
                 CmdList.append(SearchCondition)
                 CmdList.append(Command.Enter)
-            
+
             CmdList.append('0')
             CmdList.append(Command.Enter)
             CmdList.append('$')
@@ -918,7 +918,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
             AllIndex = re.findall(r'\d+ ', LastScreen)
-        
+
             if len(AllIndex) == 0:
                 Screens.show(self._ConnectCore.getScreenQueue())
                 raise Exceptions.UnknowError(i18n.UnknowError)
@@ -929,7 +929,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             for IndexTemp in AllIndex:
                 Continue = True
                 for i in range(1, 6):
-                    if IndexTemp - i not in AllIndex:
+                    if str(IndexTemp - i) not in LastScreen:
                         Continue = False
                         break
                 if Continue:
@@ -939,7 +939,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                         IndexTemp
                     )
                     return IndexTemp
-        
+
         Screens.show(self._ConnectCore.getScreenQueue())
         raise Exceptions.UnknowError(i18n.UnknowError)
 

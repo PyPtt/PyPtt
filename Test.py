@@ -211,7 +211,7 @@ def GetPost():
 
 def Post():
     global PTTBot
-    
+
     # for i in range(3):
     #     PTTBot.post('Test', 'PTT Library 自動測試 ' + str(i), '測試貼文', 1, 0)
 
@@ -220,9 +220,12 @@ def Post():
                 PTT.Command.ControlCode + 's',
                 1, 0)
 
+
 def GetNewestIndex():
     global PTTBot
-    PTTBot.getNewestIndex(PTT.IndexType.Board, Board='Wanted')
+
+    for _ in range(100):
+        PTTBot.getNewestIndex(PTT.IndexType.Board, Board='Wanted')
 
 if __name__ == '__main__':
     os.system('cls')
@@ -248,7 +251,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -259,7 +262,7 @@ if __name__ == '__main__':
         except PTTLibrary.Exceptions.LoginError:
             PTTBot.log('登入失敗')
             sys.exit()
-        
+
         # GetPost()
         # Post()
         GetNewestIndex()
@@ -267,5 +270,5 @@ if __name__ == '__main__':
 
         traceback.print_tb(e.__traceback__)
         print(e)
-    
+
     PTTBot.logout()
