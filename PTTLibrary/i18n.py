@@ -430,6 +430,12 @@ def load(inputLanguage):
         'Select Signature',
     ])
 
+    global FindNewestIndex
+    FindNewestIndex = SpecificLoad(inputLanguage, [
+        '找到最新編號',
+        'Find Newest Index',
+    ])
+
 
 def _createlist():
 

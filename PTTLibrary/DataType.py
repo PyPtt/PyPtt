@@ -308,6 +308,17 @@ class WaterBallInfo(object):
 
 
 class Cursor(object):
-
+    # 舊式游標
     OldType = '●'
+    # 新式游標
     NewType = '>'
+
+
+class IndexType(object):
+    # 版
+    Board = 1
+    # 信箱
+    Mail = 2
+
+    MinValue = Board
+    MaxValue = Mail
