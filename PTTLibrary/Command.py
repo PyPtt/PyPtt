@@ -13,6 +13,7 @@ Down = '\x1b\x4fB'
 Right = '\x1b\x4fC'
 Left = '\x1b\x4fD'
 
+Space = ' '
 QueryPost = 'Q'
 GoMainMenu = Left * 5
 Refresh = Ctrl_L

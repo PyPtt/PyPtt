@@ -39,6 +39,7 @@ LogLevel = Log.Level
 Command = Command
 PushType = DataType.PushType
 PostSearchType = DataType.PostSearchType
+IndexType = DataType.IndexType
 
 
 class Library(Synchronize.SynchronizeAllMethod):
@@ -408,6 +409,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         CmdList.append(Board)
         CmdList.append(Command.Enter)
         CmdList.append(Command.Ctrl_C * 2)
+        CmdList.append(Command.Space)
 
         if PostAID is not None:
             CmdList.append('#' + PostAID)
@@ -841,6 +843,112 @@ class Library(Synchronize.SynchronizeAllMethod):
         )
         return Post
 
+    def getNewestIndex(self,
+                       IndexType: int,
+                       Board: str=None,
+                       SearchType: int=0,
+                       SearchCondition: str=None):
+        if not Util.checkRange(DataType.IndexType, IndexType):
+            raise ValueError('Unknow IndexType', IndexType)
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(SearchType, int):
+            raise TypeError(Log.merge([
+                'SearchType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if (SearchCondition is not None and 
+           not isinstance(SearchCondition, str)):
+            raise TypeError(Log.merge([
+                'SearchCondition',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if (SearchType != 0 and
+           not Util.checkRange(DataType.PostSearchType, SearchType)):
+            raise ValueError('Unknow PostSearchType', PostSearchType)
+        
+        if IndexType == DataType.IndexType.Board:
+            CmdList = []
+            CmdList.append(Command.GoMainMenu)
+            CmdList.append('qs')
+            CmdList.append(Board)
+            CmdList.append(Command.Enter)
+            CmdList.append(Command.Ctrl_C * 2)
+            CmdList.append(Command.Space)
+
+            if SearchCondition is not None:
+                if SearchType == DataType.PostSearchType.Keyword:
+                    CmdList.append('/')
+                elif SearchType == DataType.PostSearchType.Author:
+                    CmdList.append('a')
+                elif SearchType == DataType.PostSearchType.Push:
+                    CmdList.append('Z')
+                elif SearchType == DataType.PostSearchType.Mark:
+                    CmdList.append('G')
+                elif SearchType == DataType.PostSearchType.Money:
+                    CmdList.append('A')
+                
+                CmdList.append(SearchCondition)
+                CmdList.append(Command.Enter)
+            
+            CmdList.append('0')
+            CmdList.append(Command.Enter)
+            CmdList.append('$')
+
+            Cmd = ''.join(CmdList)
+
+            TargetList = [
+                ConnectCore.TargetUnit(
+                    i18n.Success,
+                    Screens.Target.InBoard,
+                    BreakDetect=True,
+                    LogLevel=Log.Level.DEBUG
+                ),
+            ]
+            index = self._ConnectCore.send(Cmd, TargetList)
+            if index < 0:
+                Screens.show(self._ConnectCore.getScreenQueue())
+                raise Exceptions.UnknowError(i18n.UnknowError)
+
+            LastScreen = self._ConnectCore.getScreenQueue()[-1]
+            AllIndex = re.findall(r'\d+ ', LastScreen)
+        
+            if len(AllIndex) == 0:
+                Screens.show(self._ConnectCore.getScreenQueue())
+                raise Exceptions.UnknowError(i18n.UnknowError)
+
+            AllIndex = list(map(int, AllIndex))
+            AllIndex.sort(reverse=True)
+
+            for IndexTemp in AllIndex:
+                Continue = True
+                for i in range(1, 6):
+                    if IndexTemp - i not in AllIndex:
+                        Continue = False
+                        break
+                if Continue:
+                    Log.showValue(
+                        Log.Level.INFO,
+                        i18n.FindNewestIndex,
+                        IndexTemp
+                    )
+                    return IndexTemp
+
+    def crawlBoard(self,
+                   PostHandler,
+                   Board: str,
+                   StartIndex: int=0,
+                   EndIndex: int=0,
+                   SearchType: int=0,
+                   SearchCondition: str=None):
+        pass
+
     def post(self,
              Board: str,
              Title: str,
@@ -892,6 +1000,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         CmdList.append(Board)
         CmdList.append(Command.Enter)
         CmdList.append(Command.Ctrl_C * 2)
+        CmdList.append(Command.Space)
         CmdList.append(Command.Ctrl_P)
 
         Cmd = ''.join(CmdList)

@@ -220,6 +220,10 @@ def Post():
                 PTT.Command.ControlCode + 's',
                 1, 0)
 
+def GetNewestIndex():
+    global PTTBot
+    PTTBot.getNewestIndex(PTT.IndexType.Board, Board='Wanted')
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -257,8 +261,8 @@ if __name__ == '__main__':
             sys.exit()
         
         # GetPost()
-        Post()
-
+        # Post()
+        GetNewestIndex()
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
