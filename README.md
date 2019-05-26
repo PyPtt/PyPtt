@@ -22,12 +22,10 @@
 [![](http://img.youtube.com/vi/ng48ITuePlg/0.jpg)](http://www.youtube.com/watch?v=ng48ITuePlg "")
 
 ## 版本
-*****
 #### 0.8.1 beta
 #### 穩定後版號將進入 1.0 正式版
 
 ## 取得
-*****
 #### 安裝
 #### Windows
 ```
@@ -44,7 +42,6 @@ pip3 install PTTLibrary --upgrade
 ```
 
 ## 基本使用
-*****
 ```python
 import PTTLibrary
 from PTTLibrary import PTT
@@ -57,17 +54,15 @@ except PTTLibrary.ConnectCore.LoginError:
     sys.exit()
 PTTBot.log('登入成功')
 
-    .... Do some magic
+    # Do some magic
 
 PTTBot.logout()
 ```
 
 ## 詳細說明
-*****
 #### 請參考 Demo.py 有 API 的詳細範例與參數說明
 
 ## 需求
-*****
 #### Python ≥ 3.6
 
 ## 相依函式庫
@@ -78,7 +73,6 @@ PTTBot.logout()
 #### uao
 
 ## 贊助
-*****
 #### 在這個 github 的小園地，用熱血的心為您打造在 PTT 翱翔的翅膀。
 #### 希望您可以贊助這雙翅膀，讓我們一起飛得更遠，
 ####
