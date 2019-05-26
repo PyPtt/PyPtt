@@ -939,6 +939,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                         IndexTemp
                     )
                     return IndexTemp
+        
+        Screens.show(self._ConnectCore.getScreenQueue())
+        raise Exceptions.UnknowError(i18n.UnknowError)
 
     def crawlBoard(self,
                    PostHandler,
