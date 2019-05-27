@@ -47,7 +47,7 @@ setup(
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='PTT library',  # Required
+    description='PTT library github: https://github.com/Truth0906/PTTLibrary',  # Required
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
@@ -110,7 +110,7 @@ setup(
     # Note that this is a string of words separated by whitespace, not a list.
     keywords=['PTT', 'crawler', 'bot', 'library'],  # Optional
 
-    python_requires='>=3',
+    python_requires='>=3.6',
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
     #
