@@ -224,7 +224,7 @@ def Post():
 def GetNewestIndex():
     global PTTBot
 
-    for _ in range(100):
+    for _ in range(1):
         PTTBot.getNewestIndex(PTT.IndexType.Board, Board='Wanted')
 
 if __name__ == '__main__':
