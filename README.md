@@ -27,18 +27,16 @@
 
 ## 取得
 #### 安裝
-#### Windows
+#### Windows 使用 pip
+#### Linux and Mac 使用 pip3
 ```
 pip install PTTLibrary
 ```
-#### Linux Mac
-```
-pip3 install PTTLibrary
-```
+
 #### 更新
-#### [更新前注意] 0.8 不支援 0.7 之前的版本
+#### [更新前注意] 0.8 之後不支援 0.7 之前的版本
 ```
-pip3 install PTTLibrary --upgrade
+pip install PTTLibrary --upgrade
 ```
 
 ## 基本使用
