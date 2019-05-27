@@ -228,7 +228,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ScreenTimeout=Config.ScreenLongTimeOut
         )
         if index != 0:
-            raise ConnectCore.LoginError()
+            raise Exceptions.LoginError()
 
         self._Login = True
         return ErrorCode.Success
@@ -843,7 +843,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         )
         return Post
 
-    def getNewestIndex(self,
+    def _getNewestIndex(self,
                        IndexType: int,
                        Board: str=None,
                        SearchType: int=0,
@@ -926,6 +926,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             AllIndex = list(map(int, AllIndex))
             AllIndex.sort(reverse=True)
 
+            NewestIndex = 0
             for IndexTemp in AllIndex:
                 Continue = True
                 for i in range(1, 6):
@@ -938,10 +939,31 @@ class Library(Synchronize.SynchronizeAllMethod):
                         i18n.FindNewestIndex,
                         IndexTemp
                     )
-                    return IndexTemp
+                    NewestIndex = IndexTemp
+                    break
+            
+            if NewestIndex == 0:
+                Screens.show(self._ConnectCore.getScreenQueue())
+                raise Exceptions.UnknowError(i18n.UnknowError)
+            
+            # for i in range(1, 6):
+            #     if str(NewestIndex + i) not in LastScreen:
+            #         break
+            #     NewestIndex = NewestIndex + i
+            
+            return NewestIndex
 
-        Screens.show(self._ConnectCore.getScreenQueue())
-        raise Exceptions.UnknowError(i18n.UnknowError)
+    def getNewestIndex(self,
+                       IndexType: int,
+                       Board: str=None,
+                       SearchType: int=0,
+                       SearchCondition: str=None):
+        return self._getNewestIndex(
+            IndexType,
+            Board,
+            SearchType,
+            SearchCondition
+        )
 
     def crawlBoard(self,
                    PostHandler,

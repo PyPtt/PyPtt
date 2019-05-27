@@ -333,19 +333,26 @@ class API(object):
 
         if NoColor:
             # print(screen)
-            screen = re.sub('\[[\d+;]*[mH]', '', screen)
-            screen = re.sub('\[[\d+;]*[mH]', '', screen)
-
+            screen = re.sub('\[[\d+;]*[m]', '', screen)
+            screen = re.sub('\[[\d+;]*[m]', '', screen)
+            
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
         screen = re.sub(r'[\x0b\x0c]', '', screen)
-        screen = re.sub(r'[\x0e-\x1f]', '', screen)
+        
+        # screen = re.sub(r'[\x0e-\x1f]', '', screen)
+        screen = re.sub(r'[\x0e-\x1A]', '', screen)
+        screen = re.sub(r'[\x1B]', '\n', screen)
+        screen = re.sub(r'[\x1C-\x1F]', '', screen)
+        
         screen = re.sub(r'[\x7f-\xff]', '', screen)
+        
         screen = screen.replace('[K\n', '')
         screen = screen.replace('[K', '')
+        
         screen = screen.replace('[2J\n', '')
         screen = screen.replace('[2J', '')
-
+        print(screen)
         return screen
 
     def getScreenQueue(self) ->list:
