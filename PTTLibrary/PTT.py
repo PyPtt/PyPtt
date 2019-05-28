@@ -917,7 +917,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 raise Exceptions.UnknowError(i18n.UnknowError)
 
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
-            AllIndex = re.findall(r'\d+ ', LastScreen)
+            AllIndex = re.findall(r' \d+ ', LastScreen)
 
             if len(AllIndex) == 0:
                 Screens.show(self._ConnectCore.getScreenQueue())
@@ -941,16 +941,11 @@ class Library(Synchronize.SynchronizeAllMethod):
                     )
                     NewestIndex = IndexTemp
                     break
-            
+
             if NewestIndex == 0:
                 Screens.show(self._ConnectCore.getScreenQueue())
                 raise Exceptions.UnknowError(i18n.UnknowError)
-            
-            # for i in range(1, 6):
-            #     if str(NewestIndex + i) not in LastScreen:
-            #         break
-            #     NewestIndex = NewestIndex + i
-            
+
             return NewestIndex
 
     def getNewestIndex(self,
