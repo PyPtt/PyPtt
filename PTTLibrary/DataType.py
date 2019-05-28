@@ -309,9 +309,9 @@ class WaterBallInfo(object):
 
 class Cursor(object):
     # 舊式游標
-    OldType = '●'
+    Old = '●'
     # 新式游標
-    NewType = '>'
+    New = '>'
 
 
 class IndexType(object):
