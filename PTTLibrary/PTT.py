@@ -388,11 +388,27 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.BothInput,
             ]))
 
-        return self._getPost(Board,
-                             PostAID,
-                             PostIndex,
-                             SearchType,
-                             SearchCondition)
+        if PostIndex > 0:
+            NewestIndex = self._getNewestIndex(
+                DataType.IndexType.Board,
+                Board=Board,
+                SearchType=SearchType,
+                SearchCondition=SearchCondition
+            )
+
+            if PostIndex > NewestIndex:
+                raise ValueError(Log.merge([
+                    'PostIndex',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
+        return self._getPost(
+            Board,
+            PostAID,
+            PostIndex,
+            SearchType,
+            SearchCondition
+        )
 
     def _getPost(self, Board: str,
                  PostAID: str=None,
@@ -473,8 +489,8 @@ class Library(Synchronize.SynchronizeAllMethod):
             PostDelStatus = 0
 
             for line in OriScreen.split('\n'):
-                if (line.startswith(DataType.Cursor.NewType) or
-                   line.startswith(DataType.Cursor.OldType)):
+                if (line.startswith(DataType.Cursor.New) or
+                   line.startswith(DataType.Cursor.Old)):
                     # print(f'line: {line}')
 
                     pattern = re.compile('[\d]+\/[\d]+')
@@ -523,8 +539,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                 PostMoney = int(PostMoney)
 
             for line in OriScreen.split('\n'):
-                if (line.startswith(DataType.Cursor.NewType) or
-                   line.startswith(DataType.Cursor.OldType)):
+                if (line.startswith(DataType.Cursor.New) or
+                   line.startswith(DataType.Cursor.Old)):
 
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
@@ -557,7 +573,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         ]
 
         PostAuthor = None
-        PostAuthorPattern = re.compile('作者  (.+) 看板  ' + Board)
+        PostAuthorPattern_New = re.compile('作者  (.+) 看板  ' + Board)
+        PostAuthorPattern_Old = re.compile('作者  (.+) 站內  ' + Board)
         PostTitle = None
         PostTitlePattern = re.compile('標題  (.+)')
         PostDate = None
@@ -599,9 +616,14 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             if FirstPage:
 
-                PatternResult = PostAuthorPattern.search(LastScreen)
-                PostAuthor = PatternResult.group(0)
-                PostAuthor = PostAuthor.replace('看板  ' + Board, '')
+                PatternResult = PostAuthorPattern_New.search(LastScreen)
+                if PatternResult is not None:
+                    PostAuthor = PatternResult.group(0)
+                    PostAuthor = PostAuthor.replace('看板  ' + Board, '')
+                else:
+                    PatternResult = PostAuthorPattern_Old.search(LastScreen)
+                    PostAuthor = PatternResult.group(0)
+                    PostAuthor = PostAuthor.replace('站內  ' + Board, '')
                 PostAuthor = PostAuthor[4:].strip()
 
                 Log.showValue(Log.Level.DEBUG, i18n.Author, PostAuthor)
@@ -645,15 +667,29 @@ class Library(Synchronize.SynchronizeAllMethod):
                 else:
                     LastScreen = NewContentPart
 
-            if (not ContentFinish and
-               Screens.isMatch(LastScreen, Screens.Target.PostIP)):
+            if (not ContentFinish and (
+                        Screens.isMatch(
+                            LastScreen, Screens.Target.PostIP_New
+                        ) or
+                        Screens.isMatch(
+                            LastScreen, Screens.Target.PostIP_Old
+                        )
+                    )):
+                print('QQ')
                 ContentFinish = True
 
                 pattern = re.compile(
                     '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+\.[\d]+\.[\d]+\.[\d]+'
                 )
                 PatternResult = pattern.search(LastScreen)
-                IP = PatternResult.group(0)[25:]
+                if PatternResult is not None:
+                    IP = PatternResult.group(0)[25:]
+                else:
+                    pattern = re.compile(
+                        '◆ From: [\d]+\.[\d]+\.[\d]+\.[\d]+'
+                    )
+                    PatternResult = pattern.search(LastScreen)
+                    IP = PatternResult.group(0)[8:]
 
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
@@ -844,10 +880,10 @@ class Library(Synchronize.SynchronizeAllMethod):
         return Post
 
     def _getNewestIndex(self,
-                       IndexType: int,
-                       Board: str=None,
-                       SearchType: int=0,
-                       SearchCondition: str=None):
+                        IndexType: int,
+                        Board: str=None,
+                        SearchType: int=0,
+                        SearchCondition: str=None):
         if not Util.checkRange(DataType.IndexType, IndexType):
             raise ValueError('Unknow IndexType', IndexType)
         if not isinstance(Board, str):
@@ -967,7 +1003,83 @@ class Library(Synchronize.SynchronizeAllMethod):
                    EndIndex: int=0,
                    SearchType: int=0,
                    SearchCondition: str=None):
-        pass
+
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(StartIndex, int):
+            raise TypeError(Log.merge([
+                'StartIndex',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if not isinstance(EndIndex, int):
+            raise TypeError(Log.merge([
+                'EndIndex',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if not isinstance(SearchType, int):
+            raise TypeError(Log.merge([
+                'SearchType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if (SearchCondition is not None and
+           not isinstance(SearchCondition, str)):
+            raise TypeError(Log.merge([
+                'SearchCondition',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        
+        if StartIndex < 1:
+            raise ValueError(Log.merge([
+                'StartIndex',
+                i18n.ErrorParameter,
+                i18n.OutOfRange,
+            ]))
+        
+        if StartIndex < 1:
+            raise ValueError(Log.merge([
+                'StartIndex',
+                i18n.ErrorParameter,
+                i18n.OutOfRange,
+            ]))
+        
+        if StartIndex > EndIndex:
+            raise ValueError(Log.merge([
+                'StartIndex',
+                i18n.MustSmall,
+                'EndIndex',
+            ]))
+
+        NewestIndex = self._getNewestIndex(
+            DataType.IndexType.Board,
+            Board=Board,
+            SearchType=SearchType,
+            SearchCondition=SearchCondition
+        )
+
+        if EndIndex > NewestIndex:
+            raise ValueError(Log.merge([
+                'EndIndex',
+                i18n.ErrorParameter,
+                i18n.OutOfRange,
+            ]))
+        
+        for index in range(StartIndex, EndIndex + 1):
+            print(index)
+            Post = self._getPost(
+                Board,
+                PostIndex=index,
+                SearchType=SearchType,
+                SearchCondition=SearchCondition
+            )
+            PostHandler(Post)            
 
     def post(self,
              Board: str,

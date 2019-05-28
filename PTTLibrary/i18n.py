@@ -436,6 +436,18 @@ def load(inputLanguage):
         'Find Newest Index',
     ])
 
+    global OutOfRange
+    OutOfRange = SpecificLoad(inputLanguage, [
+        '超出範圍',
+        'Out Of Range',
+    ])
+
+    global MustSmall
+    MustSmall = SpecificLoad(inputLanguage, [
+        '必須小於',
+        'Must Small than',
+    ])
+
     # global List
     # List = []
 

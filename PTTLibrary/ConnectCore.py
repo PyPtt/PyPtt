@@ -353,15 +353,28 @@ class API(object):
         screen = screen.replace('[2J\n', '')
         screen = screen.replace('[2J', '')
 
-        NewLineMarkList = re.findall('\[(\d+);31H', screen)
-        for M in NewLineMarkList:
-            Target = screen[:screen.find(f'[{M};31H') + len(f'[{M};31H')]
-            Target = Target[Target.rfind('\n'):]
-            screen = screen.replace(Target, ' ', 1)
+        NewLineList = [
+            '31',
+            '77'
+        ]
+        for NewLineMark in NewLineList:
+            NewLineMarkList = re.findall(f'\[(\d+);{NewLineMark}H', screen)
+            for M in NewLineMarkList:
+                Target = screen[:screen.find(
+                    f'[{M};{NewLineMark}H') + len(f'[{M};{NewLineMark}H')
+                ]
+                Target = Target[Target.rfind('\n'):]
+                screen = screen.replace(Target, ' ', 1)
 
-        NewLineMarkList = re.findall('\[(\d+);3H', screen)
-        for M in NewLineMarkList:
-            screen = screen.replace(f'[{M};3H', '   ', 1)
+        SpaceList = [
+            3,
+            5,
+            22
+        ]
+        for Space in SpaceList:
+            NewLineMarkList = re.findall(f'\[(\d+);{Space}H', screen)
+            for M in NewLineMarkList:
+                screen = screen.replace(f'[{M};{Space}H', ' ' * Space, 1)
 
         return screen
 

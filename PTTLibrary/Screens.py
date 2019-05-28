@@ -43,11 +43,13 @@ class Target(object):
         '離開'
     ]
 
-    PostIP = [
+    PostIP_New = [
         '※ 發信站: 批踢踢實業坊(ptt.cc), 來自:'
     ]
 
-    ContentEnd = PostIP
+    PostIP_Old = [
+        '◆ From:'
+    ]
 
 
 def show(ScreenQueue, FunctionName=None):

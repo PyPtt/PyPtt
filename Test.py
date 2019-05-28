@@ -227,6 +227,19 @@ def GetNewestIndex():
     for _ in range(1):
         PTTBot.getNewestIndex(PTT.IndexType.Board, Board='Wanted')
 
+
+def crawlHandler(Post):
+    print(Post.getTitle())
+
+
+def CrawlBoard():
+    global PTTBot
+    PTTBot.crawlBoard(
+        crawlHandler,
+        'Wanted',
+        StartIndex=12,
+        EndIndex=12
+    )
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -251,7 +264,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -265,7 +278,8 @@ if __name__ == '__main__':
 
         # GetPost()
         # Post()
-        GetNewestIndex()
+        # GetNewestIndex()
+        CrawlBoard()
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
