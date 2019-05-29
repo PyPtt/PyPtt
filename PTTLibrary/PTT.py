@@ -582,7 +582,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         PostContent = []
 
         LineFromTopattern = re.compile('[\d]+~[\d]+')
-        NewIPPattern = re.compile('\([\d]+\.[\d]+\.[\d]+\.[\d]+\)')
+        NewIPPattern_New = re.compile('\([\d]+\.[\d]+\.[\d]+\.[\d]+\)')
+        NewIPPattern_Old = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
         PushAuthorPattern = re.compile('[推|噓|→] [\w]+:')
         PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
         PushIPPattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
@@ -601,8 +602,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             LastLine = Lines[-1]
             Lines.pop()
             LastScreen = '\n'.join(Lines)
-
-            # print(LastScreen)
 
             PatternResult = LineFromTopattern.search(LastLine)
             if PatternResult is None:
@@ -675,7 +674,6 @@ class Library(Synchronize.SynchronizeAllMethod):
                             LastScreen, Screens.Target.PostIP_Old
                         )
                     )):
-                print('QQ')
                 ContentFinish = True
 
                 pattern = re.compile(
@@ -719,8 +717,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                     if line.startswith('※ 編輯'):
                         if IP in line:
                             continue
-                        PatternResult = NewIPPattern.search(line)
-                        IP = PatternResult.group(0)[1:-1]
+                        PatternResult = NewIPPattern_New.search(line)
+                        if PatternResult is not None:
+                            IP = PatternResult.group(0)[1:-1]
+                        else:
+                            PatternResult = NewIPPattern_Old.search(line)
+                            IP = PatternResult.group(0)
                         Log.showValue(
                             Log.Level.DEBUG,
                             [
@@ -1035,21 +1037,21 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.MustBe,
                 i18n.String
             ]))
-        
+
         if StartIndex < 1:
             raise ValueError(Log.merge([
                 'StartIndex',
                 i18n.ErrorParameter,
                 i18n.OutOfRange,
             ]))
-        
+
         if StartIndex < 1:
             raise ValueError(Log.merge([
                 'StartIndex',
                 i18n.ErrorParameter,
                 i18n.OutOfRange,
             ]))
-        
+
         if StartIndex > EndIndex:
             raise ValueError(Log.merge([
                 'StartIndex',
@@ -1070,7 +1072,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.ErrorParameter,
                 i18n.OutOfRange,
             ]))
-        
+
         for index in range(StartIndex, EndIndex + 1):
             print(index)
             Post = self._getPost(
@@ -1079,7 +1081,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 SearchType=SearchType,
                 SearchCondition=SearchCondition
             )
-            PostHandler(Post)            
+            PostHandler(Post)
 
     def post(self,
              Board: str,
