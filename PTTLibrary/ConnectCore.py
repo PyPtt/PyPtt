@@ -245,7 +245,6 @@ class API(object):
             StartTime = time.time()
             MidTime = time.time()
             while MidTime - StartTime < CurrentScreenTimeout:
-
                 if self._ConnectMode == ConnectMode.Telnet:
                     try:
                         ReceiveDataTemp = self._Core.read_very_eager()
@@ -267,7 +266,7 @@ class API(object):
                     'big5-uao', errors='ignore'
                 )
 
-                ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)
+                # ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)
                 ReceiveData.append(ReceiveDataTemp)
                 Screen = ''.join(ReceiveData)
 
@@ -279,6 +278,7 @@ class API(object):
                     Condition = Target.isMatch(Screen)
                     if Condition:
                         if len(Screen) > 0:
+                            Screen = self._cleanScreen(Screen)
                             self._ReceiveDataQueue.append(Screen)
 
                         FindTarget = True
@@ -306,6 +306,7 @@ class API(object):
                 if FindTarget:
                     break
                 if len(Screen) > 0:
+                    Screen = self._cleanScreen(Screen)
                     self._ReceiveDataQueue.append(Screen)
 
                 MidTime = time.time()
@@ -321,8 +322,12 @@ class API(object):
         if not screen:
             return screen
 
-        # Log.log(Log.Level.INFO, screen)
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
+
+        if NoColor:
+            # print(screen)
+            screen = re.sub('\[[\d+;]*m', '', screen)
+            screen = re.sub('\[[\d+;]*m', '', screen)
 
         NewLineMarkList = re.findall('\[(\d+);4H', screen)
         for M in NewLineMarkList:
@@ -331,15 +336,9 @@ class API(object):
                             1)
             screen = screen.replace(f'[{M};4H', '\n' * NewLineCount)
 
-        if NoColor:
-            # print(screen)
-            screen = re.sub('\[[\d+;]*[m]', '', screen)
-            screen = re.sub('\[[\d+;]*[m]', '', screen)
-
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
         screen = re.sub(r'[\x0b\x0c]', '', screen)
-
         # screen = re.sub(r'[\x0e-\x1f]', '', screen)
         screen = re.sub(r'[\x0e-\x1A]', '', screen)
         screen = re.sub(r'[\x1B]', '\n', screen)
@@ -369,13 +368,29 @@ class API(object):
         SpaceList = [
             3,
             5,
-            22
+            22,
+            60
         ]
         for Space in SpaceList:
             NewLineMarkList = re.findall(f'\[(\d+);{Space}H', screen)
             for M in NewLineMarkList:
                 screen = screen.replace(f'[{M};{Space}H', ' ' * Space, 1)
 
+        NewLineList = [
+            '33',
+        ]
+        # print('=' * 50 + '\n>' + screen + '<')
+        for NewLineMark in NewLineList:
+            # print('========' + f'\[[(\d+);{NewLineMark}m')
+            NewLineMarkList = re.findall('\[(\d);' + NewLineMark + 'm', screen)
+            for M in NewLineMarkList:
+                Target = screen[:screen.find(
+                    f'[{M};{NewLineMark}m') + len(f'[{M};{NewLineMark}m')
+                ]
+                Target = Target[Target.rfind('\n'):]
+                screen = screen.replace(Target, '', 1)
+
+        screen = screen.strip()
         return screen
 
     def getScreenQueue(self) ->list:
