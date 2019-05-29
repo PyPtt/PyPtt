@@ -776,8 +776,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                         PushContent = PushContent.replace(PushDate, '')
                         if PushIP is not None:
                             PushContent = PushContent.replace(PushIP, '')
-                        PushContent = PushContent[2:].strip()
-
+                        PushContent = PushContent[
+                            PushContent.find(':') + 1:
+                        ].strip()
                         Log.showValue(Log.Level.DEBUG, [
                                 i18n.Push,
                                 i18n.Content,
