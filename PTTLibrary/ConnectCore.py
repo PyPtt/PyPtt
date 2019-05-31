@@ -328,13 +328,24 @@ class API(object):
             # print(screen)
             screen = re.sub('\[[\d+;]*m', '', screen)
             screen = re.sub('\[[\d+;]*m', '', screen)
+        
+        NewLineMarkList = [
+            '2',
+            '4'
+        ]
+        for NewLineMark in NewLineMarkList:
 
-        NewLineMarkList = re.findall('\[(\d+);4H', screen)
-        for M in NewLineMarkList:
-            NewLineCount = (int(M) -
-                            screen[:screen.find(f'[{M};4H')].count('\n') -
-                            1)
-            screen = screen.replace(f'[{M};4H', '\n' * NewLineCount)
+            ResultList = re.findall(f'\[(\d+);{NewLineMark}H', screen)
+            for M in ResultList:
+                NewLineCount = (
+                    int(M) -
+                    screen[:screen.find(f'[{M};{NewLineMark}H')].count('\n') -
+                    1
+                )
+                screen = screen.replace(
+                    f'[{M};{NewLineMark}H', 
+                    '\n' * NewLineCount
+                )
 
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
@@ -349,10 +360,15 @@ class API(object):
         screen = screen.replace('[K\n', '')
         screen = screen.replace('[K', '')
 
+        screen = screen.replace('[H\n', '')
+        screen = screen.replace('[H', '')
+
         screen = screen.replace('[2J\n', '')
         screen = screen.replace('[2J', '')
 
+        # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
         NewLineList = [
+            '9',
             '31',
             '77'
         ]
@@ -365,16 +381,10 @@ class API(object):
                 Target = Target[Target.rfind('\n'):]
                 screen = screen.replace(Target, ' ', 1)
 
-        SpaceList = [
-            3,
-            5,
-            22,
-            60
-        ]
-        for Space in SpaceList:
-            NewLineMarkList = re.findall(f'\[(\d+);{Space}H', screen)
+        for i in range(2, 24):
+            NewLineMarkList = re.findall(f'\[{i};(\d+)H', screen)
             for M in NewLineMarkList:
-                screen = screen.replace(f'[{M};{Space}H', ' ' * Space, 1)
+                screen = screen.replace(f'[{i};{M}H', ' ' * int(M), 1)
 
         NewLineList = [
             '33',
@@ -391,6 +401,7 @@ class API(object):
                 screen = screen.replace(Target, '', 1)
 
         screen = screen.strip()
+        # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
         return screen
 
     def getScreenQueue(self) ->list:
