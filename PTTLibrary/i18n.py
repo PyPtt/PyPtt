@@ -448,6 +448,18 @@ def load(inputLanguage):
         'Must Small than',
     ])
 
+    global VotePost
+    VotePost = SpecificLoad(inputLanguage, [
+        '投票文章',
+        'Vote Post',
+    ])
+
+    global DoNothing
+    DoNothing = SpecificLoad(inputLanguage, [
+        '不處理',
+        'Do Nothing',
+    ])
+
     # global List
     # List = []
 
