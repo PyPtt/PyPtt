@@ -615,6 +615,17 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             if FirstPage:
 
+                if Screens.isMatch(
+                    LastScreen, Screens.Target.Vote
+                ):
+                    Log.log(
+                        Log.Level.DEBUG, [
+                            i18n.VotePost,
+                            i18n.DoNothing,
+                        ]
+                    )
+                    return None
+
                 PatternResult = PostAuthorPattern_New.search(LastScreen)
                 if PatternResult is not None:
                     PostAuthor = PatternResult.group(0)
@@ -1082,6 +1093,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                 SearchType=SearchType,
                 SearchCondition=SearchCondition
             )
+            if Post is None:
+                continue
             PostHandler(Post)
 
     def post(self,

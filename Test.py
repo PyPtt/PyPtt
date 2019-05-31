@@ -110,7 +110,7 @@ def PerformanceTest():
     )
     try:
         PTTBot.login(ID, Password, KickOtherLogin=True)
-    except PTTLibrary.ConnectCore.LoginError:
+    except PTTLibrary.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
@@ -138,7 +138,7 @@ def PerformanceTest():
     )
     try:
         PTTBot.login(ID, Password, KickOtherLogin=True)
-    except PTTLibrary.ConnectCore.LoginError:
+    except PTTLibrary.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
@@ -228,8 +228,20 @@ def GetNewestIndex():
         PTTBot.getNewestIndex(PTT.IndexType.Board, Board='Wanted')
 
 
+def showValue(Msg, Value):
+    print(f'{Msg} =>{Value}<=')
+
+
 def crawlHandler(Post):
-    print(Post.getTitle())
+    showValue('標題', Post.getTitle())
+    showValue('AID', Post.getAID())
+    showValue('Author', Post.getAuthor())
+    showValue('Date', Post.getDate())
+    showValue('Content', Post.getContent())
+    showValue('Money', Post.getMoney())
+    showValue('WebUrl', Post.getWebUrl())
+    showValue('IP', Post.getIP())
+    showValue('ListDate', Post.getListDate())
 
 
 def CrawlBoard():
@@ -237,8 +249,8 @@ def CrawlBoard():
     PTTBot.crawlBoard(
         crawlHandler,
         'Wanted',
-        StartIndex=4,
-        EndIndex=4
+        StartIndex=19,
+        EndIndex=19
     )
 if __name__ == '__main__':
     os.system('cls')

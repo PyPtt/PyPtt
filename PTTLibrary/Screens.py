@@ -51,6 +51,12 @@ class Target(object):
         '◆ From:'
     ]
 
+    Vote = [
+        '◆ 投票名稱',
+        '◆ 投票中止於',
+        '◆ 票選題目描述'
+    ]
+
 
 def show(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.TRACE:
