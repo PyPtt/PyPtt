@@ -249,8 +249,8 @@ def CrawlBoard():
     PTTBot.crawlBoard(
         crawlHandler,
         'Wanted',
-        StartIndex=19,
-        EndIndex=19
+        StartIndex=68,
+        EndIndex=68
     )
 if __name__ == '__main__':
     os.system('cls')
@@ -276,8 +276,8 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            # LogLevel=PTT.LogLevel.TRACE,
-            LogLevel=PTT.LogLevel.DEBUG,
+            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
             PTTBot.login(ID,

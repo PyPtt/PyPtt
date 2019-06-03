@@ -454,6 +454,12 @@ def load(inputLanguage):
         'Vote Post',
     ])
 
+    global SubstandardPost
+    SubstandardPost = SpecificLoad(inputLanguage, [
+        '不合規範文章',
+        'Substandard Post',
+    ])
+
     global DoNothing
     DoNothing = SpecificLoad(inputLanguage, [
         '不處理',

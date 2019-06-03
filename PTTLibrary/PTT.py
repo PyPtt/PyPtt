@@ -632,6 +632,14 @@ class Library(Synchronize.SynchronizeAllMethod):
                     PostAuthor = PostAuthor.replace('看板  ' + Board, '')
                 else:
                     PatternResult = PostAuthorPattern_Old.search(LastScreen)
+                    if PatternResult is None:
+                        Log.log(
+                            Log.Level.DEBUG, [
+                                i18n.SubstandardPost,
+                                i18n.DoNothing,
+                            ]
+                        )
+                        return None
                     PostAuthor = PatternResult.group(0)
                     PostAuthor = PostAuthor.replace('站內  ' + Board, '')
                 PostAuthor = PostAuthor[4:].strip()
@@ -818,64 +826,6 @@ class Library(Synchronize.SynchronizeAllMethod):
                 Cmd = Command.Right
             else:
                 Cmd = Command.Down
-
-        # res = requests.get(
-        #     url=PostWeb,
-        #     cookies={'over18': '1'},
-        #     timeout=3
-        # )
-
-        # PageSource = res.text
-
-        # UnitList = Util.findValues(
-        #     PageSource,
-        #     '<span class="article-meta-value">',
-        #     '</span>'
-        # )
-
-        # PostAuthor = UnitList[0]
-        # PostTitle = UnitList[2]
-        # PostDate = UnitList[3]
-
-        # UnitList = Util.findValues(
-        #     PageSource,
-        #     PostDate + '</span></div>',
-        #     '<span class="f2">※ 發信站'
-        # )
-        # Content = UnitList[0]
-
-        # ResultList = re.findall(r'<a(.+)</a>', Content)
-
-        # for a in ResultList:
-        #     HTML = '<a' + a + '</a>'
-        #     Log.showValue(Log.Level.DEBUG, 'HTML', HTML)
-
-        #     UrlPattern = re.compile(
-        #         '(https|http):[\S]+<'
-        #     )
-        #     UrlPatternResult = UrlPattern.search(HTML)
-        #     if UrlPatternResult is None:
-        #         Content = Content.replace(HTML, '')
-        #         continue
-        #     URL = UrlPatternResult.group(0)[:-1]
-
-        #     Log.showValue(Log.Level.DEBUG, 'URL', URL)
-        #     Content = Content.replace(HTML, URL)
-
-        # ResultList = re.findall(r'<(.+)>', Content)
-
-        # for h in ResultList:
-        #     HTML = '<' + h + '>'
-        #     Log.showValue(Log.Level.DEBUG, 'HTML', HTML)
-        #     Content = Content.replace(HTML, '')
-
-        # Content = Content.strip()
-
-        # Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
-        # Log.showValue(Log.Level.DEBUG, 'PostTitle', PostTitle)
-        # Log.showValue(Log.Level.DEBUG, 'PostDate', PostDate)
-        # Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
-        # Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
         Post = DataType.PostInfo(
             Board=Board,
