@@ -51,6 +51,11 @@ class Target(object):
         '◆ From:'
     ]
 
+    Edit = [
+        '※ 編輯',
+        '來自:'
+    ]
+
     Vote = [
         '◆ 投票名稱',
         '◆ 投票中止於',

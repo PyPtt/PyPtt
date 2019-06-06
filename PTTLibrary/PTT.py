@@ -496,6 +496,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
                     ListDate = PatternResult.group(0)
+                    ListDate = ListDate[-5:]
 
                     pattern = re.compile('\[[\w]+\]')
                     PatternResult = pattern.search(line)
@@ -545,6 +546,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
                     ListDate = PatternResult.group(0)
+                    ListDate = ListDate[-5:]
 
             Log.showValue(Log.Level.DEBUG, 'PostAID', PostAID)
             Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
@@ -691,6 +693,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                         ) or
                         Screens.isMatch(
                             LastScreen, Screens.Target.PostIP_Old
+                        ) or
+                        Screens.isMatch(
+                            LastScreen, Screens.Target.Edit
                         )
                     )):
                 ContentFinish = True
@@ -706,19 +711,26 @@ class Library(Synchronize.SynchronizeAllMethod):
                         '◆ From: [\d]+\.[\d]+\.[\d]+\.[\d]+'
                     )
                     PatternResult = pattern.search(LastScreen)
-                    IP = PatternResult.group(0)[8:]
-
+                    if PatternResult is not None:
+                        IP = PatternResult.group(0)[8:]
+                    else:
+                        PatternResult = NewIPPattern_New.search(LastScreen)
+                        if PatternResult is not None:
+                            IP = PatternResult.group(0)[1:-1]
+                        else:
+                            PatternResult = NewIPPattern_Old.search(LastScreen)
+                            IP = PatternResult.group(0)
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
                 PostContent = '\n'.join(PostContent)
                 PostContent = PostContent[
-                    :PostContent.find('※ 發信站: 批踢踢實業坊(ptt.cc)')
+                    :PostContent.rfind('※')
                 ].strip()
 
                 Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
 
                 LastScreen = LastScreen[
-                    LastScreen.find('發信站: 批踢踢實業坊(ptt.cc)'):
+                    LastScreen.rfind('※'):
                 ]
 
             if ContentFinish:

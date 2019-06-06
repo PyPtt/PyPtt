@@ -328,7 +328,7 @@ class API(object):
             # print(screen)
             screen = re.sub('\[[\d+;]*m', '', screen)
             screen = re.sub('\[[\d+;]*m', '', screen)
-        
+
         NewLineMarkList = [
             '2',
             '4'
@@ -343,7 +343,7 @@ class API(object):
                     1
                 )
                 screen = screen.replace(
-                    f'[{M};{NewLineMark}H', 
+                    f'[{M};{NewLineMark}H',
                     '\n' * NewLineCount
                 )
 
@@ -367,24 +367,32 @@ class API(object):
         screen = screen.replace('[2J', '')
 
         # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
-        NewLineList = [
-            '9',
-            '31',
-            '77'
-        ]
-        for NewLineMark in NewLineList:
-            NewLineMarkList = re.findall(f'\[(\d+);{NewLineMark}H', screen)
-            for M in NewLineMarkList:
-                Target = screen[:screen.find(
-                    f'[{M};{NewLineMark}H') + len(f'[{M};{NewLineMark}H')
-                ]
-                Target = Target[Target.rfind('\n'):]
-                screen = screen.replace(Target, ' ', 1)
 
         for i in range(2, 24):
             NewLineMarkList = re.findall(f'\[{i};(\d+)H', screen)
+            # 計算 '\[{i};(\d+)H' 之前有幾個換行
+
             for M in NewLineMarkList:
-                screen = screen.replace(f'[{i};{M}H', ' ' * int(M), 1)
+                NewLineCount = (
+                    screen[:screen.find(f'[{i};{M}H')].count('\n')
+                )
+                # print('i', i)
+                # print('NewLineCount', NewLineCount)
+
+                if NewLineCount == i:
+                    screen = screen.replace(f'[{i};{M}H', ' ' * int(M), 1)
+                elif NewLineCount > i:
+                    for _ in range(NewLineCount - i):
+                        Target = screen[:screen.find(
+                            f'[{i};{M}H') + len(f'[{i};{M}H')
+                        ]
+                        Target = Target[Target.rfind('\n'):]
+                        screen = screen.replace(Target, ' ', 1)
+                elif NewLineCount < i:
+                    screen = screen.replace(
+                        f'[{i};{M}H',
+                        '\n' * (i - NewLineCount) + ' ' * int(M),
+                        1)
 
         NewLineList = [
             '33',
