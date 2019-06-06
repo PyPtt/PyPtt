@@ -1,6 +1,7 @@
 ﻿import sys
 import time
 import re
+import progressbar
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -1047,17 +1048,25 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.OutOfRange,
             ]))
 
+        if Config.LogLevel == Log.Level.INFO:
+            PB = progressbar.ProgressBar(
+                max_value=EndIndex - StartIndex + 1,
+                redirect_stdout=True
+            )
         for index in range(StartIndex, EndIndex + 1):
-            print(index)
             Post = self._getPost(
                 Board,
                 PostIndex=index,
                 SearchType=SearchType,
                 SearchCondition=SearchCondition
             )
+            if Config.LogLevel == Log.Level.INFO:
+                PB.update(index - StartIndex)
             if Post is None:
                 continue
             PostHandler(Post)
+        if Config.LogLevel == Log.Level.INFO:
+            PB.finish()
 
     def post(self,
              Board: str,

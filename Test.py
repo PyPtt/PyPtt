@@ -233,15 +233,16 @@ def showValue(Msg, Value):
 
 
 def crawlHandler(Post):
-    showValue('標題', Post.getTitle())
-    showValue('AID', Post.getAID())
-    showValue('Author', Post.getAuthor())
-    showValue('Date', Post.getDate())
-    showValue('Content', Post.getContent())
-    showValue('Money', Post.getMoney())
-    showValue('WebUrl', Post.getWebUrl())
-    showValue('IP', Post.getIP())
-    showValue('ListDate', Post.getListDate())
+    # showValue('標題', Post.getTitle())
+    # showValue('AID', Post.getAID())
+    # showValue('Author', Post.getAuthor())
+    # showValue('Date', Post.getDate())
+    # showValue('Content', Post.getContent())
+    # showValue('Money', Post.getMoney())
+    # showValue('WebUrl', Post.getWebUrl())
+    # showValue('IP', Post.getIP())
+    # showValue('ListDate', Post.getListDate())
+    pass
 
 
 def CrawlBoard():
@@ -250,7 +251,7 @@ def CrawlBoard():
         crawlHandler,
         'Wanted',
         StartIndex=1,
-        EndIndex=100
+        EndIndex=10
     )
 if __name__ == '__main__':
     os.system('cls')
