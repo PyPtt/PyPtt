@@ -251,7 +251,7 @@ def CrawlBoard():
         crawlHandler,
         'Wanted',
         StartIndex=1,
-        EndIndex=10
+        EndIndex=100
     )
 if __name__ == '__main__':
     os.system('cls')
