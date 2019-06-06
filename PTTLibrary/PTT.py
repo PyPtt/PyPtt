@@ -1048,6 +1048,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.OutOfRange,
             ]))
 
+        NonePostList = []
         if Config.LogLevel == Log.Level.INFO:
             PB = progressbar.ProgressBar(
                 max_value=EndIndex - StartIndex + 1,
@@ -1063,11 +1064,13 @@ class Library(Synchronize.SynchronizeAllMethod):
             if Config.LogLevel == Log.Level.INFO:
                 PB.update(index - StartIndex)
             if Post is None:
+                NonePostList.append(index)
                 continue
             PostHandler(Post)
         if Config.LogLevel == Log.Level.INFO:
             PB.finish()
-
+        return NonePostList
+        
     def post(self,
              Board: str,
              Title: str,
