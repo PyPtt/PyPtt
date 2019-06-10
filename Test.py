@@ -72,7 +72,7 @@ def Loginout():
                      Password,
                      # KickOtherLogin=True
                      )
-    except PTTLibrary.ConnectCore.LoginError:
+    except PTTLibrary.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
@@ -90,7 +90,7 @@ def Loginout():
     )
     try:
         PTTBot.login(ID, Password, KickOtherLogin=True)
-    except PTTLibrary.ConnectCore.LoginError:
+    except PTTLibrary.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
@@ -232,27 +232,34 @@ def showValue(Msg, Value):
     print(f'{Msg} =>{Value}<=')
 
 
+def detectNone(Name, Obj):
+    if Obj is None:
+        raise ValueError(f'{Name} is None')
+
+
 def crawlHandler(Post):
-    # showValue('標題', Post.getTitle())
-    # showValue('AID', Post.getAID())
-    # showValue('Author', Post.getAuthor())
-    # showValue('Date', Post.getDate())
-    # showValue('Content', Post.getContent())
-    # showValue('Money', Post.getMoney())
-    # showValue('WebUrl', Post.getWebUrl())
-    # showValue('IP', Post.getIP())
-    # showValue('ListDate', Post.getListDate())
-    pass
+    detectNone('標題', Post.getTitle())
+    detectNone('AID', Post.getAID())
+    detectNone('Author', Post.getAuthor())
+    detectNone('Date', Post.getDate())
+    detectNone('Content', Post.getContent())
+    detectNone('Money', Post.getMoney())
+    detectNone('WebUrl', Post.getWebUrl())
+    detectNone('IP', Post.getIP())
+    detectNone('ListDate', Post.getListDate())
 
 
 def CrawlBoard():
     global PTTBot
-    PTTBot.crawlBoard(
+    # 19 38 41 48 53 54 66 69 74 100
+    NoneList = PTTBot.crawlBoard(
         crawlHandler,
         'Wanted',
-        StartIndex=1,
+        StartIndex=100,
         EndIndex=100
     )
+
+    print('None: ' + ' '.join(str(x) for x in NoneList))
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -278,7 +285,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
             # LogLevel=PTT.LogLevel.TRACE,
-            # LogLevel=PTT.LogLevel.DEBUG,
+            LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
             PTTBot.login(ID,
@@ -292,7 +299,7 @@ if __name__ == '__main__':
         # GetPost()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)

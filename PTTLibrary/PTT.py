@@ -226,7 +226,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         index = self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            ScreenTimeout=Config.ScreenLongTimeOut,
+            Refresh=False
         )
         if index != 0:
             raise Exceptions.LoginError()
@@ -577,7 +578,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         PostAuthor = None
         PostAuthorPattern_New = re.compile('作者  (.+) 看板  ' + Board)
-        PostAuthorPattern_Old = re.compile('作者  (.+) 站內  ' + Board)
+        PostAuthorPattern_Old = re.compile('作者  (.+)')
         PostTitle = None
         PostTitlePattern = re.compile('標題  (.+)')
         PostDate = None
@@ -618,9 +619,11 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             if FirstPage:
 
-                if Screens.isMatch(
-                    LastScreen, Screens.Target.Vote
-                ):
+                if (Screens.isMatch(
+                    LastScreen, Screens.Target.Vote_Type1
+                ) or Screens.isMatch(
+                    LastScreen, Screens.Target.Vote_Type2
+                )):
                     Log.log(
                         Log.Level.DEBUG, [
                             i18n.VotePost,
@@ -783,6 +786,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                         )
 
                         Result = PushDatePattern.search(line)
+                        if Result is None:
+                            continue
                         PushDate = Result.group(0)
                         Log.showValue(Log.Level.DEBUG, [
                                 i18n.Push,
@@ -1070,7 +1075,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         if Config.LogLevel == Log.Level.INFO:
             PB.finish()
         return NonePostList
-        
+
     def post(self,
              Board: str,
              Title: str,
