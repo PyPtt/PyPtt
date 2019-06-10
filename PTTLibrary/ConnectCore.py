@@ -197,7 +197,7 @@ class API(object):
         if not ConnectSuccess:
             raise ConnectError()
 
-    def send(self, Msg: str, TargetList: list, ScreenTimeout: int=0) ->int:
+    def send(self, Msg: str, TargetList: list, ScreenTimeout: int=0, Refresh: bool=True) ->int:
 
         if not all(isinstance(T, TargetUnit) for T in TargetList):
             raise ValueError('Item of TargetList must be TargetUnit')
@@ -211,7 +211,7 @@ class API(object):
 
         while True:
 
-            if not Msg.endswith(Command.Refresh):
+            if Refresh and not Msg.endswith(Command.Refresh):
                 Msg = Msg + Command.Refresh
             try:
                 Msg = Msg.encode('big5-uao', 'replace')
@@ -270,8 +270,6 @@ class API(object):
                 ReceiveData.append(ReceiveDataTemp)
                 Screen = ''.join(ReceiveData)
 
-                Screens.show(Screen)
-
                 FindTarget = False
                 for Target in TargetList:
 
@@ -279,6 +277,7 @@ class API(object):
                     if Condition:
                         if len(Screen) > 0:
                             Screen = self._cleanScreen(Screen)
+                            Screens.show(Screen)
                             self._ReceiveDataQueue.append(Screen)
 
                         FindTarget = True
@@ -307,6 +306,7 @@ class API(object):
                     break
                 if len(Screen) > 0:
                     Screen = self._cleanScreen(Screen)
+                    Screens.show(Screen)
                     self._ReceiveDataQueue.append(Screen)
 
                 MidTime = time.time()
@@ -319,96 +319,91 @@ class API(object):
         self._Core.close()
 
     def _cleanScreen(self, screen: str, NoColor=True) ->str:
+
+        result = [' ' * 80] * 24
+        for line in result:
+            Log.showValue(Log.Level.INFO, 'result: ', line)
+
         if not screen:
             return screen
-
+        # https://github.com/RobTillaart/Arduino/blob/master/libraries/VT100/VT100.h
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
-
         if NoColor:
             # print(screen)
-            screen = re.sub('\[[\d+;]*m', '', screen)
-            screen = re.sub('\[[\d+;]*m', '', screen)
-
-        NewLineMarkList = [
-            '2',
-            '4'
-        ]
-        for NewLineMark in NewLineMarkList:
-
-            ResultList = re.findall(f'\[(\d+);{NewLineMark}H', screen)
-            for M in ResultList:
-                NewLineCount = (
-                    int(M) -
-                    screen[:screen.find(f'[{M};{NewLineMark}H')].count('\n') -
-                    1
-                )
-                screen = screen.replace(
-                    f'[{M};{NewLineMark}H',
-                    '\n' * NewLineCount
-                )
-
+            screen = re.sub('\x1B\[[\d+;]*m', '', screen)
+            # screen = re.sub('\[[\d+;]*m', '', screen)
+        
+        screen = re.sub(r'[\x1B]', '\n', screen)
+        lines = screen.split('\n')
+        for i in range(len(lines)):
+            line = lines[i]
+            print(f'line {i}: {line}')
+        print('=' * 50)
+        
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         # screen = re.sub(r'[\x0e-\x1f]', '', screen)
+        
         screen = re.sub(r'[\x0e-\x1A]', '', screen)
-        screen = re.sub(r'[\x1B]', '\n', screen)
+        
         screen = re.sub(r'[\x1C-\x1F]', '', screen)
-
         screen = re.sub(r'[\x7f-\xff]', '', screen)
 
-        screen = screen.replace('[K\n', '')
-        screen = screen.replace('[K', '')
-
-        screen = screen.replace('[H\n', '')
-        screen = screen.replace('[H', '')
-
-        screen = screen.replace('[2J\n', '')
-        screen = screen.replace('[2J', '')
+        # screen = screen.replace('[K', '')
+        # screen = screen.replace('[H', '')
+        # screen = screen.replace('[2J', '')
 
         # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
 
-        for i in range(2, 24):
-            NewLineMarkList = re.findall(f'\[{i};(\d+)H', screen)
-            # 計算 '\[{i};(\d+)H' 之前有幾個換行
+        # for line in range(2, 24):
+        #     NewLineMarkList = re.findall(f'\[{line};(\d+)H', screen)
+        #     # 計算 '\[{i};(\d+)H' 之前有幾個換行
 
-            for M in NewLineMarkList:
-                NewLineCount = (
-                    screen[:screen.find(f'[{i};{M}H')].count('\n')
-                )
-                # print('i', i)
-                # print('NewLineCount', NewLineCount)
+        #     for Space in NewLineMarkList:
+        #         NewLineCount = (
+        #             screen[:screen.find(f'[{line};{Space}H')].count('\n')
+        #         )
+        #         # print('line', linei)
+        #         # print('NewLineCount', NewLineCount)
 
-                if NewLineCount == i:
-                    screen = screen.replace(f'[{i};{M}H', ' ' * int(M), 1)
-                elif NewLineCount > i:
-                    for _ in range(NewLineCount - i):
-                        Target = screen[:screen.find(
-                            f'[{i};{M}H') + len(f'[{i};{M}H')
-                        ]
-                        Target = Target[Target.rfind('\n'):]
-                        screen = screen.replace(Target, ' ', 1)
-                elif NewLineCount < i:
-                    screen = screen.replace(
-                        f'[{i};{M}H',
-                        '\n' * (i - NewLineCount) + ' ' * int(M),
-                        1)
+        #         if NewLineCount == line:
+        #             screen = screen.replace(f'[{line};{Space}H', ' ' * int(Space), 1)
+        #         elif NewLineCount > line:
+        #             Target_Part1 = screen[:screen.find(
+        #                 f'[{line};{Space}H') + len(f'[{line};{Space}H')
+        #             ]
+        #             Target_Part1 = Target_Part1[Target_Part1.rfind('\n'):]
+        #             Target_Part2 = screen[:screen.find(Target_Part1)]
+        #             Target_Part2 = Target_Part2[Target_Part2.rfind('\n') + 1:]
+        #             # Log.showValue(Log.Level.INFO, 'Target_Part1', Target_Part1)
+        #             # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
+        #             screen = screen.replace(Target_Part1, ' ', 1)
 
-        NewLineList = [
-            '33',
-        ]
-        # print('=' * 50 + '\n>' + screen + '<')
-        for NewLineMark in NewLineList:
-            # print('========' + f'\[[(\d+);{NewLineMark}m')
-            NewLineMarkList = re.findall('\[(\d);' + NewLineMark + 'm', screen)
-            for M in NewLineMarkList:
-                Target = screen[:screen.find(
-                    f'[{M};{NewLineMark}m') + len(f'[{M};{NewLineMark}m')
-                ]
-                Target = Target[Target.rfind('\n'):]
-                screen = screen.replace(Target, '', 1)
+        #             # Log.showValue(Log.Level.INFO, 'Target_Part2', Target_Part2)
+                    
+        #             # screen = screen.replace(Target_Part2, Target_Part2[:int(Space)])
+        #         elif NewLineCount < line:
+        #             screen = screen.replace(
+        #                 f'[{line};{Space}H',
+        #                 '\n' * (line - NewLineCount) + ' ' * int(Space),
+        #                 1)
+        
+        # print('*' * 50 + '\n>' + screen + '<\n' + '*' * 50)
+        # NewLineList = [
+        #     '33',
+        # ]
+        
+        # for NewLineMark in NewLineList:
+        #     NewLineMarkList = re.findall('\[(\d);' + NewLineMark + 'm', screen)
+        #     for M in NewLineMarkList:
+        #         Target = screen[:screen.find(
+        #             f'[{M};{NewLineMark}m') + len(f'[{M};{NewLineMark}m')
+        #         ]
+        #         Target = Target[Target.rfind('\n'):]
+        #         screen = screen.replace(Target, '', 1)
 
-        screen = screen.strip()
+        # screen = screen.strip()
         # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
         return screen
 
