@@ -264,6 +264,11 @@ if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
 
+    # print(len('\x1B[[d+;]'))
+    # print(len('[[d+;]'))
+
+    # sys.exit()
+
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
             print('CI test run success!!')
