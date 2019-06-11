@@ -1,5 +1,5 @@
 import sys
-
+import re
 try:
     import DataType
     import Config
@@ -108,3 +108,70 @@ def isMatch(Screen: str, Target):
                 return False
         return True
 
+
+class Screen(object):
+    # https://github.com/RobTillaart/Arduino/blob/master/libraries/VT100/VT100.h
+
+    Control = '\x1B'
+    CleanScreen = '\x1B[2J'
+    HOME = '\x1B[H'
+
+    XY = re.compile('\x1B\[(\d+);(\d+)H')
+
+    def __init__(self, OriScreen):
+        self._y = 0
+        self._x = 0
+        self._OriScreen = OriScreen
+        self._screen = [[' '] * 80] * 24
+
+    def _writeChar(self, char):
+        print(f'({self._y}, {self._x})')
+        self._screen[self._y][self._x] = str(char)
+        self._x += 1
+        if self._x >= 80:
+            self._y += 1
+            self._x = 0
+
+    def _getScreen(self):
+        Lines = []
+        for LineList in self._screen:
+            Line = ''.join(LineList)
+            Lines.append(Line)
+        return '\n'.join(Lines)
+
+    def _show(self):
+        print(self._getScreen())
+        print('= ' * 50)
+
+    def process(self):
+
+        print(self._OriScreen)
+
+        while len(self._OriScreen) > 1:
+            if self._OriScreen.startswith(self.Control):
+                result = self.XY.search(self._OriScreen)
+                if result is not None:
+                    XYResult = result.group(0)
+                    print(XYResult)
+
+                    # if self._OriScreen.startswith(XYResult):
+
+                if self._OriScreen.startswith(self.CleanScreen):
+                    self._screen = [[' '] * 80] * 24
+                    self._y = 0
+                    self._x = 0
+                    self._OriScreen = self._OriScreen[len(self.CleanScreen):]
+                elif self._OriScreen.startswith(self.HOME):
+                    self._x = 0
+                    self._OriScreen = self._OriScreen[len(self.HOME):]
+                else:
+                    pass
+            else:
+                char = self._OriScreen[0]
+                self._OriScreen = self._OriScreen[1:]
+                self._writeChar(char)
+            
+            print(len(self._OriScreen))
+            print(self._OriScreen)
+            # self._show()
+        return self._getScreen()

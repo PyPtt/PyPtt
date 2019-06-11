@@ -320,26 +320,22 @@ class API(object):
 
     def _cleanScreen(self, screen: str, NoColor=True) ->str:
 
-        result = [' ' * 80] * 24
-        for line in result:
-            Log.showValue(Log.Level.INFO, 'result: ', line)
-
         if not screen:
             return screen
-        # https://github.com/RobTillaart/Arduino/blob/master/libraries/VT100/VT100.h
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
         if NoColor:
             # print(screen)
             screen = re.sub('\x1B\[[\d+;]*m', '', screen)
             # screen = re.sub('\[[\d+;]*m', '', screen)
         
-        screen = re.sub(r'[\x1B]', '\n', screen)
-        lines = screen.split('\n')
-        for i in range(len(lines)):
-            line = lines[i]
-            print(f'line {i}: {line}')
-        print('=' * 50)
-        
+        # screen = re.sub(r'[\x1B]', '\n', screen)
+        # lines = screen.split('\n')
+        # for i in range(len(lines)):
+        #     line = lines[i]
+        #     # print(f'line {i}: {line}')
+        #     print(f'{line}')
+        # print('=' * 50)
+
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
         screen = re.sub(r'[\x0b\x0c]', '', screen)
@@ -349,62 +345,10 @@ class API(object):
         
         screen = re.sub(r'[\x1C-\x1F]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
-
-        # screen = screen.replace('[K', '')
-        # screen = screen.replace('[H', '')
-        # screen = screen.replace('[2J', '')
-
-        # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
-
-        # for line in range(2, 24):
-        #     NewLineMarkList = re.findall(f'\[{line};(\d+)H', screen)
-        #     # 計算 '\[{i};(\d+)H' 之前有幾個換行
-
-        #     for Space in NewLineMarkList:
-        #         NewLineCount = (
-        #             screen[:screen.find(f'[{line};{Space}H')].count('\n')
-        #         )
-        #         # print('line', linei)
-        #         # print('NewLineCount', NewLineCount)
-
-        #         if NewLineCount == line:
-        #             screen = screen.replace(f'[{line};{Space}H', ' ' * int(Space), 1)
-        #         elif NewLineCount > line:
-        #             Target_Part1 = screen[:screen.find(
-        #                 f'[{line};{Space}H') + len(f'[{line};{Space}H')
-        #             ]
-        #             Target_Part1 = Target_Part1[Target_Part1.rfind('\n'):]
-        #             Target_Part2 = screen[:screen.find(Target_Part1)]
-        #             Target_Part2 = Target_Part2[Target_Part2.rfind('\n') + 1:]
-        #             # Log.showValue(Log.Level.INFO, 'Target_Part1', Target_Part1)
-        #             # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
-        #             screen = screen.replace(Target_Part1, ' ', 1)
-
-        #             # Log.showValue(Log.Level.INFO, 'Target_Part2', Target_Part2)
-                    
-        #             # screen = screen.replace(Target_Part2, Target_Part2[:int(Space)])
-        #         elif NewLineCount < line:
-        #             screen = screen.replace(
-        #                 f'[{line};{Space}H',
-        #                 '\n' * (line - NewLineCount) + ' ' * int(Space),
-        #                 1)
         
-        # print('*' * 50 + '\n>' + screen + '<\n' + '*' * 50)
-        # NewLineList = [
-        #     '33',
-        # ]
-        
-        # for NewLineMark in NewLineList:
-        #     NewLineMarkList = re.findall('\[(\d);' + NewLineMark + 'm', screen)
-        #     for M in NewLineMarkList:
-        #         Target = screen[:screen.find(
-        #             f'[{M};{NewLineMark}m') + len(f'[{M};{NewLineMark}m')
-        #         ]
-        #         Target = Target[Target.rfind('\n'):]
-        #         screen = screen.replace(Target, '', 1)
+        ScreenObj = Screens.Screen(screen)
+        screen = ScreenObj.process()
 
-        # screen = screen.strip()
-        # print('=' * 50 + '\n>' + screen + '<\n' + '=' * 50)
         return screen
 
     def getScreenQueue(self) ->list:
