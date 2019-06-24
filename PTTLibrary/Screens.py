@@ -109,69 +109,28 @@ def isMatch(Screen: str, Target):
         return True
 
 
-class Screen(object):
-    # https://github.com/RobTillaart/Arduino/blob/master/libraries/VT100/VT100.h
+def VT100(OriScreen: str, NoColor: bool=True):
 
-    Control = '\x1B'
-    CleanScreen = '\x1B[2J'
-    HOME = '\x1B[H'
+    result = OriScreen
 
-    XY = re.compile('\x1B\[(\d+);(\d+)H')
+    if NoColor:
+        result = re.sub('\x1B\[[\d+;]*m', '', result)
 
-    def __init__(self, OriScreen):
-        self._y = 0
-        self._x = 0
-        self._OriScreen = OriScreen
-        self._screen = [[' '] * 80] * 24
+    result = re.sub(r'[\x1B]', '=PTT=', result)
 
-    def _writeChar(self, char):
-        print(f'({self._y}, {self._x})')
-        self._screen[self._y][self._x] = str(char)
-        self._x += 1
-        if self._x >= 80:
-            self._y += 1
-            self._x = 0
-
-    def _getScreen(self):
-        Lines = []
-        for LineList in self._screen:
-            Line = ''.join(LineList)
-            Lines.append(Line)
-        return '\n'.join(Lines)
-
-    def _show(self):
-        print(self._getScreen())
-        print('= ' * 50)
-
-    def process(self):
-
-        print(self._OriScreen)
-
-        while len(self._OriScreen) > 1:
-            if self._OriScreen.startswith(self.Control):
-                result = self.XY.search(self._OriScreen)
-                if result is not None:
-                    XYResult = result.group(0)
-                    print(XYResult)
-
-                    # if self._OriScreen.startswith(XYResult):
-
-                if self._OriScreen.startswith(self.CleanScreen):
-                    self._screen = [[' '] * 80] * 24
-                    self._y = 0
-                    self._x = 0
-                    self._OriScreen = self._OriScreen[len(self.CleanScreen):]
-                elif self._OriScreen.startswith(self.HOME):
-                    self._x = 0
-                    self._OriScreen = self._OriScreen[len(self.HOME):]
-                else:
-                    pass
-            else:
-                char = self._OriScreen[0]
-                self._OriScreen = self._OriScreen[1:]
-                self._writeChar(char)
-            
-            print(len(self._OriScreen))
-            print(self._OriScreen)
-            # self._show()
-        return self._getScreen()
+    # result = '\n'.join(
+    #     [x.rstrip() for x in result.split('\n')]
+    # )
+    if '=PTT=[H' in result:
+        result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
+    if '=PTT=[2J' in result:
+        result = result[result.find('=PTT=[2J') + len('=PTT=[2J'):]
+    #
+    ResultList = re.findall(f'=PTT=\[(\d+);(\d+)H', result)
+    for (Line, Space) in ResultList:
+        print(Line, Space)
+        CurrentLine = result[:result.find(f'[{Line};{Space}H')].count('\n') + 1
+        print(CurrentLine)
+    print(result)
+    print('=' * 50)
+    return result

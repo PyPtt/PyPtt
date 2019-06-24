@@ -318,36 +318,28 @@ class API(object):
     def close(self):
         self._Core.close()
 
-    def _cleanScreen(self, screen: str, NoColor=True) ->str:
+    def _cleanScreen(self, screen: str, NoColor: bool=True) ->str:
 
         if not screen:
             return screen
         # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
-        if NoColor:
-            # print(screen)
-            screen = re.sub('\x1B\[[\d+;]*m', '', screen)
+
             # screen = re.sub('\[[\d+;]*m', '', screen)
-        
-        # screen = re.sub(r'[\x1B]', '\n', screen)
-        # lines = screen.split('\n')
-        # for i in range(len(lines)):
-        #     line = lines[i]
-        #     # print(f'line {i}: {line}')
-        #     print(f'{line}')
-        # print('=' * 50)
 
         screen = re.sub(r'[\r]', '', screen)
         screen = re.sub(r'[\x00-\x08]', '', screen)
         screen = re.sub(r'[\x0b\x0c]', '', screen)
         # screen = re.sub(r'[\x0e-\x1f]', '', screen)
-        
+
         screen = re.sub(r'[\x0e-\x1A]', '', screen)
-        
+
         screen = re.sub(r'[\x1C-\x1F]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
-        
-        ScreenObj = Screens.Screen(screen)
-        screen = ScreenObj.process()
+
+        # ScreenObj = Screens.Screen(screen)
+        # screen = ScreenObj.process()
+
+        screen = Screens.VT100(screen)
 
         return screen
 
