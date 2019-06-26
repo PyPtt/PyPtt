@@ -126,11 +126,45 @@ def VT100(OriScreen: str, NoColor: bool=True):
     if '=PTT=[2J' in result:
         result = result[result.find('=PTT=[2J') + len('=PTT=[2J'):]
     #
-    ResultList = re.findall(f'=PTT=\[(\d+);(\d+)H', result)
+    # print(result)
+    ResultList = re.findall('=PTT=\[(\d+);(\d+)H', result)
     for (Line, Space) in ResultList:
-        print(Line, Space)
-        CurrentLine = result[:result.find(f'[{Line};{Space}H')].count('\n') + 1
-        print(CurrentLine)
-    print(result)
-    print('=' * 50)
+        Line = int(Line)
+        Space = int(Space)
+        CurrentLine = result[
+            :result.find(
+                f'[{Line};{Space}H'
+            )
+        ].count('\n') + 1
+        CurrentSpace = result[
+            :result.find(
+                f'=PTT=[{Line};{Space}H'
+            )
+        ]
+        CurrentSpace = CurrentSpace[
+            CurrentSpace.rfind('\n') + 1:
+        ]
+        # if 15 == Line:
+        #     print(result)
+        #     print(f'>{CurrentSpace}<')
+        CurrentSpace = len(CurrentSpace)
+
+        # print(Line, Space)
+        # print(CurrentLine)
+        # print(CurrentSpace)
+        if CurrentLine > Line:
+            continue
+        
+        if CurrentSpace > Space:
+            result = result.replace(
+                f'=PTT=[{Line};{Space}H',
+                (Line - CurrentLine) * '\n' + Space * ' '
+            )
+        else:
+            result = result.replace(
+                f'=PTT=[{Line};{Space}H',
+                (Line - CurrentLine) * '\n' + (Space - CurrentSpace) * ' '
+            )
+    # print(result)
+    # print('=' * 50)
     return result

@@ -165,9 +165,10 @@ def GetPost():
     try:
         Post = PTTBot.getPost(
             'Wanted',
-            PostIndex=7172,
-            SearchType=PTT.PostSearchType.Keyword,
-            SearchCondition='公告')
+            PostIndex=79697,
+            # SearchType=PTT.PostSearchType.Keyword,
+            # SearchCondition='公告'
+        )
 
         if Post is not None:
             print('Board: ' + Post.getBoard())
@@ -304,7 +305,7 @@ if __name__ == '__main__':
         # GetPost()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
