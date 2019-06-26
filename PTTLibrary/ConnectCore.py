@@ -336,9 +336,6 @@ class API(object):
         screen = re.sub(r'[\x1C-\x1F]', '', screen)
         screen = re.sub(r'[\x7f-\xff]', '', screen)
 
-        # ScreenObj = Screens.Screen(screen)
-        # screen = ScreenObj.process()
-
         screen = Screens.VT100(screen)
 
         return screen
