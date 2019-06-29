@@ -9,7 +9,7 @@
 
 #### PTT Library 是一個由 Python 所開發，用來操作 PTT 的函式庫
 #### 無論推文、發文、爬文、收信、寄信、發 P 幣還是狂查人家 ID，都可以滿足你的需求
-#### 支援經典的 Telnet 與最新的 WebSocket 連線模式
+#### 使用最新的 WebSocket 連線模式
 #### 支援多國語系，繁體中文與英文
 #### 歡迎發起 pull request，提交你開發的 API
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
@@ -27,8 +27,7 @@
 
 ## 取得
 #### 安裝
-#### Windows 使用 pip
-#### Linux and Mac 使用 pip3
+#### Windows 使用 pip, Linux and Mac 使用 pip3
 ```
 pip install PTTLibrary
 ```
@@ -70,7 +69,6 @@ PTTBot.logout()
 ## 相依函式庫
 #### progressbar2
 #### websockets
-#### requests
 #### uao
 
 ## 贊助
