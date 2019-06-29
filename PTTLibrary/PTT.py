@@ -483,7 +483,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             raise Exceptions.UnknowError(i18n.UnknowError)
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        # print(self._ConnectCore.getScreenQueue()[-1])
+        # print(OriScreen)
 
         if index == 1:
             # 文章被刪除
