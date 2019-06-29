@@ -132,7 +132,6 @@ setup(
     install_requires=[
         'progressbar2',
         'websockets',
-        'requests',
         'uao'
     ],  # Optional
 
