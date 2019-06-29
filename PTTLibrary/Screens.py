@@ -121,11 +121,12 @@ def VT100(OriScreen: str, NoColor: bool=True):
     # result = '\n'.join(
     #     [x.rstrip() for x in result.split('\n')]
     # )
-    if '=PTT=[H' in result:
+    while '=PTT=[H' in result:
         result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
-    if '=PTT=[2J' in result:
+    while '=PTT=[2J' in result:
         result = result[result.find('=PTT=[2J') + len('=PTT=[2J'):]
     #
+    # print('-'*50)
     # print(result)
     ResultList = re.findall('=PTT=\[(\d+);(\d+)H', result)
     for (Line, Space) in ResultList:
@@ -144,26 +145,32 @@ def VT100(OriScreen: str, NoColor: bool=True):
         CurrentSpace = CurrentSpace[
             CurrentSpace.rfind('\n') + 1:
         ]
-        # if 15 == Line:
+        CurrentSpace = len(CurrentSpace)
+        # if '有的警察可能會說' in result:
+        #     print('='*50)
         #     print(result)
         #     print(f'>{CurrentSpace}<')
-        CurrentSpace = len(CurrentSpace)
-
-        # print(Line, Space)
-        # print(CurrentLine)
-        # print(CurrentSpace)
+            # print(Line, Space)
+            # print(CurrentLine)
+            # print(CurrentSpace)
         if CurrentLine > Line:
             continue
-        
-        if CurrentSpace > Space:
-            result = result.replace(
-                f'=PTT=[{Line};{Space}H',
-                (Line - CurrentLine) * '\n' + Space * ' '
-            )
+
+        if CurrentLine == Line:
+            if CurrentSpace > Space:
+                result = result.replace(
+                    f'=PTT=[{Line};{Space}H',
+                    (Line - CurrentLine) * '\n' + Space * ' '
+                )
+            else:
+                result = result.replace(
+                    f'=PTT=[{Line};{Space}H',
+                    (Line - CurrentLine) * '\n' + (Space - CurrentSpace) * ' '
+                )
         else:
             result = result.replace(
                 f'=PTT=[{Line};{Space}H',
-                (Line - CurrentLine) * '\n' + (Space - CurrentSpace) * ' '
+                (Line - CurrentLine) * '\n' + Space * ' '
             )
     # print(result)
     # print('=' * 50)

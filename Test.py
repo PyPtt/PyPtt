@@ -244,6 +244,7 @@ def crawlHandler(Post):
     detectNone('Author', Post.getAuthor())
     detectNone('Date', Post.getDate())
     detectNone('Content', Post.getContent())
+    print(Post.getContent())
     detectNone('Money', Post.getMoney())
     detectNone('WebUrl', Post.getWebUrl())
     detectNone('IP', Post.getIP())
@@ -256,11 +257,12 @@ def CrawlBoard():
     NoneList = PTTBot.crawlBoard(
         crawlHandler,
         'Wanted',
-        StartIndex=100,
-        EndIndex=100
+        StartIndex=3,
+        EndIndex=3
     )
 
-    print('None: ' + ' '.join(str(x) for x in NoneList))
+    if len(NoneList) > 0:
+        print('None: ' + ' '.join(str(x) for x in NoneList))
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -291,7 +293,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
             # LogLevel=PTT.LogLevel.TRACE,
-            LogLevel=PTT.LogLevel.DEBUG,
+            # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
             PTTBot.login(ID,
