@@ -172,6 +172,20 @@ def VT100(OriScreen: str, NoColor: bool=True):
                 f'=PTT=[{Line};{Space}H',
                 (Line - CurrentLine) * '\n' + Space * ' '
             )
+    
+    while '=PTT=[K' in result:
+        Target = result[result.find('=PTT=[K'):]
+        index1 = Target.find('\n')
+        index2 = Target.find('=PTT=')
+        if index2 == 0:
+            index = index1
+        else:
+            index = min(index1, index2)
+        Target = Target[:index]
+
+        result = result.replace(Target, '')
+
     # print(result)
     # print('=' * 50)
+
     return result

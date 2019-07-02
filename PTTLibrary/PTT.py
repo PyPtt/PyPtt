@@ -307,11 +307,14 @@ class Library(Synchronize.SynchronizeAllMethod):
             return Result.group(0)
         return None
 
-    def getPost(self, Board: str,
-                PostAID: str=None,
-                PostIndex: int=0,
-                SearchType: int=0,
-                SearchCondition: str=None):
+    def getPost(
+        self,
+        Board: str,
+        PostAID: str=None,
+        PostIndex: int=0,
+        SearchType: int=0,
+        SearchCondition: str=None
+    ):
 
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
@@ -1183,6 +1186,198 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         return ErrorCode.Success
 
+    def push(
+        self,
+        Board: str,
+        PushType: int,
+        PushContent: str,
+        PostAID: str=None,
+        PostIndex: int=0
+    ):
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PushType, int):
+            raise TypeError(Log.merge([
+                'PushType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if not isinstance(PushContent, str):
+            raise TypeError(Log.merge([
+                'PushContent',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PostAID, str) and PostAID is not None:
+            raise TypeError(Log.merge([
+                'PostAID',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PostIndex, int):
+            raise TypeError(Log.merge([
+                'PostIndex',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if len(Board) == 0:
+            raise ValueError(Log.merge([
+                i18n.Board,
+                i18n.ErrorParameter,
+                Board
+            ]))
+        if not Util.checkRange(DataType.PushType, PushType):
+            raise ValueError('Unknow PushType', PushType)
+        if PostIndex != 0 and isinstance(PostAID, str):
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostAID',
+                i18n.ErrorParameter,
+                i18n.BothInput
+            ]))
+
+        if PostIndex == 0 and PostAID is None:
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostAID',
+                i18n.ErrorParameter,
+                i18n.NoInput
+            ]))
+        if PostIndex > 0:
+            NewestIndex = self._getNewestIndex(
+                DataType.IndexType.Board,
+                Board=Board
+            )
+
+            if PostIndex > NewestIndex:
+                raise ValueError(Log.merge([
+                    'PostIndex',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
+        
+        MaxPushLength = 50
+        PushList = []
+
+        TempStartIndex = 0
+        TempEndIndex = TempStartIndex + 1
+
+        while TempEndIndex <= len(PushContent):
+
+            Temp = ''
+            while len(Temp.encode('big5-uao', 'ignore')) < MaxPushLength:
+                Temp = PushContent[TempStartIndex:TempEndIndex]
+
+                if not len(Temp.encode('big5-uao', 'ignore')) < MaxPushLength:
+                    break
+                elif PushContent.endswith(Temp):
+                    break
+                elif Temp.endswith('\n'):
+                    break
+
+                TempEndIndex += 1
+
+            PushList.append(Temp.strip())
+
+            TempStartIndex = TempEndIndex
+            TempEndIndex = TempStartIndex + 1
+        
+        PushList = filter(None, PushList)
+        for push in PushList:
+            Log.showValue(
+                Log.Level.INFO,
+                'push:',
+                push
+            )
+
+            self._push(
+                Board,
+                PushType,
+                PushContent,
+                PostAID=PostAID,
+                PostIndex=PostIndex
+            )
+
+        return ErrorCode.Success
+    
+    def _push(
+        self,
+        Board: str,
+        PushType: int,
+        PushContent: str,
+        PostAID: str=None,
+        PostIndex: int=0
+    ):
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('qs')
+        CmdList.append(Board)
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Ctrl_C * 2)
+        CmdList.append(Command.Space)
+
+        if PostAID is not None:
+            CmdList.append('#' + PostAID)
+        elif PostIndex != 0:
+            CmdList.append(str(PostIndex))
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Push)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.HasPushPermission,
+                '您覺得這篇文章',
+                LogLevel=Log.Level.DEBUG,
+                BreakDetect=True
+            ),
+            ConnectCore.TargetUnit(
+                i18n.AuthorOnlyArrow,
+                '加註方式',
+                LogLevel=Log.Level.DEBUG,
+                BreakDetect=True
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoFastPush,
+                '禁止快速連續推文',
+                LogLevel=Log.Level.INFO,
+                BreakDetect=True,
+                Exceptions=Exceptions.Error(i18n.NoFastPush)
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoFastPush,
+                '禁止短時間內大量推文',
+                LogLevel=Log.Level.INFO,
+                BreakDetect=True,
+                Exceptions=Exceptions.Error(i18n.NoFastPush)
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoPermission,
+                '使用者不可發言',
+                LogLevel=Log.Level.INFO,
+                BreakDetect=True,
+                Exceptions=Exceptions.Error(i18n.NoPermission)
+            )
+        ]
+
+        index = self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut,
+            Refresh=False
+        )
+
+        print(index)
+        print(self._ConnectCore.getScreenQueue()[-1])
+
+        return ErrorCode.Success
+
+    
 if __name__ == '__main__':
 
     print('PTT Library v ' + Version)

@@ -113,8 +113,8 @@ class PushType(object):
     Boo = 2
     Arrow = 3
 
-    MaxValue = Push
-    MinValue = Arrow
+    MinValue = Push
+    MaxValue = Arrow
 
 
 class MailInformation(object):
