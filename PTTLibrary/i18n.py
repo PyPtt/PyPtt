@@ -406,6 +406,12 @@ def load(inputLanguage):
         'Please ' + Login + ' first',
     ])
 
+    global HasPushPermission
+    HasPushPermission = SpecificLoad(inputLanguage, [
+        '使用者擁有推文權限',
+        'User Has Push Permission',
+    ])
+
     global HasPostPermission
     HasPostPermission = SpecificLoad(inputLanguage, [
         '使用者擁有貼文權限',
@@ -414,7 +420,7 @@ def load(inputLanguage):
 
     global NoPermission
     NoPermission = SpecificLoad(inputLanguage, [
-        '使用者沒有貼文權限',
+        '使用者沒有權限',
         'User Has No Permission',
     ])
 
@@ -464,6 +470,18 @@ def load(inputLanguage):
     DoNothing = SpecificLoad(inputLanguage, [
         '不處理',
         'Do Nothing',
+    ])
+
+    global NoFastPush
+    NoFastPush = SpecificLoad(inputLanguage, [
+        '禁止快速連續推文',
+        'No Fast Push',
+    ])
+
+    global AuthorOnlyArrow
+    AuthorOnlyArrow = SpecificLoad(inputLanguage, [
+        '作者本人使用加註方式',
+        'Author only use Arrow in Push',
     ])
 
     # global List

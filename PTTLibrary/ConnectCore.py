@@ -58,12 +58,15 @@ class NoMatchTargetError(Exception):
 
 
 class TargetUnit(object):
-    def __init__(self,
-                 DisplayMsg,
-                 DetectTarget,
-                 LogLevel: int=0,
-                 Response: str='',
-                 BreakDetect=False):
+    def __init__(
+        self,
+        DisplayMsg,
+        DetectTarget,
+        LogLevel: int=0,
+        Response: str='',
+        BreakDetect=False,
+        Exceptions=None
+    ):
 
         self._DisplayMsg = DisplayMsg
         self._DetectTarget = DetectTarget
@@ -73,16 +76,21 @@ class TargetUnit(object):
             self._LogLevel = LogLevel
         self._Response = Response
         self._BreakDetect = BreakDetect
+        self._Exception = Exceptions
 
     def isMatch(self, Screen: str):
         if isinstance(self._DetectTarget, str):
             if self._DetectTarget in Screen:
+                if self._Exception is not None:
+                    raise self._Exception
                 return True
             return False
         elif isinstance(self._DetectTarget, list):
             for Target in self._DetectTarget:
                 if Target not in Screen:
                     return False
+            if self._Exception is not None:
+                raise self._Exception
             return True
 
     def getDisplayMsg(self):
@@ -214,14 +222,14 @@ class API(object):
             if Refresh and not Msg.endswith(Command.Refresh):
                 Msg = Msg + Command.Refresh
             try:
-                Msg = Msg.encode('big5-uao', 'replace')
+                Msg = Msg.encode('big5-uao', 'ignore')
 
             except AttributeError:
                 pass
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                Msg = Msg.encode('big5', 'replace')
+                Msg = Msg.encode('big5', 'ignore')
 
             Log.showValue(Log.Level.DEBUG, [
                     i18n.SendMsg
