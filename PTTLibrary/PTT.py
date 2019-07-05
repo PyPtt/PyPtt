@@ -1290,7 +1290,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         for push in PushList:
             Log.showValue(
                 Log.Level.INFO,
-                'push:',
+                i18n.Push,
                 push
             )
 
@@ -1372,7 +1372,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             Refresh=False
         )
 
-        print(index)
+        # print(index)
         # print(self._ConnectCore.getScreenQueue()[-1].split('\n')[-1])
 
         EnablePush = False
