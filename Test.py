@@ -273,6 +273,7 @@ What is Ptt?
 目前在 Ptt/Ptt2 註冊的人數超過一百萬人，尖峰時段兩站容納超過十五萬名使用者同時上線，擁有超過兩萬個不同主題的看板，每日有上萬篇的新文章被發表以及閱讀，並且擁有前輩朋友留下數量可觀的資料文件。
 '''
     PTTBot.push('Test', PTT.PushType.Push, 'Test', PostIndex=367)
+    PTTBot.push('Test', PTT.PushType.Push, Content, PostIndex=367)
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')

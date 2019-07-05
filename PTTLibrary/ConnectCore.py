@@ -205,7 +205,13 @@ class API(object):
         if not ConnectSuccess:
             raise ConnectError()
 
-    def send(self, Msg: str, TargetList: list, ScreenTimeout: int=0, Refresh: bool=True) ->int:
+    def send(
+        self,
+        Msg: str,
+        TargetList: list,
+        ScreenTimeout: int=0,
+        Refresh: bool=True
+    ) ->int:
 
         if not all(isinstance(T, TargetUnit) for T in TargetList):
             raise ValueError('Item of TargetList must be TargetUnit')

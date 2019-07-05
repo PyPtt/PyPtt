@@ -1260,7 +1260,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.OutOfRange,
                 ]))
         
-        MaxPushLength = 50
+        MaxPushLength = 45
         PushList = []
 
         TempStartIndex = 0
@@ -1297,7 +1297,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             self._push(
                 Board,
                 PushType,
-                PushContent,
+                push,
                 PostAID=PostAID,
                 PostIndex=PostIndex
             )
@@ -1337,7 +1337,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 BreakDetect=True
             ),
             ConnectCore.TargetUnit(
-                i18n.AuthorOnlyArrow,
+                i18n.OnlyArrow,
                 '加註方式',
                 LogLevel=Log.Level.DEBUG,
                 BreakDetect=True
@@ -1373,7 +1373,64 @@ class Library(Synchronize.SynchronizeAllMethod):
         )
 
         print(index)
-        print(self._ConnectCore.getScreenQueue()[-1])
+        # print(self._ConnectCore.getScreenQueue()[-1].split('\n')[-1])
+
+        EnablePush = False
+        EnableBoo = False
+        EnableArrow = False
+
+        CmdList = []
+
+        if index == 0:
+            PushOptionLine = self._ConnectCore.getScreenQueue()[-1]
+            PushOptionLine = PushOptionLine.split('\n')[-1]
+            Log.showValue(Log.Level.DEBUG, 'Push option line', PushOptionLine)
+
+            EnablePush = '值得推薦' in PushOptionLine
+            EnableBoo = '給它噓聲' in PushOptionLine
+            EnableArrow = '只加→註解' in PushOptionLine
+
+            Log.showValue(Log.Level.DEBUG, 'Push', EnablePush)
+            Log.showValue(Log.Level.DEBUG, 'Boo', EnableBoo)
+            Log.showValue(Log.Level.DEBUG, 'Arrow', EnableArrow)
+
+            if PushType == DataType.PushType.Push and not EnablePush:
+                PushType = DataType.PushType.Arrow
+            elif PushType == DataType.PushType.Boo and not EnableBoo:
+                PushType = DataType.PushType.Arrow
+            elif PushType == DataType.PushType.Arrow and not EnableArrow:
+                PushType = DataType.PushType.Push
+
+            CmdList.append(str(PushType))
+        elif index == 1:
+            PushType = DataType.PushType.Arrow
+        
+        CmdList.append(PushContent)
+        CmdList.append(Command.Enter)
+        CmdList.append('y')
+        CmdList.append(Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.Push,
+                    i18n.Success,
+                ],
+                Screens.Target.InBoard,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+        ]
+
+        index = self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
+
+        # print(self._ConnectCore.getScreenQueue()[-1])
 
         return ErrorCode.Success
 
