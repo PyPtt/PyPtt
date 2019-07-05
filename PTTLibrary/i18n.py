@@ -478,10 +478,10 @@ def load(inputLanguage):
         'No Fast Push',
     ])
 
-    global AuthorOnlyArrow
-    AuthorOnlyArrow = SpecificLoad(inputLanguage, [
-        '作者本人使用加註方式',
-        'Author only use Arrow in Push',
+    global OnlyArrow
+    OnlyArrow = SpecificLoad(inputLanguage, [
+        '使用加註方式',
+        'Arrow Only in Push',
     ])
 
     # global List
