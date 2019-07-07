@@ -1259,8 +1259,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
-        
-        MaxPushLength = 45
+
+        MaxPushLength = 34
         PushList = []
 
         TempStartIndex = 0
@@ -1285,7 +1285,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             TempStartIndex = TempEndIndex
             TempEndIndex = TempStartIndex + 1
-        
+
         PushList = filter(None, PushList)
         for push in PushList:
             Log.showValue(
@@ -1294,16 +1294,26 @@ class Library(Synchronize.SynchronizeAllMethod):
                 push
             )
 
-            self._push(
-                Board,
-                PushType,
-                push,
-                PostAID=PostAID,
-                PostIndex=PostIndex
-            )
+            for _ in range(2):
+                try:
+                    self._push(
+                        Board,
+                        PushType,
+                        push,
+                        PostAID=PostAID,
+                        PostIndex=PostIndex
+                    )
+                    break
+                except Exceptions.NoFastPush:
+                    # Screens.show(self._ConnectCore.getScreenQueue())
+                    Log.log(
+                        Log.Level.DEBUG,
+                        '等待快速推文'
+                    )
+                    time.sleep(5.2)
 
         return ErrorCode.Success
-    
+
     def _push(
         self,
         Board: str,
@@ -1347,14 +1357,14 @@ class Library(Synchronize.SynchronizeAllMethod):
                 '禁止快速連續推文',
                 LogLevel=Log.Level.INFO,
                 BreakDetect=True,
-                Exceptions=Exceptions.Error(i18n.NoFastPush)
+                Exceptions=Exceptions.NoFastPush()
             ),
             ConnectCore.TargetUnit(
                 i18n.NoFastPush,
                 '禁止短時間內大量推文',
                 LogLevel=Log.Level.INFO,
                 BreakDetect=True,
-                Exceptions=Exceptions.Error(i18n.NoFastPush)
+                Exceptions=Exceptions.NoFastPush()
             ),
             ConnectCore.TargetUnit(
                 i18n.NoPermission,
@@ -1369,7 +1379,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             Cmd,
             TargetList,
             ScreenTimeout=Config.ScreenLongTimeOut,
-            Refresh=False
+            # Refresh=False
         )
 
         # print(index)
@@ -1404,7 +1414,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             CmdList.append(str(PushType))
         elif index == 1:
             PushType = DataType.PushType.Arrow
-        
+
         CmdList.append(PushContent)
         CmdList.append(Command.Enter)
         CmdList.append('y')
@@ -1434,7 +1444,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         return ErrorCode.Success
 
-    
+
 if __name__ == '__main__':
 
     print('PTT Library v ' + Version)
