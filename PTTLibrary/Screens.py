@@ -26,9 +26,9 @@ class Target(object):
     ]
 
     InBoard = [
+        '【板主',
         '文章選讀',
-        '進板畫面',
-        '【板主'
+        '相關主題'
     ]
 
     InPost = [
@@ -172,7 +172,7 @@ def VT100(OriScreen: str, NoColor: bool=True):
                 f'=PTT=[{Line};{Space}H',
                 (Line - CurrentLine) * '\n' + Space * ' '
             )
-    
+
     while '=PTT=[K' in result:
         Target = result[result.find('=PTT=[K'):]
         index1 = Target.find('\n')
