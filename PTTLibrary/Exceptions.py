@@ -53,3 +53,14 @@ class LoginError(Exception):
         if Config.Language == i18n.Language.Chinese:
             return ''.join(self.message)
         return ' '.join(self.message)
+
+
+class NoFastPush(Exception):
+    def __init__(self):
+        self.message = [i18n.NoFastPush]
+
+    def __str__(self):
+
+        if Config.Language == i18n.Language.Chinese:
+            return ''.join(self.message)
+        return ' '.join(self.message)
