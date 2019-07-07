@@ -81,16 +81,12 @@ class TargetUnit(object):
     def isMatch(self, Screen: str):
         if isinstance(self._DetectTarget, str):
             if self._DetectTarget in Screen:
-                if self._Exception is not None:
-                    raise self._Exception
                 return True
             return False
         elif isinstance(self._DetectTarget, list):
             for Target in self._DetectTarget:
                 if Target not in Screen:
                     return False
-            if self._Exception is not None:
-                raise self._Exception
             return True
 
     def getDisplayMsg(self):
@@ -111,6 +107,10 @@ class TargetUnit(object):
 
     def isBreak(self):
         return self._BreakDetect
+
+    def raiseException(self):
+        if self._Exception is not None:
+            raise self._Exception
 
 _WSRecvData = None
 
@@ -293,6 +293,7 @@ class API(object):
                             Screen = self._cleanScreen(Screen)
                             Screens.show(Screen)
                             self._ReceiveDataQueue.append(Screen)
+                            Target.raiseException()
 
                         FindTarget = True
 

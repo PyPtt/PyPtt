@@ -270,12 +270,11 @@ def Push():
     Content = '''
 What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
-期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。(詳細的權利與義務以及隱私權保障請參閱 使用者條款)
-目前在 Ptt/Ptt2 註冊的人數超過一百萬人，尖峰時段兩站容納超過十五萬名使用者同時上線，擁有超過兩萬個不同主題的看板，每日有上萬篇的新文章被發表以及閱讀，並且擁有前輩朋友留下數量可觀的資料文件。
+期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
     # PTTBot.push('Test', PTT.PushType.Push, 'Test', PostIndex=225)
     # PTTBot.push('Test', PTT.PushType.Push, Content, PostIndex=225)
-    PTTBot.push('Gossiping', PTT.PushType.Push, Content, PostIndex=99942)
+    PTTBot.push('Gossiping', PTT.PushType.Push, Content, PostIndex=95693)
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -305,7 +304,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:

@@ -1260,7 +1260,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.OutOfRange,
                 ]))
 
-        MaxPushLength = 34
+        MaxPushLength = 33
         PushList = []
 
         TempStartIndex = 0
@@ -1307,7 +1307,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 except Exceptions.NoFastPush:
                     # Screens.show(self._ConnectCore.getScreenQueue())
                     Log.log(
-                        Log.Level.DEBUG,
+                        Log.Level.INFO,
                         '等待快速推文'
                     )
                     time.sleep(5.2)
@@ -1342,7 +1342,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         TargetList = [
             ConnectCore.TargetUnit(
                 i18n.HasPushPermission,
-                '您覺得這篇文章',
+                '您覺得這篇',
                 LogLevel=Log.Level.DEBUG,
                 BreakDetect=True
             ),
