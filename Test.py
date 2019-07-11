@@ -266,6 +266,10 @@ def CrawlBoard():
         print('None: ' + ' '.join(str(x) for x in NoneList))
 
 
+def GetUser():
+    User = PTTBot.getUser('CodingMan')
+
+
 def Push():
     Content = '''
 What is Ptt?
@@ -304,7 +308,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -320,7 +324,8 @@ if __name__ == '__main__':
         # Post()
         # GetNewestIndex()
         # CrawlBoard()
-        Push()
+        # Push()
+        GetUser()
 
     except Exception as e:
 
