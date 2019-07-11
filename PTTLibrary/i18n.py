@@ -484,6 +484,18 @@ def load(inputLanguage):
         'Arrow Only in Push',
     ])
 
+    global GetUser
+    GetUser = SpecificLoad(inputLanguage, [
+        '取得使用者',
+        'Get User',
+    ])
+
+    global NoSuchUser
+    NoSuchUser = SpecificLoad(inputLanguage, [
+        '無該使用者',
+        'No such user',
+    ])
+
     # global List
     # List = []
 

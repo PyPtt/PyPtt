@@ -197,6 +197,7 @@ class UserInfo(object):
     def getSignatureFile(self):
         return self._SignatureFile
 
+
 class PushInfo(object):
     def __init__(self, PushType, Author, PushContent, PushIP, PushTime):
         self._Type = ParseParameter(int, PushType)

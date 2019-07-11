@@ -1450,7 +1450,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.MustBe,
                 i18n.String
             ]))
-        
+
         if len(UserID) < 3:
             raise ValueError(Log.merge([
                 'UserID',
@@ -1470,15 +1470,22 @@ class Library(Synchronize.SynchronizeAllMethod):
         Cmd = ''.join(CmdList)
 
         TargetList = [
-            # ConnectCore.TargetUnit(
-            #     [
-            #         i18n.Push,
-            #         i18n.Success,
-            #     ],
-            #     Screens.Target.InBoard,
-            #     BreakDetect=True,
-            #     LogLevel=Log.Level.DEBUG
-            # ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetUser,
+                    i18n.Success,
+                ],
+                Screens.Target.AnyKey,
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetUser,
+                    i18n.Fail,
+                ],
+                Screens.Target.InTalk,
+                BreakDetect=True,
+            ),
         ]
 
         index = self._ConnectCore.send(
@@ -1486,8 +1493,64 @@ class Library(Synchronize.SynchronizeAllMethod):
             TargetList,
             ScreenTimeout=Config.ScreenLongTimeOut
         )
-        
-        return None
+        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+        Log.showValue(Log.Level.DEBUG, 'OriScreen', OriScreen)
+        if index == 1:
+            raise Exceptions.NoSuchUser(UserID)
+
+        Data = Util.getSubStringList(OriScreen, '》', ['《', '\n'])
+        if len(Data) != 10:
+            raise Exceptions.ParseError(OriScreen)
+        # print('\n'.join(Data))
+        # print(len(Data))
+
+        ID = Data[0]
+        Money = Data[1]
+        LoginTime = Data[2]
+        LoginTime = LoginTime[:LoginTime.find(' ')]
+        LoginTime = int(LoginTime)
+
+        Temp = re.findall(r'\d+', Data[3])
+        LegalPost = int(Temp[0])
+        IllegalPost = int(Temp[1])
+
+        State = Data[4]
+        Mail = Data[5]
+        LastLogin = Data[6]
+        LastIP = Data[7]
+        FiveChess = Data[8]
+        Chess = Data[9]
+
+        SignatureFile = '\n'.join(OriScreen.split('\n')[6:-1]).strip()
+
+        Log.showValue(Log.Level.DEBUG, 'ID', ID)
+        Log.showValue(Log.Level.DEBUG, 'Money', Money)
+        Log.showValue(Log.Level.DEBUG, 'LoginTime', LoginTime)
+        Log.showValue(Log.Level.DEBUG, 'LegalPost', LegalPost)
+        Log.showValue(Log.Level.DEBUG, 'IllegalPost', IllegalPost)
+        Log.showValue(Log.Level.DEBUG, 'State', State)
+        Log.showValue(Log.Level.DEBUG, 'Mail', Mail)
+        Log.showValue(Log.Level.DEBUG, 'LastLogin', LastLogin)
+        Log.showValue(Log.Level.DEBUG, 'LastIP', LastIP)
+        Log.showValue(Log.Level.DEBUG, 'FiveChess', FiveChess)
+        Log.showValue(Log.Level.DEBUG, 'Chess', Chess)
+        Log.showValue(Log.Level.DEBUG, 'SignatureFile', SignatureFile)
+
+        User = DataType.UserInfo(
+            ID,
+            Money,
+            LoginTime,
+            LegalPost,
+            IllegalPost,
+            State,
+            Mail,
+            LastLogin,
+            LastIP,
+            FiveChess,
+            Chess,
+            SignatureFile
+        )
+        return User
 
 if __name__ == '__main__':
 
