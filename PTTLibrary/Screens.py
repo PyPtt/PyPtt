@@ -67,6 +67,15 @@ class Target(object):
         '◆ 預知投票紀事',
     ]
 
+    AnyKey = '任意鍵'
+
+    InTalk = [
+        '【聊天說話】',
+        '線上使用者列表',
+        '查詢網友',
+        '顯示上幾次熱訊'
+    ]
+
 
 def show(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.TRACE:

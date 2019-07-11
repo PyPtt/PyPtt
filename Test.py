@@ -269,6 +269,22 @@ def CrawlBoard():
 def GetUser():
     User = PTTBot.getUser('CodingMan')
 
+    if User is None:
+        return
+
+    PTTBot.log('使用者ID: ' + User.getID())
+    PTTBot.log('使用者經濟狀況: ' + str(User.getMoney()))
+    PTTBot.log('登入次數: ' + str(User.getLoginTime()))
+    PTTBot.log('有效文章數: ' + str(User.getLegalPost()))
+    PTTBot.log('退文文章數: ' + str(User.getIllegalPost()))
+    PTTBot.log('目前動態: ' + User.getState())
+    PTTBot.log('信箱狀態: ' + User.getMail())
+    PTTBot.log('最後登入時間: ' + User.getLastLogin())
+    PTTBot.log('上次故鄉: ' + User.getLastIP())
+    PTTBot.log('五子棋戰績: ' + User.getFiveChess())
+    PTTBot.log('象棋戰績:' + User.getChess())
+    PTTBot.log('簽名檔:' + User.getSignatureFile())
+
 
 def Push():
     Content = '''
@@ -308,7 +324,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
