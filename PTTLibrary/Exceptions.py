@@ -64,3 +64,19 @@ class NoFastPush(Exception):
         if Config.Language == i18n.Language.Chinese:
             return ''.join(self.message)
         return ' '.join(self.message)
+
+
+class NoSuchUser(Exception):
+    def __init__(self, User):
+        self.message = i18n.NoSuchUser + ': ' + User
+
+    def __str__(self):
+        return self.message
+
+
+class ParseError(Exception):
+    def __init__(self, Screen):
+        self.message = Screen
+
+    def __str__(self):
+        return self.message
