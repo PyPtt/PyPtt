@@ -145,9 +145,9 @@ class MailInformation(object):
         return self._RawData
 
 
-class UserInformation(object):
+class UserInfo(object):
     def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State,
-                 Mail, LastLogin, LastIP, FiveChess, Chess):
+                 Mail, LastLogin, LastIP, FiveChess, Chess, SignatureFile):
         self._ID = ParseParameter(str, ID)
         self._Money = ParseParameter(str, Money)
         self._LoginTime = ParseParameter(int, LoginTime)
@@ -159,6 +159,7 @@ class UserInformation(object):
         self._LastIP = ParseParameter(str, LastIP)
         self._FiveChess = ParseParameter(str, FiveChess)
         self._Chess = ParseParameter(str, Chess)
+        self._SignatureFile = ParseParameter(str, SignatureFile)
 
     def getID(self):
         return self._ID
@@ -193,6 +194,8 @@ class UserInformation(object):
     def getChess(self):
         return self._Chess
 
+    def getSignatureFile(self):
+        return self._SignatureFile
 
 class PushInfo(object):
     def __init__(self, PushType, Author, PushContent, PushIP, PushTime):
