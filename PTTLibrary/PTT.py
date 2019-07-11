@@ -1440,10 +1440,54 @@ class Library(Synchronize.SynchronizeAllMethod):
             ScreenTimeout=Config.ScreenLongTimeOut
         )
 
-        # print(self._ConnectCore.getScreenQueue()[-1])
-
         return ErrorCode.Success
 
+    def getUser(self, UserID):
+
+        if not isinstance(UserID, str):
+            raise TypeError(Log.merge([
+                'UserID',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        
+        if len(UserID) < 3:
+            raise ValueError(Log.merge([
+                'UserID',
+                i18n.ErrorParameter,
+                UserID
+            ]))
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('T')
+        CmdList.append(Command.Enter)
+        CmdList.append('Q')
+        CmdList.append(Command.Enter)
+        CmdList.append(UserID)
+        CmdList.append(Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            # ConnectCore.TargetUnit(
+            #     [
+            #         i18n.Push,
+            #         i18n.Success,
+            #     ],
+            #     Screens.Target.InBoard,
+            #     BreakDetect=True,
+            #     LogLevel=Log.Level.DEBUG
+            # ),
+        ]
+
+        index = self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
+        
+        return None
 
 if __name__ == '__main__':
 
