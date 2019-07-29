@@ -9,7 +9,8 @@ def ParseParameter(type, input):
         return None
     result = type(input)
     if isinstance(result, str):
-        result = result.encode("big5-uao", 'replace').decode("big5-uao", 'replace')
+        result = result.encode(
+            "big5-uao", 'replace').decode("big5-uao", 'replace')
         result = result.rstrip()
     return result
 

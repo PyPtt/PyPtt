@@ -2,9 +2,9 @@
 import time
 import re
 import progressbar
-import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# import requests
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 try:
     import DataType
@@ -45,11 +45,11 @@ IndexType = DataType.IndexType
 
 class Library(Synchronize.SynchronizeAllMethod):
     def __init__(self,
-                 Language: int=0,
-                 ConnectMode: int=0,
-                 LogLevel: int=0,
-                 ScreenTimeOut: int=0,
-                 ScreenLongTimeOut: int=0,
+                 Language: int = 0,
+                 ConnectMode: int = 0,
+                 LogLevel: int = 0,
+                 ScreenTimeOut: int = 0,
+                 ScreenLongTimeOut: int = 0,
                  ):
         print(f'PTT Library v {Version}')
         print('Developed by PTT CodingMan')
@@ -98,17 +98,17 @@ class Library(Synchronize.SynchronizeAllMethod):
         self._ConnectCore = ConnectCore.API(ConnectMode)
 
         Log.showValue(Log.Level.INFO, [
-                i18n.PTT,
-                i18n.Library,
-                ' v ' + Version,
-            ],
+            i18n.PTT,
+            i18n.Library,
+            ' v ' + Version,
+        ],
             i18n.Init
         )
 
     def getVersion(self) -> str:
         return Config.Version
 
-    def _login(self, ID: str, Password: str, KickOtherLogin: bool=False):
+    def _login(self, ID: str, Password: str, KickOtherLogin: bool = False):
 
         if self._Login:
             self.logout()
@@ -235,7 +235,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         self._Login = True
         return ErrorCode.Success
 
-    def login(self, ID: str, Password: str, KickOtherLogin: bool=False):
+    def login(self, ID: str, Password: str, KickOtherLogin: bool = False):
         return self._login(ID, Password, KickOtherLogin=KickOtherLogin)
 
     def logout(self):
@@ -310,10 +310,10 @@ class Library(Synchronize.SynchronizeAllMethod):
     def getPost(
         self,
         Board: str,
-        PostAID: str=None,
-        PostIndex: int=0,
-        SearchType: int=0,
-        SearchCondition: str=None
+        PostAID: str = None,
+        PostIndex: int = 0,
+        SearchType: int = 0,
+        SearchCondition: str = None
     ):
 
         if not isinstance(Board, str):
@@ -342,7 +342,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.Integer
             ]))
         if (not isinstance(SearchCondition, str) and
-           SearchCondition is not None):
+                SearchCondition is not None):
             raise TypeError(Log.merge([
                 'SearchCondition',
                 i18n.MustBe,
@@ -373,7 +373,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ]))
 
         if (SearchType != 0 and
-           not Util.checkRange(DataType.PostSearchType, SearchType)):
+                not Util.checkRange(DataType.PostSearchType, SearchType)):
             raise ValueError(Log.merge([
                 'SearchType',
                 i18n.ErrorParameter,
@@ -416,10 +416,10 @@ class Library(Synchronize.SynchronizeAllMethod):
         )
 
     def _getPost(self, Board: str,
-                 PostAID: str=None,
-                 PostIndex: int=0,
-                 SearchType: int=0,
-                 SearchCondition: str=None):
+                 PostAID: str = None,
+                 PostIndex: int = 0,
+                 SearchType: int = 0,
+                 SearchCondition: str = None):
 
         if not self._Login:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -495,7 +495,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             for line in OriScreen.split('\n'):
                 if (line.startswith(DataType.Cursor.New) or
-                   line.startswith(DataType.Cursor.Old)):
+                        line.startswith(DataType.Cursor.Old)):
                     # print(f'line: {line}')
 
                     pattern = re.compile('[\d]+\/[\d]+')
@@ -546,7 +546,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             for line in OriScreen.split('\n'):
                 if (line.startswith(DataType.Cursor.New) or
-                   line.startswith(DataType.Cursor.Old)):
+                        line.startswith(DataType.Cursor.Old)):
 
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
@@ -695,16 +695,16 @@ class Library(Synchronize.SynchronizeAllMethod):
                     LastScreen = NewContentPart
 
             if (not ContentFinish and (
-                        Screens.isMatch(
-                            LastScreen, Screens.Target.PostIP_New
-                        ) or
-                        Screens.isMatch(
-                            LastScreen, Screens.Target.PostIP_Old
-                        ) or
-                        Screens.isMatch(
-                            LastScreen, Screens.Target.Edit
-                        )
-                    )):
+                Screens.isMatch(
+                    LastScreen, Screens.Target.PostIP_New
+                ) or
+                Screens.isMatch(
+                    LastScreen, Screens.Target.PostIP_Old
+                ) or
+                Screens.isMatch(
+                    LastScreen, Screens.Target.Edit
+                )
+            )):
                 ContentFinish = True
 
                 pattern = re.compile(
@@ -746,8 +746,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                     line = line.strip()
 
                     Log.showValue(Log.Level.DEBUG, [
-                            'line'
-                        ],
+                        'line'
+                    ],
                         line
                     )
 
@@ -782,9 +782,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                         Result = PushAuthorPattern.search(line)
                         PushAuthor = Result.group(0)[2:-1]
                         Log.showValue(Log.Level.DEBUG, [
-                                i18n.Push,
-                                i18n.ID,
-                            ],
+                            i18n.Push,
+                            i18n.ID,
+                        ],
                             PushAuthor
                         )
 
@@ -793,9 +793,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                             continue
                         PushDate = Result.group(0)
                         Log.showValue(Log.Level.DEBUG, [
-                                i18n.Push,
-                                i18n.Date,
-                            ],
+                            i18n.Push,
+                            i18n.Date,
+                        ],
                             PushDate
                         )
 
@@ -804,9 +804,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                         if Result is not None:
                             PushIP = Result.group(0)
                             Log.showValue(Log.Level.DEBUG, [
-                                    i18n.Push,
-                                    'IP',
-                                ],
+                                i18n.Push,
+                                'IP',
+                            ],
                                 PushIP
                             )
 
@@ -820,9 +820,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                             PushContent.find(':') + 1:
                         ].strip()
                         Log.showValue(Log.Level.DEBUG, [
-                                i18n.Push,
-                                i18n.Content,
-                            ],
+                            i18n.Push,
+                            i18n.Content,
+                        ],
                             PushContent
                         )
 
@@ -866,9 +866,9 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def _getNewestIndex(self,
                         IndexType: int,
-                        Board: str=None,
-                        SearchType: int=0,
-                        SearchCondition: str=None):
+                        Board: str = None,
+                        SearchType: int = 0,
+                        SearchCondition: str = None):
         if not Util.checkRange(DataType.IndexType, IndexType):
             raise ValueError('Unknow IndexType', IndexType)
         if not isinstance(Board, str):
@@ -884,14 +884,14 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.Integer
             ]))
         if (SearchCondition is not None and
-           not isinstance(SearchCondition, str)):
+                not isinstance(SearchCondition, str)):
             raise TypeError(Log.merge([
                 'SearchCondition',
                 i18n.MustBe,
                 i18n.String
             ]))
         if (SearchType != 0 and
-           not Util.checkRange(DataType.PostSearchType, SearchType)):
+                not Util.checkRange(DataType.PostSearchType, SearchType)):
             raise ValueError('Unknow PostSearchType', PostSearchType)
 
         if IndexType == DataType.IndexType.Board:
@@ -971,9 +971,9 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def getNewestIndex(self,
                        IndexType: int,
-                       Board: str=None,
-                       SearchType: int=0,
-                       SearchCondition: str=None):
+                       Board: str = None,
+                       SearchType: int = 0,
+                       SearchCondition: str = None):
         return self._getNewestIndex(
             IndexType,
             Board,
@@ -984,10 +984,10 @@ class Library(Synchronize.SynchronizeAllMethod):
     def crawlBoard(self,
                    PostHandler,
                    Board: str,
-                   StartIndex: int=0,
-                   EndIndex: int=0,
-                   SearchType: int=0,
-                   SearchCondition: str=None):
+                   StartIndex: int = 0,
+                   EndIndex: int = 0,
+                   SearchType: int = 0,
+                   SearchCondition: str = None):
 
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
@@ -1014,7 +1014,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.Integer
             ]))
         if (SearchCondition is not None and
-           not isinstance(SearchCondition, str)):
+                not isinstance(SearchCondition, str)):
             raise TypeError(Log.merge([
                 'SearchCondition',
                 i18n.MustBe,
@@ -1191,8 +1191,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         Board: str,
         PushType: int,
         PushContent: str,
-        PostAID: str=None,
-        PostIndex: int=0
+        PostAID: str = None,
+        PostIndex: int = 0
     ):
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
@@ -1319,8 +1319,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         Board: str,
         PushType: int,
         PushContent: str,
-        PostAID: str=None,
-        PostIndex: int=0
+        PostAID: str = None,
+        PostIndex: int = 0
     ):
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -1551,6 +1551,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             SignatureFile
         )
         return User
+
 
 if __name__ == '__main__':
 

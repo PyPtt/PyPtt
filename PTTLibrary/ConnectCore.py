@@ -62,8 +62,8 @@ class TargetUnit(object):
         self,
         DisplayMsg,
         DetectTarget,
-        LogLevel: int=0,
-        Response: str='',
+        LogLevel: int = 0,
+        Response: str = '',
         BreakDetect=False,
         Exceptions=None
     ):
@@ -112,11 +112,14 @@ class TargetUnit(object):
         if self._Exception is not None:
             raise self._Exception
 
+
 _WSRecvData = None
+
 
 async def WebsocketRecvFunc(Core):
     global _WSRecvData
     _WSRecvData = await Core.recv()
+
 
 async def WebsocketReceiver(Core, ScreenTimeOut):
     # Wait for at most 1 second
@@ -132,8 +135,8 @@ class API(object):
         self._ConnectMode = ConnectMode
 
         Log.showValue(Log.Level.INFO, [
-                i18n.ConnectCore,
-            ],
+            i18n.ConnectCore,
+        ],
             i18n.Init
         )
 
@@ -141,18 +144,18 @@ class API(object):
         def _wait():
             for i in range(Config.RetryWaitTime):
                 Log.showValue(Log.Level.INFO, [
-                        i18n.Prepare,
-                        i18n.Again,
-                        i18n.Connect,
-                        i18n.PTT,
-                    ],
+                    i18n.Prepare,
+                    i18n.Again,
+                    i18n.Connect,
+                    i18n.PTT,
+                ],
                     str(Config.RetryWaitTime - i)
                 )
                 time.sleep(1)
 
         Log.showValue(Log.Level.INFO, [
             i18n.ConnectCore,
-            ],
+        ],
             i18n.Active
         )
 
@@ -160,16 +163,16 @@ class API(object):
 
         if self._ConnectMode == ConnectMode.Telnet:
             Log.showValue(Log.Level.INFO, [
-                    i18n.Connect,
-                    i18n.PTT,
-                ],
+                i18n.Connect,
+                i18n.PTT,
+            ],
                 i18n.ConnectMode_Telnet
             )
         else:
             Log.showValue(Log.Level.INFO, [
-                    i18n.Connect,
-                    i18n.PTT,
-                ],
+                i18n.Connect,
+                i18n.PTT,
+            ],
                 i18n.ConnectMode_WebSocket
             )
 
@@ -194,7 +197,7 @@ class API(object):
                 Log.showValue(Log.Level.INFO, [
                     i18n.Connect,
                     i18n.PTT,
-                    ],
+                ],
                     i18n.Fail
                 )
                 _wait()
@@ -209,9 +212,9 @@ class API(object):
         self,
         Msg: str,
         TargetList: list,
-        ScreenTimeout: int=0,
-        Refresh: bool=True
-    ) ->int:
+        ScreenTimeout: int = 0,
+        Refresh: bool = True
+    ) -> int:
 
         if not all(isinstance(T, TargetUnit) for T in TargetList):
             raise ValueError('Item of TargetList must be TargetUnit')
@@ -238,8 +241,8 @@ class API(object):
                 Msg = Msg.encode('big5', 'ignore')
 
             Log.showValue(Log.Level.DEBUG, [
-                    i18n.SendMsg
-                ],
+                i18n.SendMsg
+            ],
                 Msg
             )
 
@@ -298,16 +301,16 @@ class API(object):
                         FindTarget = True
 
                         Log.showValue(Target.getLogLevel(), [
-                                i18n.PTT,
-                                i18n.Msg
-                            ],
+                            i18n.PTT,
+                            i18n.Msg
+                        ],
                             Target.getDisplayMsg()
                         )
 
                         EndTime = time.time()
                         Log.showValue(Log.Level.DEBUG, [
-                                i18n.SpendTime,
-                            ],
+                            i18n.SpendTime,
+                        ],
                             round(EndTime - StartTime, 2)
                         )
 
@@ -331,9 +334,9 @@ class API(object):
         raise NoMatchTargetError(self._ReceiveDataQueue)
 
     def close(self):
-        self._Core.close()
+        asyncio.get_event_loop().run_until_complete(self._Core.close())
 
-    def _cleanScreen(self, screen: str, NoColor: bool=True) ->str:
+    def _cleanScreen(self, screen: str, NoColor: bool = True) -> str:
 
         if not screen:
             return screen
@@ -355,5 +358,5 @@ class API(object):
 
         return screen
 
-    def getScreenQueue(self) ->list:
+    def getScreenQueue(self) -> list:
         return self._ReceiveDataQueue
