@@ -528,4 +528,3 @@ def _createlist():
 if __name__ == '__main__':
     load(Language.Chinese)
     _createlist()
-

@@ -34,16 +34,21 @@ def getSubStringList(MainString, TargetA, TargetB):
     while TargetA in MainString:
         Temp = MainString[MainString.find(TargetA) + len(TargetA):]
 
-        BestIndex = len(MainString)
+        # print(f'>{Temp}')
+        MaxIndex = len(MainString)
+        BestIndex = MaxIndex
         for B in TargetB:
             CurrentIndex = Temp.find(B)
             if CurrentIndex < BestIndex and CurrentIndex >= 0:
                 BestIndex = CurrentIndex
+        #         print(f'BestIndex: {BestIndex}')
 
-        if BestIndex != len(TargetB):
+        # print(f'QQ BestIndex: {BestIndex}')
+        # print(f'QQ len(TargetB): {len(TargetB)}')
+        if BestIndex != MaxIndex:
             Temp = Temp[:BestIndex].strip()
             result.append(Temp)
-        
+
         MainString = MainString[MainString.find(TargetA) + len(TargetA):]
-    
+
     return result

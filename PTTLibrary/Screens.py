@@ -88,7 +88,7 @@ def show(ScreenQueue, FunctionName=None):
                 print(Screen.encode(
                     sys.stdin.encoding, "replace").decode(
                         sys.stdin.encoding
-                    )
+                )
                 )
             except Exception:
                 print(Screen.encode('utf-8', "replace").decode('utf-8'))
@@ -118,7 +118,7 @@ def isMatch(Screen: str, Target):
         return True
 
 
-def VT100(OriScreen: str, NoColor: bool=True):
+def VT100(OriScreen: str, NoColor: bool = True):
 
     result = OriScreen
 
@@ -159,9 +159,9 @@ def VT100(OriScreen: str, NoColor: bool=True):
         #     print('='*50)
         #     print(result)
         #     print(f'>{CurrentSpace}<')
-            # print(Line, Space)
-            # print(CurrentLine)
-            # print(CurrentSpace)
+        # print(Line, Space)
+        # print(CurrentLine)
+        # print(CurrentSpace)
         if CurrentLine > Line:
             continue
 

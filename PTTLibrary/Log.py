@@ -23,7 +23,7 @@ class Level(object):
     MaxValue = SLIENT
 
 
-def merge(Msg) ->str:
+def merge(Msg) -> str:
     if isinstance(Msg, list):
         if Config.Language == i18n.Language.Chinese:
 
@@ -31,7 +31,7 @@ def merge(Msg) ->str:
                 if Msg[i][0].upper() != Msg[i][0].lower() and i != 0:
                     Msg[i] = ' ' + Msg[i].lstrip()
                 if (Msg[i][-1].upper() != Msg[i][-1].lower() and
-                   i != len(Msg) - 1):
+                        i != len(Msg) - 1):
                     Msg[i] = Msg[i].rstrip() + ' '
 
             Msg = ''.join(Msg)
@@ -65,10 +65,11 @@ def log(LogLevel, Msg):
             sys.stdin.encoding,
             'replace'
         ).decode(
-                sys.stdin.encoding
-            ))
+            sys.stdin.encoding
+        ))
     except Exception:
         print(TotalMessage.encode('utf-8', "replace").decode('utf-8'))
+
 
 LastValue = None
 
