@@ -496,6 +496,30 @@ def load(inputLanguage):
         'No such user',
     ])
 
+    global WaterBall
+    WaterBall = SpecificLoad(inputLanguage, [
+        '水球',
+        'Water Ball',
+    ])
+
+    global UserOffline
+    UserOffline = SpecificLoad(inputLanguage, [
+        '使用者離線',
+        'User Offline',
+    ])
+
+    global SetBBCall
+    SetBBCall = SpecificLoad(inputLanguage, [
+        '設定呼叫器',
+        'Set BBCall',
+    ])
+
+    global Throw
+    Throw = SpecificLoad(inputLanguage, [
+        '丟',
+        'Throw',
+    ])
+
     # global List
     # List = []
 

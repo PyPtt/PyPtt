@@ -2,10 +2,23 @@
 import os
 import time
 import json
-import getpass
 import traceback
 import PTTLibrary
 from PTTLibrary import PTT
+
+
+def getPW():
+    try:
+        with open('Account.txt') as AccountFile:
+            Account = json.load(AccountFile)
+            ID = Account['ID']
+            Password = Account['Password']
+    except FileNotFoundError:
+        print('Please note PTT ID and Password in Account.txt')
+        print('{"ID":"YourID", "Password":"YourPassword"}')
+        sys.exit()
+
+    return ID, Password
 
 
 def Init():
@@ -153,7 +166,8 @@ def PerformanceTest():
         # print(PTT_TIME)
     EndTime = time.time()
 
-    PTTBot.log('Performance Test Telnet ' + str(round(EndTime - StartTime, 2)) + ' s')
+    PTTBot.log('Performance Test Telnet ' +
+               str(round(EndTime - StartTime, 2)) + ' s')
 
     print('Performance Test finish')
 
@@ -163,6 +177,7 @@ def GetPost():
     global PTTBot
 
     try:
+
         Post = PTTBot.getPost(
             'Wanted',
             PostIndex=79697,
@@ -190,11 +205,11 @@ def GetPost():
             ArrowCount = 0
 
             for Push in Post.getPushList():
-            #     print(Push.getType())
-            #     print(Push.getAuthor())
-            #     print(Push.getContent())
-            #     print(Push.getIP())
-            #     print(Push.getTime())
+                #     print(Push.getType())
+                #     print(Push.getAuthor())
+                #     print(Push.getContent())
+                #     print(Push.getIP())
+                #     print(Push.getTime())
 
                 if Push.getType() == PTT.PushType.Push:
                     PushCount += 1
@@ -239,7 +254,16 @@ def detectNone(Name, Obj):
         raise ValueError(f'{Name} is None')
 
 
+DelPostCount = 0
+
+
 def crawlHandler(Post):
+
+    if Post.getDeleteStatus() != PTT.DataType.PostDeleteStatus.NotDeleted:
+        global DelPostCount
+        DelPostCount += 1
+        return
+
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
     detectNone('Author', Post.getAuthor())
@@ -254,36 +278,55 @@ def crawlHandler(Post):
 
 def CrawlBoard():
     global PTTBot
-    # 19 38 41 48 53 54 66 69 74 100
-    NoneList = PTTBot.crawlBoard(
+
+    TestBoard = 'Wanted'
+    TestRange = 100
+
+    NewestIndex = PTTBot.getNewestIndex(PTT.IndexType.Board, Board=TestBoard)
+    StartIndex = NewestIndex - TestRange + 1
+
+    print(f'預備爬行編號 {StartIndex} ~ {NewestIndex} 文章')
+
+    ErrorPostList, DelPostList = PTTBot.crawlBoard(
         crawlHandler,
-        'Wanted',
-        StartIndex=3,
-        EndIndex=3
+        TestBoard,
+        StartIndex=StartIndex,
+        EndIndex=NewestIndex
+
+        # StartIndex=79525,
+        # EndIndex=79525
     )
 
-    if len(NoneList) > 0:
-        print('None: ' + ' '.join(str(x) for x in NoneList))
+    if len(ErrorPostList) > 0:
+        print('Error Post: \n' + '\n'.join(str(x) for x in ErrorPostList))
+
+    if len(DelPostList) > 0:
+        print('Del Post: \n' + '\n'.join(str(x) for x in DelPostList))
+        print(f'共有 {len(DelPostList)} 篇文章被刪除')
 
 
 def GetUser():
-    User = PTTBot.getUser('CodingMan')
 
-    if User is None:
-        return
+    try:
+        User = PTTBot.getUser('CodingMan')
+        if User is None:
+            return
 
-    PTTBot.log('使用者ID: ' + User.getID())
-    PTTBot.log('使用者經濟狀況: ' + str(User.getMoney()))
-    PTTBot.log('登入次數: ' + str(User.getLoginTime()))
-    PTTBot.log('有效文章數: ' + str(User.getLegalPost()))
-    PTTBot.log('退文文章數: ' + str(User.getIllegalPost()))
-    PTTBot.log('目前動態: ' + User.getState())
-    PTTBot.log('信箱狀態: ' + User.getMail())
-    PTTBot.log('最後登入時間: ' + User.getLastLogin())
-    PTTBot.log('上次故鄉: ' + User.getLastIP())
-    PTTBot.log('五子棋戰績: ' + User.getFiveChess())
-    PTTBot.log('象棋戰績:' + User.getChess())
-    PTTBot.log('簽名檔:' + User.getSignatureFile())
+        PTTBot.log('使用者ID: ' + User.getID())
+        PTTBot.log('使用者經濟狀況: ' + str(User.getMoney()))
+        PTTBot.log('登入次數: ' + str(User.getLoginTime()))
+        PTTBot.log('有效文章數: ' + str(User.getLegalPost()))
+        PTTBot.log('退文文章數: ' + str(User.getIllegalPost()))
+        PTTBot.log('目前動態: ' + User.getState())
+        PTTBot.log('信箱狀態: ' + User.getMail())
+        PTTBot.log('最後登入時間: ' + User.getLastLogin())
+        PTTBot.log('上次故鄉: ' + User.getLastIP())
+        PTTBot.log('五子棋戰績: ' + User.getFiveChess())
+        PTTBot.log('象棋戰績:' + User.getChess())
+        PTTBot.log('簽名檔:' + User.getSignatureFile())
+
+    except PTTLibrary.Exceptions.NoSuchUser:
+        print('無此使用者')
 
 
 def Push():
@@ -295,6 +338,21 @@ What is Ptt?
     # PTTBot.push('Test', PTT.PushType.Push, 'Test', PostIndex=225)
     # PTTBot.push('Test', PTT.PushType.Push, Content, PostIndex=225)
     PTTBot.push('Gossiping', PTT.PushType.Push, Content, PostIndex=95693)
+
+
+def ThrowWaterBall():
+
+    TagetID = 'DeepLearning'
+    TestWaterBall = '''
+What is Ptt?
+批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
+期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
+'''
+    # TestWaterBall = 'Q_Q'
+
+    PTTBot.throwWaterBall(TagetID, TestWaterBall)
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -309,14 +367,7 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
-    try:
-        with open('Account.txt') as AccountFile:
-            Account = json.load(AccountFile)
-            ID = Account['ID']
-            Password = Account['Password']
-    except FileNotFoundError:
-        ID = input('請輸入帳號: ')
-        Password = getpass.getpass('請輸入密碼: ')
+    ID, Password = getPW()
 
     try:
         # Loginout()
@@ -330,7 +381,7 @@ if __name__ == '__main__':
         try:
             PTTBot.login(ID,
                          Password,
-                        #  KickOtherLogin=True
+                         #  KickOtherLogin=True
                          )
         except PTTLibrary.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -341,7 +392,8 @@ if __name__ == '__main__':
         # GetNewestIndex()
         # CrawlBoard()
         # Push()
-        GetUser()
+        # GetUser()
+        ThrowWaterBall()
 
     except Exception as e:
 

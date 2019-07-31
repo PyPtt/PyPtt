@@ -16,6 +16,6 @@ Left = '\x1b\x4fD'
 Space = ' '
 QueryPost = 'Q'
 Push = 'X'
-GoMainMenu = Left * 5
+GoMainMenu = ' ' + Left * 5
 Refresh = Ctrl_L
 ControlCode = Ctrl_U + Star
