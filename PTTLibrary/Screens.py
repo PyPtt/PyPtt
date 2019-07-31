@@ -43,6 +43,18 @@ class Target(object):
         '離開'
     ]
 
+    InWaterBallList = [
+        '瀏覽',
+        '頁',
+        '離開'
+    ]
+
+    WaterBallListEnd = [
+        '瀏覽',
+        '頁 (100%)',
+        '離開'
+    ]
+
     PostIP_New = [
         '※ 發信站: 批踢踢實業坊(ptt.cc), 來自:'
     ]
