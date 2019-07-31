@@ -520,6 +520,19 @@ def load(inputLanguage):
         'Throw',
     ])
 
+    global NoWaterball
+    NoWaterball = SpecificLoad(inputLanguage, [
+        '無訊息記錄',
+        'No Waterball',
+    ])
+
+    global BrowseWaterball
+    BrowseWaterball = SpecificLoad(inputLanguage, [
+        '瀏覽水球紀錄',
+        'Browse Waterball',
+    ])
+
+
     # global List
     # List = []
 

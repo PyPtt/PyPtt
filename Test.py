@@ -353,6 +353,13 @@ What is Ptt?
     PTTBot.throwWaterBall(TagetID, TestWaterBall)
 
 
+def GetWaterBall():
+
+    Type = PTT.WaterBallOperateType.DoNothing
+
+    PTTBot.getWaterBall(Type)
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -376,7 +383,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
             # LogLevel=PTT.LogLevel.TRACE,
-            # LogLevel=PTT.LogLevel.DEBUG,
+            LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
             PTTBot.login(ID,
@@ -393,7 +400,10 @@ if __name__ == '__main__':
         # CrawlBoard()
         # Push()
         # GetUser()
-        ThrowWaterBall()
+        # ThrowWaterBall()
+        # ThrowWaterBall()
+        # ThrowWaterBall()
+        GetWaterBall()
 
     except Exception as e:
 

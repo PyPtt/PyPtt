@@ -41,6 +41,7 @@ Command = Command
 PushType = DataType.PushType
 PostSearchType = DataType.PostSearchType
 IndexType = DataType.IndexType
+WaterBallOperateType = DataType.WaterBallOperateType
 
 
 class Library(Synchronize.SynchronizeAllMethod):
@@ -1641,7 +1642,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                         i18n.WaterBall
                     ],
                     '丟 ' + TargetID + ' 水球:',
-                    Response=waterball + Command.Enter * 2 + Command.GoMainMenu,
+                    Response=waterball + Command.Enter * 2,
                     BreakDetectAfterSend=True
                 ),
             ]
@@ -1652,6 +1653,8 @@ class Library(Synchronize.SynchronizeAllMethod):
             CmdList.append(Command.Enter)
             CmdList.append('U')
             CmdList.append(Command.Enter)
+            if '【好友列表】' in self._ConnectCore.getScreenQueue()[-1]:
+                CmdList.append('f')
             CmdList.append('s')
             CmdList.append(TargetID)
             CmdList.append(Command.Enter)
@@ -1666,6 +1669,90 @@ class Library(Synchronize.SynchronizeAllMethod):
             )
 
         return ErrorCode.Success
+
+    def getWaterBall(self, OperateType):
+
+        if not isinstance(OperateType, int):
+            raise TypeError(Log.merge([
+                'OperateType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        if not Util.checkRange(DataType.OperateType, OperateType):
+            raise ValueError('Unknow OperateType', OperateType)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.NoWaterball,
+                '◆ 暫無訊息記錄',
+                BreakDetect=True
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.BrowseWaterball,
+                    i18n.Done,
+                ],
+                Screens.Target.WaterBallListEnd,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.BrowseWaterball,
+                ],
+                Screens.Target.InWaterBallList,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+        ]
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('T')
+        CmdList.append(Command.Enter)
+        CmdList.append('D')
+        CmdList.append(Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        LineFromTopattern = re.compile('[\d]+~[\d]+')
+        while True:
+            index = self._ConnectCore.send(
+                Cmd,
+                TargetList,
+                ScreenTimeout=Config.ScreenLongTimeOut
+            )
+
+            OriScreen = self._ConnectCore.getScreenQueue()[-1]
+            # print(OriScreen)
+
+            if index == 0:
+                return []
+
+            LastLine = OriScreen.split('\n')[-1]
+            
+            ScreenTemp = OriScreen
+            ScreenTemp = ScreenTemp.replace(
+                ']\n', ']==PTTWaterBallNewLine==')
+            ScreenTemp = ScreenTemp.replace('\n', '')
+            ScreenTemp = ScreenTemp.replace(
+                ']==PTTWaterBallNewLine==', ']\n')
+            ScreenTemp = '\n'.join(ScreenTemp.split('\n')[:-1])
+
+            print(ScreenTemp)
+            Log.showValue(
+                Log.Level.DEBUG,
+                'LastLine',
+                LastLine
+            )
+
+            if index == 1:
+                break
+            # elif index == 2:
+            #     pass
+
+            Cmd = Command.Down
 
 
 if __name__ == '__main__':
