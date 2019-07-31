@@ -466,6 +466,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 ],
                 Screens.Target.QueryPost,
                 BreakDetect=True,
+                Refresh=False,
                 LogLevel=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
@@ -956,7 +957,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                         break
                 if Continue:
                     Log.showValue(
-                        Log.Level.INFO,
+                        Log.Level.DEBUG,
                         i18n.FindNewestIndex,
                         IndexTemp
                     )
@@ -1056,7 +1057,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.OutOfRange,
             ]))
 
-        NonePostList = []
+        ErrorPostList = []
+        DelPostList = []
         if Config.LogLevel == Log.Level.INFO:
             PB = progressbar.ProgressBar(
                 max_value=EndIndex - StartIndex + 1,
@@ -1072,12 +1074,14 @@ class Library(Synchronize.SynchronizeAllMethod):
             if Config.LogLevel == Log.Level.INFO:
                 PB.update(index - StartIndex)
             if Post is None:
-                NonePostList.append(index)
+                ErrorPostList.append(index)
                 continue
+            if Post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
+                DelPostList.append(index)
             PostHandler(Post)
         if Config.LogLevel == Log.Level.INFO:
             PB.finish()
-        return NonePostList
+        return ErrorPostList, DelPostList
 
     def post(self,
              Board: str,
@@ -1269,6 +1273,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         while TempEndIndex <= len(PushContent):
 
             Temp = ''
+            LastTemp = None
             while len(Temp.encode('big5-uao', 'ignore')) < MaxPushLength:
                 Temp = PushContent[TempStartIndex:TempEndIndex]
 
@@ -1278,15 +1283,18 @@ class Library(Synchronize.SynchronizeAllMethod):
                     break
                 elif Temp.endswith('\n'):
                     break
+                elif LastTemp == Temp:
+                    break
 
                 TempEndIndex += 1
+                LastTemp = Temp
 
             PushList.append(Temp.strip())
 
             TempStartIndex = TempEndIndex
             TempEndIndex = TempStartIndex + 1
-
         PushList = filter(None, PushList)
+
         for push in PushList:
             Log.showValue(
                 Log.Level.INFO,
@@ -1442,7 +1450,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         return ErrorCode.Success
 
-    def getUser(self, UserID):
+    def _getUser(self, UserID):
 
         if not isinstance(UserID, str):
             raise TypeError(Log.merge([
@@ -1551,6 +1559,113 @@ class Library(Synchronize.SynchronizeAllMethod):
             SignatureFile
         )
         return User
+
+    def getUser(self, UserID):
+        return self._getUser(UserID)
+
+    def throwWaterBall(self, TargetID, Content):
+
+        if not isinstance(TargetID, str):
+            raise TypeError(Log.merge([
+                'TargetID',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(Content, str):
+            raise TypeError(Log.merge([
+                'Content',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if len(TargetID) <= 2:
+            raise ValueError(Log.merge([
+                'TargetID',
+                i18n.ErrorParameter,
+                TargetID
+            ]))
+
+        User = self._getUser(TargetID)
+        if '不在站上' in User.getState():
+            raise Exceptions.UserOffline(TargetID)
+
+        MaxLength = 50
+
+        WaterBallList = []
+
+        TempStartIndex = 0
+        TempEndIndex = TempStartIndex + 1
+
+        while TempEndIndex <= len(Content):
+            Temp = ''
+            LastTemp = None
+            while len(Temp.encode('big5-uao', 'ignore')) < MaxLength:
+                Temp = Content[TempStartIndex:TempEndIndex]
+
+                if not len(Temp.encode('big5-uao', 'ignore')) < MaxLength:
+                    break
+                elif Content.endswith(Temp) and TempStartIndex != 0:
+                    break
+                elif Temp.endswith('\n'):
+                    break
+                elif LastTemp == Temp:
+                    break
+
+                TempEndIndex += 1
+                LastTemp = Temp
+
+            WaterBallList.append(Temp.strip())
+
+            TempStartIndex = TempEndIndex
+            TempEndIndex = TempStartIndex + 1
+        WaterBallList = filter(None, WaterBallList)
+
+        for waterball in WaterBallList:
+            Log.showValue(
+                Log.Level.INFO,
+                i18n.WaterBall,
+                waterball
+            )
+
+            TargetList = [
+                ConnectCore.TargetUnit(
+                    i18n.SetBBCall,
+                    '您的呼叫器目前設定為關閉',
+                    Response='y' + Command.Enter,
+                ),
+                ConnectCore.TargetUnit(
+                    [
+                        i18n.Throw,
+                        TargetID,
+                        i18n.WaterBall
+                    ],
+                    '丟 ' + TargetID + ' 水球:',
+                    Response=waterball + Command.Enter * 2 + Command.GoMainMenu,
+                    BreakDetectAfterSend=True
+                ),
+            ]
+
+            CmdList = []
+            CmdList.append(Command.GoMainMenu)
+            CmdList.append('T')
+            CmdList.append(Command.Enter)
+            CmdList.append('U')
+            CmdList.append(Command.Enter)
+            CmdList.append('s')
+            CmdList.append(TargetID)
+            CmdList.append(Command.Enter)
+            CmdList.append('w')
+
+            Cmd = ''.join(CmdList)
+
+            index = self._ConnectCore.send(
+                Cmd,
+                TargetList,
+                ScreenTimeout=Config.ScreenLongTimeOut
+            )
+
+        return ErrorCode.Success
 
 
 if __name__ == '__main__':
