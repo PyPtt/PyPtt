@@ -74,6 +74,14 @@ class NoSuchUser(Exception):
         return self.message
 
 
+class UserOffline(Exception):
+    def __init__(self, User):
+        self.message = i18n.UserOffline + ': ' + User
+
+    def __str__(self):
+        return self.message
+
+
 class ParseError(Exception):
     def __init__(self, Screen):
         self.message = Screen
