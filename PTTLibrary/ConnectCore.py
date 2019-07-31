@@ -65,7 +65,9 @@ class TargetUnit(object):
         LogLevel: int = 0,
         Response: str = '',
         BreakDetect=False,
-        Exceptions=None
+        BreakDetectAfterSend=False,
+        Exceptions=None,
+        Refresh=True
     ):
 
         self._DisplayMsg = DisplayMsg
@@ -77,6 +79,8 @@ class TargetUnit(object):
         self._Response = Response
         self._BreakDetect = BreakDetect
         self._Exception = Exceptions
+        self._Refresh = Refresh
+        self._BreakAfterSend = BreakDetectAfterSend
 
     def isMatch(self, Screen: str):
         if isinstance(self._DetectTarget, str):
@@ -111,6 +115,12 @@ class TargetUnit(object):
     def raiseException(self):
         if self._Exception is not None:
             raise self._Exception
+
+    def isRefresh(self):
+        return self._Refresh
+
+    def isBreakAfterSend(self):
+        return self._BreakAfterSend
 
 
 _WSRecvData = None
@@ -225,7 +235,8 @@ class API(object):
             CurrentScreenTimeout = ScreenTimeout
 
         self._ReceiveDataQueue = []
-
+        BreakDetectAfterSend = False
+        BreakIndex = -1
         while True:
 
             if Refresh and not Msg.endswith(Command.Refresh):
@@ -253,6 +264,9 @@ class API(object):
                 asyncio.get_event_loop().run_until_complete(
                     self._Core.send(Msg)
                 )
+
+            if BreakDetectAfterSend:
+                return BreakIndex
 
             Msg = ''
             CycleTime = 0
@@ -318,6 +332,12 @@ class API(object):
                             return TargetList.index(Target)
 
                         Msg = Target.getResponse(Screen)
+                        if Target.isRefresh() and not Msg.endswith(Command.Refresh):
+                            Msg = Msg + Command.Refresh
+
+                        if Target.isBreakAfterSend():
+                            BreakIndex = TargetList.index(Target)
+                            BreakDetectAfterSend = True
                         break
 
                 if FindTarget:
