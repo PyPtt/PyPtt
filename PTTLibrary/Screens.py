@@ -46,12 +46,14 @@ class Target(object):
     InWaterBallList = [
         '瀏覽',
         '頁',
+        '說明',
         '離開'
     ]
 
     WaterBallListEnd = [
         '瀏覽',
         '頁 (100%)',
+        '說明',
         '離開'
     ]
 
