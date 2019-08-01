@@ -31,6 +31,7 @@ except ModuleNotFoundError:
     from . import Exceptions
     from . import Command
 
+
 Version = Config.Version
 
 ErrorCode = ErrorCode.ErrorCode()
@@ -89,6 +90,21 @@ class Library(Synchronize.SynchronizeAllMethod):
         else:
             Config.Language = Language
         i18n.load(Language)
+
+        if Language == i18n.Language.Chinese:
+            Log.showValue(Log.Level.INFO, [
+                i18n.ChineseTranditional,
+                i18n.LanguageModule
+            ],
+                i18n.Init
+            )
+        elif Language == i18n.Language.English:
+            Log.showValue(Log.Level.INFO, [
+                i18n.English,
+                i18n.LanguageModule
+            ],
+                i18n.Init
+            )
 
         if ConnectMode == 0:
             ConnectMode = Config.ConnectMode
@@ -1731,7 +1747,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 return []
 
             LastLine = OriScreen.split('\n')[-1]
-            
+
             ScreenTemp = OriScreen
             ScreenTemp = ScreenTemp.replace(
                 ']\n', ']==PTTWaterBallNewLine==')

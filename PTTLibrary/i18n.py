@@ -532,6 +532,26 @@ def load(inputLanguage):
         'Browse Waterball',
     ])
 
+    global LanguageModule
+    LanguageModule = SpecificLoad(inputLanguage, [
+        '語言模組',
+        'Language Module',
+    ])
+
+    global English
+    English = SpecificLoad(inputLanguage, [
+        '英文',
+        'English',
+    ])
+
+    global ChineseTranditional
+    ChineseTranditional = SpecificLoad(inputLanguage, [
+        '繁體中文',
+        'Chinese Tranditional',
+    ])
+
+    
+
 
     # global List
     # List = []
