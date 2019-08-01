@@ -43,6 +43,7 @@ PushType = DataType.PushType
 PostSearchType = DataType.PostSearchType
 IndexType = DataType.IndexType
 WaterBallOperateType = DataType.WaterBallOperateType
+WaterBallType = DataType.WaterBallType
 
 
 class Library(Synchronize.SynchronizeAllMethod):
@@ -282,6 +283,13 @@ class Library(Synchronize.SynchronizeAllMethod):
         self._ConnectCore.send(Cmd, TargetList)
         self._ConnectCore.close()
         self._Login = False
+
+        Log.showValue(
+            Log.Level.INFO,
+            i18n.Logout,
+            i18n.Done
+        )
+
         return ErrorCode.Success
 
     def log(self, Msg):
@@ -1695,9 +1703,15 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.Integer
             ]))
 
-        if not Util.checkRange(DataType.OperateType, OperateType):
-            raise ValueError('Unknow OperateType', OperateType)
+        if not Util.checkRange(DataType.WaterBallOperateType, OperateType):
+            raise ValueError('Unknow WaterBallOperateType', OperateType)
 
+        if OperateType == DataType.WaterBallOperateType.DoNothing:
+            WaterBallOperateType = 'R'
+        elif OperateType == DataType.WaterBallOperateType.Clear:
+            WaterBallOperateType = 'C'
+        elif OperateType == DataType.WaterBallOperateType.Mail:
+            WaterBallOperateType = 'M'
         TargetList = [
             ConnectCore.TargetUnit(
                 i18n.NoWaterball,
@@ -1710,7 +1724,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.Done,
                 ],
                 Screens.Target.WaterBallListEnd,
-                BreakDetect=True,
+                Response=Command.Left + WaterBallOperateType + Command.Enter,
+                BreakDetectAfterSend=True,
                 LogLevel=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
@@ -1732,7 +1747,16 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         Cmd = ''.join(CmdList)
 
+        WaterBallList = []
+
         LineFromTopattern = re.compile('[\d]+~[\d]+')
+        ToWaterBallTargetPattern = re.compile('To [\w]+:')
+        FromWaterBallTargetPattern = re.compile('★[\w]+ ')
+        WaterBallDatePattern = re.compile(
+            '\[[\d]+/[\d]+/[\d]+ [\d]+:[\d]+:[\d]+\]')
+
+        LastReadLine = 0
+        AddTailNextRound = False
         while True:
             index = self._ConnectCore.send(
                 Cmd,
@@ -1746,22 +1770,128 @@ class Library(Synchronize.SynchronizeAllMethod):
             if index == 0:
                 return []
 
-            LastLine = OriScreen.split('\n')[-1]
-
+            # print(OriScreen)
+            # print('=' * 50)
             ScreenTemp = OriScreen
+            LastLine = ScreenTemp.split('\n')[-1]
+            # print(LastLine)
+            ScreenTemp = '\n'.join(ScreenTemp.split('\n')[:-1])
+
             ScreenTemp = ScreenTemp.replace(
                 ']\n', ']==PTTWaterBallNewLine==')
             ScreenTemp = ScreenTemp.replace('\n', '')
             ScreenTemp = ScreenTemp.replace(
                 ']==PTTWaterBallNewLine==', ']\n')
-            ScreenTemp = '\n'.join(ScreenTemp.split('\n')[:-1])
 
-            print(ScreenTemp)
-            Log.showValue(
-                Log.Level.DEBUG,
-                'LastLine',
-                LastLine
-            )
+            # print(ScreenTemp)
+            # print('=' * 50)
+
+            Lines = ScreenTemp.split('\n')
+            PatternResult = LineFromTopattern.search(LastLine)
+            LastReadLineTemp = int(PatternResult.group(0).split('~')[1])
+            GetLine = LastReadLineTemp - LastReadLine
+
+            # print(LastReadLine)
+            # print(GetLine)
+            # print('=' * 50)
+            if GetLine > 0:
+                if AddTailNextRound:
+                    Log.log(
+                        Log.Level.DEBUG,
+                        'Add Tail'
+                    )
+                    AddTailNextRound = False
+                    NewContentPart = Lines[-(GetLine + 1):]
+                else:
+                    NewContentPart = Lines[-GetLine:]
+            else:
+                NewContentPart = Lines
+            NewContentPart = [x.strip() for x in NewContentPart]
+
+            # print('\n'.join(NewContentPart))
+
+            for line in NewContentPart:
+                if (not line.startswith('To')) and (not line.startswith('★')):
+
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        'Discard waterball',
+                        line
+                    )
+                    AddTailNextRound = True
+                    continue
+
+                if not line.endswith(']'):
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        'Discard waterball',
+                        line
+                    )
+                    AddTailNextRound = True
+                    continue
+
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'Ready to parse waterball',
+                    line
+                )
+
+                if line.startswith('To'):
+                    Type = DataType.WaterBallType.Send
+
+                    PatternResult = ToWaterBallTargetPattern.search(line)
+                    Target = PatternResult.group(0)[3:-1]
+
+                    PatternResult = WaterBallDatePattern.search(line)
+                    Date = PatternResult.group(0)[1:-1]
+
+                    Content = line
+                    Content = Content[Content.find(
+                        Target + ':') + len(Target + ':'):]
+                    Content = Content[:Content.rfind(Date) - 1].strip()
+                elif line.startswith('★'):
+                    Type = DataType.WaterBallType.Catch
+
+                    PatternResult = FromWaterBallTargetPattern.search(line)
+                    Target = PatternResult.group(0)[1:-1]
+
+                    PatternResult = WaterBallDatePattern.search(line)
+                    Date = PatternResult.group(0)[1:-1]
+
+                    Content = line
+                    Content = Content[Content.find(
+                        Target + ' ') + len(Target + ' '):]
+                    Content = Content[:Content.rfind(Date) - 1].strip()
+
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'Waterball Type',
+                    'Send'
+                )
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'Waterball Target',
+                    Target
+                )
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'Waterball Content',
+                    Content
+                )
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'Waterball Date',
+                    Date
+                )
+
+                CurrentWaterBall = DataType.WaterBallInfo(
+                    Type,
+                    Target,
+                    Content,
+                    Date
+                )
+
+                WaterBallList.append(CurrentWaterBall)
 
             if index == 1:
                 break
@@ -1769,6 +1899,9 @@ class Library(Synchronize.SynchronizeAllMethod):
             #     pass
 
             Cmd = Command.Down
+            LastReadLine = LastReadLineTemp
+
+        return WaterBallList
 
 
 if __name__ == '__main__':

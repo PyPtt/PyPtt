@@ -293,14 +293,14 @@ class PostInfo(object):
 
 
 class WaterBallInfo(object):
-    def __init__(self, Type, Author, Content, Date=None):
+    def __init__(self, Type, Target, Content, Date):
         self._Type = ParseParameter(int, Type)
-        self._Author = ParseParameter(str, Author)
+        self._Target = ParseParameter(str, Target)
         self._Content = ParseParameter(str, Content)
         self._Date = ParseParameter(str, Date)
 
-    def getAuthor(self):
-        return self._Author
+    def getTarget(self):
+        return self._Target
 
     def getContent(self):
         return self._Content
