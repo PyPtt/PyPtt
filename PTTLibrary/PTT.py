@@ -1533,9 +1533,10 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         Data = Util.getSubStringList(OriScreen, '》', ['《', '\n'])
         if len(Data) != 10:
+            print('\n'.join(Data))
+            print(len(Data))
             raise Exceptions.ParseError(OriScreen)
-        # print('\n'.join(Data))
-        # print(len(Data))
+        
 
         ID = Data[0]
         Money = Data[1]
@@ -1666,9 +1667,18 @@ class Library(Synchronize.SynchronizeAllMethod):
                         i18n.WaterBall
                     ],
                     '丟 ' + TargetID + ' 水球:',
-                    Response=waterball + Command.Enter * 2,
-                    BreakDetectAfterSend=True
+                    Response=waterball + Command.Enter * 2 +
+                    Command.GoMainMenu,
                 ),
+                ConnectCore.TargetUnit(
+                    [
+                        i18n.Throw,
+                        i18n.WaterBall,
+                        i18n.Success
+                    ],
+                    Screens.Target.MainMenu,
+                    BreakDetect=True
+                )
             ]
 
             CmdList = []
@@ -1692,6 +1702,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 ScreenTimeout=Config.ScreenLongTimeOut
             )
 
+            time.sleep(5)
         return ErrorCode.Success
 
     def getWaterBall(self, OperateType):
@@ -1709,7 +1720,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         if OperateType == DataType.WaterBallOperateType.DoNothing:
             WaterBallOperateType = 'R'
         elif OperateType == DataType.WaterBallOperateType.Clear:
-            WaterBallOperateType = 'C'
+            WaterBallOperateType = 'C' + Command.Enter + 'Y' + Command.Enter
         elif OperateType == DataType.WaterBallOperateType.Mail:
             WaterBallOperateType = 'M'
         TargetList = [
@@ -1763,18 +1774,31 @@ class Library(Synchronize.SynchronizeAllMethod):
                 TargetList,
                 ScreenTimeout=Config.ScreenLongTimeOut
             )
+            Log.showValue(
+                Log.Level.DEBUG,
+                'index',
+                index
+            )
+            if index == 0:
+                return None
 
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
-            # print(OriScreen)
-
-            if index == 0:
-                return []
 
             # print(OriScreen)
             # print('=' * 50)
             ScreenTemp = OriScreen
+            Log.showValue(
+                Log.Level.DEBUG,
+                'OriScreen',
+                OriScreen
+            )
+
             LastLine = ScreenTemp.split('\n')[-1]
-            # print(LastLine)
+            Log.showValue(
+                Log.Level.DEBUG,
+                'LastLine',
+                LastLine
+            )
             ScreenTemp = '\n'.join(ScreenTemp.split('\n')[:-1])
 
             ScreenTemp = ScreenTemp.replace(
@@ -1794,7 +1818,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             # print(LastReadLine)
             # print(GetLine)
             # print('=' * 50)
-            if GetLine > 0:
+            if GetLine > 0 and LastReadLine != 0:
                 if AddTailNextRound:
                     Log.log(
                         Log.Level.DEBUG,

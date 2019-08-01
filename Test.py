@@ -343,11 +343,10 @@ What is Ptt?
 def ThrowWaterBall():
 
     TagetID = 'DeepLearning'
-    TestWaterBall = '''
-What is Ptt?
-批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
-期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
-'''
+
+    TestWaterBall = [str(x % 10) for x in range(10)]
+    TestWaterBall = TestWaterBall * 3
+    TestWaterBall = '\n'.join(TestWaterBall)
     # TestWaterBall = 'Q_Q'
 
     PTTBot.throwWaterBall(TagetID, TestWaterBall)
@@ -356,9 +355,15 @@ What is Ptt?
 def GetWaterBall():
 
     OperateType = PTT.WaterBallOperateType.DoNothing
+    # OperateType = PTT.WaterBallOperateType.Mail
+    # OperateType = PTT.WaterBallOperateType.Clear
 
     WaterBallList = PTTBot.getWaterBall(OperateType)
 
+    if WaterBallList is None:
+        return
+
+    print('Result:')
     for WaterBall in WaterBallList:
         if WaterBall.getType() == PTT.WaterBallType.Catch:
             Temp = '★' + WaterBall.getTarget() + ' '
@@ -366,6 +371,31 @@ def GetWaterBall():
             Temp = 'To ' + WaterBall.getTarget() + ': '
         Temp += WaterBall.getContent() + ' [' + WaterBall.getDate() + ']'
         print(Temp)
+
+def WaterBall():
+
+    OperateType = PTT.WaterBallOperateType.Clear
+
+    TestWaterBall = [str(x % 10) for x in range(10)]
+    TagetID = 'DeepLearning'
+
+    for Msg in TestWaterBall:
+        PTTBot.throwWaterBall(TagetID, Msg)
+
+        WaterBallList = PTTBot.getWaterBall(OperateType)
+
+        if WaterBallList is None:
+            return
+
+        print('Result:')
+        for WaterBall in WaterBallList:
+            if WaterBall.getType() == PTT.WaterBallType.Catch:
+                Temp = '★' + WaterBall.getTarget() + ' '
+            elif WaterBall.getType() == PTT.WaterBallType.Send:
+                Temp = 'To ' + WaterBall.getTarget() + ': '
+            Temp += WaterBall.getContent() + ' [' + WaterBall.getDate() + ']'
+            print(Temp)
+    
 
 if __name__ == '__main__':
     os.system('cls')
@@ -408,10 +438,8 @@ if __name__ == '__main__':
         # Push()
         # GetUser()
         # ThrowWaterBall()
-        # ThrowWaterBall()
-        # ThrowWaterBall()
-        GetWaterBall()
-
+        # GetWaterBall()
+        WaterBall()
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
