@@ -355,10 +355,17 @@ What is Ptt?
 
 def GetWaterBall():
 
-    Type = PTT.WaterBallOperateType.DoNothing
+    OperateType = PTT.WaterBallOperateType.DoNothing
 
-    PTTBot.getWaterBall(Type)
+    WaterBallList = PTTBot.getWaterBall(OperateType)
 
+    for WaterBall in WaterBallList:
+        if WaterBall.getType() == PTT.WaterBallType.Catch:
+            Temp = '★' + WaterBall.getTarget() + ' '
+        elif WaterBall.getType() == PTT.WaterBallType.Send:
+            Temp = 'To ' + WaterBall.getTarget() + ': '
+        Temp += WaterBall.getContent() + ' [' + WaterBall.getDate() + ']'
+        print(Temp)
 
 if __name__ == '__main__':
     os.system('cls')
@@ -383,7 +390,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
             # LogLevel=PTT.LogLevel.TRACE,
-            LogLevel=PTT.LogLevel.DEBUG,
+            # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
             PTTBot.login(ID,
