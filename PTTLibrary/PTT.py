@@ -1527,7 +1527,11 @@ class Library(Synchronize.SynchronizeAllMethod):
             ScreenTimeout=Config.ScreenLongTimeOut
         )
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        Log.showValue(Log.Level.DEBUG, 'OriScreen', OriScreen)
+        Log.showValue(
+            Log.Level.DEBUG,
+            'OriScreen',
+            OriScreen
+        )
         if index == 1:
             raise Exceptions.NoSuchUser(UserID)
 
@@ -1536,7 +1540,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             print('\n'.join(Data))
             print(len(Data))
             raise Exceptions.ParseError(OriScreen)
-        
 
         ID = Data[0]
         Money = Data[1]
@@ -1720,9 +1723,10 @@ class Library(Synchronize.SynchronizeAllMethod):
         if OperateType == DataType.WaterBallOperateType.DoNothing:
             WaterBallOperateType = 'R'
         elif OperateType == DataType.WaterBallOperateType.Clear:
-            WaterBallOperateType = 'C' + Command.Enter + 'Y' + Command.Enter
+            WaterBallOperateType = 'C' + Command.Enter + 'Y'
         elif OperateType == DataType.WaterBallOperateType.Mail:
             WaterBallOperateType = 'M'
+
         TargetList = [
             ConnectCore.TargetUnit(
                 i18n.NoWaterball,
@@ -1735,7 +1739,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.Done,
                 ],
                 Screens.Target.WaterBallListEnd,
-                Response=Command.Left + WaterBallOperateType + Command.Enter,
+                Response=Command.Left + WaterBallOperateType +
+                Command.Enter + Command.GoMainMenu,
                 BreakDetectAfterSend=True,
                 LogLevel=Log.Level.DEBUG
             ),
@@ -1835,6 +1840,10 @@ class Library(Synchronize.SynchronizeAllMethod):
             # print('\n'.join(NewContentPart))
 
             for line in NewContentPart:
+                # print(f'line =>{line}<')
+                # print(len(line))
+                if len(line) == 0:
+                    break
                 if (not line.startswith('To')) and (not line.startswith('★')):
 
                     Log.showValue(
