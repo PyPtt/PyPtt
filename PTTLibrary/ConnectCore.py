@@ -300,6 +300,7 @@ class API(object):
                 # ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)
                 ReceiveData.append(ReceiveDataTemp)
                 Screen = ''.join(ReceiveData)
+                Screen = self._cleanScreen(Screen)
 
                 FindTarget = False
                 for Target in TargetList:
@@ -307,7 +308,6 @@ class API(object):
                     Condition = Target.isMatch(Screen)
                     if Condition:
                         if len(Screen) > 0:
-                            Screen = self._cleanScreen(Screen)
                             Screens.show(Screen)
                             self._ReceiveDataQueue.append(Screen)
                             Target.raiseException()
@@ -332,7 +332,8 @@ class API(object):
                             return TargetList.index(Target)
 
                         Msg = Target.getResponse(Screen)
-                        if Target.isRefresh() and not Msg.endswith(Command.Refresh):
+                        if Target.isRefresh() and \
+                           not Msg.endswith(Command.Refresh):
                             Msg = Msg + Command.Refresh
 
                         if Target.isBreakAfterSend():
@@ -343,7 +344,6 @@ class API(object):
                 if FindTarget:
                     break
                 if len(Screen) > 0:
-                    Screen = self._cleanScreen(Screen)
                     Screens.show(Screen)
                     self._ReceiveDataQueue.append(Screen)
 
