@@ -2,6 +2,7 @@
 import os
 import time
 import json
+import random
 import traceback
 import PTTLibrary
 from PTTLibrary import PTT
@@ -398,6 +399,65 @@ def WaterBall():
             print(Temp)
 
 
+def CallStatus():
+
+    def showCallStatus(CallStatus):
+        if CallStatus == PTT.CallStatus.On:
+            print('呼叫器狀態[打開]')
+        elif CallStatus == PTT.CallStatus.Off:
+            print('呼叫器狀態[關閉]')
+        elif CallStatus == PTT.CallStatus.Unplug:
+            print('呼叫器狀態[拔掉]')
+        elif CallStatus == PTT.CallStatus.Waterproof:
+            print('呼叫器狀態[防水]')
+        elif CallStatus == PTT.CallStatus.Friend:
+            print('呼叫器狀態[朋友]')
+        else:
+            print(f'Unknow CallStatus: {CallStatus}')
+
+    for _ in range(5):
+        CallStatus = PTTBot.getCallStatus()
+        showCallStatus(CallStatus)
+
+    print('連續測試通過')
+
+    InitCallStatus = random.randint(
+        PTT.CallStatus.MinValue, PTT.CallStatus.MaxValue
+    )
+
+    TestQueue = [x for x in range(
+        PTT.CallStatus.MinValue, PTT.CallStatus.MaxValue + 1
+    )]
+    random.shuffle(TestQueue)
+
+    print('初始呼叫器狀態')
+    showCallStatus(InitCallStatus)
+    print('測試切換呼叫器狀態順序')
+    for CurrentTestStatus in TestQueue:
+        showCallStatus(CurrentTestStatus)
+
+    PTTBot.setCallStatus(InitCallStatus)
+    CallStatus = PTTBot.getCallStatus()
+    if CallStatus != InitCallStatus:
+        print('設定初始呼叫器狀態: 不通過')
+        return
+    print('設定初始呼叫器狀態: 通過')
+
+    for CurrentTestStatus in TestQueue:
+        print('準備設定呼叫器狀態')
+        showCallStatus(CurrentTestStatus)
+
+        PTTBot.setCallStatus(CurrentTestStatus)
+        CallStatus = PTTBot.getCallStatus()
+        showCallStatus(CallStatus)
+        if CallStatus != CurrentTestStatus:
+            print('設定呼叫器狀態: 不通過')
+            return
+        print('設定呼叫器狀態: 通過')
+
+    print('呼叫器測試全數通過')
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -441,9 +501,10 @@ if __name__ == '__main__':
         # GetUser()
         # ThrowWaterBall()
         # GetWaterBall()
-        WaterBall()
+        # WaterBall()
+        CallStatus()
     except Exception as e:
-
+        # pass
         traceback.print_tb(e.__traceback__)
         print(e)
 
