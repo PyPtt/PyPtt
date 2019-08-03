@@ -1,5 +1,4 @@
 __pycache__/
-Account.txt
 build/
 dist/
 /CrawlBoardResult.txt
@@ -10,3 +9,4 @@ PTTLibrary.egg-info/
 PTTLibrary-*/
 /PTTLibrary/i18n.txt
 /Test.txt
+Account*.txt

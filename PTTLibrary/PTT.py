@@ -166,6 +166,14 @@ class Library(Synchronize.SynchronizeAllMethod):
             Password = Password[:8]
 
         ID = ID.strip()
+        Log.showValue(
+            Log.Level.INFO,
+            [
+                i18n.Login,
+                i18n.ID
+            ],
+            ID
+        )
         Password = Password.strip()
 
         Config.KickOtherLogin = KickOtherLogin

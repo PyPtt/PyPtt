@@ -372,6 +372,7 @@ def GetWaterBall():
         Temp += WaterBall.getContent() + ' [' + WaterBall.getDate() + ']'
         print(Temp)
 
+
 def WaterBall():
 
     OperateType = PTT.WaterBallOperateType.Clear
@@ -395,7 +396,7 @@ def WaterBall():
                 Temp = 'To ' + WaterBall.getTarget() + ': '
             Temp += WaterBall.getContent() + ' [' + WaterBall.getDate() + ']'
             print(Temp)
-    
+
 
 if __name__ == '__main__':
     os.system('cls')
@@ -423,10 +424,11 @@ if __name__ == '__main__':
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
-            PTTBot.login(ID,
-                         Password,
-                         #  KickOtherLogin=True
-                         )
+            PTTBot.login(
+                ID,
+                Password,
+                #  KickOtherLogin=True
+            )
         except PTTLibrary.Exceptions.LoginError:
             PTTBot.log('登入失敗')
             sys.exit()
