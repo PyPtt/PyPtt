@@ -90,6 +90,12 @@ class Target(object):
         '顯示上幾次熱訊'
     ]
 
+    InUserList = [
+        '休閒聊天',
+        '聊天/寫信',
+        '說明',
+    ]
+
 
 def show(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.TRACE:
