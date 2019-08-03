@@ -175,75 +175,95 @@ def PerformanceTest():
 
 def GetPost():
 
-    global PTTBot
+    TestPostList = [
+        ('SorryPub', 4912)
+    ]
 
-    try:
+    for (Board, Index) in TestPostList:
+        try:
+            Post = PTTBot.getPost(
+                Board,
+                PostIndex=Index,
+                # SearchType=PTT.PostSearchType.Keyword,
+                # SearchCondition='公告'
+            )
 
-        Post = PTTBot.getPost(
-            'Wanted',
-            PostIndex=79697,
-            # SearchType=PTT.PostSearchType.Keyword,
-            # SearchCondition='公告'
-        )
+            if Post is not None:
+                print('Board: ' + Post.getBoard())
+                print('AID: ' + Post.getAID())
+                print('Author: ' + Post.getAuthor())
+                print('Date: ' + Post.getDate())
+                print('Title: ' + Post.getTitle())
+                print('Content: ' + Post.getContent())
+                print('Money: ' + str(Post.getMoney()))
+                print('URL: ' + Post.getWebUrl())
+                print('IP: ' + Post.getIP())
+                # 在文章列表上的日期
+                print('List Date: ' + Post.getListDate())
 
-        if Post is not None:
-            print('Board: ' + Post.getBoard())
-            print('AID: ' + Post.getAID())
-            print('Author: ' + Post.getAuthor())
-            print('Date: ' + Post.getDate())
-            print('Title: ' + Post.getTitle())
-            print('Content: ' + Post.getContent())
-            print('Money: ' + str(Post.getMoney()))
-            print('URL: ' + Post.getWebUrl())
-            print('IP: ' + Post.getIP())
-            # 在文章列表上的日期
-            print('List Date' + Post.getListDate())
+                PushCount = 0
+                BooCount = 0
+                ArrowCount = 0
 
-            print(f'{len(Post.getPushList())} pushs')
+                for Push in Post.getPushList():
+                    #     print(Push.getType())
+                    #     print(Push.getAuthor())
+                    #     print(Push.getContent())
+                    #     print(Push.getIP())
+                    #     print(Push.getTime())
 
-            PushCount = 0
-            BooCount = 0
-            ArrowCount = 0
+                    if Push.getType() == PTT.PushType.Push:
+                        PushCount += 1
+                    if Push.getType() == PTT.PushType.Boo:
+                        BooCount += 1
+                    if Push.getType() == PTT.PushType.Arrow:
+                        ArrowCount += 1
 
-            for Push in Post.getPushList():
-                #     print(Push.getType())
-                #     print(Push.getAuthor())
-                #     print(Push.getContent())
-                #     print(Push.getIP())
-                #     print(Push.getTime())
+                print(
+                    f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
+        except Exception as e:
 
-                if Push.getType() == PTT.PushType.Push:
-                    PushCount += 1
-                if Push.getType() == PTT.PushType.Boo:
-                    BooCount += 1
-                if Push.getType() == PTT.PushType.Arrow:
-                    ArrowCount += 1
-
-            print(f'{PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
-    except Exception as e:
-
-        traceback.print_tb(e.__traceback__)
-        print(e)
+            traceback.print_tb(e.__traceback__)
+            print(e)
 
 
 def Post():
-    global PTTBot
 
-    # for i in range(3):
-    #     PTTBot.post('Test', 'PTT Library 自動測試 ' + str(i), '測試貼文', 1, 0)
+    # PTTBot.post(
+    #     'Test',
+    #     'PTT Library 自動測試',
+    #     PTT.Command.ControlCode + 's',
+    #     1,
+    #     0
+    # )
 
-    PTTBot.post('Test',
-                'PTT Library 自動測試',
-                PTT.Command.ControlCode + 's',
-                1, 0)
+    Content = [
+        'PTT Library 貼文測試，如有打擾請告知。',
+        'https://tinyurl.com/y2wuh8ck'
+    ]
+
+    Content = '\r\n\r\n'.join(Content)
+
+    PTTBot.post(
+        'Test',
+        'PTT Library 程式貼文測試',
+        Content,
+        1,
+        0
+    )
 
 
 def GetNewestIndex():
-    global PTTBot
 
-    for _ in range(30):
-        PTTBot.getNewestIndex(PTT.IndexType.Board, Board='Wanted')
-        time.sleep(1)
+    TestBoardList = [
+        'Wanted',
+        'Gossiping'
+    ]
+
+    for Board in TestBoardList:
+        for _ in range(10):
+            Index = PTTBot.getNewestIndex(PTT.IndexType.Board, Board=Board)
+            print(f'{Board} 最新文章編號 {Index}')
 
 
 def showValue(Msg, Value):
@@ -278,32 +298,40 @@ def crawlHandler(Post):
 
 
 def CrawlBoard():
-    global PTTBot
+
+    TestBoardList = [
+        'Wanted',
+        'Gossiping'
+    ]
 
     TestBoard = 'Wanted'
     TestRange = 100
 
-    NewestIndex = PTTBot.getNewestIndex(PTT.IndexType.Board, Board=TestBoard)
-    StartIndex = NewestIndex - TestRange + 1
+    for TestBoard in TestBoardList:
+        NewestIndex = PTTBot.getNewestIndex(
+            PTT.IndexType.Board,
+            Board=TestBoard
+        )
+        StartIndex = NewestIndex - TestRange + 1
 
-    print(f'預備爬行編號 {StartIndex} ~ {NewestIndex} 文章')
+        print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
 
-    ErrorPostList, DelPostList = PTTBot.crawlBoard(
-        crawlHandler,
-        TestBoard,
-        StartIndex=StartIndex,
-        EndIndex=NewestIndex
+        ErrorPostList, DelPostList = PTTBot.crawlBoard(
+            crawlHandler,
+            TestBoard,
+            StartIndex=StartIndex,
+            EndIndex=NewestIndex
 
-        # StartIndex=79525,
-        # EndIndex=79525
-    )
+            # StartIndex=80745,
+            # EndIndex=80745
+        )
 
-    if len(ErrorPostList) > 0:
-        print('Error Post: \n' + '\n'.join(str(x) for x in ErrorPostList))
+        if len(ErrorPostList) > 0:
+            print('Error Post: \n' + '\n'.join(str(x) for x in ErrorPostList))
 
-    if len(DelPostList) > 0:
-        print('Del Post: \n' + '\n'.join(str(x) for x in DelPostList))
-        print(f'共有 {len(DelPostList)} 篇文章被刪除')
+        if len(DelPostList) > 0:
+            print('Del Post: \n' + '\n'.join(str(x) for x in DelPostList))
+            print(f'共有 {len(DelPostList)} 篇文章被刪除')
 
 
 def GetUser():
@@ -331,14 +359,19 @@ def GetUser():
 
 
 def Push():
+
+    TestPostList = [
+        # ('Gossiping', 95693),
+        ('Test', 656)
+    ]
+
     Content = '''
 What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-    # PTTBot.push('Test', PTT.PushType.Push, 'Test', PostIndex=225)
-    # PTTBot.push('Test', PTT.PushType.Push, Content, PostIndex=225)
-    PTTBot.push('Gossiping', PTT.PushType.Push, Content, PostIndex=95693)
+    for (Board, Index) in TestPostList:
+        PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
 
 
 def ThrowWaterBall():
@@ -496,15 +529,14 @@ if __name__ == '__main__':
         # GetPost()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        # CrawlBoard() X
         # Push()
         # GetUser()
         # ThrowWaterBall()
         # GetWaterBall()
         # WaterBall()
-        CallStatus()
+        # CallStatus()
     except Exception as e:
-        # pass
         traceback.print_tb(e.__traceback__)
         print(e)
 
