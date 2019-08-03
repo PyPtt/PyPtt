@@ -19,18 +19,18 @@ class CallStatus(object):
     # 呼叫器狀態
 
     # 打開
-    On = 1
-    # 關掉
-    Off = 2
+    On = 0
     # 拔掉
-    Unplug = 3
+    Unplug = 1
     # 防水
-    Waterproof = 4
+    Waterproof = 2
     # 好友
-    Friend = 5
+    Friend = 3
+    # 關掉
+    Off = 4
 
     MinValue = On
-    MaxValue = Friend
+    MaxValue = Off
 
 
 class PostSearchType(object):

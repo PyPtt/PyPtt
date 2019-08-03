@@ -508,10 +508,10 @@ def load(inputLanguage):
         'User Offline',
     ])
 
-    global SetBBCall
-    SetBBCall = SpecificLoad(inputLanguage, [
-        '設定呼叫器',
-        'Set BBCall',
+    global SetCallStatus
+    SetCallStatus = SpecificLoad(inputLanguage, [
+        '設定呼叫器狀態',
+        'Set Call Status',
     ])
 
     global Throw
@@ -550,8 +550,11 @@ def load(inputLanguage):
         'Chinese Tranditional',
     ])
 
-    
-
+    global GetCallStatus
+    GetCallStatus = SpecificLoad(inputLanguage, [
+        '取得呼叫器狀態',
+        'Get BBCall Status',
+    ])
 
     # global List
     # List = []

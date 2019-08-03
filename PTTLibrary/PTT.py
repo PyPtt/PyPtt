@@ -44,16 +44,18 @@ PostSearchType = DataType.PostSearchType
 IndexType = DataType.IndexType
 WaterBallOperateType = DataType.WaterBallOperateType
 WaterBallType = DataType.WaterBallType
+CallStatus = DataType.CallStatus
 
 
 class Library(Synchronize.SynchronizeAllMethod):
-    def __init__(self,
-                 Language: int = 0,
-                 ConnectMode: int = 0,
-                 LogLevel: int = 0,
-                 ScreenTimeOut: int = 0,
-                 ScreenLongTimeOut: int = 0,
-                 ):
+    def __init__(
+        self,
+        Language: int = 0,
+        ConnectMode: int = 0,
+        LogLevel: int = 0,
+        ScreenTimeOut: int = 0,
+        ScreenLongTimeOut: int = 0,
+    ):
         print(f'PTT Library v {Version}')
         print('Developed by PTT CodingMan')
         self._Login = False
@@ -126,7 +128,12 @@ class Library(Synchronize.SynchronizeAllMethod):
     def getVersion(self) -> str:
         return Config.Version
 
-    def _login(self, ID: str, Password: str, KickOtherLogin: bool = False):
+    def _login(
+        self,
+        ID: str,
+        Password: str,
+        KickOtherLogin: bool = False
+    ):
 
         if self._Login:
             self.logout()
@@ -261,7 +268,12 @@ class Library(Synchronize.SynchronizeAllMethod):
         self._Login = True
         return ErrorCode.Success
 
-    def login(self, ID: str, Password: str, KickOtherLogin: bool = False):
+    def login(
+        self,
+        ID: str,
+        Password: str,
+        KickOtherLogin: bool = False
+    ):
         return self._login(ID, Password, KickOtherLogin=KickOtherLogin)
 
     def logout(self):
@@ -1667,7 +1679,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             TargetList = [
                 ConnectCore.TargetUnit(
-                    i18n.SetBBCall,
+                    i18n.SetCallStatus,
                     '您的呼叫器目前設定為關閉',
                     Response='y' + Command.Enter,
                 ),
@@ -1944,6 +1956,133 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         return WaterBallList
 
+    def getCallStatus(self):
+        return self._getCallStatus()
+
+    def _getCallStatus(self):
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('P')
+        CmdList.append(Command.Right)
+        CmdList.append(Command.Left)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetCallStatus,
+                    i18n.Success,
+                ],
+                '[呼叫器]打開',
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetCallStatus,
+                    i18n.Success,
+                ],
+                '[呼叫器]拔掉',
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetCallStatus,
+                    i18n.Success,
+                ],
+                '[呼叫器]防水',
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetCallStatus,
+                    i18n.Success,
+                ],
+                '[呼叫器]好友',
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetCallStatus,
+                    i18n.Success,
+                ],
+                '[呼叫器]關閉',
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
+        if index < 0:
+            OriScreen = self._ConnectCore.getScreenQueue()[-1]
+            raise Exceptions.UnknowError(OriScreen)
+
+        if index == 0:
+            return DataType.CallStatus.On
+        if index == 1:
+            return DataType.CallStatus.Unplug
+        if index == 2:
+            return DataType.CallStatus.Waterproof
+        if index == 3:
+            return DataType.CallStatus.Friend
+        if index == 4:
+            return DataType.CallStatus.Off
+
+        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+        raise Exceptions.UnknowError(OriScreen)
+
+    def setCallStatus(
+        self,
+        inputCallStatus
+    ):
+        if not isinstance(inputCallStatus, int):
+            raise TypeError('CallStatus must be integer')
+
+        if not Util.checkRange(DataType.CallStatus, inputCallStatus):
+            raise ValueError('Unknow CallStatus', inputCallStatus)
+
+        # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
+
+        CurrentCallStatus = self._getCallStatus()
+        # print(CurrentCallStatus)
+        # print(inputCallStatus)
+
+        # Distance = (CurrentCallStatus - inputCallStatus) % 5
+        # print(Distance)
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append(Command.Ctrl_U)
+        CmdList.append('p')
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.SetCallStatus,
+                    i18n.Success
+                ],
+                Screens.Target.InUserList,
+                BreakDetect=True
+            )
+        ]
+
+        while CurrentCallStatus != inputCallStatus:
+            self._ConnectCore.send(
+                Cmd,
+                TargetList,
+                ScreenTimeout=Config.ScreenLongTimeOut
+            )
+
+            CurrentCallStatus = self._getCallStatus()
+    
+        return ErrorCode.Success
 
 if __name__ == '__main__':
 
