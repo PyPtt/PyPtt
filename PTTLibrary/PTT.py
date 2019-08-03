@@ -1730,7 +1730,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 ScreenTimeout=Config.ScreenLongTimeOut
             )
 
-            time.sleep(5)
+            time.sleep(3.2)
         return ErrorCode.Success
 
     def getWaterBall(self, OperateType):
