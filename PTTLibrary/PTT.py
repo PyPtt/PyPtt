@@ -526,13 +526,9 @@ class Library(Synchronize.SynchronizeAllMethod):
         ]
 
         index = self._ConnectCore.send(Cmd, TargetList)
-
-        if index < 0:
-            Screens.show(self._ConnectCore.getScreenQueue())
-            raise Exceptions.UnknowError(i18n.UnknowError)
-
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        # print(OriScreen)
+        if index < 0:
+            raise Exceptions.UnknowError(OriScreen)
 
         if index == 1:
             # 文章被刪除
@@ -727,6 +723,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                     GetLine = LastReadLineTemp - LastReadLine
                     if GetLine > 0:
                         NewContentPart = '\n'.join(Lines[-GetLine:])
+                    else:
+                        NewContentPart = '\n'.join(Lines)
                 else:
                     NewContentPart = Lines[-1]
                 Log.showValue(
@@ -798,6 +796,11 @@ class Library(Synchronize.SynchronizeAllMethod):
                     )
 
                     PushType = 0
+                    # Log.showValue(
+                    #     Log.Level.INFO,
+                    #     'line',
+                    #     line
+                    # )
                     if line.startswith('※ 編輯'):
                         if IP in line:
                             continue
@@ -815,16 +818,18 @@ class Library(Synchronize.SynchronizeAllMethod):
                             ],
                             IP
                         )
-                    elif line.startswith('推'):
+                    elif line.startswith('推 '):
                         PushType = DataType.PushType.Push
-                    elif line.startswith('噓'):
+                    elif line.startswith('噓 '):
                         PushType = DataType.PushType.Boo
-                    elif line.startswith('→'):
+                    elif line.startswith('→ '):
                         PushType = DataType.PushType.Arrow
                     else:
                         pass
 
                     if PushType != 0:
+                        # print(line)
+
                         Result = PushAuthorPattern.search(line)
                         PushAuthor = Result.group(0)[2:-1]
                         Log.showValue(Log.Level.DEBUG, [
@@ -2081,8 +2086,9 @@ class Library(Synchronize.SynchronizeAllMethod):
             )
 
             CurrentCallStatus = self._getCallStatus()
-    
+
         return ErrorCode.Success
+
 
 if __name__ == '__main__':
 
