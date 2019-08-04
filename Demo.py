@@ -223,7 +223,7 @@ def CrawlBoard():
     #   StartIndex:
     #       起始爬行文章編號
     #   EndIndex:
-    #       起始爬行文章編號
+    #       結束爬行文章編號
     #   SearchType (Optional):
     #       可以輸入搜尋類型來取得你想要的文章 ex: [公告]
     #       PTT.PostSearchType.Keyword                  關鍵字
