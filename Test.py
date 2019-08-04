@@ -220,7 +220,8 @@ def GetPost():
                         ArrowCount += 1
 
                 print(
-                    f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
+                    f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow'
+                )
         except Exception as e:
 
             traceback.print_tb(e.__traceback__)
@@ -239,7 +240,7 @@ def Post():
 
     Content = [
         'PTT Library 貼文測試，如有打擾請告知。',
-        'https://tinyurl.com/y2wuh8ck'
+        '程式碼: https://tinyurl.com/y2wuh8ck'
     ]
 
     Content = '\r\n\r\n'.join(Content)
@@ -275,14 +276,9 @@ def detectNone(Name, Obj):
         raise ValueError(f'{Name} is None')
 
 
-DelPostCount = 0
-
-
 def crawlHandler(Post):
 
-    if Post.getDeleteStatus() != PTT.DataType.PostDeleteStatus.NotDeleted:
-        global DelPostCount
-        DelPostCount += 1
+    if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
         return
 
     detectNone('標題', Post.getTitle())

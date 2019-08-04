@@ -45,6 +45,7 @@ IndexType = DataType.IndexType
 WaterBallOperateType = DataType.WaterBallOperateType
 WaterBallType = DataType.WaterBallType
 CallStatus = DataType.CallStatus
+PostDeleteStatus = DataType.PostDeleteStatus
 
 
 class Library(Synchronize.SynchronizeAllMethod):
@@ -1144,12 +1145,14 @@ class Library(Synchronize.SynchronizeAllMethod):
             PB.finish()
         return ErrorPostList, DelPostList
 
-    def post(self,
-             Board: str,
-             Title: str,
-             Content: str,
-             PostType: int,
-             SignType: int):
+    def post(
+        self,
+        Board: str,
+        Title: str,
+        Content: str,
+        PostType: int,
+        SignType: int
+    ):
 
         if not self._Login:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
