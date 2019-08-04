@@ -147,8 +147,21 @@ class MailInformation(object):
 
 
 class UserInfo(object):
-    def __init__(self, ID, Money, LoginTime, LegalPost, IllegalPost, State,
-                 Mail, LastLogin, LastIP, FiveChess, Chess, SignatureFile):
+    def __init__(
+        self,
+        ID,
+        Money,
+        LoginTime,
+        LegalPost,
+        IllegalPost,
+        State,
+        Mail,
+        LastLogin,
+        LastIP,
+        FiveChess,
+        Chess,
+        SignatureFile
+    ):
         self._ID = ParseParameter(str, ID)
         self._Money = ParseParameter(str, Money)
         self._LoginTime = ParseParameter(int, LoginTime)
@@ -234,10 +247,22 @@ class PostDeleteStatus(object):
 
 
 class PostInfo(object):
-    def __init__(self, Board=None, AID=None, Author=None, Date=None,
-                 Title=None, WebUrl=None, Money=None, Content=None,
-                 IP=None, PushList=None, ListDate=None,
-                 DeleteStatus=0, ControlCode=False):
+    def __init__(
+        self,
+        Board=None,
+        AID=None,
+        Author=None,
+        Date=None,
+        Title=None,
+        WebUrl=None,
+        Money=None,
+        Content=None,
+        IP=None,
+        PushList=None,
+        ListDate=None,
+        DeleteStatus=0,
+        ControlCode=False
+    ):
         self._Board = ParseParameter(str, Board)
         self._AID = ParseParameter(str, AID)
         self._Author = ParseParameter(str, Author)
