@@ -460,11 +460,14 @@ class Library(Synchronize.SynchronizeAllMethod):
             SearchCondition
         )
 
-    def _getPost(self, Board: str,
-                 PostAID: str = None,
-                 PostIndex: int = 0,
-                 SearchType: int = 0,
-                 SearchCondition: str = None):
+    def _getPost(
+        self,
+        Board: str,
+        PostAID: str = None,
+        PostIndex: int = 0,
+        SearchType: int = 0,
+        SearchCondition: str = None
+    ):
 
         if not self._Login:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1032,13 +1035,15 @@ class Library(Synchronize.SynchronizeAllMethod):
             SearchCondition
         )
 
-    def crawlBoard(self,
-                   PostHandler,
-                   Board: str,
-                   StartIndex: int = 0,
-                   EndIndex: int = 0,
-                   SearchType: int = 0,
-                   SearchCondition: str = None):
+    def crawlBoard(
+        self,
+        PostHandler,
+        Board: str,
+        StartIndex: int = 0,
+        EndIndex: int = 0,
+        SearchType: int = 0,
+        SearchCondition: str = None
+    ):
 
         if not isinstance(Board, str):
             raise TypeError(Log.merge([

@@ -176,7 +176,7 @@ def PerformanceTest():
 def GetPost():
 
     TestPostList = [
-        ('SorryPub', 4912)
+        ('Python', 1)
     ]
 
     for (Board, Index) in TestPostList:
@@ -321,9 +321,8 @@ def CrawlBoard():
             TestBoard,
             StartIndex=StartIndex,
             EndIndex=NewestIndex
-
-            # StartIndex=80745,
-            # EndIndex=80745
+            # StartIndex=777273,
+            # EndIndex=777273
         )
 
         if len(ErrorPostList) > 0:
