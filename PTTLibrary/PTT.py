@@ -361,6 +361,9 @@ class Library(Synchronize.SynchronizeAllMethod):
         SearchCondition: str = None
     ):
 
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
                 'Board',
@@ -468,9 +471,6 @@ class Library(Synchronize.SynchronizeAllMethod):
         SearchType: int = 0,
         SearchCondition: str = None
     ):
-
-        if not self._Login:
-            raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -1028,6 +1028,10 @@ class Library(Synchronize.SynchronizeAllMethod):
                        Board: str = None,
                        SearchType: int = 0,
                        SearchCondition: str = None):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
         return self._getNewestIndex(
             IndexType,
             Board,
@@ -1044,6 +1048,8 @@ class Library(Synchronize.SynchronizeAllMethod):
         SearchType: int = 0,
         SearchCondition: str = None
     ):
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
@@ -1144,6 +1150,9 @@ class Library(Synchronize.SynchronizeAllMethod):
              Content: str,
              PostType: int,
              SignType: int):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
@@ -1253,6 +1262,10 @@ class Library(Synchronize.SynchronizeAllMethod):
         PostAID: str = None,
         PostIndex: int = 0
     ):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
                 'Board',
@@ -1620,9 +1633,16 @@ class Library(Synchronize.SynchronizeAllMethod):
         return User
 
     def getUser(self, UserID):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
         return self._getUser(UserID)
 
     def throwWaterBall(self, TargetID, Content):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(TargetID, str):
             raise TypeError(Log.merge([
@@ -1739,6 +1759,9 @@ class Library(Synchronize.SynchronizeAllMethod):
         return ErrorCode.Success
 
     def getWaterBall(self, OperateType):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(OperateType, int):
             raise TypeError(Log.merge([
@@ -1967,6 +1990,10 @@ class Library(Synchronize.SynchronizeAllMethod):
         return WaterBallList
 
     def getCallStatus(self):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
         return self._getCallStatus()
 
     def _getCallStatus(self):
@@ -2050,6 +2077,10 @@ class Library(Synchronize.SynchronizeAllMethod):
         self,
         inputCallStatus
     ):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
         if not isinstance(inputCallStatus, int):
             raise TypeError('CallStatus must be integer')
 
