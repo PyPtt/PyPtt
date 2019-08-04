@@ -33,7 +33,7 @@ class ConnectMode(object):
     Telnet = 1
     WebSocket = 2
 
-    MinValue = Telnet
+    MinValue = WebSocket
     MaxValue = WebSocket
 
 
