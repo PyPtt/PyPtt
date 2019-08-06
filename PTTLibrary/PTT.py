@@ -174,6 +174,11 @@ class Library(Synchronize.SynchronizeAllMethod):
             Password = Password[:8]
 
         ID = ID.strip()
+        Password = Password.strip()
+
+        self._ID = ID
+        self._Password = Password
+
         Log.showValue(
             Log.Level.INFO,
             [
@@ -182,7 +187,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             ],
             ID
         )
-        Password = Password.strip()
 
         Config.KickOtherLogin = KickOtherLogin
 
@@ -2093,11 +2097,6 @@ class Library(Synchronize.SynchronizeAllMethod):
         # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
 
         CurrentCallStatus = self._getCallStatus()
-        # print(CurrentCallStatus)
-        # print(inputCallStatus)
-
-        # Distance = (CurrentCallStatus - inputCallStatus) % 5
-        # print(Distance)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -2127,6 +2126,95 @@ class Library(Synchronize.SynchronizeAllMethod):
             CurrentCallStatus = self._getCallStatus()
 
         return ErrorCode.Success
+
+    def giveMoney(self, ID, Money):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        if not isinstance(ID, str):
+            raise TypeError(Log.merge([
+                'ID',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(Money, int):
+            raise TypeError(Log.merge([
+                'Money',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('P')
+        CmdList.append(Command.Enter)
+        CmdList.append('P')
+        CmdList.append(Command.Enter)
+        CmdList.append('O')
+        CmdList.append(Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.NoMoney,
+                '你沒有那麼多Ptt幣喔!',
+                BreakDetect=True,
+                Exceptions=Exceptions.NoMoney
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoMoney,
+                '金額過少，交易取消!',
+                BreakDetect=True,
+                Exceptions=Exceptions.MoneyTooFew
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.Transaction,
+                    i18n.Success
+                ],
+                '按任意鍵繼續',
+                BreakDetect=True
+            ),
+            ConnectCore.TargetUnit(
+                i18n.ConstantRedBag,
+                '要修改紅包袋嗎',
+                Response=Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                i18n.VerifyID,
+                '完成交易前要重新確認您的身份',
+                Response=self._Password + Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                i18n.InputMoney,
+                '要給他多少Ptt幣呢?',
+                Response=Command.Tab + str(Money) + Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                i18n.InputID,
+                '這位幸運兒的id',
+                Response=ID + Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                i18n.AuthenticationHasNotExpired,
+                '認證尚未過期',
+                Response='y' + Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                i18n.TradingInProgress,
+                '交易正在進行中',
+                Response=Command.Space
+            )
+        ]
+
+        self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
 
 
 if __name__ == '__main__':

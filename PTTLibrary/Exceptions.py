@@ -88,3 +88,19 @@ class ParseError(Exception):
 
     def __str__(self):
         return self.message
+
+
+class NoMoney(Exception):
+    def __init__(self):
+        self.message = i18n.NoMoney
+
+    def __str__(self):
+        return self.message
+
+
+class MoneyTooFew(Exception):
+    def __init__(self):
+        self.message = i18n.MoneyTooFew
+
+    def __str__(self):
+        return self.message

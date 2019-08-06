@@ -83,6 +83,8 @@ def showValue(LogLevel, Msg, Value):
         return
     if len(Msg) == 0:
         return
+    if len(Value) == 0:
+        return
     global LastValue
 
     CheckPTTMsg = merge([i18n.PTT, i18n.Msg])

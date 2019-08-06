@@ -2,6 +2,7 @@
 
 # http://www.physics.udel.edu/~watson/scen103/ascii.html
 Enter = '\r'
+Tab = '\t'
 Ctrl_C = '\x03'
 Ctrl_L = '\x0C'
 Ctrl_P = '\x10'

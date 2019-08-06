@@ -556,6 +556,60 @@ def load(inputLanguage):
         'Get BBCall Status',
     ])
 
+    global NoMoney
+    NoMoney = SpecificLoad(inputLanguage, [
+        'P 幣不足',
+        'No Money',
+    ])
+
+    global InputID
+    InputID = SpecificLoad(inputLanguage, [
+        '輸入帳號',
+        'Input ID',
+    ])
+
+    global InputMoney
+    InputMoney = SpecificLoad(inputLanguage, [
+        '輸入金額',
+        'Input Money',
+    ])
+
+    global AuthenticationHasNotExpired
+    AuthenticationHasNotExpired = SpecificLoad(inputLanguage, [
+        '認證尚未過期',
+        'Authentication has not expired',
+    ])
+
+    global VerifyID
+    VerifyID = SpecificLoad(inputLanguage, [
+        '確認身分',
+        'Verify ID',
+    ])
+
+    global TradingInProgress
+    TradingInProgress = SpecificLoad(inputLanguage, [
+        '交易正在進行中',
+        'Trading is in progress',
+    ])
+
+    global Transaction
+    Transaction = SpecificLoad(inputLanguage, [
+        '交易',
+        'Transaction',
+    ])
+
+    global MoneyTooFew
+    MoneyTooFew = SpecificLoad(inputLanguage, [
+        '金額過少，交易取消!',
+        'The amount is too small, the transaction is cancelled!',
+    ])
+
+    global ConstantRedBag
+    ConstantRedBag = SpecificLoad(inputLanguage, [
+        '不修改紅包袋',
+        'Constant the red bag',
+    ])
+
     # global List
     # List = []
 
