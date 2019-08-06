@@ -1831,7 +1831,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             index = self._ConnectCore.send(
                 Cmd,
                 TargetList,
-                ScreenTimeout=Config.ScreenTimeOut
+                ScreenTimeout=1
             )
             Log.showValue(
                 Log.Level.DEBUG,
