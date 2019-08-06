@@ -532,10 +532,8 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         index = self._ConnectCore.send(Cmd, TargetList)
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        if index < 0:
-            raise Exceptions.UnknowError(OriScreen)
-
-        if index == 1:
+        
+        if index == 1 or index < 0:
             # 文章被刪除
             Log.log(Log.Level.DEBUG, i18n.PostDeled)
             PostDelStatus = 0
@@ -835,9 +833,10 @@ class Library(Synchronize.SynchronizeAllMethod):
                         pass
 
                     if PushType != 0:
-                        # print(line)
-
                         Result = PushAuthorPattern.search(line)
+                        if Result is None:
+                            # 不符合推文格式
+                            continue
                         PushAuthor = Result.group(0)[2:-1]
                         Log.showValue(Log.Level.DEBUG, [
                             i18n.Push,
