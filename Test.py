@@ -373,12 +373,13 @@ def ThrowWaterBall():
 
     TagetID = 'DeepLearning'
 
-    TestWaterBall = [str(x % 10) for x in range(10)]
-    TestWaterBall = TestWaterBall * 3
-    TestWaterBall = '\n'.join(TestWaterBall)
-    # TestWaterBall = 'Q_Q'
+    # TestWaterBall = [str(x % 10) for x in range(10)]
+    # TestWaterBall = TestWaterBall * 3
+    # TestWaterBall = '\n'.join(TestWaterBall)
+    TestWaterBall = '水球測試 :D'
 
     PTTBot.throwWaterBall(TagetID, TestWaterBall)
+    time.sleep(3)
 
 
 def GetWaterBall():
@@ -532,11 +533,11 @@ if __name__ == '__main__':
         # CrawlBoard() X
         # Push()
         # GetUser()
-        # ThrowWaterBall()
+        ThrowWaterBall()
         # GetWaterBall()
         # WaterBall()
         # CallStatus()
-        GiveMoney()
+        # GiveMoney()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)

@@ -1831,7 +1831,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             index = self._ConnectCore.send(
                 Cmd,
                 TargetList,
-                ScreenTimeout=Config.ScreenLongTimeOut
+                ScreenTimeout=Config.ScreenTimeOut
             )
             Log.showValue(
                 Log.Level.DEBUG,
@@ -1858,6 +1858,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                 'LastLine',
                 LastLine
             )
+            if LastLine.startswith('★'):
+                continue
             ScreenTemp = '\n'.join(ScreenTemp.split('\n')[:-1])
 
             ScreenTemp = ScreenTemp.replace(
@@ -1924,6 +1926,11 @@ class Library(Synchronize.SynchronizeAllMethod):
                 )
 
                 if line.startswith('To'):
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        'Waterball Type',
+                        'Send'
+                    )
                     Type = DataType.WaterBallType.Send
 
                     PatternResult = ToWaterBallTargetPattern.search(line)
@@ -1937,6 +1944,11 @@ class Library(Synchronize.SynchronizeAllMethod):
                         Target + ':') + len(Target + ':'):]
                     Content = Content[:Content.rfind(Date) - 1].strip()
                 elif line.startswith('★'):
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        'Waterball Type',
+                        'Catch'
+                    )
                     Type = DataType.WaterBallType.Catch
 
                     PatternResult = FromWaterBallTargetPattern.search(line)
@@ -1950,11 +1962,6 @@ class Library(Synchronize.SynchronizeAllMethod):
                         Target + ' ') + len(Target + ' '):]
                     Content = Content[:Content.rfind(Date) - 1].strip()
 
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    'Waterball Type',
-                    'Send'
-                )
                 Log.showValue(
                     Log.Level.DEBUG,
                     'Waterball Target',
