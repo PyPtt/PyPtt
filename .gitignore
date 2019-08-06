@@ -1,5 +1,4 @@
 __pycache__/
-Account.txt
 build/
 dist/
 /CrawlBoardResult.txt
@@ -8,3 +7,6 @@ PTTLibrary.egg-info/
 *Out.txt
 /Big5Data.txt
 PTTLibrary-*/
+/PTTLibrary/i18n.txt
+/Test.txt
+Account*.txt

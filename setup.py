@@ -1,4 +1,4 @@
-from PTTLibrary import Version
+from PTTLibrary import Config
 
 """A setuptools based setup module.
 
@@ -18,7 +18,7 @@ from os import path
 # Get the long description from the README file
 # with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 #     long_description = f.read()
-Version = Version.Ver
+Version = Config.Version
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
@@ -47,7 +47,7 @@ setup(
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='PTT library',  # Required
+    description='PTT library github: https://github.com/Truth0906/PTTLibrary',  # Required
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
@@ -84,18 +84,24 @@ setup(
         #   5 - Production/Stable
         'Development Status :: 4 - Beta',
 
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: MacOS :: MacOS X'
+        'Operating System :: Microsoft :: Windows :: Windows 10',
+
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Communications :: BBS',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
+        'Topic :: Terminals :: Telnet'
         # Pick your license as you wish
         'License :: OSI Approved :: MIT License',
-        
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
+
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+
+        'Natural Language :: Chinese (Traditional)',
+        'Natural Language :: English',
     ],
 
     # This field adds keywords for your project which will appear on the
@@ -104,7 +110,7 @@ setup(
     # Note that this is a string of words separated by whitespace, not a list.
     keywords=['PTT', 'crawler', 'bot', 'library'],  # Optional
 
-    python_requires='>=3',
+    python_requires='>=3.6',
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
     #
@@ -115,7 +121,7 @@ setup(
     # py_modules=["PTTLibrary.py"],
     #
     packages=['PTTLibrary'],  # Required
-    
+
     # package_dir={'PTTLibrary': 'PTT'},
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
@@ -123,7 +129,11 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['progressbar2', 'paramiko', 'uao'],  # Optional
+    install_requires=[
+        'progressbar2',
+        'websockets',
+        'uao'
+    ],  # Optional
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
