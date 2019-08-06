@@ -486,6 +486,11 @@ def CallStatus():
     print('呼叫器測試全數通過')
 
 
+def GiveMoney():
+
+    PTTBot.giveMoney('DeepLearning', 1)
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -531,6 +536,7 @@ if __name__ == '__main__':
         # GetWaterBall()
         # WaterBall()
         # CallStatus()
+        GiveMoney()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)

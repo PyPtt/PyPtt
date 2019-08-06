@@ -332,9 +332,9 @@ class API(object):
                             return TargetList.index(Target)
 
                         Msg = Target.getResponse(Screen)
-                        if Target.isRefresh() and \
-                           not Msg.endswith(Command.Refresh):
-                            Msg = Msg + Command.Refresh
+                        if Target.isRefresh() or Refresh:
+                            if not Msg.endswith(Command.Refresh):
+                                Msg = Msg + Command.Refresh
 
                         if Target.isBreakAfterSend():
                             BreakIndex = TargetList.index(Target)
