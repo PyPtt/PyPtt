@@ -271,7 +271,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             raise Exceptions.LoginError()
 
         self._Login = True
-        return ErrorCode.Success
 
     def login(
         self,
@@ -314,8 +313,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             i18n.Logout,
             i18n.Done
         )
-
-        return ErrorCode.Success
 
     def log(self, Msg):
         Log.log(Log.Level.INFO, Msg)
@@ -569,10 +566,12 @@ class Library(Synchronize.SynchronizeAllMethod):
             Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
             Log.showValue(Log.Level.DEBUG, 'PostDelStatus', PostDelStatus)
 
-            return DataType.PostInfo(Board=Board,
-                                     Author=PostAuthor,
-                                     ListDate=ListDate,
-                                     DeleteStatus=PostDelStatus)
+            return DataType.PostInfo(
+                Board=Board,
+                Author=PostAuthor,
+                ListDate=ListDate,
+                DeleteStatus=PostDelStatus
+            )
 
         elif index == 0:
 
@@ -1028,11 +1027,13 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             return NewestIndex
 
-    def getNewestIndex(self,
-                       IndexType: int,
-                       Board: str = None,
-                       SearchType: int = 0,
-                       SearchCondition: str = None):
+    def getNewestIndex(
+        self,
+        IndexType: int,
+        Board: str = None,
+        SearchType: int = 0,
+        SearchCondition: str = None
+    ):
 
         if not self._Login:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1259,8 +1260,6 @@ class Library(Synchronize.SynchronizeAllMethod):
         ]
         index = self._ConnectCore.send(Cmd, TargetList)
 
-        return ErrorCode.Success
-
     def push(
         self,
         Board: str,
@@ -1395,8 +1394,6 @@ class Library(Synchronize.SynchronizeAllMethod):
                     )
                     time.sleep(5.2)
 
-        return ErrorCode.Success
-
     def _push(
         self,
         Board: str,
@@ -1522,8 +1519,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             TargetList,
             ScreenTimeout=Config.ScreenLongTimeOut
         )
-
-        return ErrorCode.Success
 
     def _getUser(self, UserID):
 
@@ -1763,7 +1758,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             )
 
             time.sleep(3.2)
-        return ErrorCode.Success
 
     def getWaterBall(self, OperateType):
 
@@ -2124,8 +2118,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             )
 
             CurrentCallStatus = self._getCallStatus()
-
-        return ErrorCode.Success
 
     def giveMoney(self, ID, Money):
 
