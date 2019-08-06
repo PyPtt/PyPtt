@@ -57,7 +57,7 @@ PTTBot.logout()
 ```
 
 ## 詳細說明
-#### 請參考 Demo.py 有 API 的詳細範例與參數說明
+#### 請參考 [Demo.py](https://github.com/Truth0906/PTTLibrary/blob/1.0/Demo.py) 有 API 的詳細範例與參數說明
 
 ## 回報問題
 #### 1. 請參考 Demo.py 將 Log level 調整成 TRACE 後並截圖
