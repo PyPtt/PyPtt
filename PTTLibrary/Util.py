@@ -1,25 +1,54 @@
+import os
 import sys
 import time
-from time import gmtime, strftime
 
-def Log(InputMessage):
-    TotalMessage = "[" + strftime("%m-%d %H:%M:%S") + "]" + InputMessage
+try:
+    import DataType
+    import Config
+    import Util
+except ModuleNotFoundError:
+    from . import DataType
+    from . import Config
+    from . import Util
 
-    try:
-        print(TotalMessage.encode(sys.stdin.encoding, "replace").decode(sys.stdin.encoding))
-    except Exception:
-        print(TotalMessage.encode('utf-8', "replace").decode('utf-8'))
 
-def getTime():
-    return strftime("%H:%M")
+def checkRange(DefineObj, Value):
+    if Value < DefineObj.MinValue or DefineObj.MaxValue < Value:
+        return False
+    return True
 
-def readPostFile(FileName):
-    result = ''
-    try:
-        with open(FileName, encoding = 'utf-8-sig') as File:
-            Temp = File.readlines()
-            Temp = [x.strip() for x in Temp]
-            result = '\r\n'.join(Temp)
-    except FileNotFoundError:
-        return None
+
+def getFileName(String):
+    result = os.path.basename(String)
+    result = result[:result.find('.')]
+    return result
+
+
+def getSubStringList(MainString, TargetA, TargetB):
+
+    result = []
+
+    if not isinstance(TargetB, list):
+        TargetB = [TargetB]
+
+    while TargetA in MainString:
+        Temp = MainString[MainString.find(TargetA) + len(TargetA):]
+
+        # print(f'>{Temp}')
+        MaxIndex = len(MainString)
+        BestIndex = MaxIndex
+        for B in TargetB:
+            CurrentIndex = Temp.find(B)
+            if CurrentIndex < BestIndex and CurrentIndex >= 0:
+                BestIndex = CurrentIndex
+        #         print(f'BestIndex: {BestIndex}')
+
+        # print(f'QQ BestIndex: {BestIndex}')
+        # print(f'QQ len(TargetB): {len(TargetB)}')
+        if BestIndex != MaxIndex:
+            Temp = Temp[:BestIndex].strip()
+            result.append(Temp)
+
+        MainString = MainString[MainString.find(TargetA) + len(TargetA):]
+
     return result
