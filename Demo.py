@@ -467,7 +467,7 @@ if __name__ == '__main__':
     # Post_GetNewestIndex_Push()
     # CrawlBoard()
     # GetUser()
-    # ThrowWaterBall()
+    ThrowWaterBall()
     # GetWaterBall()
     # CallStatus()
     # GiveMoney()

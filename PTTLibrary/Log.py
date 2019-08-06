@@ -81,15 +81,16 @@ def showValue(LogLevel, Msg, Value):
 
     if Config.LogLevel > LogLevel:
         return
-    if len(Msg) == 0:
-        return
-    if len(Value) == 0:
-        return
     global LastValue
 
     CheckPTTMsg = merge([i18n.PTT, i18n.Msg])
     Msg = merge(Msg)
     Value = merge(Value)
+
+    if len(Msg) == 0:
+        return
+    if len(Value) == 0:
+        return
 
     if CheckPTTMsg == Msg and Value == LastValue:
         return

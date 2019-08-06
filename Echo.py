@@ -26,9 +26,6 @@ def Echo():
     OperateType = PTT.WaterBallOperateType.Clear
     WaterBallList = PTTBot.getWaterBall(OperateType)
 
-    TestWaterBall = [str(x % 10) for x in range(10)]
-    TagetID = 'DeepLearning'
-
     while True:
         WaterBallList = PTTBot.getWaterBall(OperateType)
         if WaterBallList is None:
@@ -40,6 +37,8 @@ def Echo():
 
             Target = WaterBall.getTarget()
             Content = WaterBall.getContent()
+
+            print(f'收到來自 {Target} 的水球 [{Content}]')
 
             PTTBot.throwWaterBall(Target, 'Echo: ' + Content)
 
