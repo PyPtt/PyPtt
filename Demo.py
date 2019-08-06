@@ -3,6 +3,7 @@ import time
 import json
 import getpass
 import traceback
+import random
 
 import PTTLibrary
 from PTTLibrary import PTT
@@ -34,7 +35,7 @@ def LoginLogout():
     #       PTT.Language.Chinese (預設值)
     #       PTT.Language.English
 
-    # login 參數
+    # login() 參數
     #   ID:
     #       你的 PTT 帳號
     #   Password:
@@ -43,7 +44,7 @@ def LoginLogout():
     #       是否剔除其他登入。
     #       預設值為 False
 
-    # logout 無參數輸入
+    # logout() 無參數輸入
 
     PTTBot = PTT.Library()
     try:
@@ -67,7 +68,7 @@ def GetPost():
 
     # 取得特定文章範例
 
-    # 參數說明
+    # getPost() 參數說明
     #   Board:
     #       文章版
     #   PostAID (Optional):
@@ -85,6 +86,8 @@ def GetPost():
     #       PTT.PostSearchType.Money                    稿酬
     #   SearchCondition (Optional):
     #       如果你使用了 SearchType，那麼你就需要在這個欄位輸入你想要的條件
+    #
+    #   回傳: 文章資訊
 
     ################## 文章資訊 Post information ##################
     # getBoard()                                    文章所在的版
@@ -154,10 +157,12 @@ def GetPost():
         print(f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
 
 
-def Post():
+def Post_GetNewestIndex_Push():
     # 貼文範例
+    # 取得某版最新文章編號範例
+    # 推文範例
 
-    # 參數說明
+    # post() 參數說明
     #   Board:
     #       文章版
     #   Title:
@@ -170,30 +175,11 @@ def Post():
     #   SignType:
     #       選擇用哪一個簽名檔
 
-    Content = '\r\n\r\n'.join(
-        [
-            'PTT Library 貼文測試，如有打擾請告知。',
-            '程式碼: https://tinyurl.com/y2wuh8ck'
-        ]
-    )
-
-    PTTBot.post(
-        'Test',
-        'PTT Library 程式貼文測試',
-        Content,
-        1,
-        0
-    )
-
-
-def GetNewestIndex():
-    # 取得某版最新文章編號範例
-
-    # 參數說明
+    # getNewestIndex() 參數說明
     #   IndexType:
     #       可以取得兩種不一樣的最新編號，
-    #       某版的最新文章編號
-    #       信箱的最新信件編號 (尚未啟用)
+    #       PTT.IndexType.Board                         某版的最新文章編號
+    #       PTT.IndexType.Mail  (尚未啟用)               信箱的最新信件編號
     #   Board:
     #       文章版
     #   SearchType (Optional):
@@ -205,17 +191,58 @@ def GetNewestIndex():
     #       PTT.PostSearchType.Money                    稿酬
     #   SearchCondition (Optional):
     #       如果你使用了 SearchType，那麼你就需要在這個欄位輸入你想要的條件
+    #
+    #   回傳: 最新編號
 
-    Board = 'Gossiping'
+    # push() 參數說明
+    #   Board:
+    #       文章版
+    #   PushType:
+    #       推文類型，推噓或者箭頭
+    #       PTT.PushType.Push                           推
+    #       PTT.PushType.Boo                            噓
+    #       PTT.PushType.Arrow                          箭頭
+    #   PushContent:
+    #       推文內容
+    #   PostAID (Optional):
+    #       可輸入目標文章的 AID，來取得內容
+    #       此參數必須與 PostIndex，擇一輸入
+    #   PostIndex (Optional):
+    #       可輸入目標文章的編號，來取得內容
+    #       此參數必須與 PostAID，擇一輸入
+
+    Board = 'Test'
+
+    Content = '\r\n\r\n'.join(
+        [
+            'PTT Library 貼文測試，如有打擾請告知。',
+            '程式碼: https://tinyurl.com/y2wuh8ck'
+        ]
+    )
+
+    PTTBot.post(
+        Board,
+        'PTT Library 程式貼文測試',
+        Content,
+        1,
+        0
+    )
 
     Index = PTTBot.getNewestIndex(PTT.IndexType.Board, Board=Board)
     print(f'{Board} 最新文章編號 {Index}')
+
+    Content = '''
+What is Ptt?
+批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
+期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
+'''
+    PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
 
 
 def CrawlBoard():
     # 大量爬文範例
 
-    # 參數說明
+    # crawlBoard() 參數說明
     #   PostHandler:
     #       每當取得一篇新文章，傳入的 handler 就會在內部被呼叫
     #   Board:
@@ -233,6 +260,8 @@ def CrawlBoard():
     #       PTT.PostSearchType.Money                    稿酬
     #   SearchCondition (Optional):
     #       如果你使用了 SearchType，那麼你就需要在這個欄位輸入你想要的條件
+    #
+    #   回傳: 出現錯誤的文章編號清單, 被刪除的文章編號清單
 
     def crawlHandler(Post):
 
@@ -278,6 +307,146 @@ def CrawlBoard():
         print('Del Post: \n' + '\n'.join(str(x) for x in DelPostList))
         print(f'共有 {len(DelPostList)} 篇文章被刪除')
 
+
+def GetUser():
+
+    # 取得使用者資訊範例
+
+    # getUser() 參數說明
+    #   UserID:
+    #       你想要查詢的 ID
+    #
+    #   回傳: 使用者資訊
+
+    ################## 使用者資訊 User information ##################
+    # getID()                                       使用者 ID
+    # getMoney()                                    經濟欄位
+    # getLoginTime()                                登入次數
+    # getLegalPost()                                有效文章數
+    # getIllegalPost()                              退文文章數
+
+    try:
+        User = PTTBot.getUser('CodingMan')
+        if User is None:
+            return
+
+        PTTBot.log('使用者ID: ' + User.getID())
+        PTTBot.log('使用者經濟狀況: ' + str(User.getMoney()))
+        PTTBot.log('登入次數: ' + str(User.getLoginTime()))
+        PTTBot.log('有效文章數: ' + str(User.getLegalPost()))
+        PTTBot.log('退文文章數: ' + str(User.getIllegalPost()))
+        PTTBot.log('目前動態: ' + User.getState())
+        PTTBot.log('信箱狀態: ' + User.getMail())
+        PTTBot.log('最後登入時間: ' + User.getLastLogin())
+        PTTBot.log('上次故鄉: ' + User.getLastIP())
+        PTTBot.log('五子棋戰績: ' + User.getFiveChess())
+        PTTBot.log('象棋戰績: ' + User.getChess())
+        PTTBot.log('簽名檔:\n' + User.getSignatureFile())
+
+    except PTTLibrary.Exceptions.NoSuchUser:
+        print('無此使用者')
+
+
+def ThrowWaterBall():
+
+    # 丟水球範例
+
+    TagetID = 'CodingMan'
+    TestWaterBall = '哈囉，這是水球測試'
+
+    PTTBot.throwWaterBall(TagetID, TestWaterBall)
+
+
+def GetWaterBall():
+
+    # 取得歷史水球範例
+
+    # getWaterBall() 參數說明
+    #   OperateType:
+    #       看完歷史水球之後的操作
+    #       PTT.WaterBallOperateType.DoNothing          不做任何動作
+    #       PTT.WaterBallOperateType.Mail               存到信箱
+    #       PTT.WaterBallOperateType.Clear              清除
+
+    OperateType = PTT.WaterBallOperateType.DoNothing
+    WaterBallList = PTTBot.getWaterBall(OperateType)
+
+    if WaterBallList is None:
+        return
+
+    print('Result:')
+    for WaterBall in WaterBallList:
+        if WaterBall.getType() == PTT.WaterBallType.Catch:
+            Temp = '★' + WaterBall.getTarget() + ' '
+        elif WaterBall.getType() == PTT.WaterBallType.Send:
+            Temp = 'To ' + WaterBall.getTarget() + ': '
+        Temp += WaterBall.getContent() + ' [' + WaterBall.getDate() + ']'
+        print(Temp)
+
+
+def CallStatus():
+
+    # 呼叫器範例
+
+    # setCallStatus() 參數說明
+    #   CallStatus:
+    #       輸入你想要的呼叫器狀態
+    #       PTT.CallStatus.On                           打開
+    #       PTT.CallStatus.Unplug                       拔掉
+    #       PTT.CallStatus.Waterproof                   防水
+    #       PTT.CallStatus.Friend                       朋友
+    #       PTT.CallStatus.Off                          關掉
+
+    # getCallStatus() 參數說明
+    #
+    #   回傳: 呼叫器狀態
+    #       PTT.CallStatus.On                           打開
+    #       PTT.CallStatus.Unplug                       拔掉
+    #       PTT.CallStatus.Waterproof                   防水
+    #       PTT.CallStatus.Friend                       朋友
+    #       PTT.CallStatus.Off                          關掉
+
+    def showCallStatus(CallStatus):
+        if CallStatus == PTT.CallStatus.On:
+            print('呼叫器狀態[打開]')
+        elif CallStatus == PTT.CallStatus.Off:
+            print('呼叫器狀態[關閉]')
+        elif CallStatus == PTT.CallStatus.Unplug:
+            print('呼叫器狀態[拔掉]')
+        elif CallStatus == PTT.CallStatus.Waterproof:
+            print('呼叫器狀態[防水]')
+        elif CallStatus == PTT.CallStatus.Friend:
+            print('呼叫器狀態[朋友]')
+        else:
+            print(f'Unknow CallStatus: {CallStatus}')
+
+    CallStatus = PTTBot.getCallStatus()
+    showCallStatus(CallStatus)
+
+    TestQueue = [x for x in range(
+        PTT.CallStatus.MinValue, PTT.CallStatus.MaxValue + 1
+    )]
+    random.shuffle(TestQueue)
+    TestQueue.remove(CallStatus)
+
+    PTTBot.setCallStatus(TestQueue[0])
+    CallStatus = PTTBot.getCallStatus()
+    showCallStatus(CallStatus)
+
+
+def GiveMoney():
+
+    # 給 P 幣範例
+
+    # giveMoney() 參數說明
+    #   ID:
+    #       輸入你想要給錢的 ID
+    #   Money:
+    #       輸入你想要給多少錢
+
+    PTTBot.giveMoney('CodingMan', 100)
+
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -295,8 +464,12 @@ if __name__ == '__main__':
 
     # GetTime()
     # GetPost()
-    # Post()
-    # GetNewestIndex()
-    CrawlBoard()
+    # Post_GetNewestIndex_Push()
+    # CrawlBoard()
+    # GetUser()
+    # ThrowWaterBall()
+    # GetWaterBall()
+    # CallStatus()
+    # GiveMoney()
 
     PTTBot.logout()
