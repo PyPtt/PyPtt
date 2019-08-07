@@ -532,7 +532,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         index = self._ConnectCore.send(Cmd, TargetList)
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        
+
         if index == 1 or index < 0:
             # 文章被刪除
             Log.log(Log.Level.DEBUG, i18n.PostDeled)
@@ -541,7 +541,6 @@ class Library(Synchronize.SynchronizeAllMethod):
             for line in OriScreen.split('\n'):
                 if (line.startswith(DataType.Cursor.New) or
                         line.startswith(DataType.Cursor.Old)):
-                    # print(f'line: {line}')
 
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
@@ -594,11 +593,15 @@ class Library(Synchronize.SynchronizeAllMethod):
             for line in OriScreen.split('\n'):
                 if (line.startswith(DataType.Cursor.New) or
                         line.startswith(DataType.Cursor.Old)):
-
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
-                    ListDate = PatternResult.group(0)
-                    ListDate = ListDate[-5:]
+                    if PatternResult is None:
+                        ListDate = None
+                    else:
+                        ListDate = PatternResult.group(0)
+                        ListDate = ListDate[-5:]
+
+                    break
 
             Log.showValue(Log.Level.DEBUG, 'PostAID', PostAID)
             Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
@@ -991,11 +994,11 @@ class Library(Synchronize.SynchronizeAllMethod):
             ]
             index = self._ConnectCore.send(Cmd, TargetList)
             if index < 0:
-                Screens.show(self._ConnectCore.getScreenQueue())
-                raise Exceptions.UnknowError(i18n.UnknowError)
+                OriScreen = self._ConnectCore.getScreenQueue()[-1]
+                raise Exceptions.UnknowError(OriScreen)
 
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
-            AllIndex = re.findall(r' \d+ ', LastScreen)
+            AllIndex = re.findall(r'\d+ ', LastScreen)
 
             if len(AllIndex) == 0:
                 Screens.show(self._ConnectCore.getScreenQueue())
