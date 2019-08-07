@@ -544,8 +544,11 @@ class Library(Synchronize.SynchronizeAllMethod):
 
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
-                    ListDate = PatternResult.group(0)
-                    ListDate = ListDate[-5:]
+                    if PatternResult is None:
+                        ListDate = None
+                    else:
+                        ListDate = PatternResult.group(0)
+                        ListDate = ListDate[-5:]
 
                     pattern = re.compile('\[[\w]+\]')
                     PatternResult = pattern.search(line)
@@ -762,7 +765,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                 pattern = re.compile(
                     '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+\.[\d]+\.[\d]+\.[\d]+'
                 )
+
                 PatternResult = pattern.search(LastScreen)
+                IP = None
                 if PatternResult is not None:
                     IP = PatternResult.group(0)[25:]
                 else:
@@ -778,7 +783,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                             IP = PatternResult.group(0)[1:-1]
                         else:
                             PatternResult = NewIPPattern_Old.search(LastScreen)
-                            IP = PatternResult.group(0)
+                            if PatternResult is not None:
+                                IP = PatternResult.group(0)
+
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
                 PostContent = '\n'.join(PostContent)

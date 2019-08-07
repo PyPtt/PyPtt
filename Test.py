@@ -228,6 +228,66 @@ def GetPost():
             print(e)
 
 
+TestList = [
+    ('Wanted', PTT.PostSearchType.Keyword, '[公告]'),
+    ('Wanted', PTT.PostSearchType.Author, 'gogin'),
+    ('Wanted', PTT.PostSearchType.Push, '10'),
+    ('Wanted', PTT.PostSearchType.Mark, 'm'),
+    ('Wanted', PTT.PostSearchType.Money, '5'),
+    ('Gossiping', PTT.PostSearchType.Keyword, '[公告]'),
+    ('Gossiping', PTT.PostSearchType.Author, 'ReDmango'),
+    ('Gossiping', PTT.PostSearchType.Push, '10'),
+    ('Gossiping', PTT.PostSearchType.Mark, 'm'),
+    ('Gossiping', PTT.PostSearchType.Money, '5'),
+
+    ('Gossiping', PTT.PostSearchType.Push, '-100'),
+]
+
+
+def showCondition(Board, SearchType, Condition):
+    if SearchType == PTT.PostSearchType.Keyword:
+        Type = '關鍵字'
+    if SearchType == PTT.PostSearchType.Author:
+        Type = '作者'
+    if SearchType == PTT.PostSearchType.Push:
+        Type = '推文數'
+    if SearchType == PTT.PostSearchType.Mark:
+        Type = '標記'
+    if SearchType == PTT.PostSearchType.Money:
+        Type = '稿酬'
+
+    print(f'{Board} 使用 {Type} 搜尋 {Condition}')
+
+
+def GetPostWithCondition():
+
+    for (Board, SearchType, Condition) in TestList:
+        try:
+            showCondition(Board, SearchType, Condition)
+            Index = PTTBot.getNewestIndex(
+                PTT.IndexType.Board,
+                Board,
+                SearchType=SearchType,
+                SearchCondition=Condition,
+            )
+            print(f'{Board} 最新文章編號 {Index}')
+
+            Post = PTTBot.getPost(
+                Board,
+                PostIndex=Index,
+                SearchType=SearchType,
+                SearchCondition=Condition,
+            )
+
+            print('標題: ' + Post.getTitle())
+            print('=' * 50)
+
+        except Exception as e:
+
+            traceback.print_tb(e.__traceback__)
+            print(e)
+
+
 def Post():
 
     # PTTBot.post(
@@ -271,9 +331,9 @@ def showValue(Msg, Value):
     print(f'{Msg} =>{Value}<=')
 
 
-def detectNone(Name, Obj):
-    if Obj is None:
-        raise ValueError(f'{Name} is None')
+def detectNone(Name, Obj, Enable=True):
+    if Obj is None and Enable:
+        raise ValueError(Name + ' is None')
 
 
 def crawlHandler(Post):
@@ -286,11 +346,10 @@ def crawlHandler(Post):
     detectNone('Author', Post.getAuthor())
     detectNone('Date', Post.getDate())
     detectNone('Content', Post.getContent())
-    # print(Post.getContent())
     detectNone('Money', Post.getMoney())
     detectNone('WebUrl', Post.getWebUrl())
-    detectNone('IP', Post.getIP())
-    detectNone('ListDate', Post.getListDate())
+    # detectNone('IP', Post.getIP())
+    # detectNone('ListDate', Post.getListDate())
 
 
 def CrawlBoard():
@@ -317,16 +376,49 @@ def CrawlBoard():
             TestBoard,
             StartIndex=StartIndex,
             EndIndex=NewestIndex
-            # StartIndex=777273,
-            # EndIndex=777273
         )
 
         if len(ErrorPostList) > 0:
             print('Error Post: \n' + '\n'.join(str(x) for x in ErrorPostList))
 
         if len(DelPostList) > 0:
-            print('Del Post: \n' + '\n'.join(str(x) for x in DelPostList))
+            print('Del Post: \n' + '\n'.join([str(x) for x in DelPostList]))
             print(f'共有 {len(DelPostList)} 篇文章被刪除')
+
+
+def CrawlBoardWithCondition():
+
+    TestRange = 10
+
+    for (Board, SearchType, Condition) in TestList:
+        try:
+            showCondition(Board, SearchType, Condition)
+            NewestIndex = PTTBot.getNewestIndex(
+                PTT.IndexType.Board,
+                Board,
+                SearchType=SearchType,
+                SearchCondition=Condition,
+            )
+            print(f'{Board} 最新文章編號 {NewestIndex}')
+
+            StartIndex = NewestIndex - TestRange + 1
+
+            ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                crawlHandler,
+                Board,
+                StartIndex=StartIndex,
+                EndIndex=NewestIndex,
+                SearchType=SearchType,
+                SearchCondition=Condition,
+            )
+
+            # print('標題: ' + Post.getTitle())
+            print('=' * 50)
+
+        except Exception as e:
+
+            traceback.print_tb(e.__traceback__)
+            print(e)
 
 
 def GetUser():
@@ -528,12 +620,14 @@ if __name__ == '__main__':
             sys.exit()
 
         # GetPost()
+        # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard() X
+        # CrawlBoard()
+        CrawlBoardWithCondition()
         # Push()
         # GetUser()
-        ThrowWaterBall()
+        # ThrowWaterBall()
         # GetWaterBall()
         # WaterBall()
         # CallStatus()
