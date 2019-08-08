@@ -170,7 +170,7 @@ def Post_GetNewestIndex_Push():
     #   Content:
     #       文章內文
     #   PostType:
-    #       貼文類型，每個板都會有幾個文章標題讓你選，
+    #       標題分類，每個板都會有幾個標題分類讓你選，
     #       你可以選擇你要用哪一個
     #   SignType:
     #       選擇用哪一個簽名檔
@@ -262,6 +262,25 @@ def CrawlBoard():
     #       如果你使用了 SearchType，那麼你就需要在這個欄位輸入你想要的條件
     #
     #   回傳: 出現錯誤的文章編號清單, 被刪除的文章編號清單
+
+    # getNewestIndex() 參數說明
+    #   IndexType:
+    #       可以取得兩種不一樣的最新編號，
+    #       PTT.IndexType.Board                         某版的最新文章編號
+    #       PTT.IndexType.Mail  (尚未啟用)               信箱的最新信件編號
+    #   Board:
+    #       文章版
+    #   SearchType (Optional):
+    #       可以輸入搜尋類型來取得你想要的文章 ex: [公告]
+    #       PTT.PostSearchType.Keyword                  關鍵字
+    #       PTT.PostSearchType.Author                   作者
+    #       PTT.PostSearchType.Push                     推文數
+    #       PTT.PostSearchType.Mark                     標記 ex: m or s
+    #       PTT.PostSearchType.Money                    稿酬
+    #   SearchCondition (Optional):
+    #       如果你使用了 SearchType，那麼你就需要在這個欄位輸入你想要的條件
+    # 
+    # 回傳: 最新編號
 
     def crawlHandler(Post):
 
