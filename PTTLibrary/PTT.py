@@ -532,10 +532,8 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         index = self._ConnectCore.send(Cmd, TargetList)
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        if index < 0:
-            raise Exceptions.UnknowError(OriScreen)
 
-        if index == 1:
+        if index == 1 or index < 0:
             # 文章被刪除
             Log.log(Log.Level.DEBUG, i18n.PostDeled)
             PostDelStatus = 0
@@ -543,12 +541,14 @@ class Library(Synchronize.SynchronizeAllMethod):
             for line in OriScreen.split('\n'):
                 if (line.startswith(DataType.Cursor.New) or
                         line.startswith(DataType.Cursor.Old)):
-                    # print(f'line: {line}')
 
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
-                    ListDate = PatternResult.group(0)
-                    ListDate = ListDate[-5:]
+                    if PatternResult is None:
+                        ListDate = None
+                    else:
+                        ListDate = PatternResult.group(0)
+                        ListDate = ListDate[-5:]
 
                     pattern = re.compile('\[[\w]+\]')
                     PatternResult = pattern.search(line)
@@ -596,11 +596,15 @@ class Library(Synchronize.SynchronizeAllMethod):
             for line in OriScreen.split('\n'):
                 if (line.startswith(DataType.Cursor.New) or
                         line.startswith(DataType.Cursor.Old)):
-
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
-                    ListDate = PatternResult.group(0)
-                    ListDate = ListDate[-5:]
+                    if PatternResult is None:
+                        ListDate = None
+                    else:
+                        ListDate = PatternResult.group(0)
+                        ListDate = ListDate[-5:]
+
+                    break
 
             Log.showValue(Log.Level.DEBUG, 'PostAID', PostAID)
             Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
@@ -761,7 +765,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                 pattern = re.compile(
                     '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+\.[\d]+\.[\d]+\.[\d]+'
                 )
+
                 PatternResult = pattern.search(LastScreen)
+                IP = None
                 if PatternResult is not None:
                     IP = PatternResult.group(0)[25:]
                 else:
@@ -777,7 +783,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                             IP = PatternResult.group(0)[1:-1]
                         else:
                             PatternResult = NewIPPattern_Old.search(LastScreen)
-                            IP = PatternResult.group(0)
+                            if PatternResult is not None:
+                                IP = PatternResult.group(0)
+
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
                 PostContent = '\n'.join(PostContent)
@@ -835,9 +843,10 @@ class Library(Synchronize.SynchronizeAllMethod):
                         pass
 
                     if PushType != 0:
-                        # print(line)
-
                         Result = PushAuthorPattern.search(line)
+                        if Result is None:
+                            # 不符合推文格式
+                            continue
                         PushAuthor = Result.group(0)[2:-1]
                         Log.showValue(Log.Level.DEBUG, [
                             i18n.Push,
@@ -992,11 +1001,11 @@ class Library(Synchronize.SynchronizeAllMethod):
             ]
             index = self._ConnectCore.send(Cmd, TargetList)
             if index < 0:
-                Screens.show(self._ConnectCore.getScreenQueue())
-                raise Exceptions.UnknowError(i18n.UnknowError)
+                OriScreen = self._ConnectCore.getScreenQueue()[-1]
+                raise Exceptions.UnknowError(OriScreen)
 
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
-            AllIndex = re.findall(r' \d+ ', LastScreen)
+            AllIndex = re.findall(r'\d+ ', LastScreen)
 
             if len(AllIndex) == 0:
                 Screens.show(self._ConnectCore.getScreenQueue())
@@ -1831,7 +1840,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             index = self._ConnectCore.send(
                 Cmd,
                 TargetList,
-                ScreenTimeout=Config.ScreenLongTimeOut
+                ScreenTimeout=1
             )
             Log.showValue(
                 Log.Level.DEBUG,
@@ -1858,6 +1867,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                 'LastLine',
                 LastLine
             )
+            if LastLine.startswith('★'):
+                continue
             ScreenTemp = '\n'.join(ScreenTemp.split('\n')[:-1])
 
             ScreenTemp = ScreenTemp.replace(
@@ -1924,6 +1935,11 @@ class Library(Synchronize.SynchronizeAllMethod):
                 )
 
                 if line.startswith('To'):
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        'Waterball Type',
+                        'Send'
+                    )
                     Type = DataType.WaterBallType.Send
 
                     PatternResult = ToWaterBallTargetPattern.search(line)
@@ -1937,6 +1953,11 @@ class Library(Synchronize.SynchronizeAllMethod):
                         Target + ':') + len(Target + ':'):]
                     Content = Content[:Content.rfind(Date) - 1].strip()
                 elif line.startswith('★'):
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        'Waterball Type',
+                        'Catch'
+                    )
                     Type = DataType.WaterBallType.Catch
 
                     PatternResult = FromWaterBallTargetPattern.search(line)
@@ -1950,11 +1971,6 @@ class Library(Synchronize.SynchronizeAllMethod):
                         Target + ' ') + len(Target + ' '):]
                     Content = Content[:Content.rfind(Date) - 1].strip()
 
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    'Waterball Type',
-                    'Send'
-                )
                 Log.showValue(
                     Log.Level.DEBUG,
                     'Waterball Target',
