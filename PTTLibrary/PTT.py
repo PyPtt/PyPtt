@@ -2208,6 +2208,45 @@ class Library(Synchronize.SynchronizeAllMethod):
             ScreenTimeout=Config.ScreenLongTimeOut
         )
 
+    def mail(
+        self,
+        ID: str,
+        Title: str,
+        Content: str,
+        SignType: int
+    ):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        if not isinstance(ID, str):
+            raise TypeError(Log.merge([
+                'ID',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(Title, str):
+            raise TypeError(Log.merge([
+                'Title',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(Content, str):
+            raise TypeError(Log.merge([
+                'Content',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(SignType, int):
+            raise TypeError(Log.merge([
+                'SignType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
 
 if __name__ == '__main__':
 
