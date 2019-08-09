@@ -610,6 +610,36 @@ def load(inputLanguage):
         'Constant the red bag',
     ])
 
+    global SendMail
+    SendMail = SpecificLoad(inputLanguage, [
+        '寄信',
+        'Send Mail',
+    ])
+
+    global Select
+    Select = SpecificLoad(inputLanguage, [
+        '選擇',
+        'Select',
+    ])
+
+    global SignatureFile
+    SignatureFile = SpecificLoad(inputLanguage, [
+        '簽名檔',
+        'Signature File',
+    ])
+
+    global NoSignatureFile
+    NoSignatureFile = SpecificLoad(inputLanguage, [
+        '不加簽名檔',
+        'No Signature File',
+    ])
+
+    global SelfSaveDraft
+    SelfSaveDraft = SpecificLoad(inputLanguage, [
+        '自存底搞',
+        'Self-Save Draft',
+    ])
+
     # global List
     # List = []
 
