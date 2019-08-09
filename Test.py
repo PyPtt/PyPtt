@@ -584,6 +584,34 @@ def GiveMoney():
     PTTBot.giveMoney('DeepLearning', 1)
 
 
+def Mail():
+
+    Content = '\r\n\r\n'.join(
+        [
+            '如有誤寄，對..對不起',
+            'PTT Library 程式寄信測試內容',
+            '程式碼: https://tinyurl.com/y2wuh8ck'
+        ]
+    )
+
+    try:
+        PTTBot.mail(
+            'sdjfkdsjfls',
+            '程式寄信標題',
+            Content,
+            0
+        )
+    except PTT.Exceptions.NoSuchUser:
+        pass
+
+    PTTBot.mail(
+        'DeepLearning',
+        '程式寄信標題',
+        Content,
+        0
+    )
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -624,7 +652,7 @@ if __name__ == '__main__':
         # Post()
         # GetNewestIndex()
         # CrawlBoard()
-        CrawlBoardWithCondition()
+        # CrawlBoardWithCondition()
         # Push()
         # GetUser()
         # ThrowWaterBall()
@@ -632,6 +660,7 @@ if __name__ == '__main__':
         # WaterBall()
         # CallStatus()
         # GiveMoney()
+        Mail()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
