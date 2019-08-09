@@ -9,7 +9,7 @@ except ModuleNotFoundError:
     from . import i18n
     from . import ConnectCore
 
-Version = '0.8.1 beta'
+Version = '0.8.1'
 Host = 'ptt.cc'
 Port = '23'
 
