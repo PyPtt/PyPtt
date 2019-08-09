@@ -660,7 +660,7 @@ if __name__ == '__main__':
         # WaterBall()
         # CallStatus()
         # GiveMoney()
-        Mail()
+        # Mail()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
