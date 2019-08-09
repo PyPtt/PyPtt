@@ -8,7 +8,7 @@
 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
 
 #### PTT Library 是一個由 Python 所開發，用來操作 PTT 的函式庫
-#### 無論推文、發文、爬文、收信、寄信、發 P 幣、丟水球還是狂查人家 ID，都可以滿足你的需求
+#### 無論推文、發文、爬文、寄信、發 P 幣、丟水球還是狂查人家 ID，都可以滿足你的需求
 #### 使用最新的 WebSocket 連線模式
 #### 支援多國語系，繁體中文與英文
 #### 歡迎發起 pull request，提交你開發的 API

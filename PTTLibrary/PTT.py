@@ -245,7 +245,8 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
                 '任意鍵',
-                Response=Command.GoMainMenu,
+                Response='qqq',
+                Refresh=True
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUpdate,
@@ -284,6 +285,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         if not self._Login:
             return ErrorCode.Success
+
         CmdList = []
         CmdList.append(Command.GoMainMenu)
         CmdList.append('g')
@@ -304,6 +306,15 @@ class Library(Synchronize.SynchronizeAllMethod):
                 BreakDetect=True,
             ),
         ]
+
+        Log.log(
+            Log.Level.INFO,
+            [
+                i18n.Start,
+                i18n.Logout
+            ]
+        )
+
         self._ConnectCore.send(Cmd, TargetList)
         self._ConnectCore.close()
         self._Login = False
@@ -1466,9 +1477,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         index = self._ConnectCore.send(
             Cmd,
-            TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut,
-            # Refresh=False
+            TargetList
         )
 
         # print(index)
@@ -1525,8 +1534,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         index = self._ConnectCore.send(
             Cmd,
-            TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            TargetList
         )
 
     def _getUser(self, UserID):
@@ -1577,8 +1585,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         index = self._ConnectCore.send(
             Cmd,
-            TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            TargetList
         )
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
         Log.showValue(
@@ -2229,7 +2236,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         ID: str,
         Title: str,
         Content: str,
-        SignType: int
+        SignFile: int
     ):
 
         if not self._Login:
@@ -2256,12 +2263,98 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.String
             ]))
 
-        if not isinstance(SignType, int):
+        if not isinstance(SignFile, int):
             raise TypeError(Log.merge([
-                'SignType',
+                'SignFile',
                 i18n.MustBe,
                 i18n.Integer
             ]))
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('M')
+        CmdList.append(Command.Enter)
+        CmdList.append('S')
+        CmdList.append(Command.Enter)
+        CmdList.append(ID)
+        CmdList.append(Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.Start,
+                    i18n.SendMail
+                ],
+                '主題：',
+                BreakDetect=True
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoSuchUser,
+                '【電子郵件】',
+                Exceptions=Exceptions.NoSuchUser(ID)
+            ),
+        ]
+
+        self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
+
+        CmdList = []
+        CmdList.append(Title)
+        CmdList.append(Command.Enter)
+        CmdList.append(Content)
+        CmdList.append(Command.Ctrl_X)
+
+        Cmd = ''.join(CmdList)
+
+        if SignFile == 0:
+            SingFileSelection = i18n.NoSignatureFile
+        else:
+            SingFileSelection = i18n.Select + ' ' + \
+                str(SignFile) + 'th ' + i18n.SignatureFile
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.AnyKeyContinue,
+                '任意鍵',
+                BreakDetect=True
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SaveFile,
+                '確定要儲存檔案嗎',
+                Response='s' + Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SelfSaveDraft,
+                '是否自存底稿',
+                Response='y' + Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                SingFileSelection,
+                '選擇簽名檔',
+                Response=str(SignFile) + Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                SingFileSelection,
+                'x=隨機',
+                Response=str(SignFile) + Command.Enter
+            ),
+        ]
+
+        self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
+
+        Log.showValue(
+            Log.Level.INFO,
+            i18n.SendMail,
+            i18n.Success
+        )
 
 
 if __name__ == '__main__':
