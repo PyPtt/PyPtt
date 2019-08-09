@@ -1,4 +1,4 @@
-from PTTLibrary import Config
+from PTTLibrary import Ver
 
 """A setuptools based setup module.
 
@@ -18,7 +18,7 @@ from os import path
 # Get the long description from the README file
 # with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 #     long_description = f.read()
-Version = Config.Version
+Version = Ver.V
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 

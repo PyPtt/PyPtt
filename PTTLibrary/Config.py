@@ -1,15 +1,17 @@
 try:
+    import Ver
     import DataType
     import Log
     import i18n
     import ConnectCore
 except ModuleNotFoundError:
+    from . import Ver
     from . import DataType
     from . import Log
     from . import i18n
     from . import ConnectCore
 
-Version = '0.8.1'
+Version = Ver.V
 Host = 'ptt.cc'
 Port = '23'
 
