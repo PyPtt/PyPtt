@@ -1,7 +1,6 @@
 ﻿import sys
 import time
 import json
-import getpass
 import traceback
 import random
 
@@ -25,6 +24,7 @@ def getPW():
 
 def LoginLogout():
     # 登入登出範例
+    # 不支援 Multi-thread 如果有需求，請多開多個 Bot
 
     # Library 參數
     #   LogLevel (Optional):
