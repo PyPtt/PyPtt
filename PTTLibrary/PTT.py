@@ -1176,7 +1176,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         Title: str,
         Content: str,
         PostType: int,
-        SignType: int
+        SignFile: int
     ):
 
         if not self._Login:
@@ -1210,9 +1210,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.Integer
             ]))
 
-        if not isinstance(SignType, int):
+        if not isinstance(SignFile, int):
             raise TypeError(Log.merge([
-                'SignType',
+                'SignFile',
                 i18n.MustBe,
                 i18n.Integer
             ]))
@@ -1275,7 +1275,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.SelectSignature,
                 'x=隨機',
-                Response=str(SignType) + Command.Enter,
+                Response=str(SignFile) + Command.Enter,
             ),
         ]
         index = self._ConnectCore.send(Cmd, TargetList)

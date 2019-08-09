@@ -172,7 +172,7 @@ def Post_GetNewestIndex_Push():
     #   PostType:
     #       標題分類，每個板都會有幾個標題分類讓你選，
     #       你可以選擇你要用哪一個
-    #   SignType:
+    #   SignFile:
     #       選擇用哪一個簽名檔
 
     # getNewestIndex() 參數說明
@@ -466,6 +466,39 @@ def GiveMoney():
     PTTBot.giveMoney('CodingMan', 100)
 
 
+def Mail():
+
+    # 寄信範例
+
+    # mail() 參數說明
+    #   ID:
+    #       輸入你想要寄信的 ID
+    #   Title:
+    #       標題
+    #   Content:
+    #       內文
+    #   SignFile:
+    #       簽名檔
+
+    Content = '\r\n\r\n'.join(
+        [
+            '如有誤寄，對..對不起',
+            'PTT Library 程式寄信測試內容',
+            '程式碼: https://tinyurl.com/y2wuh8ck'
+        ]
+    )
+
+    try:
+        PTTBot.mail(
+            'DeepLearning',
+            '程式寄信標題',
+            Content,
+            0
+        )
+    except PTT.Exceptions.NoSuchUser:
+        print('No Such User')
+
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -483,12 +516,13 @@ if __name__ == '__main__':
 
     # GetTime()
     # GetPost()
-    # Post_GetNewestIndex_Push()
+    Post_GetNewestIndex_Push()
     # CrawlBoard()
     # GetUser()
     # ThrowWaterBall()
     # GetWaterBall()
     # CallStatus()
     # GiveMoney()
+    # Mail()
 
     PTTBot.logout()
