@@ -332,7 +332,14 @@ class API(object):
                             return TargetList.index(Target)
 
                         Msg = Target.getResponse(Screen)
-                        if Target.isRefresh() or Refresh:
+
+                        AddRefresh = False
+                        if Target.isRefresh():
+                            AddRefresh = True
+                        elif Refresh:
+                            AddRefresh = True
+
+                        if AddRefresh:
                             if not Msg.endswith(Command.Refresh):
                                 Msg = Msg + Command.Refresh
 
