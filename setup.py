@@ -76,7 +76,7 @@ setup(
     # Classifiers help users find your project by categorizing it.
     #
     # For a list of valid classifiers, see
-    # https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    # https://pypi.org/classifiers/
     classifiers=[  # Optional
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -85,7 +85,7 @@ setup(
         'Development Status :: 4 - Beta',
 
         'Operating System :: POSIX :: Linux',
-        'Operating System :: MacOS :: MacOS X'
+        'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows :: Windows 10',
 
         # Indicate who your project is intended for
@@ -93,7 +93,7 @@ setup(
         'Topic :: Communications :: BBS',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
-        'Topic :: Terminals :: Telnet'
+        'Topic :: Terminals :: Telnet',
         # Pick your license as you wish
         'License :: OSI Approved :: MIT License',
 
