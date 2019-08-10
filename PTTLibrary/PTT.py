@@ -942,13 +942,17 @@ class Library(Synchronize.SynchronizeAllMethod):
         )
         return Post
 
-    def _getNewestIndex(self,
-                        IndexType: int,
-                        Board: str = None,
-                        SearchType: int = 0,
-                        SearchCondition: str = None):
+    def _getNewestIndex(
+        self,
+        IndexType: int,
+        Board: str = None,
+        SearchType: int = 0,
+        SearchCondition: str = None
+    ):
+
         if not Util.checkRange(DataType.IndexType, IndexType):
             raise ValueError('Unknow IndexType', IndexType)
+
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
                 'Board',
@@ -996,7 +1000,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 CmdList.append(SearchCondition)
                 CmdList.append(Command.Enter)
 
-            CmdList.append('0')
+            CmdList.append('1')
             CmdList.append(Command.Enter)
             CmdList.append('$')
 
@@ -1045,7 +1049,10 @@ class Library(Synchronize.SynchronizeAllMethod):
                 Screens.show(self._ConnectCore.getScreenQueue())
                 raise Exceptions.UnknowError(i18n.UnknowError)
 
-            return NewestIndex
+        else:
+            pass
+
+        return NewestIndex
 
     def getNewestIndex(
         self,
@@ -2316,6 +2323,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         else:
             SingFileSelection = i18n.Select + ' ' + \
                 str(SignFile) + 'th ' + i18n.SignatureFile
+
         TargetList = [
             ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
@@ -2355,6 +2363,47 @@ class Library(Synchronize.SynchronizeAllMethod):
             i18n.SendMail,
             i18n.Success
         )
+
+    def hasNewMail(self):
+
+        if not self._Login:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('M')
+        CmdList.append(Command.Enter)
+        CmdList.append('R')
+        CmdList.append(Command.Enter)
+        CmdList.append('1')
+        CmdList.append(Command.Enter)
+        CmdList.append('$')
+        Cmd = ''.join(CmdList)
+
+        #
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.MailBox,
+                Screens.Target.InMailBox,
+                BreakDetect=True
+            )
+        ]
+
+        self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
+
+        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+
+        pattern = re.compile('>  [\d]+ \+')
+        Result = pattern.search(OriScreen)
+
+        if Result is not None:
+            return True
+
+        return False
 
 
 if __name__ == '__main__':

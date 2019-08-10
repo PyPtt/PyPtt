@@ -22,7 +22,7 @@
 [![](http://img.youtube.com/vi/ng48ITuePlg/0.jpg)](http://www.youtube.com/watch?v=ng48ITuePlg "")
 
 ## 版本
-#### 0.8.4 beta
+#### 0.8.5 beta
 #### 穩定後版號將進入 1.0 正式版
 
 ## 取得
