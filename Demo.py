@@ -490,13 +490,28 @@ def Mail():
 
     try:
         PTTBot.mail(
-            'DeepLearning',
+            ID,
             '程式寄信標題',
             Content,
             0
         )
     except PTT.Exceptions.NoSuchUser:
         print('No Such User')
+
+
+def HashNewMail():
+
+    # 是否有新信範例
+
+    # hasNewMail() 無參數輸入
+    # 
+    # 回傳值: True or False
+
+    result = PTTBot.hasNewMail()
+    if result:
+        print('You got mail')
+    else:
+        print('No new mail')
 
 
 if __name__ == '__main__':
@@ -524,5 +539,6 @@ if __name__ == '__main__':
     # CallStatus()
     # GiveMoney()
     # Mail()
+    # HashNewMail()
 
     PTTBot.logout()

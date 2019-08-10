@@ -94,6 +94,11 @@ class Target(object):
         '說明',
     ]
 
+    InMailBox = [
+        '【郵件選單】',
+        '鴻雁往返'
+    ]
+
 
 def show(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.TRACE:

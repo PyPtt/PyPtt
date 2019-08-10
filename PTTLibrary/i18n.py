@@ -636,8 +636,14 @@ def load(inputLanguage):
 
     global SelfSaveDraft
     SelfSaveDraft = SpecificLoad(inputLanguage, [
-        '自存底搞',
+        '自存底稿',
         'Self-Save Draft',
+    ])
+
+    global MailBox
+    MailBox = SpecificLoad(inputLanguage, [
+        '郵件選單',
+        'Mail Box',
     ])
 
     # global List
