@@ -606,7 +606,7 @@ def Mail():
         pass
 
     PTTBot.mail(
-        'DeepLearning',
+        ID,
         '程式寄信標題',
         Content,
         0
@@ -642,7 +642,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -669,7 +669,7 @@ if __name__ == '__main__':
         # CallStatus()
         # GiveMoney()
         # Mail()
-        HashNewMail()
+        # HashNewMail()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
