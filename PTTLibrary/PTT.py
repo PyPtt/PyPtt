@@ -245,8 +245,8 @@ class Library(Synchronize.SynchronizeAllMethod):
             ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
                 '任意鍵',
-                Response='qqq',
-                Refresh=True
+                Response='q',
+                Refresh=False
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUpdate,
@@ -2397,7 +2397,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
-        pattern = re.compile('>  [\d]+ \+')
+        pattern = re.compile('[\s]+[\d]+ \+[\s]+')
         Result = pattern.search(OriScreen)
 
         if Result is not None:
