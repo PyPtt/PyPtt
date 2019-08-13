@@ -192,11 +192,14 @@ class API(object):
                 if self._ConnectMode == ConnectMode.Telnet:
                     self._Core = telnetlib.Telnet(Config.Host, Config.Port)
                 else:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
                     self._Core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             'wss://ws.ptt.cc/bbs/',
                             origin='https://www.ptt.cc'
-                        ))
+                        )
+                    )
 
                 ConnectSuccess = True
             except Exception as e:
