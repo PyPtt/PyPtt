@@ -5,6 +5,7 @@ import json
 import random
 import traceback
 import PTTLibrary
+import threading
 from PTTLibrary import PTT
 
 
@@ -620,6 +621,33 @@ def HashNewMail():
     result = PTTBot.hasNewMail()
     print(result)
 
+
+def ThreadFunc():
+    PTTBot = PTT.Library(
+        ConnectMode=PTT.ConnectMode.WebSocket,
+        LogLevel=PTT.LogLevel.TRACE,
+        # LogLevel=PTT.LogLevel.DEBUG,
+    )
+    try:
+        PTTBot.login(
+            ID,
+            Password,
+            #  KickOtherLogin=True
+        )
+    except PTTLibrary.Exceptions.LoginError:
+        PTTBot.log('登入失敗')
+        return
+    PTTBot.logout()
+    print('多線程測試完成')
+
+
+def ThreadingTest():
+    t = threading.Thread(
+        target=ThreadFunc
+    )
+    t.start()
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -639,6 +667,8 @@ if __name__ == '__main__':
     try:
         # Loginout()
         # PerformanceTest()
+        ThreadingTest()
+        sys.exit()
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
