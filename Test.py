@@ -622,40 +622,41 @@ def HashNewMail():
     print(result)
 
 
-def ThreadFunc():
-    PTTBot = PTT.Library(
-        ConnectMode=PTT.ConnectMode.WebSocket,
-        LogLevel=PTT.LogLevel.TRACE,
-        # LogLevel=PTT.LogLevel.DEBUG,
-    )
-    try:
-        PTTBot.login(
-            ID,
-            Password,
-            #  KickOtherLogin=True
-        )
-    except PTTLibrary.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
-        return
-    PTTBot.logout()
-    print('多線程測試完成')
+PTTBot = None
 
 
 def ThreadingTest():
+    global PTTBot
+    def ThreadFunc():
+        global PTTBot
+        PTTBot = PTT.Library(
+            ConnectMode=PTT.ConnectMode.WebSocket,
+            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.DEBUG,
+        )
+        try:
+            PTTBot.login(
+                ID,
+                Password,
+                #  KickOtherLogin=True
+            )
+        except PTTLibrary.Exceptions.LoginError:
+            PTTBot.log('登入失敗')
+            return
+        print('多線程測試完成')
+
     t = threading.Thread(
         target=ThreadFunc
     )
     t.start()
+    t.join()
+    PTTBot.logout()
+    sys.exit()
 
 
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
-
-    # print(len('\x1B[[d+;]'))
-    # print(len('[[d+;]'))
-
-    # sys.exit()
 
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
@@ -668,7 +669,6 @@ if __name__ == '__main__':
         # Loginout()
         # PerformanceTest()
         ThreadingTest()
-        sys.exit()
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
