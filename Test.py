@@ -177,7 +177,8 @@ def PerformanceTest():
 def GetPost():
 
     TestPostList = [
-        ('Python', 1)
+        ('Python', 1),
+        ('NotExitBoard', 1),
     ]
 
     for (Board, Index) in TestPostList:
@@ -230,18 +231,19 @@ def GetPost():
 
 
 TestList = [
-    ('Wanted', PTT.PostSearchType.Keyword, '[公告]'),
-    ('Wanted', PTT.PostSearchType.Author, 'gogin'),
-    ('Wanted', PTT.PostSearchType.Push, '10'),
-    ('Wanted', PTT.PostSearchType.Mark, 'm'),
-    ('Wanted', PTT.PostSearchType.Money, '5'),
-    ('Gossiping', PTT.PostSearchType.Keyword, '[公告]'),
-    ('Gossiping', PTT.PostSearchType.Author, 'ReDmango'),
-    ('Gossiping', PTT.PostSearchType.Push, '10'),
-    ('Gossiping', PTT.PostSearchType.Mark, 'm'),
-    ('Gossiping', PTT.PostSearchType.Money, '5'),
+    # ('Wanted', PTT.PostSearchType.Keyword, '[公告]'),
+    # ('Wanted', PTT.PostSearchType.Author, 'gogin'),
+    # ('Wanted', PTT.PostSearchType.Push, '10'),
+    # ('Wanted', PTT.PostSearchType.Mark, 'm'),
+    # ('Wanted', PTT.PostSearchType.Money, '5'),
+    # ('Gossiping', PTT.PostSearchType.Keyword, '[公告]'),
+    # ('Gossiping', PTT.PostSearchType.Author, 'ReDmango'),
+    # ('Gossiping', PTT.PostSearchType.Push, '10'),
+    # ('Gossiping', PTT.PostSearchType.Mark, 'm'),
+    # ('Gossiping', PTT.PostSearchType.Money, '5'),
 
-    ('Gossiping', PTT.PostSearchType.Push, '-100'),
+    # ('Gossiping', PTT.PostSearchType.Push, '-100'),
+    ('Gossiping', PTT.PostSearchType.Push, '150'),
 ]
 
 
@@ -668,7 +670,7 @@ if __name__ == '__main__':
     try:
         # Loginout()
         # PerformanceTest()
-        ThreadingTest()
+        # ThreadingTest()
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
@@ -686,7 +688,7 @@ if __name__ == '__main__':
             sys.exit()
 
         # GetPost()
-        # GetPostWithCondition()
+        GetPostWithCondition()
         # Post()
         # GetNewestIndex()
         # CrawlBoard()

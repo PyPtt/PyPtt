@@ -446,6 +446,21 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.ErrorParameter,
             ]))
 
+        if SearchType == DataType.PostSearchType.Push:
+            try:
+                S = int(SearchCondition)
+            except ValueError:
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
+            if not (-100 <= S <= 110):
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
         if PostAID is not None and SearchCondition is not None:
             raise ValueError(Log.merge([
                 'PostAID',
@@ -585,6 +600,9 @@ class Library(Synchronize.SynchronizeAllMethod):
             )
 
         elif index == 0:
+
+            if f'看板《{Board}》' not in OriScreen:
+                raise Exceptions.NoSuchBoard(Board)
 
             pattern = re.compile('#[\w]+')
             PatternResult = pattern.search(OriScreen)
