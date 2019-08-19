@@ -274,6 +274,7 @@ class API(object):
             CycleTime = 0
             CycleWait = 0
             ReceiveData = []
+            ReceiveDataBuffer = bytes()
 
             StartTime = time.time()
             MidTime = time.time()
@@ -295,14 +296,11 @@ class API(object):
                     except asyncio.TimeoutError:
                         return -1
 
-                ReceiveDataTemp = ReceiveDataTemp.decode(
+                ReceiveDataBuffer += ReceiveDataTemp
+                ReceiveDataTemp = ReceiveDataBuffer.decode(
                     'big5-uao', errors='ignore'
                 )
-
-                # ReceiveDataTemp = self._cleanScreen(ReceiveDataTemp)
-                ReceiveData.append(ReceiveDataTemp)
-                Screen = ''.join(ReceiveData)
-                Screen = self._cleanScreen(Screen)
+                Screen = self._cleanScreen(ReceiveDataTemp)
 
                 FindTarget = False
                 for Target in TargetList:
