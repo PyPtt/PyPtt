@@ -601,7 +601,8 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         elif index == 0:
 
-            if f'看板《{Board}》' not in OriScreen:
+            FirstLine = OriScreen.split('\n')[0]
+            if f'《{Board}》' not in FirstLine:
                 raise Exceptions.NoSuchBoard(Board)
 
             pattern = re.compile('#[\w]+')
