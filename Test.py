@@ -688,7 +688,7 @@ if __name__ == '__main__':
             sys.exit()
 
         # GetPost()
-        GetPostWithCondition()
+        # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
         # CrawlBoard()
