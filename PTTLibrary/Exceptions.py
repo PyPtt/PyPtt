@@ -104,3 +104,11 @@ class MoneyTooFew(Exception):
 
     def __str__(self):
         return self.message
+
+
+class NoSuchBoard(Exception):
+    def __init__(self, Board):
+        self.message = i18n.NoSuchBoard + ': ' + Board
+
+    def __str__(self):
+        return self.message

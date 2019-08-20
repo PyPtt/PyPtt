@@ -646,6 +646,12 @@ def load(inputLanguage):
         'Mail Box',
     ])
 
+    global NoSuchBoard
+    NoSuchBoard = SpecificLoad(inputLanguage, [
+        '無該版面',
+        'No Such Board',
+    ])
+
     # global List
     # List = []
 

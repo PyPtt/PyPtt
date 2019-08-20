@@ -5,6 +5,7 @@ import json
 import random
 import traceback
 import PTTLibrary
+import threading
 from PTTLibrary import PTT
 
 
@@ -176,7 +177,8 @@ def PerformanceTest():
 def GetPost():
 
     TestPostList = [
-        ('Python', 1)
+        ('Python', 1),
+        ('NotExitBoard', 1),
     ]
 
     for (Board, Index) in TestPostList:
@@ -229,18 +231,19 @@ def GetPost():
 
 
 TestList = [
-    ('Wanted', PTT.PostSearchType.Keyword, '[公告]'),
-    ('Wanted', PTT.PostSearchType.Author, 'gogin'),
-    ('Wanted', PTT.PostSearchType.Push, '10'),
-    ('Wanted', PTT.PostSearchType.Mark, 'm'),
-    ('Wanted', PTT.PostSearchType.Money, '5'),
-    ('Gossiping', PTT.PostSearchType.Keyword, '[公告]'),
-    ('Gossiping', PTT.PostSearchType.Author, 'ReDmango'),
-    ('Gossiping', PTT.PostSearchType.Push, '10'),
-    ('Gossiping', PTT.PostSearchType.Mark, 'm'),
-    ('Gossiping', PTT.PostSearchType.Money, '5'),
+    # ('Wanted', PTT.PostSearchType.Keyword, '[公告]'),
+    # ('Wanted', PTT.PostSearchType.Author, 'gogin'),
+    # ('Wanted', PTT.PostSearchType.Push, '10'),
+    # ('Wanted', PTT.PostSearchType.Mark, 'm'),
+    # ('Wanted', PTT.PostSearchType.Money, '5'),
+    # ('Gossiping', PTT.PostSearchType.Keyword, '[公告]'),
+    # ('Gossiping', PTT.PostSearchType.Author, 'ReDmango'),
+    # ('Gossiping', PTT.PostSearchType.Push, '10'),
+    # ('Gossiping', PTT.PostSearchType.Mark, 'm'),
+    # ('Gossiping', PTT.PostSearchType.Money, '5'),
 
-    ('Gossiping', PTT.PostSearchType.Push, '-100'),
+    # ('Gossiping', PTT.PostSearchType.Push, '-100'),
+    ('Gossiping', PTT.PostSearchType.Push, '150'),
 ]
 
 
@@ -620,14 +623,42 @@ def HashNewMail():
     result = PTTBot.hasNewMail()
     print(result)
 
+
+PTTBot = None
+
+
+def ThreadingTest():
+    global PTTBot
+    def ThreadFunc():
+        global PTTBot
+        PTTBot = PTT.Library(
+            ConnectMode=PTT.ConnectMode.WebSocket,
+            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.DEBUG,
+        )
+        try:
+            PTTBot.login(
+                ID,
+                Password,
+                #  KickOtherLogin=True
+            )
+        except PTTLibrary.Exceptions.LoginError:
+            PTTBot.log('登入失敗')
+            return
+        print('多線程測試完成')
+
+    t = threading.Thread(
+        target=ThreadFunc
+    )
+    t.start()
+    t.join()
+    PTTBot.logout()
+    sys.exit()
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
-
-    # print(len('\x1B[[d+;]'))
-    # print(len('[[d+;]'))
-
-    # sys.exit()
 
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
@@ -639,6 +670,7 @@ if __name__ == '__main__':
     try:
         # Loginout()
         # PerformanceTest()
+        # ThreadingTest()
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
