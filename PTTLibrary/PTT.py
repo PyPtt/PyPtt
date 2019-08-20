@@ -446,6 +446,21 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.ErrorParameter,
             ]))
 
+        if SearchType == DataType.PostSearchType.Push:
+            try:
+                S = int(SearchCondition)
+            except ValueError:
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
+            if not (-100 <= S <= 110):
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
         if PostAID is not None and SearchCondition is not None:
             raise ValueError(Log.merge([
                 'PostAID',
@@ -585,6 +600,10 @@ class Library(Synchronize.SynchronizeAllMethod):
             )
 
         elif index == 0:
+
+            FirstLine = OriScreen.split('\n')[0]
+            if f'《{Board}》' not in FirstLine:
+                raise Exceptions.NoSuchBoard(Board)
 
             pattern = re.compile('#[\w]+')
             PatternResult = pattern.search(OriScreen)
@@ -1137,6 +1156,21 @@ class Library(Synchronize.SynchronizeAllMethod):
                 'EndIndex',
             ]))
 
+        if SearchType == DataType.PostSearchType.Push:
+            try:
+                S = int(SearchCondition)
+            except ValueError:
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
+            if not (-100 <= S <= 110):
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
         NewestIndex = self._getNewestIndex(
             DataType.IndexType.Board,
             Board=Board,
@@ -1604,11 +1638,11 @@ class Library(Synchronize.SynchronizeAllMethod):
             raise Exceptions.NoSuchUser(UserID)
 
         Data = Util.getSubStringList(OriScreen, '》', ['《', '\n'])
-        if len(Data) != 10:
+        if len(Data) < 10:
             print('\n'.join(Data))
             print(len(Data))
             raise Exceptions.ParseError(OriScreen)
-
+        
         ID = Data[0]
         Money = Data[1]
         LoginTime = Data[2]
