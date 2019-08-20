@@ -524,7 +524,7 @@ def Mail():
         print('No Such User')
 
 
-def HashNewMail():
+def HasNewMail():
 
     # 是否有新信範例
 
@@ -564,6 +564,6 @@ if __name__ == '__main__':
     # CallStatus()
     # GiveMoney()
     # Mail()
-    # HashNewMail()
+    # HasNewMail()
 
     PTTBot.logout()
