@@ -6,6 +6,7 @@ import random
 import traceback
 import PTTLibrary
 import threading
+
 from PTTLibrary import PTT
 
 
@@ -289,6 +290,29 @@ def GetPostWithCondition():
 
             traceback.print_tb(e.__traceback__)
             print(e)
+
+    # TestList = [
+    #     ('Python', PTT.PostSearchType.Keyword, '[公告]')
+    # ]
+
+    # for (Board, SearchType, Condition) in TestList:
+    #     Index = PTTBot.getNewestIndex(
+    #         PTT.IndexType.Board,
+    #         Board,
+    #         SearchType=SearchType,
+    #         SearchCondition=Condition,
+    #     )
+    #     print(f'{Board} 最新文章編號 {Index}')
+
+    #     Post = PTTBot.getPost(
+    #         Board,
+    #         PostIndex=Index,
+    #         SearchType=SearchType,
+    #         SearchCondition=Condition,
+    #     )
+
+    #     print('標題: ' + Post.getTitle())
+    #     print('=' * 50)
 
 
 def Post():
@@ -629,6 +653,7 @@ PTTBot = None
 
 def ThreadingTest():
     global PTTBot
+
     def ThreadFunc():
         global PTTBot
         PTTBot = PTT.Library(

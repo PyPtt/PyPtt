@@ -4,7 +4,6 @@ import json
 import traceback
 import random
 
-import PTTLibrary
 from PTTLibrary import PTT
 
 
@@ -26,7 +25,7 @@ def LoginLogout():
     # 登入登出範例
     # 不支援 Multi-thread 如果有需求，請多開多個 Bot
 
-    # Library 參數
+    # Library() 參數
     #   LogLevel (Optional):
     #       PTT.LogLevel.DEBUG
     #       PTT.LogLevel.INFO (預設值)
@@ -125,36 +124,57 @@ def GetPost():
     # PTT.PostSearchType.Money                     搜尋稿酬
 
     Post = PTTBot.getPost(
-        'Gossiping',
-        PostIndex=301676
+        'Python',
+        PostIndex=7486
     )
 
-    if Post is not None:
-        print('Board: ' + Post.getBoard())
-        print('AID: ' + Post.getAID())
-        print('Author: ' + Post.getAuthor())
-        print('Date: ' + Post.getDate())
-        print('Title: ' + Post.getTitle())
-        print('Content: ' + Post.getContent())
-        print('Money: ' + str(Post.getMoney()))
-        print('URL: ' + Post.getWebUrl())
-        print('IP: ' + Post.getIP())
-        # 在文章列表上的日期
-        print('List Date: ' + Post.getListDate())
+    if Post is None:
+        print('Post is None')
+    if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+        print('文章被作者刪了')
+    if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+        print('文章被版主刪了')
 
-        PushCount = 0
-        BooCount = 0
-        ArrowCount = 0
+    # 如果到這兒
+    # 表示 Post.getDeleteStatus() == PTT.PostDeleteStatus.NotDeleted
 
-        for Push in Post.getPushList():
-            if Push.getType() == PTT.PushType.Push:
-                PushCount += 1
-            if Push.getType() == PTT.PushType.Boo:
-                BooCount += 1
-            if Push.getType() == PTT.PushType.Arrow:
-                ArrowCount += 1
+    print('Board: ' + Post.getBoard())
+    print('AID: ' + Post.getAID())
+    print('Author: ' + Post.getAuthor())
+    print('Date: ' + Post.getDate())
+    print('Title: ' + Post.getTitle())
+    print('Content: ' + Post.getContent())
+    print('Money: ' + str(Post.getMoney()))
+    print('URL: ' + Post.getWebUrl())
+    print('IP: ' + Post.getIP())
+    # 在文章列表上的日期
+    print('List Date: ' + Post.getListDate())
 
-        print(f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
+    PushCount = 0
+    BooCount = 0
+    ArrowCount = 0
+
+    for Push in Post.getPushList():
+        if Push.getType() == PTT.PushType.Push:
+            Type = '推'
+            PushCount += 1
+        if Push.getType() == PTT.PushType.Boo:
+            Type = '噓'
+            BooCount += 1
+        if Push.getType() == PTT.PushType.Arrow:
+            Type = '箭頭'
+            ArrowCount += 1
+
+        Author = Push.getAuthor()
+        Content = Push.getContent()
+
+        Buffer = f'{Author} 給了一個{Type} 說 {Content}'
+        if Push.getIP() is not None:
+            Buffer += f'來自 {Push.getIP()}'
+        Buffer += f'時間是 {Push.getTime()}'
+        print(Buffer)
+
+    print(f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
 
 
 def Post_GetNewestIndex_Push():
@@ -221,10 +241,15 @@ def Post_GetNewestIndex_Push():
     )
 
     PTTBot.post(
+        # 版
         Board,
+        # 標題
         'PTT Library 程式貼文測試',
+        # 內文
         Content,
+        # 標題分類
         1,
+        # 簽名檔
         0
     )
 
@@ -279,7 +304,7 @@ def CrawlBoard():
     #       PTT.PostSearchType.Money                    稿酬
     #   SearchCondition (Optional):
     #       如果你使用了 SearchType，那麼你就需要在這個欄位輸入你想要的條件
-    # 
+    #
     # 回傳: 最新編號
 
     def crawlHandler(Post):
@@ -504,7 +529,7 @@ def HashNewMail():
     # 是否有新信範例
 
     # hasNewMail() 無參數輸入
-    # 
+    #
     # 回傳值: True or False
 
     result = PTTBot.hasNewMail()
