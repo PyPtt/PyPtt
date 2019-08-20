@@ -640,7 +640,7 @@ def Mail():
     )
 
 
-def HashNewMail():
+def HasNewMail():
 
     result = PTTBot.hasNewMail()
     print(result)
@@ -726,7 +726,7 @@ if __name__ == '__main__':
         # CallStatus()
         # GiveMoney()
         # Mail()
-        # HashNewMail()
+        # HasNewMail()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)

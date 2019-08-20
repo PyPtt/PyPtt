@@ -1653,7 +1653,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             print('\n'.join(Data))
             print(len(Data))
             raise Exceptions.ParseError(OriScreen)
-        
+
         ID = Data[0]
         Money = Data[1]
         LoginTime = Data[2]
