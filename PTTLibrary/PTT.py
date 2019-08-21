@@ -2257,6 +2257,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                 Exceptions=Exceptions.MoneyTooFew
             ),
             ConnectCore.TargetUnit(
+                i18n.NoMoney,
+                '交易取消!',
+                BreakDetect=True,
+                Exceptions=Exceptions.UnknowError
+            ),
+            ConnectCore.TargetUnit(
                 [
                     i18n.Transaction,
                     i18n.Success
@@ -2469,13 +2475,8 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
-        pattern = re.compile('[\s]+[\d]+ \+[\s]+')
-        Result = pattern.search(OriScreen)
-
-        if Result is not None:
-            return True
-
-        return False
+        pattern = re.findall('[\s]+[\d]+ (\+)[\s]+', OriScreen)
+        return len(pattern)
 
 
 if __name__ == '__main__':

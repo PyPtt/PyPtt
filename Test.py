@@ -724,7 +724,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -744,7 +744,7 @@ if __name__ == '__main__':
         # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
-        GetUser()
+        # GetUser()
         # ThrowWaterBall()
         # GetWaterBall()
         # WaterBall()
