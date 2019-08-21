@@ -1032,6 +1032,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                     BreakDetect=True,
                     LogLevel=Log.Level.DEBUG
                 ),
+                ConnectCore.TargetUnit(
+                    i18n.Success,
+                    Screens.Target.InBoardWithCursor,
+                    BreakDetect=True,
+                    LogLevel=Log.Level.DEBUG
+                ),
             ]
             index = self._ConnectCore.send(Cmd, TargetList)
             if index < 0:
@@ -1048,10 +1054,15 @@ class Library(Synchronize.SynchronizeAllMethod):
             AllIndex = list(map(int, AllIndex))
             AllIndex.sort(reverse=True)
 
+            MaxCheckRange = 6
             NewestIndex = 0
             for IndexTemp in AllIndex:
                 Continue = True
-                for i in range(1, 6):
+                if IndexTemp > MaxCheckRange:
+                    CheckRange = MaxCheckRange
+                else:
+                    CheckRange = IndexTemp
+                for i in range(1, CheckRange):
                     if str(IndexTemp - i) not in LastScreen:
                         Continue = False
                         break
