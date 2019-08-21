@@ -1109,6 +1109,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.MustBe,
                 i18n.String
             ]))
+
         if not isinstance(StartIndex, int):
             raise TypeError(Log.merge([
                 'StartIndex',
@@ -1133,6 +1134,13 @@ class Library(Synchronize.SynchronizeAllMethod):
                 'SearchCondition',
                 i18n.MustBe,
                 i18n.String
+            ]))
+
+        if len(Board) == 0:
+            raise ValueError(Log.merge([
+                i18n.Board,
+                i18n.ErrorParameter,
+                Board
             ]))
 
         if StartIndex < 1:
@@ -1642,7 +1650,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             print('\n'.join(Data))
             print(len(Data))
             raise Exceptions.ParseError(OriScreen)
-        
+
         ID = Data[0]
         Money = Data[1]
         LoginTime = Data[2]
