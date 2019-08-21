@@ -27,25 +27,24 @@
 ## 取得
 #### 安裝
 #### Windows 使用 pip, Linux and Mac 使用 pip3
-```python
+```
 pip install PTTLibrary
 ```
 
 #### 更新
 #### [更新前注意] 0.8 之後不支援 0.7 之前的版本
-```python
+```
 pip install PTTLibrary --upgrade
 ```
 
 ## 基本使用
 ```python
-import PTTLibrary
 from PTTLibrary import PTT
 
 PTTBot = PTT.Library()
 try:
     PTTBot.login(ID, Password)
-except PTTLibrary.ConnectCore.LoginError:
+except PTT.ConnectCore.LoginError:
     PTTBot.log('登入失敗')
     sys.exit()
 PTTBot.log('登入成功')
