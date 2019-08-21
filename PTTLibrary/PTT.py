@@ -602,7 +602,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         elif index == 0:
 
             FirstLine = OriScreen.split('\n')[0]
-            if f'《{Board}》' not in FirstLine:
+            if f'《{Board}》'.lower() not in FirstLine.lower():
                 raise Exceptions.NoSuchBoard(Board)
 
             pattern = re.compile('#[\w]+')
@@ -611,7 +611,10 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             pattern = re.compile('文章網址: https:[\S]+html')
             PatternResult = pattern.search(OriScreen)
-            PostWeb = PatternResult.group(0)[6:]
+            if PatternResult is None:
+                PostWeb = None
+            else:
+                PostWeb = PatternResult.group(0)[6:]
 
             pattern = re.compile('這一篇文章值 [\d]+ Ptt幣')
             PatternResult = pattern.search(OriScreen)

@@ -387,7 +387,7 @@ def GetUser():
         PTTBot.log('象棋戰績: ' + User.getChess())
         PTTBot.log('簽名檔:\n' + User.getSignatureFile())
 
-    except PTTLibrary.Exceptions.NoSuchUser:
+    except PTT.Exceptions.NoSuchUser:
         print('無此使用者')
 
 
@@ -398,7 +398,12 @@ def ThrowWaterBall():
     TagetID = 'CodingMan'
     TestWaterBall = '哈囉，這是水球測試'
 
-    PTTBot.throwWaterBall(TagetID, TestWaterBall)
+    try:
+        PTTBot.throwWaterBall(TagetID, TestWaterBall)
+    except PTT.Exceptions.NoSuchUser:
+        print('無此使用者')
+    except PTT.Exceptions.UserOffline:
+        print('使用者離線')
 
 
 def GetWaterBall():

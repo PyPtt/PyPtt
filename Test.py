@@ -387,7 +387,6 @@ def CrawlBoard():
         'Gossiping'
     ]
 
-    TestBoard = 'Wanted'
     TestRange = 100
 
     for TestBoard in TestBoardList:
@@ -416,37 +415,63 @@ def CrawlBoard():
 
 def CrawlBoardWithCondition():
 
+    # TestRange = 10
+
+    # for (Board, SearchType, Condition) in TestList:
+    #     try:
+    #         showCondition(Board, SearchType, Condition)
+    #         NewestIndex = PTTBot.getNewestIndex(
+    #             PTT.IndexType.Board,
+    #             Board,
+    #             SearchType=SearchType,
+    #             SearchCondition=Condition,
+    #         )
+    #         print(f'{Board} 最新文章編號 {NewestIndex}')
+
+    #         StartIndex = NewestIndex - TestRange + 1
+
+    #         ErrorPostList, DelPostList = PTTBot.crawlBoard(
+    #             crawlHandler,
+    #             Board,
+    #             StartIndex=StartIndex,
+    #             EndIndex=NewestIndex,
+    #             SearchType=SearchType,
+    #             SearchCondition=Condition,
+    #         )
+
+    #         # print('標題: ' + Post.getTitle())
+    #         print('=' * 50)
+
+    #     except Exception as e:
+
+    #         traceback.print_tb(e.__traceback__)
+    #         print(e)
+
     TestRange = 10
 
     for (Board, SearchType, Condition) in TestList:
-        try:
-            showCondition(Board, SearchType, Condition)
-            NewestIndex = PTTBot.getNewestIndex(
-                PTT.IndexType.Board,
-                Board,
-                SearchType=SearchType,
-                SearchCondition=Condition,
-            )
-            print(f'{Board} 最新文章編號 {NewestIndex}')
+        showCondition(Board, SearchType, Condition)
+        NewestIndex = PTTBot.getNewestIndex(
+            PTT.IndexType.Board,
+            Board,
+            SearchType=SearchType,
+            SearchCondition=Condition,
+        )
+        print(f'{Board} 最新文章編號 {NewestIndex}')
 
-            StartIndex = NewestIndex - TestRange + 1
+        StartIndex = NewestIndex - TestRange + 1
 
-            ErrorPostList, DelPostList = PTTBot.crawlBoard(
-                crawlHandler,
-                Board,
-                StartIndex=StartIndex,
-                EndIndex=NewestIndex,
-                SearchType=SearchType,
-                SearchCondition=Condition,
-            )
+        ErrorPostList, DelPostList = PTTBot.crawlBoard(
+            crawlHandler,
+            Board,
+            StartIndex=StartIndex,
+            EndIndex=NewestIndex,
+            SearchType=SearchType,
+            SearchCondition=Condition,
+        )
 
-            # print('標題: ' + Post.getTitle())
-            print('=' * 50)
-
-        except Exception as e:
-
-            traceback.print_tb(e.__traceback__)
-            print(e)
+        # print('標題: ' + Post.getTitle())
+        print('=' * 50)
 
 
 def GetUser():
@@ -712,14 +737,14 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        GetPost()
+        # GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
         # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
-        # GetUser()
+        GetUser()
         # ThrowWaterBall()
         # GetWaterBall()
         # WaterBall()
