@@ -31,6 +31,11 @@ class Target(object):
         '相關主題'
     ]
 
+    InBoardWithCursor = [
+        '【板主',
+        '>',
+    ]
+
     InPost = [
         '瀏覽',
         '頁',
