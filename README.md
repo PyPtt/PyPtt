@@ -13,13 +13,12 @@
 #### 支援多國語系，繁體中文與英文
 #### 歡迎發起 pull request，提交你開發的 API
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
+#### 共筆指南: [PTT Library 指南](/@CodingMan/PTTLibrary指南🙂)
 #### 原始碼
 #### github: https://github.com/Truth0906/PTTLibrary
 #### Pypi: https://pypi.org/project/PTTLibrary/
-#### 共筆指南: [PTT Library 指南](/@CodingMan/PTTLibrary指南🙂)
 
 ### 介紹影片
-
 [![](http://img.youtube.com/vi/ng48ITuePlg/0.jpg)](http://www.youtube.com/watch?v=ng48ITuePlg "")
 
 ## 版本
@@ -28,18 +27,18 @@
 ## 取得
 #### 安裝
 #### Windows 使用 pip, Linux and Mac 使用 pip3
-```
+```bash=
 pip install PTTLibrary
 ```
 
 #### 更新
 #### [更新前注意] 0.8 之後不支援 0.7 之前的版本
-```
+```bash=
 pip install PTTLibrary --upgrade
 ```
 
 ## 基本使用
-```python
+```python=
 import PTTLibrary
 from PTTLibrary import PTT
 
