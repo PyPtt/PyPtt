@@ -535,11 +535,11 @@ def HashNewMail():
 
     # hasNewMail() 無參數輸入
     #
-    # 回傳值: True or False
+    # 回傳值: 有幾封新信
 
-    result = PTTBot.hasNewMail()
-    if result:
-        print('You got mail')
+    HowManyNewMail = PTTBot.hasNewMail()
+    if HowManyNewMail > 0:
+        print(f'You got {HowManyNewMail} mail(s)')
     else:
         print('No new mail')
 
