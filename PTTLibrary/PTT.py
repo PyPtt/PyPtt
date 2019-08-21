@@ -1239,7 +1239,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         Title: str,
         Content: str,
         PostType: int,
-        SignFile: int
+        SignFile
     ):
 
         if not self._Login:
@@ -1273,12 +1273,20 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.Integer
             ]))
 
-        if not isinstance(SignFile, int):
-            raise TypeError(Log.merge([
-                'SignFile',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckSignFile = False
+        for i in range(0, 10):
+            if str(i) == SignFile or i == SignFile:
+                CheckSignFile = True
+                break
+
+        if not CheckSignFile:
+            SignFile = SignFile.lower()
+            if SignFile != 'x':
+                raise ValueError(Log.merge([
+                    'SignFile',
+                    i18n.ErrorParameter,
+                    SignFile
+                ]))
 
         if not self._Login:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2299,7 +2307,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         ID: str,
         Title: str,
         Content: str,
-        SignFile: int
+        SignFile
     ):
 
         if not self._Login:
@@ -2326,12 +2334,20 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.String
             ]))
 
-        if not isinstance(SignFile, int):
-            raise TypeError(Log.merge([
-                'SignFile',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckSignFile = False
+        for i in range(0, 10):
+            if str(i) == SignFile or i == SignFile:
+                CheckSignFile = True
+                break
+
+        if not CheckSignFile:
+            SignFile = SignFile.lower()
+            if SignFile != 'x':
+                raise ValueError(Log.merge([
+                    'SignFile',
+                    i18n.ErrorParameter,
+                    SignFile
+                ]))
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
