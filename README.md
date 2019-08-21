@@ -27,18 +27,18 @@
 ## 取得
 #### 安裝
 #### Windows 使用 pip, Linux and Mac 使用 pip3
-```bash=
+```python
 pip install PTTLibrary
 ```
 
 #### 更新
 #### [更新前注意] 0.8 之後不支援 0.7 之前的版本
-```bash=
+```python
 pip install PTTLibrary --upgrade
 ```
 
 ## 基本使用
-```python=
+```python
 import PTTLibrary
 from PTTLibrary import PTT
 
@@ -57,6 +57,7 @@ PTTBot.logout()
 
 ## 詳細說明
 #### 請參考 [Demo.py](https://github.com/Truth0906/PTTLibrary/blob/1.0/Demo.py) 有 API 的詳細範例與參數說明
+#### 共筆指南: [PTT Library 指南](/@CodingMan/PTTLibrary指南🙂)
 
 ## 回報問題
 #### 1. 請參考 Demo.py 將 Log level 調整成 TRACE 後並截圖
