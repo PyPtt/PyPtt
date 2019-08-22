@@ -88,7 +88,7 @@ def Loginout():
                      Password,
                      # KickOtherLogin=True
                      )
-    except PTTLibrary.Exceptions.LoginError:
+    except PTT.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
@@ -106,7 +106,7 @@ def Loginout():
     )
     try:
         PTTBot.login(ID, Password, KickOtherLogin=True)
-    except PTTLibrary.Exceptions.LoginError:
+    except PTT.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
@@ -126,7 +126,7 @@ def PerformanceTest():
     )
     try:
         PTTBot.login(ID, Password, KickOtherLogin=True)
-    except PTTLibrary.Exceptions.LoginError:
+    except PTT.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
@@ -154,7 +154,7 @@ def PerformanceTest():
     )
     try:
         PTTBot.login(ID, Password, KickOtherLogin=True)
-    except PTTLibrary.Exceptions.LoginError:
+    except PTT.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
     PTTBot.log('登入成功')
@@ -180,6 +180,7 @@ def GetPost():
     TestPostList = [
         ('Python', 1),
         ('NotExitBoard', 1),
+        ('Python', 7486),
     ]
 
     for (Board, Index) in TestPostList:
@@ -265,6 +266,10 @@ def showCondition(Board, SearchType, Condition):
 
 def GetPostWithCondition():
 
+    TestList = [
+        ('Python', PTT.PostSearchType.Keyword, '[公告]')
+    ]
+
     for (Board, SearchType, Condition) in TestList:
         try:
             showCondition(Board, SearchType, Condition)
@@ -283,7 +288,10 @@ def GetPostWithCondition():
                 SearchCondition=Condition,
             )
 
-            print('標題: ' + Post.getTitle())
+            print('標題:')
+            print(Post.getTitle())
+            print('內文:')
+            print(Post.getContent())
             print('=' * 50)
 
         except Exception as e:
@@ -469,7 +477,7 @@ def GetUser():
         PTTBot.log('象棋戰績:' + User.getChess())
         PTTBot.log('簽名檔:' + User.getSignatureFile())
 
-    except PTTLibrary.Exceptions.NoSuchUser:
+    except PTT.Exceptions.NoSuchUser:
         print('無此使用者')
 
 
@@ -667,7 +675,7 @@ def ThreadingTest():
                 Password,
                 #  KickOtherLogin=True
             )
-        except PTTLibrary.Exceptions.LoginError:
+        except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
             return
         print('多線程測試完成')
@@ -708,7 +716,7 @@ if __name__ == '__main__':
                 Password,
                 #  KickOtherLogin=True
             )
-        except PTTLibrary.Exceptions.LoginError:
+        except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
             sys.exit()
 
