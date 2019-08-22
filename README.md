@@ -22,7 +22,7 @@
 [![](http://img.youtube.com/vi/ng48ITuePlg/0.jpg)](http://www.youtube.com/watch?v=ng48ITuePlg "")
 
 ## 版本
-#### 0.8.9 beta
+#### 0.8.10 beta
 
 ## 取得
 #### 安裝
@@ -44,7 +44,7 @@ from PTTLibrary import PTT
 PTTBot = PTT.Library()
 try:
     PTTBot.login(ID, Password)
-except PTT.ConnectCore.LoginError:
+except PTT.Exceptions.LoginError:
     PTTBot.log('登入失敗')
     sys.exit()
 PTTBot.log('登入成功')
