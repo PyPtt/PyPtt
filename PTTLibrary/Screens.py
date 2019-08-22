@@ -69,8 +69,7 @@ class Target(object):
     ]
 
     Edit = [
-        '※ 編輯',
-        '來自:'
+        '※ 編輯'
     ]
 
     Vote_Type1 = [
