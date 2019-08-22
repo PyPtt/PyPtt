@@ -168,10 +168,10 @@ def GetPost():
         Author = Push.getAuthor()
         Content = Push.getContent()
 
-        Buffer = f'{Author} 給了一個{Type} 說 {Content}'
+        Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
         if Push.getIP() is not None:
-            Buffer += f'來自 {Push.getIP()}'
-        Buffer += f'時間是 {Push.getTime()}'
+            Buffer += f' 來自 [{Push.getIP()}]'
+        Buffer += f' 時間是 [{Push.getTime()}]'
         print(Buffer)
 
     print(f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow')
@@ -326,7 +326,7 @@ def CrawlBoard():
         detectNone('IP', Post.getIP())
         detectNone('ListDate', Post.getListDate())
 
-    TestBoard = 'Gossiping'
+    TestBoard = 'Python'
     TestRange = 100
 
     NewestIndex = PTTBot.getNewestIndex(
@@ -387,7 +387,7 @@ def GetUser():
         PTTBot.log('象棋戰績: ' + User.getChess())
         PTTBot.log('簽名檔:\n' + User.getSignatureFile())
 
-    except PTTLibrary.Exceptions.NoSuchUser:
+    except PTT.Exceptions.NoSuchUser:
         print('無此使用者')
 
 
@@ -545,6 +545,7 @@ if __name__ == '__main__':
     ID, Password = getPW()
 
     # LoginLogout()
+    # sys.exit()
 
     PTTBot = PTT.Library()
     try:
