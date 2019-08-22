@@ -602,7 +602,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         elif index == 0:
 
             FirstLine = OriScreen.split('\n')[0]
-            if f'《{Board}》' not in FirstLine:
+            if f'《{Board}》'.lower() not in FirstLine.lower():
                 raise Exceptions.NoSuchBoard(Board)
 
             pattern = re.compile('#[\w]+')
@@ -611,7 +611,10 @@ class Library(Synchronize.SynchronizeAllMethod):
 
             pattern = re.compile('文章網址: https:[\S]+html')
             PatternResult = pattern.search(OriScreen)
-            PostWeb = PatternResult.group(0)[6:]
+            if PatternResult is None:
+                PostWeb = None
+            else:
+                PostWeb = PatternResult.group(0)[6:]
 
             pattern = re.compile('這一篇文章值 [\d]+ Ptt幣')
             PatternResult = pattern.search(OriScreen)
@@ -1120,6 +1123,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.MustBe,
                 i18n.String
             ]))
+
         if not isinstance(StartIndex, int):
             raise TypeError(Log.merge([
                 'StartIndex',
@@ -1144,6 +1148,13 @@ class Library(Synchronize.SynchronizeAllMethod):
                 'SearchCondition',
                 i18n.MustBe,
                 i18n.String
+            ]))
+
+        if len(Board) == 0:
+            raise ValueError(Log.merge([
+                i18n.Board,
+                i18n.ErrorParameter,
+                Board
             ]))
 
         if StartIndex < 1:
@@ -1228,7 +1239,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         Title: str,
         Content: str,
         PostType: int,
-        SignFile: int
+        SignFile
     ):
 
         if not self._Login:
@@ -1262,12 +1273,20 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.Integer
             ]))
 
-        if not isinstance(SignFile, int):
-            raise TypeError(Log.merge([
-                'SignFile',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckSignFile = False
+        for i in range(0, 10):
+            if str(i) == SignFile or i == SignFile:
+                CheckSignFile = True
+                break
+
+        if not CheckSignFile:
+            SignFile = SignFile.lower()
+            if SignFile != 'x':
+                raise ValueError(Log.merge([
+                    'SignFile',
+                    i18n.ErrorParameter,
+                    SignFile
+                ]))
 
         if not self._Login:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1653,7 +1672,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             print('\n'.join(Data))
             print(len(Data))
             raise Exceptions.ParseError(OriScreen)
-        
+
         ID = Data[0]
         Money = Data[1]
         LoginTime = Data[2]
@@ -2238,6 +2257,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                 Exceptions=Exceptions.MoneyTooFew
             ),
             ConnectCore.TargetUnit(
+                i18n.NoMoney,
+                '交易取消!',
+                BreakDetect=True,
+                Exceptions=Exceptions.UnknowError
+            ),
+            ConnectCore.TargetUnit(
                 [
                     i18n.Transaction,
                     i18n.Success
@@ -2288,7 +2313,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         ID: str,
         Title: str,
         Content: str,
-        SignFile: int
+        SignFile
     ):
 
         if not self._Login:
@@ -2315,12 +2340,20 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.String
             ]))
 
-        if not isinstance(SignFile, int):
-            raise TypeError(Log.merge([
-                'SignFile',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckSignFile = False
+        for i in range(0, 10):
+            if str(i) == SignFile or i == SignFile:
+                CheckSignFile = True
+                break
+
+        if not CheckSignFile:
+            SignFile = SignFile.lower()
+            if SignFile != 'x':
+                raise ValueError(Log.merge([
+                    'SignFile',
+                    i18n.ErrorParameter,
+                    SignFile
+                ]))
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -2442,13 +2475,8 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
-        pattern = re.compile('[\s]+[\d]+ \+[\s]+')
-        Result = pattern.search(OriScreen)
-
-        if Result is not None:
-            return True
-
-        return False
+        pattern = re.findall('[\s]+[\d]+ (\+)[\s]+', OriScreen)
+        return len(pattern)
 
 
 if __name__ == '__main__':

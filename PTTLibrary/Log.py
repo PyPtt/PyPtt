@@ -26,8 +26,9 @@ class Level(object):
 def merge(Msg) -> str:
     if isinstance(Msg, list):
         if Config.Language == i18n.Language.Chinese:
-
             for i in range(len(Msg)):
+                if len(Msg[i]) == 0:
+                    continue
                 if Msg[i][0].upper() != Msg[i][0].lower() and i != 0:
                     Msg[i] = ' ' + Msg[i].lstrip()
                 if (Msg[i][-1].upper() != Msg[i][-1].lower() and

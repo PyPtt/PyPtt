@@ -398,7 +398,12 @@ def ThrowWaterBall():
     TagetID = 'CodingMan'
     TestWaterBall = '哈囉，這是水球測試'
 
-    PTTBot.throwWaterBall(TagetID, TestWaterBall)
+    try:
+        PTTBot.throwWaterBall(TagetID, TestWaterBall)
+    except PTT.Exceptions.NoSuchUser:
+        print('無此使用者')
+    except PTT.Exceptions.UserOffline:
+        print('使用者離線')
 
 
 def GetWaterBall():
@@ -524,17 +529,17 @@ def Mail():
         print('No Such User')
 
 
-def HashNewMail():
+def HasNewMail():
 
     # 是否有新信範例
 
     # hasNewMail() 無參數輸入
     #
-    # 回傳值: True or False
+    # 回傳值: 有幾封新信
 
-    result = PTTBot.hasNewMail()
-    if result:
-        print('You got mail')
+    HowManyNewMail = PTTBot.hasNewMail()
+    if HowManyNewMail > 0:
+        print(f'You got {HowManyNewMail} mail(s)')
     else:
         print('No new mail')
 
@@ -565,6 +570,6 @@ if __name__ == '__main__':
     # CallStatus()
     # GiveMoney()
     # Mail()
-    # HashNewMail()
+    # HasNewMail()
 
     PTTBot.logout()
