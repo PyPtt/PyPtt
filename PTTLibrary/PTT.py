@@ -604,8 +604,14 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         elif index == 0:
 
-            FirstLine = OriScreen.split('\n')[0]
-            if f'《{Board}》'.lower() not in FirstLine.lower():
+            CurrentLine = None
+            for line in OriScreen.split('\n'):
+                if '文章代碼(AID)' in line:
+                    CurrentLine = line
+                    break
+            if CurrentLine is None:
+                raise Exceptions.NoSuchBoard(Board)
+            if f'({Board})'.lower() not in CurrentLine.lower():
                 raise Exceptions.NoSuchBoard(Board)
 
             pattern = re.compile('#[\w]+')

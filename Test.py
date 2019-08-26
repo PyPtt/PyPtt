@@ -178,9 +178,10 @@ def PerformanceTest():
 def GetPost():
 
     TestPostList = [
-        ('Python', 1),
-        ('NotExitBoard', 1),
-        ('Python', 7486),
+        # ('Python', 1),
+        # ('NotExitBoard', 1),
+        # ('Python', 7486),
+        ('Steam', 54347),
     ]
 
     for (Board, Index) in TestPostList:
@@ -745,7 +746,7 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
