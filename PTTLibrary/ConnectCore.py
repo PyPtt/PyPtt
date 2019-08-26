@@ -66,7 +66,8 @@ class TargetUnit(object):
         BreakDetect=False,
         BreakDetectAfterSend=False,
         Exceptions=None,
-        Refresh=True
+        Refresh=True,
+        Secret=False,
     ):
 
         self._DisplayMsg = DisplayMsg
@@ -80,6 +81,7 @@ class TargetUnit(object):
         self._Exception = Exceptions
         self._Refresh = Refresh
         self._BreakAfterSend = BreakDetectAfterSend
+        self._Secret = Secret
 
     def isMatch(self, Screen: str):
         if isinstance(self._DetectTarget, str):
@@ -120,6 +122,9 @@ class TargetUnit(object):
 
     def isBreakAfterSend(self):
         return self._BreakAfterSend
+
+    def isSecret(self):
+        return self._Secret
 
 
 _WSRecvData = None
@@ -225,7 +230,8 @@ class API(object):
         Msg: str,
         TargetList: list,
         ScreenTimeout: int = 0,
-        Refresh: bool = True
+        Refresh: bool = True,
+        Secret: bool = False
     ) -> int:
 
         if not all(isinstance(T, TargetUnit) for T in TargetList):
@@ -239,6 +245,7 @@ class API(object):
         self._ReceiveDataQueue = []
         BreakDetectAfterSend = False
         BreakIndex = -1
+        isSecret = Secret
         while True:
 
             if Refresh and not Msg.endswith(Command.Refresh):
@@ -253,11 +260,20 @@ class API(object):
                 print(e)
                 Msg = Msg.encode('big5', 'ignore')
 
-            Log.showValue(Log.Level.DEBUG, [
-                i18n.SendMsg
-            ],
-                Msg
-            )
+            if isSecret:
+                Log.showValue(
+                    Log.Level.DEBUG, [
+                        i18n.SendMsg
+                    ],
+                    i18n.HideSensitiveInfor
+                )
+            else:
+                Log.showValue(
+                    Log.Level.DEBUG, [
+                        i18n.SendMsg
+                    ],
+                    Msg
+                )
 
             if self._ConnectMode == ConnectMode.Telnet:
                 self._Core.read_very_eager()
@@ -342,6 +358,8 @@ class API(object):
                         if AddRefresh:
                             if not Msg.endswith(Command.Refresh):
                                 Msg = Msg + Command.Refresh
+                        
+                        isSecret = Target.isSecret()
 
                         if Target.isBreakAfterSend():
                             BreakIndex = TargetList.index(Target)

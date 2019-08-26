@@ -59,7 +59,7 @@ class Library(Synchronize.SynchronizeAllMethod):
     ):
         print(f'PTT Library v {Version}')
         print('Developed by PTT CodingMan')
-        self._Login = False
+        self._LoginStatus= False
 
         Config.load()
 
@@ -136,7 +136,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         KickOtherLogin: bool = False
     ):
 
-        if self._Login:
+        if self._LoginStatus:
             self.logout()
 
         if not isinstance(ID, str):
@@ -266,12 +266,13 @@ class Library(Synchronize.SynchronizeAllMethod):
             Cmd,
             TargetList,
             ScreenTimeout=Config.ScreenLongTimeOut,
-            Refresh=False
+            Refresh=False,
+            Secret=True
         )
         if index != 0:
             raise Exceptions.LoginError()
 
-        self._Login = True
+        self._LoginStatus= True
 
     def login(
         self,
@@ -283,7 +284,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def logout(self):
 
-        if not self._Login:
+        if not self._LoginStatus:
             return ErrorCode.Success
 
         CmdList = []
@@ -317,7 +318,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         self._ConnectCore.send(Cmd, TargetList)
         self._ConnectCore.close()
-        self._Login = False
+        self._LoginStatus= False
 
         Log.showValue(
             Log.Level.INFO,
@@ -330,7 +331,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def getTime(self) -> str:
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CmdList = []
@@ -374,7 +375,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         SearchCondition: str = None
     ):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(Board, str):
@@ -1095,7 +1096,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         SearchCondition: str = None
     ):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         return self._getNewestIndex(
@@ -1114,7 +1115,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         SearchType: int = 0,
         SearchCondition: str = None
     ):
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(Board, str):
@@ -1242,7 +1243,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         SignFile
     ):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(Board, str):
@@ -1288,7 +1289,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     SignFile
                 ]))
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CmdList = []
@@ -1360,7 +1361,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         PostIndex: int = 0
     ):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(Board, str):
@@ -1723,14 +1724,14 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def getUser(self, UserID):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         return self._getUser(UserID)
 
     def throwWaterBall(self, TargetID, Content):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(TargetID, str):
@@ -1848,7 +1849,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def getWaterBall(self, OperateType):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(OperateType, int):
@@ -2086,7 +2087,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def getCallStatus(self):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         return self._getCallStatus()
@@ -2173,7 +2174,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         inputCallStatus
     ):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(inputCallStatus, int):
@@ -2215,7 +2216,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def giveMoney(self, ID, Money):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(ID, str):
@@ -2316,7 +2317,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         SignFile
     ):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         if not isinstance(ID, str):
@@ -2444,7 +2445,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
     def hasNewMail(self):
 
-        if not self._Login:
+        if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CmdList = []
