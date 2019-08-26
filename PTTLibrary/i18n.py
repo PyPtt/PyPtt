@@ -652,6 +652,11 @@ def load(inputLanguage):
         'No Such Board',
     ])
 
+    global HideSensitiveInfor
+    HideSensitiveInfor = SpecificLoad(inputLanguage, [
+        '隱藏敏感資訊',
+        'Hide Sensitive Information',
+    ])
     # global List
     # List = []
 
