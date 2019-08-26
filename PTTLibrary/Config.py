@@ -47,3 +47,7 @@ def load():
     # 預設是否剔除其他登入
     global KickOtherLogin
     KickOtherLogin = False
+
+    # Log Handler
+    global LogHandler
+    LogHandler = None
