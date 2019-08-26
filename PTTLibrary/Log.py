@@ -71,6 +71,9 @@ def log(LogLevel, Msg):
     except Exception:
         print(TotalMessage.encode('utf-8', "replace").decode('utf-8'))
 
+    if Config.LogHandler is not None:
+        Config.LogHandler(TotalMessage)
+
 
 LastValue = None
 

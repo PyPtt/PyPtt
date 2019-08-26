@@ -56,10 +56,11 @@ class Library(Synchronize.SynchronizeAllMethod):
         LogLevel: int = 0,
         ScreenTimeOut: int = 0,
         ScreenLongTimeOut: int = 0,
+        LogHandler=None,
     ):
         print(f'PTT Library v {Version}')
         print('Developed by PTT CodingMan')
-        self._LoginStatus= False
+        self._LoginStatus = False
 
         Config.load()
 
@@ -83,9 +84,10 @@ class Library(Synchronize.SynchronizeAllMethod):
             LogLevel = Config.LogLevel
         elif not Util.checkRange(Log.Level, LogLevel):
             raise ValueError('Unknow LogLevel', LogLevel)
-
         else:
             Config.LogLevel = LogLevel
+
+        Config.LogHandler = LogHandler
 
         if Language == 0:
             Language = Config.Language
@@ -272,7 +274,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         if index != 0:
             raise Exceptions.LoginError()
 
-        self._LoginStatus= True
+        self._LoginStatus = True
 
     def login(
         self,
@@ -318,7 +320,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         self._ConnectCore.send(Cmd, TargetList)
         self._ConnectCore.close()
-        self._LoginStatus= False
+        self._LoginStatus = False
 
         Log.showValue(
             Log.Level.INFO,
