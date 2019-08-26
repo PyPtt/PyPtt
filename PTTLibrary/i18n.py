@@ -657,6 +657,12 @@ def load(inputLanguage):
         '隱藏敏感資訊',
         'Hide Sensitive Information',
     ])
+
+    global PostFormatError
+    PostFormatError = SpecificLoad(inputLanguage, [
+        '文章格式錯誤',
+        'Post Format Error',
+    ])
     # global List
     # List = []
 

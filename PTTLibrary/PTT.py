@@ -957,6 +957,27 @@ class Library(Synchronize.SynchronizeAllMethod):
             else:
                 Cmd = Command.Down
 
+        if not ContentFinish:
+            if PostAID is not None:
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    i18n.PostFormatError,
+                    [
+                        Board,
+                        PostAID
+                    ]
+                )
+            else:
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    i18n.PostFormatError,
+                    [
+                        Board,
+                        str(PostIndex)
+                    ]
+                )
+            return None
+
         Post = DataType.PostInfo(
             Board=Board,
             AID=PostAID,
