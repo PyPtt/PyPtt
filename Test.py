@@ -181,7 +181,7 @@ def GetPost():
         # ('Python', 1),
         # ('NotExitBoard', 1),
         # ('Python', 7486),
-        ('Steam', 54347),
+        ('Steam', 4444),
     ]
 
     for (Board, Index) in TestPostList:
