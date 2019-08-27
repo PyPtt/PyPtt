@@ -62,7 +62,7 @@ def LogHandlerDemo():
             F.write(Msg + '\n')
 
     PTTBot = PTT.Library(
-        # LogHandler=handler
+        LogHandler=handler
     )
     try:
         PTTBot.login(ID, Password)
@@ -569,7 +569,7 @@ if __name__ == '__main__':
     ID, Password = getPW()
 
     # LoginLogout()
-    LogHandlerDemo()
+    # LogHandlerDemo()
 
     PTTBot = PTT.Library()
     try:
