@@ -663,6 +663,13 @@ def load(inputLanguage):
         '文章格式錯誤',
         'Post Format Error',
     ])
+
+    global LogHandler
+    LogHandler = SpecificLoad(inputLanguage, [
+        '紀錄額取器',
+        'Log Handler',
+    ])
+
     # global List
     # List = []
 

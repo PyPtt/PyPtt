@@ -53,6 +53,25 @@ def LoginLogout():
         return
     PTTBot.log('登入成功')
     PTTBot.logout()
+    sys.exit()
+
+
+def LogHandlerDemo():
+    def handler(Msg):
+        with open('LogHandler.txt', 'a', encoding='utf-8') as F:
+            F.write(Msg + '\n')
+
+    PTTBot = PTT.Library(
+        # LogHandler=handler
+    )
+    try:
+        PTTBot.login(ID, Password)
+    except PTT.Exceptions.LoginError:
+        PTTBot.log('登入失敗')
+        return
+    PTTBot.log('登入成功')
+    PTTBot.logout()
+    sys.exit()
 
 
 def GetTime():
@@ -550,7 +569,7 @@ if __name__ == '__main__':
     ID, Password = getPW()
 
     # LoginLogout()
-    # sys.exit()
+    LogHandlerDemo()
 
     PTTBot = PTT.Library()
     try:

@@ -58,8 +58,22 @@ class Library(Synchronize.SynchronizeAllMethod):
         ScreenLongTimeOut: int = 0,
         LogHandler=None,
     ):
-        print(f'PTT Library v {Version}')
-        print('Developed by PTT CodingMan')
+
+        if LogHandler is not None:
+            hasLogHandler = True
+            setLogHandlerResult = True
+            try:
+                LogHandler(f'PTT Library v {Version}')
+                LogHandler('Developed by PTT CodingMan')
+            except:
+                LogHandler = None
+                setLogHandlerResult = False
+
+            print(f'PTT Library v {Version}')
+            print('Developed by PTT CodingMan')
+        else:
+            hasLogHandler = False
+
         self._LoginStatus = False
 
         Config.load()
@@ -87,8 +101,6 @@ class Library(Synchronize.SynchronizeAllMethod):
         else:
             Config.LogLevel = LogLevel
 
-        Config.LogHandler = LogHandler
-
         if Language == 0:
             Language = Config.Language
         elif not Util.checkRange(i18n.Language, Language):
@@ -96,6 +108,23 @@ class Library(Synchronize.SynchronizeAllMethod):
         else:
             Config.Language = Language
         i18n.load(Language)
+
+        if LogHandler is not None:
+            Log.Handler = LogHandler
+            Log.showValue(
+                Log.Level.INFO,
+                i18n.LogHandler,
+                i18n.Init
+            )
+        elif hasLogHandler and not setLogHandlerResult:
+            Log.showValue(
+                Log.Level.INFO,
+                i18n.LogHandler,
+                [
+                    i18n.Init,
+                    i18n.Fail
+                ]
+            )
 
         if Language == i18n.Language.Chinese:
             Log.showValue(Log.Level.INFO, [

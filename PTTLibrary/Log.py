@@ -1,5 +1,6 @@
 import sys
 from time import gmtime, strftime
+
 try:
     import DataType
     import Config
@@ -10,6 +11,9 @@ except ModuleNotFoundError:
     from . import Config
     from . import Util
     from . import i18n
+
+# Log Handler
+Handler = None
 
 
 class Level(object):
@@ -71,8 +75,9 @@ def log(LogLevel, Msg):
     except Exception:
         print(TotalMessage.encode('utf-8', "replace").decode('utf-8'))
 
-    if Config.LogHandler is not None:
-        Config.LogHandler(TotalMessage)
+    global Handler
+    if Handler is not None:
+        Handler(TotalMessage)
 
 
 LastValue = None

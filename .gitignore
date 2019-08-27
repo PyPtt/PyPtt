@@ -11,3 +11,4 @@ PTTLibrary-*/
 /Test.txt
 Account*.txt
 *.spec
+/LogHandler.txt
