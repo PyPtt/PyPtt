@@ -48,6 +48,3 @@ def load():
     global KickOtherLogin
     KickOtherLogin = False
 
-    # Log Handler
-    global LogHandler
-    LogHandler = None
