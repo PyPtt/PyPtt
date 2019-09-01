@@ -643,19 +643,25 @@ class Library(Synchronize.SynchronizeAllMethod):
             if f'({Board})'.lower() not in CurrentLine.lower():
                 raise Exceptions.NoSuchBoard(Board)
 
+            
+            OriScreenTemp = OriScreen[OriScreen.find('┌──────────'):]
+            OriScreenTemp = OriScreenTemp[:OriScreenTemp.find(
+                '└─────────────')
+            ]
+
             pattern = re.compile('#[\w]+')
-            PatternResult = pattern.search(OriScreen)
+            PatternResult = pattern.search(OriScreenTemp)
             PostAID = PatternResult.group(0)[1:]
 
             pattern = re.compile('文章網址: https:[\S]+html')
-            PatternResult = pattern.search(OriScreen)
+            PatternResult = pattern.search(OriScreenTemp)
             if PatternResult is None:
                 PostWeb = None
             else:
                 PostWeb = PatternResult.group(0)[6:]
 
             pattern = re.compile('這一篇文章值 [\d]+ Ptt幣')
-            PatternResult = pattern.search(OriScreen)
+            PatternResult = pattern.search(OriScreenTemp)
             if PatternResult is None:
                 # 特殊文章無價格
                 PostMoney = -1
