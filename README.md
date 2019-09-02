@@ -13,7 +13,7 @@
 #### 支援多國語系，繁體中文與英文
 #### 歡迎發起 pull request，提交你開發的 API
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
-#### 共筆指南: [PTT Library 指南](https://hackmd.io/@CodingMan/PTTLibrary指南)
+#### 共筆指南: [PTT Library 指南](https://hackmd.io/@CodingMan/PTTLibraryManual)
 #### 原始碼
 #### github: https://github.com/Truth0906/PTTLibrary
 #### Pypi: https://pypi.org/project/PTTLibrary/
