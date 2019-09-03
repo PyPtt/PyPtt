@@ -670,6 +670,24 @@ def load(inputLanguage):
         'Log Handler',
     ])
 
+    global NewCursor
+    NewCursor = SpecificLoad(inputLanguage, [
+        '新式游標',
+        'New Type Cursor',
+    ])
+
+    global OldCursor
+    OldCursor = SpecificLoad(inputLanguage, [
+        '舊式游標',
+        'Old Type Cursor',
+    ])
+
+    global PostNoContent
+    PostNoContent = SpecificLoad(inputLanguage, [
+        '此文章無內容',
+        'Post has no content',
+    ])
+
     # global List
     # List = []
 

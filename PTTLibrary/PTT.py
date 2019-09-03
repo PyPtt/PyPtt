@@ -68,11 +68,11 @@ class Library(Synchronize.SynchronizeAllMethod):
             except:
                 LogHandler = None
                 setLogHandlerResult = False
-
-            print(f'PTT Library v {Version}')
-            print('Developed by PTT CodingMan')
         else:
             hasLogHandler = False
+
+        print(f'PTT Library v {Version}')
+        print('Developed by PTT CodingMan')
 
         self._LoginStatus = False
 
@@ -303,6 +303,20 @@ class Library(Synchronize.SynchronizeAllMethod):
         if index != 0:
             raise Exceptions.LoginError()
 
+        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+        if '> (' in OriScreen:
+            self._Cursor = DataType.Cursor.New
+            Log.log(
+                Log.Level.DEBUG,
+                i18n.NewCursor
+            )
+        else:
+            self._Cursor = DataType.Cursor.Old
+            Log.log(
+                Log.Level.DEBUG,
+                i18n.OldCursor
+            )
+
         self._LoginStatus = True
 
     def login(
@@ -461,8 +475,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             raise ValueError(Log.merge([
                 'PostIndex',
                 'PostAID',
-                i18n.ErrorParameter,
-                i18n.NoInput
+                i18n.ErrorParameter
             ]))
 
         if (SearchType != 0 and
@@ -591,14 +604,15 @@ class Library(Synchronize.SynchronizeAllMethod):
         index = self._ConnectCore.send(Cmd, TargetList)
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
+        PostAuthor = None
+        PostTitle = None
         if index == 1 or index < 0:
             # 文章被刪除
             Log.log(Log.Level.DEBUG, i18n.PostDeled)
             PostDelStatus = 0
 
             for line in OriScreen.split('\n'):
-                if (line.startswith(DataType.Cursor.New) or
-                        line.startswith(DataType.Cursor.Old)):
+                if line.startswith(self._Cursor):
 
                     pattern = re.compile('[\d]+\/[\d]+')
                     PatternResult = pattern.search(line)
@@ -643,14 +657,28 @@ class Library(Synchronize.SynchronizeAllMethod):
             if f'({Board})'.lower() not in CurrentLine.lower():
                 raise Exceptions.NoSuchBoard(Board)
 
-            
+            CursorLine = [line for line in OriScreen.split(
+                '\n') if line.startswith(self._Cursor)][0]
+            PostAuthor = CursorLine
+            PostAuthor = PostAuthor[:PostAuthor.find('□')].strip()
+            PostAuthor = PostAuthor[PostAuthor.rfind(' '):].strip()
+
+            AIDLine = [line for line in OriScreen.split(
+                '\n') if line.startswith('│ 文章代碼(AID)')][0]
+
+            PostTitle = AIDLine
+            # [ptt.cc]
+            PostTitle = PostTitle[PostTitle.find(
+                '[ptt.cc]') + len('[ptt.cc]'):].strip()
+            PostTitle = PostTitle[:-1].strip()
+
             OriScreenTemp = OriScreen[OriScreen.find('┌──────────'):]
             OriScreenTemp = OriScreenTemp[:OriScreenTemp.find(
                 '└─────────────')
             ]
 
-            pattern = re.compile('#[\w]+')
-            PatternResult = pattern.search(OriScreenTemp)
+            pattern = re.compile('#[\w|-]+')
+            PatternResult = pattern.search(AIDLine)
             PostAID = PatternResult.group(0)[1:]
 
             pattern = re.compile('文章網址: https:[\S]+html')
@@ -670,18 +698,13 @@ class Library(Synchronize.SynchronizeAllMethod):
                 PostMoney = PostMoney[:PostMoney.find(' ')]
                 PostMoney = int(PostMoney)
 
-            for line in OriScreen.split('\n'):
-                if (line.startswith(DataType.Cursor.New) or
-                        line.startswith(DataType.Cursor.Old)):
-                    pattern = re.compile('[\d]+\/[\d]+')
-                    PatternResult = pattern.search(line)
-                    if PatternResult is None:
-                        ListDate = None
-                    else:
-                        ListDate = PatternResult.group(0)
-                        ListDate = ListDate[-5:]
-
-                    break
+            pattern = re.compile('[\d]+\/[\d]+')
+            PatternResult = pattern.search(CursorLine)
+            if PatternResult is None:
+                ListDate = None
+            else:
+                ListDate = PatternResult.group(0)
+                ListDate = ListDate[-5:]
 
             Log.showValue(Log.Level.DEBUG, 'PostAID', PostAID)
             Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
@@ -707,12 +730,18 @@ class Library(Synchronize.SynchronizeAllMethod):
                 BreakDetect=True,
                 LogLevel=Log.Level.DEBUG
             ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.PostNoContent,
+                ],
+                Screens.Target.PostNoContent,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
         ]
 
-        PostAuthor = None
         PostAuthorPattern_New = re.compile('作者  (.+) 看板  ' + Board)
         PostAuthorPattern_Old = re.compile('作者  (.+)')
-        PostTitle = None
         PostTitlePattern = re.compile('標題  (.+)')
         PostDate = None
         PostDatePattern = re.compile('時間  (.+)')
@@ -721,7 +750,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         LineFromTopattern = re.compile('[\d]+~[\d]+')
         NewIPPattern_New = re.compile('\([\d]+\.[\d]+\.[\d]+\.[\d]+\)')
         NewIPPattern_Old = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
-        PushAuthorPattern = re.compile('[推|噓|→] [\w]+:')
+        PushAuthorPattern = re.compile('[推|噓|→] [\w| ]+:')
         PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
         PushIPPattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
@@ -732,8 +761,25 @@ class Library(Synchronize.SynchronizeAllMethod):
         ContentFinish = False
         index = -1
         FirstPage = True
+        IP = None
         while True:
             index = self._ConnectCore.send(Cmd, TargetList)
+            if index == 2:
+                Post = DataType.PostInfo(
+                    Board=Board,
+                    AID=PostAID,
+                    Author=PostAuthor,
+                    Date=PostDate,
+                    Title=PostTitle,
+                    WebUrl=PostWeb,
+                    Money=PostMoney,
+                    Content=PostContent,
+                    IP=IP,
+                    PushList=PushList,
+                    ListDate=ListDate,
+                    ControlCode=HasControlCode
+                )
+                return Post
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
             Lines = LastScreen.split('\n')
             LastLine = Lines[-1]
@@ -763,7 +809,21 @@ class Library(Synchronize.SynchronizeAllMethod):
                             i18n.DoNothing,
                         ]
                     )
-                    return None
+                    Post = DataType.PostInfo(
+                        Board=Board,
+                        AID=PostAID,
+                        Author=PostAuthor,
+                        Date=PostDate,
+                        Title=PostTitle,
+                        WebUrl=PostWeb,
+                        Money=PostMoney,
+                        Content=PostContent,
+                        IP=IP,
+                        PushList=PushList,
+                        ListDate=ListDate,
+                        ControlCode=HasControlCode
+                    )
+                    return Post
 
                 PatternResult = PostAuthorPattern_New.search(LastScreen)
                 if PatternResult is not None:
@@ -778,7 +838,21 @@ class Library(Synchronize.SynchronizeAllMethod):
                                 i18n.DoNothing,
                             ]
                         )
-                        return None
+                        Post = DataType.PostInfo(
+                            Board=Board,
+                            AID=PostAID,
+                            Author=PostAuthor,
+                            Date=PostDate,
+                            Title=PostTitle,
+                            WebUrl=PostWeb,
+                            Money=PostMoney,
+                            Content=PostContent,
+                            IP=IP,
+                            PushList=PushList,
+                            ListDate=ListDate,
+                            ControlCode=HasControlCode
+                        )
+                        return Post
                     PostAuthor = PatternResult.group(0)
                     PostAuthor = PostAuthor.replace('站內  ' + Board, '')
                 PostAuthor = PostAuthor[4:].strip()
@@ -844,7 +918,6 @@ class Library(Synchronize.SynchronizeAllMethod):
                 )
 
                 PatternResult = pattern.search(LastScreen)
-                IP = None
                 if PatternResult is not None:
                     IP = PatternResult.group(0)[25:]
                 else:
@@ -924,7 +997,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                         if Result is None:
                             # 不符合推文格式
                             continue
-                        PushAuthor = Result.group(0)[2:-1]
+                        PushAuthor = Result.group(0)[2:-1].strip()
                         Log.showValue(Log.Level.DEBUG, [
                             i18n.Push,
                             i18n.ID,
@@ -1011,7 +1084,21 @@ class Library(Synchronize.SynchronizeAllMethod):
                         str(PostIndex)
                     ]
                 )
-            return None
+            Post = DataType.PostInfo(
+                Board=Board,
+                AID=PostAID,
+                Author=PostAuthor,
+                Date=PostDate,
+                Title=PostTitle,
+                WebUrl=PostWeb,
+                Money=PostMoney,
+                Content=PostContent,
+                IP=IP,
+                PushList=PushList,
+                ListDate=ListDate,
+                ControlCode=HasControlCode
+            )
+            return Post
 
         Post = DataType.PostInfo(
             Board=Board,

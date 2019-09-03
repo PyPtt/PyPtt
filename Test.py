@@ -182,7 +182,8 @@ def GetPost():
         # ('NotExitBoard', 1),
         # ('Python', 7486),
         # ('Steam', 4444),
-        ('Baseball', 199787)
+        # ('Baseball', 199787),
+        ('Stock', 99939)
     ]
 
     for (Board, Index) in TestPostList:
@@ -270,7 +271,8 @@ def showCondition(Board, SearchType, Condition):
 def GetPostWithCondition():
 
     TestList = [
-        ('Python', PTT.PostSearchType.Keyword, '[公告]')
+        # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
     ]
 
     for (Board, SearchType, Condition) in TestList:
@@ -286,11 +288,15 @@ def GetPostWithCondition():
 
             Post = PTTBot.getPost(
                 Board,
-                PostIndex=Index,
+                PostIndex=2407,
                 SearchType=SearchType,
                 SearchCondition=Condition,
             )
 
+            print('列表日期:')
+            print(Post.getListDate())
+            print('作者:')
+            print(Post.getAuthor())
             print('標題:')
             print(Post.getTitle())
             print('內文:')
