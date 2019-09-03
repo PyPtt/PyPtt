@@ -26,15 +26,13 @@ class Target(object):
     ]
 
     InBoard = [
-        '【板主',
+        '看板資訊/設定',
         '文章選讀',
         '相關主題'
     ]
 
-    InBoardWithCursor = [
-        '【板主',
-        '>',
-    ]
+    InBoardWithCursor = InBoard.copy()
+    InBoardWithCursor.append('>')
 
     InPost = [
         '瀏覽',
@@ -101,6 +99,11 @@ class Target(object):
     InMailBox = [
         '【郵件選單】',
         '鴻雁往返'
+    ]
+
+    PostNoContent = [
+        '◆ 此文章無內容',
+        AnyKey
     ]
 
 
