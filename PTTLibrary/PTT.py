@@ -330,7 +330,7 @@ class Library(Synchronize.SynchronizeAllMethod):
     def logout(self):
 
         if not self._LoginStatus:
-            return ErrorCode.Success
+            return
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -361,7 +361,10 @@ class Library(Synchronize.SynchronizeAllMethod):
             ]
         )
 
-        self._ConnectCore.send(Cmd, TargetList)
+        try:
+            self._ConnectCore.send(Cmd, TargetList)
+        except Exceptions.ConnectionClosed:
+            pass
         self._ConnectCore.close()
         self._LoginStatus = False
 
@@ -660,7 +663,12 @@ class Library(Synchronize.SynchronizeAllMethod):
             CursorLine = [line for line in OriScreen.split(
                 '\n') if line.startswith(self._Cursor)][0]
             PostAuthor = CursorLine
-            PostAuthor = PostAuthor[:PostAuthor.find('□')].strip()
+            if '□' in PostAuthor:
+                PostAuthor = PostAuthor[:PostAuthor.find('□')].strip()
+            elif 'R:' in PostAuthor:
+                PostAuthor = PostAuthor[:PostAuthor.find('R:')].strip()
+            elif ' 轉 [' in PostAuthor:
+                PostAuthor = PostAuthor[:PostAuthor.find('轉')].strip()
             PostAuthor = PostAuthor[PostAuthor.rfind(' '):].strip()
 
             AIDLine = [line for line in OriScreen.split(
@@ -740,7 +748,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             ),
         ]
 
-        PostAuthorPattern_New = re.compile('作者  (.+) 看板  ' + Board)
+        PostAuthorPattern_New = re.compile('作者  (.+) 看板')
         PostAuthorPattern_Old = re.compile('作者  (.+)')
         PostTitlePattern = re.compile('標題  (.+)')
         PostDate = None
@@ -828,7 +836,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                 PatternResult = PostAuthorPattern_New.search(LastScreen)
                 if PatternResult is not None:
                     PostAuthor = PatternResult.group(0)
-                    PostAuthor = PostAuthor.replace('看板  ' + Board, '')
+                    PostAuthor = PostAuthor[:PostAuthor.rfind('看板')]
                 else:
                     PatternResult = PostAuthorPattern_Old.search(LastScreen)
                     if PatternResult is None:

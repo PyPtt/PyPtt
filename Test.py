@@ -367,7 +367,7 @@ def GetNewestIndex():
     ]
 
     for Board in TestBoardList:
-        for _ in range(10):
+        for _ in range(1000):
             Index = PTTBot.getNewestIndex(PTT.IndexType.Board, Board=Board)
             print(f'{Board} 最新文章編號 {Index}')
 
@@ -741,7 +741,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -754,7 +754,7 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        GetPost()
+        # GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
