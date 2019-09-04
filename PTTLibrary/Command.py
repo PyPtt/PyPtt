@@ -4,6 +4,7 @@
 Enter = '\r'
 Tab = '\t'
 Ctrl_C = '\x03'
+Ctrl_F = '\x06'
 Ctrl_L = '\x0C'
 Ctrl_P = '\x10'
 Ctrl_U = '\x15'
