@@ -2638,6 +2638,90 @@ class Library(Synchronize.SynchronizeAllMethod):
         pattern = re.findall('[\s]+[\d]+ (\+)[\s]+', OriScreen)
         return len(pattern)
 
+    def getBoardList(self):
+        if not self._LoginStatus:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('F')
+        CmdList.append(Command.Enter)
+        CmdList.append('y')
+        CmdList.append('0')
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.BoardList,
+                Screens.Target.InBoardList,
+                BreakDetect=True
+            )
+        ]
+
+        BoardList = []
+        LastNo = 0
+        while True:
+
+            self._ConnectCore.send(
+                Cmd,
+                TargetList,
+                ScreenTimeout=Config.ScreenLongTimeOut
+            )
+
+            OriScreen = self._ConnectCore.getScreenQueue()[-1]
+            # print(OriScreen)
+            for line in OriScreen.split('\n'):
+                if '◎' not in line:
+                    continue
+
+                if line.startswith(self._Cursor):
+                    line = line[len(self._Cursor):]
+
+                # print(f'->{line}<')
+
+                FrontPart = line[:line.find('◎')]
+                FrontPartList = [x for x in FrontPart.split(' ')]
+                FrontPartList = list(filter(None, FrontPartList))
+                # print(f'FrontPartList =>{FrontPartList}<=')
+                No = int(FrontPartList[0])
+                # print(f'No =>{No}<=')
+                # print(f'LastNo =>{LastNo}<=')
+
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'LastNO',
+                    LastNo
+                )
+
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'Board NO',
+                    No
+                )
+
+                if LastNo > No:
+                    break
+
+                LastNo = No
+
+                BoardName = FrontPartList[1]
+                if BoardName.startswith('ˇ'):
+                    BoardName = BoardName[1:]
+
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'Board Name',
+                    BoardName
+                )
+
+                BoardList.append(BoardName)
+                # print('=' * 20)
+            if LastNo > No:
+                break
+            Cmd = Command.Ctrl_F
+
+        return BoardList
+
 
 if __name__ == '__main__':
 

@@ -106,6 +106,12 @@ class Target(object):
         AnyKey
     ]
 
+    InBoardList = [
+        '【看板列表】',
+        '選擇看板',
+        '已讀/未讀',
+    ]
+
 
 def show(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.TRACE:

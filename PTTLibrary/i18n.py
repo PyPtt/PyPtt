@@ -648,7 +648,7 @@ def load(inputLanguage):
 
     global NoSuchBoard
     NoSuchBoard = SpecificLoad(inputLanguage, [
-        '無該版面',
+        '無該板面',
         'No Such Board',
     ])
 
@@ -692,6 +692,12 @@ def load(inputLanguage):
     ConnectionClosed = SpecificLoad(inputLanguage, [
         '連線已經被關閉',
         'Connection Closed',
+    ])
+
+    global BoardList
+    BoardList = SpecificLoad(inputLanguage, [
+        '看板列表',
+        'Board List',
     ])
 
     # global List
