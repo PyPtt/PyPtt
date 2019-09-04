@@ -290,10 +290,15 @@ class API(object):
                 self._Core.read_very_eager()
                 self._Core.write(Msg)
             else:
-                asyncio.get_event_loop().run_until_complete(
-                    self._Core.send(Msg)
-                )
 
+                try:
+                    asyncio.get_event_loop().run_until_complete(
+                        self._Core.send(Msg)
+                    )
+                except asyncio.streams.IncompleteReadError:
+                    raise Exceptions.ConnectionClosed()
+                except websockets.exceptions.ConnectionClosedError:
+                    raise Exceptions.ConnectionClosed()
             if BreakDetectAfterSend:
                 return BreakIndex
 

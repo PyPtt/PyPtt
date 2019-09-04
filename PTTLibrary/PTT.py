@@ -633,8 +633,12 @@ class Library(Synchronize.SynchronizeAllMethod):
                         pattern = re.compile('<[\w]+>')
                         PatternResult = pattern.search(line)
                         PostDelStatus = DataType.PostDeleteStatus.ByModerator
-
-                    PostAuthor = PatternResult.group(0)[1:-1]
+                    
+                    try:
+                        PostAuthor = PatternResult.group(0)[1:-1]
+                    except:
+                        print(f'=>{line}<')
+                        raise Exceptions.ParseError(line)
                     break
 
             Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
@@ -785,7 +789,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                     IP=IP,
                     PushList=PushList,
                     ListDate=ListDate,
-                    ControlCode=HasControlCode
+                    ControlCode=HasControlCode,
+                    FormatCheck=False,
                 )
                 return Post
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
@@ -829,7 +834,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                         IP=IP,
                         PushList=PushList,
                         ListDate=ListDate,
-                        ControlCode=HasControlCode
+                        ControlCode=HasControlCode,
+                        FormatCheck=False,
                     )
                     return Post
 
@@ -858,7 +864,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                             IP=IP,
                             PushList=PushList,
                             ListDate=ListDate,
-                            ControlCode=HasControlCode
+                            ControlCode=HasControlCode,
+                            FormatCheck=False,
                         )
                         return Post
                     PostAuthor = PatternResult.group(0)
@@ -1104,7 +1111,8 @@ class Library(Synchronize.SynchronizeAllMethod):
                 IP=IP,
                 PushList=PushList,
                 ListDate=ListDate,
-                ControlCode=HasControlCode
+                ControlCode=HasControlCode,
+                FormatCheck=False,
             )
             return Post
 
@@ -1120,7 +1128,8 @@ class Library(Synchronize.SynchronizeAllMethod):
             IP=IP,
             PushList=PushList,
             ListDate=ListDate,
-            ControlCode=HasControlCode
+            ControlCode=HasControlCode,
+            FormatCheck=True,
         )
         return Post
 
@@ -2647,7 +2656,7 @@ class Library(Synchronize.SynchronizeAllMethod):
         CmdList.append('F')
         CmdList.append(Command.Enter)
         CmdList.append('y')
-        CmdList.append('0')
+        CmdList.append('$')
         Cmd = ''.join(CmdList)
 
         TargetList = [
@@ -2658,8 +2667,51 @@ class Library(Synchronize.SynchronizeAllMethod):
             )
         ]
 
+        self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
+        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+
+        MaxNo = 0
+
+        for line in OriScreen.split('\n'):
+            if '◎' not in line:
+                continue
+
+            if line.startswith(self._Cursor):
+                line = line[len(self._Cursor):]
+
+            # print(f'->{line}<')
+
+            FrontPart = line[:line.find('◎')]
+            FrontPartList = [x for x in FrontPart.split(' ')]
+            FrontPartList = list(filter(None, FrontPartList))
+            # print(f'FrontPartList =>{FrontPartList}<=')
+            MaxNo = int(FrontPartList[0])
+
+        Log.showValue(
+            Log.Level.DEBUG,
+            'MaxNo',
+            MaxNo
+        )
+
+        if Config.LogLevel == Log.Level.INFO:
+            PB = progressbar.ProgressBar(
+                max_value=MaxNo,
+                redirect_stdout=True
+            )
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('F')
+        CmdList.append(Command.Enter)
+        CmdList.append('y')
+        CmdList.append('0')
+        Cmd = ''.join(CmdList)
+
         BoardList = []
-        LastNo = 0
         while True:
 
             self._ConnectCore.send(
@@ -2689,20 +2741,9 @@ class Library(Synchronize.SynchronizeAllMethod):
 
                 Log.showValue(
                     Log.Level.DEBUG,
-                    'LastNO',
-                    LastNo
-                )
-
-                Log.showValue(
-                    Log.Level.DEBUG,
                     'Board NO',
                     No
                 )
-
-                if LastNo > No:
-                    break
-
-                LastNo = No
 
                 BoardName = FrontPartList[1]
                 if BoardName.startswith('ˇ'):
@@ -2715,10 +2756,16 @@ class Library(Synchronize.SynchronizeAllMethod):
                 )
 
                 BoardList.append(BoardName)
-                # print('=' * 20)
-            if LastNo > No:
+
+                if Config.LogLevel == Log.Level.INFO:
+                    PB.update(No)
+
+            if No == MaxNo:
                 break
             Cmd = Command.Ctrl_F
+
+        if Config.LogLevel == Log.Level.INFO:
+            PB.finish()
 
         return BoardList
 
