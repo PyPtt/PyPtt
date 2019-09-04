@@ -688,6 +688,12 @@ def load(inputLanguage):
         'Post has no content',
     ])
 
+    global ConnectionClosed
+    ConnectionClosed = SpecificLoad(inputLanguage, [
+        '連線已經被關閉',
+        'Connection Closed',
+    ])
+
     # global List
     # List = []
 

@@ -17,6 +17,7 @@ try:
     import Log
     import Screens
     import Command
+    import Exceptions
 except ModuleNotFoundError:
     from . import DataType
     from . import Config
@@ -25,6 +26,7 @@ except ModuleNotFoundError:
     from . import Log
     from . import Screens
     from . import Command
+    from . import Exceptions
 
 
 class ConnectMode(object):
@@ -194,17 +196,26 @@ class API(object):
 
             try:
 
-                if self._ConnectMode == ConnectMode.Telnet:
-                    self._Core = telnetlib.Telnet(Config.Host, Config.Port)
-                else:
-                    loop = asyncio.new_event_loop()
-                    asyncio.set_event_loop(loop)
-                    self._Core = asyncio.get_event_loop().run_until_complete(
-                        websockets.connect(
-                            'wss://ws.ptt.cc/bbs/',
-                            origin='https://www.ptt.cc'
-                        )
+                # if self._ConnectMode == ConnectMode.Telnet:
+                #     self._Core = telnetlib.Telnet(Config.Host, Config.Port)
+                # else:
+                #     loop = asyncio.new_event_loop()
+                #     asyncio.set_event_loop(loop)
+                #     self._Core = asyncio.get_event_loop().run_until_complete(
+                #         websockets.connect(
+                #             'wss://ws.ptt.cc/bbs/',
+                #             origin='https://www.ptt.cc'
+                #         )
+                #     )
+
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                self._Core = asyncio.get_event_loop().run_until_complete(
+                    websockets.connect(
+                        'wss://ws.ptt.cc/bbs/',
+                        origin='https://www.ptt.cc'
                     )
+                )
 
                 ConnectSuccess = True
             except Exception as e:
@@ -308,7 +319,7 @@ class API(object):
                         ReceiveDataTemp = _WSRecvData
 
                     except websockets.exceptions.ConnectionClosed:
-                        return -1
+                        raise Exceptions.ConnectionClosed()
                     except asyncio.TimeoutError:
                         return -1
 

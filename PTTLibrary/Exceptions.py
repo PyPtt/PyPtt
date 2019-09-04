@@ -112,3 +112,11 @@ class NoSuchBoard(Exception):
 
     def __str__(self):
         return self.message
+
+
+class ConnectionClosed(Exception):
+    def __init__(self):
+        self.message = i18n.ConnectionClosed
+
+    def __str__(self):
+        return self.message
