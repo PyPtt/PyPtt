@@ -531,13 +531,29 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
-        return self._getPost(
-            Board,
-            PostAID,
-            PostIndex,
-            SearchType,
-            SearchCondition
-        )
+        for _ in range(2):
+
+            NeedContinue = False
+            try:
+                Post = self._getPost(
+                    Board,
+                    PostAID,
+                    PostIndex,
+                    SearchType,
+                    SearchCondition
+                )
+            except Exceptions.ParseError:
+                NeedContinue = True
+
+            if not Post.isFormatCheck():
+                NeedContinue = True
+
+            if NeedContinue:
+                time.sleep(0.01)
+                continue
+
+            break
+        return Post
 
     def _getPost(
         self,
@@ -633,7 +649,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                         pattern = re.compile('<[\w]+>')
                         PatternResult = pattern.search(line)
                         PostDelStatus = DataType.PostDeleteStatus.ByModerator
-                    
+
                     try:
                         PostAuthor = PatternResult.group(0)[1:-1]
                     except:
@@ -1384,12 +1400,28 @@ class Library(Synchronize.SynchronizeAllMethod):
                 redirect_stdout=True
             )
         for index in range(StartIndex, EndIndex + 1):
-            Post = self._getPost(
-                Board,
-                PostIndex=index,
-                SearchType=SearchType,
-                SearchCondition=SearchCondition
-            )
+
+            for _ in range(2):
+                NeedContinue = False
+                try:
+                    Post = self._getPost(
+                        Board,
+                        PostIndex=index,
+                        SearchType=SearchType,
+                        SearchCondition=SearchCondition
+                    )
+                except Exceptions.ParseError:
+                    NeedContinue = True
+
+                if not Post.isFormatCheck():
+                    NeedContinue = True
+
+                if NeedContinue:
+                    time.sleep(0.01)
+                    continue
+
+                break
+
             if Config.LogLevel == Log.Level.INFO:
                 PB.update(index - StartIndex)
             if Post is None:

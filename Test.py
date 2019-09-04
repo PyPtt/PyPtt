@@ -412,9 +412,10 @@ def CrawlBoard():
         'Stock'
     ]
 
-    TestRange = 100
+    TestRange = 1000
+    TestRound = 1
 
-    for _ in range(10):
+    for _ in range(TestRound):
 
         for TestBoard in TestBoardList:
             NewestIndex = PTTBot.getNewestIndex(
