@@ -37,13 +37,13 @@ class Target(object):
     InPost = [
         '瀏覽',
         '頁',
-        '回應'
+        '離開'
     ]
 
     PostEnd = [
         '瀏覽',
         '頁 (100%)',
-        '回應'
+        '離開'
     ]
 
     InWaterBallList = [

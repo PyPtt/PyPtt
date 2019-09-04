@@ -183,7 +183,7 @@ def GetPost():
         # ('Python', 7486),
         # ('Steam', 4444),
         # ('Baseball', 199787),
-        ('Stock', 99939)
+        # ('Stock', 92324),
     ]
 
     for (Board, Index) in TestPostList:
@@ -272,7 +272,7 @@ def GetPostWithCondition():
 
     TestList = [
         # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
     ]
 
     for (Board, SearchType, Condition) in TestList:
@@ -385,6 +385,11 @@ def crawlHandler(Post):
 
     if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
         return
+    
+    if not Post.isFormatCheck():
+        return
+
+    print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
 
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
@@ -393,6 +398,8 @@ def crawlHandler(Post):
     detectNone('Content', Post.getContent())
     detectNone('Money', Post.getMoney())
     detectNone('WebUrl', Post.getWebUrl())
+
+    print('=' * 20)
     # detectNone('IP', Post.getIP())
     # detectNone('ListDate', Post.getListDate())
 
@@ -401,33 +408,38 @@ def CrawlBoard():
 
     TestBoardList = [
         'Wanted',
-        'Gossiping'
+        'Gossiping',
+        'Stock'
     ]
 
     TestRange = 100
 
-    for TestBoard in TestBoardList:
-        NewestIndex = PTTBot.getNewestIndex(
-            PTT.IndexType.Board,
-            Board=TestBoard
-        )
-        StartIndex = NewestIndex - TestRange + 1
+    for _ in range(10):
 
-        print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
+        for TestBoard in TestBoardList:
+            NewestIndex = PTTBot.getNewestIndex(
+                PTT.IndexType.Board,
+                Board=TestBoard
+            )
+            StartIndex = NewestIndex - TestRange + 1
 
-        ErrorPostList, DelPostList = PTTBot.crawlBoard(
-            crawlHandler,
-            TestBoard,
-            StartIndex=StartIndex,
-            EndIndex=NewestIndex
-        )
+            print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
 
-        if len(ErrorPostList) > 0:
-            print('Error Post: \n' + '\n'.join(str(x) for x in ErrorPostList))
+            ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                crawlHandler,
+                TestBoard,
+                StartIndex=StartIndex,
+                EndIndex=NewestIndex
+            )
 
-        if len(DelPostList) > 0:
-            print('Del Post: \n' + '\n'.join([str(x) for x in DelPostList]))
-            print(f'共有 {len(DelPostList)} 篇文章被刪除')
+            if len(ErrorPostList) > 0:
+                print('Error Post: \n' + '\n'.join(str(x) for x in ErrorPostList))
+            else:
+                print('沒有偵測到錯誤文章')
+
+            # if len(DelPostList) > 0:
+            #     print('Del Post: \n' + '\n'.join([str(x) for x in DelPostList]))
+            #     print(f'共有 {len(DelPostList)} 篇文章被刪除')
 
 
 def CrawlBoardWithCondition():
@@ -463,6 +475,10 @@ def CrawlBoardWithCondition():
 
     #         traceback.print_tb(e.__traceback__)
     #         print(e)
+
+    TestList = [
+        ('Stock', PTT.PostSearchType.Keyword, '盤中閒聊'),
+    ]
 
     TestRange = 10
 
@@ -725,6 +741,7 @@ def ThreadingTest():
 
 def GetBoardList():
     BoardList = PTTBot.getBoardList()
+    print('\n'.join(BoardList))
     print(f'總共有 {len(BoardList)} 個板名')
 
 if __name__ == '__main__':
@@ -762,7 +779,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
@@ -773,7 +790,7 @@ if __name__ == '__main__':
         # GiveMoney()
         # Mail()
         # HasNewMail()
-        GetBoardList()
+        # GetBoardList()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)

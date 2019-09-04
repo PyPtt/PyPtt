@@ -261,7 +261,8 @@ class PostInfo(object):
         PushList=None,
         ListDate=None,
         DeleteStatus=0,
-        ControlCode=False
+        ControlCode=False,
+        FormatCheck=False,
     ):
         self._Board = ParseParameter(str, Board)
         self._AID = ParseParameter(str, AID)
@@ -276,6 +277,7 @@ class PostInfo(object):
         self._DeleteStatus = DeleteStatus
         self._ListDate = ParseParameter(str, ListDate)
         self._ControlCode = ControlCode
+        self._FormatCheck = FormatCheck
 
     def getBoard(self):
         return self._Board
@@ -315,6 +317,9 @@ class PostInfo(object):
 
     def hasControlCode(self):
         return self._ControlCode
+
+    def isFormatCheck(self):
+        return self._FormatCheck
 
 
 class WaterBallInfo(object):
