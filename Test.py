@@ -723,6 +723,10 @@ def ThreadingTest():
     sys.exit()
 
 
+def GetBoardList():
+    BoardList = PTTBot.getBoardList()
+    print(f'總共有 {len(BoardList)} 個板名')
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -769,6 +773,7 @@ if __name__ == '__main__':
         # GiveMoney()
         # Mail()
         # HasNewMail()
+        GetBoardList()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
