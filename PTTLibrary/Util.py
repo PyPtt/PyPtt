@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import traceback
 
 try:
     import DataType
@@ -52,3 +53,7 @@ def getSubStringList(MainString, TargetA, TargetB):
         MainString = MainString[MainString.find(TargetA) + len(TargetA):]
 
     return result
+
+
+def getCurrentFuncName():
+    return traceback.extract_stack(None, 2)[0][2]

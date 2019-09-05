@@ -317,6 +317,20 @@ class Library(Synchronize.SynchronizeAllMethod):
                 i18n.OldCursor
             )
 
+        self._UnregisteredUser = False
+        if '(T)alk' not in OriScreen:
+            self._UnregisteredUser = True
+        if '(P)lay' not in OriScreen:
+            self._UnregisteredUser = True
+        if '(N)amelist' not in OriScreen:
+            self._UnregisteredUser = True
+
+        if self._UnregisteredUser:
+            Log.log(
+                Log.Level.INFO,
+                i18n.UnregisteredUserCantUseAllAPI
+            )
+
         self._LoginStatus = True
 
     def login(
@@ -384,7 +398,7 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
-        CmdList.append('P')
+        CmdList.append('A')
         CmdList.append(Command.Right)
         CmdList.append(Command.Left)
 
@@ -531,7 +545,7 @@ class Library(Synchronize.SynchronizeAllMethod):
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
-        for _ in range(2):
+        for i in range(2):
 
             NeedContinue = False
             try:
@@ -542,7 +556,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                     SearchType,
                     SearchCondition
                 )
-            except Exceptions.ParseError:
+            except Exceptions.ParseError as e:
+                if i == 1:
+                    raise e
                 NeedContinue = True
 
             if not Post.isFormatCheck():
@@ -1401,7 +1417,7 @@ class Library(Synchronize.SynchronizeAllMethod):
             )
         for index in range(StartIndex, EndIndex + 1):
 
-            for _ in range(2):
+            for i in range(2):
                 NeedContinue = False
                 try:
                     Post = self._getPost(
@@ -1410,7 +1426,9 @@ class Library(Synchronize.SynchronizeAllMethod):
                         SearchType=SearchType,
                         SearchCondition=SearchCondition
                     )
-                except Exceptions.ParseError:
+                except Exceptions.ParseError as e:
+                    if i == 1:
+                        raise e
                     NeedContinue = True
 
                 if not Post.isFormatCheck():
@@ -1927,12 +1945,18 @@ class Library(Synchronize.SynchronizeAllMethod):
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
+        if self._UnregisteredUser:
+            raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
+
         return self._getUser(UserID)
 
     def throwWaterBall(self, TargetID, Content):
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        if self._UnregisteredUser:
+            raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
         if not isinstance(TargetID, str):
             raise TypeError(Log.merge([
@@ -2051,6 +2075,9 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        if self._UnregisteredUser:
+            raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
         if not isinstance(OperateType, int):
             raise TypeError(Log.merge([
@@ -2289,14 +2316,14 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
-
+        
         return self._getCallStatus()
 
     def _getCallStatus(self):
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
-        CmdList.append('P')
+        CmdList.append('A')
         CmdList.append(Command.Right)
         CmdList.append(Command.Left)
 
@@ -2418,6 +2445,9 @@ class Library(Synchronize.SynchronizeAllMethod):
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        if self._UnregisteredUser:
+            raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
         if not isinstance(ID, str):
             raise TypeError(Log.merge([

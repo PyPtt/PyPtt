@@ -763,7 +763,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -780,10 +780,10 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
-        # GetUser()
+        GetUser()
         # ThrowWaterBall()
         # GetWaterBall()
         # WaterBall()

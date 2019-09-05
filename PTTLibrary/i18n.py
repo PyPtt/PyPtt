@@ -700,6 +700,18 @@ def load(inputLanguage):
         'Board List',
     ])
 
+    global UnregisteredUserCantUseAllAPI
+    UnregisteredUserCantUseAllAPI = SpecificLoad(inputLanguage, [
+        '未註冊使用者，將無法使用全部功能',
+        'Unregistered User Can\'t Use All API',
+    ])
+
+    global UnregisteredUserCantUseThisAPI
+    UnregisteredUserCantUseThisAPI = SpecificLoad(inputLanguage, [
+        '未註冊使用者，無法使用此功能',
+        'Unregistered User Can\'t Use This API',
+    ])
+
     # global List
     # List = []
 
