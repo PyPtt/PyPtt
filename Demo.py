@@ -563,6 +563,10 @@ def HasNewMail():
         print('No new mail')
 
 
+def GetBoardList():
+    BoardList = PTTBot.getBoardList()
+    print(f'總共有 {len(BoardList)} 個板名')
+
 if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' Demo')
 
@@ -581,7 +585,7 @@ if __name__ == '__main__':
 
     # GetTime()
     # GetPost()
-    Post_GetNewestIndex_Push()
+    # Post_GetNewestIndex_Push()
     # CrawlBoard()
     # GetUser()
     # ThrowWaterBall()
@@ -589,6 +593,7 @@ if __name__ == '__main__':
     # CallStatus()
     # GiveMoney()
     # Mail()
-    # HasNewMail()
+    HasNewMail()
+    # GetBoardList()
 
     PTTBot.logout()
