@@ -314,6 +314,9 @@ class Library(OneThread.OneThread):
                 i18n.OldCursor
             )
 
+        if self._Cursor not in Screens.Target.InBoardWithCursor:
+            Screens.Target.InBoardWithCursor.append(self._Cursor)
+
         self._UnregisteredUser = False
         if '(T)alk' not in OriScreen:
             self._UnregisteredUser = True
@@ -2313,7 +2316,7 @@ class Library(OneThread.OneThread):
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
-        
+
         return self._getCallStatus()
 
     def _getCallStatus(self):

@@ -312,7 +312,7 @@ def load(inputLanguage):
 
     global Board
     Board = SpecificLoad(inputLanguage, [
-        '看板',
+        '看版',
         'Board',
     ])
 
@@ -648,7 +648,7 @@ def load(inputLanguage):
 
     global NoSuchBoard
     NoSuchBoard = SpecificLoad(inputLanguage, [
-        '無該板面',
+        '無該版面',
         'No Such Board',
     ])
 
@@ -696,7 +696,7 @@ def load(inputLanguage):
 
     global BoardList
     BoardList = SpecificLoad(inputLanguage, [
-        '看板列表',
+        '看版列表',
         'Board List',
     ])
 

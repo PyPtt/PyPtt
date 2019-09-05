@@ -31,8 +31,10 @@ class Target(object):
         '相關主題'
     ]
 
-    InBoardWithCursor = InBoard.copy()
-    InBoardWithCursor.append('>')
+    InBoardWithCursor = [
+        '【',
+        '看板資訊/設定',
+    ]
 
     InPost = [
         '瀏覽',
