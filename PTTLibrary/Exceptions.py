@@ -120,3 +120,11 @@ class ConnectionClosed(Exception):
 
     def __str__(self):
         return self.message
+
+
+class UnregisteredUser(Exception):
+    def __init__(self, ApiName):
+        self.message = i18n.UnregisteredUserCantUseThisAPI + ': ' + ApiName
+
+    def __str__(self):
+        return self.message
