@@ -178,12 +178,12 @@ def PerformanceTest():
 def GetPost():
 
     TestPostList = [
-        # ('Python', 1),
-        # ('NotExitBoard', 1),
-        # ('Python', 7486),
-        # ('Steam', 4444),
-        # ('Baseball', 199787),
-        # ('Stock', 92324),
+        ('Python', 1),
+        ('NotExitBoard', 1),
+        ('Python', 7486),
+        ('Steam', 4444),
+        ('Baseball', 199787),
+        ('Stock', 92324),
     ]
 
     for (Board, Index) in TestPostList:
@@ -271,8 +271,8 @@ def showCondition(Board, SearchType, Condition):
 def GetPostWithCondition():
 
     TestList = [
-        # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
     ]
 
     for (Board, SearchType, Condition) in TestList:
@@ -288,7 +288,7 @@ def GetPostWithCondition():
 
             Post = PTTBot.getPost(
                 Board,
-                PostIndex=2407,
+                PostIndex=Index,
                 SearchType=SearchType,
                 SearchCondition=Condition,
             )
@@ -530,13 +530,18 @@ def GetUser():
 
     except PTT.Exceptions.NoSuchUser:
         print('無此使用者')
+    
+    try:
+        User = PTTBot.getUser('sdjfklsdj')
+    except PTT.Exceptions.NoSuchUser:
+        print('無此使用者')
 
 
 def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        ('Test', 656)
+        ('Test', 482)
     ]
 
     Content = '''
@@ -759,7 +764,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -787,7 +792,7 @@ if __name__ == '__main__':
         # GiveMoney()
         # Mail()
         # HasNewMail()
-        # GetBoardList()
+        GetBoardList()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
