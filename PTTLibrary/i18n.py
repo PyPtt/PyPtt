@@ -712,6 +712,12 @@ def load(inputLanguage):
         'Unregistered User Can\'t Use This API',
     ])
 
+    global MultiThreadOperate
+    MultiThreadOperate = SpecificLoad(inputLanguage, [
+        '請勿使用多核心同時操作一個 PTT Library 物件',
+        'Do not use a multi-thread to operate a PTT Library object',
+    ])
+
     # global List
     # List = []
 

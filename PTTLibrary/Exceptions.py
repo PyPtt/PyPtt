@@ -128,3 +128,11 @@ class UnregisteredUser(Exception):
 
     def __str__(self):
         return self.message
+
+
+class MultiThreadOperated(Exception):
+    def __init__(self):
+        self.message = i18n.MultiThreadOperate
+
+    def __str__(self):
+        return self.message

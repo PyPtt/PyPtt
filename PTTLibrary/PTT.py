@@ -12,9 +12,8 @@ try:
     import Util
     import i18n
     import ConnectCore
-    import ErrorCode
     import Log
-    import Synchronize
+    import OneThread
     import Screens
     import Exceptions
     import Command
@@ -24,9 +23,8 @@ except ModuleNotFoundError:
     from . import Util
     from . import i18n
     from . import ConnectCore
-    from . import ErrorCode
     from . import Log
-    from . import Synchronize
+    from . import OneThread
     from . import Screens
     from . import Exceptions
     from . import Command
@@ -34,7 +32,6 @@ except ModuleNotFoundError:
 
 Version = Config.Version
 
-ErrorCode = ErrorCode.ErrorCode()
 Language = i18n.Language
 ConnectMode = ConnectCore.ConnectMode
 LogLevel = Log.Level
@@ -48,7 +45,7 @@ CallStatus = DataType.CallStatus
 PostDeleteStatus = DataType.PostDeleteStatus
 
 
-class Library(Synchronize.SynchronizeAllMethod):
+class Library(OneThread.OneThread):
     def __init__(
         self,
         Language: int = 0,

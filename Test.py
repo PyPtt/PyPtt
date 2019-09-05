@@ -703,32 +703,29 @@ def HasNewMail():
 
     result = PTTBot.hasNewMail()
     print(result)
-    result = PTTBot.hasNewMail()
-    print(result)
 
-
-PTTBot = None
+ThreadBot = None
 
 
 def ThreadingTest():
-    global PTTBot
-
     def ThreadFunc():
-        global PTTBot
-        PTTBot = PTT.Library(
+        global ThreadBot
+        ThreadBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
-            PTTBot.login(
+            ThreadBot.login(
                 ID,
                 Password,
                 #  KickOtherLogin=True
             )
         except PTT.Exceptions.LoginError:
-            PTTBot.log('登入失敗')
+            ThreadBot.log('登入失敗')
             return
+        
+        ThreadBot.logout()
         print('多線程測試完成')
 
     t = threading.Thread(
@@ -736,17 +733,16 @@ def ThreadingTest():
     )
     t.start()
     t.join()
-    PTTBot.logout()
+    # ThreadBot.log('Hi')
     sys.exit()
 
 
 def GetBoardList():
     BoardList = PTTBot.getBoardList()
-    print('\n'.join(BoardList))
     print(f'總共有 {len(BoardList)} 個板名')
 
 if __name__ == '__main__':
-    os.system('cls')
+    # os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
 
     if len(sys.argv) == 2:
@@ -783,7 +779,7 @@ if __name__ == '__main__':
         # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
-        GetUser()
+        # GetUser()
         # ThrowWaterBall()
         # GetWaterBall()
         # WaterBall()
