@@ -54,7 +54,7 @@ class NoMatchTargetError(Exception):
         self.ScreenQueue = ScreenQueue
 
     def __str__(self):
-        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue[-3:])
+        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
         return Screens + '\n' + i18n.ScreenNoMatchTarget
 
 
@@ -145,10 +145,23 @@ async def WebsocketReceiver(Core, ScreenTimeOut):
     )
 
 
+class ReceiveDataQueue(object):
+    def __init__(self):
+        self._ReceiveDataQueue = []
+
+    def add(self, Screen):
+        self._ReceiveDataQueue.append(Screen)
+        self._ReceiveDataQueue = self._ReceiveDataQueue[-10:]
+
+    def get(self, Last=1):
+        return self._ReceiveDataQueue[-Last:]
+
+
 class API(object):
     def __init__(self, ConnectMode: int):
 
         self._ConnectMode = ConnectMode
+        self._RDQ = ReceiveDataQueue()
 
         Log.showValue(Log.Level.INFO, [
             i18n.ConnectCore,
@@ -255,7 +268,6 @@ class API(object):
         else:
             CurrentScreenTimeout = ScreenTimeout
 
-        self._ReceiveDataQueue = []
         BreakDetectAfterSend = False
         BreakIndex = -1
         isSecret = Secret
@@ -301,6 +313,8 @@ class API(object):
                     raise Exceptions.ConnectionClosed()
                 except websockets.exceptions.ConnectionClosedError:
                     raise Exceptions.ConnectionClosed()
+                except RuntimeError:
+                    raise Exceptions.ConnectionClosed()
             if BreakDetectAfterSend:
                 return BreakIndex
 
@@ -343,7 +357,8 @@ class API(object):
                     if Condition:
                         if len(Screen) > 0:
                             Screens.show(Screen)
-                            self._ReceiveDataQueue.append(Screen)
+                            self._RDQ.add(Screen)
+                            # self._ReceiveDataQueue.append(Screen)
                             Target.raiseException()
 
                         FindTarget = True
@@ -376,7 +391,7 @@ class API(object):
                         if AddRefresh:
                             if not Msg.endswith(Command.Refresh):
                                 Msg = Msg + Command.Refresh
-                        
+
                         isSecret = Target.isSecret()
 
                         if Target.isBreakAfterSend():
@@ -388,13 +403,14 @@ class API(object):
                     break
                 if len(Screen) > 0:
                     Screens.show(Screen)
-                    self._ReceiveDataQueue.append(Screen)
+                    self._RDQ.add(Screen)
+                    # self._ReceiveDataQueue.append(Screen)
 
                 MidTime = time.time()
 
             if not FindTarget:
-                raise NoMatchTargetError(self._ReceiveDataQueue)
-        raise NoMatchTargetError(self._ReceiveDataQueue)
+                raise NoMatchTargetError(self._RDQ)
+        raise NoMatchTargetError(self._RDQ)
 
     def close(self):
         asyncio.get_event_loop().run_until_complete(self._Core.close())
@@ -422,4 +438,4 @@ class API(object):
         return screen
 
     def getScreenQueue(self) -> list:
-        return self._ReceiveDataQueue
+        return self._RDQ.get(1)

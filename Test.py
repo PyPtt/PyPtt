@@ -178,11 +178,11 @@ def PerformanceTest():
 def GetPost():
 
     TestPostList = [
-        ('Python', 1),
-        ('NotExitBoard', 1),
-        ('Python', 7486),
-        ('Steam', 4444),
-        ('Baseball', 199787),
+        # ('Python', 1),
+        # ('NotExitBoard', 1),
+        # ('Python', 7486),
+        # ('Steam', 4444),
+        # ('Baseball', 199787),
         ('Stock', 92324),
     ]
 
@@ -195,6 +195,10 @@ def GetPost():
                 # SearchCondition='公告'
             )
             if Post is None:
+                continue
+            
+            if not Post.isFormatCheck():
+                print('文章格式錯誤')
                 continue
 
             print('Board: ' + Post.getBoard())
@@ -222,10 +226,24 @@ def GetPost():
 
                 if Push.getType() == PTT.PushType.Push:
                     PushCount += 1
+                    Type = '推'
                 if Push.getType() == PTT.PushType.Boo:
                     BooCount += 1
+                    Type = '噓'
                 if Push.getType() == PTT.PushType.Arrow:
                     ArrowCount += 1
+                    Type = '箭頭'
+
+                Author = Push.getAuthor()
+                Content = Push.getContent()
+
+                Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
+                if Push.getIP() is not None:
+                    Buffer += f' 來自 [{Push.getIP()}]'
+                Buffer += f' 時間是 [{Push.getTime()}]'
+                print(Buffer)
+
+                
 
             print(
                 f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow'
@@ -764,7 +782,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -777,7 +795,7 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()

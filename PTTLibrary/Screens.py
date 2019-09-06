@@ -168,15 +168,32 @@ def VT100(OriScreen: str, NoColor: bool = True):
     # result = '\n'.join(
     #     [x.rstrip() for x in result.split('\n')]
     # )
+
     while '=PTT=[H' in result:
         result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
     while '=PTT=[2J' in result:
         result = result[result.find('=PTT=[2J') + len('=PTT=[2J'):]
-    #
+
+    PatternResult = re.compile('=PTT=\[(\d+);(\d+)H$').search(result)
+    LastPosition = None
+    if PatternResult is not None:
+        # print(f'Before [{PatternResult.group(0)}]')
+        LastPosition = PatternResult.group(0)
+
+    # 進入 PTT 時，有時候會連分類看版一起傳過來然後再用主功能表畫面直接繪製畫面
+    # 沒有[H 或者 [2J 導致後面的繪製行數錯誤
+
+    # if '=PTT=[1;3H主功能表' in result:
+    #     result = result[result.find('=PTT=[1;3H主功能表') + len('=PTT=[1;3H主功能表'):]
+
+    if '=PTT=[1;' in result:
+        result = result[result.rfind('=PTT=[1;'):]
+
     # print('-'*50)
     # print(result)
     ResultList = re.findall('=PTT=\[(\d+);(\d+)H', result)
     for (Line, Space) in ResultList:
+        # print(f'>{Line}={Space}<')
         Line = int(Line)
         Space = int(Space)
         CurrentLine = result[
@@ -192,18 +209,18 @@ def VT100(OriScreen: str, NoColor: bool = True):
         CurrentSpace = CurrentSpace[
             CurrentSpace.rfind('\n') + 1:
         ]
-        CurrentSpace = len(CurrentSpace)
-        # if '有的警察可能會說' in result:
-        #     print('='*50)
-        #     print(result)
-        #     print(f'>{CurrentSpace}<')
-        # print(Line, Space)
-        # print(CurrentLine)
-        # print(CurrentSpace)
-        if CurrentLine > Line:
-            continue
 
-        if CurrentLine == Line:
+        CurrentSpace = len(CurrentSpace)
+        if CurrentLine > Line:
+            pass
+            # if LastPosition is None:
+            #     pass
+            # elif LastPosition != f'=PTT=[{Line};{Space}H':
+            #     print(f'CurrentLine [{CurrentLine}]')
+            #     print(f'Line [{Line}]')
+            #     print('Clear !!!')
+            # print(f'=PTT=[{Line};{Space}H')
+        elif CurrentLine == Line:
             if CurrentSpace > Space:
                 result = result.replace(
                     f'=PTT=[{Line};{Space}H',
@@ -229,10 +246,9 @@ def VT100(OriScreen: str, NoColor: bool = True):
         else:
             index = min(index1, index2)
         Target = Target[:index]
-
         result = result.replace(Target, '')
 
-    # print(result)
-    # print('=' * 50)
+    if LastPosition is not None:
+        result = result.replace(LastPosition, '')
 
     return result

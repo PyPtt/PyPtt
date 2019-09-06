@@ -230,12 +230,13 @@ class Library(OneThread.OneThread):
                 i18n.ErrorIDPW,
                 '密碼不對或無此帳號',
                 BreakDetect=True,
-                Exceptions=Exceptions.WrongIDorPassword
+                Exceptions=Exceptions.WrongIDorPassword()
             ),
             ConnectCore.TargetUnit(
                 i18n.LoginTooOften,
                 '登入太頻繁',
                 BreakDetect=True,
+                Exceptions=Exceptions.LoginTooOften()
             ),
             ConnectCore.TargetUnit(
                 i18n.SystemBusyTryLater,
@@ -994,23 +995,28 @@ class Library(OneThread.OneThread):
 
                 PostContent = '\n'.join(PostContent)
                 PostContent = PostContent[
-                    :PostContent.rfind('※')
+                    :PostContent.rfind('--\n※') + len('--')
                 ].strip()
 
                 Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
 
                 LastScreen = LastScreen[
-                    LastScreen.rfind('※'):
+                    LastScreen.rfind('--\n※'):
                 ]
+
+                print('=' * 20)
+                print(LastScreen)
+                print('=' * 20)
 
             if ContentFinish:
                 Lines = LastScreen.split('\n')
                 for line in Lines:
                     line = line.strip()
 
-                    Log.showValue(Log.Level.DEBUG, [
-                        'line'
-                    ],
+                    Log.showValue(
+                        Log.Level.DEBUG, [
+                            'line'
+                        ],
                         line
                     )
 

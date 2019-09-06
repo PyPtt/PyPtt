@@ -1,3 +1,4 @@
+#!/bin/sh
 
 echo PTT Library uploader v 1.0.0
 
