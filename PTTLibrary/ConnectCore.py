@@ -177,20 +177,20 @@ class API(object):
 
         ConnectSuccess = False
 
-        if self._ConnectMode == ConnectMode.Telnet:
-            Log.showValue(Log.Level.INFO, [
-                i18n.Connect,
-                i18n.PTT,
-            ],
-                i18n.ConnectMode_Telnet
-            )
-        else:
-            Log.showValue(Log.Level.INFO, [
-                i18n.Connect,
-                i18n.PTT,
-            ],
-                i18n.ConnectMode_WebSocket
-            )
+        # if self._ConnectMode == ConnectMode.Telnet:
+        #     Log.showValue(Log.Level.INFO, [
+        #         i18n.Connect,
+        #         i18n.PTT,
+        #     ],
+        #         i18n.ConnectMode_Telnet
+        #     )
+        # else:
+        #     Log.showValue(Log.Level.INFO, [
+        #         i18n.Connect,
+        #         i18n.PTT,
+        #     ],
+        #         i18n.ConnectMode_WebSocket
+        #     )
 
         for _ in range(2):
 
@@ -207,9 +207,11 @@ class API(object):
                 #             origin='https://www.ptt.cc'
                 #         )
                 #     )
-
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
+                try:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                except:
+                    pass
                 self._Core = asyncio.get_event_loop().run_until_complete(
                     websockets.connect(
                         'wss://ws.ptt.cc/bbs/',

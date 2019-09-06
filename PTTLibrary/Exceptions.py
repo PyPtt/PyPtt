@@ -136,3 +136,11 @@ class MultiThreadOperated(Exception):
 
     def __str__(self):
         return self.message
+
+
+class WrongIDorPassword(Exception):
+    def __init__(self):
+        self.message = i18n.ErrorIDPW
+
+    def __str__(self):
+        return self.message
