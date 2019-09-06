@@ -229,12 +229,8 @@ class Library(OneThread.OneThread):
             ConnectCore.TargetUnit(
                 i18n.ErrorIDPW,
                 '密碼不對或無此帳號',
-                BreakDetect=True
-            ),
-            ConnectCore.TargetUnit(
-                i18n.ErrorIDPW,
-                '密碼不對或無此帳號',
-                BreakDetect=True
+                BreakDetect=True,
+                Exceptions=Exceptions.WrongIDorPassword
             ),
             ConnectCore.TargetUnit(
                 i18n.LoginTooOften,
@@ -339,7 +335,18 @@ class Library(OneThread.OneThread):
         Password: str,
         KickOtherLogin: bool = False
     ):
-        return self._login(ID, Password, KickOtherLogin=KickOtherLogin)
+        try:
+            return self._login(
+                ID,
+                Password,
+                KickOtherLogin=KickOtherLogin
+            )
+        except Exceptions.LoginError:
+            return self._login(
+                ID,
+                Password,
+                KickOtherLogin=KickOtherLogin
+            )
 
     def logout(self):
 
