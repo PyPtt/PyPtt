@@ -9,12 +9,12 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account2.txt') as AccountFile:
+        with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
     except FileNotFoundError:
-        print('Please note PTT ID and Password in Account2.txt')
+        print('Please note PTT ID and Password in Account.txt')
         print('{"ID":"YourID", "Password":"YourPassword"}')
         sys.exit()
 
@@ -26,34 +26,37 @@ def SendEcho():
     OperateType = PTT.WaterBallOperateType.Clear
     WaterBallList = PTTBot.getWaterBall(OperateType)
 
-    PTTBot.setCallStatus(PTT.CallStatus.Off)
-
-    Content = '\n'.join(
-        [str(x % 10) for x in range(10)]
-    )
-    Content = '哈囉!!這是測試水球!!'
-
-    PTTBot.throwWaterBall('CodingMan', Content)
-
     while True:
-        WaterBallList = PTTBot.getWaterBall(OperateType)
-        if WaterBallList is None:
+        try:
+            PTTBot.throwWaterBall('DeepLearning', 'Hey')
+        except PTT.Exceptions.UserOffline:
             time.sleep(1)
             continue
+        break
 
-        End = False
+    while True:
+        PTTBot.setCallStatus(PTT.CallStatus.Off)
+        time.sleep(1)
+        WaterBallList = PTTBot.getWaterBall(OperateType)
+        if WaterBallList is None:
+            continue
+
         for WaterBall in WaterBallList:
             if not WaterBall.getType() == PTT.WaterBallType.Catch:
                 continue
-            End = True
 
             Target = WaterBall.getTarget()
             Content = WaterBall.getContent()
 
             print(f'收到來自 {Target} 的水球 [{Content}]')
 
-        if End:
-            break
+            while True:
+                try:
+                    PTTBot.throwWaterBall(Target, 'Hey')
+                except PTT.Exceptions.UserOffline:
+                    time.sleep(1)
+                    continue
+                break
 
 
 if __name__ == '__main__':
@@ -64,11 +67,7 @@ if __name__ == '__main__':
 
     try:
 
-        PTTBot = PTT.Library(
-            ConnectMode=PTT.ConnectMode.WebSocket,
-            # LogLevel=PTT.LogLevel.TRACE,
-            # LogLevel=PTT.LogLevel.DEBUG,
-        )
+        PTTBot = PTT.Library()
         try:
             PTTBot.login(
                 ID,
