@@ -183,7 +183,7 @@ def GetPost():
         # ('Python', 7486),
         # ('Steam', 4444),
         # ('Baseball', 199787),
-        ('Stock', 92324),
+        # ('Stock', 92324),
     ]
 
     for (Board, Index) in TestPostList:
@@ -255,18 +255,18 @@ def GetPost():
 
 
 TestList = [
-    # ('Wanted', PTT.PostSearchType.Keyword, '[公告]'),
-    # ('Wanted', PTT.PostSearchType.Author, 'gogin'),
-    # ('Wanted', PTT.PostSearchType.Push, '10'),
-    # ('Wanted', PTT.PostSearchType.Mark, 'm'),
-    # ('Wanted', PTT.PostSearchType.Money, '5'),
-    # ('Gossiping', PTT.PostSearchType.Keyword, '[公告]'),
-    # ('Gossiping', PTT.PostSearchType.Author, 'ReDmango'),
-    # ('Gossiping', PTT.PostSearchType.Push, '10'),
-    # ('Gossiping', PTT.PostSearchType.Mark, 'm'),
-    # ('Gossiping', PTT.PostSearchType.Money, '5'),
+    ('Wanted', PTT.PostSearchType.Keyword, '[公告]'),
+    ('Wanted', PTT.PostSearchType.Author, 'gogin'),
+    ('Wanted', PTT.PostSearchType.Push, '10'),
+    ('Wanted', PTT.PostSearchType.Mark, 'm'),
+    ('Wanted', PTT.PostSearchType.Money, '5'),
+    ('Gossiping', PTT.PostSearchType.Keyword, '[公告]'),
+    ('Gossiping', PTT.PostSearchType.Author, 'ReDmango'),
+    ('Gossiping', PTT.PostSearchType.Push, '10'),
+    ('Gossiping', PTT.PostSearchType.Mark, 'm'),
+    ('Gossiping', PTT.PostSearchType.Money, '5'),
 
-    # ('Gossiping', PTT.PostSearchType.Push, '-100'),
+    ('Gossiping', PTT.PostSearchType.Push, '-100'),
     ('Gossiping', PTT.PostSearchType.Push, '150'),
 ]
 
@@ -352,17 +352,10 @@ def GetPostWithCondition():
 
 def Post():
 
-    # PTTBot.post(
-    #     'Test',
-    #     'PTT Library 自動測試',
-    #     PTT.Command.ControlCode + 's',
-    #     1,
-    #     0
-    # )
-
     Content = [
-        'PTT Library 貼文測試，如有打擾請告知。',
-        '程式碼: https://tinyurl.com/y2wuh8ck'
+        '此為 PTT Library 貼文測試內容，如有打擾請告知。',
+        '程式碼: https://tinyurl.com/y2wuh8ck',
+        '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual'
     ]
 
     Content = '\r\n\r\n'.join(Content)
@@ -381,11 +374,13 @@ def GetNewestIndex():
     TestBoardList = [
         'Wanted',
         'Gossiping',
-        'Test'
+        'Test',
+        'Stock',
+        'movie'
     ]
 
     for Board in TestBoardList:
-        for _ in range(1000):
+        for _ in range(5):
             Index = PTTBot.getNewestIndex(PTT.IndexType.Board, Board=Board)
             print(f'{Board} 最新文章編號 {Index}')
 
@@ -417,7 +412,7 @@ def crawlHandler(Post):
     detectNone('Money', Post.getMoney())
     detectNone('WebUrl', Post.getWebUrl())
 
-    print('=' * 20)
+    # print('=' * 20)
     # detectNone('IP', Post.getIP())
     # detectNone('ListDate', Post.getListDate())
 
@@ -427,7 +422,8 @@ def CrawlBoard():
     TestBoardList = [
         'Wanted',
         'Gossiping',
-        'Stock'
+        'Stock',
+        'movie',
     ]
 
     TestRange = 1000
@@ -559,7 +555,7 @@ def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        ('Test', 482)
+        ('Test', 560)
     ]
 
     Content = '''
@@ -575,10 +571,10 @@ def ThrowWaterBall():
 
     TagetID = 'DeepLearning'
 
-    # TestWaterBall = [str(x % 10) for x in range(10)]
-    # TestWaterBall = TestWaterBall * 3
-    # TestWaterBall = '\n'.join(TestWaterBall)
-    TestWaterBall = '水球測試 :D'
+    TestWaterBall = [str(x % 10) for x in range(10)]
+    TestWaterBall = TestWaterBall * 3
+    TestWaterBall = '\n'.join(TestWaterBall)
+    # TestWaterBall = '水球測試 :D'
 
     PTTBot.throwWaterBall(TagetID, TestWaterBall)
     time.sleep(3)
@@ -588,7 +584,7 @@ def GetWaterBall():
 
     OperateType = PTT.WaterBallOperateType.DoNothing
     # OperateType = PTT.WaterBallOperateType.Mail
-    # OperateType = PTT.WaterBallOperateType.Clear
+    # OperateType = PT4T.WaterBallOperateType.Clear
 
     WaterBallList = PTTBot.getWaterBall(OperateType)
 
@@ -762,10 +758,11 @@ def ThreadingTest():
 
 def GetBoardList():
     BoardList = PTTBot.getBoardList()
+    print(' '.join(BoardList))
     print(f'總共有 {len(BoardList)} 個板名')
 
 if __name__ == '__main__':
-    # os.system('cls')
+    os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
 
     if len(sys.argv) == 2:
@@ -782,7 +779,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             ConnectMode=PTT.ConnectMode.WebSocket,
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -795,7 +792,7 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        GetPost()
+        # GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()

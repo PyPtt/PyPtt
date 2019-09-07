@@ -718,6 +718,12 @@ def load(inputLanguage):
         'Do not use a multi-thread to operate a PTT Library object',
     ])
 
+    global HasNewMailGotoMainMenu
+    HasNewMailGotoMainMenu = SpecificLoad(inputLanguage, [
+        '有新信，回到主選單',
+        'Have a new letter, return to the main menu',
+    ])
+
     # global List
     # List = []
 
