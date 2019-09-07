@@ -9,12 +9,12 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account.txt') as AccountFile:
+        with open('Account2.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
     except FileNotFoundError:
-        print('Please note PTT ID and Password in Account.txt')
+        print('Please note PTT ID and Password in Account2.txt')
         print('{"ID":"YourID", "Password":"YourPassword"}')
         sys.exit()
 
@@ -26,14 +26,20 @@ def Echo():
     OperateType = PTT.WaterBallOperateType.Clear
     WaterBallList = PTTBot.getWaterBall(OperateType)
 
-    PTTBot.setCallStatus(PTT.CallStatus.Off)
-
     while True:
+        PTTBot.setCallStatus(PTT.CallStatus.Off)
+        time.sleep(1)
         WaterBallList = PTTBot.getWaterBall(OperateType)
         if WaterBallList is None:
-            time.sleep(1)
             continue
         for WaterBall in WaterBallList:
+            # Target = WaterBall.getTarget()
+            # Content = WaterBall.getContent()
+
+            # print(f'來自 {Target} 的水球 [{Content}]')
+
+            # print('=' * 30)
+
             if not WaterBall.getType() == PTT.WaterBallType.Catch:
                 continue
 
@@ -44,10 +50,31 @@ def Echo():
 
             while True:
                 try:
-                    PTTBot.throwWaterBall(Target, 'Echo: ' + Content)
+                    PTTBot.throwWaterBall(Target, 'I heard')
                 except PTT.Exceptions.UserOffline:
+                    time.sleep(1)
                     continue
                 break
+
+
+def listWaterBall():
+    OperateType = PTT.WaterBallOperateType.Clear
+    WaterBallList = PTTBot.getWaterBall(OperateType)
+    OperateType = PTT.WaterBallOperateType.DoNothing
+    while True:
+        PTTBot.setCallStatus(PTT.CallStatus.Off)
+        time.sleep(1)
+        WaterBallList = PTTBot.getWaterBall(OperateType)
+        if WaterBallList is None:
+            continue
+        for WaterBall in WaterBallList:
+
+            Target = WaterBall.getTarget()
+            Content = WaterBall.getContent()
+
+            print(f'收到來自 {Target} 的水球 [{Content}]')
+
+        print('=' * 30)
 
 
 if __name__ == '__main__':
@@ -59,9 +86,7 @@ if __name__ == '__main__':
     try:
 
         PTTBot = PTT.Library(
-            ConnectMode=PTT.ConnectMode.WebSocket,
             # LogLevel=PTT.LogLevel.TRACE,
-            # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
             PTTBot.login(
@@ -74,6 +99,8 @@ if __name__ == '__main__':
             sys.exit()
 
         Echo()
+        # listWaterBall()
+
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
