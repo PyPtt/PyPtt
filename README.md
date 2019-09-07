@@ -21,7 +21,7 @@
 [![](http://img.youtube.com/vi/ng48ITuePlg/0.jpg)](http://www.youtube.com/watch?v=ng48ITuePlg "")
 
 ## 版本
-#### 0.8.14 beta
+#### 0.8.15 beta
 
 ## 取得
 #### 安裝
