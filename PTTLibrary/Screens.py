@@ -183,11 +183,14 @@ def VT100(OriScreen: str, NoColor: bool = True):
     # 進入 PTT 時，有時候會連分類看版一起傳過來然後再用主功能表畫面直接繪製畫面
     # 沒有[H 或者 [2J 導致後面的繪製行數錯誤
 
-    # if '=PTT=[1;3H主功能表' in result:
-    #     result = result[result.find('=PTT=[1;3H主功能表') + len('=PTT=[1;3H主功能表'):]
+    if '=PTT=[1;3H主功能表' in result:
+        result = result[result.find('=PTT=[1;3H主功能表') + len('=PTT=[1;3H主功能表'):]
 
-    if '=PTT=[1;' in result:
-        result = result[result.rfind('=PTT=[1;'):]
+    # if '=PTT=[1;' in result:
+    #     if LastPosition is None:
+    #         result = result[result.rfind('=PTT=[1;'):]
+    #     elif not LastPosition.startswith('=PTT=[1;'):
+    #         result = result[result.rfind('=PTT=[1;'):]
 
     # print('-'*50)
     # print(result)

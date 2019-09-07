@@ -268,10 +268,14 @@ class Library(OneThread.OneThread):
                 Response=KickOtherLoginResponse,
             ),
             ConnectCore.TargetUnit(
+                i18n.HasNewMailGotoMainMenu,
+                '你有新信件',
+                Response=Command.GoMainMenu,
+            ),
+            ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
                 '任意鍵',
                 Response='q',
-                Refresh=False
             ),
             ConnectCore.TargetUnit(
                 i18n.SigningUpdate,
@@ -1004,9 +1008,9 @@ class Library(OneThread.OneThread):
                     LastScreen.rfind('--\n※'):
                 ]
 
-                print('=' * 20)
-                print(LastScreen)
-                print('=' * 20)
+                # print('=' * 20)
+                # print(LastScreen)
+                # print('=' * 20)
 
             if ContentFinish:
                 Lines = LastScreen.split('\n')
@@ -2040,6 +2044,12 @@ class Library(OneThread.OneThread):
                     '您的呼叫器目前設定為關閉',
                     Response='y' + Command.Enter,
                 ),
+                # 對方已落跑了
+                ConnectCore.TargetUnit(
+                    i18n.SetCallStatus,
+                    '◆ 糟糕! 對方已落跑了',
+                    Exceptions=Exceptions.UserOffline(TargetID)
+                ),
                 ConnectCore.TargetUnit(
                     [
                         i18n.Throw,
@@ -2180,7 +2190,7 @@ class Library(OneThread.OneThread):
                 OriScreen
             )
 
-            LastLine = ScreenTemp.split('\n')[-1]
+            LastLine = ScreenTemp.split('\n')[-1].strip()
             Log.showValue(
                 Log.Level.DEBUG,
                 'LastLine',
@@ -2188,15 +2198,18 @@ class Library(OneThread.OneThread):
             )
             if LastLine.startswith('★'):
                 continue
+
             ScreenTemp = '\n'.join(ScreenTemp.split('\n')[:-1])
 
+            # 整理水球換行格式
             ScreenTemp = ScreenTemp.replace(
                 ']\n', ']==PTTWaterBallNewLine==')
             ScreenTemp = ScreenTemp.replace('\n', '')
             ScreenTemp = ScreenTemp.replace(
                 ']==PTTWaterBallNewLine==', ']\n')
 
-            # print(ScreenTemp)
+            # print('=' * 50)
+            # print(LastLine)
             # print('=' * 50)
 
             Lines = ScreenTemp.split('\n')
@@ -2386,6 +2399,14 @@ class Library(OneThread.OneThread):
                 ],
                 '[呼叫器]關閉',
                 BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.GetCallStatus,
+                ],
+                '★',
+                Response=Cmd,
                 LogLevel=Log.Level.DEBUG
             ),
         ]
@@ -2655,7 +2676,8 @@ class Library(OneThread.OneThread):
             ConnectCore.TargetUnit(
                 i18n.SaveFile,
                 '確定要儲存檔案嗎',
-                Response='s' + Command.Enter
+                Response='s' + Command.Enter,
+                # Refresh=False,
             ),
             ConnectCore.TargetUnit(
                 i18n.SelfSaveDraft,
