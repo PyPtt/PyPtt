@@ -13,12 +13,11 @@
 #### 支援多國語系，繁體中文與英文
 #### 歡迎發起 pull request，提交你開發的 API
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
-#### 使用手冊: [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
 #### 原始碼
 #### github: https://github.com/Truth0906/PTTLibrary
 #### Pypi: https://pypi.org/project/PTTLibrary/
 
-### 介紹影片
+### 介紹影片 (感謝 NaeNPIANO 介紹)
 [![](http://img.youtube.com/vi/ng48ITuePlg/0.jpg)](http://www.youtube.com/watch?v=ng48ITuePlg "")
 
 ## 版本
@@ -31,35 +30,11 @@
 pip install PTTLibrary
 ```
 
-#### 更新
-#### [更新前注意] 0.8 之後不支援 0.7 之前的版本
-```
-pip install PTTLibrary --upgrade
-```
-
-## 基本使用
-```python
-from PTTLibrary import PTT
-
-PTTBot = PTT.Library()
-try:
-    PTTBot.login(ID, Password)
-except PTT.Exceptions.LoginError:
-    PTTBot.log('登入失敗')
-    sys.exit()
-PTTBot.log('登入成功')
-
-    # Do some magic
-
-PTTBot.logout()
-```
-
 ## 詳細說明
-#### 請參考 [Demo.py](https://github.com/Truth0906/PTTLibrary/blob/1.0/Demo.py) 有 API 的詳細範例與參數說明
-#### 手冊: [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
+#### [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual) 有 API 的詳細範例與參數說明
 
 ## 回報問題
-#### 1. 請參考 [Demo.py](https://github.com/Truth0906/PTTLibrary/blob/1.0/Demo.py) 將 Log level 調整成 TRACE 後並截圖
+#### 1. 請參考 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual) 將 Log level 調整成 TRACE 後並截圖
 #### 2. 可以開 [issue](https://github.com/Truth0906/PTTLibrary/issues/new) 也可以直接在 gitter 上問我 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
 
 ## 需求
@@ -79,3 +54,7 @@ PTTBot.logout()
 ####
 #### XMR
 #### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
+
+## 贊助清單
+
+#### 尚無贊助
