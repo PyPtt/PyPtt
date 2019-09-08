@@ -653,42 +653,48 @@ class Library(OneThread.OneThread):
 
         PostAuthor = None
         PostTitle = None
-        if index == 1 or index < 0:
+        if index < 0 or index == 1:
             # 文章被刪除
             Log.log(Log.Level.DEBUG, i18n.PostDeled)
             PostDelStatus = 0
 
-            for line in OriScreen.split('\n'):
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    'Deleted post screen',
-                    line
-                )
-                if line.startswith(self._Cursor):
+            Log.showValue(
+                Log.Level.DEBUG,
+                'OriScreen',
+                OriScreen
+            )
 
-                    pattern = re.compile('[\d]+\/[\d]+')
-                    PatternResult = pattern.search(line)
-                    if PatternResult is None:
-                        ListDate = None
-                    else:
-                        ListDate = PatternResult.group(0)
-                        ListDate = ListDate[-5:]
+            CursorLine = [line for line in OriScreen.split(
+                '\n') if line.startswith(self._Cursor)][0]
 
-                    pattern = re.compile('\[[\w]+\]')
-                    PatternResult = pattern.search(line)
-                    if PatternResult is not None:
-                        PostDelStatus = DataType.PostDeleteStatus.ByAuthor
-                    else:
-                        pattern = re.compile('<[\w]+>')
-                        PatternResult = pattern.search(line)
-                        PostDelStatus = DataType.PostDeleteStatus.ByModerator
+            Log.showValue(
+                Log.Level.DEBUG,
+                'CursorLine',
+                CursorLine
+            )
 
-                    try:
-                        PostAuthor = PatternResult.group(0)[1:-1]
-                    except:
-                        print(f'=>{line}<')
-                        raise Exceptions.ParseError(line)
-                    break
+            pattern = re.compile('[\d]+\/[\d]+')
+            PatternResult = pattern.search(CursorLine)
+            if PatternResult is None:
+                ListDate = None
+            else:
+                ListDate = PatternResult.group(0)
+                ListDate = ListDate[-5:]
+
+            pattern = re.compile('\[[\w]+\]')
+            PatternResult = pattern.search(CursorLine)
+            if PatternResult is not None:
+                PostDelStatus = DataType.PostDeleteStatus.ByAuthor
+            else:
+                pattern = re.compile('<[\w]+>')
+                PatternResult = pattern.search(CursorLine)
+                PostDelStatus = DataType.PostDeleteStatus.ByModerator
+
+            try:
+                PostAuthor = PatternResult.group(0)[1:-1]
+            except:
+                print(f'=>{CursorLine}<')
+                raise Exceptions.ParseError(CursorLine)
 
             Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
             Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
@@ -1321,12 +1327,20 @@ class Library(OneThread.OneThread):
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        return self._getNewestIndex(
-            IndexType,
-            Board,
-            SearchType,
-            SearchCondition
-        )
+        try:
+            return self._getNewestIndex(
+                IndexType,
+                Board,
+                SearchType,
+                SearchCondition
+            )
+        except Exceptions.UnknowError:
+            return self._getNewestIndex(
+                IndexType,
+                Board,
+                SearchType,
+                SearchCondition
+            )
 
     def crawlBoard(
         self,

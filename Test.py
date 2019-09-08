@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account2.txt') as AccountFile:
+        with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -196,7 +196,7 @@ def GetPost():
             )
             if Post is None:
                 continue
-            
+
             if not Post.isFormatCheck():
                 print('文章格式錯誤')
                 continue
@@ -243,8 +243,6 @@ def GetPost():
                 Buffer += f' 時間是 [{Push.getTime()}]'
                 print(Buffer)
 
-                
-
             print(
                 f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow'
             )
@@ -289,9 +287,12 @@ def showCondition(Board, SearchType, Condition):
 def GetPostWithCondition():
 
     TestList = [
-        ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        # ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)')
     ]
+
+    TestRange = 100
 
     for (Board, SearchType, Condition) in TestList:
         try:
@@ -304,22 +305,29 @@ def GetPostWithCondition():
             )
             print(f'{Board} 最新文章編號 {Index}')
 
-            Post = PTTBot.getPost(
-                Board,
-                PostIndex=Index,
-                SearchType=SearchType,
-                SearchCondition=Condition,
-            )
+            for i in range(TestRange):
+                Post = PTTBot.getPost(
+                    Board,
+                    PostIndex=Index - i,
+                    SearchType=SearchType,
+                    SearchCondition=Condition,
+                )
 
-            print('列表日期:')
-            print(Post.getListDate())
-            print('作者:')
-            print(Post.getAuthor())
-            print('標題:')
-            print(Post.getTitle())
-            print('內文:')
-            print(Post.getContent())
-            print('=' * 50)
+                print('列表日期:')
+                print(Post.getListDate())
+                print('作者:')
+                print(Post.getAuthor())
+                print('標題:')
+                print(Post.getTitle())
+
+                if Post.getDeleteStatus() == PTT.PostDeleteStatus.NotDeleted:
+                    print('內文:')
+                    print(Post.getContent())
+                elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+                    print('文章被作者刪除')
+                elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+                    print('文章被版主刪除')
+                print('=' * 50)
 
         except Exception as e:
 
@@ -397,9 +405,14 @@ def detectNone(Name, Obj, Enable=True):
 def crawlHandler(Post):
 
     if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
+        if Post.getDeleteStatus() != PTT.PostDeleteStatus.ByModerator:
+            print(f'[版主刪除][{Post.getAuthor()}][{Post.getTitle()}]')
+        elif Post.getDeleteStatus() != PTT.PostDeleteStatus.ByAuthor:
+            print(f'[作者刪除][{Post.getAuthor()}][{Post.getTitle()}]')
         return
 
     if not Post.isFormatCheck():
+        print('[不合格式]')
         return
 
     print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
@@ -411,12 +424,8 @@ def crawlHandler(Post):
     detectNone('Content', Post.getContent())
     detectNone('Money', Post.getMoney())
     detectNone('WebUrl', Post.getWebUrl())
-
-    # print('=' * 20)
-    # detectNone('IP', Post.getIP())
-    # detectNone('ListDate', Post.getListDate())
-
-    time.sleep(1)
+    detectNone('IP', Post.getIP())
+    detectNone('ListDate', Post.getListDate())
 
 
 def CrawlBoard():
@@ -424,11 +433,11 @@ def CrawlBoard():
     TestBoardList = [
         'Wanted',
         'Gossiping',
-        'Stock',
-        'movie',
+        # 'Stock',
+        # 'movie',
     ]
 
-    TestRange = 1000
+    TestRange = 500
     TestRound = 1
 
     for _ in range(TestRound):
@@ -450,7 +459,8 @@ def CrawlBoard():
             )
 
             if len(ErrorPostList) > 0:
-                print('Error Post: \n' + '\n'.join(str(x) for x in ErrorPostList))
+                print('Error Post: \n' + '\n'.join(str(x)
+                                                   for x in ErrorPostList))
             else:
                 print('沒有偵測到錯誤文章')
 
@@ -547,7 +557,7 @@ def GetUser():
 
     except PTT.Exceptions.NoSuchUser:
         print('無此使用者')
-    
+
     try:
         User = PTTBot.getUser('sdjfklsdj')
     except PTT.Exceptions.NoSuchUser:
@@ -726,6 +736,7 @@ def HasNewMail():
     result = PTTBot.hasNewMail()
     print(result)
 
+
 ThreadBot = None
 
 
@@ -745,7 +756,7 @@ def ThreadingTest():
         except PTT.Exceptions.LoginError:
             ThreadBot.log('登入失敗')
             return
-        
+
         ThreadBot.logout()
         print('多線程測試完成')
 
@@ -762,6 +773,7 @@ def GetBoardList():
     BoardList = PTTBot.getBoardList()
     print(' '.join(BoardList))
     print(f'總共有 {len(BoardList)} 個板名')
+
 
 if __name__ == '__main__':
     os.system('cls')
@@ -797,8 +809,8 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
-        CrawlBoardWithCondition()
+        CrawlBoard()
+        # CrawlBoardWithCondition()
         # Push()
         # GetUser()
         # ThrowWaterBall()
