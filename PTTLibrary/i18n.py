@@ -724,6 +724,14 @@ def load(inputLanguage):
         'Have a new letter, return to the main menu',
     ])
 
+    global UseTooManyResources
+    UseTooManyResources = SpecificLoad(inputLanguage, [
+        '耗用太多資源',
+        'Use too many resources of PTT',
+    ])
+
+    # 
+
     # global List
     # List = []
 

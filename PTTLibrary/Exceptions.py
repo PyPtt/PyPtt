@@ -152,3 +152,11 @@ class LoginTooOften(Exception):
 
     def __str__(self):
         return self.message
+
+
+class UseTooManyResources(Exception):
+    def __init__(self):
+        self.message = i18n.UseTooManyResources
+
+    def __str__(self):
+        return self.message

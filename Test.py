@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account.txt') as AccountFile:
+        with open('Account2.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -398,7 +398,7 @@ def crawlHandler(Post):
 
     if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
         return
-    
+
     if not Post.isFormatCheck():
         return
 
@@ -415,6 +415,8 @@ def crawlHandler(Post):
     # print('=' * 20)
     # detectNone('IP', Post.getIP())
     # detectNone('ListDate', Post.getListDate())
+
+    time.sleep(1)
 
 
 def CrawlBoard():
@@ -492,10 +494,11 @@ def CrawlBoardWithCondition():
     #         print(e)
 
     TestList = [
-        ('Stock', PTT.PostSearchType.Keyword, '盤中閒聊'),
+        # ('Stock', PTT.PostSearchType.Keyword, '盤中閒聊'),
+        ('Baseball', PTT.PostSearchType.Push, '20')
     ]
 
-    TestRange = 10
+    TestRange = 10000
 
     for (Board, SearchType, Condition) in TestList:
         showCondition(Board, SearchType, Condition)
@@ -730,7 +733,6 @@ def ThreadingTest():
     def ThreadFunc():
         global ThreadBot
         ThreadBot = PTT.Library(
-            ConnectMode=PTT.ConnectMode.WebSocket,
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
@@ -778,7 +780,6 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            ConnectMode=PTT.ConnectMode.WebSocket,
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
@@ -797,7 +798,7 @@ if __name__ == '__main__':
         # Post()
         # GetNewestIndex()
         # CrawlBoard()
-        # CrawlBoardWithCondition()
+        CrawlBoardWithCondition()
         # Push()
         # GetUser()
         # ThrowWaterBall()
