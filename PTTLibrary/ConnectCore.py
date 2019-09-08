@@ -162,6 +162,13 @@ class API(object):
 
         self._ConnectMode = ConnectMode
         self._RDQ = ReceiveDataQueue()
+        self._UseTooManyResources = TargetUnit(
+            [
+                i18n.UseTooManyResources,
+            ],
+            Screens.Target.UseTooManyResources,
+            Exceptions=Exceptions.UseTooManyResources
+        )
 
         Log.showValue(Log.Level.INFO, [
             i18n.ConnectCore,
@@ -263,6 +270,9 @@ class API(object):
         if not all(isinstance(T, TargetUnit) for T in TargetList):
             raise ValueError('Item of TargetList must be TargetUnit')
 
+        if self._UseTooManyResources not in TargetList:
+            TargetList.append(self._UseTooManyResources)
+
         if ScreenTimeout == 0:
             CurrentScreenTimeout = Config.ScreenTimeOut
         else:
@@ -340,6 +350,8 @@ class API(object):
                         ReceiveDataTemp = _WSRecvData
 
                     except websockets.exceptions.ConnectionClosed:
+                        raise Exceptions.ConnectionClosed()
+                    except websockets.exceptions.ConnectionClosedOK:
                         raise Exceptions.ConnectionClosed()
                     except asyncio.TimeoutError:
                         return -1

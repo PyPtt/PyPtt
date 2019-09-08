@@ -659,6 +659,11 @@ class Library(OneThread.OneThread):
             PostDelStatus = 0
 
             for line in OriScreen.split('\n'):
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'Deleted post screen',
+                    line
+                )
                 if line.startswith(self._Cursor):
 
                     pattern = re.compile('[\d]+\/[\d]+')

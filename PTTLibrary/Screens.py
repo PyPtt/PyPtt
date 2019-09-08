@@ -114,6 +114,10 @@ class Target(object):
         '已讀/未讀',
     ]
 
+    UseTooManyResources = [
+        '程式耗用過多計算資源'
+    ]
+
 
 def show(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.TRACE:
