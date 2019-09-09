@@ -1049,6 +1049,27 @@ class Library(OneThread.OneThread):
                     #     line
                     # )
                     if line.startswith('※ 編輯'):
+                        if IP is None:
+                            Log.log(
+                                Log.Level.DEBUG,
+                                'Edited Post Formate check fail'
+                            )
+                            Post = DataType.PostInfo(
+                                Board=Board,
+                                AID=PostAID,
+                                Author=PostAuthor,
+                                Date=PostDate,
+                                Title=PostTitle,
+                                WebUrl=PostWeb,
+                                Money=PostMoney,
+                                Content=PostContent,
+                                IP=IP,
+                                PushList=PushList,
+                                ListDate=ListDate,
+                                ControlCode=HasControlCode,
+                                FormatCheck=False,
+                            )
+                            return Post
                         if IP in line:
                             continue
                         PatternResult = NewIPPattern_New.search(line)
