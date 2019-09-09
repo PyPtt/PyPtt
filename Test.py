@@ -184,6 +184,7 @@ def GetPost():
         # ('Steam', 4444),
         # ('Baseball', 199787),
         # ('Stock', 92324),
+        ('Gossiping', 778570)
     ]
 
     for (Board, Index) in TestPostList:
@@ -805,7 +806,7 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
