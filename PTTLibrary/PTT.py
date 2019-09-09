@@ -222,6 +222,11 @@ class Library(OneThread.OneThread):
 
         TargetList = [
             ConnectCore.TargetUnit(
+                i18n.HasNewMailGotoMainMenu,
+                '你有新信件',
+                Response=Command.GoMainMenu,
+            ),
+            ConnectCore.TargetUnit(
                 i18n.LoginSuccess,
                 Screens.Target.MainMenu,
                 BreakDetect=True
@@ -268,11 +273,6 @@ class Library(OneThread.OneThread):
                 Response=KickOtherLoginResponse,
             ),
             ConnectCore.TargetUnit(
-                i18n.HasNewMailGotoMainMenu,
-                '你有新信件',
-                Response=Command.GoMainMenu,
-            ),
-            ConnectCore.TargetUnit(
                 i18n.AnyKeyContinue,
                 '任意鍵',
                 Response='q',
@@ -298,7 +298,7 @@ class Library(OneThread.OneThread):
             Refresh=False,
             Secret=True
         )
-        if index != 0:
+        if index != 1:
             raise Exceptions.LoginError()
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
