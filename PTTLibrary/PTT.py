@@ -389,9 +389,12 @@ class Library(OneThread.OneThread):
 
         try:
             self._ConnectCore.send(Cmd, TargetList)
+            self._ConnectCore.close()
         except Exceptions.ConnectionClosed:
             pass
-        self._ConnectCore.close()
+        except RuntimeError:
+            pass
+
         self._LoginStatus = False
 
         Log.showValue(
@@ -569,6 +572,10 @@ class Library(OneThread.OneThread):
                     SearchCondition
                 )
             except Exceptions.ParseError as e:
+                if i == 1:
+                    raise e
+                NeedContinue = True
+            except Exceptions.UnknowError as e:
                 if i == 1:
                     raise e
                 NeedContinue = True
@@ -1463,6 +1470,10 @@ class Library(OneThread.OneThread):
                         SearchCondition=SearchCondition
                     )
                 except Exceptions.ParseError as e:
+                    if i == 1:
+                        raise e
+                    NeedContinue = True
+                except Exceptions.UnknowError as e:
                     if i == 1:
                         raise e
                     NeedContinue = True
