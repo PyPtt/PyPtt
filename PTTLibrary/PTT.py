@@ -71,8 +71,6 @@ class Library(OneThread.OneThread):
         print(f'PTT Library v {Version}')
         print('Developed by PTT CodingMan')
 
-        raise ValueError()
-
         self._LoginStatus = False
 
         Config.load()
@@ -746,19 +744,16 @@ class Library(OneThread.OneThread):
                 PostAuthor = PostAuthor[:PostAuthor.find('轉')].strip()
             PostAuthor = PostAuthor[PostAuthor.rfind(' '):].strip()
 
-            AIDLine = [line for line in OriScreen.split(
-                '\n') if line.startswith('│ 文章代碼(AID)')][0]
-
-            PostTitle = AIDLine
-            # [ptt.cc]
-            PostTitle = PostTitle[PostTitle.find(
-                '[ptt.cc]') + len('[ptt.cc]'):].strip()
-            PostTitle = PostTitle[:-1].strip()
+            PostTitle = CursorLine
+            PostTitle = PostTitle[PostTitle.find('□') + 1:].strip()
 
             OriScreenTemp = OriScreen[OriScreen.find('┌──────────'):]
             OriScreenTemp = OriScreenTemp[:OriScreenTemp.find(
                 '└─────────────')
             ]
+
+            AIDLine = [line for line in OriScreen.split(
+                '\n') if line.startswith('│ 文章代碼(AID)')][0]
 
             pattern = re.compile('#[\w|-]+')
             PatternResult = pattern.search(AIDLine)
@@ -1399,7 +1394,8 @@ class Library(OneThread.OneThread):
         StartIndex: int = 0,
         EndIndex: int = 0,
         SearchType: int = 0,
-        SearchCondition: str = None
+        SearchCondition: str = None,
+        Query: bool = False
     ):
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1510,7 +1506,8 @@ class Library(OneThread.OneThread):
                         Board,
                         PostIndex=index,
                         SearchType=SearchType,
-                        SearchCondition=SearchCondition
+                        SearchCondition=SearchCondition,
+                        Query=Query
                     )
                 except Exceptions.ParseError as e:
                     if i == 1:
