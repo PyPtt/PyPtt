@@ -187,15 +187,19 @@ def GetPost():
         ('Gossiping', 778570)
     ]
 
+    Query = True
+
     for (Board, Index) in TestPostList:
         try:
             Post = PTTBot.getPost(
                 Board,
                 PostIndex=Index,
                 # SearchType=PTT.PostSearchType.Keyword,
-                # SearchCondition='公告'
+                # SearchCondition='公告',
+                Query=True,
             )
             if Post is None:
+                print('Empty')
                 continue
 
             if not Post.isFormatCheck():
@@ -205,48 +209,49 @@ def GetPost():
             print('Board: ' + Post.getBoard())
             print('AID: ' + Post.getAID())
             print('Author: ' + Post.getAuthor())
-            print('Date: ' + Post.getDate())
+            print('List Date: ' + Post.getListDate())
             print('Title: ' + Post.getTitle())
-            print('Content: ' + Post.getContent())
             print('Money: ' + str(Post.getMoney()))
             print('URL: ' + Post.getWebUrl())
-            print('IP: ' + Post.getIP())
+            if not Query:
+                print('Date: ' + Post.getDate())
+                print('Content: ' + Post.getContent())
+                print('IP: ' + Post.getIP())
             # 在文章列表上的日期
-            print('List Date: ' + Post.getListDate())
 
-            PushCount = 0
-            BooCount = 0
-            ArrowCount = 0
+                PushCount = 0
+                BooCount = 0
+                ArrowCount = 0
 
-            for Push in Post.getPushList():
-                #     print(Push.getType())
-                #     print(Push.getAuthor())
-                #     print(Push.getContent())
-                #     print(Push.getIP())
-                #     print(Push.getTime())
+                for Push in Post.getPushList():
+                    #     print(Push.getType())
+                    #     print(Push.getAuthor())
+                    #     print(Push.getContent())
+                    #     print(Push.getIP())
+                    #     print(Push.getTime())
 
-                if Push.getType() == PTT.PushType.Push:
-                    PushCount += 1
-                    Type = '推'
-                if Push.getType() == PTT.PushType.Boo:
-                    BooCount += 1
-                    Type = '噓'
-                if Push.getType() == PTT.PushType.Arrow:
-                    ArrowCount += 1
-                    Type = '箭頭'
+                    if Push.getType() == PTT.PushType.Push:
+                        PushCount += 1
+                        Type = '推'
+                    if Push.getType() == PTT.PushType.Boo:
+                        BooCount += 1
+                        Type = '噓'
+                    if Push.getType() == PTT.PushType.Arrow:
+                        ArrowCount += 1
+                        Type = '箭頭'
 
-                Author = Push.getAuthor()
-                Content = Push.getContent()
+                    Author = Push.getAuthor()
+                    Content = Push.getContent()
 
-                Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
-                if Push.getIP() is not None:
-                    Buffer += f' 來自 [{Push.getIP()}]'
-                Buffer += f' 時間是 [{Push.getTime()}]'
-                print(Buffer)
+                    Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
+                    if Push.getIP() is not None:
+                        Buffer += f' 來自 [{Push.getIP()}]'
+                    Buffer += f' 時間是 [{Push.getTime()}]'
+                    print(Buffer)
 
-            print(
-                f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow'
-            )
+                print(
+                    f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow'
+                )
         except Exception as e:
 
             traceback.print_tb(e.__traceback__)
@@ -291,9 +296,11 @@ def GetPostWithCondition():
         # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
         # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
         # ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)')
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)')
     ]
 
-    TestRange = 100
+    TestRange = 1
+    Query = True
 
     for (Board, SearchType, Condition) in TestList:
         try:
@@ -309,9 +316,11 @@ def GetPostWithCondition():
             for i in range(TestRange):
                 Post = PTTBot.getPost(
                     Board,
-                    PostIndex=Index - i,
+                    # PostIndex=Index - i,
+                    PostIndex=9464,
                     SearchType=SearchType,
                     SearchCondition=Condition,
+                    Query=Query
                 )
 
                 print('列表日期:')
@@ -322,8 +331,9 @@ def GetPostWithCondition():
                 print(Post.getTitle())
 
                 if Post.getDeleteStatus() == PTT.PostDeleteStatus.NotDeleted:
-                    print('內文:')
-                    print(Post.getContent())
+                    if not Query:
+                        print('內文:')
+                        print(Post.getContent())
                 elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
                     print('文章被作者刪除')
                 elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
@@ -793,7 +803,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -806,8 +816,8 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        GetPost()
-        # GetPostWithCondition()
+        # GetPost()
+        GetPostWithCondition()
         # Post()
         # GetNewestIndex()
         # CrawlBoard()

@@ -71,6 +71,8 @@ class Library(OneThread.OneThread):
         print(f'PTT Library v {Version}')
         print('Developed by PTT CodingMan')
 
+        raise ValueError()
+
         self._LoginStatus = False
 
         Config.load()
@@ -449,7 +451,8 @@ class Library(OneThread.OneThread):
         PostAID: str = None,
         PostIndex: int = 0,
         SearchType: int = 0,
-        SearchCondition: str = None
+        SearchCondition: str = None,
+        Query: bool = False
     ):
 
         if not self._LoginStatus:
@@ -569,7 +572,8 @@ class Library(OneThread.OneThread):
                     PostAID,
                     PostIndex,
                     SearchType,
-                    SearchCondition
+                    SearchCondition,
+                    Query
                 )
             except Exceptions.ParseError as e:
                 if i == 1:
@@ -584,7 +588,11 @@ class Library(OneThread.OneThread):
                 NeedContinue = True
 
             if NeedContinue:
-                time.sleep(0.01)
+                Log.log(
+                    Log.Level.DEBUG,
+                    'Wait for retry repost'
+                )
+                time.sleep(0.1)
                 continue
 
             break
@@ -596,7 +604,8 @@ class Library(OneThread.OneThread):
         PostAID: str = None,
         PostIndex: int = 0,
         SearchType: int = 0,
-        SearchCondition: str = None
+        SearchCondition: str = None,
+        Query: bool = False,
     ):
 
         CmdList = []
@@ -784,6 +793,19 @@ class Library(OneThread.OneThread):
             Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
             Log.showValue(Log.Level.DEBUG, 'PostMoney', PostMoney)
             Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
+
+        if Query:
+            Post = DataType.PostInfo(
+                Board=Board,
+                AID=PostAID,
+                Author=PostAuthor,
+                Title=PostTitle,
+                WebUrl=PostWeb,
+                Money=PostMoney,
+                ListDate=ListDate,
+                FormatCheck=True,
+            )
+            return Post
 
         Cmd = Command.Enter * 2
         TargetList = [
@@ -1503,7 +1525,11 @@ class Library(OneThread.OneThread):
                     NeedContinue = True
 
                 if NeedContinue:
-                    time.sleep(0.01)
+                    Log.log(
+                        Log.Level.DEBUG,
+                        'Wait for retry repost'
+                    )
+                    time.sleep(0.1)
                     continue
 
                 break
