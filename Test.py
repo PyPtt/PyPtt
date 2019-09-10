@@ -412,14 +412,18 @@ def detectNone(Name, Obj, Enable=True):
     if Obj is None and Enable:
         raise ValueError(Name + ' is None')
 
+Query = True
+
 
 def crawlHandler(Post):
 
+    global Query
+
     if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
         if Post.getDeleteStatus() != PTT.PostDeleteStatus.ByModerator:
-            print(f'[版主刪除][{Post.getAuthor()}][{Post.getTitle()}]')
+            print(f'[版主刪除][{Post.getAuthor()}]')
         elif Post.getDeleteStatus() != PTT.PostDeleteStatus.ByAuthor:
-            print(f'[作者刪除][{Post.getAuthor()}][{Post.getTitle()}]')
+            print(f'[作者刪除][{Post.getAuthor()}]')
         return
 
     if not Post.isFormatCheck():
@@ -431,16 +435,19 @@ def crawlHandler(Post):
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
     detectNone('Author', Post.getAuthor())
-    detectNone('Date', Post.getDate())
-    detectNone('Content', Post.getContent())
     detectNone('Money', Post.getMoney())
     detectNone('WebUrl', Post.getWebUrl())
-    detectNone('IP', Post.getIP())
     detectNone('ListDate', Post.getListDate())
+
+    if not Query:
+        detectNone('Date', Post.getDate())
+        detectNone('Content', Post.getContent())
+        detectNone('IP', Post.getIP())
 
 
 def CrawlBoard():
 
+    global Query
     TestBoardList = [
         'Wanted',
         'Gossiping',
@@ -466,7 +473,8 @@ def CrawlBoard():
                 crawlHandler,
                 TestBoard,
                 StartIndex=StartIndex,
-                EndIndex=NewestIndex
+                EndIndex=NewestIndex,
+                Query=Query
             )
 
             if len(ErrorPostList) > 0:
@@ -803,7 +811,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -817,10 +825,10 @@ if __name__ == '__main__':
             sys.exit()
 
         # GetPost()
-        GetPostWithCondition()
+        # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
