@@ -478,8 +478,8 @@ def CrawlBoard():
             ErrorPostList, DelPostList = PTTBot.crawlBoard(
                 crawlHandler,
                 TestBoard,
-                StartIndex=1,
-                EndIndex=1000,
+                StartIndex=StartIndex,
+                EndIndex=NewestIndex,
                 Query=Query
             )
 
