@@ -263,6 +263,7 @@ class PostInfo(object):
         DeleteStatus=0,
         ControlCode=False,
         FormatCheck=False,
+        Location=None
     ):
         self._Board = ParseParameter(str, Board)
         self._AID = ParseParameter(str, AID)
@@ -278,6 +279,7 @@ class PostInfo(object):
         self._ListDate = ParseParameter(str, ListDate)
         self._ControlCode = ControlCode
         self._FormatCheck = FormatCheck
+        self._Location = ParseParameter(str, Location)
 
     def getBoard(self):
         return self._Board
@@ -320,6 +322,9 @@ class PostInfo(object):
 
     def isFormatCheck(self):
         return self._FormatCheck
+
+    def getLocation(self):
+        return self._Location
 
 
 class WaterBallInfo(object):
