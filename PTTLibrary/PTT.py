@@ -871,6 +871,7 @@ class Library(OneThread.OneThread):
                     ListDate=ListDate,
                     ControlCode=HasControlCode,
                     FormatCheck=False,
+                    Location=Location,
                 )
                 return Post
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
@@ -916,6 +917,7 @@ class Library(OneThread.OneThread):
                         ListDate=ListDate,
                         ControlCode=HasControlCode,
                         FormatCheck=False,
+                        Location=Location,
                     )
                     return Post
 
@@ -946,6 +948,7 @@ class Library(OneThread.OneThread):
                             ListDate=ListDate,
                             ControlCode=HasControlCode,
                             FormatCheck=False,
+                            Location=Location,
                         )
                         return Post
                     PostAuthor = PatternResult.group(0)
@@ -954,13 +957,60 @@ class Library(OneThread.OneThread):
 
                 Log.showValue(Log.Level.DEBUG, i18n.Author, PostAuthor)
 
-                PatternResult = PostTitlePattern.search(LastScreen)
+                TitleLine = [line for line in LastScreen.split('\n')][1]
+
+                PatternResult = PostTitlePattern.search(TitleLine)
+                if PatternResult is None:
+                    Log.log(
+                        Log.Level.DEBUG,
+                        'Edited Post Formate check fail'
+                    )
+                    Post = DataType.PostInfo(
+                        Board=Board,
+                        AID=PostAID,
+                        Author=PostAuthor,
+                        Date=PostDate,
+                        Title=PostTitle,
+                        WebUrl=PostWeb,
+                        Money=PostMoney,
+                        Content=PostContent,
+                        IP=IP,
+                        PushList=PushList,
+                        ListDate=ListDate,
+                        ControlCode=HasControlCode,
+                        FormatCheck=False,
+                        Location=Location,
+                    )
+                    return Post
                 PostTitle = PatternResult.group(0)
                 PostTitle = PostTitle[4:].strip()
 
                 Log.showValue(Log.Level.DEBUG, i18n.Title, PostTitle)
 
-                PatternResult = PostDatePattern.search(LastScreen)
+                DateLine = [line for line in LastScreen.split('\n')][2]
+                PatternResult = PostDatePattern.search(DateLine)
+                if PatternResult is None:
+                    Log.log(
+                        Log.Level.DEBUG,
+                        'Edited Post Formate check fail'
+                    )
+                    Post = DataType.PostInfo(
+                        Board=Board,
+                        AID=PostAID,
+                        Author=PostAuthor,
+                        Date=PostDate,
+                        Title=PostTitle,
+                        WebUrl=PostWeb,
+                        Money=PostMoney,
+                        Content=PostContent,
+                        IP=IP,
+                        PushList=PushList,
+                        ListDate=ListDate,
+                        ControlCode=HasControlCode,
+                        FormatCheck=False,
+                        Location=Location,
+                    )
+                    return Post
                 PostDate = PatternResult.group(0)
                 PostDate = PostDate[4:].strip()
 
@@ -1052,23 +1102,38 @@ class Library(OneThread.OneThread):
                 if IP is not None:
                     IPLine = [line for line in LastScreen.split(
                         '\n') if IP in line][0]
-                    Location = IPLine[IPLine.find(IP):]
-                    if '(' in Location and ')' in Location:
-                        Location = Location[Location.rfind('(') + 1: -1]
-                        print(f'Location: [{Location}]')
+                    LocationTemp = IPLine[IPLine.find(IP):]
+                    # print(f'+====Location: [{Location}]')
+                    if '(' in LocationTemp and ')' in LocationTemp:
+                        Location = LocationTemp[
+                            LocationTemp.rfind('(') + 1: -1
+                        ]
+                        # print(f'============== Location: [{Location}]')
 
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
                 PostContent = '\n'.join(PostContent)
-                PostContent = PostContent[
-                    :PostContent.rfind('--\n※') + len('--')
-                ].strip()
+                if '--\n※' in PostContent:
+                    PostContent = PostContent[
+                        :PostContent.rfind('--\n※') + len('--')
+                    ].strip()
+
+                    LastScreen = LastScreen[
+                        LastScreen.rfind('--\n※'):
+                    ]
+                elif '※ 編輯' in PostContent:
+                    PostContent = PostContent[
+                        :PostContent.rfind('※ 編輯')
+                    ].strip()
+
+                    LastScreen = LastScreen[
+                        LastScreen.rfind('※ 編輯'):
+                    ]
 
                 Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
 
-                LastScreen = LastScreen[
-                    LastScreen.rfind('--\n※'):
-                ]
+                # print('=' * 20)
+                # print(LastScreen)
 
                 # print('=' * 20)
                 # print(LastScreen)
@@ -1112,8 +1177,37 @@ class Library(OneThread.OneThread):
                                 ListDate=ListDate,
                                 ControlCode=HasControlCode,
                                 FormatCheck=False,
+                                Location=Location,
                             )
                             return Post
+
+                        # print(f'====================: [{line}]')
+
+                        LocationTemp = line[:line.rfind(')') + 1].strip()
+                        LocationTemp = LocationTemp[
+                            LocationTemp.rfind('('):
+                        ].strip()
+
+                        # print(f'+++++++++++++++: [{LocationTemp}]')
+                        # (223.139.39.197 臺灣)
+                        # (06/25 02:05)
+
+                        if len(LocationTemp) >= 2:
+                            if '/' not in LocationTemp:
+                                Location = LocationTemp
+                                Location = Location[
+                                    Location.find(' '):
+                                ].strip()
+                                Location = Location[:-1]
+
+                                Log.showValue(
+                                    Log.Level.DEBUG,
+                                    [
+                                        i18n.Update,
+                                        'Location'
+                                    ],
+                                    Location
+                                )
                         if IP in line:
                             continue
                         PatternResult = NewIPPattern_New.search(line)
@@ -1122,6 +1216,7 @@ class Library(OneThread.OneThread):
                         else:
                             PatternResult = NewIPPattern_Old.search(line)
                             IP = PatternResult.group(0)
+
                         Log.showValue(
                             Log.Level.DEBUG,
                             [
@@ -1245,6 +1340,7 @@ class Library(OneThread.OneThread):
                 ListDate=ListDate,
                 ControlCode=HasControlCode,
                 FormatCheck=False,
+                Location=Location,
             )
             return Post
 
@@ -1262,6 +1358,7 @@ class Library(OneThread.OneThread):
             ListDate=ListDate,
             ControlCode=HasControlCode,
             FormatCheck=True,
+            Location=Location,
         )
         return Post
 
