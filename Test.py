@@ -184,10 +184,11 @@ def GetPost():
         # ('Steam', 4444),
         # ('Baseball', 199787),
         # ('Stock', 92324),
-        ('Gossiping', 778570)
+        # ('Gossiping', 778570)
+        ('Gossiping', 782086)
     ]
 
-    Query = True
+    Query = False
 
     for (Board, Index) in TestPostList:
         try:
@@ -196,7 +197,7 @@ def GetPost():
                 PostIndex=Index,
                 # SearchType=PTT.PostSearchType.Keyword,
                 # SearchCondition='公告',
-                Query=True,
+                Query=Query,
             )
             if Post is None:
                 print('Empty')
@@ -824,11 +825,11 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
