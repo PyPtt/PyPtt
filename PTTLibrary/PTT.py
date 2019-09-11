@@ -853,6 +853,7 @@ class Library(OneThread.OneThread):
         index = -1
         FirstPage = True
         IP = None
+        Location = None
         while True:
             index = self._ConnectCore.send(Cmd, TargetList)
             if index == 2:
@@ -974,6 +975,24 @@ class Library(OneThread.OneThread):
                 PostContent.append(PostContentTemp)
                 if not ControlCodeMode:
                     LastReadLine = LastReadLineTemp
+
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'PostAuthor',
+                    PostAuthor
+                )
+
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'PostTitle',
+                    PostTitle
+                )
+
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'PostDate',
+                    PostDate
+                )
             else:
                 if not ControlCodeMode:
                     GetLine = LastReadLineTemp - LastReadLine
@@ -1029,6 +1048,14 @@ class Library(OneThread.OneThread):
                             PatternResult = NewIPPattern_Old.search(LastScreen)
                             if PatternResult is not None:
                                 IP = PatternResult.group(0)
+
+                if IP is not None:
+                    IPLine = [line for line in LastScreen.split(
+                        '\n') if IP in line][0]
+                    Location = IPLine[IPLine.find(IP):]
+                    if '(' in Location and ')' in Location:
+                        Location = Location[Location.rfind('(') + 1: -1]
+                        print(f'Location: [{Location}]')
 
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
