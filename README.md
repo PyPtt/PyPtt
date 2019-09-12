@@ -34,8 +34,9 @@ pip install PTTLibrary
 #### [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual) 有 API 的詳細範例與參數說明
 
 ## 回報問題
-#### 1. 請參考手冊中的 [初始設定](https://hackmd.io/JAiqhriyQVe_TJleNwLWTQ#%E5%88%9D%E5%A7%8B%E8%A8%AD%E5%AE%9A) 將 Log level 調整成 TRACE 後並截圖
-#### 2. 開個 [issue](https://github.com/Truth0906/PTTLibrary/issues/new) 追蹤問題也可以直接在 gitter 上問我 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge) ~~或聊天~~
+#### 1. 請先確認你所使用的版本為 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary) 如果是舊版本請更新後複測
+#### 2. 如果問題還是存在，請參考手冊中的 [初始設定](https://hackmd.io/JAiqhriyQVe_TJleNwLWTQ#%E5%88%9D%E5%A7%8B%E8%A8%AD%E5%AE%9A) 將 Log level 調整成 TRACE 後並截圖
+#### 3. 開個 [issue](https://github.com/Truth0906/PTTLibrary/issues/new) 追蹤問題也可以直接在 gitter 上問我 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge) ~~或聊天~~
 
 ## 需求
 #### Python ≥ 3.6
