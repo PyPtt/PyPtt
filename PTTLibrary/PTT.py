@@ -745,7 +745,15 @@ class Library(OneThread.OneThread):
             PostAuthor = PostAuthor[PostAuthor.rfind(' '):].strip()
 
             PostTitle = CursorLine
-            PostTitle = PostTitle[PostTitle.find('□') + 1:].strip()
+            if '□' in PostTitle:
+                PostTitle = PostTitle[PostTitle.find('□') + 1:].strip()
+            elif 'R:' in PostTitle:
+                PostTitle = PostTitle[PostTitle.find('R:'):].strip()
+            elif ' 轉 [' in PostTitle:
+                # print(f'[{PostTitle}]=========>')
+                PostTitle = PostTitle[PostTitle.find('轉') + 1:].strip()
+                PostTitle = f'Fw: {PostTitle}'
+                # print(f'=========>[{PostTitle}]')
 
             OriScreenTemp = OriScreen[OriScreen.find('┌──────────'):]
             OriScreenTemp = OriScreenTemp[:OriScreenTemp.find(

@@ -417,7 +417,7 @@ def detectNone(Name, Obj, Enable=True):
     if Obj is None and Enable:
         raise ValueError(Name + ' is None')
 
-Query = False
+Query = True
 
 
 def crawlHandler(Post):
@@ -435,8 +435,14 @@ def crawlHandler(Post):
         print('[不合格式]')
         return
 
+    # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
+
+
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
-    print(f'[{Post.getAID()}][{Post.getDate()}][{Post.getTitle()}]')
+    if not Query:
+        print(f'[{Post.getAID()}][{Post.getDate()}][{Post.getTitle()}]')
+    else:
+        print(f'[{Post.getAID()}][{Post.getListDate()}][{Post.getTitle()}]')
 
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
@@ -461,7 +467,7 @@ def CrawlBoard():
         'movie',
     ]
 
-    TestRange = 1000
+    TestRange = 5000
     TestRound = 1
 
     for _ in range(TestRound):
@@ -489,9 +495,9 @@ def CrawlBoard():
             else:
                 print('沒有偵測到錯誤文章')
 
-            # if len(DelPostList) > 0:
-            #     print('Del Post: \n' + '\n'.join([str(x) for x in DelPostList]))
-            #     print(f'共有 {len(DelPostList)} 篇文章被刪除')
+            if len(DelPostList) > 0:
+                # print('Del Post: \n' + '\n'.join([str(x) for x in DelPostList]))
+                print(f'共有 {len(DelPostList)} 篇文章被刪除')
 
 
 def CrawlBoardWithCondition():
