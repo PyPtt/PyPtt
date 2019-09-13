@@ -679,8 +679,12 @@ class Library(OneThread.OneThread):
             )
 
             CursorLine = [line for line in OriScreen.split(
-                '\n') if line.startswith(self._Cursor)][0]
+                '\n') if line.startswith(self._Cursor)]
 
+            if len(CursorLine) != 1:
+                raise Exceptions.UnknowError(OriScreen)
+
+            CursorLine = CursorLine[0]
             Log.showValue(
                 Log.Level.DEBUG,
                 'CursorLine',
@@ -704,11 +708,14 @@ class Library(OneThread.OneThread):
                 PatternResult = pattern.search(CursorLine)
                 PostDelStatus = DataType.PostDeleteStatus.ByModerator
 
-            try:
+            # > 79843     9/11 -             □ (本文已被吃掉)<
+            # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
+            # print(f'O=>{CursorLine}<')
+            if PatternResult is not None:
                 PostAuthor = PatternResult.group(0)[1:-1]
-            except:
-                print(f'=>{CursorLine}<')
-                raise Exceptions.ParseError(CursorLine)
+            else:
+                PostAuthor = None
+                PostDelStatus = DataType.PostDeleteStatus.ByUnknow
 
             Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
             Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
@@ -1080,6 +1087,9 @@ class Library(OneThread.OneThread):
                 ) or
                 Screens.isMatch(
                     LastScreen, Screens.Target.Edit
+                ) or
+                Screens.isMatch(
+                    LastScreen, Screens.Target.PostURL
                 )
             )):
                 ContentFinish = True
@@ -1121,27 +1131,39 @@ class Library(OneThread.OneThread):
                 Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
                 PostContent = '\n'.join(PostContent)
-                if '--\n※' in PostContent:
+                # print('=' * 20)
+                # print(PostContent)
+                # if '--\n※' in PostContent:
+                #     PostContent = PostContent[
+                #         :PostContent.find('--\n※') + len('--')
+                #     ].strip()
+
+                #     print('=' * 20)
+                #     print(LastScreen)
+
+                #     LastScreen = LastScreen[
+                #         LastScreen.find('--\n※'):
+                #     ]
+
+                # elif '※ 編輯' in PostContent:
+                #     PostContent = PostContent[
+                #         :PostContent.rfind('※ 編輯')
+                #     ].strip()
+
+                #     LastScreen = LastScreen[
+                #         LastScreen.rfind('※ 編輯'):
+                #     ]
+
+                if '※ ' in PostContent:
                     PostContent = PostContent[
-                        :PostContent.rfind('--\n※') + len('--')
+                        :PostContent.find('\n※')
                     ].strip()
 
                     LastScreen = LastScreen[
-                        LastScreen.rfind('--\n※'):
-                    ]
-                elif '※ 編輯' in PostContent:
-                    PostContent = PostContent[
-                        :PostContent.rfind('※ 編輯')
-                    ].strip()
-
-                    LastScreen = LastScreen[
-                        LastScreen.rfind('※ 編輯'):
+                        LastScreen.find('\n※'):
                     ]
 
                 Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
-
-                # print('=' * 20)
-                # print(LastScreen)
 
                 # print('=' * 20)
                 # print(LastScreen)
@@ -1166,10 +1188,11 @@ class Library(OneThread.OneThread):
                     #     line
                     # )
                     if line.startswith('※ 編輯'):
+                        # print('QQ line[{line}]')
                         if IP is None:
                             Log.log(
                                 Log.Level.DEBUG,
-                                'Edited Post Formate check fail'
+                                'Edited Post Format check fail'
                             )
                             Post = DataType.PostInfo(
                                 Board=Board,
@@ -1351,6 +1374,26 @@ class Library(OneThread.OneThread):
                 Location=Location,
             )
             return Post
+
+        # CheckList = [
+        #     Board,
+        #     PostAID,
+        #     PostAuthor,
+        #     PostDate,
+        #     PostTitle,
+        #     PostWeb,
+        #     PostMoney,
+        #     PostContent,
+        #     IP,
+        #     ListDate,
+        #     Location,
+        # ]
+
+        # FormatCheck = True
+        # for item in CheckList:
+        #     if item is None:
+        #         FormatCheck = False
+        #         break
 
         Post = DataType.PostInfo(
             Board=Board,

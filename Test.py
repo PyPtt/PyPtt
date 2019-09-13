@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account.txt') as AccountFile:
+        with open('Account2.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -181,25 +181,38 @@ def GetPost():
         # ('Python', 1),
         # ('NotExitBoard', 1),
         # ('Python', 7486),
+        # 文章格式錯誤
         # ('Steam', 4444),
         # ('Baseball', 199787),
         # ('Stock', 92324),
+        # 文章格式錯誤
         # ('Gossiping', 778570),
         # ('Stock', 99606),
-        ('movie', 457)
+        # ('movie', 457),
+        # ('Wanted', 76417),
+        ('Gossiping', '1TU65Wi_')
     ]
 
     Query = False
 
     for (Board, Index) in TestPostList:
         try:
-            Post = PTTBot.getPost(
-                Board,
-                PostIndex=Index,
-                # SearchType=PTT.PostSearchType.Keyword,
-                # SearchCondition='公告',
-                Query=Query,
-            )
+            if isinstance(Index, int):
+                Post = PTTBot.getPost(
+                    Board,
+                    PostIndex=Index,
+                    # SearchType=PTT.PostSearchType.Keyword,
+                    # SearchCondition='公告',
+                    Query=Query,
+                )
+            else:
+                Post = PTTBot.getPost(
+                    Board,
+                    PostAID=Index,
+                    # SearchType=PTT.PostSearchType.Keyword,
+                    # SearchCondition='公告',
+                    Query=Query,
+                )
             if Post is None:
                 print('Empty')
                 continue
@@ -220,8 +233,11 @@ def GetPost():
                 print('Content: ' + Post.getContent())
                 print('IP: ' + Post.getIP())
 
+                # print('Location: ' + Post.getLocation())
                 if Post.getLocation() is not None:
                     print('Location: ' + Post.getLocation())
+                else:
+                    print('無地區')
             # 在文章列表上的日期
 
                 PushCount = 0
@@ -255,7 +271,7 @@ def GetPost():
                     print(Buffer)
 
                 print(
-                    f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow'
+                    f'Total {PushCount} Pushs {BooCount} Boo {ArrowCount} Arrow = {PushCount - BooCount}'
                 )
         except Exception as e:
 
@@ -417,7 +433,7 @@ def detectNone(Name, Obj, Enable=True):
     if Obj is None and Enable:
         raise ValueError(Name + ' is None')
 
-Query = True
+Query = False
 
 
 def crawlHandler(Post):
@@ -425,10 +441,12 @@ def crawlHandler(Post):
     global Query
 
     if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
-        if Post.getDeleteStatus() != PTT.PostDeleteStatus.ByModerator:
+        if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
             print(f'[版主刪除][{Post.getAuthor()}]')
-        elif Post.getDeleteStatus() != PTT.PostDeleteStatus.ByAuthor:
+        elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
             print(f'[作者刪除][{Post.getAuthor()}]')
+        elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
+            print(f'[不明刪除]')
         return
 
     if not Post.isFormatCheck():
@@ -436,14 +454,12 @@ def crawlHandler(Post):
         return
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
-
-
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
     if not Query:
         print(f'[{Post.getAID()}][{Post.getDate()}][{Post.getTitle()}]')
     else:
         print(f'[{Post.getAID()}][{Post.getListDate()}][{Post.getTitle()}]')
-
+    
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
     detectNone('Author', Post.getAuthor())
@@ -455,19 +471,28 @@ def crawlHandler(Post):
         detectNone('Date', Post.getDate())
         detectNone('Content', Post.getContent())
         detectNone('IP', Post.getIP())
+        detectNone('Location', Post.getLocation())
+
+        # print(Post.getContent())
+
+    time.sleep(0.2)
 
 
 def CrawlBoard():
 
     global Query
     TestBoardList = [
-        'Wanted',
+        # 'Wanted',
         'Gossiping',
         'Stock',
         'movie',
+        'C_Chat',
+        'Baseball',
+        'NBA',
+        'HatePolitics'
     ]
 
-    TestRange = 5000
+    TestRange = 10000
     TestRound = 1
 
     for _ in range(TestRound):
@@ -836,11 +861,11 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
