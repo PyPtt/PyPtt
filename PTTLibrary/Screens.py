@@ -72,6 +72,10 @@ class Target(object):
         '※ 編輯'
     ]
 
+    PostURL = [
+        '※ 文章網址'
+    ]
+
     Vote_Type1 = [
         '◆ 投票名稱',
         '◆ 投票中止於',
