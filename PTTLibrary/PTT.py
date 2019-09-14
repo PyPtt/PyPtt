@@ -846,29 +846,17 @@ class Library(OneThread.OneThread):
             ),
         ]
 
-        PostAuthorPattern_New = re.compile('作者  (.+) 看板')
-        PostAuthorPattern_Old = re.compile('作者  (.+)')
-        PostTitlePattern = re.compile('標題  (.+)')
-        PostDate = None
-        PostDatePattern = re.compile('時間  (.+)')
-        PostContent = []
-
         LineFromTopattern = re.compile('[\d]+~[\d]+')
-        NewIPPattern_New = re.compile('\([\d]+\.[\d]+\.[\d]+\.[\d]+\)')
-        NewIPPattern_Old = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
-        PushAuthorPattern = re.compile('[推|噓|→] [\w| ]+:')
-        PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
-        PushIPPattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
-        PushList = []
+        ContentStart = '───────────────────────────────────────'
+        ContentEnd = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
 
         HasControlCode = False
         ControlCodeMode = False
-        ContentFinish = False
-        index = -1
+        PushStart = False
+
         FirstPage = True
-        IP = None
-        Location = None
+        AllPost = []
         while True:
             index = self._ConnectCore.send(Cmd, TargetList)
             if index == 2:
@@ -876,17 +864,15 @@ class Library(OneThread.OneThread):
                     Board=Board,
                     AID=PostAID,
                     Author=PostAuthor,
-                    Date=PostDate,
+                    # Date=PostDate,
                     Title=PostTitle,
                     WebUrl=PostWeb,
                     Money=PostMoney,
-                    Content=PostContent,
-                    IP=IP,
-                    PushList=PushList,
+                    # Content=PostContent,
+                    # PushList=PushList,
                     ListDate=ListDate,
                     ControlCode=HasControlCode,
                     FormatCheck=False,
-                    Location=Location,
                 )
                 return Post
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
@@ -906,158 +892,8 @@ class Library(OneThread.OneThread):
                 ControlCodeMode = False
 
             if FirstPage:
-
-                if (Screens.isMatch(
-                    LastScreen, Screens.Target.Vote_Type1
-                ) or Screens.isMatch(
-                    LastScreen, Screens.Target.Vote_Type2
-                )):
-                    Log.log(
-                        Log.Level.DEBUG, [
-                            i18n.VotePost,
-                            i18n.DoNothing,
-                        ]
-                    )
-                    Post = DataType.PostInfo(
-                        Board=Board,
-                        AID=PostAID,
-                        Author=PostAuthor,
-                        Date=PostDate,
-                        Title=PostTitle,
-                        WebUrl=PostWeb,
-                        Money=PostMoney,
-                        Content=PostContent,
-                        IP=IP,
-                        PushList=PushList,
-                        ListDate=ListDate,
-                        ControlCode=HasControlCode,
-                        FormatCheck=False,
-                        Location=Location,
-                    )
-                    return Post
-
-                PatternResult = PostAuthorPattern_New.search(LastScreen)
-                if PatternResult is not None:
-                    PostAuthor = PatternResult.group(0)
-                    PostAuthor = PostAuthor[:PostAuthor.rfind('看板')]
-                else:
-                    PatternResult = PostAuthorPattern_Old.search(LastScreen)
-                    if PatternResult is None:
-                        Log.log(
-                            Log.Level.DEBUG, [
-                                i18n.SubstandardPost,
-                                i18n.DoNothing,
-                            ]
-                        )
-                        Post = DataType.PostInfo(
-                            Board=Board,
-                            AID=PostAID,
-                            Author=PostAuthor,
-                            Date=PostDate,
-                            Title=PostTitle,
-                            WebUrl=PostWeb,
-                            Money=PostMoney,
-                            Content=PostContent,
-                            IP=IP,
-                            PushList=PushList,
-                            ListDate=ListDate,
-                            ControlCode=HasControlCode,
-                            FormatCheck=False,
-                            Location=Location,
-                        )
-                        return Post
-                    PostAuthor = PatternResult.group(0)
-                    PostAuthor = PostAuthor.replace('站內  ' + Board, '')
-                PostAuthor = PostAuthor[4:].strip()
-
-                Log.showValue(Log.Level.DEBUG, i18n.Author, PostAuthor)
-
-                TitleLine = [line for line in LastScreen.split('\n')][1]
-
-                PatternResult = PostTitlePattern.search(TitleLine)
-                if PatternResult is None:
-                    Log.log(
-                        Log.Level.DEBUG,
-                        'Edited Post Formate check fail'
-                    )
-                    Post = DataType.PostInfo(
-                        Board=Board,
-                        AID=PostAID,
-                        Author=PostAuthor,
-                        Date=PostDate,
-                        Title=PostTitle,
-                        WebUrl=PostWeb,
-                        Money=PostMoney,
-                        Content=PostContent,
-                        IP=IP,
-                        PushList=PushList,
-                        ListDate=ListDate,
-                        ControlCode=HasControlCode,
-                        FormatCheck=False,
-                        Location=Location,
-                    )
-                    return Post
-                PostTitle = PatternResult.group(0)
-                PostTitle = PostTitle[4:].strip()
-
-                Log.showValue(Log.Level.DEBUG, i18n.Title, PostTitle)
-
-                DateLine = [line for line in LastScreen.split('\n')][2]
-                PatternResult = PostDatePattern.search(DateLine)
-                if PatternResult is None:
-                    Log.log(
-                        Log.Level.DEBUG,
-                        'Edited Post Formate check fail'
-                    )
-                    Post = DataType.PostInfo(
-                        Board=Board,
-                        AID=PostAID,
-                        Author=PostAuthor,
-                        Date=PostDate,
-                        Title=PostTitle,
-                        WebUrl=PostWeb,
-                        Money=PostMoney,
-                        Content=PostContent,
-                        IP=IP,
-                        PushList=PushList,
-                        ListDate=ListDate,
-                        ControlCode=HasControlCode,
-                        FormatCheck=False,
-                        Location=Location,
-                    )
-                    return Post
-                PostDate = PatternResult.group(0)
-                PostDate = PostDate[4:].strip()
-
-                Log.showValue(Log.Level.DEBUG, i18n.Date, PostDate)
-
-                PostContentTemp = LastScreen
-                StartTarget = '───────────────────────────────────────'
-                PostContentTemp = PostContentTemp[
-                    PostContentTemp.find(StartTarget) + len(StartTarget):
-                ]
-
-                PostContent.append(PostContentTemp)
-                if not ControlCodeMode:
-                    LastReadLine = LastReadLineTemp
-
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    'PostAuthor',
-                    PostAuthor
-                )
-
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    'PostTitle',
-                    PostTitle
-                )
-
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    'PostDate',
-                    PostDate
-                )
+                FirstPage = False
+                AllPost.append(LastScreen)
             else:
                 if not ControlCodeMode:
                     GetLine = LastReadLineTemp - LastReadLine
@@ -1067,296 +903,173 @@ class Library(OneThread.OneThread):
                         NewContentPart = '\n'.join(Lines)
                 else:
                     NewContentPart = Lines[-1]
+
+                AllPost.append(NewContentPart)
                 Log.showValue(
                     Log.Level.DEBUG,
                     'NewContentPart',
                     NewContentPart
                 )
 
-                if not ContentFinish:
-                    PostContent.append(NewContentPart)
-                else:
-                    LastScreen = NewContentPart
-
-            if (not ContentFinish and (
-                Screens.isMatch(
-                    LastScreen, Screens.Target.PostIP_New
-                ) or
-                Screens.isMatch(
-                    LastScreen, Screens.Target.PostIP_Old
-                ) or
-                Screens.isMatch(
-                    LastScreen, Screens.Target.Edit
-                ) or
-                Screens.isMatch(
-                    LastScreen, Screens.Target.PostURL
-                )
-            )):
-                ContentFinish = True
-
-                pattern = re.compile(
-                    '發信站: 批踢踢實業坊\(ptt.cc\), 來自: [\d]+\.[\d]+\.[\d]+\.[\d]+'
-                )
-
-                PatternResult = pattern.search(LastScreen)
-                if PatternResult is not None:
-                    IP = PatternResult.group(0)[25:]
-                else:
-                    pattern = re.compile(
-                        '◆ From: [\d]+\.[\d]+\.[\d]+\.[\d]+'
-                    )
-                    PatternResult = pattern.search(LastScreen)
-                    if PatternResult is not None:
-                        IP = PatternResult.group(0)[8:]
-                    else:
-                        PatternResult = NewIPPattern_New.search(LastScreen)
-                        if PatternResult is not None:
-                            IP = PatternResult.group(0)[1:-1]
-                        else:
-                            PatternResult = NewIPPattern_Old.search(LastScreen)
-                            if PatternResult is not None:
-                                IP = PatternResult.group(0)
-
-                if IP is not None:
-                    IPLine = [line for line in LastScreen.split(
-                        '\n') if IP in line][0]
-                    LocationTemp = IPLine[IPLine.find(IP):]
-                    # print(f'+====Location: [{Location}]')
-                    if '(' in LocationTemp and ')' in LocationTemp:
-                        Location = LocationTemp[
-                            LocationTemp.rfind('(') + 1: -1
-                        ]
-                        # print(f'============== Location: [{Location}]')
-
-                Log.showValue(Log.Level.DEBUG, 'IP', IP)
-
-                PostContent = '\n'.join(PostContent)
-                # print('=' * 20)
-                # print(PostContent)
-                # if '--\n※' in PostContent:
-                #     PostContent = PostContent[
-                #         :PostContent.find('--\n※') + len('--')
-                #     ].strip()
-
-                #     print('=' * 20)
-                #     print(LastScreen)
-
-                #     LastScreen = LastScreen[
-                #         LastScreen.find('--\n※'):
-                #     ]
-
-                # elif '※ 編輯' in PostContent:
-                #     PostContent = PostContent[
-                #         :PostContent.rfind('※ 編輯')
-                #     ].strip()
-
-                #     LastScreen = LastScreen[
-                #         LastScreen.rfind('※ 編輯'):
-                #     ]
-
-                if '※ ' in PostContent:
-                    PostContent = PostContent[
-                        :PostContent.find('\n※')
-                    ].strip()
-
-                    LastScreen = LastScreen[
-                        LastScreen.find('\n※'):
-                    ]
-
-                Log.showValue(Log.Level.DEBUG, 'PostContent', PostContent)
-
-                # print('=' * 20)
-                # print(LastScreen)
-                # print('=' * 20)
-
-            if ContentFinish:
-                Lines = LastScreen.split('\n')
-                for line in Lines:
-                    line = line.strip()
-
-                    Log.showValue(
-                        Log.Level.DEBUG, [
-                            'line'
-                        ],
-                        line
-                    )
-
-                    PushType = 0
-                    # Log.showValue(
-                    #     Log.Level.INFO,
-                    #     'line',
-                    #     line
-                    # )
-                    if line.startswith('※ 編輯'):
-                        # print('QQ line[{line}]')
-                        if IP is None:
-                            Log.log(
-                                Log.Level.DEBUG,
-                                'Edited Post Format check fail'
-                            )
-                            Post = DataType.PostInfo(
-                                Board=Board,
-                                AID=PostAID,
-                                Author=PostAuthor,
-                                Date=PostDate,
-                                Title=PostTitle,
-                                WebUrl=PostWeb,
-                                Money=PostMoney,
-                                Content=PostContent,
-                                IP=IP,
-                                PushList=PushList,
-                                ListDate=ListDate,
-                                ControlCode=HasControlCode,
-                                FormatCheck=False,
-                                Location=Location,
-                            )
-                            return Post
-
-                        # print(f'====================: [{line}]')
-
-                        LocationTemp = line[:line.rfind(')') + 1].strip()
-                        LocationTemp = LocationTemp[
-                            LocationTemp.rfind('('):
-                        ].strip()
-
-                        # print(f'+++++++++++++++: [{LocationTemp}]')
-                        # (223.139.39.197 臺灣)
-                        # (06/25 02:05)
-
-                        if len(LocationTemp) >= 2:
-                            if '/' not in LocationTemp:
-                                Location = LocationTemp
-                                Location = Location[
-                                    Location.find(' '):
-                                ].strip()
-                                Location = Location[:-1]
-
-                                Log.showValue(
-                                    Log.Level.DEBUG,
-                                    [
-                                        i18n.Update,
-                                        'Location'
-                                    ],
-                                    Location
-                                )
-                        if IP in line:
-                            continue
-                        PatternResult = NewIPPattern_New.search(line)
-                        if PatternResult is not None:
-                            IP = PatternResult.group(0)[1:-1]
-                        else:
-                            PatternResult = NewIPPattern_Old.search(line)
-                            IP = PatternResult.group(0)
-
-                        Log.showValue(
-                            Log.Level.DEBUG,
-                            [
-                                i18n.Update,
-                                'IP'
-                            ],
-                            IP
-                        )
-                    elif line.startswith('推 '):
-                        PushType = DataType.PushType.Push
-                    elif line.startswith('噓 '):
-                        PushType = DataType.PushType.Boo
-                    elif line.startswith('→ '):
-                        PushType = DataType.PushType.Arrow
-                    else:
-                        pass
-
-                    if PushType != 0:
-                        Result = PushAuthorPattern.search(line)
-                        if Result is None:
-                            # 不符合推文格式
-                            continue
-                        PushAuthor = Result.group(0)[2:-1].strip()
-                        Log.showValue(Log.Level.DEBUG, [
-                            i18n.Push,
-                            i18n.ID,
-                        ],
-                            PushAuthor
-                        )
-
-                        Result = PushDatePattern.search(line)
-                        if Result is None:
-                            continue
-                        PushDate = Result.group(0)
-                        Log.showValue(Log.Level.DEBUG, [
-                            i18n.Push,
-                            i18n.Date,
-                        ],
-                            PushDate
-                        )
-
-                        PushIP = None
-                        Result = PushIPPattern.search(line)
-                        if Result is not None:
-                            PushIP = Result.group(0)
-                            Log.showValue(Log.Level.DEBUG, [
-                                i18n.Push,
-                                'IP',
-                            ],
-                                PushIP
-                            )
-
-                        PushContent = line[
-                            line.find(PushAuthor) + len(PushAuthor):
-                        ]
-                        PushContent = PushContent.replace(PushDate, '')
-                        if PushIP is not None:
-                            PushContent = PushContent.replace(PushIP, '')
-                        PushContent = PushContent[
-                            PushContent.find(':') + 1:
-                        ].strip()
-                        Log.showValue(Log.Level.DEBUG, [
-                            i18n.Push,
-                            i18n.Content,
-                        ],
-                            PushContent
-                        )
-
-                        CurrentPush = DataType.PushInfo(
-                            PushType,
-                            PushAuthor,
-                            PushContent,
-                            PushIP,
-                            PushDate
-                        )
-                        PushList.append(CurrentPush)
             if index == 0:
                 break
 
-            FirstPage = False
             if not ControlCodeMode:
                 LastReadLine = LastReadLineTemp
+            
+            if ContentEnd in LastScreen:
+                PushStart = True
 
-            if ControlCodeMode:
+            if not PushStart:
                 Cmd = Command.Down
-            elif ContentFinish:
+            else:
                 Cmd = Command.Right
-            else:
-                Cmd = Command.Down
 
-        if not ContentFinish:
-            if PostAID is not None:
+        AllPost = '\n'.join(AllPost)
+
+        # print('=' * 20)
+        # print(AllPost)
+        # print('=' * 20)
+
+        PostAuthorPattern_New = re.compile('作者  (.+) 看板')
+        PostAuthorPattern_Old = re.compile('作者  (.+)')
+
+        PostDate = None
+        PostContent = []
+        IP = None
+        Location = None
+        PushList = []
+
+        # 格式確認，亂改的我也沒辦法Q_Q
+        AllPostLines = AllPost.split('\n')
+
+        AuthorLine = AllPostLines[0]
+        PatternResult = PostAuthorPattern_New.search(AuthorLine)
+        if PatternResult is not None:
+            PostAuthor = PatternResult.group(0)
+            PostAuthor = PostAuthor[:PostAuthor.rfind(')') + 1]
+        else:
+            PatternResult = PostAuthorPattern_Old.search(AuthorLine)
+            if PatternResult is None:
                 Log.showValue(
                     Log.Level.DEBUG,
-                    i18n.PostFormatError,
-                    [
-                        Board,
-                        PostAID
-                    ]
+                    i18n.SubstandardPost,
+                    i18n.Author
                 )
-            else:
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    i18n.PostFormatError,
-                    [
-                        Board,
-                        str(PostIndex)
-                    ]
+                Post = DataType.PostInfo(
+                    Board=Board,
+                    AID=PostAID,
+                    Author=PostAuthor,
+                    Date=PostDate,
+                    Title=PostTitle,
+                    WebUrl=PostWeb,
+                    Money=PostMoney,
+                    Content=PostContent,
+                    IP=IP,
+                    PushList=PushList,
+                    ListDate=ListDate,
+                    ControlCode=HasControlCode,
+                    FormatCheck=False,
+                    Location=Location,
                 )
+                return Post
+            PostAuthor = PatternResult.group(0)
+            PostAuthor = PostAuthor[:PostAuthor.rfind(')') + 1]
+        PostAuthor = PostAuthor[4:].strip()
+
+        Log.showValue(
+            Log.Level.DEBUG,
+            i18n.Author,
+            PostAuthor
+        )
+
+        PostTitlePattern = re.compile('標題  (.+)')
+
+        TitleLine = AllPostLines[1]
+        PatternResult = PostTitlePattern.search(TitleLine)
+        if PatternResult is None:
+            Log.showValue(
+                Log.Level.DEBUG,
+                i18n.SubstandardPost,
+                i18n.Title
+            )
+            Post = DataType.PostInfo(
+                Board=Board,
+                AID=PostAID,
+                Author=PostAuthor,
+                Date=PostDate,
+                Title=PostTitle,
+                WebUrl=PostWeb,
+                Money=PostMoney,
+                Content=PostContent,
+                IP=IP,
+                PushList=PushList,
+                ListDate=ListDate,
+                ControlCode=HasControlCode,
+                FormatCheck=False,
+                Location=Location,
+            )
+            return Post
+        PostTitle = PatternResult.group(0)
+        PostTitle = PostTitle[4:].strip()
+
+        Log.showValue(
+            Log.Level.DEBUG,
+            i18n.Title,
+            PostTitle
+        )
+
+        PostDatePattern = re.compile('時間  (.+)')
+        DateLine = AllPostLines[2]
+        PatternResult = PostDatePattern.search(DateLine)
+        if PatternResult is None:
+            Log.showValue(
+                Log.Level.DEBUG,
+                i18n.SubstandardPost,
+                i18n.Date
+            )
+            Post = DataType.PostInfo(
+                Board=Board,
+                AID=PostAID,
+                Author=PostAuthor,
+                Date=PostDate,
+                Title=PostTitle,
+                WebUrl=PostWeb,
+                Money=PostMoney,
+                Content=PostContent,
+                IP=IP,
+                PushList=PushList,
+                ListDate=ListDate,
+                ControlCode=HasControlCode,
+                FormatCheck=False,
+                Location=Location,
+            )
+            return Post
+        PostDate = PatternResult.group(0)
+        PostDate = PostDate[4:].strip()
+
+        Log.showValue(
+            Log.Level.DEBUG,
+            i18n.Date,
+            PostDate
+        )
+
+        if ContentStart in AllPost and ContentEnd in AllPost:
+            PostContent = AllPost
+            PostContent = PostContent[
+                PostContent.find(ContentStart) +
+                len(ContentStart):
+            ]
+            PostContent = PostContent[
+                :PostContent.rfind('※ 發信站: 批踢踢實業坊(ptt.cc)')
+            ]
+            PostContent = PostContent.strip()
+        else:
+            Log.showValue(
+                Log.Level.DEBUG,
+                i18n.SubstandardPost,
+                i18n.Content
+            )
             Post = DataType.PostInfo(
                 Board=Board,
                 AID=PostAID,
@@ -1375,25 +1088,153 @@ class Library(OneThread.OneThread):
             )
             return Post
 
-        # CheckList = [
-        #     Board,
-        #     PostAID,
-        #     PostAuthor,
-        #     PostDate,
-        #     PostTitle,
-        #     PostWeb,
-        #     PostMoney,
-        #     PostContent,
-        #     IP,
-        #     ListDate,
-        #     Location,
-        # ]
+        Log.showValue(
+            Log.Level.DEBUG,
+            i18n.Content,
+            PostContent
+        )
 
-        # FormatCheck = True
-        # for item in CheckList:
-        #     if item is None:
-        #         FormatCheck = False
-        #         break
+        AllPost = AllPost[AllPost.find(ContentEnd):]
+        AllPostLines = AllPost.split('\n')
+
+        InfoLines = [
+            line for line in AllPostLines if line.startswith('※') or line.startswith('◆')
+        ]
+        pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+
+        for line in reversed(InfoLines):
+            Log.showValue(
+                Log.Level.DEBUG,
+                'IP Line',
+                line
+            )
+
+            # type 1
+            # ※ 編輯: CodingMan (111.243.146.98 臺灣)
+            # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 111.243.146.98 (臺灣)
+
+            # type 2
+            # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 116.241.32.178
+            # ※ 編輯: kill77845 (114.136.55.237), 12/08/2018 16:47:59
+
+            # type 3
+            # ※ 發信站: 批踢踢實業坊(ptt.cc)
+            # ◆ From: 211.20.78.69
+            # ※ 編輯: JCC             來自: 211.20.78.69         (06/20 10:22)
+            # ※ 編輯: JCC (118.163.28.150), 12/03/2015 14:25:35
+
+            PatternResult = pattern.search(line)
+            if PatternResult is not None:
+                IP = PatternResult.group(0)
+                LocationTemp = line[line.find(IP) + len(IP):].strip()
+                LocationTemp = LocationTemp.replace('(', '')
+                LocationTemp = LocationTemp[:LocationTemp.rfind(')')]
+                # print(f'=>[{LocationTemp}]')
+                if ' ' not in LocationTemp:
+                    Location = LocationTemp
+                    Log.showValue(Log.Level.DEBUG, 'Location', Location)
+                break
+
+        if IP is None:
+            Log.showValue(
+                Log.Level.DEBUG,
+                i18n.SubstandardPost,
+                'IP'
+            )
+            Post = DataType.PostInfo(
+                Board=Board,
+                AID=PostAID,
+                Author=PostAuthor,
+                Date=PostDate,
+                Title=PostTitle,
+                WebUrl=PostWeb,
+                Money=PostMoney,
+                Content=PostContent,
+                IP=IP,
+                PushList=PushList,
+                ListDate=ListDate,
+                ControlCode=HasControlCode,
+                FormatCheck=False,
+                Location=Location,
+            )
+            return Post
+        Log.showValue(Log.Level.DEBUG, 'IP', IP)
+
+        PushAuthorPattern = re.compile('[推|噓|→] [\w| ]+:')
+        PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
+        PushIPPattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+
+        PushList = []
+
+        for line in AllPostLines:
+            PushType = 0
+            if line.startswith('推'):
+                PushType = DataType.PushType.Push
+            elif line.startswith('噓 '):
+                PushType = DataType.PushType.Boo
+            elif line.startswith('→ '):
+                PushType = DataType.PushType.Arrow
+            else:
+                continue
+
+            Result = PushAuthorPattern.search(line)
+            if Result is None:
+                # 不符合推文格式
+                continue
+            PushAuthor = Result.group(0)[2:-1].strip()
+            Log.showValue(Log.Level.DEBUG, [
+                i18n.Push,
+                i18n.ID,
+            ],
+                PushAuthor
+            )
+
+            Result = PushDatePattern.search(line)
+            if Result is None:
+                continue
+            PushDate = Result.group(0)
+            Log.showValue(Log.Level.DEBUG, [
+                i18n.Push,
+                i18n.Date,
+            ],
+                PushDate
+            )
+
+            PushIP = None
+            Result = PushIPPattern.search(line)
+            if Result is not None:
+                PushIP = Result.group(0)
+                Log.showValue(Log.Level.DEBUG, [
+                    i18n.Push,
+                    'IP',
+                ],
+                    PushIP
+                )
+
+            PushContent = line[
+                line.find(PushAuthor) + len(PushAuthor):
+            ]
+            PushContent = PushContent.replace(PushDate, '')
+            if PushIP is not None:
+                PushContent = PushContent.replace(PushIP, '')
+            PushContent = PushContent[
+                PushContent.find(':') + 1:
+            ].strip()
+            Log.showValue(Log.Level.DEBUG, [
+                i18n.Push,
+                i18n.Content,
+            ],
+                PushContent
+            )
+
+            CurrentPush = DataType.PushInfo(
+                PushType,
+                PushAuthor,
+                PushContent,
+                PushIP,
+                PushDate
+            )
+            PushList.append(CurrentPush)
 
         Post = DataType.PostInfo(
             Board=Board,

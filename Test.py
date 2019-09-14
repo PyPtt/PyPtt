@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account2.txt') as AccountFile:
+        with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -187,10 +187,13 @@ def GetPost():
         # ('Stock', 92324),
         # 文章格式錯誤
         # ('Gossiping', 778570),
+        # 文章格式錯誤
         # ('Stock', 99606),
+        # 文章格式錯誤
         # ('movie', 457),
+        # 文章格式錯誤
         # ('Wanted', 76417),
-        ('Gossiping', '1TU65Wi_')
+        # ('Gossiping', '1TU65Wi_')
     ]
 
     Query = False
@@ -259,15 +262,17 @@ def GetPost():
                         Type = '噓'
                     if Push.getType() == PTT.PushType.Arrow:
                         ArrowCount += 1
-                        Type = '箭頭'
+                        Type = '→'
 
                     Author = Push.getAuthor()
                     Content = Push.getContent()
 
-                    Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
-                    if Push.getIP() is not None:
-                        Buffer += f' 來自 [{Push.getIP()}]'
-                    Buffer += f' 時間是 [{Push.getTime()}]'
+                    # Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
+                    # if Push.getIP() is not None:
+                    #     Buffer += f' 來自 [{Push.getIP()}]'
+                    # Buffer += f' 時間是 [{Push.getTime()}]'
+
+                    Buffer = f'{Type} {Author}: {Content} {Push.getIP()} {Push.getTime()}'
                     print(Buffer)
 
                 print(
@@ -397,7 +402,6 @@ def Post():
         '程式碼: https://tinyurl.com/y2wuh8ck',
         '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual'
     ]
-
     Content = '\r\n\r\n'.join(Content)
 
     PTTBot.post(
@@ -450,15 +454,15 @@ def crawlHandler(Post):
         return
 
     if not Post.isFormatCheck():
-        print('[不合格式]')
+        print('[格式錯誤]')
         return
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
     if not Query:
-        print(f'[{Post.getAID()}][{Post.getDate()}][{Post.getTitle()}]')
+        print(f'[{Post.getAID()}][{Post.getTitle()}]')
     else:
-        print(f'[{Post.getAID()}][{Post.getListDate()}][{Post.getTitle()}]')
+        print(f'[{Post.getAID()}][{Post.getTitle()}]')
     
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
@@ -475,7 +479,7 @@ def crawlHandler(Post):
 
         # print(Post.getContent())
 
-    time.sleep(0.2)
+    # time.sleep(0.2)
 
 
 def CrawlBoard():
@@ -492,7 +496,7 @@ def CrawlBoard():
         'HatePolitics'
     ]
 
-    TestRange = 10000
+    TestRange = 500
     TestRound = 1
 
     for _ in range(TestRound):
@@ -624,7 +628,7 @@ def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        ('Test', 560)
+        ('Test', 796)
     ]
 
     Content = '''
