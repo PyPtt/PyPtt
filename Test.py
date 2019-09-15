@@ -437,6 +437,7 @@ def detectNone(Name, Obj, Enable=True):
     if Obj is None and Enable:
         raise ValueError(Name + ' is None')
 
+
 Query = False
 
 
@@ -453,17 +454,10 @@ def crawlHandler(Post):
             print(f'[不明刪除]')
         return
 
-    if not Post.isFormatCheck():
-        print('[格式錯誤]')
-        return
-
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
-    if not Query:
-        print(f'[{Post.getAID()}][{Post.getTitle()}]')
-    else:
-        print(f'[{Post.getAID()}][{Post.getTitle()}]')
-    
+    print(f'[{Post.getAID()}][{Post.getTitle()}]')
+
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
     detectNone('Author', Post.getAuthor())
@@ -488,15 +482,15 @@ def CrawlBoard():
     TestBoardList = [
         # 'Wanted',
         'Gossiping',
-        'Stock',
-        'movie',
-        'C_Chat',
-        'Baseball',
-        'NBA',
-        'HatePolitics'
+        # 'Stock',
+        # 'movie',
+        # 'C_Chat',
+        # 'Baseball',
+        # 'NBA',
+        # 'HatePolitics'
     ]
 
-    TestRange = 500
+    TestRange = 1000
     TestRound = 1
 
     for _ in range(TestRound):
@@ -519,13 +513,11 @@ def CrawlBoard():
             )
 
             if len(ErrorPostList) > 0:
-                print('Error Post: \n' + '\n'.join(str(x)
-                                                   for x in ErrorPostList))
+                print('格式錯誤文章: \n' + '\n'.join(str(x) for x in ErrorPostList))
             else:
-                print('沒有偵測到錯誤文章')
+                print('沒有偵測到格式錯誤文章')
 
             if len(DelPostList) > 0:
-                # print('Del Post: \n' + '\n'.join([str(x) for x in DelPostList]))
                 print(f'共有 {len(DelPostList)} 篇文章被刪除')
 
 

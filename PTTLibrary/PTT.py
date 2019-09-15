@@ -725,7 +725,8 @@ class Library(OneThread.OneThread):
                 Board=Board,
                 Author=PostAuthor,
                 ListDate=ListDate,
-                DeleteStatus=PostDelStatus
+                DeleteStatus=PostDelStatus,
+                FormatCheck=True
             )
 
         elif index == 0:
