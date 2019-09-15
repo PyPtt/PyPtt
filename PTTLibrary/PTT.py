@@ -1552,6 +1552,9 @@ class Library(OneThread.OneThread):
             if Post is None:
                 ErrorPostList.append(index)
                 continue
+            if not Post.isFormatCheck():
+                ErrorPostList.append(index)
+                continue
             if Post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
                 DelPostList.append(index)
             PostHandler(Post)
