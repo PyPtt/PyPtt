@@ -221,7 +221,8 @@ def VT100(OriScreen: str, NoColor: bool = True):
             CurrentSpace.rfind('\n') + 1:
         ]
 
-        CurrentSpace = len(CurrentSpace)
+        # CurrentSpace = len(CurrentSpace)
+        CurrentSpace = len(CurrentSpace.encode('big5-uao', 'replace'))
         if CurrentLine > Line:
             pass
             # if LastPosition is None:

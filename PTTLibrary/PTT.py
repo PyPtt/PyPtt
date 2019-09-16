@@ -857,7 +857,7 @@ class Library(OneThread.OneThread):
         PushStart = False
 
         FirstPage = True
-        AllPost = []
+        OriginPost = []
         while True:
             index = self._ConnectCore.send(Cmd, TargetList)
             if index == 2:
@@ -894,7 +894,7 @@ class Library(OneThread.OneThread):
 
             if FirstPage:
                 FirstPage = False
-                AllPost.append(LastScreen)
+                OriginPost.append(LastScreen)
             else:
                 if not ControlCodeMode:
                     GetLine = LastReadLineTemp - LastReadLine
@@ -905,7 +905,7 @@ class Library(OneThread.OneThread):
                 else:
                     NewContentPart = Lines[-1]
 
-                AllPost.append(NewContentPart)
+                OriginPost.append(NewContentPart)
                 Log.showValue(
                     Log.Level.DEBUG,
                     'NewContentPart',
@@ -926,10 +926,16 @@ class Library(OneThread.OneThread):
             else:
                 Cmd = Command.Right
 
-        AllPost = '\n'.join(AllPost)
+        OriginPost = '\n'.join(OriginPost)
+
+        Log.showValue(
+            Log.Level.DEBUG,
+            'OriginPost',
+            OriginPost
+        )
 
         # print('=' * 20)
-        # print(AllPost)
+        # print()
         # print('=' * 20)
 
         PostAuthorPattern_New = re.compile('作者  (.+) 看板')
@@ -942,9 +948,9 @@ class Library(OneThread.OneThread):
         PushList = []
 
         # 格式確認，亂改的我也沒辦法Q_Q
-        AllPostLines = AllPost.split('\n')
+        OriginPostLines = OriginPost.split('\n')
 
-        AuthorLine = AllPostLines[0]
+        AuthorLine = OriginPostLines[0]
         PatternResult = PostAuthorPattern_New.search(AuthorLine)
         if PatternResult is not None:
             PostAuthor = PatternResult.group(0)
@@ -986,7 +992,7 @@ class Library(OneThread.OneThread):
 
         PostTitlePattern = re.compile('標題  (.+)')
 
-        TitleLine = AllPostLines[1]
+        TitleLine = OriginPostLines[1]
         PatternResult = PostTitlePattern.search(TitleLine)
         if PatternResult is None:
             Log.showValue(
@@ -1021,7 +1027,7 @@ class Library(OneThread.OneThread):
         )
 
         PostDatePattern = re.compile('時間  (.+)')
-        DateLine = AllPostLines[2]
+        DateLine = OriginPostLines[2]
         PatternResult = PostDatePattern.search(DateLine)
         if PatternResult is None:
             Log.showValue(
@@ -1055,8 +1061,8 @@ class Library(OneThread.OneThread):
             PostDate
         )
 
-        if ContentStart in AllPost and ContentEnd in AllPost:
-            PostContent = AllPost
+        if ContentStart in OriginPost and ContentEnd in OriginPost:
+            PostContent = OriginPost
             PostContent = PostContent[
                 PostContent.find(ContentStart) +
                 len(ContentStart):
@@ -1095,11 +1101,11 @@ class Library(OneThread.OneThread):
             PostContent
         )
 
-        AllPost = AllPost[AllPost.find(ContentEnd):]
-        AllPostLines = AllPost.split('\n')
+        OriginPost = OriginPost[OriginPost.find(ContentEnd):]
+        OriginPostLines = OriginPost.split('\n')
 
         InfoLines = [
-            line for line in AllPostLines if line.startswith('※') or line.startswith('◆')
+            line for line in OriginPostLines if line.startswith('※') or line.startswith('◆')
         ]
         pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
@@ -1167,7 +1173,7 @@ class Library(OneThread.OneThread):
 
         PushList = []
 
-        for line in AllPostLines:
+        for line in OriginPostLines:
             PushType = 0
             if line.startswith('推'):
                 PushType = DataType.PushType.Push
@@ -1769,10 +1775,10 @@ class Library(OneThread.OneThread):
 
             Temp = ''
             LastTemp = None
-            while len(Temp.encode('big5-uao', 'ignore')) < MaxPushLength:
+            while len(Temp.encode('big5-uao', 'replace')) < MaxPushLength:
                 Temp = PushContent[TempStartIndex:TempEndIndex]
 
-                if not len(Temp.encode('big5-uao', 'ignore')) < MaxPushLength:
+                if not len(Temp.encode('big5-uao', 'replace')) < MaxPushLength:
                     break
                 elif PushContent.endswith(Temp):
                     break
