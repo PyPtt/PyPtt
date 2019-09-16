@@ -286,14 +286,14 @@ class API(object):
             if Refresh and not Msg.endswith(Command.Refresh):
                 Msg = Msg + Command.Refresh
             try:
-                Msg = Msg.encode('big5-uao', 'ignore')
+                Msg = Msg.encode('big5-uao', 'replace')
 
             except AttributeError:
                 pass
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                Msg = Msg.encode('big5', 'ignore')
+                Msg = Msg.encode('big5', 'replace')
 
             if isSecret:
                 Log.showValue(
@@ -358,7 +358,7 @@ class API(object):
 
                 ReceiveDataBuffer += ReceiveDataTemp
                 ReceiveDataTemp = ReceiveDataBuffer.decode(
-                    'big5-uao', errors='ignore'
+                    'big5-uao', errors='replace'
                 )
                 Screen = self._cleanScreen(ReceiveDataTemp)
 

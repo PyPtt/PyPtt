@@ -456,7 +456,7 @@ def crawlHandler(Post):
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
-    print(f'[{Post.getAID()}][{Post.getTitle()}]')
+    print(f'[{Post.getAID()}][{Post.getContent()}]')
 
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
@@ -490,7 +490,7 @@ def CrawlBoard():
         # 'HatePolitics'
     ]
 
-    TestRange = 1000
+    TestRange = 10
     TestRound = 1
 
     for _ in range(TestRound):
@@ -844,7 +844,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -857,11 +857,11 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
