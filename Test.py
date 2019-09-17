@@ -180,7 +180,7 @@ def GetPost():
     TestPostList = [
         # ('Python', 1),
         # ('NotExitBoard', 1),
-        # ('Python', 7486),
+        # ('Python', '1TJH_XY0'),
         # 文章格式錯誤
         # ('Steam', 4444),
         # ('Baseball', 199787),
@@ -438,7 +438,7 @@ def detectNone(Name, Obj, Enable=True):
         raise ValueError(Name + ' is None')
 
 
-Query = False
+Query = True
 
 
 def crawlHandler(Post):
@@ -456,7 +456,18 @@ def crawlHandler(Post):
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
-    print(f'[{Post.getAID()}][{Post.getContent()}]')
+
+    PushNumber = Post.getPushNumber()
+    if PushNumber is not None:
+        if PushNumber == '爆':
+            pass
+        elif PushNumber.startswith('X'):
+            N = PushNumber[1:]
+        else:
+            if not PushNumber.isdigit():
+                print(f'[{Post.getAID()}][{Post.getPushNumber()}]')
+                raise ValueError()
+        # print(f'[{Post.getAID()}][{Post.getPushNumber()}]')
 
     detectNone('標題', Post.getTitle())
     detectNone('AID', Post.getAID())
@@ -480,17 +491,17 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        # 'Wanted',
+        'Wanted',
         'Gossiping',
-        # 'Stock',
+        'Stock',
         # 'movie',
         # 'C_Chat',
         # 'Baseball',
         # 'NBA',
-        # 'HatePolitics'
+        'HatePolitics',
     ]
 
-    TestRange = 10
+    TestRange = 100
     TestRound = 1
 
     for _ in range(TestRound):
@@ -844,7 +855,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -857,11 +868,11 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        GetPost()
+        # GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()

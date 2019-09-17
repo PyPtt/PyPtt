@@ -263,7 +263,8 @@ class PostInfo(object):
         DeleteStatus=0,
         ControlCode=False,
         FormatCheck=False,
-        Location=None
+        Location=None,
+        PushNumber=None,
     ):
         self._Board = ParseParameter(str, Board)
         self._AID = ParseParameter(str, AID)
@@ -280,6 +281,7 @@ class PostInfo(object):
         self._ControlCode = ControlCode
         self._FormatCheck = FormatCheck
         self._Location = ParseParameter(str, Location)
+        self._PushNumber = ParseParameter(str, PushNumber)
 
     def getBoard(self):
         return self._Board
@@ -325,6 +327,9 @@ class PostInfo(object):
 
     def getLocation(self):
         return self._Location
+
+    def getPushNumber(self):
+        return self._PushNumber
 
 
 class WaterBallInfo(object):

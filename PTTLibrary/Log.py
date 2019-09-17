@@ -98,8 +98,8 @@ def showValue(LogLevel, Msg, Value):
 
     if len(Msg) == 0:
         return
-    if len(Value) == 0:
-        return
+    # if len(Value) == 0:
+    #     return
 
     if CheckPTTMsg == Msg and Value == LastValue:
         return
