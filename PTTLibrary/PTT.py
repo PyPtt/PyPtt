@@ -653,7 +653,7 @@ class Library(OneThread.OneThread):
             ),
             ConnectCore.TargetUnit(
                 [
-                    i18n.CatchPost,
+                    i18n.PostDeled,
                     i18n.Success,
                 ],
                 Screens.Target.InBoard,
@@ -800,10 +800,46 @@ class Library(OneThread.OneThread):
                 ListDate = PatternResult.group(0)
                 ListDate = ListDate[-5:]
 
+            # >  7485   9 8/09 CodingMan    □ [閒聊] PTT Library 更新
+            # > 79189 M 1 9/17 LittleCalf   □ [公告] 禁言退文公告
+            # >781508 +爆 9/17 jodojeda     □ [新聞] 國人吃魚少 學者：應把吃魚當成輕鬆愉快
+            # >781406 +X1 9/17 kingofage111 R: [申請] ReDmango 請辭Gossiping板主職務
+
+            PushNumber = CursorLine
+            # print(PushNumber)
+            PushNumber = PushNumber[:PushNumber.find(ListDate)]
+            # print(PushNumber)
+            PushNumber = PushNumber[7:]
+            # print(PushNumber)
+            PushNumber = PushNumber.split(' ')
+            # print(PushNumber)
+            PushNumber = list(filter(None, PushNumber))
+            # print(PushNumber)
+
+            if len(PushNumber) == 0:
+                PushNumber = None
+            else:
+                PushNumber = PushNumber[-1]
+                # print(PushNumber)
+
+                if PushNumber.startswith('+') or PushNumber.startswith('~'):
+                    PushNumber = PushNumber[1:]
+                    # print(PushNumber)
+                if PushNumber.lower().startswith('m'):
+                    PushNumber = PushNumber[1:]
+                    # print(PushNumber)
+                if PushNumber.lower().startswith('!'):
+                    PushNumber = PushNumber[1:]
+                if len(PushNumber) == 0:
+                    PushNumber = None
+
+            # print(PushNumber)
+
             Log.showValue(Log.Level.DEBUG, 'PostAID', PostAID)
             Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
             Log.showValue(Log.Level.DEBUG, 'PostMoney', PostMoney)
             Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
+            Log.showValue(Log.Level.DEBUG, 'PushNumber', PushNumber)
 
         if Query:
             Post = DataType.PostInfo(
@@ -815,6 +851,7 @@ class Library(OneThread.OneThread):
                 Money=PostMoney,
                 ListDate=ListDate,
                 FormatCheck=True,
+                PushNumber=PushNumber,
             )
             return Post
 
@@ -874,6 +911,7 @@ class Library(OneThread.OneThread):
                     ListDate=ListDate,
                     ControlCode=HasControlCode,
                     FormatCheck=False,
+                    PushNumber=PushNumber,
                 )
                 return Post
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
@@ -917,7 +955,7 @@ class Library(OneThread.OneThread):
 
             if not ControlCodeMode:
                 LastReadLine = LastReadLineTemp
-            
+
             if ContentEnd in LastScreen:
                 PushStart = True
 
@@ -978,6 +1016,7 @@ class Library(OneThread.OneThread):
                     ControlCode=HasControlCode,
                     FormatCheck=False,
                     Location=Location,
+                    PushNumber=PushNumber,
                 )
                 return Post
             PostAuthor = PatternResult.group(0)
@@ -1015,6 +1054,7 @@ class Library(OneThread.OneThread):
                 ControlCode=HasControlCode,
                 FormatCheck=False,
                 Location=Location,
+                PushNumber=PushNumber,
             )
             return Post
         PostTitle = PatternResult.group(0)
@@ -1050,6 +1090,7 @@ class Library(OneThread.OneThread):
                 ControlCode=HasControlCode,
                 FormatCheck=False,
                 Location=Location,
+                PushNumber=PushNumber,
             )
             return Post
         PostDate = PatternResult.group(0)
@@ -1092,6 +1133,7 @@ class Library(OneThread.OneThread):
                 ControlCode=HasControlCode,
                 FormatCheck=False,
                 Location=Location,
+                PushNumber=PushNumber,
             )
             return Post
 
@@ -1163,6 +1205,7 @@ class Library(OneThread.OneThread):
                 ControlCode=HasControlCode,
                 FormatCheck=False,
                 Location=Location,
+                PushNumber=PushNumber,
             )
             return Post
         Log.showValue(Log.Level.DEBUG, 'IP', IP)
@@ -1258,6 +1301,7 @@ class Library(OneThread.OneThread):
             ControlCode=HasControlCode,
             FormatCheck=True,
             Location=Location,
+            PushNumber=PushNumber,
         )
         return Post
 
