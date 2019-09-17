@@ -354,7 +354,7 @@ class API(object):
                     except websockets.exceptions.ConnectionClosedOK:
                         raise Exceptions.ConnectionClosed()
                     except asyncio.TimeoutError:
-                        return -1
+                        raise NoMatchTargetError(self._RDQ)
 
                 ReceiveDataBuffer += ReceiveDataTemp
                 ReceiveDataTemp = ReceiveDataBuffer.decode(
