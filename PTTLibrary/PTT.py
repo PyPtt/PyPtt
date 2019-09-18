@@ -581,6 +581,10 @@ class Library(OneThread.OneThread):
                 if i == 1:
                     raise e
                 NeedContinue = True
+            except Exceptions.NoSuchBoard as e:
+                if i == 1:
+                    raise e
+                NeedContinue = True
 
             if not Post.isFormatCheck():
                 NeedContinue = True
@@ -1581,6 +1585,10 @@ class Library(OneThread.OneThread):
                         raise e
                     NeedContinue = True
                 except Exceptions.UnknowError as e:
+                    if i == 1:
+                        raise e
+                    NeedContinue = True
+                except Exceptions.NoSuchBoard as e:
                     if i == 1:
                         raise e
                     NeedContinue = True
