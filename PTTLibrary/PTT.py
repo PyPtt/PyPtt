@@ -1616,7 +1616,10 @@ class Library(OneThread.OneThread):
                 ErrorPostList.append(index)
                 continue
             if not Post.isFormatCheck():
-                ErrorPostList.append(index)
+                if Post.getAID() is not None:
+                    ErrorPostList.append(Post.getAID())
+                else:
+                    ErrorPostList.append(index)
                 continue
             if Post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
                 DelPostList.append(index)
