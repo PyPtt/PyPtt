@@ -834,6 +834,10 @@ class Library(OneThread.OneThread):
                     # print(PushNumber)
                 if PushNumber.lower().startswith('!'):
                     PushNumber = PushNumber[1:]
+
+                if PushNumber.lower().startswith('s'):
+                    PushNumber = PushNumber[1:]
+
                 if len(PushNumber) == 0:
                     PushNumber = None
 

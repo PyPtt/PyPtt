@@ -193,7 +193,7 @@ def GetPost():
         # ('movie', 457),
         # 文章格式錯誤
         # ('Wanted', 76417),
-        # ('Gossiping', '1TU65Wi_')
+        # ('Gossiping', '1TU65Wi_'),
     ]
 
     Query = False
@@ -438,7 +438,7 @@ def detectNone(Name, Obj, Enable=True):
         raise ValueError(Name + ' is None')
 
 
-Query = True
+Query = False
 
 
 def crawlHandler(Post):
@@ -455,7 +455,7 @@ def crawlHandler(Post):
         return
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
-    # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
+    print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
 
     PushNumber = Post.getPushNumber()
     if PushNumber is not None:
@@ -465,6 +465,8 @@ def crawlHandler(Post):
             N = PushNumber[1:]
         else:
             if not PushNumber.isdigit():
+                print(f'[{Post.getAID()}][{Post.getPushNumber()}]')
+                print(f'[{Post.getAID()}][{Post.getPushNumber()}]')
                 print(f'[{Post.getAID()}][{Post.getPushNumber()}]')
                 raise ValueError()
         # print(f'[{Post.getAID()}][{Post.getPushNumber()}]')
@@ -491,17 +493,17 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        'Wanted',
-        'Gossiping',
-        'Stock',
-        # 'movie',
-        # 'C_Chat',
-        # 'Baseball',
-        # 'NBA',
+        # 'Wanted',
+        # 'Gossiping',
+        # 'Stock',
+        'movie',
+        'C_Chat',
+        'Baseball',
+        'NBA',
         'HatePolitics',
     ]
 
-    TestRange = 100
+    TestRange = 500
     TestRound = 1
 
     for _ in range(TestRound):
