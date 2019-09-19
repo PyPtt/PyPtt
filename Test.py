@@ -493,9 +493,9 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        # 'Wanted',
-        # 'Gossiping',
-        # 'Stock',
+        'Wanted',
+        'Gossiping',
+        'Stock',
         'movie',
         'C_Chat',
         'Baseball',
