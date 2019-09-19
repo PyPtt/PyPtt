@@ -194,6 +194,7 @@ def GetPost():
         # 文章格式錯誤
         # ('Wanted', 76417),
         # ('Gossiping', '1TU65Wi_'),
+        ('Gossiping', 783050)
     ]
 
     Query = False
@@ -222,6 +223,10 @@ def GetPost():
 
             if not Post.isFormatCheck():
                 print('文章格式錯誤')
+                continue
+
+            if Post.isLock():
+                print('鎖文狀態')
                 continue
 
             print('Board: ' + Post.getBoard())
@@ -857,7 +862,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
         )
         try:
@@ -870,11 +875,11 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()

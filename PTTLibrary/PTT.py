@@ -564,6 +564,7 @@ class Library(OneThread.OneThread):
         for i in range(2):
 
             NeedContinue = False
+            Post = None
             try:
                 Post = self._getPost(
                     Board,
@@ -586,7 +587,9 @@ class Library(OneThread.OneThread):
                     raise e
                 NeedContinue = True
 
-            if not Post.isFormatCheck():
+            if Post is None:
+                NeedContinue = True
+            elif not Post.isFormatCheck():
                 NeedContinue = True
 
             if NeedContinue:
@@ -735,16 +738,19 @@ class Library(OneThread.OneThread):
 
         elif index == 0:
 
-            CurrentLine = None
-            for line in OriScreen.split('\n'):
-                if '文章代碼(AID)' in line:
-                    CurrentLine = line
-                    break
-            if CurrentLine is None:
-                raise Exceptions.NoSuchBoard(Board)
-            if f'({Board})'.lower() not in CurrentLine.lower():
-                raise Exceptions.NoSuchBoard(Board)
+            if f'《{Board}》'.lower() not in OriScreen.lower():
+                CurrentLine = None
+                for line in OriScreen.split('\n'):
+                    if '文章代碼(AID)' in line:
+                        CurrentLine = line
+                        break
+                if CurrentLine is None:
+                    print(OriScreen)
+                    raise Exceptions.NoSuchBoard(Board)
+                if f'({Board})'.lower() not in CurrentLine.lower():
+                    raise Exceptions.NoSuchBoard(Board)
 
+            LockPost = False
             CursorLine = [line for line in OriScreen.split(
                 '\n') if line.startswith(self._Cursor)][0]
             PostAuthor = CursorLine
@@ -752,20 +758,25 @@ class Library(OneThread.OneThread):
                 PostAuthor = PostAuthor[:PostAuthor.find('□')].strip()
             elif 'R:' in PostAuthor:
                 PostAuthor = PostAuthor[:PostAuthor.find('R:')].strip()
-            elif ' 轉 [' in PostAuthor:
+            elif ' 轉 ' in PostAuthor:
                 PostAuthor = PostAuthor[:PostAuthor.find('轉')].strip()
+            elif ' 鎖 ' in PostAuthor:
+                PostAuthor = PostAuthor[:PostAuthor.find('鎖')].strip()
+                LockPost = True
             PostAuthor = PostAuthor[PostAuthor.rfind(' '):].strip()
 
             PostTitle = CursorLine
-            if '□' in PostTitle:
+            if ' □ ' in PostTitle:
                 PostTitle = PostTitle[PostTitle.find('□') + 1:].strip()
-            elif 'R:' in PostTitle:
+            elif ' R:' in PostTitle:
                 PostTitle = PostTitle[PostTitle.find('R:'):].strip()
-            elif ' 轉 [' in PostTitle:
+            elif ' 轉 ' in PostTitle:
                 # print(f'[{PostTitle}]=========>')
                 PostTitle = PostTitle[PostTitle.find('轉') + 1:].strip()
                 PostTitle = f'Fw: {PostTitle}'
                 # print(f'=========>[{PostTitle}]')
+            elif ' 鎖 ' in PostTitle:
+                PostTitle = PostTitle[PostTitle.find('鎖') + 1:].strip()
 
             OriScreenTemp = OriScreen[OriScreen.find('┌──────────'):]
             OriScreenTemp = OriScreenTemp[:OriScreenTemp.find(
@@ -773,11 +784,13 @@ class Library(OneThread.OneThread):
             ]
 
             AIDLine = [line for line in OriScreen.split(
-                '\n') if line.startswith('│ 文章代碼(AID)')][0]
+                '\n') if line.startswith('│ 文章代碼(AID)')]
 
-            pattern = re.compile('#[\w|-]+')
-            PatternResult = pattern.search(AIDLine)
-            PostAID = PatternResult.group(0)[1:]
+            if len(AIDLine) == 1:
+                AIDLine = AIDLine[0]
+                pattern = re.compile('#[\w|-]+')
+                PatternResult = pattern.search(AIDLine)
+                PostAID = PatternResult.group(0)[1:]
 
             pattern = re.compile('文章網址: https:[\S]+html')
             PatternResult = pattern.search(OriScreenTemp)
@@ -842,12 +855,28 @@ class Library(OneThread.OneThread):
                     PushNumber = None
 
             # print(PushNumber)
-
+            Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
+            Log.showValue(Log.Level.DEBUG, 'PostTitle', PostTitle)
             Log.showValue(Log.Level.DEBUG, 'PostAID', PostAID)
             Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
             Log.showValue(Log.Level.DEBUG, 'PostMoney', PostMoney)
             Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
             Log.showValue(Log.Level.DEBUG, 'PushNumber', PushNumber)
+
+            if LockPost:
+                Post = DataType.PostInfo(
+                    Board=Board,
+                    AID=PostAID,
+                    Author=PostAuthor,
+                    Title=PostTitle,
+                    WebUrl=PostWeb,
+                    Money=PostMoney,
+                    ListDate=ListDate,
+                    FormatCheck=True,
+                    PushNumber=PushNumber,
+                    Lock=True,
+                )
+                return Post
 
         if Query:
             Post = DataType.PostInfo(
@@ -1576,6 +1605,7 @@ class Library(OneThread.OneThread):
 
             for i in range(2):
                 NeedContinue = False
+                Post = None
                 try:
                     Post = self._getPost(
                         Board,
@@ -1597,7 +1627,9 @@ class Library(OneThread.OneThread):
                         raise e
                     NeedContinue = True
 
-                if not Post.isFormatCheck():
+                if Post is None:
+                    NeedContinue = True
+                elif not Post.isFormatCheck():
                     NeedContinue = True
 
                 if NeedContinue:

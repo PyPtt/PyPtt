@@ -265,6 +265,7 @@ class PostInfo(object):
         FormatCheck=False,
         Location=None,
         PushNumber=None,
+        Lock=False,
     ):
         self._Board = ParseParameter(str, Board)
         self._AID = ParseParameter(str, AID)
@@ -282,6 +283,7 @@ class PostInfo(object):
         self._FormatCheck = FormatCheck
         self._Location = ParseParameter(str, Location)
         self._PushNumber = ParseParameter(str, PushNumber)
+        self._Lock = Lock
 
     def getBoard(self):
         return self._Board
@@ -330,6 +332,9 @@ class PostInfo(object):
 
     def getPushNumber(self):
         return self._PushNumber
+
+    def isLock(self):
+        return self._Lock
 
 
 class WaterBallInfo(object):
