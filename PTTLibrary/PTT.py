@@ -145,6 +145,7 @@ class Library(OneThread.OneThread):
         else:
             Config.ConnectMode = ConnectMode
         self._ConnectCore = ConnectCore.API(ConnectMode)
+        self._ExistBoardList = []
 
         Log.showValue(Log.Level.INFO, [
             i18n.PTT,
@@ -613,6 +614,51 @@ class Library(OneThread.OneThread):
         Query: bool = False,
     ):
 
+        if Board.lower() not in self._ExistBoardList:
+            CmdList = []
+            CmdList.append(Command.GoMainMenu)
+            CmdList.append('qs')
+            CmdList.append(Board)
+            CmdList.append(Command.Enter)
+            CmdList.append(Command.Ctrl_C * 2)
+            CmdList.append(Command.Space)
+            CmdList.append('i')
+            Cmd = ''.join(CmdList)
+
+            TargetList = [
+                ConnectCore.TargetUnit(
+                    i18n.AnyKeyContinue,
+                    '任意鍵繼續',
+                    BreakDetect=True,
+                    LogLevel=Log.Level.DEBUG
+                )
+            ]
+
+            index = self._ConnectCore.send(Cmd, TargetList)
+            OriScreen = self._ConnectCore.getScreenQueue()[-1]
+            if index < 0:
+                raise Exceptions.UnknowError(OriScreen)
+
+            BoardNameLine = [line.strip() for line in OriScreen.split(
+                '\n') if line.strip().startswith('《')]
+            if len(BoardNameLine) != 1:
+                raise Exceptions.UnknowError(OriScreen)
+            BoardNameLine = BoardNameLine[0]
+            if '《' not in BoardNameLine or '》' not in BoardNameLine:
+                raise Exceptions.UnknowError(BoardNameLine)
+
+            BoardName = BoardNameLine[1:BoardNameLine.find('》')]
+
+            Log.showValue(
+                Log.Level.DEBUG,
+                'Find Board Name',
+                BoardName
+            )
+            self._ExistBoardList.append(BoardName.lower())
+
+            if BoardName.lower() != Board.lower():
+                raise Exceptions.NoSuchBoard(Board)
+
         CmdList = []
         CmdList.append(Command.GoMainMenu)
         CmdList.append('qs')
@@ -737,18 +783,6 @@ class Library(OneThread.OneThread):
             )
 
         elif index == 0:
-
-            if f'《{Board}》'.lower() not in OriScreen.lower():
-                CurrentLine = None
-                for line in OriScreen.split('\n'):
-                    if '文章代碼(AID)' in line:
-                        CurrentLine = line
-                        break
-                if CurrentLine is None:
-                    print(OriScreen)
-                    raise Exceptions.NoSuchBoard(Board)
-                if f'({Board})'.lower() not in CurrentLine.lower():
-                    raise Exceptions.NoSuchBoard(Board)
 
             LockPost = False
             CursorLine = [line for line in OriScreen.split(
