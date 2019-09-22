@@ -194,7 +194,7 @@ def GetPost():
         # 文章格式錯誤
         # ('Wanted', 76417),
         # ('Gossiping', '1TU65Wi_'),
-        ('Gossiping', 783050)
+        ('Gossiping', '1TWadtnq')
     ]
 
     Query = False
@@ -229,6 +229,8 @@ def GetPost():
                 print('鎖文狀態')
                 continue
 
+            print(f'Origin Post: \n{Post.getOriginPost()}')
+            print('=' * 30)
             print('Board: ' + Post.getBoard())
             print('AID: ' + Post.getAID())
             print('Author: ' + Post.getAuthor())
@@ -875,11 +877,11 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()

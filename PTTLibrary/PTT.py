@@ -1088,6 +1088,7 @@ class Library(OneThread.OneThread):
                     FormatCheck=False,
                     Location=Location,
                     PushNumber=PushNumber,
+                    OriginPost=OriginPost,
                 )
                 return Post
             PostAuthor = PatternResult.group(0)
@@ -1126,6 +1127,7 @@ class Library(OneThread.OneThread):
                 FormatCheck=False,
                 Location=Location,
                 PushNumber=PushNumber,
+                OriginPost=OriginPost,
             )
             return Post
         PostTitle = PatternResult.group(0)
@@ -1162,6 +1164,7 @@ class Library(OneThread.OneThread):
                 FormatCheck=False,
                 Location=Location,
                 PushNumber=PushNumber,
+                OriginPost=OriginPost,
             )
             return Post
         PostDate = PatternResult.group(0)
@@ -1205,6 +1208,7 @@ class Library(OneThread.OneThread):
                 FormatCheck=False,
                 Location=Location,
                 PushNumber=PushNumber,
+                OriginPost=OriginPost,
             )
             return Post
 
@@ -1214,8 +1218,8 @@ class Library(OneThread.OneThread):
             PostContent
         )
 
-        OriginPost = OriginPost[OriginPost.find(ContentEnd):]
-        OriginPostLines = OriginPost.split('\n')
+        OriginPostLines = OriginPost[OriginPost.find(ContentEnd):]
+        OriginPostLines = OriginPostLines.split('\n')
 
         InfoLines = [
             line for line in OriginPostLines if line.startswith('※') or line.startswith('◆')
@@ -1277,6 +1281,7 @@ class Library(OneThread.OneThread):
                 FormatCheck=False,
                 Location=Location,
                 PushNumber=PushNumber,
+                OriginPost=OriginPost,
             )
             return Post
         Log.showValue(Log.Level.DEBUG, 'IP', IP)
@@ -1373,6 +1378,7 @@ class Library(OneThread.OneThread):
             FormatCheck=True,
             Location=Location,
             PushNumber=PushNumber,
+            OriginPost=OriginPost,
         )
         return Post
 
