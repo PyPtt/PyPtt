@@ -359,6 +359,8 @@ class Library(OneThread.OneThread):
         if not self._LoginStatus:
             return
 
+        OneThread.ThreadID = None
+
         CmdList = []
         CmdList.append(Command.GoMainMenu)
         CmdList.append('g')

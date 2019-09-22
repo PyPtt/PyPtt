@@ -837,6 +837,12 @@ def ThreadingTest():
     )
     t.start()
     t.join()
+
+    t = threading.Thread(
+        target=ThreadFunc
+    )
+    t.start()
+    t.join()
     # ThreadBot.log('Hi')
     sys.exit()
 
@@ -861,7 +867,7 @@ if __name__ == '__main__':
     try:
         # Loginout()
         # PerformanceTest()
-        # ThreadingTest()
+        ThreadingTest()
 
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
