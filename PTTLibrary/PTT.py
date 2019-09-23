@@ -2267,13 +2267,11 @@ class Library(OneThread.OneThread):
 
         for waterball in WaterBallList:
 
-            CurrentTime = time.time()
-
-            if self._LastThroWaterBallTime == 0:
-                self._LastThroWaterBallTime = CurrentTime
-            else:
+            if self._LastThroWaterBallTime != 0:
+                CurrentTime = time.time()
                 while (CurrentTime - self._LastThroWaterBallTime) < 3.2:
                     time.sleep(0.1)
+                    CurrentTime = time.time()
 
             Log.showValue(
                 Log.Level.INFO,
@@ -2334,6 +2332,8 @@ class Library(OneThread.OneThread):
                 TargetList,
                 ScreenTimeout=Config.ScreenLongTimeOut
             )
+
+            self._LastThroWaterBallTime = time.time()
 
     def getWaterBall(self, OperateType):
 
@@ -2418,7 +2418,7 @@ class Library(OneThread.OneThread):
                 index
             )
             if index == 0:
-                return None
+                return WaterBallList
 
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
