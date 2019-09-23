@@ -146,6 +146,7 @@ class Library(OneThread.OneThread):
             Config.ConnectMode = ConnectMode
         self._ConnectCore = ConnectCore.API(ConnectMode)
         self._ExistBoardList = []
+        self._LastThroWaterBallTime = 0
 
         Log.showValue(Log.Level.INFO, [
             i18n.PTT,
@@ -2265,6 +2266,15 @@ class Library(OneThread.OneThread):
         WaterBallList = filter(None, WaterBallList)
 
         for waterball in WaterBallList:
+
+            CurrentTime = time.time()
+
+            if self._LastThroWaterBallTime == 0:
+                self._LastThroWaterBallTime = CurrentTime
+            else:
+                while (CurrentTime - self._LastThroWaterBallTime) < 3.2:
+                    time.sleep(0.1)
+
             Log.showValue(
                 Log.Level.INFO,
                 i18n.WaterBall,
@@ -2324,8 +2334,6 @@ class Library(OneThread.OneThread):
                 TargetList,
                 ScreenTimeout=Config.ScreenLongTimeOut
             )
-
-            time.sleep(3.2)
 
     def getWaterBall(self, OperateType):
 
