@@ -165,11 +165,6 @@ class Library(object):
 
     def _OneThread(self):
         CurrentThreadID = threading.get_ident()
-        Log.showValue(
-            Log.Level.DEBUG,
-            'CurrentThreadID',
-            CurrentThreadID
-        )
         if CurrentThreadID == self._ThreadID:
             return
         Log.showValue(
@@ -1610,6 +1605,7 @@ class Library(object):
         Query: bool = False
     ):
         self._OneThread()
+
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -1779,6 +1775,7 @@ class Library(object):
         SignFile
     ):
         self._OneThread()
+
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -2272,6 +2269,7 @@ class Library(object):
 
     def throwWaterBall(self, TargetID, Content):
         self._OneThread()
+
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
