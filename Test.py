@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account.txt') as AccountFile:
+        with open('Account2.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -812,11 +812,11 @@ ThreadBot = None
 
 
 def ThreadingTest():
-    ID1 = 'CodingMan'
-    Password1 = 'BNcRVB3D'
+    ID1 = 'QQ1'
+    Password1 = 'xxxxx'
 
-    ID2 = 'DeepLearning'
-    Password2 = 'U4X7M4JD'
+    ID2 = 'QQ2'
+    Password2 = 'xxxxx'
 
     def ThreadFunc1():
         ThreadBot1 = PTT.Library()
@@ -905,7 +905,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
