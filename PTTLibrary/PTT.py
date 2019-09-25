@@ -602,8 +602,7 @@ class Library(object):
                     PostIndex,
                     SearchType,
                     SearchCondition,
-                    Query,
-                    _Retry=(i == 1),
+                    Query
                 )
             except Exceptions.ParseError as e:
                 if i == 1:
@@ -614,6 +613,10 @@ class Library(object):
                     raise e
                 NeedContinue = True
             except Exceptions.NoSuchBoard as e:
+                if i == 1:
+                    raise e
+                NeedContinue = True
+            except ConnectCore.NoMatchTargetError as e:
                 if i == 1:
                     raise e
                 NeedContinue = True
@@ -642,7 +645,6 @@ class Library(object):
         SearchType: int = 0,
         SearchCondition: str = None,
         Query: bool = False,
-        _Retry: bool = False,
     ):
 
         if Board.lower() not in self._ExistBoardList:
@@ -746,16 +748,7 @@ class Library(object):
             ),
         ]
 
-        # index = self._ConnectCore.send(Cmd, TargetList)
-        index = -1
-        try:
-            index = self._ConnectCore.send(Cmd, TargetList)
-        except ConnectCore.NoMatchTargetError as e:
-            if not _Retry:
-                OriScreen = self._ConnectCore.getScreenQueue()[-1]
-                raise Exceptions.UnknowError(OriScreen)
-            raise e
-
+        index = self._ConnectCore.send(Cmd, TargetList)
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
         PostAuthor = None
@@ -1007,14 +1000,7 @@ class Library(object):
         FirstPage = True
         OriginPost = []
         while True:
-            index = -1
-            try:
-                index = self._ConnectCore.send(Cmd, TargetList)
-            except ConnectCore.NoMatchTargetError as e:
-                if not _Retry:
-                    OriScreen = self._ConnectCore.getScreenQueue()[-1]
-                    raise Exceptions.UnknowError(OriScreen)
-                raise e
+            index = self._ConnectCore.send(Cmd, TargetList)
 
             if index == 2:
                 Post = DataType.PostInfo(
@@ -1717,8 +1703,7 @@ class Library(object):
                         PostIndex=index,
                         SearchType=SearchType,
                         SearchCondition=SearchCondition,
-                        Query=Query,
-                        _Retry=(i == 1),
+                        Query=Query
                     )
                 except Exceptions.ParseError as e:
                     if i == 1:
@@ -1729,6 +1714,10 @@ class Library(object):
                         raise e
                     NeedContinue = True
                 except Exceptions.NoSuchBoard as e:
+                    if i == 1:
+                        raise e
+                    NeedContinue = True
+                except ConnectCore.NoMatchTargetError as e:
                     if i == 1:
                         raise e
                     NeedContinue = True
