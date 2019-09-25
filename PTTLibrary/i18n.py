@@ -730,8 +730,6 @@ def load(inputLanguage):
         'Use too many resources of PTT',
     ])
 
-    # 
-
     # global List
     # List = []
 
