@@ -94,10 +94,11 @@ def Loginout():
     PTTBot.log('登入成功')
     PTTBot.logout()
     PTTBot.log('登出成功')
+    sys.exit()
 
     print('等待五秒')
     time.sleep(5)
-    return
+    sys.exit()
 
     print('Telnet 登入登出測試')
     PTTBot = PTT.Library(
@@ -120,7 +121,7 @@ def PerformanceTest():
     print(f'效能測試 getTime {TestTime} 次')
 
     PTTBot = PTT.Library(
-        ConnectMode=PTT.ConnectMode.WebSocket,
+        # ConnectMode=PTT.ConnectMode.WebSocket,
         LogLevel=PTT.LogLevel.SLIENT,
         # LogLevel=PTT.LogLevel.DEBUG,
     )
@@ -141,38 +142,39 @@ def PerformanceTest():
         # print(PTT_TIME)
     EndTime = time.time()
     PTTBot.logout()
-    PTTBot.log('Performance Test WebSocket ' + str(
+    print('Performance Test WebSocket ' + str(
         round(EndTime - StartTime, 2)) + ' s')
 
-    PTTBot.log('等待五秒')
-    time.sleep(5)
+    # PTTBot.log('等待五秒')
+    # time.sleep(5)
 
-    PTTBot = PTT.Library(
-        ConnectMode=PTT.ConnectMode.Telnet,
-        LogLevel=PTT.LogLevel.SLIENT,
-        # LogLevel=PTT.LogLevel.DEBUG,
-    )
-    try:
-        PTTBot.login(ID, Password, KickOtherLogin=True)
-    except PTT.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
-        sys.exit()
-    PTTBot.log('登入成功')
+    # PTTBot = PTT.Library(
+    #     ConnectMode=PTT.ConnectMode.Telnet,
+    #     LogLevel=PTT.LogLevel.SLIENT,
+    #     # LogLevel=PTT.LogLevel.DEBUG,
+    # )
+    # try:
+    #     PTTBot.login(ID, Password, KickOtherLogin=True)
+    # except PTT.Exceptions.LoginError:
+    #     PTTBot.log('登入失敗')
+    #     sys.exit()
+    # PTTBot.log('登入成功')
 
-    StartTime = time.time()
-    for _ in range(TestTime):
-        PTT_TIME = PTTBot.getTime()
+    # StartTime = time.time()
+    # for _ in range(TestTime):
+    #     PTT_TIME = PTTBot.getTime()
 
-        if PTT_TIME is None:
-            print('PTT_TIME is None')
-            break
-        # print(PTT_TIME)
-    EndTime = time.time()
+    #     if PTT_TIME is None:
+    #         print('PTT_TIME is None')
+    #         break
+    #     # print(PTT_TIME)
+    # EndTime = time.time()
 
-    PTTBot.log('Performance Test Telnet ' +
-               str(round(EndTime - StartTime, 2)) + ' s')
+    # PTTBot.log('Performance Test Telnet ' +
+    #            str(round(EndTime - StartTime, 2)) + ' s')
 
     print('Performance Test finish')
+    sys.exit()
 
 
 def GetPost():
@@ -185,16 +187,12 @@ def GetPost():
         # ('Steam', 4444),
         # ('Baseball', 199787),
         # ('Stock', 92324),
-        # 文章格式錯誤
         # ('Gossiping', 778570),
-        # 文章格式錯誤
         # ('Stock', 99606),
         # 文章格式錯誤
         # ('movie', 457),
-        # 文章格式錯誤
-        # ('Wanted', 76417),
         # ('Gossiping', '1TU65Wi_'),
-        ('Gossiping', '1TWadtnq')
+        # ('Gossiping', '1TWadtnq')
     ]
 
     Query = False
@@ -326,10 +324,10 @@ def showCondition(Board, SearchType, Condition):
 def GetPostWithCondition():
 
     TestList = [
-        # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
-        # ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)')
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)')
+        ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
     ]
 
     TestRange = 1
@@ -349,8 +347,8 @@ def GetPostWithCondition():
             for i in range(TestRange):
                 Post = PTTBot.getPost(
                     Board,
-                    # PostIndex=Index - i,
-                    PostIndex=9464,
+                    PostIndex=Index - i,
+                    # PostIndex=9464,
                     SearchType=SearchType,
                     SearchCondition=Condition,
                     Query=Query
@@ -813,36 +811,55 @@ ThreadBot = None
 
 
 def ThreadingTest():
-    def ThreadFunc():
-        global ThreadBot
-        ThreadBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
-            # LogLevel=PTT.LogLevel.DEBUG,
-        )
+    ID1 = 'CodingMan'
+    Password1 = 'BNcRVB3D'
+
+    ID2 = 'DeepLearning'
+    Password2 = 'U4X7M4JD'
+
+    def ThreadFunc1():
+        ThreadBot1 = PTT.Library()
         try:
-            ThreadBot.login(
-                ID,
-                Password,
+            ThreadBot1.login(
+                ID1,
+                Password1,
                 #  KickOtherLogin=True
             )
         except PTT.Exceptions.LoginError:
-            ThreadBot.log('登入失敗')
+            ThreadBot1.log('登入失敗')
             return
 
-        ThreadBot.logout()
-        print('多線程測試完成')
+        ThreadBot1.logout()
+        print('1 多線程測試完成')
 
-    t = threading.Thread(
-        target=ThreadFunc
-    )
-    t.start()
-    t.join()
+    def ThreadFunc2():
+        ThreadBot2 = PTT.Library()
+        try:
+            ThreadBot2.login(
+                ID2,
+                Password2,
+                #  KickOtherLogin=True
+            )
+        except PTT.Exceptions.LoginError:
+            ThreadBot2.log('登入失敗')
+            return
 
-    t = threading.Thread(
-        target=ThreadFunc
+        ThreadBot2.logout()
+        print('2 多線程測試完成')
+
+    t1 = threading.Thread(
+        target=ThreadFunc1
     )
-    t.start()
-    t.join()
+    t2 = threading.Thread(
+        target=ThreadFunc2
+    )
+
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
+
     # ThreadBot.log('Hi')
     sys.exit()
 
@@ -887,7 +904,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
