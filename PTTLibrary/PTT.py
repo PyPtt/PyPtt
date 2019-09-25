@@ -1096,18 +1096,19 @@ class Library(object):
 
         AuthorLine = OriginPostLines[0]
 
-        BoardLine = AuthorLine[AuthorLine.find(')') + 1:]
-        PatternResult = BoardPattern.search(BoardLine)
-        if PatternResult is not None:
-            BoardTemp = PostAuthor = PatternResult.group(0)
-            BoardTemp = BoardTemp[2:].strip()
-            if len(BoardTemp) > 0:
-                Board = BoardTemp
-                Log.showValue(
-                    Log.Level.DEBUG,
-                    i18n.Board,
-                    Board
-                )
+        if Board.lower() == 'allpost':
+            BoardLine = AuthorLine[AuthorLine.find(')') + 1:]
+            PatternResult = BoardPattern.search(BoardLine)
+            if PatternResult is not None:
+                BoardTemp = PostAuthor = PatternResult.group(0)
+                BoardTemp = BoardTemp[2:].strip()
+                if len(BoardTemp) > 0:
+                    Board = BoardTemp
+                    Log.showValue(
+                        Log.Level.DEBUG,
+                        i18n.Board,
+                        Board
+                    )
         PatternResult = PostAuthorPattern_New.search(AuthorLine)
         if PatternResult is not None:
             PostAuthor = PatternResult.group(0)
