@@ -1102,6 +1102,7 @@ class Library(object):
 
         PostAuthorPattern_New = re.compile('作者  (.+) 看板')
         PostAuthorPattern_Old = re.compile('作者  (.+)')
+        BoardPattern = re.compile('看板  (.+)')
 
         PostDate = None
         PostContent = []
@@ -1113,6 +1114,19 @@ class Library(object):
         OriginPostLines = OriginPost.split('\n')
 
         AuthorLine = OriginPostLines[0]
+
+        BoardLine = AuthorLine[AuthorLine.find(')') + 1:]
+        PatternResult = BoardPattern.search(BoardLine)
+        if PatternResult is not None:
+            BoardTemp = PostAuthor = PatternResult.group(0)
+            BoardTemp = BoardTemp[2:].strip()
+            if len(BoardTemp) > 0:
+                Board = BoardTemp
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    i18n.Board,
+                    Board
+                )
         PatternResult = PostAuthorPattern_New.search(AuthorLine)
         if PatternResult is not None:
             PostAuthor = PatternResult.group(0)
