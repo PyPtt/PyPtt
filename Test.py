@@ -867,7 +867,7 @@ if __name__ == '__main__':
     try:
         # Loginout()
         # PerformanceTest()
-        ThreadingTest()
+        # ThreadingTest()
 
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
@@ -883,7 +883,7 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        GetPost()
+        # GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()

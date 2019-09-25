@@ -2,6 +2,7 @@
 import time
 import re
 import progressbar
+import threading
 # import requests
 # from requests.packages.urllib3.exceptions import InsecureRequestWarning
 # requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -13,7 +14,6 @@ try:
     import i18n
     import ConnectCore
     import Log
-    import OneThread
     import Screens
     import Exceptions
     import Command
@@ -24,7 +24,6 @@ except ModuleNotFoundError:
     from . import i18n
     from . import ConnectCore
     from . import Log
-    from . import OneThread
     from . import Screens
     from . import Exceptions
     from . import Command
@@ -45,7 +44,7 @@ CallStatus = DataType.CallStatus
 PostDeleteStatus = DataType.PostDeleteStatus
 
 
-class Library(OneThread.OneThread):
+class Library(object):
     def __init__(
         self,
         Language: int = 0,
@@ -147,16 +146,46 @@ class Library(OneThread.OneThread):
         self._ConnectCore = ConnectCore.API(ConnectMode)
         self._ExistBoardList = []
         self._LastThroWaterBallTime = 0
+        self._ThreadID = threading.get_ident()
 
-        Log.showValue(Log.Level.INFO, [
-            i18n.PTT,
-            i18n.Library,
-            ' v ' + Version,
-        ],
+        Log.showValue(
+            Log.Level.DEBUG,
+            'ThreadID',
+            self._ThreadID
+        )
+
+        Log.showValue(
+            Log.Level.INFO, [
+                i18n.PTT,
+                i18n.Library,
+                ' v ' + Version,
+            ],
             i18n.Init
         )
 
+    def _OneThread(self):
+        CurrentThreadID = threading.get_ident()
+        Log.showValue(
+            Log.Level.DEBUG,
+            'CurrentThreadID',
+            CurrentThreadID
+        )
+        if CurrentThreadID == self._ThreadID:
+            return
+        Log.showValue(
+            Log.Level.DEBUG,
+            'ThreadID',
+            self._ThreadID
+        )
+        Log.showValue(
+            Log.Level.DEBUG,
+            'Current thread id',
+            CurrentThreadID
+        )
+        raise Exceptions.MultiThreadOperated()
+
     def getVersion(self) -> str:
+        self._OneThread()
         return Config.Version
 
     def _login(
@@ -342,6 +371,7 @@ class Library(OneThread.OneThread):
         Password: str,
         KickOtherLogin: bool = False
     ):
+        self._OneThread()
         try:
             return self._login(
                 ID,
@@ -356,11 +386,10 @@ class Library(OneThread.OneThread):
             )
 
     def logout(self):
+        self._OneThread()
 
         if not self._LoginStatus:
             return
-
-        OneThread.ThreadID = None
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -408,10 +437,11 @@ class Library(OneThread.OneThread):
         )
 
     def log(self, Msg):
+        self._OneThread()
         Log.log(Log.Level.INFO, Msg)
 
     def getTime(self) -> str:
-
+        self._OneThread()
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -456,6 +486,7 @@ class Library(OneThread.OneThread):
         SearchCondition: str = None,
         Query: bool = False
     ):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -576,7 +607,8 @@ class Library(OneThread.OneThread):
                     PostIndex,
                     SearchType,
                     SearchCondition,
-                    Query
+                    Query,
+                    _Retry=(i == 1),
                 )
             except Exceptions.ParseError as e:
                 if i == 1:
@@ -615,6 +647,7 @@ class Library(OneThread.OneThread):
         SearchType: int = 0,
         SearchCondition: str = None,
         Query: bool = False,
+        _Retry: bool = False,
     ):
 
         if Board.lower() not in self._ExistBoardList:
@@ -718,7 +751,16 @@ class Library(OneThread.OneThread):
             ),
         ]
 
-        index = self._ConnectCore.send(Cmd, TargetList)
+        # index = self._ConnectCore.send(Cmd, TargetList)
+        index = -1
+        try:
+            index = self._ConnectCore.send(Cmd, TargetList)
+        except ConnectCore.NoMatchTargetError as e:
+            if not _Retry:
+                OriScreen = self._ConnectCore.getScreenQueue()[-1]
+                raise Exceptions.UnknowError(OriScreen)
+            raise e
+
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
         PostAuthor = None
@@ -970,7 +1012,15 @@ class Library(OneThread.OneThread):
         FirstPage = True
         OriginPost = []
         while True:
-            index = self._ConnectCore.send(Cmd, TargetList)
+            index = -1
+            try:
+                index = self._ConnectCore.send(Cmd, TargetList)
+            except ConnectCore.NoMatchTargetError as e:
+                if not _Retry:
+                    OriScreen = self._ConnectCore.getScreenQueue()[-1]
+                    raise Exceptions.UnknowError(OriScreen)
+                raise e
+
             if index == 2:
                 Post = DataType.PostInfo(
                     Board=Board,
@@ -1515,6 +1565,7 @@ class Library(OneThread.OneThread):
         SearchType: int = 0,
         SearchCondition: str = None
     ):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1544,6 +1595,7 @@ class Library(OneThread.OneThread):
         SearchCondition: str = None,
         Query: bool = False
     ):
+        self._OneThread()
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -1655,7 +1707,8 @@ class Library(OneThread.OneThread):
                         PostIndex=index,
                         SearchType=SearchType,
                         SearchCondition=SearchCondition,
-                        Query=Query
+                        Query=Query,
+                        _Retry=(i == 1),
                     )
                 except Exceptions.ParseError as e:
                     if i == 1:
@@ -1711,7 +1764,7 @@ class Library(OneThread.OneThread):
         PostType: int,
         SignFile
     ):
-
+        self._OneThread()
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -1829,6 +1882,7 @@ class Library(OneThread.OneThread):
         PostAID: str = None,
         PostIndex: int = 0
     ):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2192,6 +2246,7 @@ class Library(OneThread.OneThread):
         return User
 
     def getUser(self, UserID):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2202,7 +2257,7 @@ class Library(OneThread.OneThread):
         return self._getUser(UserID)
 
     def throwWaterBall(self, TargetID, Content):
-
+        self._OneThread()
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -2336,6 +2391,7 @@ class Library(OneThread.OneThread):
             self._LastThroWaterBallTime = time.time()
 
     def getWaterBall(self, OperateType):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2580,6 +2636,7 @@ class Library(OneThread.OneThread):
         return WaterBallList
 
     def getCallStatus(self):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2675,6 +2732,7 @@ class Library(OneThread.OneThread):
         self,
         inputCallStatus
     ):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2717,6 +2775,7 @@ class Library(OneThread.OneThread):
             CurrentCallStatus = self._getCallStatus()
 
     def giveMoney(self, ID, Money):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2821,6 +2880,7 @@ class Library(OneThread.OneThread):
         Content: str,
         SignFile
     ):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2950,6 +3010,7 @@ class Library(OneThread.OneThread):
         )
 
     def hasNewMail(self):
+        self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -2986,6 +3047,8 @@ class Library(OneThread.OneThread):
         return len(pattern)
 
     def getBoardList(self):
+        self._OneThread()
+
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
