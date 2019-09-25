@@ -325,6 +325,9 @@ class API(object):
                     raise Exceptions.ConnectionClosed()
                 except RuntimeError:
                     raise Exceptions.ConnectionClosed()
+                except websockets.exceptions.ConnectionClosedOK:
+                    raise Exceptions.ConnectionClosed()
+
             if BreakDetectAfterSend:
                 return BreakIndex
 
