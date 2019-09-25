@@ -638,7 +638,7 @@ def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        ('Test', 796)
+        ('Test', 549)
     ]
 
     Content = '''
@@ -904,7 +904,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
