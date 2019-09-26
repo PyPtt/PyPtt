@@ -173,12 +173,13 @@ def VT100(OriScreen: str, NoColor: bool = True):
 
     result = re.sub(r'[\x1B]', '=PTT=', result)
 
+    # print('=Start=' * 20)
+    # print(result)
+    # print('=End=' * 20)
+
     # result = '\n'.join(
     #     [x.rstrip() for x in result.split('\n')]
     # )
-
-    # print('=Start=' * 20)
-    # print(result)
 
     while '=PTT=[H' in result:
         result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
@@ -215,17 +216,7 @@ def VT100(OriScreen: str, NoColor: bool = True):
                 f'[{Line};{Space}H'
             )
         ].count('\n') + 1
-        CurrentSpace = result[
-            :result.find(
-                f'=PTT=[{Line};{Space}H'
-            )
-        ]
-        CurrentSpace = CurrentSpace[
-            CurrentSpace.rfind('\n') + 1:
-        ]
 
-        # CurrentSpace = len(CurrentSpace)
-        CurrentSpace = len(CurrentSpace.encode('big5-uao', 'replace'))
         if CurrentLine > Line:
             # if LastPosition is None:
             #     pass
@@ -234,7 +225,7 @@ def VT100(OriScreen: str, NoColor: bool = True):
             #     print(f'Line [{Line}]')
             #     print('Clear !!!')
             # print(f'!!!!!!!!=PTT=[{Line};{Space}H')
-            
+
             ResultLines = result.split('\n')
             TargetLine = ResultLines[Line - 1]
             if f'=PTT=[{Line};{Space}H=PTT=[K' in result:
@@ -274,6 +265,22 @@ def VT100(OriScreen: str, NoColor: bool = True):
                 ResultLines[Line - 1] = NewTargetLine
             result = '\n'.join(ResultLines)
         elif CurrentLine == Line:
+            # print(f'!!!!!=PTT=[{Line};{Space}H')
+            CurrentSpace = result[
+                :result.find(
+                    f'=PTT=[{Line};{Space}H'
+                )
+            ]
+            CurrentSpace = CurrentSpace[
+                CurrentSpace.rfind('\n') + 1:
+            ]
+            # Log.showValue(
+            #     Log.Level.INFO,
+            #     'CurrentSpace',
+            #     CurrentSpace
+            # )
+            CurrentSpace = len(CurrentSpace.encode('big5', 'replace'))
+            # print(f'!!!!!{CurrentSpace}')
             if CurrentSpace > Space:
                 result = result.replace(
                     f'=PTT=[{Line};{Space}H',
