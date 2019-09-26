@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account2.txt') as AccountFile:
+        with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -188,12 +188,12 @@ def GetPost():
         # ('Baseball', 199787),
         # ('Stock', 92324),
         # ('Gossiping', 778570),
-        # ('Stock', 99606),
+        # ('Stock', '1TVnEivO'),
         # 文章格式錯誤
         # ('movie', 457),
         # ('Gossiping', '1TU65Wi_'),
         # ('Gossiping', '1TWadtnq'),
-        ('WomenTalk', '1TYB1eaH'),
+        # ('WomenTalk', '1TYB1eaH'),
     ]
 
     Query = False
@@ -278,7 +278,10 @@ def GetPost():
                     #     Buffer += f' 來自 [{Push.getIP()}]'
                     # Buffer += f' 時間是 [{Push.getTime()}]'
 
-                    Buffer = f'{Type} {Author}: {Content} {Push.getIP()} {Push.getTime()}'
+                    if Push.getIP() is not None:
+                        Buffer = f'{Type} {Author}: {Content} {Push.getIP()} {Push.getTime()}'
+                    else:
+                        Buffer = f'{Type} {Author}: {Content} {Push.getTime()}'
                     print(Buffer)
 
                 print(
@@ -462,6 +465,7 @@ def crawlHandler(Post):
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
     print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
+    print(f'[{Post.getContent()}]')
 
     PushNumber = Post.getPushNumber()
     if PushNumber is not None:
@@ -500,16 +504,17 @@ def CrawlBoard():
     global Query
     TestBoardList = [
         'Wanted',
+        # 'Test',
         'Gossiping',
-        'Stock',
-        'movie',
-        'C_Chat',
-        'Baseball',
-        'NBA',
-        'HatePolitics',
+        # 'Stock',
+        # 'movie',
+        # 'C_Chat',
+        # 'Baseball',
+        # 'NBA',
+        # 'HatePolitics',
     ]
 
-    TestRange = 500
+    TestRange = 5
     TestRound = 1
 
     for _ in range(TestRound):
@@ -905,7 +910,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
@@ -917,6 +922,8 @@ if __name__ == '__main__':
         # Mail()
         # HasNewMail()
         # GetBoardList()
+
+        # FullTest()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
