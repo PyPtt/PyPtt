@@ -739,7 +739,7 @@ class Library(object):
             ),
             ConnectCore.TargetUnit(
                 [
-                    i18n.PostDeled,
+                    i18n.PostDeleted,
                     i18n.Success,
                 ],
                 Screens.Target.InBoard,
@@ -755,7 +755,7 @@ class Library(object):
         PostTitle = None
         if index < 0 or index == 1:
             # 文章被刪除
-            Log.log(Log.Level.DEBUG, i18n.PostDeled)
+            Log.log(Log.Level.DEBUG, i18n.PostDeleted)
             PostDelStatus = 0
 
             Log.showValue(

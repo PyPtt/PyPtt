@@ -334,8 +334,8 @@ def load(inputLanguage):
         'Catch post',
     ])
 
-    global PostDeled
-    PostDeled = SpecificLoad(inputLanguage, [
+    global PostDeleted
+    PostDeleted = SpecificLoad(inputLanguage, [
         '文章已經被刪除',
         'Post has been deleted',
     ])
