@@ -1,15 +1,16 @@
 try:
-    import Ver
-    import DataType
-    import Log
-    import i18n
-    import ConnectCore
-except ModuleNotFoundError:
     from . import Ver
     from . import DataType
     from . import Log
     from . import i18n
     from . import ConnectCore
+except ModuleNotFoundError:
+    import Ver
+    import DataType
+    import Log
+    import i18n
+    import ConnectCore
+
 
 Version = Ver.V
 Host = 'ptt.cc'
@@ -47,4 +48,3 @@ def load():
     # 預設是否剔除其他登入
     global KickOtherLogin
     KickOtherLogin = False
-

@@ -10,15 +10,6 @@ from uao import register_uao
 register_uao()
 
 try:
-    import DataType
-    import Config
-    import Util
-    import i18n
-    import Log
-    import Screens
-    import Command
-    import Exceptions
-except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
@@ -27,6 +18,15 @@ except ModuleNotFoundError:
     from . import Screens
     from . import Command
     from . import Exceptions
+except ModuleNotFoundError:
+    import DataType
+    import Config
+    import Util
+    import i18n
+    import Log
+    import Screens
+    import Command
+    import Exceptions
 
 
 class ConnectMode(object):

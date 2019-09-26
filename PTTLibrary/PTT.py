@@ -8,16 +8,6 @@ import threading
 # requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 try:
-    import DataType
-    import Config
-    import Util
-    import i18n
-    import ConnectCore
-    import Log
-    import Screens
-    import Exceptions
-    import Command
-except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
@@ -27,6 +17,16 @@ except ModuleNotFoundError:
     from . import Screens
     from . import Exceptions
     from . import Command
+except ModuleNotFoundError:
+    import DataType
+    import Config
+    import Util
+    import i18n
+    import ConnectCore
+    import Log
+    import Screens
+    import Exceptions
+    import Command
 
 
 Version = Config.Version
@@ -2422,7 +2422,8 @@ class Library(object):
             ConnectCore.TargetUnit(
                 i18n.NoWaterball,
                 '◆ 暫無訊息記錄',
-                BreakDetect=True
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 [
@@ -3033,7 +3034,8 @@ class Library(object):
             ConnectCore.TargetUnit(
                 i18n.MailBox,
                 Screens.Target.InMailBox,
-                BreakDetect=True
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
             )
         ]
 
