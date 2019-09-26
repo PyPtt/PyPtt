@@ -1,17 +1,17 @@
 import sys
 import re
 try:
-    import DataType
-    import Config
-    import Util
-    import i18n
-    import Log
-except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
     from . import i18n
     from . import Log
+except ModuleNotFoundError:
+    import DataType
+    import Config
+    import Util
+    import i18n
+    import Log
 
 
 class Target(object):
@@ -177,6 +177,9 @@ def VT100(OriScreen: str, NoColor: bool = True):
     #     [x.rstrip() for x in result.split('\n')]
     # )
 
+    # print('=Start=' * 20)
+    # print(result)
+
     while '=PTT=[H' in result:
         result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
     while '=PTT=[2J' in result:
@@ -224,14 +227,52 @@ def VT100(OriScreen: str, NoColor: bool = True):
         # CurrentSpace = len(CurrentSpace)
         CurrentSpace = len(CurrentSpace.encode('big5-uao', 'replace'))
         if CurrentLine > Line:
-            pass
             # if LastPosition is None:
             #     pass
             # elif LastPosition != f'=PTT=[{Line};{Space}H':
             #     print(f'CurrentLine [{CurrentLine}]')
             #     print(f'Line [{Line}]')
             #     print('Clear !!!')
-            # print(f'=PTT=[{Line};{Space}H')
+            # print(f'!!!!!!!!=PTT=[{Line};{Space}H')
+            
+            ResultLines = result.split('\n')
+            TargetLine = ResultLines[Line - 1]
+            if f'=PTT=[{Line};{Space}H=PTT=[K' in result:
+                # 如果有 K 則把該行座標之後，全部抹除
+                TargetLine = TargetLine[:Space - 1]
+
+                OriginIndex = -1
+                OriginLine = None
+                for i in range(len(ResultLines)):
+                    line = ResultLines[i]
+                    if f'=PTT=[{Line};{Space}H=PTT=[K' in line:
+                        OriginIndex = i
+                        OriginLine = line
+                        break
+
+                if OriginLine.count('=PTT=') > 2:
+                    OriginLine = OriginLine[
+                        :Util.findnth(OriginLine, '=PTT=', 3)
+                    ]
+
+                # ResultLines[OriginIndex] = ResultLines[OriginIndex].replace(
+                #     OriginLine,
+                #     ''
+                # )
+
+                OriginLine = OriginLine[
+                    len(f'=PTT=[{Line};{Space}H=PTT=[K'):
+                ]
+
+                # Log.showValue(
+                #     Log.Level.INFO,
+                #     'OriginLine',
+                #     OriginLine
+                # )
+
+                NewTargetLine = f'{TargetLine}{OriginLine}'
+                ResultLines[Line - 1] = NewTargetLine
+            result = '\n'.join(ResultLines)
         elif CurrentLine == Line:
             if CurrentSpace > Space:
                 result = result.replace(
@@ -249,16 +290,27 @@ def VT100(OriScreen: str, NoColor: bool = True):
                 (Line - CurrentLine) * '\n' + Space * ' '
             )
 
-    while '=PTT=[K' in result:
-        Target = result[result.find('=PTT=[K'):]
-        index1 = Target.find('\n')
-        index2 = Target.find('=PTT=')
-        if index2 == 0:
-            index = index1
-        else:
-            index = min(index1, index2)
-        Target = Target[:index]
-        result = result.replace(Target, '')
+    # while '=PTT=[K' in result:
+    #     Target = result[result.find('=PTT=[K'):]
+    #     index1 = Target.find('\n')
+    #     index2 = Target.rfind('=PTT=')
+    #     if index2 == 0:
+    #         index = index1
+    #     else:
+    #         index = min(index1, index2)
+    #     Target = Target[:index]
+    #     print('===' * 20)
+    #     print(result)
+    #     print('-=-' * 20)
+    #     print(Target)
+    #     print('===' * 20)
+    #     result = result.replace(Target, '')
+
+    # print('---' * 20)
+    # print(result)
+    # print('-=-' * 20)
+    # print(Target)
+    # print('===' * 20)
 
     if LastPosition is not None:
         result = result.replace(LastPosition, '')

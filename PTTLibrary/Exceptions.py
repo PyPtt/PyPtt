@@ -1,12 +1,12 @@
 
 try:
-    import Config
-    import Util
-    import i18n
-except ModuleNotFoundError:
     from . import Config
     from . import Util
     from . import i18n
+except ModuleNotFoundError:
+    import Config
+    import Util
+    import i18n
 
 
 class Error(Exception):

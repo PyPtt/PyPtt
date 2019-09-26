@@ -4,13 +4,13 @@ import time
 import traceback
 
 try:
-    import DataType
-    import Config
-    import Util
-except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
+except ModuleNotFoundError:
+    import DataType
+    import Config
+    import Util
 
 
 def checkRange(DefineObj, Value):
@@ -57,3 +57,10 @@ def getSubStringList(MainString, TargetA, TargetB):
 
 def getCurrentFuncName():
     return traceback.extract_stack(None, 2)[0][2]
+
+
+def findnth(haystack, needle, n):
+    parts = haystack.split(needle, n+1)
+    if len(parts) <= n+1:
+        return -1
+    return len(haystack)-len(parts[-1])-len(needle)

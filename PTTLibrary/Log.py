@@ -2,15 +2,16 @@ import sys
 from time import gmtime, strftime
 
 try:
-    import DataType
-    import Config
-    import Util
-    import i18n
-except ModuleNotFoundError:
     from . import DataType
     from . import Config
     from . import Util
     from . import i18n
+except ModuleNotFoundError:
+    import DataType
+    import Config
+    import Util
+    import i18n
+
 
 # Log Handler
 Handler = None
