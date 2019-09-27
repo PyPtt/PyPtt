@@ -2712,10 +2712,13 @@ class Library(object):
             ),
         ]
 
-        index = self._ConnectCore.send(Cmd, TargetList)
-        if index < 0:
-            OriScreen = self._ConnectCore.getScreenQueue()[-1]
-            raise Exceptions.UnknowError(OriScreen)
+        for i in range(2):
+            index = self._ConnectCore.send(Cmd, TargetList)
+            if index < 0:
+                if i == 0:
+                    continue
+                OriScreen = self._ConnectCore.getScreenQueue()[-1]
+                raise Exceptions.UnknowError(OriScreen)
 
         if index == 0:
             return DataType.CallStatus.On
