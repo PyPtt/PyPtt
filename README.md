@@ -11,6 +11,7 @@
 #### 無論推文、發文、爬蟲、寄信、發 P 幣、丟水球還是狂查人家 ID，都可以滿足你的需求
 #### 使用最新的 WebSocket 連線模式
 #### 支援多國語系，繁體中文與英文
+#### 備有親切的說明手冊 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
 #### 歡迎發起 pull request，提交你開發的 API
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
 #### 原始碼
