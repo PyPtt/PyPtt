@@ -44,7 +44,7 @@ CallStatus = DataType.CallStatus
 PostDeleteStatus = DataType.PostDeleteStatus
 
 
-class Library(object):
+class Library:
     def __init__(
         self,
         Language: int = 0,
@@ -1584,177 +1584,207 @@ class Library(object):
     def crawlBoard(
         self,
         PostHandler,
+        CrawlType: int,
         Board: str,
+        # BBS版本
         StartIndex: int = 0,
         EndIndex: int = 0,
         SearchType: int = 0,
         SearchCondition: str = None,
-        Query: bool = False
+        Query: bool = False,
+        # 網頁版本
+        StartPage: int = 0,
+        EndPage: int = 0,
     ):
         self._OneThread()
 
-        if not self._LoginStatus:
-            raise Exceptions.RequireLogin(i18n.RequireLogin)
-
-        if not isinstance(Board, str):
+        if not isinstance(CrawlType, int):
             raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(StartIndex, int):
-            raise TypeError(Log.merge([
-                'StartIndex',
+                'CrawlType',
                 i18n.MustBe,
                 i18n.Integer
             ]))
-        if not isinstance(EndIndex, int):
-            raise TypeError(Log.merge([
-                'EndIndex',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-        if not isinstance(SearchType, int):
-            raise TypeError(Log.merge([
-                'SearchType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-        if (SearchCondition is not None and
-                not isinstance(SearchCondition, str)):
-            raise TypeError(Log.merge([
-                'SearchCondition',
-                i18n.MustBe,
-                i18n.String
-            ]))
 
-        if len(Board) == 0:
-            raise ValueError(Log.merge([
-                i18n.Board,
-                i18n.ErrorParameter,
-                Board
-            ]))
+        if not Util.checkRange(DataType.CrawlType, CrawlType):
+            raise ValueError('Unknow CrawlType', CrawlType)
 
-        if StartIndex < 1:
-            raise ValueError(Log.merge([
-                'StartIndex',
-                i18n.ErrorParameter,
-                i18n.OutOfRange,
-            ]))
+        if CrawlType == DataType.CrawlType.BBS:
 
-        if StartIndex < 1:
-            raise ValueError(Log.merge([
-                'StartIndex',
-                i18n.ErrorParameter,
-                i18n.OutOfRange,
-            ]))
+            if not self._LoginStatus:
+                raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if StartIndex > EndIndex:
-            raise ValueError(Log.merge([
-                'StartIndex',
-                i18n.MustSmall,
-                'EndIndex',
-            ]))
-
-        if SearchType == DataType.PostSearchType.Push:
-            try:
-                S = int(SearchCondition)
-            except ValueError:
-                raise ValueError(Log.merge([
-                    'SearchCondition',
-                    i18n.ErrorParameter,
+            if not isinstance(Board, str):
+                raise TypeError(Log.merge([
+                    'Board',
+                    i18n.MustBe,
+                    i18n.String
                 ]))
 
-            if not (-100 <= S <= 110):
-                raise ValueError(Log.merge([
+            if not isinstance(StartIndex, int):
+                raise TypeError(Log.merge([
+                    'StartIndex',
+                    i18n.MustBe,
+                    i18n.Integer
+                ]))
+            if not isinstance(EndIndex, int):
+                raise TypeError(Log.merge([
+                    'EndIndex',
+                    i18n.MustBe,
+                    i18n.Integer
+                ]))
+            if not isinstance(SearchType, int):
+                raise TypeError(Log.merge([
+                    'SearchType',
+                    i18n.MustBe,
+                    i18n.Integer
+                ]))
+            if (SearchCondition is not None and
+                    not isinstance(SearchCondition, str)):
+                raise TypeError(Log.merge([
                     'SearchCondition',
-                    i18n.ErrorParameter,
+                    i18n.MustBe,
+                    i18n.String
                 ]))
 
-        NewestIndex = self._getNewestIndex(
-            DataType.IndexType.Board,
-            Board=Board,
-            SearchType=SearchType,
-            SearchCondition=SearchCondition
-        )
+            if len(Board) == 0:
+                raise ValueError(Log.merge([
+                    i18n.Board,
+                    i18n.ErrorParameter,
+                    Board
+                ]))
 
-        if EndIndex > NewestIndex:
-            raise ValueError(Log.merge([
-                'EndIndex',
-                i18n.ErrorParameter,
-                i18n.OutOfRange,
-            ]))
+            if StartIndex < 1:
+                raise ValueError(Log.merge([
+                    'StartIndex',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
 
-        ErrorPostList = []
-        DelPostList = []
-        if Config.LogLevel == Log.Level.INFO:
-            PB = progressbar.ProgressBar(
-                max_value=EndIndex - StartIndex + 1,
-                redirect_stdout=True
-            )
-        for index in range(StartIndex, EndIndex + 1):
+            if StartIndex < 1:
+                raise ValueError(Log.merge([
+                    'StartIndex',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
 
-            for i in range(2):
-                NeedContinue = False
-                Post = None
+            if StartIndex > EndIndex:
+                raise ValueError(Log.merge([
+                    'StartIndex',
+                    i18n.MustSmall,
+                    'EndIndex',
+                ]))
+
+            if SearchType == DataType.PostSearchType.Push:
                 try:
-                    Post = self._getPost(
-                        Board,
-                        PostIndex=index,
-                        SearchType=SearchType,
-                        SearchCondition=SearchCondition,
-                        Query=Query
-                    )
-                except Exceptions.ParseError as e:
-                    if i == 1:
-                        raise e
-                    NeedContinue = True
-                except Exceptions.UnknowError as e:
-                    if i == 1:
-                        raise e
-                    NeedContinue = True
-                except Exceptions.NoSuchBoard as e:
-                    if i == 1:
-                        raise e
-                    NeedContinue = True
-                except ConnectCore.NoMatchTargetError as e:
-                    if i == 1:
-                        raise e
-                    NeedContinue = True
+                    S = int(SearchCondition)
+                except ValueError:
+                    raise ValueError(Log.merge([
+                        'SearchCondition',
+                        i18n.ErrorParameter,
+                    ]))
 
-                if Post is None:
-                    NeedContinue = True
-                elif not Post.isFormatCheck():
-                    NeedContinue = True
+                if not (-100 <= S <= 110):
+                    raise ValueError(Log.merge([
+                        'SearchCondition',
+                        i18n.ErrorParameter,
+                    ]))
 
-                if NeedContinue:
-                    Log.log(
-                        Log.Level.DEBUG,
-                        'Wait for retry repost'
-                    )
-                    time.sleep(0.1)
-                    continue
+            NewestIndex = self._getNewestIndex(
+                DataType.IndexType.Board,
+                Board=Board,
+                SearchType=SearchType,
+                SearchCondition=SearchCondition
+            )
 
-                break
+            if EndIndex > NewestIndex:
+                raise ValueError(Log.merge([
+                    'EndIndex',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
 
+            ErrorPostList = []
+            DelPostList = []
             if Config.LogLevel == Log.Level.INFO:
-                PB.update(index - StartIndex)
-            if Post is None:
-                ErrorPostList.append(index)
-                continue
-            if not Post.isFormatCheck():
-                if Post.getAID() is not None:
-                    ErrorPostList.append(Post.getAID())
-                else:
+                PB = progressbar.ProgressBar(
+                    max_value=EndIndex - StartIndex + 1,
+                    redirect_stdout=True
+                )
+            for index in range(StartIndex, EndIndex + 1):
+
+                for i in range(2):
+                    NeedContinue = False
+                    Post = None
+                    try:
+                        Post = self._getPost(
+                            Board,
+                            PostIndex=index,
+                            SearchType=SearchType,
+                            SearchCondition=SearchCondition,
+                            Query=Query
+                        )
+                    except Exceptions.ParseError as e:
+                        if i == 1:
+                            raise e
+                        NeedContinue = True
+                    except Exceptions.UnknowError as e:
+                        if i == 1:
+                            raise e
+                        NeedContinue = True
+                    except Exceptions.NoSuchBoard as e:
+                        if i == 1:
+                            raise e
+                        NeedContinue = True
+                    except ConnectCore.NoMatchTargetError as e:
+                        if i == 1:
+                            raise e
+                        NeedContinue = True
+
+                    if Post is None:
+                        NeedContinue = True
+                    elif not Post.isFormatCheck():
+                        NeedContinue = True
+
+                    if NeedContinue:
+                        Log.log(
+                            Log.Level.DEBUG,
+                            'Wait for retry repost'
+                        )
+                        time.sleep(0.1)
+                        continue
+
+                    break
+
+                if Config.LogLevel == Log.Level.INFO:
+                    PB.update(index - StartIndex)
+                if Post is None:
                     ErrorPostList.append(index)
-                continue
-            if Post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
-                DelPostList.append(index)
-            PostHandler(Post)
-        if Config.LogLevel == Log.Level.INFO:
-            PB.finish()
-        return ErrorPostList, DelPostList
+                    continue
+                if not Post.isFormatCheck():
+                    if Post.getAID() is not None:
+                        ErrorPostList.append(Post.getAID())
+                    else:
+                        ErrorPostList.append(index)
+                    continue
+                if Post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
+                    DelPostList.append(index)
+                PostHandler(Post)
+            if Config.LogLevel == Log.Level.INFO:
+                PB.finish()
+
+            return ErrorPostList, DelPostList
+
+        else:
+            # 網頁版本爬蟲
+            # https://www.ptt.cc/bbs/index.html
+
+            # 1. 取得總共有幾頁 MaxPage
+            # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
+            # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 DataType.PostInfo
+            # 4. 把組合出來的 Post 塞給 handler
+            # 5. 顯示 progress bar
+
+            return ErrorPostList
 
     def post(
         self,

@@ -15,7 +15,7 @@ def ParseParameter(type, input):
     return result
 
 
-class CallStatus(object):
+class CallStatus:
     # 呼叫器狀態
 
     # 打開
@@ -33,7 +33,7 @@ class CallStatus(object):
     MaxValue = Off
 
 
-class PostSearchType(object):
+class PostSearchType:
     # 文章搜尋類型
 
     # 搜尋關鍵字    / ?
@@ -51,7 +51,7 @@ class PostSearchType(object):
     MaxValue = Money
 
 
-class WaterBallType(object):
+class WaterBallType:
     # 水球接收狀態
 
     # 收到水球
@@ -63,7 +63,7 @@ class WaterBallType(object):
     MaxValue = Send
 
 
-class WaterBallOperateType(object):
+class WaterBallOperateType:
     # 清除水球類型
 
     Clear = 1
@@ -74,7 +74,7 @@ class WaterBallOperateType(object):
     MaxValue = DoNothing
 
 
-class OperateType(object):
+class OperateType:
     # 操作類型
 
     Add = 1
@@ -85,7 +85,7 @@ class OperateType(object):
     MaxValue = Query
 
 
-class FriendListType(object):
+class FriendListType:
     # 名單類型
 
     GoodFriend = 1
@@ -98,7 +98,7 @@ class FriendListType(object):
     MaxValue = OtherSpecial
 
 
-class ReplyPostType(object):
+class ReplyPostType:
     # 回文類型
 
     Board = 1
@@ -109,7 +109,7 @@ class ReplyPostType(object):
     MaxValue = Board_Mail
 
 
-class PushType(object):
+class PushType:
     Push = 1
     Boo = 2
     Arrow = 3
@@ -118,7 +118,7 @@ class PushType(object):
     MaxValue = Arrow
 
 
-class MailInformation(object):
+class MailInformation:
     def __init__(self, Author, Title, Date, Content, IP, RawData):
         self._Author = ParseParameter(str, Author)
         self._Title = ParseParameter(str, Title)
@@ -146,7 +146,7 @@ class MailInformation(object):
         return self._RawData
 
 
-class UserInfo(object):
+class UserInfo:
     def __init__(
         self,
         ID,
@@ -212,7 +212,7 @@ class UserInfo(object):
         return self._SignatureFile
 
 
-class PushInfo(object):
+class PushInfo:
     def __init__(self, PushType, Author, PushContent, PushIP, PushTime):
         self._Type = ParseParameter(int, PushType)
         self._Author = ParseParameter(str, Author)
@@ -236,7 +236,7 @@ class PushInfo(object):
         return self._Time
 
 
-class PostDeleteStatus(object):
+class PostDeleteStatus:
     NotDeleted = 0
     ByAuthor = 1
     ByModerator = 2
@@ -246,7 +246,7 @@ class PostDeleteStatus(object):
     MaxValue = ByUnknow
 
 
-class PostInfo(object):
+class PostInfo:
     def __init__(
         self,
         Board=None,
@@ -342,7 +342,7 @@ class PostInfo(object):
         return self._OriginPost
 
 
-class WaterBallInfo(object):
+class WaterBallInfo:
     def __init__(self, Type, Target, Content, Date):
         self._Type = ParseParameter(int, Type)
         self._Target = ParseParameter(str, Target)
@@ -362,18 +362,28 @@ class WaterBallInfo(object):
         return self._Type
 
 
-class Cursor(object):
+class Cursor:
     # 舊式游標
     Old = '●'
     # 新式游標
     New = '>'
 
 
-class IndexType(object):
-    # 版
+class IndexType:
+    # 板
     Board = 1
     # 信箱
     Mail = 2
 
     MinValue = Board
     MaxValue = Mail
+
+
+class CrawlType:
+    # BBS版本
+    BBS = 1
+    # 網頁版本
+    Web = 2
+
+    MinValue = BBS
+    MaxValue = Web
