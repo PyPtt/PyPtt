@@ -643,7 +643,7 @@ def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        ('Test', 636)
+        ('Test', 20004)
     ]
 
     Content = '''
@@ -900,7 +900,7 @@ if __name__ == '__main__':
             PTTBot.login(
                 ID,
                 Password,
-                KickOtherLogin=True
+                # KickOtherLogin=True
             )
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -908,7 +908,7 @@ if __name__ == '__main__':
 
         # GetPost()
         # GetPostWithCondition()
-        # Post()
+        Post()
         # GetNewestIndex()
         # CrawlBoard()
         # CrawlBoardWithCondition()
