@@ -194,6 +194,9 @@ def GetPost():
         # ('Gossiping', '1TU65Wi_'),
         # ('Gossiping', '1TWadtnq'),
         # ('Gossiping', '1TZBBkWP'),
+
+        # PTT2
+        ('Test', 20004),
     ]
 
     Query = False
@@ -236,7 +239,7 @@ def GetPost():
             print('List Date: ' + Post.getListDate())
             print('Title: ' + Post.getTitle())
             print('Money: ' + str(Post.getMoney()))
-            print('URL: ' + Post.getWebUrl())
+            # print('URL: ' + Post.getWebUrl())
             if not Query:
                 print('Date: ' + Post.getDate())
                 print('Content: ' + Post.getContent())
@@ -895,9 +898,9 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT1
+            Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(
