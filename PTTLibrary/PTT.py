@@ -1912,6 +1912,7 @@ class Library:
         CmdList.append(Command.Enter)
         CmdList.append(str(Title))
         CmdList.append(Command.Enter)
+        CmdList.append(Command.Ctrl_Y * 30)
         CmdList.append(str(Content))
         CmdList.append(Command.Ctrl_X)
         Cmd = ''.join(CmdList)
