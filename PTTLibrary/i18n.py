@@ -94,6 +94,12 @@ def load(inputLanguage):
         'PTT',
     ])
 
+    global PTT2
+    PTT2 = SpecificLoad(inputLanguage, [
+        '批踢踢兔',
+        'PTT2',
+    ])
+
     global Init
     Init = SpecificLoad(inputLanguage, [
         '初始化',
@@ -728,6 +734,12 @@ def load(inputLanguage):
     UseTooManyResources = SpecificLoad(inputLanguage, [
         '耗用太多資源',
         'Use too many resources of PTT',
+    ])
+
+    global Host
+    Host = SpecificLoad(inputLanguage, [
+        '主機',
+        'Host',
     ])
 
     # global List

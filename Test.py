@@ -894,6 +894,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
+            Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(
