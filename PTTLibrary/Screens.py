@@ -20,6 +20,11 @@ class Target(object):
         '[呼叫器]',
     ]
 
+    MainMenu_Exiting = [
+        '【主功能表】',
+        '您確定要離開',
+    ]
+
     QueryPost = [
         '請按任意鍵繼續',
         '───────┘',
