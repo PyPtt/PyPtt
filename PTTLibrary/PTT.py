@@ -42,6 +42,8 @@ WaterBallOperateType = DataType.WaterBallOperateType
 WaterBallType = DataType.WaterBallType
 CallStatus = DataType.CallStatus
 PostDeleteStatus = DataType.PostDeleteStatus
+CrawlType = DataType.CrawlType
+Host = DataType.Host
 
 
 class Library:
@@ -53,6 +55,7 @@ class Library:
         ScreenTimeOut: int = 0,
         ScreenLongTimeOut: int = 0,
         LogHandler=None,
+        Host: int = 0,
     ):
 
         if LogHandler is not None:
@@ -72,7 +75,7 @@ class Library:
 
         self._LoginStatus = False
 
-        Config.load()
+        # Config.load()
 
         if not isinstance(Language, int):
             raise TypeError('Language must be integer')
@@ -84,6 +87,8 @@ class Library:
             raise TypeError('ScreenTimeOut must be integer')
         if not isinstance(ScreenLongTimeOut, int):
             raise TypeError('ScreenLongTimeOut must be integer')
+        if not isinstance(Host, int):
+            raise TypeError('Host must be integer')
 
         if ScreenTimeOut != 0:
             Config.ScreenTimeOut = ScreenTimeOut
@@ -143,7 +148,32 @@ class Library:
             raise ValueError('Unknow ConnectMode', ConnectMode)
         else:
             Config.ConnectMode = ConnectMode
-        self._ConnectCore = ConnectCore.API(ConnectMode)
+
+        if Host == 0:
+            Host = Config.Host
+        elif not Util.checkRange(DataType.Host, Host):
+            raise ValueError('Unknow Host', Host)
+
+        if Host == DataType.Host.PTT1:
+            Log.showValue(
+                Log.Level.INFO,
+                [
+                    i18n.Connect,
+                    i18n.Host
+                ],
+                i18n.PTT
+            )
+        if Host == DataType.Host.PTT2:
+            Log.showValue(
+                Log.Level.INFO,
+                [
+                    i18n.Connect,
+                    i18n.Host
+                ],
+                i18n.PTT2
+            )
+
+        self._ConnectCore = ConnectCore.API(Host)
         self._ExistBoardList = []
         self._LastThroWaterBallTime = 0
         self._ThreadID = threading.get_ident()

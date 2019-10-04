@@ -158,9 +158,9 @@ class ReceiveDataQueue(object):
 
 
 class API(object):
-    def __init__(self, ConnectMode: int):
+    def __init__(self, Host: int):
 
-        self._ConnectMode = ConnectMode
+        self._Host = Host
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
             [
@@ -197,59 +197,48 @@ class API(object):
 
         ConnectSuccess = False
 
-        # if self._ConnectMode == ConnectMode.Telnet:
-        #     Log.showValue(Log.Level.INFO, [
-        #         i18n.Connect,
-        #         i18n.PTT,
-        #     ],
-        #         i18n.ConnectMode_Telnet
-        #     )
-        # else:
-        #     Log.showValue(Log.Level.INFO, [
-        #         i18n.Connect,
-        #         i18n.PTT,
-        #     ],
-        #         i18n.ConnectMode_WebSocket
-        #     )
-
         for _ in range(2):
 
             try:
-
-                # if self._ConnectMode == ConnectMode.Telnet:
-                #     self._Core = telnetlib.Telnet(Config.Host, Config.Port)
-                # else:
-                #     loop = asyncio.new_event_loop()
-                #     asyncio.set_event_loop(loop)
-                #     self._Core = asyncio.get_event_loop().run_until_complete(
-                #         websockets.connect(
-                #             'wss://ws.ptt.cc/bbs/',
-                #             origin='https://www.ptt.cc'
-                #         )
-                #     )
                 try:
                     loop = asyncio.new_event_loop()
                     asyncio.set_event_loop(loop)
                 except:
                     pass
-                self._Core = asyncio.get_event_loop().run_until_complete(
-                    websockets.connect(
-                        'wss://ws.ptt.cc/bbs/',
-                        origin='https://www.ptt.cc'
+
+                if self._Host == DataType.Host.PTT1:
+                    self._Core = asyncio.get_event_loop().run_until_complete(
+                        websockets.connect(
+                            'wss://ws.ptt.cc/bbs/',
+                            origin='https://www.ptt.cc'
+                        )
                     )
-                )
+                else:
+                    self._Core = asyncio.get_event_loop().run_until_complete(
+                        websockets.connect(
+                            'wss://ws.ptt2.cc/bbs',
+                            origin='https://term.ptt2.cc'
+                        )
+                    )
 
                 ConnectSuccess = True
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-            # except:
-                Log.showValue(Log.Level.INFO, [
-                    i18n.Connect,
-                    i18n.PTT,
-                ],
-                    i18n.Fail
-                )
+                if self._Host == DataType.Host.PTT1:
+                    Log.showValue(Log.Level.INFO, [
+                        i18n.Connect,
+                        i18n.PTT,
+                    ],
+                        i18n.Fail
+                    )
+                else:
+                    Log.showValue(Log.Level.INFO, [
+                        i18n.Connect,
+                        i18n.PTT2,
+                    ],
+                        i18n.Fail
+                    )
                 _wait()
                 continue
 
@@ -310,23 +299,18 @@ class API(object):
                     Msg
                 )
 
-            if self._ConnectMode == ConnectMode.Telnet:
-                self._Core.read_very_eager()
-                self._Core.write(Msg)
-            else:
-
-                try:
-                    asyncio.get_event_loop().run_until_complete(
-                        self._Core.send(Msg)
-                    )
-                except asyncio.streams.IncompleteReadError:
-                    raise Exceptions.ConnectionClosed()
-                except websockets.exceptions.ConnectionClosedError:
-                    raise Exceptions.ConnectionClosed()
-                except RuntimeError:
-                    raise Exceptions.ConnectionClosed()
-                except websockets.exceptions.ConnectionClosedOK:
-                    raise Exceptions.ConnectionClosed()
+            try:
+                asyncio.get_event_loop().run_until_complete(
+                    self._Core.send(Msg)
+                )
+            except asyncio.streams.IncompleteReadError:
+                raise Exceptions.ConnectionClosed()
+            except websockets.exceptions.ConnectionClosedError:
+                raise Exceptions.ConnectionClosed()
+            except RuntimeError:
+                raise Exceptions.ConnectionClosed()
+            except websockets.exceptions.ConnectionClosedOK:
+                raise Exceptions.ConnectionClosed()
 
             if BreakDetectAfterSend:
                 return BreakIndex
@@ -340,24 +324,18 @@ class API(object):
             StartTime = time.time()
             MidTime = time.time()
             while MidTime - StartTime < CurrentScreenTimeout:
-                if self._ConnectMode == ConnectMode.Telnet:
-                    try:
-                        ReceiveDataTemp = self._Core.read_very_eager()
-                    except EOFError:
-                        return -1
-                else:
-                    try:
-                        asyncio.get_event_loop().run_until_complete(
-                            WebsocketReceiver(self._Core, CurrentScreenTimeout)
-                        )
-                        ReceiveDataTemp = _WSRecvData
+                try:
+                    asyncio.get_event_loop().run_until_complete(
+                        WebsocketReceiver(self._Core, CurrentScreenTimeout)
+                    )
+                    ReceiveDataTemp = _WSRecvData
 
-                    except websockets.exceptions.ConnectionClosed:
-                        raise Exceptions.ConnectionClosed()
-                    except websockets.exceptions.ConnectionClosedOK:
-                        raise Exceptions.ConnectionClosed()
-                    except asyncio.TimeoutError:
-                        return -1
+                except websockets.exceptions.ConnectionClosed:
+                    raise Exceptions.ConnectionClosed()
+                except websockets.exceptions.ConnectionClosedOK:
+                    raise Exceptions.ConnectionClosed()
+                except asyncio.TimeoutError:
+                    return -1
 
                 ReceiveDataBuffer += ReceiveDataTemp
                 ReceiveDataTemp = ReceiveDataBuffer.decode(

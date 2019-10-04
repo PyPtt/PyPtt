@@ -387,3 +387,12 @@ class CrawlType:
 
     MinValue = BBS
     MaxValue = Web
+
+
+class Host:
+    PTT1 = 1
+    # 網頁版本
+    PTT2 = 2
+
+    MinValue = PTT1
+    MaxValue = PTT2
