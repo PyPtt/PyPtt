@@ -1027,7 +1027,12 @@ class Library:
         LineFromTopattern = re.compile('[\d]+~[\d]+')
 
         ContentStart = '───────────────────────────────────────'
-        ContentEnd = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
+        if self._Host == DataType.Host.PTT1:
+            ContentEnd = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
+        else:
+            ContentEnd = '--\n※ 發信站: 批踢踢兔(ptt2.cc)'
+
+        # '※ 發信站: 批踢踢實業坊(ptt.cc)'
 
         HasControlCode = False
         ControlCodeMode = False
@@ -1268,7 +1273,7 @@ class Library:
                 len(ContentStart):
             ]
             PostContent = PostContent[
-                :PostContent.rfind('※ 發信站: 批踢踢實業坊(ptt.cc)')
+                :PostContent.rfind(ContentEnd) + 3
             ]
             PostContent = PostContent.strip()
         else:
@@ -1425,7 +1430,15 @@ class Library:
             PushContent = line[
                 line.find(PushAuthor) + len(PushAuthor):
             ]
-            PushContent = PushContent.replace(PushDate, '')
+            # PushContent = PushContent.replace(PushDate, '')
+            if self._Host == DataType.Host.PTT1:
+                PushContent = PushContent[
+                    :PushContent.rfind(PushDate)
+                ]
+            else:
+                PushContent = PushContent[
+                    :PushContent.rfind(PushDate) - 2
+                ]
             if PushIP is not None:
                 PushContent = PushContent.replace(PushIP, '')
             PushContent = PushContent[
