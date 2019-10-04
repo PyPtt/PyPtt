@@ -1272,6 +1272,7 @@ class Library:
                 PostContent.find(ContentStart) +
                 len(ContentStart):
             ]
+            # + 3 = 把 --\n 拿掉
             PostContent = PostContent[
                 :PostContent.rfind(ContentEnd) + 3
             ]
@@ -1431,11 +1432,13 @@ class Library:
                 line.find(PushAuthor) + len(PushAuthor):
             ]
             # PushContent = PushContent.replace(PushDate, '')
+
             if self._Host == DataType.Host.PTT1:
                 PushContent = PushContent[
                     :PushContent.rfind(PushDate)
                 ]
             else:
+                # → CodingMan:What is Ptt?                                       推 10/04 13:25
                 PushContent = PushContent[
                     :PushContent.rfind(PushDate) - 2
                 ]
