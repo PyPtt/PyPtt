@@ -160,3 +160,11 @@ class UseTooManyResources(Exception):
 
     def __str__(self):
         return self.message
+
+
+class HostNotSupport(Exception):
+    def __init__(self, API):
+        self.message = f'{i18n.PTT2NotSupport}: {API}'
+
+    def __str__(self):
+        return self.message

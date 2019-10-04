@@ -153,6 +153,7 @@ class Library:
             Host = Config.Host
         elif not Util.checkRange(DataType.Host, Host):
             raise ValueError('Unknow Host', Host)
+        self._Host = Host
 
         if Host == DataType.Host.PTT1:
             Log.showValue(
@@ -775,6 +776,11 @@ class Library:
                 Screens.Target.InBoard,
                 BreakDetect=True,
                 LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoSuchBoard,
+                Screens.Target.MainMenu_Exiting,
+                Exceptions=Exceptions.NoSuchBoard(Board)
             ),
         ]
 
@@ -1538,6 +1544,11 @@ class Library:
                     BreakDetect=True,
                     LogLevel=Log.Level.DEBUG
                 ),
+                ConnectCore.TargetUnit(
+                    i18n.NoSuchBoard,
+                    Screens.Target.MainMenu_Exiting,
+                    Exceptions=Exceptions.NoSuchBoard(Board)
+                ),
             ]
             index = self._ConnectCore.send(Cmd, TargetList)
             if index < 0:
@@ -1805,6 +1816,10 @@ class Library:
             return ErrorPostList, DelPostList
 
         else:
+
+            if self._Host == DataType.Host.PTT2:
+                raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
+
             # 網頁版本爬蟲
             # https://www.ptt.cc/bbs/index.html
 

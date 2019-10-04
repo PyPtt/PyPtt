@@ -503,14 +503,15 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        'Wanted',
-        'Gossiping',
-        'Stock',
-        'movie',
-        'C_Chat',
-        'Baseball',
-        'NBA',
-        'HatePolitics',
+        'Test',
+        # 'Wanted',
+        # 'Gossiping',
+        # 'Stock',
+        # 'movie',
+        # 'C_Chat',
+        # 'Baseball',
+        # 'NBA',
+        # 'HatePolitics',
     ]
 
     TestRange = 300
@@ -527,8 +528,10 @@ def CrawlBoard():
 
             print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
 
+            print(f'TestBoard [{TestBoard}]')
             ErrorPostList, DelPostList = PTTBot.crawlBoard(
                 crawlHandler,
+                PTT.CrawlType.BBS,
                 TestBoard,
                 StartIndex=StartIndex,
                 EndIndex=NewestIndex,
@@ -894,7 +897,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT2
+            Host=PTT.Host.PTT1
         )
         try:
             PTTBot.login(
@@ -906,9 +909,9 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
-        Post()
+        # Post()
         # GetNewestIndex()
         # CrawlBoard()
         # CrawlBoardWithCondition()

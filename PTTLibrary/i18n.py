@@ -742,6 +742,12 @@ def load(inputLanguage):
         'Host',
     ])
 
+    global PTT2NotSupport
+    PTT2NotSupport = SpecificLoad(inputLanguage, [
+        f'{PTT2}不支援',
+        f'{PTT2} Not Support',
+    ])
+
     # global List
     # List = []
 
