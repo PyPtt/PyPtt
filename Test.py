@@ -187,16 +187,16 @@ def GetPost():
         # ('Steam', 4444),
         # ('Baseball', 199787),
         # ('Stock', 92324),
-        # ('Gossiping', 778570),
         # ('Stock', '1TVnEivO'),
         # 文章格式錯誤
         # ('movie', 457),
         # ('Gossiping', '1TU65Wi_'),
         # ('Gossiping', '1TWadtnq'),
         # ('Gossiping', '1TZBBkWP'),
+        # ('joke', '1Tc6G9eQ'),
 
         # PTT2
-        ('Test', 20004),
+        # ('Test', 20004),
     ]
 
     Query = False
@@ -898,9 +898,9 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT2
+            Host=PTT.Host.PTT1
         )
         try:
             PTTBot.login(
