@@ -196,6 +196,7 @@ def GetPost():
         # ('joke', '1Tc6G9eQ'),
 
         # PTT2
+        ('PttSuggest', 2)
         # ('Test', 20004),
     ]
 
@@ -243,7 +244,7 @@ def GetPost():
             if not Query:
                 print('Date: ' + Post.getDate())
                 print('Content: ' + Post.getContent())
-                print('IP: ' + Post.getIP())
+                # print('IP: ' + Post.getIP())
 
                 # print('Location: ' + Post.getLocation())
                 if Post.getLocation() is not None:
@@ -330,8 +331,18 @@ def showCondition(Board, SearchType, Condition):
 
 def GetPostWithCondition():
 
+    # PTT1
     TestList = [
         ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
+    ]
+
+    # PTT2
+    # PttSuggest
+    TestList = [
+        ('PttSuggest', PTT.PostSearchType.Keyword, '[公告]'),
         ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
         ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
         ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
@@ -898,9 +909,9 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT1
+            Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(

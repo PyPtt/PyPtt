@@ -34,5 +34,8 @@ ConnectMode = ConnectCore.ConnectMode.WebSocket
 # 預設 Log 等級
 LogLevel = Log.Level.INFO
 
-# 預設是否剔除其他登入
+# 預設不剔除其他登入
 KickOtherLogin = False
+
+# 預設登入 PTT1
+Host = DataType.Host.PTT1
