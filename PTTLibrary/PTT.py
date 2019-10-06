@@ -1031,6 +1031,7 @@ class Library:
             ContentEnd = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
         else:
             ContentEnd = '--\n※ 發信站: 批踢踢兔(ptt2.cc)'
+            ContentEnd_Old = '--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)'
 
         # '※ 發信站: 批踢踢實業坊(ptt.cc)'
 
@@ -1100,7 +1101,6 @@ class Library:
                         else:
                             NewContentPart = '\n'.join(Lines)
                 else:
-                    print('Type 3')
                     NewContentPart = Lines[-1]
 
                 OriginPost.append(NewContentPart)
@@ -1115,9 +1115,11 @@ class Library:
 
             if not ControlCodeMode:
                 LastReadLineA = LastReadLineATemp
-                LastReadLineB = LastReadLineBTemp                
+                LastReadLineB = LastReadLineBTemp
 
             if ContentEnd in LastScreen:
+                PushStart = True
+            if ContentEnd_Old in LastScreen:
                 PushStart = True
 
             if not PushStart:
@@ -1281,17 +1283,28 @@ class Library:
             PostDate
         )
 
-        if ContentStart in OriginPost and ContentEnd in OriginPost:
+        if ContentStart in OriginPost and \
+        (ContentEnd in OriginPost or ContentEnd_Old in OriginPost):
+
             PostContent = OriginPost
             PostContent = PostContent[
                 PostContent.find(ContentStart) +
                 len(ContentStart):
             ]
+
             # + 3 = 把 --\n 拿掉
-            PostContent = PostContent[
-                :PostContent.rfind(ContentEnd) + 3
-            ]
+            if ContentEnd in PostContent:
+                PostContent = PostContent[
+                    :PostContent.rfind(ContentEnd) + 3
+                ]
+                OriginPostLines = OriginPost[OriginPost.find(ContentEnd):]
+            else:
+                PostContent = PostContent[
+                    :PostContent.rfind(ContentEnd_Old) + 3
+                ]
+                OriginPostLines = OriginPost[OriginPost.find(ContentEnd_Old):]
             PostContent = PostContent.strip()
+            OriginPostLines = OriginPostLines.split('\n')
         else:
             Log.showValue(
                 Log.Level.DEBUG,
@@ -1324,14 +1337,12 @@ class Library:
             PostContent
         )
 
-        OriginPostLines = OriginPost[OriginPost.find(ContentEnd):]
-        OriginPostLines = OriginPostLines.split('\n')
-
         InfoLines = [
             line for line in OriginPostLines if line.startswith('※') or line.startswith('◆')
         ]
-        pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
+        pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+        pattern_p2 = re.compile('[\d]+-[\d]+-[\d]+-[\d]+')
         for line in reversed(InfoLines):
             Log.showValue(
                 Log.Level.DEBUG,
@@ -1365,31 +1376,38 @@ class Library:
                     Log.showValue(Log.Level.DEBUG, 'Location', Location)
                 break
 
-        if IP is None:
-            Log.showValue(
-                Log.Level.DEBUG,
-                i18n.SubstandardPost,
-                'IP'
-            )
-            Post = DataType.PostInfo(
-                Board=Board,
-                AID=PostAID,
-                Author=PostAuthor,
-                Date=PostDate,
-                Title=PostTitle,
-                WebUrl=PostWeb,
-                Money=PostMoney,
-                Content=PostContent,
-                IP=IP,
-                PushList=PushList,
-                ListDate=ListDate,
-                ControlCode=HasControlCode,
-                FormatCheck=False,
-                Location=Location,
-                PushNumber=PushNumber,
-                OriginPost=OriginPost,
-            )
-            return Post
+            PatternResult = pattern_p2.search(line)
+            if PatternResult is not None:
+                IP = PatternResult.group(0)
+                IP = IP.replace('-', '.')
+                # print(f'IP -> [{IP}]')
+                break
+        if self._Host == DataType.Host.PTT1:
+            if IP is None:
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    i18n.SubstandardPost,
+                    'IP'
+                )
+                Post = DataType.PostInfo(
+                    Board=Board,
+                    AID=PostAID,
+                    Author=PostAuthor,
+                    Date=PostDate,
+                    Title=PostTitle,
+                    WebUrl=PostWeb,
+                    Money=PostMoney,
+                    Content=PostContent,
+                    IP=IP,
+                    PushList=PushList,
+                    ListDate=ListDate,
+                    ControlCode=HasControlCode,
+                    FormatCheck=False,
+                    Location=Location,
+                    PushNumber=PushNumber,
+                    OriginPost=OriginPost,
+                )
+                return Post
         Log.showValue(Log.Level.DEBUG, 'IP', IP)
 
         PushAuthorPattern = re.compile('[推|噓|→] [\w| ]+:')
