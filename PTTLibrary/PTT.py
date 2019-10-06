@@ -1071,22 +1071,36 @@ class Library:
                 ControlCodeMode = True
                 HasControlCode = True
             else:
-                LastReadLineTemp = int(PatternResult.group(0).split('~')[1])
+                LastReadLineList = PatternResult.group(0).split('~')
+                LastReadLineATemp = int(LastReadLineList[0])
+                LastReadLineBTemp = int(LastReadLineList[1])
                 if ControlCodeMode:
-                    LastReadLine = LastReadLineTemp - 1
+                    LastReadLineA = LastReadLineATemp - 1
+                    LastReadLineB = LastReadLineBTemp - 1
                 ControlCodeMode = False
 
             if FirstPage:
                 FirstPage = False
                 OriginPost.append(LastScreen)
             else:
+                # print(f'LastReadLineATemp [{LastReadLineATemp}]')
+                # print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
                 if not ControlCodeMode:
-                    GetLine = LastReadLineTemp - LastReadLine
-                    if GetLine > 0:
-                        NewContentPart = '\n'.join(Lines[-GetLine:])
+                    GetLineB = LastReadLineBTemp - LastReadLineB
+                    if GetLineB > 0:
+                        # print('Type 1')
+                        # print(f'GetLineB [{GetLineB}]')
+                        NewContentPart = '\n'.join(Lines[-GetLineB:])
                     else:
-                        NewContentPart = '\n'.join(Lines)
+                        GetLineA = LastReadLineATemp - LastReadLineA
+                        # print('Type 2')
+                        # print(f'GetLineA [{GetLineA}]')
+                        if GetLineA > 0:
+                            NewContentPart = '\n'.join(Lines[-GetLineA:])
+                        else:
+                            NewContentPart = '\n'.join(Lines)
                 else:
+                    print('Type 3')
                     NewContentPart = Lines[-1]
 
                 OriginPost.append(NewContentPart)
@@ -1100,7 +1114,8 @@ class Library:
                 break
 
             if not ControlCodeMode:
-                LastReadLine = LastReadLineTemp
+                LastReadLineA = LastReadLineATemp
+                LastReadLineB = LastReadLineBTemp                
 
             if ContentEnd in LastScreen:
                 PushStart = True
@@ -2555,7 +2570,7 @@ class Library:
         WaterBallDatePattern = re.compile(
             '\[[\d]+/[\d]+/[\d]+ [\d]+:[\d]+:[\d]+\]')
 
-        LastReadLine = 0
+        LastReadLineB = 0
         AddTailNextRound = False
         while True:
             index = self._ConnectCore.send(
@@ -2606,13 +2621,13 @@ class Library:
 
             Lines = ScreenTemp.split('\n')
             PatternResult = LineFromTopattern.search(LastLine)
-            LastReadLineTemp = int(PatternResult.group(0).split('~')[1])
-            GetLine = LastReadLineTemp - LastReadLine
+            LastReadLineBTemp = int(PatternResult.group(0).split('~')[1])
+            GetLine = LastReadLineBTemp - LastReadLineB
 
-            # print(LastReadLine)
+            # print(LastReadLineB)
             # print(GetLine)
             # print('=' * 50)
-            if GetLine > 0 and LastReadLine != 0:
+            if GetLine > 0 and LastReadLineB != 0:
                 if AddTailNextRound:
                     Log.log(
                         Log.Level.DEBUG,
@@ -2726,7 +2741,7 @@ class Library:
             #     pass
 
             Cmd = Command.Down
-            LastReadLine = LastReadLineTemp
+            LastReadLineB = LastReadLineBTemp
 
         return WaterBallList
 
