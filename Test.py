@@ -198,6 +198,16 @@ def GetPost():
         # PTT2
         # ('PttSuggest', 1),
         # ('PttSuggest', '0z7TVw00'),
+        # 發信站:
+        # ('PttSuggest', '1EbQObff'),
+        # 沒有結尾
+        ('WhoAmI', '1Tc0ooap'),
+        # WhoAmI 1Tc0ooap
+        # Test
+        # 1Sp1W7Fi
+        # 1T4yyKuE
+        # 1TXRkuDW
+        # 1TYTfSZW
     ]
 
     def show(Name, Value):
@@ -336,19 +346,14 @@ def GetPostWithCondition():
 
     # PTT1
     TestList = [
-        ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
-        ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
-    ]
+        # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        # ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
+        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
 
-    # PTT2
-    # PttSuggest
-    TestList = [
-        ('PttSuggest', PTT.PostSearchType.Keyword, '[公告]'),
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
-        ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
+        # PTT2
+        ('PttSuggest', PTT.PostSearchType.Keyword, '[問題]'),
+        ('PttSuggest', PTT.PostSearchType.Push, '10'),
     ]
 
     TestRange = 1
@@ -442,11 +447,16 @@ def Post():
 def GetNewestIndex():
 
     TestBoardList = [
-        'Wanted',
-        'Gossiping',
+        # 'Wanted',
+        # 'Gossiping',
+        # 'Test',
+        # 'Stock',
+        # 'movie'
+
+        # PTT2
+        'PttSuggest',
         'Test',
-        'Stock',
-        'movie'
+        'WhoAmI'
     ]
 
     for Board in TestBoardList:
@@ -482,7 +492,7 @@ def crawlHandler(Post):
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
     print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
-    print(f'[{Post.getContent()}]')
+    # print(f'[{Post.getContent()}]')
 
     PushNumber = Post.getPushNumber()
     if PushNumber is not None:
@@ -502,16 +512,13 @@ def crawlHandler(Post):
     detectNone('AID', Post.getAID())
     detectNone('Author', Post.getAuthor())
     detectNone('Money', Post.getMoney())
-    detectNone('WebUrl', Post.getWebUrl())
+    # detectNone('WebUrl', Post.getWebUrl())
     detectNone('ListDate', Post.getListDate())
 
     if not Query:
         detectNone('Date', Post.getDate())
         detectNone('Content', Post.getContent())
-        detectNone('IP', Post.getIP())
-        detectNone('Location', Post.getLocation())
-
-        # print(Post.getContent())
+        # detectNone('IP', Post.getIP())
 
     # time.sleep(0.2)
 
@@ -520,7 +527,7 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        'Test',
+        # 'Test',
         # 'Wanted',
         # 'Gossiping',
         # 'Stock',
@@ -529,6 +536,11 @@ def CrawlBoard():
         # 'Baseball',
         # 'NBA',
         # 'HatePolitics',
+
+        # PTT2
+        'Test',
+        'WhoAmI',
+        'PttSuggest'
     ]
 
     TestRange = 300

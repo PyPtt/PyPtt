@@ -1037,6 +1037,8 @@ class Library:
         HasControlCode = False
         ControlCodeMode = False
         PushStart = False
+        ContentStartJump = False
+        ContentStartJumpSet = False
 
         FirstPage = True
         OriginPost = []
@@ -1066,6 +1068,13 @@ class Library:
             Lines.pop()
             LastScreen = '\n'.join(Lines)
 
+            if not ContentStartJumpSet:
+                if ContentStart not in LastScreen:
+                    ContentStartJump = True
+                    ContentStartJumpSet = True
+            else:
+                ContentStartJump = False
+            
             PatternResult = LineFromTopattern.search(LastLine)
             if PatternResult is None:
                 ControlCodeMode = True
@@ -1083,18 +1092,19 @@ class Library:
                 FirstPage = False
                 OriginPost.append(LastScreen)
             else:
-                # print(f'LastReadLineATemp [{LastReadLineATemp}]')
-                # print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
+                print(f'LastReadLineATemp [{LastReadLineATemp}]')
+                print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
+                print(f'ContentStartJump {ContentStartJump}')
                 if not ControlCodeMode:
                     GetLineB = LastReadLineBTemp - LastReadLineB
                     if GetLineB > 0:
-                        # print('Type 1')
-                        # print(f'GetLineB [{GetLineB}]')
+                        print('Type 1')
+                        print(f'GetLineB [{GetLineB}]')
                         NewContentPart = '\n'.join(Lines[-GetLineB:])
                     else:
                         GetLineA = LastReadLineATemp - LastReadLineA
-                        # print('Type 2')
-                        # print(f'GetLineA [{GetLineA}]')
+                        print('Type 2')
+                        print(f'GetLineA [{GetLineA}]')
                         if GetLineA > 0:
                             NewContentPart = '\n'.join(Lines[-GetLineA:])
                         else:
@@ -1110,6 +1120,13 @@ class Library:
                 )
 
             if index == 0:
+                if ContentStartJump and len(NewContentPart) == 0:
+                    # print(f'!!!GetLineB {GetLineB}')
+                    GetLineB += 1
+                    NewContentPart = '\n'.join(Lines[-GetLineB:])
+                    # print(f'!!!NewContentPart {NewContentPart}')
+                    OriginPost.pop()
+                    OriginPost.append(NewContentPart)
                 break
 
             if not ControlCodeMode:
@@ -1126,6 +1143,8 @@ class Library:
             else:
                 Cmd = Command.Right
 
+        OriginPost = '\n'.join(OriginPost)
+        OriginPost = [line.strip() for line in OriginPost.split('\n')]
         OriginPost = '\n'.join(OriginPost)
 
         Log.showValue(
@@ -1284,16 +1303,19 @@ class Library:
 
         ContentFail = True
         if ContentStart not in OriginPost:
+            # print('Type 1')
             ContentFail = True
         else:
+            PostContent = OriginPost
+            PostContent = PostContent[
+                PostContent.find(ContentStart) +
+                len(ContentStart):
+            ]
+            # print('Type 2')
+            # print(f'PostContent [{PostContent}]')
             for EC in ContentEnd:
-                PostContent = OriginPost
-                PostContent = PostContent[
-                    PostContent.find(ContentStart) +
-                    len(ContentStart):
-                ]
-
                 # + 3 = 把 --\n 拿掉
+                # print(f'EC [{EC}]')
                 if EC in PostContent:
                     ContentFail = False
 
@@ -1371,7 +1393,7 @@ class Library:
                 LocationTemp = LocationTemp.replace('(', '')
                 LocationTemp = LocationTemp[:LocationTemp.rfind(')')]
                 LocationTemp = LocationTemp.strip()
-                print(f'=>[{LocationTemp}]')
+                # print(f'=>[{LocationTemp}]')
                 if ' ' not in LocationTemp and len(LocationTemp) > 0:
                     Location = LocationTemp
                     Log.showValue(Log.Level.DEBUG, 'Location', Location)
