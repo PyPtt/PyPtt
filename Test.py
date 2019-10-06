@@ -952,13 +952,13 @@ if __name__ == '__main__':
         # GetUser()
         # ThrowWaterBall()
         # PTT2 尚未支援
-        # GetWaterBall() 
+        GetWaterBall() 
         # WaterBall()
         # CallStatus()
         # GiveMoney()
         # Mail()
         # HasNewMail()
-        GetBoardList()
+        # GetBoardList()
 
         # FullTest()
     except Exception as e:

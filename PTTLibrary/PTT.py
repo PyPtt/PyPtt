@@ -2671,8 +2671,8 @@ class Library:
 
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
-            print(OriScreen)
-            print('=' * 50)
+            # print(OriScreen)
+            # print('=' * 50)
             ScreenTemp = OriScreen
             Log.showValue(
                 Log.Level.DEBUG,
@@ -2725,11 +2725,11 @@ class Library:
                 NewContentPart = Lines
             NewContentPart = [x.strip() for x in NewContentPart]
 
-            # Log.showValue(
-            #     Log.Level.INFO,
-            #     'NewContentPart',
-            #     '\n'.join(NewContentPart)
-            # )
+            Log.showValue(
+                Log.Level.INFO,
+                'NewContentPart',
+                '\n'.join(NewContentPart)
+            )
 
             for line in NewContentPart:
                 # print(f'line =>{line}<')
