@@ -748,6 +748,13 @@ def load(inputLanguage):
         f'{PTT2} Not Support',
     ])
 
+    # Animation
+    global AnimationPost
+    AnimationPost = SpecificLoad(inputLanguage, [
+        f'動畫文章',
+        f'Animation Post',
+    ])
+
     # global List
     # List = []
 

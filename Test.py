@@ -194,17 +194,21 @@ def GetPost():
         # ('Gossiping', '1TWadtnq'),
         # ('Gossiping', '1TZBBkWP'),
         # ('joke', '1Tc6G9eQ'),
+        ('Test', 575),
 
         # PTT2
         # ('PttSuggest', 1),
         # ('PttSuggest', '0z7TVw00'),
+        # 文章格式錯誤
         # 發信站:
         # ('PttSuggest', '1EbQObff'),
-        # 沒有結尾
-        ('WhoAmI', '1Tc0ooap'),
-        # WhoAmI 1Tc0ooap
+        # 文章起始消失跳躍，導致沒有結尾 (已經修正)
+        # ('WhoAmI', '1Tc0ooap'),
         # Test
-        # 1Sp1W7Fi
+        # 文章格式錯誤
+        # 瞎改
+        # ('Test', '1Sp1W7Fi'),
+        # ('Test', '1TXRkuDW'),
         # 1T4yyKuE
         # 1TXRkuDW
         # 1TYTfSZW
@@ -527,20 +531,20 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        # 'Test',
-        # 'Wanted',
-        # 'Gossiping',
-        # 'Stock',
-        # 'movie',
-        # 'C_Chat',
-        # 'Baseball',
-        # 'NBA',
-        # 'HatePolitics',
+        'Test',
+        'Wanted',
+        'Gossiping',
+        'Stock',
+        'movie',
+        'C_Chat',
+        'Baseball',
+        'NBA',
+        'HatePolitics',
 
         # PTT2
-        'Test',
-        'WhoAmI',
-        'PttSuggest'
+        # 'Test',
+        # 'WhoAmI',
+        # 'PttSuggest'
     ]
 
     TestRange = 300
@@ -924,9 +928,9 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT2
+            # Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(

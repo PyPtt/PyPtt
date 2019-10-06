@@ -127,6 +127,10 @@ class Target(object):
         '程式耗用過多計算資源'
     ]
 
+    Animation = [
+        '★ 這份文件是可播放的文字動畫，要開始播放嗎？'
+    ]
+
 
 def show(ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.TRACE:
