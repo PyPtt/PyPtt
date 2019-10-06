@@ -1022,6 +1022,15 @@ class Library:
                 BreakDetect=True,
                 LogLevel=Log.Level.DEBUG
             ),
+            # Animation
+            ConnectCore.TargetUnit(
+                [
+                    i18n.AnimationPost,
+                ],
+                Screens.Target.Animation,
+                Response=Command.GoMainMenu_TypeQ,
+                BreakDetectAfterSend=True
+            ),
         ]
 
         LineFromTopattern = re.compile('[\d]+~[\d]+')
@@ -1037,6 +1046,7 @@ class Library:
         HasControlCode = False
         ControlCodeMode = False
         PushStart = False
+        ContentStartExist = False
         ContentStartJump = False
         ContentStartJumpSet = False
 
@@ -1045,7 +1055,7 @@ class Library:
         while True:
             index = self._ConnectCore.send(Cmd, TargetList)
 
-            if index == 2:
+            if index == 2 or index == 3:
                 Post = DataType.PostInfo(
                     Board=Board,
                     AID=PostAID,
@@ -1062,18 +1072,23 @@ class Library:
                     PushNumber=PushNumber,
                 )
                 return Post
+
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
             Lines = LastScreen.split('\n')
             LastLine = Lines[-1]
             Lines.pop()
             LastScreen = '\n'.join(Lines)
 
-            if not ContentStartJumpSet:
-                if ContentStart not in LastScreen:
-                    ContentStartJump = True
-                    ContentStartJumpSet = True
-            else:
-                ContentStartJump = False
+            if ContentStart in LastScreen and not ContentStartExist:
+                ContentStartExist = True
+
+            if ContentStartExist:
+                if not ContentStartJumpSet:
+                    if ContentStart not in LastScreen:
+                        ContentStartJump = True
+                        ContentStartJumpSet = True
+                else:
+                    ContentStartJump = False
             
             PatternResult = LineFromTopattern.search(LastLine)
             if PatternResult is None:
@@ -1092,19 +1107,19 @@ class Library:
                 FirstPage = False
                 OriginPost.append(LastScreen)
             else:
-                print(f'LastReadLineATemp [{LastReadLineATemp}]')
-                print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
-                print(f'ContentStartJump {ContentStartJump}')
+                # print(f'LastReadLineATemp [{LastReadLineATemp}]')
+                # print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
+                # print(f'ContentStartJump {ContentStartJump}')
                 if not ControlCodeMode:
                     GetLineB = LastReadLineBTemp - LastReadLineB
                     if GetLineB > 0:
-                        print('Type 1')
-                        print(f'GetLineB [{GetLineB}]')
+                        # print('Type 1')
+                        # print(f'GetLineB [{GetLineB}]')
                         NewContentPart = '\n'.join(Lines[-GetLineB:])
                     else:
                         GetLineA = LastReadLineATemp - LastReadLineA
-                        print('Type 2')
-                        print(f'GetLineA [{GetLineA}]')
+                        # print('Type 2')
+                        # print(f'GetLineA [{GetLineA}]')
                         if GetLineA > 0:
                             NewContentPart = '\n'.join(Lines[-GetLineA:])
                         else:

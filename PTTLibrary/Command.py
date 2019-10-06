@@ -21,5 +21,6 @@ Space = ' '
 QueryPost = 'Q'
 Push = 'X'
 GoMainMenu = ' ' + Left * 5
+GoMainMenu_TypeQ = 'q' * 5
 Refresh = Ctrl_L
 ControlCode = Ctrl_U + Star
