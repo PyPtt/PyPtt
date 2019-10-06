@@ -1089,7 +1089,7 @@ class Library:
                         ContentStartJumpSet = True
                 else:
                     ContentStartJump = False
-            
+
             PatternResult = LineFromTopattern.search(LastLine)
             if PatternResult is None:
                 ControlCodeMode = True
@@ -2354,6 +2354,28 @@ class Library:
         )
         if index == 1:
             raise Exceptions.NoSuchUser(UserID)
+        # PTT1
+        # 《ＩＤ暱稱》CodingMan (專業程式 BUG 製造機)《經濟狀況》小康 ($73866)
+        # 《登入次數》1118 次 (同天內只計一次) 《有效文章》15 篇 (退:0)
+        # 《目前動態》閱讀文章     《私人信箱》最近無新信件
+        # 《上次上站》10/06/2019 17:29:49 Sun  《上次故鄉》111.251.231.184
+        # 《 五子棋 》 0 勝  0 敗  0 和 《象棋戰績》 0 勝  0 敗  0 和
+
+        # https://github.com/Truth0906/PTTLibrary
+
+        # 強大的 PTT 函式庫
+        # 提供您 快速 穩定 完整 的 PTT API
+
+        # 提供專業的 PTT 機器人諮詢服務
+
+        # PTT2
+        # 《ＩＤ暱稱》CodingMan (專業程式 BUG 製造機)《經濟狀況》家徒四壁 ($0)
+        # 《登入次數》8 次 (同天內只計一次)  《有效文章》0 篇
+        # 《目前動態》看板列表     《私人信箱》最近無新信件
+        # 《上次上站》10/06/2019 17:27:55 Sun  《上次故鄉》111.251.231.184
+        # 《 五子棋 》 0 勝  0 敗  0 和 《象棋戰績》 0 勝  0 敗  0 和
+
+        # 《個人名片》CodingMan 目前沒有名片
 
         Data = Util.getSubStringList(OriScreen, '》', ['《', '\n'])
         if len(Data) < 10:
@@ -2369,7 +2391,12 @@ class Library:
 
         Temp = re.findall(r'\d+', Data[3])
         LegalPost = int(Temp[0])
-        IllegalPost = int(Temp[1])
+
+        # PTT2 沒有退文
+        if self._Host == DataType.Host.PTT1:
+            IllegalPost = int(Temp[1])
+        else:
+            IllegalPost = -1
 
         State = Data[4]
         Mail = Data[5]
@@ -2644,8 +2671,8 @@ class Library:
 
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
-            # print(OriScreen)
-            # print('=' * 50)
+            print(OriScreen)
+            print('=' * 50)
             ScreenTemp = OriScreen
             Log.showValue(
                 Log.Level.DEBUG,
@@ -2667,6 +2694,7 @@ class Library:
             # 整理水球換行格式
             ScreenTemp = ScreenTemp.replace(
                 ']\n', ']==PTTWaterBallNewLine==')
+            ScreenTemp = ScreenTemp.replace('\\\n', '')
             ScreenTemp = ScreenTemp.replace('\n', '')
             ScreenTemp = ScreenTemp.replace(
                 ']==PTTWaterBallNewLine==', ']\n')
@@ -2697,7 +2725,11 @@ class Library:
                 NewContentPart = Lines
             NewContentPart = [x.strip() for x in NewContentPart]
 
-            # print('\n'.join(NewContentPart))
+            # Log.showValue(
+            #     Log.Level.INFO,
+            #     'NewContentPart',
+            #     '\n'.join(NewContentPart)
+            # )
 
             for line in NewContentPart:
                 # print(f'line =>{line}<')
@@ -3294,7 +3326,7 @@ class Library:
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
             # print(OriScreen)
             for line in OriScreen.split('\n'):
-                if '◎' not in line:
+                if '◎' not in line and '●' not in line:
                     continue
 
                 if line.startswith(self._Cursor):
@@ -3302,12 +3334,15 @@ class Library:
 
                 # print(f'->{line}<')
 
-                FrontPart = line[:line.find('◎')]
+                if '◎' in line:
+                    FrontPart = line[:line.find('◎')]
+                else:
+                    FrontPart = line[:line.find('●')]
                 FrontPartList = [x for x in FrontPart.split(' ')]
                 FrontPartList = list(filter(None, FrontPartList))
                 # print(f'FrontPartList =>{FrontPartList}<=')
                 No = int(FrontPartList[0])
-                # print(f'No =>{No}<=')
+                # print(f'No  =>{No}<=')
                 # print(f'LastNo =>{LastNo}<=')
 
                 Log.showValue(
@@ -3325,6 +3360,9 @@ class Library:
                     'Board Name',
                     BoardName
                 )
+                # 版名重複
+                # > 10609   BR_Joseyen   苦甜 ◎Josey的異想世界                    1 joseyen
+                #   10610   BR_Joseyen   苦甜 ◎Josey的異想世界                      joseyen
 
                 BoardList.append(BoardName)
 
