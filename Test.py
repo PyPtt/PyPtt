@@ -531,20 +531,20 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        'Test',
-        'Wanted',
-        'Gossiping',
-        'Stock',
-        'movie',
-        'C_Chat',
-        'Baseball',
-        'NBA',
-        'HatePolitics',
+        # 'Test',
+        # 'Wanted',
+        # 'Gossiping',
+        # 'Stock',
+        # 'movie',
+        # 'C_Chat',
+        # 'Baseball',
+        # 'NBA',
+        # 'HatePolitics',
 
         # PTT2
-        # 'Test',
-        # 'WhoAmI',
-        # 'PttSuggest'
+        'Test',
+        'WhoAmI',
+        'PttSuggest'
     ]
 
     TestRange = 300
@@ -693,12 +693,12 @@ What is Ptt?
 
 def ThrowWaterBall():
 
-    TagetID = 'DeepLearning'
+    TagetID = 'phoning'
 
-    TestWaterBall = [str(x % 10) for x in range(10)]
-    TestWaterBall = TestWaterBall * 3
-    TestWaterBall = '\n'.join(TestWaterBall)
-    # TestWaterBall = '水球測試 :D'
+    # TestWaterBall = [str(x % 10) for x in range(10)]
+    # TestWaterBall = TestWaterBall * 3
+    # TestWaterBall = '\n'.join(TestWaterBall)
+    TestWaterBall = '水球測試1 :D\n水球測試2 :D'
 
     PTTBot.throwWaterBall(TagetID, TestWaterBall)
     time.sleep(3)
@@ -930,7 +930,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            # Host=PTT.Host.PTT2
+            Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(
@@ -942,7 +942,7 @@ if __name__ == '__main__':
             PTTBot.log('登入失敗')
             sys.exit()
 
-        GetPost()
+        # GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
@@ -951,13 +951,14 @@ if __name__ == '__main__':
         # Push()
         # GetUser()
         # ThrowWaterBall()
-        # GetWaterBall()
+        # PTT2 尚未支援
+        # GetWaterBall() 
         # WaterBall()
         # CallStatus()
         # GiveMoney()
         # Mail()
         # HasNewMail()
-        # GetBoardList()
+        GetBoardList()
 
         # FullTest()
     except Exception as e:
