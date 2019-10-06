@@ -196,9 +196,15 @@ def GetPost():
         # ('joke', '1Tc6G9eQ'),
 
         # PTT2
-        ('PttSuggest', 2)
-        # ('Test', 20004),
+        # ('PttSuggest', 1),
+        # ('PttSuggest', '0z7TVw00'),
     ]
+
+    def show(Name, Value):
+        if Value is not None:
+            print(f'{Name} [{Value}]')
+        else:
+            print(f'無{Name}')
 
     Query = False
 
@@ -232,25 +238,22 @@ def GetPost():
                 print('鎖文狀態')
                 continue
 
-            print(f'Origin Post: \n{Post.getOriginPost()}')
+            show('Origin Post\n', Post.getOriginPost())
             print('=' * 30)
-            print('Board: ' + Post.getBoard())
-            print('AID: ' + Post.getAID())
-            print('Author: ' + Post.getAuthor())
-            print('List Date: ' + Post.getListDate())
-            print('Title: ' + Post.getTitle())
-            print('Money: ' + str(Post.getMoney()))
-            # print('URL: ' + Post.getWebUrl())
-            if not Query:
-                print('Date: ' + Post.getDate())
-                print('Content: ' + Post.getContent())
-                # print('IP: ' + Post.getIP())
+            show('Board', Post.getBoard())
+            show('AID', Post.getAID())
+            show('Author', Post.getAuthor())
+            show('List Date', Post.getListDate())
+            show('Title', Post.getTitle())
+            show('Money', Post.getMoney())
+            show('URL', Post.getWebUrl())
 
-                # print('Location: ' + Post.getLocation())
-                if Post.getLocation() is not None:
-                    print('Location: ' + Post.getLocation())
-                else:
-                    print('無地區')
+            if not Query:
+                show('Date', Post.getDate())
+                show('Content', Post.getContent())
+                show('IP', Post.getIP())
+                show('Location', Post.getLocation())
+
             # 在文章列表上的日期
 
                 PushCount = 0

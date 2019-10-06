@@ -1027,11 +1027,10 @@ class Library:
         LineFromTopattern = re.compile('[\d]+~[\d]+')
 
         ContentStart = '───────────────────────────────────────'
-        if self._Host == DataType.Host.PTT1:
-            ContentEnd = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
-        else:
-            ContentEnd = '--\n※ 發信站: 批踢踢兔(ptt2.cc)'
-            ContentEnd_Old = '--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)'
+        ContentEnd = []
+        ContentEnd.append('--\n※ 發信站: 批踢踢實業坊(ptt.cc)')
+        ContentEnd.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
+        ContentEnd.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
 
         # '※ 發信站: 批踢踢實業坊(ptt.cc)'
 
@@ -1117,10 +1116,10 @@ class Library:
                 LastReadLineA = LastReadLineATemp
                 LastReadLineB = LastReadLineBTemp
 
-            if ContentEnd in LastScreen:
-                PushStart = True
-            if ContentEnd_Old in LastScreen:
-                PushStart = True
+            for EC in ContentEnd:
+                if EC in LastScreen:
+                    PushStart = True
+                    break
 
             if not PushStart:
                 Cmd = Command.Down
@@ -1283,29 +1282,30 @@ class Library:
             PostDate
         )
 
-        if ContentStart in OriginPost and \
-        (ContentEnd in OriginPost or ContentEnd_Old in OriginPost):
-
-            PostContent = OriginPost
-            PostContent = PostContent[
-                PostContent.find(ContentStart) +
-                len(ContentStart):
-            ]
-
-            # + 3 = 把 --\n 拿掉
-            if ContentEnd in PostContent:
-                PostContent = PostContent[
-                    :PostContent.rfind(ContentEnd) + 3
-                ]
-                OriginPostLines = OriginPost[OriginPost.find(ContentEnd):]
-            else:
-                PostContent = PostContent[
-                    :PostContent.rfind(ContentEnd_Old) + 3
-                ]
-                OriginPostLines = OriginPost[OriginPost.find(ContentEnd_Old):]
-            PostContent = PostContent.strip()
-            OriginPostLines = OriginPostLines.split('\n')
+        ContentFail = True
+        if ContentStart not in OriginPost:
+            ContentFail = True
         else:
+            for EC in ContentEnd:
+                PostContent = OriginPost
+                PostContent = PostContent[
+                    PostContent.find(ContentStart) +
+                    len(ContentStart):
+                ]
+
+                # + 3 = 把 --\n 拿掉
+                if EC in PostContent:
+                    ContentFail = False
+
+                    PostContent = PostContent[
+                        :PostContent.rfind(EC) + 3
+                    ]
+                    OriginPostLines = OriginPost[OriginPost.find(EC):]
+                    PostContent = PostContent.strip()
+                    OriginPostLines = OriginPostLines.split('\n')
+                    break
+
+        if ContentFail:
             Log.showValue(
                 Log.Level.DEBUG,
                 i18n.SubstandardPost,
@@ -1370,8 +1370,9 @@ class Library:
                 LocationTemp = line[line.find(IP) + len(IP):].strip()
                 LocationTemp = LocationTemp.replace('(', '')
                 LocationTemp = LocationTemp[:LocationTemp.rfind(')')]
-                # print(f'=>[{LocationTemp}]')
-                if ' ' not in LocationTemp:
+                LocationTemp = LocationTemp.strip()
+                print(f'=>[{LocationTemp}]')
+                if ' ' not in LocationTemp and len(LocationTemp) > 0:
                     Location = LocationTemp
                     Log.showValue(Log.Level.DEBUG, 'Location', Location)
                 break
