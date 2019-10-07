@@ -693,12 +693,12 @@ What is Ptt?
 
 def ThrowWaterBall():
 
-    TagetID = 'phoning'
+    TagetID = 'uPTT'
 
-    # TestWaterBall = [str(x % 10) for x in range(10)]
+    TestWaterBall = [str(x) + '_' * 35 + ' 水球測試結尾' for x in range(30)]
     # TestWaterBall = TestWaterBall * 3
-    # TestWaterBall = '\n'.join(TestWaterBall)
-    TestWaterBall = '水球測試1 :D\n水球測試2 :D'
+    TestWaterBall = '\n'.join(TestWaterBall)
+    # TestWaterBall = '水球測試1 :D\n水球測試2 :D'
 
     PTTBot.throwWaterBall(TagetID, TestWaterBall)
     time.sleep(3)
@@ -930,7 +930,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT2
+            # Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(
@@ -952,7 +952,7 @@ if __name__ == '__main__':
         # GetUser()
         # ThrowWaterBall()
         # PTT2 尚未支援
-        GetWaterBall() 
+        GetWaterBall()
         # WaterBall()
         # CallStatus()
         # GiveMoney()
