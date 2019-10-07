@@ -392,8 +392,9 @@ class CrawlType:
 
 
 class Host:
+    # 批踢踢萬
     PTT1 = 1
-    # 網頁版本
+    # 批踢踢兔
     PTT2 = 2
 
     MinValue = PTT1
