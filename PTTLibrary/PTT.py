@@ -3,7 +3,8 @@ import time
 import re
 import progressbar
 import threading
-# import requests
+import requests
+from bs4 import BeautifulSoup
 # from requests.packages.urllib3.exceptions import InsecureRequestWarning
 # requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -1678,8 +1679,24 @@ class Library:
                 raise Exceptions.UnknowError(i18n.UnknowError)
 
         elif DataType.IndexType.Web:
-            ####
-            pass
+            # web
+            soup = None
+            _NewestIndex = ""
+            _url = 'https://www.ptt.cc/bbs/'
+            url = _url.append(Board)
+            r = requests.get(url)
+            if r.status_code == requests.codes.ok:
+                soup = BeautifulSoup(r.text, 'html.parser')
+            else:
+                print ("r.status is not ok")
+            for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
+            text = data.text
+            herf = data.get('href')
+            if '上頁' in text:
+                _NewestIndex = herf.split('index')[1].split('.')[0]
+                _NewestIndex = int(self.EndPage)
+
+        NewestIndex = _NewestIndex + 1
 
         return NewestIndex
 
