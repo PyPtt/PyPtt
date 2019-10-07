@@ -1677,7 +1677,8 @@ class Library:
                 Screens.show(self._ConnectCore.getScreenQueue())
                 raise Exceptions.UnknowError(i18n.UnknowError)
 
-        else:
+        elif DataType.IndexType.Web:
+            ####
             pass
 
         return NewestIndex

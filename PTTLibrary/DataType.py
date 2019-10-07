@@ -374,9 +374,11 @@ class IndexType:
     Board = 1
     # 信箱
     Mail = 2
+    #
+    Web = 3
 
     MinValue = Board
-    MaxValue = Mail
+    MaxValue = Web
 
 
 class CrawlType:
