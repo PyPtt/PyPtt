@@ -2655,7 +2655,6 @@ class Library:
 
         AllWaterball = []
         FirstPage = True
-        CheckTail = False
         while True:
             index = self._ConnectCore.send(
                 Cmd,
@@ -2732,13 +2731,7 @@ class Library:
                 if GetLineB > 0:
                     # print('Type 1')
 
-                    if len(Lines[-GetLineB]) <= 8:
-                        # print('1')
-                        CheckTail = False
-
-                    if CheckTail:
-                        # print('2')
-                        CheckTail = False
+                    if not AllWaterball[-1].endswith(']'):
                         GetLineB += 1
 
                     NewContentPart = '\n'.join(Lines[-GetLineB:])
@@ -2756,11 +2749,6 @@ class Library:
                         # print('Type 2 - 2')
                         NewContentPart = '\n'.join(Lines)
 
-                if NewContentPart.endswith('\\'):
-                    CheckTail = True
-                else:
-                    CheckTail = False
-
                 AllWaterball.append(NewContentPart)
                 Log.showValue(
                     Log.Level.DEBUG,
@@ -2777,15 +2765,23 @@ class Library:
             Cmd = Command.Down
 
         AllWaterball = '\n'.join(AllWaterball)
-        AllWaterball = AllWaterball.replace('\\\n', '')
+
+        if self._Host == DataType.Host.PTT1:
+            AllWaterball = AllWaterball.replace(
+                ']\n', ']==PTTWaterBallNewLine==')
+            AllWaterball = AllWaterball.replace('\n', '')
+            AllWaterball = AllWaterball.replace(
+                ']==PTTWaterBallNewLine==', ']\n')
+        else:
+            AllWaterball = AllWaterball.replace('\\\n', '')
         Log.showValue(
             Log.Level.DEBUG,
             'AllWaterball',
             AllWaterball
         )
-        print('=' * 20)
-        print(AllWaterball)
-        print('=' * 20)
+        # print('=' * 20)
+        # print(AllWaterball)
+        # print('=' * 20)
 
         WaterBallList = []
         for line in AllWaterball.split('\n'):
@@ -2822,7 +2818,7 @@ class Library:
                     Target + ':') + len(Target + ':'):]
                 Content = Content[:Content.rfind(Date) - 1]
                 Content = Content.strip()
-            
+
             elif line.startswith('★'):
                 Log.showValue(
                     Log.Level.DEBUG,
@@ -2867,98 +2863,6 @@ class Library:
             )
 
             WaterBallList.append(CurrentWaterBall)
-
-        # for line in NewContentPart:
-        #     # print(f'line =>{line}<')
-        #     # print(len(line))
-        #     if len(line) == 0:
-        #         break
-        #     if (not line.startswith('To')) and (not line.startswith('★')):
-
-        #         Log.showValue(
-        #             Log.Level.DEBUG,
-        #             'Discard waterball',
-        #             line
-        #         )
-        #         AddTailNextRound = True
-        #         continue
-
-        #     if not line.endswith(']'):
-        #         Log.showValue(
-        #             Log.Level.DEBUG,
-        #             'Discard waterball',
-        #             line
-        #         )
-        #         AddTailNextRound = True
-        #         continue
-
-        #     Log.showValue(
-        #         Log.Level.DEBUG,
-        #         'Ready to parse waterball',
-        #         line
-        #     )
-
-        #     if line.startswith('To'):
-        #         Log.showValue(
-        #             Log.Level.DEBUG,
-        #             'Waterball Type',
-        #             'Send'
-        #         )
-        #         Type = DataType.WaterBallType.Send
-
-        #         PatternResult = ToWaterBallTargetPattern.search(line)
-        #         Target = PatternResult.group(0)[3:-1]
-
-        #         PatternResult = WaterBallDatePattern.search(line)
-        #         Date = PatternResult.group(0)[1:-1]
-
-        #         Content = line
-        #         Content = Content[Content.find(
-        #             Target + ':') + len(Target + ':'):]
-        #         Content = Content[:Content.rfind(Date) - 1].strip()
-        #     elif line.startswith('★'):
-        #         Log.showValue(
-        #             Log.Level.DEBUG,
-        #             'Waterball Type',
-        #             'Catch'
-        #         )
-        #         Type = DataType.WaterBallType.Catch
-
-        #         PatternResult = FromWaterBallTargetPattern.search(line)
-        #         Target = PatternResult.group(0)[1:-1]
-
-        #         PatternResult = WaterBallDatePattern.search(line)
-        #         Date = PatternResult.group(0)[1:-1]
-
-        #         Content = line
-        #         Content = Content[Content.find(
-        #             Target + ' ') + len(Target + ' '):]
-        #         Content = Content[:Content.rfind(Date) - 1].strip()
-
-        #     Log.showValue(
-        #         Log.Level.DEBUG,
-        #         'Waterball Target',
-        #         Target
-        #     )
-        #     Log.showValue(
-        #         Log.Level.DEBUG,
-        #         'Waterball Content',
-        #         Content
-        #     )
-        #     Log.showValue(
-        #         Log.Level.DEBUG,
-        #         'Waterball Date',
-        #         Date
-        #     )
-
-        #     CurrentWaterBall = DataType.WaterBallInfo(
-        #         Type,
-        #         Target,
-        #         Content,
-        #         Date
-        #     )
-
-        #     WaterBallList.append(CurrentWaterBall)
 
         return WaterBallList
 
