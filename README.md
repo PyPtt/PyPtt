@@ -46,6 +46,7 @@ pip install PTTLibrary
 #### progressbar2
 #### websockets
 #### uao
+#### beautifulsoup4 (Since 0.8.25)
 
 ## 贊助
 #### 在這個 github 的小園地，用熱血的心為您打造在 PTT 翱翔的翅膀。
