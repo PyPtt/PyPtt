@@ -371,13 +371,13 @@ class Cursor:
 
 class IndexType:
     # 板
-    Board = 1
+    BBS = 1
     # 信箱
     Mail = 2
     #
     Web = 3
 
-    MinValue = Board
+    MinValue = BBS
     MaxValue = Web
 
 
