@@ -354,14 +354,14 @@ def GetPostWithCondition():
         # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
         # ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
         # ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
-
+        ('Gossiping', PTT.PostSearchType.Keyword, '普悠瑪'),
         # PTT2
-        ('PttSuggest', PTT.PostSearchType.Keyword, '[問題]'),
-        ('PttSuggest', PTT.PostSearchType.Push, '10'),
+        # ('PttSuggest', PTT.PostSearchType.Keyword, '[問題]'),
+        # ('PttSuggest', PTT.PostSearchType.Push, '10'),
     ]
 
     TestRange = 1
-    Query = True
+    Query = False
 
     for (Board, SearchType, Condition) in TestList:
         try:
@@ -377,8 +377,8 @@ def GetPostWithCondition():
             for i in range(TestRange):
                 Post = PTTBot.getPost(
                     Board,
-                    PostIndex=Index - i,
-                    # PostIndex=9464,
+                    # PostIndex=Index - i,
+                    PostIndex=611,
                     SearchType=SearchType,
                     SearchCondition=Condition,
                     Query=Query
@@ -532,14 +532,14 @@ def CrawlBoard():
     global Query
     TestBoardList = [
         # 'Test',
-        'Wanted',
+        # 'Wanted',
         'Gossiping',
-        'Stock',
-        'movie',
-        'C_Chat',
-        'Baseball',
-        'NBA',
-        'HatePolitics',
+        # 'Stock',
+        # 'movie',
+        # 'C_Chat',
+        # 'Baseball',
+        # 'NBA',
+        # 'HatePolitics',
 
         # PTT2
         # 'Test',
@@ -547,7 +547,7 @@ def CrawlBoard():
         # 'PttSuggest'
     ]
 
-    TestRange = 300
+    TestRange = 10000
     TestRound = 1
 
     for _ in range(TestRound):
