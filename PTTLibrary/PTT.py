@@ -1689,8 +1689,9 @@ class Library:
                 raise Exceptions.UnknowError(i18n.UnknowError)
 
         elif DataType.IndexType.Web:
+            pass
             # web
-            soup = None
+            # soup = None
             # _NewestIndex = ""
             # _url = 'https://www.ptt.cc/bbs/'
             # url = _url.append(Board)
@@ -1700,13 +1701,13 @@ class Library:
             # else:
             #     print("r.status is not ok")
             # for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
-            # text = data.text
-            # herf = data.get('href')
-            # if '上頁' in text:
-            #     _NewestIndex = herf.split('index')[1].split('.')[0]
-            #     _NewestIndex = int(self.EndPage)
+            #     text = data.text
+            #     herf = data.get('href')
+            #     if '上頁' in text:
+            #         _NewestIndex = herf.split('index')[1].split('.')[0]
+            #         _NewestIndex = int(self.EndPage)
 
-        # NewestIndex = _NewestIndex + 1
+            # NewestIndex = _NewestIndex + 1
 
         return NewestIndex
 
@@ -1894,6 +1895,32 @@ class Library:
                     except ConnectCore.NoMatchTargetError as e:
                         if i == 1:
                             raise e
+                        NeedContinue = True
+                    except Exceptions.ConnectionClosed as e:
+                        if i == 1:
+                            raise e
+                        Log.log(
+                            Log.Level.INFO,
+                            i18n.RestoreConnection
+                        )
+                        self._login(
+                            self._ID,
+                            self._Password,
+                            Config.KickOtherLogin
+                        )
+                        NeedContinue = True
+                    except Exceptions.UseTooManyResources as e:
+                        if i == 1:
+                            raise e
+                        Log.log(
+                            Log.Level.INFO,
+                            i18n.RestoreConnection
+                        )
+                        self._login(
+                            self._ID,
+                            self._Password,
+                            Config.KickOtherLogin
+                        )
                         NeedContinue = True
 
                     if Post is None:

@@ -751,8 +751,14 @@ def load(inputLanguage):
     # Animation
     global AnimationPost
     AnimationPost = SpecificLoad(inputLanguage, [
-        f'動畫文章',
-        f'Animation Post',
+        '動畫文章',
+        'Animation Post',
+    ])
+
+    global RestoreConnection
+    RestoreConnection = SpecificLoad(inputLanguage, [
+        '恢復連線',
+        'Restore Connection',
     ])
 
     # global List
