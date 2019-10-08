@@ -611,7 +611,7 @@ class Library:
 
         if PostIndex > 0:
             NewestIndex = self._getNewestIndex(
-                DataType.IndexType.Board,
+                DataType.IndexType.BBS,
                 Board=Board,
                 SearchType=SearchType,
                 SearchCondition=SearchCondition
@@ -1559,9 +1559,17 @@ class Library:
         self,
         IndexType: int,
         Board: str = None,
+        # BBS
         SearchType: int = 0,
         SearchCondition: str = None
     ):
+
+        if not isinstance(IndexType, int):
+            raise TypeError(Log.merge([
+                'IndexType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
 
         if not Util.checkRange(DataType.IndexType, IndexType):
             raise ValueError('Unknow IndexType', IndexType)
@@ -1572,24 +1580,26 @@ class Library:
                 i18n.MustBe,
                 i18n.String
             ]))
-        if not isinstance(SearchType, int):
-            raise TypeError(Log.merge([
-                'SearchType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-        if (SearchCondition is not None and
-                not isinstance(SearchCondition, str)):
-            raise TypeError(Log.merge([
-                'SearchCondition',
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if (SearchType != 0 and
-                not Util.checkRange(DataType.PostSearchType, SearchType)):
-            raise ValueError('Unknow PostSearchType', PostSearchType)
 
-        if IndexType == DataType.IndexType.Board:
+        if IndexType == DataType.IndexType.BBS:
+
+            if not isinstance(SearchType, int):
+                raise TypeError(Log.merge([
+                    'SearchType',
+                    i18n.MustBe,
+                    i18n.Integer
+                ]))
+            if (SearchCondition is not None and
+                    not isinstance(SearchCondition, str)):
+                raise TypeError(Log.merge([
+                    'SearchCondition',
+                    i18n.MustBe,
+                    i18n.String
+                ]))
+            if (SearchType != 0 and
+                    not Util.checkRange(DataType.PostSearchType, SearchType)):
+                raise ValueError('Unknow PostSearchType', PostSearchType)
+
             CmdList = []
             CmdList.append(Command.GoMainMenu)
             CmdList.append('qs')
@@ -1681,22 +1691,22 @@ class Library:
         elif DataType.IndexType.Web:
             # web
             soup = None
-            _NewestIndex = ""
-            _url = 'https://www.ptt.cc/bbs/'
-            url = _url.append(Board)
-            r = requests.get(url)
-            if r.status_code == requests.codes.ok:
-                soup = BeautifulSoup(r.text, 'html.parser')
-            else:
-                print ("r.status is not ok")
-            for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
-            text = data.text
-            herf = data.get('href')
-            if '上頁' in text:
-                _NewestIndex = herf.split('index')[1].split('.')[0]
-                _NewestIndex = int(self.EndPage)
+            # _NewestIndex = ""
+            # _url = 'https://www.ptt.cc/bbs/'
+            # url = _url.append(Board)
+            # r = requests.get(url)
+            # if r.status_code == requests.codes.ok:
+            #     soup = BeautifulSoup(r.text, 'html.parser')
+            # else:
+            #     print("r.status is not ok")
+            # for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
+            # text = data.text
+            # herf = data.get('href')
+            # if '上頁' in text:
+            #     _NewestIndex = herf.split('index')[1].split('.')[0]
+            #     _NewestIndex = int(self.EndPage)
 
-        NewestIndex = _NewestIndex + 1
+        # NewestIndex = _NewestIndex + 1
 
         return NewestIndex
 
@@ -1836,7 +1846,7 @@ class Library:
                     ]))
 
             NewestIndex = self._getNewestIndex(
-                DataType.IndexType.Board,
+                DataType.IndexType.BBS,
                 Board=Board,
                 SearchType=SearchType,
                 SearchCondition=SearchCondition
@@ -2124,7 +2134,7 @@ class Library:
             ]))
         if PostIndex > 0:
             NewestIndex = self._getNewestIndex(
-                DataType.IndexType.Board,
+                DataType.IndexType.BBS,
                 Board=Board
             )
 

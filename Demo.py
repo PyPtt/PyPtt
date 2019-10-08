@@ -217,7 +217,7 @@ def Post_GetNewestIndex_Push():
     # getNewestIndex() 參數說明
     #   IndexType:
     #       可以取得兩種不一樣的最新編號，
-    #       PTT.IndexType.Board                         某版的最新文章編號
+    #       PTT.IndexType.BBS                           某版的最新文章編號
     #       PTT.IndexType.Mail  (尚未啟用)               信箱的最新信件編號
     #   Board:
     #       文章版
@@ -272,7 +272,7 @@ def Post_GetNewestIndex_Push():
         0
     )
 
-    Index = PTTBot.getNewestIndex(PTT.IndexType.Board, Board=Board)
+    Index = PTTBot.getNewestIndex(PTT.IndexType.BBS, Board=Board)
     print(f'{Board} 最新文章編號 {Index}')
 
     Content = '''
@@ -310,7 +310,7 @@ def CrawlBoard():
     # getNewestIndex() 參數說明
     #   IndexType:
     #       可以取得兩種不一樣的最新編號，
-    #       PTT.IndexType.Board                         某版的最新文章編號
+    #       PTT.IndexType.BBS                         某版的最新文章編號
     #       PTT.IndexType.Mail  (尚未啟用)               信箱的最新信件編號
     #   Board:
     #       文章版
@@ -349,7 +349,7 @@ def CrawlBoard():
     TestRange = 100
 
     NewestIndex = PTTBot.getNewestIndex(
-        PTT.IndexType.Board,
+        PTT.IndexType.BBS,
         Board=TestBoard
     )
     StartIndex = NewestIndex - TestRange + 1

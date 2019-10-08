@@ -367,7 +367,7 @@ def GetPostWithCondition():
         try:
             showCondition(Board, SearchType, Condition)
             Index = PTTBot.getNewestIndex(
-                PTT.IndexType.Board,
+                PTT.IndexType.BBS,
                 Board,
                 SearchType=SearchType,
                 SearchCondition=Condition,
@@ -412,7 +412,7 @@ def GetPostWithCondition():
 
     # for (Board, SearchType, Condition) in TestList:
     #     Index = PTTBot.getNewestIndex(
-    #         PTT.IndexType.Board,
+    #         PTT.IndexType.BBS,
     #         Board,
     #         SearchType=SearchType,
     #         SearchCondition=Condition,
@@ -465,7 +465,7 @@ def GetNewestIndex():
 
     for Board in TestBoardList:
         for _ in range(5):
-            Index = PTTBot.getNewestIndex(PTT.IndexType.Board, Board=Board)
+            Index = PTTBot.getNewestIndex(PTT.IndexType.BBS, Board=Board)
             print(f'{Board} 最新文章編號 {Index}')
 
 
@@ -532,19 +532,19 @@ def CrawlBoard():
     global Query
     TestBoardList = [
         # 'Test',
-        # 'Wanted',
-        # 'Gossiping',
-        # 'Stock',
-        # 'movie',
-        # 'C_Chat',
-        # 'Baseball',
-        # 'NBA',
-        # 'HatePolitics',
+        'Wanted',
+        'Gossiping',
+        'Stock',
+        'movie',
+        'C_Chat',
+        'Baseball',
+        'NBA',
+        'HatePolitics',
 
         # PTT2
-        'Test',
-        'WhoAmI',
-        'PttSuggest'
+        # 'Test',
+        # 'WhoAmI',
+        # 'PttSuggest'
     ]
 
     TestRange = 300
@@ -554,7 +554,7 @@ def CrawlBoard():
 
         for TestBoard in TestBoardList:
             NewestIndex = PTTBot.getNewestIndex(
-                PTT.IndexType.Board,
+                PTT.IndexType.BBS,
                 Board=TestBoard
             )
             StartIndex = NewestIndex - TestRange + 1
@@ -588,7 +588,7 @@ def CrawlBoardWithCondition():
     #     try:
     #         showCondition(Board, SearchType, Condition)
     #         NewestIndex = PTTBot.getNewestIndex(
-    #             PTT.IndexType.Board,
+    #             PTT.IndexType.BBS,
     #             Board,
     #             SearchType=SearchType,
     #             SearchCondition=Condition,
@@ -624,7 +624,7 @@ def CrawlBoardWithCondition():
     for (Board, SearchType, Condition) in TestList:
         showCondition(Board, SearchType, Condition)
         NewestIndex = PTTBot.getNewestIndex(
-            PTT.IndexType.Board,
+            PTT.IndexType.BBS,
             Board,
             SearchType=SearchType,
             SearchCondition=Condition,
@@ -946,13 +946,13 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
         # ThrowWaterBall()
         # PTT2 尚未支援
-        GetWaterBall()
+        # GetWaterBall()
         # WaterBall()
         # CallStatus()
         # GiveMoney()
