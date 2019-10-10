@@ -1689,7 +1689,7 @@ class Library:
 
         elif DataType.IndexType.Web:
             # web
-            _NewestIndex = ""
+            _NewestIndex = None
             NewestIndex = 0
             _url = 'https://www.ptt.cc/bbs/'
             url = _url + Board
@@ -1706,7 +1706,9 @@ class Library:
                     _NewestIndex = herf.split('index')[1].split('.')[0]
                     # print("_NewestIndex: " + _NewestIndex)
                     _NewestIndex = int(_NewestIndex)
-
+            
+            if _NewestIndex is None:
+                raise Exceptions.UnknowError('')
             NewestIndex = (_NewestIndex) + 1
         return NewestIndex
 
