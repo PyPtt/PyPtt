@@ -1689,26 +1689,30 @@ class Library:
                 raise Exceptions.UnknowError(i18n.UnknowError)
 
         elif DataType.IndexType.Web:
-            pass
             # web
-            # soup = None
-            # _NewestIndex = ""
-            # _url = 'https://www.ptt.cc/bbs/'
-            # url = _url.append(Board)
-            # r = requests.get(url)
-            # if r.status_code == requests.codes.ok:
-            #     soup = BeautifulSoup(r.text, 'html.parser')
-            # else:
-            #     print("r.status is not ok")
-            # for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
-            #     text = data.text
-            #     herf = data.get('href')
-            #     if '上頁' in text:
-            #         _NewestIndex = herf.split('index')[1].split('.')[0]
-            #         _NewestIndex = int(self.EndPage)
+            _NewestIndex = ""
+            NewestIndex = 0
+            _url = 'https://www.ptt.cc/bbs/'
+            url = _url + Board
+            if Board == "Gossiping" :
+                r = requests.get(url, cookies={'over18': '1'})  # Gossiping版第一次會詢問是否滿18，先開瀏覽器紀錄
+            else:
+                r = requests.get(url)
 
-            # NewestIndex = _NewestIndex + 1
+            if r.status_code == requests.codes.ok:
+                soup = BeautifulSoup(r.text, 'html.parser')
+            else:
+                print("r.status is not ok")
+                
+            for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
+                text = data.text
+                herf = data.get('href')
+                if '上頁' in text:
+                    _NewestIndex = herf.split('index')[1].split('.')[0]
+                    print ("_NewestIndex: " + _NewestIndex)
+                    _NewestIndex = int(_NewestIndex)
 
+            NewestIndex = (_NewestIndex) + 1
         return NewestIndex
 
     def getNewestIndex(
@@ -1963,6 +1967,7 @@ class Library:
                 raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
 
             # 網頁版本爬蟲
+            print ("網頁版本爬蟲")
             # https://www.ptt.cc/bbs/index.html
 
             # 1. 取得總共有幾頁 MaxPage

@@ -547,14 +547,15 @@ def CrawlBoard():
         # 'PttSuggest'
     ]
 
-    TestRange = 10000
+    TestRange = 10
     TestRound = 1
 
     for _ in range(TestRound):
 
         for TestBoard in TestBoardList:
             NewestIndex = PTTBot.getNewestIndex(
-                PTT.IndexType.BBS,
+                # PTT.IndexType.BBS,
+                PTT.IndexType.Web,
                 Board=TestBoard
             )
             StartIndex = NewestIndex - TestRange + 1
