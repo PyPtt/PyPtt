@@ -134,6 +134,7 @@ setup(
         'websockets',
         'uao',
         'beautifulsoup4'
+        'requests'
     ],
 
     # List additional groups of dependencies here (e.g. development
