@@ -133,13 +133,13 @@ setup(
         'progressbar2',
         'websockets',
         'uao',
-        'beautifulsoup4'
+        'beautifulsoup4',
         'requests'
     ],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
-    # syntax, for example:
+    # syntax, for example:0
     #
     #   $ pip install sampleproject[dev]
     #
