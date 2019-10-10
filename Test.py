@@ -531,15 +531,15 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        # 'Test',
-        # 'Wanted',
+        'Test',
+        'Wanted',
         'Gossiping',
-        # 'Stock',
-        # 'movie',
-        # 'C_Chat',
-        # 'Baseball',
-        # 'NBA',
-        # 'HatePolitics',
+        'Stock',
+        'movie',
+        'C_Chat',
+        'Baseball',
+        'NBA',
+        'HatePolitics',
 
         # PTT2
         # 'Test',
@@ -547,39 +547,50 @@ def CrawlBoard():
         # 'PttSuggest'
     ]
 
-    TestRange = 10
-    TestRound = 1
+    CrawlType = PTT.IndexType.Web
+
+    TestRange = 10000
+    TestRound = 100
 
     for _ in range(TestRound):
 
         for TestBoard in TestBoardList:
-            NewestIndex = PTTBot.getNewestIndex(
-                # PTT.IndexType.BBS,
-                PTT.IndexType.Web,
-                Board=TestBoard
-            )
-            StartIndex = NewestIndex - TestRange + 1
 
-            print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
+            if CrawlType == PTT.IndexType.BBS:
+                NewestIndex = PTTBot.getNewestIndex(
+                    # PTT.IndexType.BBS,
+                    Board=TestBoard
+                )
+                StartIndex = NewestIndex - TestRange + 1
 
-            print(f'TestBoard [{TestBoard}]')
-            ErrorPostList, DelPostList = PTTBot.crawlBoard(
-                crawlHandler,
-                PTT.CrawlType.BBS,
-                TestBoard,
-                StartIndex=StartIndex,
-                EndIndex=NewestIndex,
-                Query=Query
-            )
+                print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
 
-            if len(ErrorPostList) > 0:
-                print('格式錯誤文章: \n' + '\n'.join(str(x) for x in ErrorPostList))
-            else:
-                print('沒有偵測到格式錯誤文章')
+                print(f'TestBoard [{TestBoard}]')
+                ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                    crawlHandler,
+                    PTT.CrawlType.BBS,
+                    TestBoard,
+                    StartIndex=StartIndex,
+                    EndIndex=NewestIndex,
+                    Query=Query
+                )
 
-            if len(DelPostList) > 0:
-                print(f'共有 {len(DelPostList)} 篇文章被刪除')
+                if len(ErrorPostList) > 0:
+                    print('格式錯誤文章: \n' + '\n'.join(str(x) for x in ErrorPostList))
+                else:
+                    print('沒有偵測到格式錯誤文章')
 
+                if len(DelPostList) > 0:
+                    print(f'共有 {len(DelPostList)} 篇文章被刪除')
+
+            elif CrawlType == PTT.IndexType.Web:
+
+                NewestIndex = PTTBot.getNewestIndex(
+                    PTT.IndexType.Web,
+                    Board=TestBoard
+                )
+
+                print(f'預備爬行 {TestBoard} 最新頁數 {NewestIndex}')
 
 def CrawlBoardWithCondition():
 
@@ -934,11 +945,12 @@ if __name__ == '__main__':
             # Host=PTT.Host.PTT2
         )
         try:
-            PTTBot.login(
-                ID,
-                Password,
-                # KickOtherLogin=True
-            )
+            # PTTBot.login(
+            #     ID,
+            #     Password,
+            #     # KickOtherLogin=True
+            # )
+            pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
             sys.exit()

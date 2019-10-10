@@ -5,8 +5,7 @@ import progressbar
 import threading
 import requests
 from bs4 import BeautifulSoup
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 try:
     from . import DataType
@@ -28,7 +27,7 @@ except ModuleNotFoundError:
     import Screens
     import Exceptions
     import Command
-
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 Version = Config.Version
 
@@ -1694,22 +1693,18 @@ class Library:
             NewestIndex = 0
             _url = 'https://www.ptt.cc/bbs/'
             url = _url + Board
-            if Board == "Gossiping" :
-                r = requests.get(url, cookies={'over18': '1'})  # Gossiping版第一次會詢問是否滿18，先開瀏覽器紀錄
-            else:
-                r = requests.get(url)
+            r = requests.get(url, cookies={'over18': '1'})
 
-            if r.status_code == requests.codes.ok:
-                soup = BeautifulSoup(r.text, 'html.parser')
-            else:
-                print("r.status is not ok")
-                
+            if r.status_code != requests.codes.ok:
+                raise Exceptions.NoSuchBoard(Board)
+            soup = BeautifulSoup(r.text, 'html.parser')
+
             for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
                 text = data.text
                 herf = data.get('href')
                 if '上頁' in text:
                     _NewestIndex = herf.split('index')[1].split('.')[0]
-                    print ("_NewestIndex: " + _NewestIndex)
+                    # print("_NewestIndex: " + _NewestIndex)
                     _NewestIndex = int(_NewestIndex)
 
             NewestIndex = (_NewestIndex) + 1
@@ -1724,8 +1719,9 @@ class Library:
     ):
         self._OneThread()
 
-        if not self._LoginStatus:
-            raise Exceptions.RequireLogin(i18n.RequireLogin)
+        if IndexType == DataType.IndexType.BBS:
+            if not self._LoginStatus:
+                raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         try:
             return self._getNewestIndex(
@@ -1734,7 +1730,7 @@ class Library:
                 SearchType,
                 SearchCondition
             )
-        except Exceptions.UnknowError:
+        except:
             return self._getNewestIndex(
                 IndexType,
                 Board,
@@ -1967,7 +1963,7 @@ class Library:
                 raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
 
             # 網頁版本爬蟲
-            print ("網頁版本爬蟲")
+            print("網頁版本爬蟲")
             # https://www.ptt.cc/bbs/index.html
 
             # 1. 取得總共有幾頁 MaxPage
