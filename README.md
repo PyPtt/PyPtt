@@ -9,9 +9,8 @@
 
 #### PTT Library 是一個由 Python 所開發，用來操作 PTT 的函式庫
 #### 無論推文、發文、爬蟲、寄信、發 P 幣、丟水球還是狂查人家 ID，都可以滿足你的需求
-#### 使用最新的 WebSocket 連線模式
-#### 支援多國語系，繁體中文與英文
-#### 備有親切的說明手冊 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
+#### 使用最新的 WebSocket 連線模式，支援繁體中文與英文顯示
+#### 就連 PTT2 也都完整支援，並且備有親切的說明手冊 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
 #### 歡迎發起 pull request，提交你開發的 API
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
 #### 原始碼
@@ -47,6 +46,7 @@ pip install PTTLibrary
 #### websockets
 #### uao
 #### beautifulsoup4 (Since 0.8.25)
+#### requests (Since 0.8.25)
 
 ## 贊助
 #### 在這個 github 的小園地，用熱血的心為您打造在 PTT 翱翔的翅膀。
