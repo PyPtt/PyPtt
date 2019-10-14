@@ -954,7 +954,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
@@ -985,7 +985,7 @@ if __name__ == '__main__':
         # GiveMoney()
         # Mail()
         # HasNewMail()
-        # GetBoardList()
+        GetBoardList()
 
         # FullTest()
     except Exception as e:
