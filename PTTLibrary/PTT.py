@@ -1963,18 +1963,118 @@ class Library:
 
             if self._Host == DataType.Host.PTT2:
                 raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
-
             # 網頁版本爬蟲
             print("網頁版本爬蟲")
             # https://www.ptt.cc/bbs/index.html
 
             # 1. 取得總共有幾頁 MaxPage
+            NewestIndex = self._getNewestIndex(
+                DataType.IndexType.Web,
+                Board=Board
+                # SearchType=SearchType,
+                # SearchCondition=SearchCondition
+            )
             # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
+            if not isinstance(Board, str):
+                raise TypeError(Log.merge([
+                    'Board',
+                    i18n.MustBe,
+                    i18n.String
+                ]))
+            #
+            if not isinstance(StartPage, int):
+                raise TypeError(Log.merge([
+                    'StartPage',
+                    i18n.MustBe,
+                    i18n.Integer
+                ]))
+            if not isinstance(EndPage, int):
+                raise TypeError(Log.merge([
+                    'EndPage',
+                    i18n.MustBe,
+                    i18n.Integer
+                ]))
+            #
+            if len(Board) == 0:
+                raise ValueError(Log.merge([
+                    i18n.Board,
+                    i18n.ErrorParameter,
+                    Board
+                ]))
+
+            if StartPage < 1:
+                raise ValueError(Log.merge([
+                    'StartPage',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
+
+            if StartPage > EndPage:
+                raise ValueError(Log.merge([
+                    'StartPage',
+                    i18n.MustSmall,
+                    'EndPage',
+                ]))
+            
+            if StartPage > NewestIndex:
+                raise ValueError(Log.merge([
+                    'StartPage',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
+
+            if EndPage > NewestIndex:
+                raise ValueError(Log.merge([
+                    'EndPage',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
+
             # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 DataType.PostInfo
+            ErrorPostList = []
+            DelPostList = []
+            # PostAID = ""
+            _url = 'https://www.ptt.cc/bbs/'
+            index = str(NewestIndex)
+
+            if Config.LogLevel == Log.Level.INFO:
+                PB = progressbar.ProgressBar(
+                    max_value=EndPage - StartPage + 1,
+                    redirect_stdout=True
+                )
+
+            for index in range(StartPage, NewestIndex + 1):
+                print ('Page:', StartPage)
+                url = _url + Board + '/index' + str(StartPage) + '.html'
+                r = requests.get(url, cookies={'over18': '1'})
+                if r.status_code != requests.codes.ok:
+                    raise Exceptions.NoSuchBoard(Board)
+                soup = BeautifulSoup(r.text, 'html.parser')
+
+            # for index in range(1, 2):
+            # for index in range(StartPage, NewestIndex):
+                for index, data in enumerate(soup.select('div.title a')):
+                    PostTitle = data.text
+                    PostWeb = 'https://www.ptt.cc' + data.get('href')
+                    # print (PostWeb)
+                    print (PostTitle)
+                for index, data in enumerate(soup.select('div.author')):
+                    PostAuthor = data.text     
+                    # print (PostAuthor)
+                StartPage += 1
+
+            Post = DataType.PostInfo(
+                    Board=Board,
+                    # AID=PostAID,
+                    Author=PostAuthor,
+                    Title=PostTitle,
+                    WebUrl=PostWeb
+                )
             # 4. 把組合出來的 Post 塞給 handler
+            # PostHandler(Post)
             # 5. 顯示 progress bar
 
-            return ErrorPostList
+            return ErrorPostList, DelPostList
 
     def post(
         self,

@@ -531,15 +531,15 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        'Test',
-        'Wanted',
-        'Gossiping',
-        'Stock',
-        'movie',
-        'C_Chat',
-        'Baseball',
+        # 'Test',
+        # 'Wanted',
+        # 'Gossiping',
+        # 'Stock',
+        # 'movie',
+        # 'C_Chat',
+        # 'Baseball',
         'NBA',
-        'HatePolitics',
+        # 'HatePolitics',
 
         # PTT2
         # 'Test',
@@ -549,8 +549,8 @@ def CrawlBoard():
 
     CrawlType = PTT.IndexType.Web
 
-    TestRange = 10000
-    TestRound = 100
+    TestRange = 10
+    TestRound = 1
 
     for _ in range(TestRound):
 
@@ -590,7 +590,19 @@ def CrawlBoard():
                     Board=TestBoard
                 )
 
+                StartPage = NewestIndex - TestRange + 1
+
                 print(f'預備爬行 {TestBoard} 最新頁數 {NewestIndex}')
+                print(f'預備爬行 {TestBoard} 編號 {StartPage} ~ {NewestIndex} 文章')
+
+                ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                    crawlHandler,
+                    PTT.CrawlType.Web,
+                    TestBoard,
+                    StartPage=StartPage,
+                    EndPage=NewestIndex,
+                    Query=Query
+                )
 
 def CrawlBoardWithCondition():
 
@@ -934,7 +946,7 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
-    ID, Password = getPW()
+    # ID, Password = getPW()
 
     try:
         # Loginout()
@@ -947,11 +959,11 @@ if __name__ == '__main__':
             # Host=PTT.Host.PTT2
         )
         try:
-            PTTBot.login(
-                ID,
-                Password,
-                # KickOtherLogin=True
-            )
+            # PTTBot.login(
+            #     ID,
+            #     Password,
+            #     # KickOtherLogin=True
+            # )
             pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -961,9 +973,9 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
-        Push()
+        # Push()
         # GetUser()
         # ThrowWaterBall()
         # PTT2 尚未支援
