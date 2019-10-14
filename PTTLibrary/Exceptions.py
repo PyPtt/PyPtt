@@ -168,3 +168,11 @@ class HostNotSupport(Exception):
 
     def __str__(self):
         return self.message
+
+
+class NoPush(Exception):
+    def __init__(self):
+        self.message = i18n.NoPush
+
+    def __str__(self):
+        return self.message

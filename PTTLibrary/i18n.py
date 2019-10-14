@@ -761,6 +761,12 @@ def load(inputLanguage):
         'Restore Connection',
     ])
 
+    global NoPush
+    NoPush = SpecificLoad(inputLanguage, [
+        '禁止推薦',
+        'No Push',
+    ])
+
     # global List
     # List = []
 

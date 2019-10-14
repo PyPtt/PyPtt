@@ -691,16 +691,18 @@ def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        ('Test', 20004)
+        # ('Test', 20004),
+        ('Wanted', '1Teyovc3')
     ]
 
     Content = '''
-What is Ptt?
-批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
-期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
+可以
 '''
     for (Board, Index) in TestPostList:
-        PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
+        if isinstance(Index, int):
+            PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
+        else:
+            PTTBot.push(Board, PTT.PushType.Push, Content, PostAID=Index)
 
 
 def ThrowWaterBall():
@@ -940,16 +942,16 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
         try:
-            # PTTBot.login(
-            #     ID,
-            #     Password,
-            #     # KickOtherLogin=True
-            # )
+            PTTBot.login(
+                ID,
+                Password,
+                # KickOtherLogin=True
+            )
             pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -959,9 +961,9 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
-        # Push()
+        Push()
         # GetUser()
         # ThrowWaterBall()
         # PTT2 尚未支援
