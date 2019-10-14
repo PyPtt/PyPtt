@@ -2288,8 +2288,15 @@ class Library:
                 '使用者不可發言',
                 LogLevel=Log.Level.INFO,
                 BreakDetect=True,
-                Exceptions=Exceptions.Error(i18n.NoPermission)
-            )
+                Exceptions=Exceptions.NoPermission(i18n.NoPermission)
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoPush,
+                '◆ 抱歉, 禁止推薦',
+                LogLevel=Log.Level.INFO,
+                BreakDetect=True,
+                Exceptions=Exceptions.NoPush()
+            ),
         ]
 
         index = self._ConnectCore.send(
