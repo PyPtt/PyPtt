@@ -98,7 +98,7 @@ class FriendListType:
     MaxValue = OtherSpecial
 
 
-class ReplyPostType:
+class ReplyType:
     # 回文類型
 
     Board = 1
