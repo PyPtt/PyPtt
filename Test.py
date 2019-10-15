@@ -940,6 +940,15 @@ def GetBoardList():
     print(f'總共有 {len(BoardList)} 個板名')
 
 
+def ReplyPost():
+    PTTBot.replyPost(
+        PTT.ReplyType.Board,
+        'Test',
+        '測試回文，如有打擾抱歉',
+        PostIndex=123
+    )
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -949,7 +958,7 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
-    # ID, Password = getPW()
+    ID, Password = getPW()
 
     try:
         # Loginout()
@@ -962,11 +971,11 @@ if __name__ == '__main__':
             # Host=PTT.Host.PTT2
         )
         try:
-            # PTTBot.login(
-            #     ID,
-            #     Password,
-            #     # KickOtherLogin=True
-            # )
+            PTTBot.login(
+                ID,
+                Password,
+                # KickOtherLogin=True
+            )
             pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -976,7 +985,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
@@ -989,6 +998,7 @@ if __name__ == '__main__':
         # Mail()
         # HasNewMail()
         # GetBoardList()
+        ReplyPost()
 
         # FullTest()
     except Exception as e:

@@ -44,6 +44,7 @@ CallStatus = DataType.CallStatus
 PostDeleteStatus = DataType.PostDeleteStatus
 CrawlType = DataType.CrawlType
 Host = DataType.Host
+ReplyType = DataType.ReplyType
 
 
 class Library:
@@ -608,7 +609,7 @@ class Library:
                 i18n.BothInput,
             ]))
 
-        if PostIndex > 0:
+        if PostIndex != 0:
             NewestIndex = self._getNewestIndex(
                 DataType.IndexType.BBS,
                 Board=Board,
@@ -616,12 +617,13 @@ class Library:
                 SearchCondition=SearchCondition
             )
 
-            if PostIndex > NewestIndex:
+            if PostIndex < 1 or NewestIndex < PostIndex:
                 raise ValueError(Log.merge([
                     'PostIndex',
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
+
         for i in range(2):
 
             NeedContinue = False
@@ -3579,6 +3581,74 @@ class Library:
             PB.finish()
 
         return BoardList
+
+    def replyPost(
+        self,
+        inputReplyType: int,
+        Board: str,
+        Content: str,
+        PostAID: str = None,
+        PostIndex: int = 0
+    ):
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(Content, str):
+            raise TypeError(Log.merge([
+                'Content',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(inputReplyType, int):
+            raise TypeError(Log.merge([
+                'ReplyType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        if PostAID is not None:
+            if not isinstance(PostAID, str):
+                raise TypeError(Log.merge([
+                    'Content',
+                    i18n.MustBe,
+                    i18n.String
+                ]))
+
+        if PostIndex != 0:
+            if not isinstance(PostIndex, int):
+                raise TypeError(Log.merge([
+                    'PostIndex',
+                    i18n.MustBe,
+                    i18n.Integer
+                ]))
+
+            NewestIndex = self._getNewestIndex(
+                DataType.IndexType.BBS,
+                Board=Board,
+            )
+
+            if PostIndex < 1 or NewestIndex < PostIndex:
+                raise ValueError(Log.merge([
+                    'PostIndex',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
+
+        if not Util.checkRange(DataType.ReplyType, inputReplyType):
+            raise ValueError('Unknow ReplyType', inputReplyType)
+
+        if PostAID is not None and PostIndex != 0:
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostAID',
+                i18n.ErrorParameter,
+                i18n.BothInput
+            ]))
 
 
 if __name__ == '__main__':
