@@ -576,7 +576,8 @@ def CrawlBoard():
                 )
 
                 if len(ErrorPostList) > 0:
-                    print('格式錯誤文章: \n' + '\n'.join(str(x) for x in ErrorPostList))
+                    print('格式錯誤文章: \n' + '\n'.join(str(x)
+                                                   for x in ErrorPostList))
                 else:
                     print('沒有偵測到格式錯誤文章')
 
@@ -589,20 +590,22 @@ def CrawlBoard():
                     PTT.IndexType.Web,
                     Board=TestBoard
                 )
+                EndPage = NewestIndex
 
-                StartPage = NewestIndex - TestRange + 1
+                StartPage = EndPage - TestRange + 1
 
                 print(f'預備爬行 {TestBoard} 最新頁數 {NewestIndex}')
-                print(f'預備爬行 {TestBoard} 編號 {StartPage} ~ {NewestIndex} 文章')
+                print(f'預備爬行 {TestBoard} 編號 {StartPage} ~ {EndPage} 文章')
 
                 ErrorPostList, DelPostList = PTTBot.crawlBoard(
                     crawlHandler,
                     PTT.CrawlType.Web,
                     TestBoard,
                     StartPage=StartPage,
-                    EndPage=NewestIndex,
-                    Query=Query
+                    EndPage=EndPage,
+                    # Query=Query
                 )
+
 
 def CrawlBoardWithCondition():
 
@@ -955,7 +958,7 @@ if __name__ == '__main__':
 
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
-            # LogLevel=PTT.LogLevel.DEBUG,
+            LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
         try:
@@ -985,7 +988,7 @@ if __name__ == '__main__':
         # GiveMoney()
         # Mail()
         # HasNewMail()
-        GetBoardList()
+        # GetBoardList()
 
         # FullTest()
     except Exception as e:
