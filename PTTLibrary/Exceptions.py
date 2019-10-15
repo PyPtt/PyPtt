@@ -176,3 +176,11 @@ class NoPush(Exception):
 
     def __str__(self):
         return self.message
+
+
+class NoResponse(Exception):
+    def __init__(self):
+        self.message = i18n.NoResponse
+
+    def __str__(self):
+        return self.message

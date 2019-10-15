@@ -453,18 +453,18 @@ def GetNewestIndex():
     TestBoardList = [
         # 'Wanted',
         # 'Gossiping',
-        # 'Test',
+        'Test',
         # 'Stock',
         # 'movie'
 
         # PTT2
-        'PttSuggest',
-        'Test',
-        'WhoAmI'
+        # 'PttSuggest',
+        # 'Test',
+        # 'WhoAmI'
     ]
 
     for Board in TestBoardList:
-        for _ in range(5):
+        for _ in range(1000):
             Index = PTTBot.getNewestIndex(PTT.IndexType.BBS, Board=Board)
             print(f'{Board} 最新文章編號 {Index}')
 
@@ -945,7 +945,7 @@ def ReplyPost():
         PTT.ReplyType.Board,
         'Test',
         '測試回文，如有打擾抱歉',
-        PostIndex=123
+        PostIndex=388
     )
 
 
@@ -966,8 +966,8 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
-            LogLevel=PTT.LogLevel.DEBUG,
+            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
         try:
@@ -990,7 +990,6 @@ if __name__ == '__main__':
         # Push()
         # GetUser()
         # ThrowWaterBall()
-        # PTT2 尚未支援
         # GetWaterBall()
         # WaterBall()
         # CallStatus()
