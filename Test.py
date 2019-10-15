@@ -549,7 +549,7 @@ def CrawlBoard():
 
     CrawlType = PTT.IndexType.Web
 
-    TestRange = 10
+    TestRange = 2
     TestRound = 1
 
     for _ in range(TestRound):
@@ -605,6 +605,9 @@ def CrawlBoard():
                     EndPage=EndPage,
                     # Query=Query
                 )
+
+                if len(DelPostList) > 0:
+                    print(f'共有 {len(DelPostList)} 篇文章被刪除')
 
 
 def CrawlBoardWithCondition():
@@ -958,7 +961,7 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
-    ID, Password = getPW()
+    # ID, Password = getPW()
 
     try:
         # Loginout()
@@ -971,11 +974,11 @@ if __name__ == '__main__':
             # Host=PTT.Host.PTT2
         )
         try:
-            PTTBot.login(
-                ID,
-                Password,
-                # KickOtherLogin=True
-            )
+            # PTTBot.login(
+            #     ID,
+            #     Password,
+            #     # KickOtherLogin=True
+            # )
             pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -985,7 +988,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
@@ -997,7 +1000,7 @@ if __name__ == '__main__':
         # Mail()
         # HasNewMail()
         # GetBoardList()
-        ReplyPost()
+        # ReplyPost()
 
         # FullTest()
     except Exception as e:

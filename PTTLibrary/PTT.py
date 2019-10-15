@@ -2055,21 +2055,25 @@ class Library:
 
             # for index in range(1, 2):
             # for index in range(StartPage, NewestIndex):
-                for index, data in enumerate(soup.select('div.title a')):
-                    PostTitle = data.text
-                    PostWeb = 'https://www.ptt.cc' + data.get('href')
-
+                for index, data in enumerate(soup.select('div.title')):
+                    PostTitle = data.text.strip('\n').lstrip().rstrip()
+                    if PostTitle.startswith('('):
+                        DelPostList.append(PostTitle) 
                     Log.showValue(
                         Log.Level.DEBUG,
                         'PostTitle',
                         PostTitle
                     )
+                    
+                for index, data in enumerate(soup.select('div.title a')):
+                    PostWeb = 'https://www.ptt.cc' + data.get('href')
 
                     Log.showValue(
                         Log.Level.DEBUG,
                         'PostWeb',
                         PostWeb
                     )
+
                 for index, data in enumerate(soup.select('div.author')):
                     PostAuthor = data.text
                     Log.showValue(
@@ -2084,6 +2088,13 @@ class Library:
                 Title=PostTitle,
                 WebUrl=PostWeb
             )
+
+            Log.showValue(
+                        Log.Level.DEBUG,
+                        'DelPostList',
+                        DelPostList
+                    )
+            
             # 4. 把組合出來的 Post 塞給 handler
             # PostHandler(Post)
             # 5. 顯示 progress bar
