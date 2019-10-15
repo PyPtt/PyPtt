@@ -670,16 +670,10 @@ class Library:
             break
         return Post
 
-    def _getPost(
+    def _checkBoardExist(
         self,
-        Board: str,
-        PostAID: str = None,
-        PostIndex: int = 0,
-        SearchType: int = 0,
-        SearchCondition: str = None,
-        Query: bool = False,
+        Board
     ):
-
         if Board.lower() not in self._ExistBoardList:
             CmdList = []
             CmdList.append(Command.GoMainMenu)
@@ -724,6 +718,18 @@ class Library:
 
             if BoardName.lower() != Board.lower():
                 raise Exceptions.NoSuchBoard(Board)
+
+    def _getPost(
+        self,
+        Board: str,
+        PostAID: str = None,
+        PostIndex: int = 0,
+        SearchType: int = 0,
+        SearchCondition: str = None,
+        Query: bool = False,
+    ):
+
+        self._checkBoardExist(Board)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -1727,6 +1733,8 @@ class Library:
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
+            self._checkBoardExist(Board)
+
         try:
             return self._getNewestIndex(
                 IndexType,
@@ -2138,8 +2146,7 @@ class Library:
                     SignFile
                 ]))
 
-        if not self._LoginStatus:
-            raise Exceptions.RequireLogin(i18n.RequireLogin)
+        self._checkBoardExist(Board)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -2280,6 +2287,8 @@ class Library:
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
+
+        self._checkBoardExist(Board)
 
         MaxPushLength = 33
         PushList = []
@@ -3587,9 +3596,15 @@ class Library:
         inputReplyType: int,
         Board: str,
         Content: str,
+        SignFile=0,
         PostAID: str = None,
         PostIndex: int = 0
     ):
+        self._OneThread()
+
+        if not self._LoginStatus:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
         if not isinstance(Board, str):
             raise TypeError(Log.merge([
                 'Board',
@@ -3632,6 +3647,12 @@ class Library:
                 Board=Board,
             )
 
+            Log.showValue(
+                Log.Level.DEBUG,
+                'NewestIndex',
+                NewestIndex
+            )
+
             if PostIndex < 1 or NewestIndex < PostIndex:
                 raise ValueError(Log.merge([
                     'PostIndex',
@@ -3642,6 +3663,15 @@ class Library:
         if not Util.checkRange(DataType.ReplyType, inputReplyType):
             raise ValueError('Unknow ReplyType', inputReplyType)
 
+        SignFileList = [str(x) for x in range(0, 10)]
+        SignFileList.append('x')
+
+        if str(SignFile) not in SignFileList:
+            raise ValueError(Log.merge([
+                'SignFile',
+                i18n.ErrorParameter
+            ]))
+
         if PostAID is not None and PostIndex != 0:
             raise ValueError(Log.merge([
                 'PostIndex',
@@ -3649,6 +3679,100 @@ class Library:
                 i18n.ErrorParameter,
                 i18n.BothInput
             ]))
+
+        self._checkBoardExist(Board)
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('qs')
+        CmdList.append(Board)
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Ctrl_C * 2)
+        CmdList.append(Command.Space)
+
+        if PostAID is not None:
+            CmdList.append('#' + PostAID)
+        elif PostIndex != 0:
+            CmdList.append(str(PostIndex))
+        CmdList.append(Command.Enter * 2)
+        CmdList.append('r')
+
+        if inputReplyType == DataType.ReplyType.Board:
+            ReplyTargetUnit = ConnectCore.TargetUnit(
+                i18n.ReplyBoard,
+                '▲ 回應至',
+                LogLevel=Log.Level.INFO,
+                Response='F' + Command.Enter
+            )
+        elif inputReplyType == DataType.ReplyType.Mail:
+            ReplyTargetUnit = ConnectCore.TargetUnit(
+                i18n.ReplyMail,
+                '▲ 回應至',
+                LogLevel=Log.Level.INFO,
+                Response='M' + Command.Enter
+            )
+        elif inputReplyType == DataType.ReplyType.Board_Mail:
+            ReplyTargetUnit = ConnectCore.TargetUnit(
+                i18n.ReplyBoard_Mail,
+                '▲ 回應至',
+                LogLevel=Log.Level.INFO,
+                Response='B' + Command.Enter
+            )
+
+        Cmd = ''.join(CmdList)
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.AnyKeyContinue,
+                '任意鍵繼續',
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoResponse,
+                '◆ 很抱歉, 此文章已結案並標記, 不得回應',
+                LogLevel=Log.Level.INFO,
+                Exceptions=Exceptions.NoResponse()
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SelectSignature,
+                '請選擇簽名檔',
+                Response=str(SignFile) + Command.Enter,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.SaveFile,
+                '確定要儲存檔案嗎',
+                Response='s' + Command.Enter,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.EditPost,
+                '編輯文章',
+                LogLevel=Log.Level.INFO,
+                Response=str(Content) + Command.Enter + Command.Ctrl_X
+            ),
+            ConnectCore.TargetUnit(
+                i18n.QuoteOriginal,
+                '請問要引用原文嗎',
+                LogLevel=Log.Level.DEBUG,
+                Response='Y' + Command.Enter
+            ),
+            ConnectCore.TargetUnit(
+                i18n.UseTheOriginalTitle,
+                '採用原標題[Y/n]?',
+                LogLevel=Log.Level.DEBUG,
+                Response='Y' + Command.Enter
+            ),
+            ReplyTargetUnit
+        ]
+
+        self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
+        )
+
+        Log.log(
+            Log.Level.INFO,
+            i18n.RespondSuccess
+        )
 
 
 if __name__ == '__main__':

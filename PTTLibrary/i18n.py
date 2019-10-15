@@ -767,6 +767,58 @@ def load(inputLanguage):
         'No Push',
     ])
 
+    # Sorry, this article has been closed and marked, no response
+
+    global NoResponse
+    NoResponse = SpecificLoad(inputLanguage, [
+        '很抱歉, 此文章已結案並標記, 不得回應',
+        'This Post has been closed and marked, no response',
+    ])
+
+    global ReplyBoard
+    ReplyBoard = SpecificLoad(inputLanguage, [
+        '回應至看板',
+        'Respond to the Board',
+    ])
+
+    global ReplyMail
+    ReplyMail = SpecificLoad(inputLanguage, [
+        '回應至作者信箱',
+        'Respond to the mailbox of author',
+    ])
+
+    global ReplyBoard_Mail
+    ReplyBoard_Mail = SpecificLoad(inputLanguage, [
+        '回應至看板與作者信箱',
+        'Respond to the Board and the mailbox of author',
+    ])
+
+    global UseTheOriginalTitle
+    UseTheOriginalTitle = SpecificLoad(inputLanguage, [
+        '採用原標題',
+        'Use the original title',
+    ])
+
+    global QuoteOriginal
+    QuoteOriginal = SpecificLoad(inputLanguage, [
+        '引用原文',
+        'Quote original',
+    ])
+
+    global EditPost
+    EditPost = SpecificLoad(inputLanguage, [
+        '編輯文章',
+        'Edit Post',
+    ])
+
+    global RespondSuccess
+    RespondSuccess = SpecificLoad(inputLanguage, [
+        '回應成功',
+        'Respond Success',
+    ])
+
+    # Quote original
+
     # global List
     # List = []
 

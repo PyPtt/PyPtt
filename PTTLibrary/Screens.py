@@ -194,8 +194,8 @@ def VT100(OriScreen: str, NoColor: bool = True):
     #     [x.rstrip() for x in result.split('\n')]
     # )
 
-    while '=PTT=[H' in result:
-        result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
+    # while '=PTT=[H' in result:
+    #     result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
     while '=PTT=[2J' in result:
         result = result[result.find('=PTT=[2J') + len('=PTT=[2J'):]
 
