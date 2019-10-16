@@ -947,8 +947,22 @@ def ReplyPost():
     PTTBot.replyPost(
         PTT.ReplyType.Board,
         'Test',
-        '測試回文，如有打擾抱歉',
-        PostIndex=388
+        '測試回應到板上，如有打擾抱歉',
+        PostIndex=356
+    )
+
+    PTTBot.replyPost(
+        PTT.ReplyType.Mail,
+        'Test',
+        '測試回應到信箱，如有打擾抱歉',
+        PostIndex=356
+    )
+
+    PTTBot.replyPost(
+        PTT.ReplyType.Board_Mail,
+        'Test',
+        '測試回應到板上還有信箱，如有打擾抱歉',
+        PostIndex=356
     )
 
 
@@ -961,7 +975,7 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
-    # ID, Password = getPW()
+    ID, Password = getPW()
 
     try:
         # Loginout()
@@ -969,16 +983,16 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
         try:
-            # PTTBot.login(
-            #     ID,
-            #     Password,
-            #     # KickOtherLogin=True
-            # )
+            PTTBot.login(
+                ID,
+                Password,
+                # KickOtherLogin=True
+            )
             pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -988,7 +1002,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()

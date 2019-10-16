@@ -3743,6 +3743,13 @@ class Library:
                 LogLevel=Log.Level.INFO,
                 Exceptions=Exceptions.NoResponse()
             ),
+            # (E)繼續編輯 (W)強制寫入
+            ConnectCore.TargetUnit(
+                i18n.ForcedWrite,
+                '(E)繼續編輯 (W)強制寫入',
+                LogLevel=Log.Level.INFO,
+                Response='W' + Command.Enter
+            ),
             ConnectCore.TargetUnit(
                 i18n.SelectSignature,
                 '請選擇簽名檔',
@@ -3771,7 +3778,13 @@ class Library:
                 LogLevel=Log.Level.DEBUG,
                 Response='Y' + Command.Enter
             ),
-            ReplyTargetUnit
+            ReplyTargetUnit,
+            ConnectCore.TargetUnit(
+                i18n.SelfSaveDraft,
+                '已順利寄出，是否自存底稿',
+                LogLevel=Log.Level.DEBUG,
+                Response='Y' + Command.Enter
+            ),
         ]
 
         self._ConnectCore.send(
