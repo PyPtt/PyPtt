@@ -977,7 +977,13 @@ def SetBoardTitle():
             'CodingMan',
             f'現在時間 {Time}'
         )
-        time.sleep(1)
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            PTTBot.setBoardTitle(
+                'CodingMan',
+                '專業程式 BUG 製造機'
+            )
 
 
 if __name__ == '__main__':
