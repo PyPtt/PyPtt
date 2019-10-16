@@ -486,17 +486,28 @@ def crawlHandler(Post):
 
     global Query
 
-    if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
-        if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-            print(f'[版主刪除][{Post.getAuthor()}]')
-        elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-            print(f'[作者刪除][{Post.getAuthor()}]')
-        elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
-            print(f'[不明刪除]')
-        return
-
+    # if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
+    #     if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+    #         print(f'[版主刪除][{Post.getAuthor()}]')
+    #     elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+    #         print(f'[作者刪除][{Post.getAuthor()}]')
+    #     elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
+    #         print(f'[不明刪除]')
+    #     return
+    # print ('1')
+    # print ('Post.PostDeleteStatus:', Post.PostDeleteStatus)
+    # if Post.PostDeleteStatus != PTT.PostDeleteStatus.NotDeleted:
+    #     print ('2')
+    #     if Post.PostDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+    #         print(f'[版主刪除][{Post.Author}]')
+    #     elif Post.PostDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+    #         print(f'[作者刪除][{Post.Author}]')
+    #     elif Post.PostDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
+    #         print(f'[不明刪除]')
+    #     return
+        
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
-    print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
+    # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
     # print(f'[{Post.getContent()}]')
 
     PushNumber = Post.getPushNumber()
@@ -514,18 +525,18 @@ def crawlHandler(Post):
         # print(f'[{Post.getAID()}][{Post.getPushNumber()}]')
 
     detectNone('標題', Post.getTitle())
-    detectNone('AID', Post.getAID())
+    # detectNone('AID', Post.getAID())
     detectNone('Author', Post.getAuthor())
-    detectNone('Money', Post.getMoney())
+    # detectNone('Money', Post.getMoney())
     # detectNone('WebUrl', Post.getWebUrl())
-    detectNone('ListDate', Post.getListDate())
+    # detectNone('ListDate', Post.getListDate())
 
-    if not Query:
-        detectNone('Date', Post.getDate())
-        detectNone('Content', Post.getContent())
+    # if not Query:
+        # detectNone('Date', Post.getDate())
+        # detectNone('Content', Post.getContent())
         # detectNone('IP', Post.getIP())
 
-    # time.sleep(0.2)
+        # time.sleep(0.2)
 
 
 def CrawlBoard():
@@ -550,7 +561,7 @@ def CrawlBoard():
 
     CrawlType = PTT.IndexType.Web
 
-    TestRange = 2
+    TestRange = 20
     TestRound = 1
 
     for _ in range(TestRound):
@@ -603,7 +614,7 @@ def CrawlBoard():
                     PTT.CrawlType.Web,
                     TestBoard,
                     StartPage=StartPage,
-                    EndPage=EndPage,
+                    EndPage=EndPage
                     # Query=Query
                 )
 
@@ -995,7 +1006,7 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
-    ID, Password = getPW()
+    # ID, Password = getPW()
 
     try:
         # Loginout()
@@ -1005,14 +1016,15 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT2
+            LogLevel=PTT.LogLevel.INFO
+            # Host=PTT.Host.PTT2
         )
         try:
-            PTTBot.login(
-                ID,
-                Password,
-                # KickOtherLogin=True
-            )
+            # PTTBot.login(
+            #     ID,
+            #     Password,
+            #     # KickOtherLogin=True
+            # )
             pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -1022,7 +1034,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
