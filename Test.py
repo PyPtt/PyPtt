@@ -453,18 +453,19 @@ def GetNewestIndex():
     TestBoardList = [
         # 'Wanted',
         # 'Gossiping',
-        'Test',
+        # 'Test',
         # 'Stock',
         # 'movie'
 
         # PTT2
-        # 'PttSuggest',
-        # 'Test',
-        # 'WhoAmI'
+        'PttSuggest',
+        'Test',
+        'WhoAmI',
+        'CodingMan'
     ]
 
     for Board in TestBoardList:
-        for _ in range(1000):
+        for _ in range(1):
             Index = PTTBot.getNewestIndex(PTT.IndexType.BBS, Board=Board)
             print(f'{Board} 最新文章編號 {Index}')
 
@@ -941,6 +942,7 @@ def GetBoardList():
     BoardList = PTTBot.getBoardList()
     print(' '.join(BoardList))
     print(f'總共有 {len(BoardList)} 個板名')
+    print(f'總共有 {len(set(BoardList))} 個不重複板名')
 
 
 def ReplyPost():

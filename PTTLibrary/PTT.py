@@ -1638,6 +1638,12 @@ class Library:
 
             TargetList = [
                 ConnectCore.TargetUnit(
+                    i18n.NoPost,
+                    '沒有文章...',
+                    BreakDetect=True,
+                    LogLevel=Log.Level.DEBUG
+                ),
+                ConnectCore.TargetUnit(
                     i18n.Success,
                     Screens.Target.InBoard,
                     BreakDetect=True,
@@ -1659,6 +1665,9 @@ class Library:
             if index < 0:
                 OriScreen = self._ConnectCore.getScreenQueue()[-1]
                 raise Exceptions.UnknowError(OriScreen)
+
+            if index == 0:
+                return 0
 
             LastScreen = self._ConnectCore.getScreenQueue()[-1]
             AllIndex = re.findall(r'\d+ ', LastScreen)
