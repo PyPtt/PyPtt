@@ -823,6 +823,12 @@ def load(inputLanguage):
         'Forced Write',
     ])
 
+    global NoPost
+    NoPost = SpecificLoad(inputLanguage, [
+        '沒有文章',
+        'No Post',
+    ])
+
     # Quote original
 
     # global List
