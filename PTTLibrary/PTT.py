@@ -746,9 +746,9 @@ class Library:
 
                 self._ModeratorList[BoardName] = CheckModeratorList
 
-            if CheckModerator:
-                if self._ID.lower() not in self._ModeratorList[BoardName]:
-                    raise Exceptions.NeedModeratorPermission()
+        if CheckModerator:
+            if self._ID.lower() not in self._ModeratorList[BoardName]:
+                raise Exceptions.NeedModeratorPermission()
 
     def _getPost(
         self,
