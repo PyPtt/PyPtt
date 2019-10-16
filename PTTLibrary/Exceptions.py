@@ -184,3 +184,11 @@ class NoResponse(Exception):
 
     def __str__(self):
         return self.message
+
+
+class NeedModeratorPermission(Exception):
+    def __init__(self):
+        self.message = i18n.NeedModeratorPermission
+
+    def __str__(self):
+        return self.message

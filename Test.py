@@ -968,6 +968,18 @@ def ReplyPost():
     )
 
 
+def SetBoardTitle():
+    from time import gmtime, strftime
+
+    while True:
+        Time = strftime('%H:%M:%S')
+        PTTBot.setBoardTitle(
+            'CodingMan',
+            f'現在時間 {Time}'
+        )
+        time.sleep(1)
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -987,7 +999,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            # Host=PTT.Host.PTT2
+            Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(
@@ -1017,6 +1029,7 @@ if __name__ == '__main__':
         # HasNewMail()
         # GetBoardList()
         # ReplyPost()
+        # SetBoardTitle()
 
         # FullTest()
     except Exception as e:

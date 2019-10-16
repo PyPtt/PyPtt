@@ -829,6 +829,26 @@ def load(inputLanguage):
         'No Post',
     ])
 
+    global NeedModeratorPermission
+    NeedModeratorPermission = SpecificLoad(inputLanguage, [
+        '需要板主權限',
+        'Need Moderator Permission',
+    ])
+
+    global NewSettingsHaveBeenSaved
+    NewSettingsHaveBeenSaved = SpecificLoad(inputLanguage, [
+        '已儲存新設定',
+        'New settings have been saved',
+    ])
+
+    global NoChanges
+    NoChanges = SpecificLoad(inputLanguage, [
+        '未改變任何設定',
+        'No changes have been made to any settings',
+    ])
+
+    # No changes have been made to any settings
+
     # Quote original
 
     # global List
