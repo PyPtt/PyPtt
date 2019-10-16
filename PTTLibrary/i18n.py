@@ -817,6 +817,12 @@ def load(inputLanguage):
         'Respond Success',
     ])
 
+    global ForcedWrite
+    ForcedWrite = SpecificLoad(inputLanguage, [
+        '強制寫入',
+        'Forced Write',
+    ])
+
     # Quote original
 
     # global List
