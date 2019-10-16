@@ -177,6 +177,7 @@ class Library:
 
         self._ConnectCore = ConnectCore.API(Host)
         self._ExistBoardList = []
+        self._ModeratorList = dict()
         self._LastThroWaterBallTime = 0
         self._ThreadID = threading.get_ident()
 
@@ -670,11 +671,13 @@ class Library:
             break
         return Post
 
-    def _checkBoardExist(
+    def _checkBoard(
         self,
-        Board
+        Board,
+        CheckModerator: bool = False
     ):
-        if Board.lower() not in self._ExistBoardList:
+        if Board.lower() not in self._ExistBoardList or \
+                Board.lower() not in self._ModeratorList:
             CmdList = []
             CmdList.append(Command.GoMainMenu)
             CmdList.append('qs')
@@ -699,6 +702,7 @@ class Library:
             if index < 0:
                 raise Exceptions.UnknowError(OriScreen)
 
+        if Board.lower() not in self._ExistBoardList:
             BoardNameLine = [line.strip() for line in OriScreen.split(
                 '\n') if line.strip().startswith('《')]
             if len(BoardNameLine) != 1:
@@ -707,17 +711,44 @@ class Library:
             if '《' not in BoardNameLine or '》' not in BoardNameLine:
                 raise Exceptions.UnknowError(BoardNameLine)
 
-            BoardName = BoardNameLine[1:BoardNameLine.find('》')]
+            BoardName = BoardNameLine[1:BoardNameLine.find('》')].lower()
 
             Log.showValue(
                 Log.Level.DEBUG,
                 'Find Board Name',
                 BoardName
             )
-            self._ExistBoardList.append(BoardName.lower())
 
-            if BoardName.lower() != Board.lower():
+            self._ExistBoardList.append(BoardName)
+
+            if BoardName != Board.lower():
                 raise Exceptions.NoSuchBoard(Board)
+
+        if Board.lower() not in self._ModeratorList:
+            CheckModeratorLine = [line.strip() for line in OriScreen.split(
+                '\n') if line.strip().startswith('板主名單:')]
+
+            if len(CheckModeratorLine) != 1:
+                raise Exceptions.UnknowError(OriScreen)
+
+            if BoardName not in self._ModeratorList:
+
+                CheckModeratorLine = CheckModeratorLine[0]
+                CheckModeratorLine = CheckModeratorLine[5:].strip()
+
+                CheckModeratorList = CheckModeratorLine.split('/')
+                CheckModeratorList = [x.lower() for x in CheckModeratorList]
+                Log.showValue(
+                    Log.Level.DEBUG,
+                    'CheckModeratorLine',
+                    CheckModeratorLine
+                )
+
+                self._ModeratorList[BoardName] = CheckModeratorList
+
+            if CheckModerator:
+                if self._ID.lower() not in self._ModeratorList[BoardName]:
+                    raise Exceptions.NeedModeratorPermission()
 
     def _getPost(
         self,
@@ -729,7 +760,7 @@ class Library:
         Query: bool = False,
     ):
 
-        self._checkBoardExist(Board)
+        self._checkBoard(Board)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -1742,7 +1773,7 @@ class Library:
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-            self._checkBoardExist(Board)
+            self._checkBoard(Board)
 
         try:
             return self._getNewestIndex(
@@ -2067,13 +2098,13 @@ class Library:
                 for index, data in enumerate(soup.select('div.title')):
                     PostTitle = data.text.strip('\n').lstrip().rstrip()
                     if PostTitle.startswith('('):
-                        DelPostList.append(PostTitle) 
+                        DelPostList.append(PostTitle)
                     Log.showValue(
                         Log.Level.DEBUG,
                         'PostTitle',
                         PostTitle
                     )
-                    
+
                 for index, data in enumerate(soup.select('div.title a')):
                     PostWeb = 'https://www.ptt.cc' + data.get('href')
 
@@ -2099,11 +2130,11 @@ class Library:
             )
 
             Log.showValue(
-                        Log.Level.DEBUG,
-                        'DelPostList',
-                        DelPostList
-                    )
-            
+                Log.Level.DEBUG,
+                'DelPostList',
+                DelPostList
+            )
+
             # 4. 把組合出來的 Post 塞給 handler
             # PostHandler(Post)
             # 5. 顯示 progress bar
@@ -2166,7 +2197,7 @@ class Library:
                     SignFile
                 ]))
 
-        self._checkBoardExist(Board)
+        self._checkBoard(Board)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -2308,7 +2339,7 @@ class Library:
                     i18n.OutOfRange,
                 ]))
 
-        self._checkBoardExist(Board)
+        self._checkBoard(Board)
 
         MaxPushLength = 33
         PushList = []
@@ -3700,7 +3731,7 @@ class Library:
                 i18n.BothInput
             ]))
 
-        self._checkBoardExist(Board)
+        self._checkBoard(Board)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -3752,7 +3783,6 @@ class Library:
                 LogLevel=Log.Level.INFO,
                 Exceptions=Exceptions.NoResponse()
             ),
-            # (E)繼續編輯 (W)強制寫入
             ConnectCore.TargetUnit(
                 i18n.ForcedWrite,
                 '(E)繼續編輯 (W)強制寫入',
@@ -3805,6 +3835,73 @@ class Library:
         Log.log(
             Log.Level.INFO,
             i18n.RespondSuccess
+        )
+
+    def setBoardTitle(
+        self,
+        Board: str,
+        NewTitle: str
+    ):
+        # 第一支板主專用 API
+        self._OneThread()
+
+        if not self._LoginStatus:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if not isinstance(NewTitle, str):
+            raise TypeError(Log.merge([
+                'NewTitle',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        self._checkBoard(
+            Board,
+            CheckModerator=True
+        )
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('qs')
+        CmdList.append(Board)
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Ctrl_C * 2)
+        CmdList.append(Command.Space)
+        CmdList.append('I')
+        CmdList.append(Command.Ctrl_P)
+        CmdList.append('b')
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Backspace * 31)
+        CmdList.append(NewTitle)
+        CmdList.append(Command.Enter * 2)
+        # Backspace
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.NewSettingsHaveBeenSaved,
+                '◆ 已儲存新設定',
+                BreakDetect=True,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoChanges,
+                '◆ 未改變任何設定',
+                BreakDetect=True,
+            ),
+        ]
+
+        Cmd = ''.join(CmdList)
+
+        self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenLongTimeOut
         )
 
 
