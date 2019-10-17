@@ -12,3 +12,4 @@ PTTLibrary-*/
 Account*.txt
 *.spec
 /LogHandler.txt
+.vscode

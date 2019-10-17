@@ -2068,7 +2068,6 @@ class Library:
             # PostAID = ""
             _url = 'https://www.ptt.cc/bbs/'
             index = str(NewestIndex)
-
             if Config.LogLevel == Log.Level.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=EndPage - StartPage + 1,
@@ -2076,8 +2075,6 @@ class Library:
                 )
 
             for index in range(StartPage, NewestIndex + 1):
-                # print('Page:', StartPage)
-
                 Log.showValue(
                     Log.Level.DEBUG,
                     'CurrentPage',
@@ -2090,19 +2087,28 @@ class Library:
                     raise Exceptions.NoSuchBoard(Board)
                 soup = BeautifulSoup(r.text, 'html.parser')
 
-            # for index in range(1, 2):
-            # for index in range(StartPage, NewestIndex):
-                for index, data in enumerate(soup.select('div.title')):
+                for _index, data in enumerate(soup.select('div.title')):
                     PostTitle = data.text.strip('\n').lstrip().rstrip()
                     if PostTitle.startswith('('):
+                        # PostDelStatus = 0
                         DelPostList.append(PostTitle)
+                        # if '本文' in PostTitle:
+                        #     PostDelStatus = DataType.PostDeleteStatus.ByAuthor
+                        #     print ('DataType.PostDeleteStatus.ByAuthor')
+                        # elif PostTitle.startswith('(已被'):
+                        #     PostDelStatus = DataType.PostDeleteStatus.ByModerator
+                        #     print ('DataType.PostDeleteStatus.ByModerator')
+                        # else:
+                        #     PostDelStatus = DataType.PostDeleteStatus.ByUnknow
+                        #     print ('DataType.PostDeleteStatus.ByUnknow')
+
                     Log.showValue(
-                        Log.Level.DEBUG,
+                        Log.Level.INFO,
                         'PostTitle',
                         PostTitle
                     )
 
-                for index, data in enumerate(soup.select('div.title a')):
+                for _index, data in enumerate(soup.select('div.title a')):
                     PostWeb = 'https://www.ptt.cc' + data.get('href')
 
                     Log.showValue(
@@ -2111,13 +2117,16 @@ class Library:
                         PostWeb
                     )
 
-                for index, data in enumerate(soup.select('div.author')):
+                for _index, data in enumerate(soup.select('div.author')):
                     PostAuthor = data.text
                     Log.showValue(
                         Log.Level.DEBUG,
                         'PostAuthor',
                         PostAuthor
                     )
+
+                if Config.LogLevel == Log.Level.INFO:
+                    PB.update(index - StartPage)
 
             Post = DataType.PostInfo(
                 Board=Board,
@@ -2133,8 +2142,10 @@ class Library:
             )
 
             # 4. 把組合出來的 Post 塞給 handler
-            # PostHandler(Post)
+            PostHandler(Post)
             # 5. 顯示 progress bar
+            if Config.LogLevel == Log.Level.INFO:
+                PB.finish()
 
             return ErrorPostList, DelPostList
 
