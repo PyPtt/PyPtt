@@ -194,7 +194,7 @@ def GetPost():
         # ('Gossiping', '1TWadtnq'),
         # ('Gossiping', '1TZBBkWP'),
         # ('joke', '1Tc6G9eQ'),
-        ('Test', 575),
+        # ('Test', 575),
 
         # PTT2
         # ('PttSuggest', 1),
@@ -977,13 +977,17 @@ def SetBoardTitle():
             'CodingMan',
             f'現在時間 {Time}'
         )
+        print('已經更新時間 ' + Time, end='\r')
         try:
             time.sleep(1)
         except KeyboardInterrupt:
+            print('已經更新時間 ' + Time)
             PTTBot.setBoardTitle(
                 'CodingMan',
                 '專業程式 BUG 製造機'
             )
+            print('板標已經恢復')
+            break
 
 
 if __name__ == '__main__':
@@ -1035,7 +1039,7 @@ if __name__ == '__main__':
         # HasNewMail()
         # GetBoardList()
         # ReplyPost()
-        # SetBoardTitle()
+        SetBoardTitle()
 
         # FullTest()
     except Exception as e:
