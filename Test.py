@@ -510,6 +510,8 @@ def crawlHandler(Post):
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
     # print(f'[{Post.getContent()}]')
 
+    print(f'[{Post.getAuthor()}][{Post.getTitle()}]')
+
     PushNumber = Post.getPushNumber()
     if PushNumber is not None:
         if PushNumber == '爆':
@@ -528,7 +530,7 @@ def crawlHandler(Post):
     # detectNone('AID', Post.getAID())
     detectNone('Author', Post.getAuthor())
     # detectNone('Money', Post.getMoney())
-    # detectNone('WebUrl', Post.getWebUrl())
+    detectNone('WebUrl', Post.getWebUrl())
     # detectNone('ListDate', Post.getListDate())
 
     # if not Query:
@@ -561,7 +563,7 @@ def CrawlBoard():
 
     CrawlType = PTT.IndexType.Web
 
-    TestRange = 20
+    TestRange = 10
     TestRound = 1
 
     for _ in range(TestRound):
@@ -619,6 +621,7 @@ def CrawlBoard():
                 )
 
                 if len(DelPostList) > 0:
+                    print('\n'.join(DelPostList))
                     print(f'共有 {len(DelPostList)} 篇文章被刪除')
 
 
@@ -1020,7 +1023,6 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            LogLevel=PTT.LogLevel.INFO
             # Host=PTT.Host.PTT2
         )
         try:
@@ -1051,7 +1053,7 @@ if __name__ == '__main__':
         # HasNewMail()
         # GetBoardList()
         # ReplyPost()
-        SetBoardTitle()
+        # SetBoardTitle()
 
         # FullTest()
     except Exception as e:
