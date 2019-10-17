@@ -676,8 +676,7 @@ class Library:
         Board,
         CheckModerator: bool = False
     ):
-        if Board.lower() not in self._ExistBoardList or \
-                Board.lower() not in self._ModeratorList:
+        if Board.lower() not in self._ExistBoardList:
             CmdList = []
             CmdList.append(Command.GoMainMenu)
             CmdList.append('qs')
@@ -702,7 +701,6 @@ class Library:
             if index < 0:
                 raise Exceptions.UnknowError(OriScreen)
 
-        if Board.lower() not in self._ExistBoardList:
             BoardNameLine = [line.strip() for line in OriScreen.split(
                 '\n') if line.strip().startswith('《')]
             if len(BoardNameLine) != 1:
@@ -724,7 +722,6 @@ class Library:
             if BoardName != Board.lower():
                 raise Exceptions.NoSuchBoard(Board)
 
-        if Board.lower() not in self._ModeratorList:
             CheckModeratorLine = [line.strip() for line in OriScreen.split(
                 '\n') if line.strip().startswith('板主名單:')]
 
@@ -747,8 +744,8 @@ class Library:
                 self._ModeratorList[BoardName] = CheckModeratorList
 
         if CheckModerator:
-            if self._ID.lower() not in self._ModeratorList[BoardName]:
-                raise Exceptions.NeedModeratorPermission()
+            if self._ID.lower() not in self._ModeratorList[Board.lower()]:
+                raise Exceptions.NeedModeratorPermission(Board)
 
     def _getPost(
         self,

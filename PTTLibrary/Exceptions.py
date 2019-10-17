@@ -187,8 +187,8 @@ class NoResponse(Exception):
 
 
 class NeedModeratorPermission(Exception):
-    def __init__(self):
-        self.message = i18n.NeedModeratorPermission
+    def __init__(self, Board):
+        self.message = f'{i18n.NeedModeratorPermission}: {Board}'
 
     def __str__(self):
         return self.message
