@@ -2103,7 +2103,7 @@ class Library:
                         #     print ('DataType.PostDeleteStatus.ByUnknow')
 
                     Log.showValue(
-                        Log.Level.INFO,
+                        Log.Level.DEBUG,
                         'PostTitle',
                         PostTitle
                     )
