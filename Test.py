@@ -486,26 +486,15 @@ def crawlHandler(Post):
 
     global Query
 
-    # if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
-    #     if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-    #         print(f'[版主刪除][{Post.getAuthor()}]')
-    #     elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-    #         print(f'[作者刪除][{Post.getAuthor()}]')
-    #     elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
-    #         print(f'[不明刪除]')
-    #     return
-    # print ('1')
-    # print ('Post.PostDeleteStatus:', Post.PostDeleteStatus)
-    # if Post.PostDeleteStatus != PTT.PostDeleteStatus.NotDeleted:
-    #     print ('2')
-    #     if Post.PostDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-    #         print(f'[版主刪除][{Post.Author}]')
-    #     elif Post.PostDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-    #         print(f'[作者刪除][{Post.Author}]')
-    #     elif Post.PostDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
-    #         print(f'[不明刪除]')
-    #     return
-        
+    if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
+        if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+            print(f'[版主刪除][{Post.getAuthor()}]')
+        elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+            print(f'[作者刪除][{Post.getAuthor()}]')
+        elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
+            print(f'[不明刪除]')
+        return
+
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
     # print(f'[{Post.getContent()}]')
@@ -549,10 +538,10 @@ def CrawlBoard():
         # 'Wanted',
         # 'Gossiping',
         # 'Stock',
-        # 'movie',
+        'movie',
         # 'C_Chat',
         # 'Baseball',
-        'NBA',
+        # 'NBA',
         # 'HatePolitics',
 
         # PTT2
@@ -562,67 +551,76 @@ def CrawlBoard():
     ]
 
     CrawlType = PTT.IndexType.Web
+    # CrawlType = PTT.IndexType.BBS
 
-    TestRange = 10
+    TestRange = 5
     TestRound = 1
 
+    from concurrent.futures import ThreadPoolExecutor
+    pool = ThreadPoolExecutor(5)
+
+    def crawler(CrawlType, TestBoard):
+        if CrawlType == PTT.IndexType.BBS:
+            NewestIndex = PTTBot.getNewestIndex(
+                PTT.IndexType.BBS,
+                Board=TestBoard
+            )
+            StartIndex = NewestIndex - TestRange + 1
+
+            print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
+
+            print(f'TestBoard [{TestBoard}]')
+            ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                crawlHandler,
+                PTT.CrawlType.BBS,
+                TestBoard,
+                StartIndex=StartIndex,
+                EndIndex=NewestIndex,
+                Query=Query
+            )
+
+            if len(ErrorPostList) > 0:
+                print('格式錯誤文章: \n' + '\n'.join(str(x)
+                                                for x in ErrorPostList))
+            else:
+                print('沒有偵測到格式錯誤文章')
+
+            if len(DelPostList) > 0:
+                print(f'共有 {len(DelPostList)} 篇文章被刪除')
+
+        elif CrawlType == PTT.IndexType.Web:
+
+            NewestIndex = PTTBot._getNewestIndex(
+                PTT.IndexType.Web,
+                Board=TestBoard
+            )
+            EndPage = NewestIndex
+
+            StartPage = EndPage - TestRange + 1
+
+            print(f'預備爬行 {TestBoard} 最新頁數 {NewestIndex}')
+            print(f'預備爬行 {TestBoard} 編號 {StartPage} ~ {EndPage} 文章')
+
+            ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                crawlHandler,
+                PTT.CrawlType.Web,
+                TestBoard,
+                StartPage=StartPage,
+                EndPage=EndPage
+                # Query=Query
+            )
+
+            if len(DelPostList) > 0:
+                # print('\n'.join(DelPostList))
+                print(f'{TestBoard}板 共有 {len(DelPostList)} 篇文章被刪除')
+  
     for _ in range(TestRound):
-
-        for TestBoard in TestBoardList:
-
-            if CrawlType == PTT.IndexType.BBS:
-                NewestIndex = PTTBot.getNewestIndex(
-                    # PTT.IndexType.BBS,
-                    Board=TestBoard
-                )
-                StartIndex = NewestIndex - TestRange + 1
-
-                print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
-
-                print(f'TestBoard [{TestBoard}]')
-                ErrorPostList, DelPostList = PTTBot.crawlBoard(
-                    crawlHandler,
-                    PTT.CrawlType.BBS,
-                    TestBoard,
-                    StartIndex=StartIndex,
-                    EndIndex=NewestIndex,
-                    Query=Query
-                )
-
-                if len(ErrorPostList) > 0:
-                    print('格式錯誤文章: \n' + '\n'.join(str(x)
-                                                   for x in ErrorPostList))
-                else:
-                    print('沒有偵測到格式錯誤文章')
-
-                if len(DelPostList) > 0:
-                    print(f'共有 {len(DelPostList)} 篇文章被刪除')
-
-            elif CrawlType == PTT.IndexType.Web:
-
-                NewestIndex = PTTBot.getNewestIndex(
-                    PTT.IndexType.Web,
-                    Board=TestBoard
-                )
-                EndPage = NewestIndex
-
-                StartPage = EndPage - TestRange + 1
-
-                print(f'預備爬行 {TestBoard} 最新頁數 {NewestIndex}')
-                print(f'預備爬行 {TestBoard} 編號 {StartPage} ~ {EndPage} 文章')
-
-                ErrorPostList, DelPostList = PTTBot.crawlBoard(
-                    crawlHandler,
-                    PTT.CrawlType.Web,
-                    TestBoard,
-                    StartPage=StartPage,
-                    EndPage=EndPage
-                    # Query=Query
-                )
-
-                if len(DelPostList) > 0:
-                    print('\n'.join(DelPostList))
-                    print(f'共有 {len(DelPostList)} 篇文章被刪除')
+        if PTT.IndexType.Web == CrawlType:
+            futures = [pool.submit(crawler, CrawlType, TestBoard) for TestBoard in TestBoardList]
+            result = [future.result() for future in futures]
+        else:
+            for TestBoard in TestBoardList:
+                crawler(CrawlType, TestBoard)
 
 
 def CrawlBoardWithCondition():
