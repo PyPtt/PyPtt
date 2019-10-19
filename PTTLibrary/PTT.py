@@ -1802,8 +1802,8 @@ class Library:
         StartPage: int = 0,
         EndPage: int = 0,
     ):
-        self._OneThread()
 
+        # self._OneThread()
         if not isinstance(CrawlType, int):
             raise TypeError(Log.merge([
                 'CrawlType',
@@ -1829,7 +1829,6 @@ class Library:
             ]))
 
         if CrawlType == DataType.CrawlType.BBS:
-
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -2007,7 +2006,6 @@ class Library:
             return ErrorPostList, DelPostList
 
         else:
-
             if self._Host == DataType.Host.PTT2:
                 raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
 
@@ -2074,6 +2072,17 @@ class Library:
                     redirect_stdout=True
                 )
 
+            def deleted_post(post_title):
+                if post_title.startswith('('):
+                    if '本文' in post_title:
+                        return DataType.PostDeleteStatus.ByAuthor
+                    elif post_title.startswith('(已被'):
+                        return DataType.PostDeleteStatus.ByModerator
+                    else:
+                        return DataType.PostDeleteStatus.ByUnknow
+                else:
+                    return DataType.PostDeleteStatus.NotDeleted
+
             for index in range(StartPage, NewestIndex + 1):
                 Log.showValue(
                     Log.Level.DEBUG,
@@ -2087,53 +2096,34 @@ class Library:
                     raise Exceptions.NoSuchBoard(Board)
                 soup = BeautifulSoup(r.text, 'html.parser')
 
-                for _index, data in enumerate(soup.select('div.title')):
-                    PostTitle = data.text.strip('\n').lstrip().rstrip()
-                    if PostTitle.startswith('('):
-                        # PostDelStatus = 0
-                        DelPostList.append(PostTitle)
-                        # if '本文' in PostTitle:
-                        #     PostDelStatus = DataType.PostDeleteStatus.ByAuthor
-                        #     print ('DataType.PostDeleteStatus.ByAuthor')
-                        # elif PostTitle.startswith('(已被'):
-                        #     PostDelStatus = DataType.PostDeleteStatus.ByModerator
-                        #     print ('DataType.PostDeleteStatus.ByModerator')
-                        # else:
-                        #     PostDelStatus = DataType.PostDeleteStatus.ByUnknow
-                        #     print ('DataType.PostDeleteStatus.ByUnknow')
+                for div in soup.select('div.r-ent'):
+                    web = div.select('div.title a')
+                    post = {
+                        'author': div.select('div.author')[0].text,
+                        'title': div.select('div.title')[0].text.strip('\n').strip(),
+                        'web': web[0].get('href') if web else ''
+                    }
+                    if post['title'].startswith('('):
+                        DelPostList.append(post['title'])
+                        if post['title'].startswith('(本文'):
+                            if '[' in post['title']:
+                                post['author'] = post['title'].split('[')[1].split(']')[0]
+                            else:
+                                post['author'] = post['title'].split('<')[1].split('>')[0]
+                        else:
+                            post['author'] = post['title'].split('<')[1].split('>')[0]
 
-                    Log.showValue(
-                        Log.Level.DEBUG,
-                        'PostTitle',
-                        PostTitle
+                    Post = DataType.PostInfo(
+                        Board=Board,
+                        Author=post['author'],
+                        Title=post['title'],
+                        WebUrl='https://www.ptt.cc' + post['web'],
+                        DeleteStatus=deleted_post(post['title'])
                     )
-
-                for _index, data in enumerate(soup.select('div.title a')):
-                    PostWeb = 'https://www.ptt.cc' + data.get('href')
-
-                    Log.showValue(
-                        Log.Level.DEBUG,
-                        'PostWeb',
-                        PostWeb
-                    )
-
-                for _index, data in enumerate(soup.select('div.author')):
-                    PostAuthor = data.text
-                    Log.showValue(
-                        Log.Level.DEBUG,
-                        'PostAuthor',
-                        PostAuthor
-                    )
+                    PostHandler(Post)
 
                 if Config.LogLevel == Log.Level.INFO:
                     PB.update(index - StartPage)
-
-            Post = DataType.PostInfo(
-                Board=Board,
-                Author=PostAuthor,
-                Title=PostTitle,
-                WebUrl=PostWeb
-            )
 
             Log.showValue(
                 Log.Level.DEBUG,
@@ -2142,7 +2132,7 @@ class Library:
             )
 
             # 4. 把組合出來的 Post 塞給 handler
-            PostHandler(Post)
+
             # 5. 顯示 progress bar
             if Config.LogLevel == Log.Level.INFO:
                 PB.finish()
