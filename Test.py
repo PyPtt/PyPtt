@@ -1011,7 +1011,7 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
-    # ID, Password = getPW()
+    ID, Password = getPW()
 
     try:
         # Loginout()
@@ -1019,16 +1019,16 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
         try:
-            # PTTBot.login(
-            #     ID,
-            #     Password,
-            #     # KickOtherLogin=True
-            # )
+            PTTBot.login(
+                ID,
+                Password,
+                # KickOtherLogin=True
+            )
             pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -1038,7 +1038,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()

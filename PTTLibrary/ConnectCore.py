@@ -1,9 +1,7 @@
 
-import sys
 import time
 import asyncio
 import websockets
-import ssl
 import re
 import traceback
 from uao import register_uao
@@ -316,9 +314,6 @@ class API(object):
                 return BreakIndex
 
             Msg = ''
-            CycleTime = 0
-            CycleWait = 0
-            ReceiveData = []
             ReceiveDataBuffer = bytes()
 
             StartTime = time.time()

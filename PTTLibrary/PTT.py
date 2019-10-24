@@ -59,6 +59,9 @@ class Library:
         Host: int = 0,
     ):
 
+        if LogHandler is not None and not callable(LogHandler):
+            raise TypeError('LogHandler is must callable')
+
         if LogHandler is not None:
             hasLogHandler = True
             setLogHandlerResult = True
