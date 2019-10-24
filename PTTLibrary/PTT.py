@@ -60,7 +60,7 @@ class Library:
     ):
 
         if LogHandler is not None and not callable(LogHandler):
-            raise TypeError('LogHandler is must callable')
+            raise TypeError('[PTT Library] LogHandler is must callable!!')
 
         if LogHandler is not None:
             hasLogHandler = True
@@ -82,17 +82,17 @@ class Library:
         # Config.load()
 
         if not isinstance(Language, int):
-            raise TypeError('Language must be integer')
+            raise TypeError('[PTT Library] Language must be integer')
         if not isinstance(ConnectMode, int):
-            raise TypeError('ConnectMode must be integer')
+            raise TypeError('[PTT Library] ConnectMode must be integer')
         if not isinstance(LogLevel, int):
-            raise TypeError('LogLevel must be integer')
+            raise TypeError('[PTT Library] LogLevel must be integer')
         if not isinstance(ScreenTimeOut, int):
-            raise TypeError('ScreenTimeOut must be integer')
+            raise TypeError('[PTT Library] ScreenTimeOut must be integer')
         if not isinstance(ScreenLongTimeOut, int):
-            raise TypeError('ScreenLongTimeOut must be integer')
+            raise TypeError('[PTT Library] ScreenLongTimeOut must be integer')
         if not isinstance(Host, int):
-            raise TypeError('Host must be integer')
+            raise TypeError('[PTT Library] Host must be integer')
 
         if ScreenTimeOut != 0:
             Config.ScreenTimeOut = ScreenTimeOut
@@ -102,14 +102,14 @@ class Library:
         if LogLevel == 0:
             LogLevel = Config.LogLevel
         elif not Util.checkRange(Log.Level, LogLevel):
-            raise ValueError('Unknow LogLevel', LogLevel)
+            raise ValueError('[PTT Library] Unknow LogLevel', LogLevel)
         else:
             Config.LogLevel = LogLevel
 
         if Language == 0:
             Language = Config.Language
         elif not Util.checkRange(i18n.Language, Language):
-            raise ValueError('Unknow language', Language)
+            raise ValueError('[PTT Library] Unknow language', Language)
         else:
             Config.Language = Language
         i18n.load(Language)
@@ -149,14 +149,14 @@ class Library:
         if ConnectMode == 0:
             ConnectMode = Config.ConnectMode
         elif not Util.checkRange(ConnectCore.ConnectMode, ConnectMode):
-            raise ValueError('Unknow ConnectMode', ConnectMode)
+            raise ValueError('[PTT Library] Unknow ConnectMode', ConnectMode)
         else:
             Config.ConnectMode = ConnectMode
 
         if Host == 0:
             Host = Config.Host
         elif not Util.checkRange(DataType.Host, Host):
-            raise ValueError('Unknow Host', Host)
+            raise ValueError('[PTT Library] Unknow Host', Host)
         self._Host = Host
 
         if Host == DataType.Host.PTT1:
@@ -2110,11 +2110,14 @@ class Library:
                         DelPostList.append(post['title'])
                         if post['title'].startswith('(本文'):
                             if '[' in post['title']:
-                                post['author'] = post['title'].split('[')[1].split(']')[0]
+                                post['author'] = post['title'].split(
+                                    '[')[1].split(']')[0]
                             else:
-                                post['author'] = post['title'].split('<')[1].split('>')[0]
+                                post['author'] = post['title'].split('<')[
+                                    1].split('>')[0]
                         else:
-                            post['author'] = post['title'].split('<')[1].split('>')[0]
+                            post['author'] = post['title'].split('<')[
+                                1].split('>')[0]
 
                     Post = DataType.PostInfo(
                         Board=Board,
