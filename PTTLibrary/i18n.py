@@ -1,13 +1,8 @@
-from time import gmtime, strftime
 
 try:
-    from . import DataType
     from . import Util
-    from . import Config
 except ModuleNotFoundError:
-    import DataType
     import Util
-    import Config
 
 
 class Language(object):
