@@ -36,26 +36,6 @@ class ConnectMode(object):
     MaxValue = WebSocket
 
 
-class ConnectError(Exception):
-    def __init__(self):
-        self.message = [i18n.Connect, i18n.Fail]
-
-    def __str__(self):
-
-        if Config.Language == i18n.Language.Chinese:
-            return ''.join(self.message)
-        return ' '.join(self.message)
-
-
-class NoMatchTargetError(Exception):
-    def __init__(self, ScreenQueue: list):
-        self.ScreenQueue = ScreenQueue
-
-    def __str__(self):
-        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
-        return Screens + '\n' + i18n.ScreenNoMatchTarget
-
-
 class TargetUnit(object):
     def __init__(
         self,
@@ -243,7 +223,7 @@ class API(object):
             break
 
         if not ConnectSuccess:
-            raise ConnectError()
+            raise Exceptions.ConnectError()
 
     def send(
         self,
@@ -397,8 +377,8 @@ class API(object):
                 MidTime = time.time()
 
             if not FindTarget:
-                raise NoMatchTargetError(self._RDQ)
-        raise NoMatchTargetError(self._RDQ)
+                raise Exceptions.NoMatchTargetError(self._RDQ)
+        raise Exceptions.NoMatchTargetError(self._RDQ)
 
     def close(self):
         asyncio.get_event_loop().run_until_complete(self._Core.close())
