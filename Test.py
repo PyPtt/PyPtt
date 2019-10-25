@@ -439,13 +439,15 @@ def Post():
     ]
     Content = '\r\n\r\n'.join(Content)
 
-    PTTBot.post(
-        'Test',
-        'PTT Library 程式貼文測試',
-        Content,
-        1,
-        0
-    )
+    for _ in range(3):
+
+        PTTBot.post(
+            'CodingMan',
+            'PTT Library 程式貼文測試',
+            Content,
+            1,
+            0
+        )
 
 
 def GetNewestIndex():
@@ -1002,6 +1004,36 @@ def SetBoardTitle():
             break
 
 
+def MarkPost():
+
+    MarkType = PTT.MarkType.D
+
+    PTTBot.markPost(
+        MarkType,
+        'CodingMan',
+        PostIndex=2
+    )
+
+    PTTBot.markPost(
+        MarkType,
+        'CodingMan',
+        PostIndex=3
+    )
+
+    PTTBot.markPost(
+        MarkType,
+        'CodingMan',
+        PostIndex=4
+    )
+
+    if MarkType == PTT.MarkType.D:
+        PTTBot.markPost(
+            PTT.MarkType.DeleteD,
+            'CodingMan',
+            PostIndex=4
+        )
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -1021,7 +1053,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            # Host=PTT.Host.PTT2
+            Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(
@@ -1051,7 +1083,9 @@ if __name__ == '__main__':
         # HasNewMail()
         # GetBoardList()
         # ReplyPost()
+        
         # SetBoardTitle()
+        # MarkPost()
 
         # FullTest()
     except Exception as e:
