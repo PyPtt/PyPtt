@@ -397,3 +397,15 @@ class Host:
 
     MinValue = PTT1
     MaxValue = PTT2
+
+
+class MarkType:
+    # s 文章
+    S = 1
+    # 標記文章
+    D = 2
+    # 刪除標記文章
+    DeleteD = 3
+
+    MinValue = S
+    MaxValue = DeleteD
