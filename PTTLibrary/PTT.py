@@ -45,6 +45,7 @@ PostDeleteStatus = DataType.PostDeleteStatus
 CrawlType = DataType.CrawlType
 Host = DataType.Host
 ReplyType = DataType.ReplyType
+MarkType = DataType.MarkType
 
 
 class Library:
@@ -1643,8 +1644,33 @@ class Library:
             CmdList.append('qs')
             CmdList.append(Board)
             CmdList.append(Command.Enter)
-            CmdList.append(Command.Ctrl_C * 2)
-            CmdList.append(Command.Space)
+
+            Cmd = ''.join(CmdList)
+
+            TargetList = [
+                ConnectCore.TargetUnit(
+                    i18n.AnyKeyContinue,
+                    '任意鍵',
+                    Response=' ',
+                ),
+                ConnectCore.TargetUnit(
+                    [
+                        '動畫播放中',
+                    ],
+                    '互動式動畫播放中',
+                    Response=Command.Ctrl_C,
+                    LogLevel=Log.Level.DEBUG
+                ),
+                ConnectCore.TargetUnit(
+                    [
+                        i18n.Mark,
+                        i18n.Success,
+                    ],
+                    Screens.Target.InBoard,
+                    BreakDetect=True,
+                    LogLevel=Log.Level.DEBUG
+                ),
+            ]
 
             if SearchCondition is not None:
                 if SearchType == DataType.PostSearchType.Keyword:
@@ -3907,6 +3933,229 @@ class Library:
             TargetList,
             ScreenTimeout=Config.ScreenLongTimeOut
         )
+
+    def markPost(
+        self,
+        inputMarkType: int,
+        Board: str,
+        PostAID: str = None,
+        PostIndex: int = 0,
+        SearchType: int = 0,
+        SearchCondition: str = None,
+    ):
+        # 標記文章
+        self._OneThread()
+
+        if not self._LoginStatus:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        if not isinstance(inputMarkType, int):
+            raise TypeError(Log.merge([
+                'MarkType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PostAID, str) and PostAID is not None:
+            raise TypeError(Log.merge([
+                'PostAID',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PostIndex, int):
+            raise TypeError(Log.merge([
+                'PostIndex',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        if not isinstance(SearchType, int):
+            raise TypeError(Log.merge([
+                'SearchType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if (not isinstance(SearchCondition, str) and
+                SearchCondition is not None):
+            raise TypeError(Log.merge([
+                'SearchCondition',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if (SearchType != 0 and
+                not Util.checkRange(DataType.PostSearchType, SearchType)):
+            raise ValueError(Log.merge([
+                'SearchType',
+                i18n.ErrorParameter,
+            ]))
+
+        if len(Board) == 0:
+            raise ValueError(Log.merge([
+                i18n.Board,
+                i18n.ErrorParameter,
+                Board
+            ]))
+
+        if PostIndex != 0 and isinstance(PostAID, str):
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostAID',
+                i18n.ErrorParameter,
+                i18n.BothInput
+            ]))
+
+        if PostIndex == 0 and PostAID is None:
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostAID',
+                i18n.ErrorParameter
+            ]))
+
+        if not Util.checkRange(DataType.MarkType, inputMarkType):
+            raise ValueError(Log.merge([
+                'MarkType',
+                i18n.ErrorParameter,
+            ]))
+
+        if SearchCondition is not None and SearchType == 0:
+            raise ValueError(Log.merge([
+                'SearchType',
+                i18n.ErrorParameter,
+            ]))
+
+        if SearchType == DataType.PostSearchType.Push:
+            try:
+                S = int(SearchCondition)
+            except ValueError:
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
+            if not (-100 <= S <= 110):
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
+        if PostAID is not None and SearchCondition is not None:
+            raise ValueError(Log.merge([
+                'PostAID',
+                'SearchCondition',
+                i18n.ErrorParameter,
+                i18n.BothInput,
+            ]))
+
+        if PostIndex != 0:
+            NewestIndex = self._getNewestIndex(
+                DataType.IndexType.BBS,
+                Board=Board,
+                SearchType=SearchType,
+                SearchCondition=SearchCondition
+            )
+
+            if PostIndex < 1 or NewestIndex < PostIndex:
+                raise ValueError(Log.merge([
+                    'PostIndex',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('qs')
+        CmdList.append(Board)
+        CmdList.append(Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.AnyKeyContinue,
+                '任意鍵',
+                Response=' ',
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    '動畫播放中',
+                ],
+                '互動式動畫播放中',
+                Response=Command.Ctrl_C,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    '進板成功',
+                ],
+                Screens.Target.InBoard,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
+
+        CmdList = []
+        if PostAID is not None:
+            CmdList.append('#' + PostAID)
+
+        elif PostIndex != 0:
+            if SearchCondition is not None:
+                if SearchType == DataType.PostSearchType.Keyword:
+                    CmdList.append('/')
+                elif SearchType == DataType.PostSearchType.Author:
+                    CmdList.append('a')
+                elif SearchType == DataType.PostSearchType.Push:
+                    CmdList.append('Z')
+                elif SearchType == DataType.PostSearchType.Mark:
+                    CmdList.append('G')
+                elif SearchType == DataType.PostSearchType.Money:
+                    CmdList.append('A')
+
+                CmdList.append(SearchCondition)
+                CmdList.append(Command.Enter)
+
+            CmdList.append(str(PostIndex))
+
+        CmdList.append(Command.Enter)
+
+        if inputMarkType == DataType.MarkType.S:
+            CmdList.append('L')
+        elif inputMarkType == DataType.MarkType.D:
+            CmdList.append('t')
+        elif inputMarkType == DataType.MarkType.DeleteD:
+            CmdList.append(Command.Ctrl_D)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.DelAllMarkPost,
+                ],
+                '刪除所有標記',
+                Response='y' + Command.Enter,
+                LogLevel=Log.Level.INFO
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.Mark,
+                    i18n.Success,
+                ],
+                Screens.Target.InBoard,
+                BreakDetect=True,
+                LogLevel=Log.Level.INFO
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
 
 
 if __name__ == '__main__':
