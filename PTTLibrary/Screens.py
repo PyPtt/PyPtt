@@ -1,16 +1,12 @@
 import sys
 import re
 try:
-    from . import DataType
     from . import Config
     from . import Util
-    from . import i18n
     from . import Log
 except ModuleNotFoundError:
-    import DataType
     import Config
     import Util
-    import i18n
     import Log
 
 
@@ -43,7 +39,7 @@ class Target(object):
 
     # (h)說明 (←/q)離開
     # (y)回應(X%)推文(h)說明(←)離開
-    # (y)回應(X/%)推文 (←)離開 
+    # (y)回應(X/%)推文 (←)離開
 
     InPost = [
         '瀏覽',
@@ -245,12 +241,11 @@ def VT100(OriScreen: str, NoColor: bool = True):
                 # 如果有 K 則把該行座標之後，全部抹除
                 TargetLine = TargetLine[:Space - 1]
 
-                OriginIndex = -1
+                # OriginIndex = -1
                 OriginLine = None
-                for i in range(len(ResultLines)):
-                    line = ResultLines[i]
+                for i, line in enumerate(ResultLines):
                     if f'=PTT=[{Line};{Space}H=PTT=[K' in line:
-                        OriginIndex = i
+                        # OriginIndex = i
                         OriginLine = line
                         break
 

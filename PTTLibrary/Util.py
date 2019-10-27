@@ -1,16 +1,5 @@
 import os
-import sys
-import time
 import traceback
-
-try:
-    from . import DataType
-    from . import Config
-    from . import Util
-except ModuleNotFoundError:
-    import DataType
-    import Config
-    import Util
 
 
 def checkRange(DefineObj, Value):

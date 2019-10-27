@@ -45,6 +45,7 @@ PostDeleteStatus = DataType.PostDeleteStatus
 CrawlType = DataType.CrawlType
 Host = DataType.Host
 ReplyType = DataType.ReplyType
+MarkType = DataType.MarkType
 
 
 class Library:
@@ -58,6 +59,9 @@ class Library:
         LogHandler=None,
         Host: int = 0,
     ):
+
+        if LogHandler is not None and not callable(LogHandler):
+            raise TypeError('[PTT Library] LogHandler is must callable!!')
 
         if LogHandler is not None:
             hasLogHandler = True
@@ -79,17 +83,17 @@ class Library:
         # Config.load()
 
         if not isinstance(Language, int):
-            raise TypeError('Language must be integer')
+            raise TypeError('[PTT Library] Language must be integer')
         if not isinstance(ConnectMode, int):
-            raise TypeError('ConnectMode must be integer')
+            raise TypeError('[PTT Library] ConnectMode must be integer')
         if not isinstance(LogLevel, int):
-            raise TypeError('LogLevel must be integer')
+            raise TypeError('[PTT Library] LogLevel must be integer')
         if not isinstance(ScreenTimeOut, int):
-            raise TypeError('ScreenTimeOut must be integer')
+            raise TypeError('[PTT Library] ScreenTimeOut must be integer')
         if not isinstance(ScreenLongTimeOut, int):
-            raise TypeError('ScreenLongTimeOut must be integer')
+            raise TypeError('[PTT Library] ScreenLongTimeOut must be integer')
         if not isinstance(Host, int):
-            raise TypeError('Host must be integer')
+            raise TypeError('[PTT Library] Host must be integer')
 
         if ScreenTimeOut != 0:
             Config.ScreenTimeOut = ScreenTimeOut
@@ -99,14 +103,14 @@ class Library:
         if LogLevel == 0:
             LogLevel = Config.LogLevel
         elif not Util.checkRange(Log.Level, LogLevel):
-            raise ValueError('Unknow LogLevel', LogLevel)
+            raise ValueError('[PTT Library] Unknow LogLevel', LogLevel)
         else:
             Config.LogLevel = LogLevel
 
         if Language == 0:
             Language = Config.Language
         elif not Util.checkRange(i18n.Language, Language):
-            raise ValueError('Unknow language', Language)
+            raise ValueError('[PTT Library] Unknow language', Language)
         else:
             Config.Language = Language
         i18n.load(Language)
@@ -146,14 +150,14 @@ class Library:
         if ConnectMode == 0:
             ConnectMode = Config.ConnectMode
         elif not Util.checkRange(ConnectCore.ConnectMode, ConnectMode):
-            raise ValueError('Unknow ConnectMode', ConnectMode)
+            raise ValueError('[PTT Library] Unknow ConnectMode', ConnectMode)
         else:
             Config.ConnectMode = ConnectMode
 
         if Host == 0:
             Host = Config.Host
         elif not Util.checkRange(DataType.Host, Host):
-            raise ValueError('Unknow Host', Host)
+            raise ValueError('[PTT Library] Unknow Host', Host)
         self._Host = Host
 
         if Host == DataType.Host.PTT1:
@@ -1640,8 +1644,33 @@ class Library:
             CmdList.append('qs')
             CmdList.append(Board)
             CmdList.append(Command.Enter)
-            CmdList.append(Command.Ctrl_C * 2)
-            CmdList.append(Command.Space)
+
+            Cmd = ''.join(CmdList)
+
+            TargetList = [
+                ConnectCore.TargetUnit(
+                    i18n.AnyKeyContinue,
+                    '任意鍵',
+                    Response=' ',
+                ),
+                ConnectCore.TargetUnit(
+                    [
+                        '動畫播放中',
+                    ],
+                    '互動式動畫播放中',
+                    Response=Command.Ctrl_C,
+                    LogLevel=Log.Level.DEBUG
+                ),
+                ConnectCore.TargetUnit(
+                    [
+                        i18n.Mark,
+                        i18n.Success,
+                    ],
+                    Screens.Target.InBoard,
+                    BreakDetect=True,
+                    LogLevel=Log.Level.DEBUG
+                ),
+            ]
 
             if SearchCondition is not None:
                 if SearchType == DataType.PostSearchType.Keyword:
@@ -1802,8 +1831,8 @@ class Library:
         StartPage: int = 0,
         EndPage: int = 0,
     ):
-        self._OneThread()
 
+        # self._OneThread()
         if not isinstance(CrawlType, int):
             raise TypeError(Log.merge([
                 'CrawlType',
@@ -1829,7 +1858,6 @@ class Library:
             ]))
 
         if CrawlType == DataType.CrawlType.BBS:
-
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -2007,7 +2035,6 @@ class Library:
             return ErrorPostList, DelPostList
 
         else:
-
             if self._Host == DataType.Host.PTT2:
                 raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
 
@@ -2074,6 +2101,17 @@ class Library:
                     redirect_stdout=True
                 )
 
+            def deleted_post(post_title):
+                if post_title.startswith('('):
+                    if '本文' in post_title:
+                        return DataType.PostDeleteStatus.ByAuthor
+                    elif post_title.startswith('(已被'):
+                        return DataType.PostDeleteStatus.ByModerator
+                    else:
+                        return DataType.PostDeleteStatus.ByUnknow
+                else:
+                    return DataType.PostDeleteStatus.NotDeleted
+
             for index in range(StartPage, NewestIndex + 1):
                 Log.showValue(
                     Log.Level.DEBUG,
@@ -2087,53 +2125,37 @@ class Library:
                     raise Exceptions.NoSuchBoard(Board)
                 soup = BeautifulSoup(r.text, 'html.parser')
 
-                for _index, data in enumerate(soup.select('div.title')):
-                    PostTitle = data.text.strip('\n').lstrip().rstrip()
-                    if PostTitle.startswith('('):
-                        # PostDelStatus = 0
-                        DelPostList.append(PostTitle)
-                        # if '本文' in PostTitle:
-                        #     PostDelStatus = DataType.PostDeleteStatus.ByAuthor
-                        #     print ('DataType.PostDeleteStatus.ByAuthor')
-                        # elif PostTitle.startswith('(已被'):
-                        #     PostDelStatus = DataType.PostDeleteStatus.ByModerator
-                        #     print ('DataType.PostDeleteStatus.ByModerator')
-                        # else:
-                        #     PostDelStatus = DataType.PostDeleteStatus.ByUnknow
-                        #     print ('DataType.PostDeleteStatus.ByUnknow')
+                for div in soup.select('div.r-ent'):
+                    web = div.select('div.title a')
+                    post = {
+                        'author': div.select('div.author')[0].text,
+                        'title': div.select('div.title')[0].text.strip('\n').strip(),
+                        'web': web[0].get('href') if web else ''
+                    }
+                    if post['title'].startswith('('):
+                        DelPostList.append(post['title'])
+                        if post['title'].startswith('(本文'):
+                            if '[' in post['title']:
+                                post['author'] = post['title'].split(
+                                    '[')[1].split(']')[0]
+                            else:
+                                post['author'] = post['title'].split('<')[
+                                    1].split('>')[0]
+                        else:
+                            post['author'] = post['title'].split('<')[
+                                1].split('>')[0]
 
-                    Log.showValue(
-                        Log.Level.DEBUG,
-                        'PostTitle',
-                        PostTitle
+                    Post = DataType.PostInfo(
+                        Board=Board,
+                        Author=post['author'],
+                        Title=post['title'],
+                        WebUrl='https://www.ptt.cc' + post['web'],
+                        DeleteStatus=deleted_post(post['title'])
                     )
-
-                for _index, data in enumerate(soup.select('div.title a')):
-                    PostWeb = 'https://www.ptt.cc' + data.get('href')
-
-                    Log.showValue(
-                        Log.Level.DEBUG,
-                        'PostWeb',
-                        PostWeb
-                    )
-
-                for _index, data in enumerate(soup.select('div.author')):
-                    PostAuthor = data.text
-                    Log.showValue(
-                        Log.Level.DEBUG,
-                        'PostAuthor',
-                        PostAuthor
-                    )
+                    PostHandler(Post)
 
                 if Config.LogLevel == Log.Level.INFO:
                     PB.update(index - StartPage)
-
-            Post = DataType.PostInfo(
-                Board=Board,
-                Author=PostAuthor,
-                Title=PostTitle,
-                WebUrl=PostWeb
-            )
 
             Log.showValue(
                 Log.Level.DEBUG,
@@ -2142,7 +2164,7 @@ class Library:
             )
 
             # 4. 把組合出來的 Post 塞給 handler
-            PostHandler(Post)
+
             # 5. 顯示 progress bar
             if Config.LogLevel == Log.Level.INFO:
                 PB.finish()
@@ -3911,6 +3933,229 @@ class Library:
             TargetList,
             ScreenTimeout=Config.ScreenLongTimeOut
         )
+
+    def markPost(
+        self,
+        inputMarkType: int,
+        Board: str,
+        PostAID: str = None,
+        PostIndex: int = 0,
+        SearchType: int = 0,
+        SearchCondition: str = None,
+    ):
+        # 標記文章
+        self._OneThread()
+
+        if not self._LoginStatus:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        if not isinstance(inputMarkType, int):
+            raise TypeError(Log.merge([
+                'MarkType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        if not isinstance(Board, str):
+            raise TypeError(Log.merge([
+                'Board',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PostAID, str) and PostAID is not None:
+            raise TypeError(Log.merge([
+                'PostAID',
+                i18n.MustBe,
+                i18n.String
+            ]))
+        if not isinstance(PostIndex, int):
+            raise TypeError(Log.merge([
+                'PostIndex',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+
+        if not isinstance(SearchType, int):
+            raise TypeError(Log.merge([
+                'SearchType',
+                i18n.MustBe,
+                i18n.Integer
+            ]))
+        if (not isinstance(SearchCondition, str) and
+                SearchCondition is not None):
+            raise TypeError(Log.merge([
+                'SearchCondition',
+                i18n.MustBe,
+                i18n.String
+            ]))
+
+        if (SearchType != 0 and
+                not Util.checkRange(DataType.PostSearchType, SearchType)):
+            raise ValueError(Log.merge([
+                'SearchType',
+                i18n.ErrorParameter,
+            ]))
+
+        if len(Board) == 0:
+            raise ValueError(Log.merge([
+                i18n.Board,
+                i18n.ErrorParameter,
+                Board
+            ]))
+
+        if PostIndex != 0 and isinstance(PostAID, str):
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostAID',
+                i18n.ErrorParameter,
+                i18n.BothInput
+            ]))
+
+        if PostIndex == 0 and PostAID is None:
+            raise ValueError(Log.merge([
+                'PostIndex',
+                'PostAID',
+                i18n.ErrorParameter
+            ]))
+
+        if not Util.checkRange(DataType.MarkType, inputMarkType):
+            raise ValueError(Log.merge([
+                'MarkType',
+                i18n.ErrorParameter,
+            ]))
+
+        if SearchCondition is not None and SearchType == 0:
+            raise ValueError(Log.merge([
+                'SearchType',
+                i18n.ErrorParameter,
+            ]))
+
+        if SearchType == DataType.PostSearchType.Push:
+            try:
+                S = int(SearchCondition)
+            except ValueError:
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
+            if not (-100 <= S <= 110):
+                raise ValueError(Log.merge([
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                ]))
+
+        if PostAID is not None and SearchCondition is not None:
+            raise ValueError(Log.merge([
+                'PostAID',
+                'SearchCondition',
+                i18n.ErrorParameter,
+                i18n.BothInput,
+            ]))
+
+        if PostIndex != 0:
+            NewestIndex = self._getNewestIndex(
+                DataType.IndexType.BBS,
+                Board=Board,
+                SearchType=SearchType,
+                SearchCondition=SearchCondition
+            )
+
+            if PostIndex < 1 or NewestIndex < PostIndex:
+                raise ValueError(Log.merge([
+                    'PostIndex',
+                    i18n.ErrorParameter,
+                    i18n.OutOfRange,
+                ]))
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('qs')
+        CmdList.append(Board)
+        CmdList.append(Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.AnyKeyContinue,
+                '任意鍵',
+                Response=' ',
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    '動畫播放中',
+                ],
+                '互動式動畫播放中',
+                Response=Command.Ctrl_C,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    '進板成功',
+                ],
+                Screens.Target.InBoard,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
+
+        CmdList = []
+        if PostAID is not None:
+            CmdList.append('#' + PostAID)
+
+        elif PostIndex != 0:
+            if SearchCondition is not None:
+                if SearchType == DataType.PostSearchType.Keyword:
+                    CmdList.append('/')
+                elif SearchType == DataType.PostSearchType.Author:
+                    CmdList.append('a')
+                elif SearchType == DataType.PostSearchType.Push:
+                    CmdList.append('Z')
+                elif SearchType == DataType.PostSearchType.Mark:
+                    CmdList.append('G')
+                elif SearchType == DataType.PostSearchType.Money:
+                    CmdList.append('A')
+
+                CmdList.append(SearchCondition)
+                CmdList.append(Command.Enter)
+
+            CmdList.append(str(PostIndex))
+
+        CmdList.append(Command.Enter)
+
+        if inputMarkType == DataType.MarkType.S:
+            CmdList.append('L')
+        elif inputMarkType == DataType.MarkType.D:
+            CmdList.append('t')
+        elif inputMarkType == DataType.MarkType.DeleteD:
+            CmdList.append(Command.Ctrl_D)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                [
+                    i18n.DelAllMarkPost,
+                ],
+                '刪除所有標記',
+                Response='y' + Command.Enter,
+                LogLevel=Log.Level.INFO
+            ),
+            ConnectCore.TargetUnit(
+                [
+                    i18n.Mark,
+                    i18n.Success,
+                ],
+                Screens.Target.InBoard,
+                BreakDetect=True,
+                LogLevel=Log.Level.INFO
+            ),
+        ]
+
+        index = self._ConnectCore.send(Cmd, TargetList)
 
 
 if __name__ == '__main__':

@@ -1,9 +1,7 @@
 
-import sys
 import time
 import asyncio
 import websockets
-import ssl
 import re
 import traceback
 from uao import register_uao
@@ -36,26 +34,6 @@ class ConnectMode(object):
 
     MinValue = WebSocket
     MaxValue = WebSocket
-
-
-class ConnectError(Exception):
-    def __init__(self):
-        self.message = [i18n.Connect, i18n.Fail]
-
-    def __str__(self):
-
-        if Config.Language == i18n.Language.Chinese:
-            return ''.join(self.message)
-        return ' '.join(self.message)
-
-
-class NoMatchTargetError(Exception):
-    def __init__(self, ScreenQueue: list):
-        self.ScreenQueue = ScreenQueue
-
-    def __str__(self):
-        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
-        return Screens + '\n' + i18n.ScreenNoMatchTarget
 
 
 class TargetUnit(object):
@@ -210,7 +188,7 @@ class API(object):
                     self._Core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             'wss://ws.ptt.cc/bbs/',
-                            origin='https://www.ptt.cc'
+                            origin='https://term.ptt.cc'
                         )
                     )
                 else:
@@ -245,7 +223,7 @@ class API(object):
             break
 
         if not ConnectSuccess:
-            raise ConnectError()
+            raise Exceptions.ConnectError()
 
     def send(
         self,
@@ -316,9 +294,6 @@ class API(object):
                 return BreakIndex
 
             Msg = ''
-            CycleTime = 0
-            CycleWait = 0
-            ReceiveData = []
             ReceiveDataBuffer = bytes()
 
             StartTime = time.time()
@@ -402,8 +377,8 @@ class API(object):
                 MidTime = time.time()
 
             if not FindTarget:
-                raise NoMatchTargetError(self._RDQ)
-        raise NoMatchTargetError(self._RDQ)
+                raise Exceptions.NoMatchTargetError(self._RDQ)
+        raise Exceptions.NoMatchTargetError(self._RDQ)
 
     def close(self):
         asyncio.get_event_loop().run_until_complete(self._Core.close())
