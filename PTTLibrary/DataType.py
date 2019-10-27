@@ -9,8 +9,6 @@ def ParseParameter(type, input):
         return None
     result = type(input)
     if isinstance(result, str):
-        result = result.encode(
-            "big5-uao", 'replace').decode("big5-uao", 'replace')
         result = result.rstrip()
     return result
 
@@ -399,3 +397,15 @@ class Host:
 
     MinValue = PTT1
     MaxValue = PTT2
+
+
+class MarkType:
+    # s 文章
+    S = 1
+    # 標記文章
+    D = 2
+    # 刪除標記文章
+    DeleteD = 3
+
+    MinValue = S
+    MaxValue = DeleteD

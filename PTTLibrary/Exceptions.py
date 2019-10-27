@@ -1,11 +1,9 @@
 
 try:
     from . import Config
-    from . import Util
     from . import i18n
 except ModuleNotFoundError:
     import Config
-    import Util
     import i18n
 
 
@@ -192,3 +190,23 @@ class NeedModeratorPermission(Exception):
 
     def __str__(self):
         return self.message
+
+
+class ConnectError(Exception):
+    def __init__(self):
+        self.message = [i18n.Connect, i18n.Fail]
+
+    def __str__(self):
+
+        if Config.Language == i18n.Language.Chinese:
+            return ''.join(self.message)
+        return ' '.join(self.message)
+
+
+class NoMatchTargetError(Exception):
+    def __init__(self, ScreenQueue: list):
+        self.ScreenQueue = ScreenQueue
+
+    def __str__(self):
+        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
+        return Screens + '\n' + i18n.ScreenNoMatchTarget

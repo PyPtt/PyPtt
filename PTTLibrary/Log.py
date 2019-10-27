@@ -1,13 +1,11 @@
 import sys
-from time import gmtime, strftime
+from time import strftime
 
 try:
-    from . import DataType
     from . import Config
     from . import Util
     from . import i18n
 except ModuleNotFoundError:
-    import DataType
     import Config
     import Util
     import i18n
@@ -31,14 +29,15 @@ class Level(object):
 def merge(Msg) -> str:
     if isinstance(Msg, list):
         if Config.Language == i18n.Language.Chinese:
-            for i in range(len(Msg)):
-                if len(Msg[i]) == 0:
+
+            for i, element in enumerate(Msg):
+                if len(element) == 0:
                     continue
-                if Msg[i][0].upper() != Msg[i][0].lower() and i != 0:
-                    Msg[i] = ' ' + Msg[i].lstrip()
-                if (Msg[i][-1].upper() != Msg[i][-1].lower() and
+                if element[0].upper() != element[0].lower() and i != 0:
+                    element = ' ' + element.lstrip()
+                if (element[-1].upper() != element[-1].lower() and
                         i != len(Msg) - 1):
-                    Msg[i] = Msg[i].rstrip() + ' '
+                    element = element.rstrip() + ' '
 
             Msg = ''.join(Msg)
         else:

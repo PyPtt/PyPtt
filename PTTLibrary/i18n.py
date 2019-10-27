@@ -1,13 +1,8 @@
-from time import gmtime, strftime
 
 try:
-    from . import DataType
     from . import Util
-    from . import Config
 except ModuleNotFoundError:
-    import DataType
     import Util
-    import Config
 
 
 class Language(object):
@@ -845,6 +840,18 @@ def load(inputLanguage):
     NoChanges = SpecificLoad(inputLanguage, [
         '未改變任何設定',
         'No changes have been made to any settings',
+    ])
+
+    global Mark
+    Mark = SpecificLoad(inputLanguage, [
+        '標記',
+        'Mark',
+    ])
+
+    global DelAllMarkPost
+    DelAllMarkPost = SpecificLoad(inputLanguage, [
+        '刪除所有標記文章',
+        'Del All Mark Post',
     ])
 
     # No changes have been made to any settings
