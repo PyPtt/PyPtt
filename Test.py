@@ -987,10 +987,26 @@ def SetBoardTitle():
 
     while True:
         Time = strftime('%H:%M:%S')
-        PTTBot.setBoardTitle(
-            'CodingMan',
-            f'現在時間 {Time}'
-        )
+        try:
+            PTTBot.setBoardTitle(
+                'CodingMan',
+                f'現在時間 {Time}'
+            )
+        except PTT.Exceptions.ConnectionClosed:
+            while True:
+                try:
+                    PTTBot.login(
+                        ID,
+                        Password,
+                        KickOtherLogin=True
+                    )
+                    break
+                except PTT.Exceptions.LoginError:
+                    PTTBot.log('登入失敗')
+                    time.sleep(1)
+                except PTT.Exceptions.ConnectError:
+                    PTTBot.log('登入失敗')
+                    time.sleep(1)
         print('已經更新時間 ' + Time, end='\r')
         try:
             time.sleep(1)
@@ -1013,7 +1029,7 @@ if __name__ == '__main__':
             print('CI test run success!!')
             sys.exit()
 
-    # ID, Password = getPW()
+    ID, Password = getPW()
 
     try:
         # Loginout()
@@ -1026,11 +1042,11 @@ if __name__ == '__main__':
             # Host=PTT.Host.PTT2
         )
         try:
-            # PTTBot.login(
-            #     ID,
-            #     Password,
-            #     # KickOtherLogin=True
-            # )
+            PTTBot.login(
+                ID,
+                Password,
+                # KickOtherLogin=True
+            )
             pass
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
@@ -1040,7 +1056,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
