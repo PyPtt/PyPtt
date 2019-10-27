@@ -208,7 +208,7 @@ class API(object):
                     self._Core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             'wss://ws.ptt.cc/bbs/',
-                            origin='https://www.ptt.cc'
+                            origin='https://term.ptt.cc'
                         )
                     )
                 else:
