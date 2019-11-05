@@ -1,8 +1,10 @@
 
 try:
+    from . import DataType
     from . import Config
     from . import i18n
 except ModuleNotFoundError:
+    import DataType
     import Config
     import i18n
 
@@ -106,10 +108,24 @@ class MoneyTooFew(Exception):
 
 class NoSuchBoard(Exception):
     def __init__(self, Board):
-        self.message = i18n.NoSuchBoard + ': ' + Board
+        # self.message = i18n.NoSuchBoard + ': ' + Board
+        self.board = Board
+        if Config.Host == DataType.Host.PTT1:
+            self.message = [
+                i18n.PTT,
+                i18n.NoSuchBoard
+            ]
+        else:
+            self.message = [
+                i18n.PTT2,
+                i18n.NoSuchBoard
+            ]
 
     def __str__(self):
-        return self.message
+
+        if Config.Language == i18n.Language.Chinese:
+            return ''.join(self.message) + ': ' + self.board
+        return ' '.join(self.message) + ': ' + self.board
 
 
 class ConnectionClosed(Exception):

@@ -350,10 +350,10 @@ def GetPostWithCondition():
 
     # PTT1
     TestList = [
-        # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
-        # ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
-        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
+        ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
+        ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
         ('Gossiping', PTT.PostSearchType.Keyword, '普悠瑪'),
         # PTT2
         # ('PttSuggest', PTT.PostSearchType.Keyword, '[問題]'),
@@ -377,8 +377,8 @@ def GetPostWithCondition():
             for i in range(TestRange):
                 Post = PTTBot.getPost(
                     Board,
-                    # PostIndex=Index - i,
-                    PostIndex=611,
+                    PostIndex=Index - i,
+                    # PostIndex=611,
                     SearchType=SearchType,
                     SearchCondition=Condition,
                     Query=Query
@@ -453,17 +453,17 @@ def Post():
 def GetNewestIndex():
 
     TestBoardList = [
-        # 'Wanted',
-        # 'Gossiping',
-        # 'Test',
-        # 'Stock',
-        # 'movie'
+        'Wanted',
+        'Gossiping',
+        'Test',
+        'Stock',
+        'movie'
 
         # PTT2
-        'PttSuggest',
-        'Test',
-        'WhoAmI',
-        'CodingMan'
+        # 'PttSuggest',
+        # 'Test',
+        # 'WhoAmI',
+        # 'CodingMan'
     ]
 
     for Board in TestBoardList:
@@ -552,10 +552,10 @@ def CrawlBoard():
         # 'PttSuggest'
     ]
 
-    CrawlType = PTT.IndexType.Web
-    # CrawlType = PTT.IndexType.BBS
+    # CrawlType = PTT.IndexType.Web
+    CrawlType = PTT.IndexType.BBS
 
-    TestRange = 5
+    TestRange = 100
     TestRound = 1
 
     from concurrent.futures import ThreadPoolExecutor
@@ -664,7 +664,7 @@ def CrawlBoardWithCondition():
         ('Baseball', PTT.PostSearchType.Push, '20')
     ]
 
-    TestRange = 10000
+    TestRange = 100
 
     for (Board, SearchType, Condition) in TestList:
         showCondition(Board, SearchType, Condition)
@@ -680,6 +680,7 @@ def CrawlBoardWithCondition():
 
         ErrorPostList, DelPostList = PTTBot.crawlBoard(
             crawlHandler,
+            PTT.CrawlType.BBS,
             Board,
             StartIndex=StartIndex,
             EndIndex=NewestIndex,
@@ -724,12 +725,12 @@ def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        # ('Test', 20004),
-        ('Wanted', '1Teyovc3')
+        ('Test', 758),
+        # ('Wanted', '1Teyovc3')
     ]
 
     Content = '''
-可以
+推文測試
 '''
     for (Board, Index) in TestPostList:
         if isinstance(Index, int):
@@ -1067,9 +1068,9 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT2
+            # Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(

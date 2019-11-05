@@ -17,6 +17,7 @@ try:
     from . import Screens
     from . import Exceptions
     from . import Command
+    from . import CheckValue
 except ModuleNotFoundError:
     import DataType
     import Config
@@ -27,6 +28,7 @@ except ModuleNotFoundError:
     import Screens
     import Exceptions
     import Command
+    import CheckValue
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 Version = Config.Version
@@ -158,7 +160,7 @@ class Library:
             Host = Config.Host
         elif not Util.checkRange(DataType.Host, Host):
             raise ValueError('[PTT Library] Unknow Host', Host)
-        self._Host = Host
+        Config.Host = Host
 
         if Host == DataType.Host.PTT1:
             Log.showValue(
@@ -230,24 +232,9 @@ class Library:
         if self._LoginStatus:
             self.logout()
 
-        if not isinstance(ID, str):
-            raise TypeError(Log.merge([
-                i18n.ID,
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(Password, str):
-            raise TypeError(Log.merge([
-                i18n.Password,
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(KickOtherLogin, bool):
-            raise TypeError(Log.merge([
-                'KickOtherLogin',
-                i18n.MustBe,
-                i18n.Boolean
-            ]))
+        CheckValue.check(str, 'ID', ID)
+        CheckValue.check(str, 'Password', Password)
+        CheckValue.check(bool, 'KickOtherLogin', KickOtherLogin)
 
         Config.KickOtherLogin = KickOtherLogin
 
@@ -523,38 +510,17 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if not isinstance(Board, str):
-            raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(PostAID, str) and PostAID is not None:
-            raise TypeError(Log.merge([
-                'PostAID',
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(PostIndex, int):
-            raise TypeError(Log.merge([
-                'PostIndex',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckValue.check(str, 'Board', Board)
 
-        if not isinstance(SearchType, int):
-            raise TypeError(Log.merge([
-                'SearchType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-        if (not isinstance(SearchCondition, str) and
-                SearchCondition is not None):
-            raise TypeError(Log.merge([
-                'SearchCondition',
-                i18n.MustBe,
-                i18n.String
-            ]))
+        if PostAID is not None:
+            CheckValue.check(str, 'PostAID', PostAID)
+
+        CheckValue.check(int, 'PostIndex', PostIndex)
+        CheckValue.check(int, 'SearchType', SearchType,
+                         Class=DataType.PostSearchType)
+
+        if SearchCondition is not None:
+            CheckValue.check(str, 'SearchCondition', SearchCondition)
 
         if len(Board) == 0:
             raise ValueError(Log.merge([
@@ -576,13 +542,6 @@ class Library:
                 'PostIndex',
                 'PostAID',
                 i18n.ErrorParameter
-            ]))
-
-        if (SearchType != 0 and
-                not Util.checkRange(DataType.PostSearchType, SearchType)):
-            raise ValueError(Log.merge([
-                'SearchType',
-                i18n.ErrorParameter,
             ]))
 
         if SearchCondition is not None and SearchType == 0:
@@ -697,13 +656,24 @@ class Library:
                     '任意鍵繼續',
                     BreakDetect=True,
                     LogLevel=Log.Level.DEBUG
-                )
+                ),
+                # ConnectCore.TargetUnit(
+                #     i18n.NoSuchBoard,
+                #     Screens.Target.MainMenu,
+                #     BreakDetect=True,
+                #     LogLevel=Log.Level.DEBUG
+                # ),
             ]
 
             index = self._ConnectCore.send(Cmd, TargetList)
-            OriScreen = self._ConnectCore.getScreenQueue()[-1]
             if index < 0:
-                raise Exceptions.UnknowError(OriScreen)
+                raise Exceptions.NoSuchBoard(Board)
+
+            OriScreen = self._ConnectCore.getScreenQueue()[-1]
+
+            # print(OriScreen)
+            # if index == 1:
+            #     raise Exceptions.NoSuchBoard(Board)
 
             BoardNameLine = [line.strip() for line in OriScreen.split(
                 '\n') if line.strip().startswith('《')]
@@ -1460,7 +1430,7 @@ class Library:
                 IP = IP.replace('-', '.')
                 # print(f'IP -> [{IP}]')
                 break
-        if self._Host == DataType.Host.PTT1:
+        if Config.Host == DataType.Host.PTT1:
             if IP is None:
                 Log.showValue(
                     Log.Level.DEBUG,
@@ -1544,7 +1514,7 @@ class Library:
             ]
             # PushContent = PushContent.replace(PushDate, '')
 
-            if self._Host == DataType.Host.PTT1:
+            if Config.Host == DataType.Host.PTT1:
                 PushContent = PushContent[
                     :PushContent.rfind(PushDate)
                 ]
@@ -1602,42 +1572,18 @@ class Library:
         SearchType: int = 0,
         SearchCondition: str = None
     ):
-
-        if not isinstance(IndexType, int):
-            raise TypeError(Log.merge([
-                'IndexType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-
-        if not Util.checkRange(DataType.IndexType, IndexType):
-            raise ValueError('Unknow IndexType', IndexType)
-
-        if not isinstance(Board, str):
-            raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
+        CheckValue.check(int, 'IndexType', IndexType, Class=DataType.IndexType)
+        CheckValue.check(str, 'Board', Board)
 
         if IndexType == DataType.IndexType.BBS:
 
-            if not isinstance(SearchType, int):
-                raise TypeError(Log.merge([
-                    'SearchType',
-                    i18n.MustBe,
-                    i18n.Integer
-                ]))
-            if (SearchCondition is not None and
-                    not isinstance(SearchCondition, str)):
-                raise TypeError(Log.merge([
-                    'SearchCondition',
-                    i18n.MustBe,
-                    i18n.String
-                ]))
-            if (SearchType != 0 and
-                    not Util.checkRange(DataType.PostSearchType, SearchType)):
-                raise ValueError('Unknow PostSearchType', PostSearchType)
+            self._checkBoard(Board)
+
+            CheckValue.check(int, 'SearchType', SearchType,
+                             Class=DataType.PostSearchType)
+            if SearchCondition is not None:
+                CheckValue.check(str, 'SearchCondition', SearchCondition)
+            CheckValue.check(int, 'SearchType', SearchType)
 
             CmdList = []
             CmdList.append(Command.GoMainMenu)
@@ -1720,8 +1666,8 @@ class Library:
             ]
             index = self._ConnectCore.send(Cmd, TargetList)
             if index < 0:
-                OriScreen = self._ConnectCore.getScreenQueue()[-1]
-                raise Exceptions.UnknowError(OriScreen)
+                # OriScreen = self._ConnectCore.getScreenQueue()[-1]
+                raise Exceptions.NoSuchBoard(Board)
 
             if index == 0:
                 return 0
@@ -1730,7 +1676,7 @@ class Library:
             AllIndex = re.findall(r'\d+ ', LastScreen)
 
             if len(AllIndex) == 0:
-                Screens.show(self._ConnectCore.getScreenQueue())
+                print(LastScreen)
                 raise Exceptions.UnknowError(i18n.UnknowError)
 
             AllIndex = list(map(int, AllIndex))
@@ -1799,8 +1745,6 @@ class Library:
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-            self._checkBoard(Board)
-
         try:
             return self._getNewestIndex(
                 IndexType,
@@ -1832,23 +1776,10 @@ class Library:
         EndPage: int = 0,
     ):
 
-        # self._OneThread()
-        if not isinstance(CrawlType, int):
-            raise TypeError(Log.merge([
-                'CrawlType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        self._OneThread()
 
-        if not Util.checkRange(DataType.CrawlType, CrawlType):
-            raise ValueError('Unknow CrawlType', CrawlType)
-
-        if not isinstance(Board, str):
-            raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
+        CheckValue.check(int, 'CrawlType', CrawlType, Class=DataType.CrawlType)
+        CheckValue.check(str, 'Board', Board)
 
         if len(Board) == 0:
             raise ValueError(Log.merge([
@@ -1861,52 +1792,10 @@ class Library:
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-            if not isinstance(StartIndex, int):
-                raise TypeError(Log.merge([
-                    'StartIndex',
-                    i18n.MustBe,
-                    i18n.Integer
-                ]))
-            if not isinstance(EndIndex, int):
-                raise TypeError(Log.merge([
-                    'EndIndex',
-                    i18n.MustBe,
-                    i18n.Integer
-                ]))
-            if not isinstance(SearchType, int):
-                raise TypeError(Log.merge([
-                    'SearchType',
-                    i18n.MustBe,
-                    i18n.Integer
-                ]))
-            if (SearchCondition is not None and
-                    not isinstance(SearchCondition, str)):
-                raise TypeError(Log.merge([
-                    'SearchCondition',
-                    i18n.MustBe,
-                    i18n.String
-                ]))
+            CheckValue.check(int, 'SearchType', SearchType)
 
-            if StartIndex < 1:
-                raise ValueError(Log.merge([
-                    'StartIndex',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
-
-            if StartIndex < 1:
-                raise ValueError(Log.merge([
-                    'StartIndex',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
-
-            if StartIndex > EndIndex:
-                raise ValueError(Log.merge([
-                    'StartIndex',
-                    i18n.MustSmall,
-                    'EndIndex',
-                ]))
+            if SearchCondition is not None:
+                CheckValue.check(str, 'SearchCondition', SearchCondition)
 
             if SearchType == DataType.PostSearchType.Push:
                 try:
@@ -1930,12 +1819,13 @@ class Library:
                 SearchCondition=SearchCondition
             )
 
-            if EndIndex > NewestIndex:
-                raise ValueError(Log.merge([
-                    'EndIndex',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
+            CheckValue.checkIndexRange(
+                'StartIndex',
+                StartIndex,
+                'EndIndex',
+                EndIndex,
+                MaxValue=NewestIndex
+            )
 
             ErrorPostList = []
             DelPostList = []
@@ -2035,21 +1925,8 @@ class Library:
             return ErrorPostList, DelPostList
 
         else:
-            if self._Host == DataType.Host.PTT2:
+            if Config.Host == DataType.Host.PTT2:
                 raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
-
-            if not isinstance(StartPage, int):
-                raise TypeError(Log.merge([
-                    'StartPage',
-                    i18n.MustBe,
-                    i18n.Integer
-                ]))
-            if not isinstance(EndPage, int):
-                raise TypeError(Log.merge([
-                    'EndPage',
-                    i18n.MustBe,
-                    i18n.Integer
-                ]))
 
             # 網頁版本爬蟲
             # https://www.ptt.cc/bbs/index.html
@@ -2061,33 +1938,13 @@ class Library:
             )
             # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
 
-            if StartPage < 1:
-                raise ValueError(Log.merge([
-                    'StartPage',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
-
-            if StartPage > EndPage:
-                raise ValueError(Log.merge([
-                    'StartPage',
-                    i18n.MustSmall,
-                    'EndPage',
-                ]))
-
-            if StartPage > NewestIndex:
-                raise ValueError(Log.merge([
-                    'StartPage',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
-
-            if EndPage > NewestIndex:
-                raise ValueError(Log.merge([
-                    'EndPage',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
+            CheckValue.checkIndexRange(
+                'StartPage',
+                StartPage,
+                'EndPage',
+                EndPage,
+                MaxValue=NewestIndex
+            )
 
             # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 DataType.PostInfo
             ErrorPostList = []
@@ -2184,33 +2041,10 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if not isinstance(Board, str):
-            raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(Title, str):
-            raise TypeError(Log.merge([
-                'Title',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(Content, str):
-            raise TypeError(Log.merge([
-                'Content',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(PostType, int):
-            raise TypeError(Log.merge([
-                'PostType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(str, 'Title', Title)
+        CheckValue.check(str, 'Content', Content)
+        CheckValue.check(int, 'PostType', PostType)
 
         CheckSignFile = False
         for i in range(0, 10):
@@ -2303,44 +2137,20 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if not isinstance(Board, str):
-            raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(PushType, int):
-            raise TypeError(Log.merge([
-                'PushType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-        if not isinstance(PushContent, str):
-            raise TypeError(Log.merge([
-                'PushContent',
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(PostAID, str) and PostAID is not None:
-            raise TypeError(Log.merge([
-                'PostAID',
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(PostIndex, int):
-            raise TypeError(Log.merge([
-                'PostIndex',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(int, 'PushType', PushType, Class=DataType.PushType)
+        CheckValue.check(str, 'PushContent', PushContent)
+        if PostAID is not None:
+            CheckValue.check(str, 'PostAID', PostAID)
+        CheckValue.check(int, 'PostIndex', PostIndex)
+
         if len(Board) == 0:
             raise ValueError(Log.merge([
                 i18n.Board,
                 i18n.ErrorParameter,
                 Board
             ]))
-        if not Util.checkRange(DataType.PushType, PushType):
-            raise ValueError('Unknow PushType', PushType)
+
         if PostIndex != 0 and isinstance(PostAID, str):
             raise ValueError(Log.merge([
                 'PostIndex',
@@ -2356,18 +2166,12 @@ class Library:
                 i18n.ErrorParameter,
                 i18n.NoInput
             ]))
-        if PostIndex > 0:
-            NewestIndex = self._getNewestIndex(
-                DataType.IndexType.BBS,
-                Board=Board
-            )
 
-            if PostIndex > NewestIndex:
-                raise ValueError(Log.merge([
-                    'PostIndex',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
+        NewestIndex = self._getNewestIndex(
+            DataType.IndexType.BBS,
+            Board=Board
+        )
+        CheckValue.checkIndex('PostIndex', PostIndex, NewestIndex)
 
         self._checkBoard(Board)
 
@@ -2559,13 +2363,7 @@ class Library:
 
     def _getUser(self, UserID):
 
-        if not isinstance(UserID, str):
-            raise TypeError(Log.merge([
-                'UserID',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
+        CheckValue.check(str, 'UserID', UserID)
         if len(UserID) < 3:
             raise ValueError(Log.merge([
                 'UserID',
@@ -2654,7 +2452,7 @@ class Library:
         LegalPost = int(Temp[0])
 
         # PTT2 沒有退文
-        if self._Host == DataType.Host.PTT1:
+        if Config.Host == DataType.Host.PTT1:
             IllegalPost = int(Temp[1])
         else:
             IllegalPost = -1
@@ -2717,19 +2515,8 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        if not isinstance(TargetID, str):
-            raise TypeError(Log.merge([
-                'TargetID',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(Content, str):
-            raise TypeError(Log.merge([
-                'Content',
-                i18n.MustBe,
-                i18n.String
-            ]))
+        CheckValue.check(str, 'TargetID', TargetID)
+        CheckValue.check(str, 'Content', Content)
 
         if len(TargetID) <= 2:
             raise ValueError(Log.merge([
@@ -2852,15 +2639,8 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        if not isinstance(OperateType, int):
-            raise TypeError(Log.merge([
-                'OperateType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-
-        if not Util.checkRange(DataType.WaterBallOperateType, OperateType):
-            raise ValueError('Unknow WaterBallOperateType', OperateType)
+        CheckValue.check(int, 'OperateType', OperateType,
+                         Class=DataType.WaterBallOperateType)
 
         if OperateType == DataType.WaterBallOperateType.DoNothing:
             WaterBallOperateType = 'R'
@@ -3027,7 +2807,7 @@ class Library:
 
         AllWaterball = '\n'.join(AllWaterball)
 
-        if self._Host == DataType.Host.PTT1:
+        if Config.Host == DataType.Host.PTT1:
             AllWaterball = AllWaterball.replace(
                 ']\n', ']==PTTWaterBallNewLine==')
             AllWaterball = AllWaterball.replace('\n', '')
@@ -3232,11 +3012,8 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if not isinstance(inputCallStatus, int):
-            raise TypeError('CallStatus must be integer')
-
-        if not Util.checkRange(DataType.CallStatus, inputCallStatus):
-            raise ValueError('Unknow CallStatus', inputCallStatus)
+        CheckValue.check(int, 'CallStatus', inputCallStatus,
+                         Class=DataType.CallStatus)
 
         # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
 
@@ -3278,19 +3055,8 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        if not isinstance(ID, str):
-            raise TypeError(Log.merge([
-                'ID',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(Money, int):
-            raise TypeError(Log.merge([
-                'Money',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckValue.check(str, 'ID', ID)
+        CheckValue.check(int, 'Money', Money)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -3380,26 +3146,9 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if not isinstance(ID, str):
-            raise TypeError(Log.merge([
-                'ID',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(Title, str):
-            raise TypeError(Log.merge([
-                'Title',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(Content, str):
-            raise TypeError(Log.merge([
-                'Content',
-                i18n.MustBe,
-                i18n.String
-            ]))
+        CheckValue.check(str, 'ID', ID)
+        CheckValue.check(str, 'Title', Title)
+        CheckValue.check(str, 'Content', Content)
 
         CheckSignFile = False
         for i in range(0, 10):
@@ -3686,63 +3435,21 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if not isinstance(Board, str):
-            raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(Content, str):
-            raise TypeError(Log.merge([
-                'Content',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(inputReplyType, int):
-            raise TypeError(Log.merge([
-                'ReplyType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
+        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(str, 'Content', Content)
+        CheckValue.check(int, 'ReplyType', inputReplyType,
+                         Class=DataType.ReplyType)
 
         if PostAID is not None:
-            if not isinstance(PostAID, str):
-                raise TypeError(Log.merge([
-                    'Content',
-                    i18n.MustBe,
-                    i18n.String
-                ]))
+            CheckValue.check(str, 'PostAID', PostAID)
 
         if PostIndex != 0:
-            if not isinstance(PostIndex, int):
-                raise TypeError(Log.merge([
-                    'PostIndex',
-                    i18n.MustBe,
-                    i18n.Integer
-                ]))
 
             NewestIndex = self._getNewestIndex(
                 DataType.IndexType.BBS,
                 Board=Board,
             )
-
-            Log.showValue(
-                Log.Level.DEBUG,
-                'NewestIndex',
-                NewestIndex
-            )
-
-            if PostIndex < 1 or NewestIndex < PostIndex:
-                raise ValueError(Log.merge([
-                    'PostIndex',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
-
-        if not Util.checkRange(DataType.ReplyType, inputReplyType):
-            raise ValueError('Unknow ReplyType', inputReplyType)
+            CheckValue.checkIndex('PostIndex', PostIndex, MaxValue=NewestIndex)
 
         SignFileList = [str(x) for x in range(0, 10)]
         SignFileList.append('x')
@@ -3878,19 +3585,8 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if not isinstance(Board, str):
-            raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if not isinstance(NewTitle, str):
-            raise TypeError(Log.merge([
-                'NewTitle',
-                i18n.MustBe,
-                i18n.String
-            ]))
+        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(str, 'NewTitle', NewTitle)
 
         self._checkBoard(
             Board,
@@ -3949,52 +3645,16 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        if not isinstance(inputMarkType, int):
-            raise TypeError(Log.merge([
-                'MarkType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-
-        if not isinstance(Board, str):
-            raise TypeError(Log.merge([
-                'Board',
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(PostAID, str) and PostAID is not None:
-            raise TypeError(Log.merge([
-                'PostAID',
-                i18n.MustBe,
-                i18n.String
-            ]))
-        if not isinstance(PostIndex, int):
-            raise TypeError(Log.merge([
-                'PostIndex',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-
-        if not isinstance(SearchType, int):
-            raise TypeError(Log.merge([
-                'SearchType',
-                i18n.MustBe,
-                i18n.Integer
-            ]))
-        if (not isinstance(SearchCondition, str) and
-                SearchCondition is not None):
-            raise TypeError(Log.merge([
-                'SearchCondition',
-                i18n.MustBe,
-                i18n.String
-            ]))
-
-        if (SearchType != 0 and
-                not Util.checkRange(DataType.PostSearchType, SearchType)):
-            raise ValueError(Log.merge([
-                'SearchType',
-                i18n.ErrorParameter,
-            ]))
+        CheckValue.check(int, 'MarkType', inputMarkType,
+                         Class=DataType.MarkType)
+        CheckValue.check(str, 'Board', Board)
+        if PostAID is not None:
+            CheckValue.check(str, 'PostAID', PostAID)
+        CheckValue.check(int, 'PostIndex', PostIndex)
+        CheckValue.check(int, 'SearchType', SearchType,
+                         Class=DataType.PostSearchType)
+        if SearchCondition is not None:
+            CheckValue.check(str, 'SearchCondition', SearchCondition)
 
         if len(Board) == 0:
             raise ValueError(Log.merge([
@@ -4016,12 +3676,6 @@ class Library:
                 'PostIndex',
                 'PostAID',
                 i18n.ErrorParameter
-            ]))
-
-        if not Util.checkRange(DataType.MarkType, inputMarkType):
-            raise ValueError(Log.merge([
-                'MarkType',
-                i18n.ErrorParameter,
             ]))
 
         if SearchCondition is not None and SearchType == 0:
@@ -4060,13 +3714,7 @@ class Library:
                 SearchType=SearchType,
                 SearchCondition=SearchCondition
             )
-
-            if PostIndex < 1 or NewestIndex < PostIndex:
-                raise ValueError(Log.merge([
-                    'PostIndex',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
+            CheckValue.checkIndex('PostIndex', PostIndex, MaxValue=NewestIndex)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
