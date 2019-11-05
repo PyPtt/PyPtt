@@ -34,6 +34,7 @@ class CallStatus:
 class PostSearchType:
     # 文章搜尋類型
 
+    Nope = 0
     # 搜尋關鍵字    / ?
     Keyword = 1
     # 搜尋作者      a
@@ -45,7 +46,7 @@ class PostSearchType:
     # 搜尋稿酬      A
     Money = 5
 
-    MinValue = Keyword
+    MinValue = Nope
     MaxValue = Money
 
 
