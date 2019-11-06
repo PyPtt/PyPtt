@@ -31,6 +31,13 @@ def SpecificLoad(inputLanguage, LangList):
     return LangList[LanguageList.index(inputLanguage)]
 
 
+def replace(String, *args):
+    for i in range(len(args)):
+        Target = args[i]
+        String = String.replace('{Target' + str(i) + '}', Target)
+    return String
+
+
 def load(inputLanguage):
     if not Util.checkRange(Language, inputLanguage):
         raise ValueError('Language', inputLanguage)
@@ -762,8 +769,6 @@ def load(inputLanguage):
         'No Push',
     ])
 
-    # Sorry, this article has been closed and marked, no response
-
     global NoResponse
     NoResponse = SpecificLoad(inputLanguage, [
         '很抱歉, 此文章已結案並標記, 不得回應',
@@ -852,6 +857,12 @@ def load(inputLanguage):
     DelAllMarkPost = SpecificLoad(inputLanguage, [
         '刪除所有標記文章',
         'Del All Mark Post',
+    ])
+
+    global NoSuchPost
+    NoSuchPost = SpecificLoad(inputLanguage, [
+        '{Target0} 板沒有 {Target1} 的文章',
+        'The {Target1} post of {Target0} is not exist',
     ])
 
     # No changes have been made to any settings

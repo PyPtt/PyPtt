@@ -525,22 +525,22 @@ def crawlHandler(Post):
     # detectNone('ListDate', Post.getListDate())
 
     # if not Query:
-        # detectNone('Date', Post.getDate())
-        # detectNone('Content', Post.getContent())
-        # detectNone('IP', Post.getIP())
+    # detectNone('Date', Post.getDate())
+    # detectNone('Content', Post.getContent())
+    # detectNone('IP', Post.getIP())
 
-        # time.sleep(0.2)
+    # time.sleep(0.2)
 
 
 def CrawlBoard():
 
     global Query
     TestBoardList = [
-        # 'Test',
+        'Test',
         # 'Wanted',
         # 'Gossiping',
         # 'Stock',
-        'movie',
+        # 'movie',
         # 'C_Chat',
         # 'Baseball',
         # 'NBA',
@@ -555,74 +555,82 @@ def CrawlBoard():
     # CrawlType = PTT.IndexType.Web
     CrawlType = PTT.IndexType.BBS
 
+    Type = 'AID'
+
     TestRange = 100
     TestRound = 1
 
-    from concurrent.futures import ThreadPoolExecutor
-    pool = ThreadPoolExecutor(5)
-
-    def crawler(CrawlType, TestBoard):
-        if CrawlType == PTT.IndexType.BBS:
-            NewestIndex = PTTBot.getNewestIndex(
-                PTT.IndexType.BBS,
-                Board=TestBoard
-            )
-            StartIndex = NewestIndex - TestRange + 1
-
-            print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
-
-            print(f'TestBoard [{TestBoard}]')
-            ErrorPostList, DelPostList = PTTBot.crawlBoard(
-                crawlHandler,
-                PTT.CrawlType.BBS,
-                TestBoard,
-                StartIndex=StartIndex,
-                EndIndex=NewestIndex,
-                Query=Query
-            )
-
-            if len(ErrorPostList) > 0:
-                print('格式錯誤文章: \n' + '\n'.join(str(x)
-                                                for x in ErrorPostList))
-            else:
-                print('沒有偵測到格式錯誤文章')
-
-            if len(DelPostList) > 0:
-                print(f'共有 {len(DelPostList)} 篇文章被刪除')
-
-        elif CrawlType == PTT.IndexType.Web:
-
-            NewestIndex = PTTBot._getNewestIndex(
-                PTT.IndexType.Web,
-                Board=TestBoard
-            )
-            EndPage = NewestIndex
-
-            StartPage = EndPage - TestRange + 1
-
-            print(f'預備爬行 {TestBoard} 最新頁數 {NewestIndex}')
-            print(f'預備爬行 {TestBoard} 編號 {StartPage} ~ {EndPage} 文章')
-
-            ErrorPostList, DelPostList = PTTBot.crawlBoard(
-                crawlHandler,
-                PTT.CrawlType.Web,
-                TestBoard,
-                StartPage=StartPage,
-                EndPage=EndPage
-                # Query=Query
-            )
-
-            if len(DelPostList) > 0:
-                # print('\n'.join(DelPostList))
-                print(f'{TestBoard}板 共有 {len(DelPostList)} 篇文章被刪除')
-  
     for _ in range(TestRound):
-        if PTT.IndexType.Web == CrawlType:
-            futures = [pool.submit(crawler, CrawlType, TestBoard) for TestBoard in TestBoardList]
-            result = [future.result() for future in futures]
-        else:
-            for TestBoard in TestBoardList:
-                crawler(CrawlType, TestBoard)
+
+        for TestBoard in TestBoardList:
+
+            if CrawlType == PTT.IndexType.BBS:
+
+                if Type == 'Index':
+                    NewestIndex = PTTBot.getNewestIndex(
+                        # PTT.IndexType.BBS,
+                        Board=TestBoard
+                    )
+                    StartIndex = NewestIndex - TestRange + 1
+
+                    print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
+
+                    print(f'TestBoard [{TestBoard}]')
+                    ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                        crawlHandler,
+                        PTT.CrawlType.BBS,
+                        TestBoard,
+                        StartIndex=StartIndex,
+                        EndIndex=NewestIndex,
+                        Query=Query
+                    )
+                elif Type == 'AID':
+
+                    StartAID = '1TmJHIMg'
+                    EndAID = '1TmJHLDE'
+
+                    ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                        crawlHandler,
+                        PTT.CrawlType.BBS,
+                        TestBoard,
+                        StartAID=StartAID,
+                        EndAID=EndAID
+                    )
+                if len(ErrorPostList) > 0:
+                    print('格式錯誤文章: \n' + '\n'.join(str(x)
+                                                   for x in ErrorPostList))
+                else:
+                    print('沒有偵測到格式錯誤文章')
+
+                if len(DelPostList) > 0:
+                    print(f'共有 {len(DelPostList)} 篇文章被刪除')
+
+            elif CrawlType == PTT.IndexType.Web:
+
+                NewestIndex = PTTBot.getNewestIndex(
+                    PTT.IndexType.Web,
+                    Board=TestBoard
+                )
+                EndPage = NewestIndex
+
+                StartPage = EndPage - TestRange + 1
+
+                print(f'預備爬行 {TestBoard} 最新頁數 {NewestIndex}')
+                print(f'預備爬行 {TestBoard} 編號 {StartPage} ~ {EndPage} 文章')
+
+                ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                    crawlHandler,
+                    PTT.CrawlType.Web,
+                    TestBoard,
+                    StartPage=StartPage,
+                    EndPage=EndPage
+                    # Query=Query
+                )
+
+                if len(DelPostList) > 0:
+                    print('\n'.join(DelPostList))
+                    print(f'共有 {len(DelPostList)} 篇文章被刪除')
+
 
 
 def CrawlBoardWithCondition():
@@ -741,12 +749,12 @@ def Push():
 
 def ThrowWaterBall():
 
-    TagetID = 'uPTT'
+    TagetID = 'DeepLearning'
 
-    TestWaterBall = [str(x) + '_' * 35 + ' 水球測試結尾' for x in range(30)]
-    # TestWaterBall = TestWaterBall * 3
-    TestWaterBall = '\n'.join(TestWaterBall)
-    # TestWaterBall = '水球測試1 :D\n水球測試2 :D'
+    # TestWaterBall = [str(x) + '_' * 35 + ' 水球測試結尾' for x in range(30)]
+    # # TestWaterBall = TestWaterBall * 3
+    # TestWaterBall = '\n'.join(TestWaterBall)
+    TestWaterBall = '水球測試1 :D\n水球測試2 :D'
 
     PTTBot.throwWaterBall(TagetID, TestWaterBall)
     time.sleep(3)
@@ -961,25 +969,28 @@ def GetBoardList():
 
 
 def ReplyPost():
+
+    ReplyPostIndex = 755
+
     PTTBot.replyPost(
         PTT.ReplyType.Board,
         'Test',
         '測試回應到板上，如有打擾抱歉',
-        PostIndex=356
+        PostIndex=ReplyPostIndex
     )
 
     PTTBot.replyPost(
         PTT.ReplyType.Mail,
         'Test',
         '測試回應到信箱，如有打擾抱歉',
-        PostIndex=356
+        PostIndex=ReplyPostIndex
     )
 
     PTTBot.replyPost(
         PTT.ReplyType.Board_Mail,
         'Test',
         '測試回應到板上還有信箱，如有打擾抱歉',
-        PostIndex=356
+        PostIndex=ReplyPostIndex
     )
 
 
@@ -1023,7 +1034,7 @@ def SetBoardTitle():
 
 def MarkPost():
 
-    MarkType = PTT.MarkType.D
+    MarkType = PTT.MarkType.S
 
     PTTBot.markPost(
         MarkType,
@@ -1087,7 +1098,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        # CrawlBoard()
+        CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
@@ -1100,7 +1111,7 @@ if __name__ == '__main__':
         # HasNewMail()
         # GetBoardList()
         # ReplyPost()
-        
+
         # SetBoardTitle()
         # MarkPost()
 
