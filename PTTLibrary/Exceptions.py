@@ -226,3 +226,15 @@ class NoMatchTargetError(Exception):
     def __str__(self):
         Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
         return Screens + '\n' + i18n.ScreenNoMatchTarget
+
+
+class NoSuchPost(Exception):
+    def __init__(self, Board, AID):
+        self.message = i18n.replace(
+            i18n.NoSuchPost,
+            Board,
+            AID
+        )
+
+    def __str__(self):
+        return self.message

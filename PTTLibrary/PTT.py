@@ -511,14 +511,11 @@ class Library:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CheckValue.check(str, 'Board', Board)
-
         if PostAID is not None:
             CheckValue.check(str, 'PostAID', PostAID)
-
         CheckValue.check(int, 'PostIndex', PostIndex)
         CheckValue.check(int, 'SearchType', SearchType,
                          Class=DataType.PostSearchType)
-
         if SearchCondition is not None:
             CheckValue.check(str, 'SearchCondition', SearchCondition)
 
@@ -1760,6 +1757,85 @@ class Library:
                 SearchCondition
             )
 
+    def _getPostIndex(
+        self,
+        Board,
+        AID,
+        SearchType: int = 0,
+        SearchCondition: str = None,
+    ):
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('qs')
+        CmdList.append(Board)
+        CmdList.append(Command.Enter)
+        CmdList.append(Command.Ctrl_C * 2)
+        CmdList.append(Command.Space)
+
+        if SearchCondition is not None:
+            if SearchType == DataType.PostSearchType.Keyword:
+                CmdList.append('/')
+            elif SearchType == DataType.PostSearchType.Author:
+                CmdList.append('a')
+            elif SearchType == DataType.PostSearchType.Push:
+                CmdList.append('Z')
+            elif SearchType == DataType.PostSearchType.Mark:
+                CmdList.append('G')
+            elif SearchType == DataType.PostSearchType.Money:
+                CmdList.append('A')
+
+            CmdList.append(SearchCondition)
+            CmdList.append(Command.Enter)
+
+        CmdList.append('#')
+        CmdList.append(AID)
+        CmdList.append(Command.Enter)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.NoPost,
+                '沒有文章...',
+                Exceptions=Exceptions.NoSuchPost(Board, AID)
+            ),
+            ConnectCore.TargetUnit(
+                i18n.Success,
+                Screens.Target.InBoard,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                i18n.Success,
+                Screens.Target.InBoardWithCursor,
+                BreakDetect=True,
+                LogLevel=Log.Level.DEBUG
+            ),
+            ConnectCore.TargetUnit(
+                i18n.NoSuchBoard,
+                Screens.Target.MainMenu_Exiting,
+                Exceptions=Exceptions.NoSuchBoard(Board)
+            ),
+        ]
+        index = self._ConnectCore.send(Cmd, TargetList)
+        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+        if index < 0:
+            raise Exceptions.NoSuchBoard(Board)
+
+        # print(OriScreen)
+
+        line = [x for x in OriScreen.split('\n') if x.startswith(self._Cursor)]
+        line = line[0]
+        # print(line)
+
+        Index = line
+        while '  ' in Index:
+            Index = Index.replace('  ', ' ')
+        Index = Index.split(' ')[1]
+        Index = int(Index)
+        # print(Index)
+        return Index
+
     def crawlBoard(
         self,
         PostHandler,
@@ -1768,6 +1844,8 @@ class Library:
         # BBS版本
         StartIndex: int = 0,
         EndIndex: int = 0,
+        StartAID: str = None,
+        EndAID: str = None,
         SearchType: int = 0,
         SearchCondition: str = None,
         Query: bool = False,
@@ -1793,9 +1871,21 @@ class Library:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
             CheckValue.check(int, 'SearchType', SearchType)
-
             if SearchCondition is not None:
                 CheckValue.check(str, 'SearchCondition', SearchCondition)
+            if StartAID is not None:
+                CheckValue.check(str, 'StartAID', StartAID)
+            if EndAID is not None:
+                CheckValue.check(str, 'EndAID', EndAID)
+
+            if (StartAID is not None or EndAID is not None) and \
+               (StartIndex != 0 or EndIndex != 0):
+                raise ValueError(Log.merge([
+                    'AID',
+                    'Index',
+                    i18n.ErrorParameter,
+                    i18n.BothInput
+                ]))
 
             if SearchType == DataType.PostSearchType.Push:
                 try:
@@ -1812,20 +1902,40 @@ class Library:
                         i18n.ErrorParameter,
                     ]))
 
-            NewestIndex = self._getNewestIndex(
-                DataType.IndexType.BBS,
-                Board=Board,
-                SearchType=SearchType,
-                SearchCondition=SearchCondition
-            )
+            if StartIndex != 0:
+                NewestIndex = self._getNewestIndex(
+                    DataType.IndexType.BBS,
+                    Board=Board,
+                    SearchType=SearchType,
+                    SearchCondition=SearchCondition
+                )
+                CheckValue.checkIndexRange(
+                    'StartIndex',
+                    StartIndex,
+                    'EndIndex',
+                    EndIndex,
+                    MaxValue=NewestIndex
+                )
+            elif StartAID is not None and EndAID is not None:
+                StartIndex = self._getPostIndex(
+                    Board,
+                    StartAID,
+                    SearchType,
+                    SearchCondition,
+                )
 
-            CheckValue.checkIndexRange(
-                'StartIndex',
-                StartIndex,
-                'EndIndex',
-                EndIndex,
-                MaxValue=NewestIndex
-            )
+                EndIndex = self._getPostIndex(
+                    Board,
+                    EndAID,
+                    SearchType,
+                    SearchCondition,
+                )
+
+            else:
+                raise ValueError(Log.merge([
+                    i18n.ErrorParameter,
+                    i18n.NoInput
+                ]))
 
             ErrorPostList = []
             DelPostList = []
@@ -3435,11 +3545,10 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'Board', Board)
-        CheckValue.check(str, 'Content', Content)
         CheckValue.check(int, 'ReplyType', inputReplyType,
                          Class=DataType.ReplyType)
-
+        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(str, 'Content', Content)
         if PostAID is not None:
             CheckValue.check(str, 'PostAID', PostAID)
 
@@ -3607,7 +3716,7 @@ class Library:
         CmdList.append(Command.Backspace * 31)
         CmdList.append(NewTitle)
         CmdList.append(Command.Enter * 2)
-        # Backspace
+        Cmd = ''.join(CmdList)
 
         TargetList = [
             ConnectCore.TargetUnit(
@@ -3621,8 +3730,6 @@ class Library:
                 BreakDetect=True,
             ),
         ]
-
-        Cmd = ''.join(CmdList)
 
         self._ConnectCore.send(
             Cmd,
@@ -3785,9 +3892,7 @@ class Library:
 
         TargetList = [
             ConnectCore.TargetUnit(
-                [
-                    i18n.DelAllMarkPost,
-                ],
+                [i18n.DelAllMarkPost],
                 '刪除所有標記',
                 Response='y' + Command.Enter,
                 LogLevel=Log.Level.INFO
