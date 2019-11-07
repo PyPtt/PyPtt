@@ -1836,13 +1836,20 @@ class Library:
         # print(LastLine)
         # print(line)
 
-        Index = LastLine.strip()
+        if '編號' in LastLine and '人氣:' in LastLine:
+            Index = line[1:].strip()
+            IndexFix = False
+        else:
+            Index = LastLine.strip()
+            IndexFix = True
         while '  ' in Index:
             Index = Index.replace('  ', ' ')
         IndexList = Index.split(' ')
         Index = IndexList[0]
+        Index = int(Index)
+        if IndexFix:
+            Index += 1
         # print(Index)
-        Index = int(Index) + 1
         return Index
 
     def crawlBoard(
