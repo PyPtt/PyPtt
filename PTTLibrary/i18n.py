@@ -861,8 +861,8 @@ def load(inputLanguage):
 
     global NoSuchPost
     NoSuchPost = SpecificLoad(inputLanguage, [
-        '{Target0} 板沒有 {Target1} 的文章',
-        'The {Target1} post of {Target0} is not exist',
+        '{Target0} 板找不到這個文章代碼 {Target1}',
+        'In {Target0}, the post code is not exist {Target1}',
     ])
 
     # No changes have been made to any settings

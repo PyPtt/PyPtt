@@ -1794,6 +1794,12 @@ class Library:
         Cmd = ''.join(CmdList)
 
         TargetList = [
+            # 找不到這個文章代碼(AID)
+            ConnectCore.TargetUnit(
+                i18n.NoPost,
+                '找不到這個文章代碼(AID)',
+                Exceptions=Exceptions.NoSuchPost(Board, AID)
+            ),
             ConnectCore.TargetUnit(
                 i18n.NoPost,
                 '沒有文章...',
@@ -1822,18 +1828,21 @@ class Library:
         if index < 0:
             raise Exceptions.NoSuchBoard(Board)
 
-        # print(OriScreen)
+        ScreenList = OriScreen.split('\n')
 
-        line = [x for x in OriScreen.split('\n') if x.startswith(self._Cursor)]
+        line = [x for x in ScreenList if x.startswith(self._Cursor)]
         line = line[0]
+        LastLine = ScreenList[ScreenList.index(line) - 1]
+        # print(LastLine)
         # print(line)
 
-        Index = line
+        Index = LastLine.strip()
         while '  ' in Index:
             Index = Index.replace('  ', ' ')
-        Index = Index.split(' ')[1]
-        Index = int(Index)
+        IndexList = Index.split(' ')
+        Index = IndexList[0]
         # print(Index)
+        Index = int(Index) + 1
         return Index
 
     def crawlBoard(
@@ -1923,7 +1932,6 @@ class Library:
                     SearchType,
                     SearchCondition,
                 )
-
                 EndIndex = self._getPostIndex(
                     Board,
                     EndAID,
@@ -1931,11 +1939,29 @@ class Library:
                     SearchCondition,
                 )
 
+                CheckValue.checkIndexRange(
+                    'StartIndex',
+                    StartIndex,
+                    'EndIndex',
+                    EndIndex
+                )
             else:
                 raise ValueError(Log.merge([
                     i18n.ErrorParameter,
                     i18n.NoInput
                 ]))
+
+            Log.showValue(
+                Log.Level.DEBUG,
+                'StartIndex',
+                StartIndex
+            )
+
+            Log.showValue(
+                Log.Level.DEBUG,
+                'EndIndex',
+                EndIndex
+            )
 
             ErrorPostList = []
             DelPostList = []
