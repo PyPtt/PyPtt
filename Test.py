@@ -536,9 +536,9 @@ def CrawlBoard():
 
     global Query
     TestBoardList = [
-        'Test',
+        # 'Test',
         # 'Wanted',
-        # 'Gossiping',
+        'Gossiping',
         # 'Stock',
         # 'movie',
         # 'C_Chat',
@@ -586,8 +586,8 @@ def CrawlBoard():
                     )
                 elif Type == 'AID':
 
-                    StartAID = '1TmJHIMg'
-                    EndAID = '1TmJHLDE'
+                    StartAID = '12jVjJUf'
+                    EndAID = '12jeW-Ry'
 
                     ErrorPostList, DelPostList = PTTBot.crawlBoard(
                         crawlHandler,
