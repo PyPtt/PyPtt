@@ -615,7 +615,7 @@ class Library:
                 if i == 1:
                     raise e
                 NeedContinue = True
-            except ConnectCore.NoMatchTargetError as e:
+            except Exceptions.NoMatchTargetError as e:
                 if i == 1:
                     raise e
                 NeedContinue = True
@@ -2007,7 +2007,7 @@ class Library:
                         if i == 1:
                             raise e
                         NeedContinue = True
-                    except ConnectCore.NoMatchTargetError as e:
+                    except Exceptions.NoMatchTargetError as e:
                         if i == 1:
                             raise e
                         NeedContinue = True
