@@ -3920,6 +3920,8 @@ class Library:
             CmdList.append('t')
         elif inputMarkType == DataType.MarkType.DeleteD:
             CmdList.append(Command.Ctrl_D)
+        elif inputMarkType == DataType.MarkType.M:
+            CmdList.append('m')
 
         Cmd = ''.join(CmdList)
 

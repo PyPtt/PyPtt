@@ -1034,7 +1034,7 @@ def SetBoardTitle():
 
 def MarkPost():
 
-    MarkType = PTT.MarkType.S
+    MarkType = PTT.MarkType.M
 
     PTTBot.markPost(
         MarkType,
@@ -1081,7 +1081,7 @@ if __name__ == '__main__':
         PTTBot = PTT.Library(
             # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            # Host=PTT.Host.PTT2
+            Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(
@@ -1098,7 +1098,7 @@ if __name__ == '__main__':
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
-        CrawlBoard()
+        # CrawlBoard()
         # CrawlBoardWithCondition()
         # Push()
         # GetUser()
@@ -1113,7 +1113,7 @@ if __name__ == '__main__':
         # ReplyPost()
 
         # SetBoardTitle()
-        # MarkPost()
+        MarkPost()
 
         # FullTest()
     except Exception as e:
