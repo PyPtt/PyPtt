@@ -91,7 +91,7 @@ def checkIndexRange(
     if StartIndex > EndIndex:
         raise ValueError(Log.merge([
             StartName,
-            i18n.MustSmall,
+            i18n.MustSmallOrEqual,
             EndName,
         ]))
 

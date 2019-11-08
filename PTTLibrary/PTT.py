@@ -1947,9 +1947,9 @@ class Library:
                 )
 
                 CheckValue.checkIndexRange(
-                    'StartIndex',
+                    'StartAID',
                     StartIndex,
-                    'EndIndex',
+                    'EndAID',
                     EndIndex
                 )
             else:

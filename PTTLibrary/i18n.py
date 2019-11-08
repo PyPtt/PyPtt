@@ -456,10 +456,10 @@ def load(inputLanguage):
         'Out Of Range',
     ])
 
-    global MustSmall
-    MustSmall = SpecificLoad(inputLanguage, [
-        '必須小於',
-        'Must Small than',
+    global MustSmallOrEqual
+    MustSmallOrEqual = SpecificLoad(inputLanguage, [
+        '必須小於等於',
+        'Must be less than or equal',
     ])
 
     global VotePost
