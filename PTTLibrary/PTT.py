@@ -308,11 +308,6 @@ class Library:
                 '您保存信件數目',
                 Response=Command.GoMainMenu,
             ),
-            # ConnectCore.TargetUnit(
-            #     i18n.PostNotFinish,
-            #     '請選擇暫存檔',
-            #     Response='0' + Command.Enter,
-            # ),
             ConnectCore.TargetUnit(
                 i18n.PostNotFinish,
                 '有一篇文章尚未完成',
