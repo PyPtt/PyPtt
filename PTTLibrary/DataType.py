@@ -407,6 +407,8 @@ class MarkType:
     D = 2
     # 刪除標記文章
     DeleteD = 3
+    # M 起來
+    M = 4
 
     MinValue = S
-    MaxValue = DeleteD
+    MaxValue = M
