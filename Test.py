@@ -1079,9 +1079,9 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
-            Host=PTT.Host.PTT2
+            # Host=PTT.Host.PTT2
         )
         try:
             PTTBot.login(
@@ -1113,7 +1113,7 @@ if __name__ == '__main__':
         # ReplyPost()
 
         # SetBoardTitle()
-        MarkPost()
+        # MarkPost()
 
         # FullTest()
     except Exception as e:
