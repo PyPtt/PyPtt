@@ -34,10 +34,10 @@ def merge(Msg) -> str:
                 if len(element) == 0:
                     continue
                 if element[0].upper() != element[0].lower() and i != 0:
-                    element = ' ' + element.lstrip()
+                    Msg[i] = ' ' + element.lstrip()
                 if (element[-1].upper() != element[-1].lower() and
                         i != len(Msg) - 1):
-                    element = element.rstrip() + ' '
+                    Msg[i] = element.lstrip() + ' '
 
             Msg = ''.join(Msg)
         else:

@@ -586,8 +586,8 @@ def CrawlBoard():
                     )
                 elif Type == 'AID':
 
-                    StartAID = '12jVjJUf'
-                    EndAID = '12jeW-Ry'
+                    StartAID = '1TnDKzxw'
+                    EndAID = '1TnCPFGu'
 
                     ErrorPostList, DelPostList = PTTBot.crawlBoard(
                         crawlHandler,
