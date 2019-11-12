@@ -321,13 +321,13 @@ def VT100(OriScreen: str, NoColor: bool = True):
     #     print('===' * 20)
     #     result = result.replace(Target, '')
 
-    # print('---' * 20)
-    # print(result)
-    # print('-=-' * 20)
     # print(Target)
     # print('===' * 20)
 
     if LastPosition is not None:
         result = result.replace(LastPosition, '')
 
+    # print('-Final-' * 20)
+    # print(result)
+    # print('-Final-' * 20)
     return result
