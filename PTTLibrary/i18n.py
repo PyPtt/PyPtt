@@ -865,6 +865,12 @@ def load(inputLanguage):
         'In {Target0}, the post code is not exist {Target1}',
     ])
 
+    global GoMainMenu
+    GoMainMenu = SpecificLoad(inputLanguage, [
+        '回到主選單',
+        'Back to main memu',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original

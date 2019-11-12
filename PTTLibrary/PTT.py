@@ -282,6 +282,11 @@ class Library:
                 BreakDetect=True
             ),
             ConnectCore.TargetUnit(
+                i18n.GoMainMenu,
+                '【看板列表】',
+                Response=Command.GoMainMenu,
+            ),
+            ConnectCore.TargetUnit(
                 i18n.ErrorIDPW,
                 '密碼不對或無此帳號',
                 BreakDetect=True,
@@ -348,7 +353,8 @@ class Library:
             Refresh=False,
             Secret=True
         )
-        if index != 1:
+
+        if TargetList[index].getDisplayMsg() != i18n.LoginSuccess:
             raise Exceptions.LoginError()
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
