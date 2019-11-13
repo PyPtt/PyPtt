@@ -238,3 +238,11 @@ class NoSuchPost(Exception):
 
     def __str__(self):
         return self.message
+
+
+class CanNotUseSearchPostCode(Exception):
+    def __init__(self):
+        self.message = i18n.CanNotUseSearchPostCodeF
+
+    def __str__(self):
+        return self.message

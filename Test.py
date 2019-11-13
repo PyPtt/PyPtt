@@ -573,7 +573,8 @@ def CrawlBoard():
                     )
                     StartIndex = NewestIndex - TestRange + 1
 
-                    print(f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
+                    print(
+                        f'預備爬行 {TestBoard} 編號 {StartIndex} ~ {NewestIndex} 文章')
 
                     print(f'TestBoard [{TestBoard}]')
                     ErrorPostList, DelPostList = PTTBot.crawlBoard(
@@ -630,7 +631,6 @@ def CrawlBoard():
                 if len(DelPostList) > 0:
                     print('\n'.join(DelPostList))
                     print(f'共有 {len(DelPostList)} 篇文章被刪除')
-
 
 
 def CrawlBoardWithCondition():
@@ -1062,6 +1062,48 @@ def MarkPost():
         )
 
 
+def getPostIndexTest():
+
+    BoardList = [
+        'Wanted',
+        'Gossiping'
+    ]
+    Range = 100
+
+    for Board in BoardList:
+
+        Index = PTTBot.getNewestIndex(
+            PTT.IndexType.BBS,
+            Board,
+        )
+
+        for i in range(Range):
+
+            Post = PTTBot.getPost(
+                Board,
+                PostIndex=Index - i,
+                Query=True
+            )
+
+            if Post is None:
+                print('Empty')
+                continue
+
+            if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
+                print('被刪除文章')
+                continue
+
+            print(Post.getAID())
+
+            PostIndex = PTTBot._getPostIndex(Board, Post.getAID())
+            print(PostIndex)
+            if Index - i != PostIndex:
+                print('!!!!!!!!!!!!!!!!!!!!!!!!!')
+                return
+
+        print('=' * 50)
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -1114,6 +1156,9 @@ if __name__ == '__main__':
 
         # SetBoardTitle()
         # MarkPost()
+
+        # private test
+        getPostIndexTest()
 
         # FullTest()
     except Exception as e:
