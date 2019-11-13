@@ -1,4 +1,4 @@
-![PTTLibrary: A PTT Library in Python](https://i.imgur.com/B1kIMgR.png)
+![PTTLibrary: A PTT Library in Python](https://github.com/Truth0906/PTTLibrary/blob/master/logo/facebook_cover_photo_1.png)
 # PTT Library
 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)
 [![Build Status](https://travis-ci.org/Truth0906/PTTLibrary.svg?branch=master)](https://travis-ci.org/Truth0906/PTTLibrary)
