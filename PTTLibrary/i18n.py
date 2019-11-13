@@ -871,6 +871,12 @@ def load(inputLanguage):
         'Back to main memu',
     ])
 
+    global CanNotUseSearchPostCodeF
+    CanNotUseSearchPostCodeF = SpecificLoad(inputLanguage, [
+        '此狀態下無法使用搜尋文章代碼(AID)功能',
+        'This state can not use the search Post code function',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original

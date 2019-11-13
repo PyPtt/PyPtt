@@ -372,7 +372,7 @@ class Library:
             )
 
         if self._Cursor not in Screens.Target.InBoardWithCursor:
-            Screens.Target.InBoardWithCursor.append(self._Cursor)
+            Screens.Target.InBoardWithCursor.append('\n' + self._Cursor)
 
         self._UnregisteredUser = False
         if '(T)alk' not in OriScreen:
@@ -1767,8 +1767,6 @@ class Library:
         self,
         Board,
         AID,
-        SearchType: int = 0,
-        SearchCondition: str = None,
     ):
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -1778,21 +1776,6 @@ class Library:
         CmdList.append(Command.Ctrl_C * 2)
         CmdList.append(Command.Space)
 
-        if SearchCondition is not None:
-            if SearchType == DataType.PostSearchType.Keyword:
-                CmdList.append('/')
-            elif SearchType == DataType.PostSearchType.Author:
-                CmdList.append('a')
-            elif SearchType == DataType.PostSearchType.Push:
-                CmdList.append('Z')
-            elif SearchType == DataType.PostSearchType.Mark:
-                CmdList.append('G')
-            elif SearchType == DataType.PostSearchType.Money:
-                CmdList.append('A')
-
-            CmdList.append(SearchCondition)
-            CmdList.append(Command.Enter)
-
         CmdList.append('#')
         CmdList.append(AID)
         CmdList.append(Command.Enter)
@@ -1800,11 +1783,16 @@ class Library:
         Cmd = ''.join(CmdList)
 
         TargetList = [
-            # 找不到這個文章代碼(AID)
             ConnectCore.TargetUnit(
                 i18n.NoPost,
                 '找不到這個文章代碼(AID)',
                 Exceptions=Exceptions.NoSuchPost(Board, AID)
+            ),
+            # 此狀態下無法使用搜尋文章代碼(AID)功能
+            ConnectCore.TargetUnit(
+                i18n.CanNotUseSearchPostCodeF,
+                '此狀態下無法使用搜尋文章代碼(AID)功能',
+                Exceptions=Exceptions.CanNotUseSearchPostCode()
             ),
             ConnectCore.TargetUnit(
                 i18n.NoPost,
@@ -1829,11 +1817,17 @@ class Library:
                 Exceptions=Exceptions.NoSuchBoard(Board)
             ),
         ]
-        index = self._ConnectCore.send(Cmd, TargetList)
+        index = self._ConnectCore.send(
+            Cmd,
+            TargetList
+        )
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
         if index < 0:
+            print(OriScreen)
             raise Exceptions.NoSuchBoard(Board)
 
+        # print(index)
+        # print(OriScreen)
         ScreenList = OriScreen.split('\n')
 
         line = [x for x in ScreenList if x.startswith(self._Cursor)]
@@ -1909,6 +1903,15 @@ class Library:
                     i18n.BothInput
                 ]))
 
+            if (StartAID is not None or EndAID is not None) and \
+               (SearchCondition is not None):
+                raise ValueError(Log.merge([
+                    'AID',
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                    i18n.BothInput
+                ]))
+
             if SearchType == DataType.PostSearchType.Push:
                 try:
                     S = int(SearchCondition)
@@ -1942,14 +1945,10 @@ class Library:
                 StartIndex = self._getPostIndex(
                     Board,
                     StartAID,
-                    SearchType,
-                    SearchCondition,
                 )
                 EndIndex = self._getPostIndex(
                     Board,
                     EndAID,
-                    SearchType,
-                    SearchCondition,
                 )
 
                 CheckValue.checkIndexRange(
