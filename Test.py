@@ -442,7 +442,7 @@ def Post():
     for _ in range(3):
 
         PTTBot.post(
-            'CodingMan',
+            'Test',
             'PTT Library 程式貼文測試',
             Content,
             1,
@@ -1158,7 +1158,7 @@ if __name__ == '__main__':
         # MarkPost()
 
         # private test
-        getPostIndexTest()
+        # getPostIndexTest()
 
         # FullTest()
     except Exception as e:
