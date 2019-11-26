@@ -1107,11 +1107,10 @@ def getPostIndexTest():
 def GetFavouriteBoard():
     List = PTTBot.getFavouriteBoard()
 
-    print(len(List))
-
     for board in List:
         Buff = f'[{board.getBoard()}][{board.getType()}][{board.getBoardTitle()}]'
         print(Buff)
+
 
 if __name__ == '__main__':
     os.system('cls')
