@@ -1104,6 +1104,15 @@ def getPostIndexTest():
         print('=' * 50)
 
 
+def GetFavouriteBoard():
+    List = PTTBot.getFavouriteBoard()
+
+    print(len(List))
+
+    for board in List:
+        Buff = f'[{board.getBoard()}][{board.getType()}][{board.getBoardTitle()}]'
+        print(Buff)
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -1153,6 +1162,7 @@ if __name__ == '__main__':
         # HasNewMail()
         # GetBoardList()
         # ReplyPost()
+        # GetFavouriteBoard()
 
         # SetBoardTitle()
         # MarkPost()

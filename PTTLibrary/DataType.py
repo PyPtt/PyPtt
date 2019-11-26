@@ -412,3 +412,19 @@ class MarkType:
 
     MinValue = S
     MaxValue = M
+
+
+class FavouriteBoard:
+    def __init__(self, Board, Type, BoardTitle):
+        self.Board = ParseParameter(str, Board)
+        self.Type = ParseParameter(str, Type)
+        self.BoardTitle = ParseParameter(str, BoardTitle)
+
+    def getBoard(self):
+        return self.Board
+
+    def getType(self):
+        return self.Type
+
+    def getBoardTitle(self):
+        return self.BoardTitle

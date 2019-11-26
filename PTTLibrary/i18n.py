@@ -877,6 +877,12 @@ def load(inputLanguage):
         'This state can not use the search Post code function',
     ])
 
+    global FavouriteBoardList
+    FavouriteBoardList = SpecificLoad(inputLanguage, [
+        '我的最愛',
+        'Favourite Board List',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original
