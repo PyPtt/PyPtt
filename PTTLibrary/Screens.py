@@ -307,12 +307,17 @@ def VT100(OriScreen: str, NoColor: bool = True):
 
     # while '=PTT=[K' in result:
     #     Target = result[result.find('=PTT=[K'):]
+
+    #     print(f'Target[{Target}]')
+
     #     index1 = Target.find('\n')
-    #     index2 = Target.rfind('=PTT=')
+    #     index2 = Target.find('=PTT=')
     #     if index2 == 0:
     #         index = index1
     #     else:
     #         index = min(index1, index2)
+
+    #     break
     #     Target = Target[:index]
     #     print('===' * 20)
     #     print(result)

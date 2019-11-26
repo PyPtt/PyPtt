@@ -3994,9 +3994,10 @@ class Library:
             for i, line in enumerate(ScreenBuf):
                 if len(ScreenBuf[i]) == 0:
                     continue
-                while len(ScreenBuf[i]) <= MinLen:
+                if len(ScreenBuf[i]) <= MinLen:
                     # print(f'[{ScreenBuf[i]}]')
-                    ScreenBuf[i] = ScreenBuf[i] + ' '
+                    ScreenBuf[i] = ScreenBuf[i] + \
+                        (' ' * ((MinLen + 1) - len(ScreenBuf[i])))
             ScreenBuf = [x[10:MinLen - len(x)].strip() for x in ScreenBuf]
             ScreenBuf = list(filter(None, ScreenBuf))
 
