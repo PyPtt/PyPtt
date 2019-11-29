@@ -4096,10 +4096,7 @@ class Library:
                 BreakDetect=True,
             ),
             ConnectCore.TargetUnit(
-                [
-                    i18n.bucket,
-                    i18n.Success,
-                ],
+                i18n.InputBucketDays_Reason,
                 '請以數字跟單位(預設為天)輸入期限',
                 Response=CmdPart2,
             ),

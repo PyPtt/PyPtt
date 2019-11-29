@@ -895,6 +895,12 @@ def load(inputLanguage):
         'User has previously been banned',
     ])
 
+    global InputBucketDays_Reason
+    InputBucketDays_Reason = SpecificLoad(inputLanguage, [
+        '輸入水桶天數與理由',
+        'Input bucket days and reason',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original
