@@ -246,3 +246,11 @@ class CanNotUseSearchPostCode(Exception):
 
     def __str__(self):
         return self.message
+
+
+class UserHasPreviouslyBeenBanned(Exception):
+    def __init__(self):
+        self.message = i18n.UserHasPreviouslyBeenBanned
+
+    def __str__(self):
+        return self.message

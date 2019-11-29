@@ -883,6 +883,18 @@ def load(inputLanguage):
         'Favourite Board List',
     ])
 
+    global bucket
+    bucket = SpecificLoad(inputLanguage, [
+        '水桶',
+        'Bucket',
+    ])
+
+    global UserHasPreviouslyBeenBanned
+    UserHasPreviouslyBeenBanned = SpecificLoad(inputLanguage, [
+        '使用者之前已被禁言',
+        'User has previously been banned',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original

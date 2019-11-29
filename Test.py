@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account.txt') as AccountFile:
+        with open('Account3.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -1112,6 +1112,15 @@ def GetFavouriteBoard():
         print(Buff)
 
 
+def Bucket():
+    PTTBot.bucket(
+        'give',
+        7,
+        'Bucket Reason',
+        'CodingMan'
+    )
+
+
 if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
@@ -1162,6 +1171,8 @@ if __name__ == '__main__':
         # GetBoardList()
         # ReplyPost()
         # GetFavouriteBoard()
+        Bucket()
+
 
         # SetBoardTitle()
         # MarkPost()
