@@ -181,7 +181,7 @@ class API(object):
                 try:
                     loop = asyncio.new_event_loop()
                     asyncio.set_event_loop(loop)
-                except:
+                except Exception as e:
                     pass
 
                 if self._Host == DataType.Host.PTT1:

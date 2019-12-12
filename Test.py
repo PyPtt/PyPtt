@@ -1171,7 +1171,7 @@ if __name__ == '__main__':
         # GetBoardList()
         # ReplyPost()
         # GetFavouriteBoard()
-        Bucket()
+        # Bucket()
 
 
         # SetBoardTitle()

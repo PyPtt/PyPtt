@@ -355,6 +355,8 @@ class Library:
         )
 
         if TargetList[index].getDisplayMsg() != i18n.LoginSuccess:
+            # OriScreen = self._ConnectCore.getScreenQueue()[-1]
+            # print(OriScreen)
             raise Exceptions.LoginError()
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
@@ -421,7 +423,6 @@ class Library:
         CmdList.append('g')
         CmdList.append(Command.Enter)
         CmdList.append('y')
-        CmdList.append(Command.Enter)
         CmdList.append(Command.Enter)
 
         Cmd = ''.join(CmdList)
