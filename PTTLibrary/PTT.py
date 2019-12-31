@@ -495,12 +495,16 @@ class Library:
             return None
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-
+        LineList = OriScreen.split('\n')
         pattern = re.compile('[\d]+:[\d][\d]')
-        Result = pattern.search(OriScreen)
 
-        if Result is not None:
-            return Result.group(0)
+        LineList = LineList[-3:]
+
+        for line in LineList:
+            if '星期' in line and '線上' in line and '我是' in line:
+                Result = pattern.search(line)
+                if Result is not None:
+                    return Result.group(0)
         return None
 
     def getPost(

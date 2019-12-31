@@ -722,7 +722,7 @@ def load(inputLanguage):
 
     global MultiThreadOperate
     MultiThreadOperate = SpecificLoad(inputLanguage, [
-        '請勿使用多核心同時操作一個 PTT Library 物件',
+        '請勿使用多線程同時操作一個 PTT Library 物件',
         'Do not use a multi-thread to operate a PTT Library object',
     ])
 
