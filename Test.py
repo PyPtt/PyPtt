@@ -120,18 +120,6 @@ def PerformanceTest():
     TestTime = 1000
     print(f'效能測試 getTime {TestTime} 次')
 
-    PTTBot = PTT.Library(
-        # ConnectMode=PTT.ConnectMode.WebSocket,
-        LogLevel=PTT.LogLevel.SLIENT,
-        # LogLevel=PTT.LogLevel.DEBUG,
-    )
-    try:
-        PTTBot.login(ID, Password, KickOtherLogin=True)
-    except PTT.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
-        sys.exit()
-    PTTBot.log('登入成功')
-
     StartTime = time.time()
     for _ in range(TestTime):
         PTT_TIME = PTTBot.getTime()
@@ -139,7 +127,7 @@ def PerformanceTest():
         if PTT_TIME is None:
             print('PTT_TIME is None')
             break
-        # print(PTT_TIME)
+        print(PTT_TIME)
     EndTime = time.time()
     PTTBot.logout()
     print('Performance Test WebSocket ' + str(
@@ -1134,7 +1122,6 @@ if __name__ == '__main__':
 
     try:
         # Loginout()
-        # PerformanceTest()
         # ThreadingTest()
 
         PTTBot = PTT.Library(
@@ -1152,6 +1139,8 @@ if __name__ == '__main__':
         except PTT.Exceptions.LoginError:
             PTTBot.log('登入失敗')
             sys.exit()
+
+        # PerformanceTest()
 
         # GetPost()
         # GetPostWithCondition()
