@@ -500,6 +500,8 @@ class Library:
 
         LineList = LineList[-3:]
 
+        # 0:00
+
         for line in LineList:
             if '星期' in line and '線上' in line and '我是' in line:
                 Result = pattern.search(line)
@@ -1015,6 +1017,12 @@ class Library:
 
         Cmd = Command.Enter * 2
         TargetList = [
+            # 待證實文章
+            ConnectCore.TargetUnit(
+                i18n.PostToBeConfirmed,
+                '本篇文章內容經站方授權之板務管理人員判斷有尚待證實之處',
+                Response=' '
+            ),
             ConnectCore.TargetUnit(
                 [
                     i18n.BrowsePost,
@@ -1040,7 +1048,7 @@ class Library:
                 BreakDetect=True,
                 LogLevel=Log.Level.DEBUG
             ),
-            # Animation
+            # 動畫文章
             ConnectCore.TargetUnit(
                 [
                     i18n.AnimationPost,
@@ -1073,7 +1081,7 @@ class Library:
         while True:
             index = self._ConnectCore.send(Cmd, TargetList)
 
-            if index == 2 or index == 3:
+            if index == 3 or index == 4:
                 Post = DataType.PostInfo(
                     Board=Board,
                     AID=PostAID,
@@ -1152,7 +1160,7 @@ class Library:
                     NewContentPart
                 )
 
-            if index == 0:
+            if index == 1:
                 if ContentStartJump and len(NewContentPart) == 0:
                     # print(f'!!!GetLineB {GetLineB}')
                     GetLineB += 1

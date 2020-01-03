@@ -183,6 +183,8 @@ def GetPost():
         # ('Gossiping', '1TZBBkWP'),
         # ('joke', '1Tc6G9eQ'),
         # ('Test', 575),
+        # 待證文章
+        # ('Test', 568),
 
         # PTT2
         # ('PttSuggest', 1),
@@ -1125,7 +1127,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
@@ -1142,7 +1144,7 @@ if __name__ == '__main__':
 
         # PerformanceTest()
 
-        # GetPost()
+        GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
