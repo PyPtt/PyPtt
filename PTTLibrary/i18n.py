@@ -901,6 +901,12 @@ def load(inputLanguage):
         'Input bucket days and reason',
     ])
 
+    global PostToBeConfirmed
+    PostToBeConfirmed = SpecificLoad(inputLanguage, [
+        '待證實文章',
+        'Post To Be Confirmed',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original
