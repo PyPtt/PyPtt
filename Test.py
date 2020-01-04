@@ -471,7 +471,7 @@ def detectNone(Name, Obj, Enable=True):
         raise ValueError(Name + ' is None')
 
 
-Query = False
+Query = True
 
 
 def crawlHandler(Post):
@@ -480,18 +480,21 @@ def crawlHandler(Post):
 
     if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
         if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-            print(f'[版主刪除][{Post.getAuthor()}]')
+            # print(f'[版主刪除][{Post.getAuthor()}]')
+            pass
         elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-            print(f'[作者刪除][{Post.getAuthor()}]')
+            # print(f'[作者刪除][{Post.getAuthor()}]')
+            pass
         elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
-            print(f'[不明刪除]')
+            # print(f'[不明刪除]')
+            pass
         return
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
     # print(f'[{Post.getAID()}][{Post.getAuthor()}][{Post.getTitle()}]')
     # print(f'[{Post.getContent()}]')
 
-    print(f'[{Post.getAuthor()}][{Post.getTitle()}]')
+    # print(f'[{Post.getAuthor()}][{Post.getTitle()}]')
 
     PushNumber = Post.getPushNumber()
     if PushNumber is not None:
@@ -527,10 +530,10 @@ def CrawlBoard():
     global Query
     TestBoardList = [
         # 'Test',
-        # 'Wanted',
+        'Wanted',
         'Gossiping',
-        # 'Stock',
-        # 'movie',
+        'Stock',
+        'movie',
         # 'C_Chat',
         # 'Baseball',
         # 'NBA',
@@ -545,10 +548,10 @@ def CrawlBoard():
     # CrawlType = PTT.IndexType.Web
     CrawlType = PTT.IndexType.BBS
 
-    Type = 'AID'
+    Type = 'Index'
 
-    TestRange = 100
-    TestRound = 1
+    TestRange = 5000
+    TestRound = 5
 
     for _ in range(TestRound):
 
@@ -558,7 +561,7 @@ def CrawlBoard():
 
                 if Type == 'Index':
                     NewestIndex = PTTBot.getNewestIndex(
-                        # PTT.IndexType.BBS,
+                        PTT.IndexType.BBS,
                         Board=TestBoard
                     )
                     StartIndex = NewestIndex - TestRange + 1
@@ -1127,7 +1130,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
@@ -1144,7 +1147,7 @@ if __name__ == '__main__':
 
         # PerformanceTest()
 
-        GetPost()
+        # GetPost()
         # GetPostWithCondition()
         # Post()
         # GetNewestIndex()
