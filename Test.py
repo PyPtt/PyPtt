@@ -1178,5 +1178,7 @@ if __name__ == '__main__':
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
+    except KeyboardInterrupt:
+        pass
 
     PTTBot.logout()

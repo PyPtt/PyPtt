@@ -248,6 +248,8 @@ class API(object):
         BreakDetectAfterSend = False
         BreakIndex = -1
         isSecret = Secret
+
+        UseTooManyRes = False
         while True:
 
             if Refresh and not Msg.endswith(Command.Refresh):
@@ -294,6 +296,7 @@ class API(object):
             Msg = ''
             ReceiveDataBuffer = bytes()
 
+            print(f'0 {UseTooManyRes}')
             StartTime = time.time()
             MidTime = time.time()
             while MidTime - StartTime < CurrentScreenTimeout:
@@ -304,6 +307,11 @@ class API(object):
                     ReceiveDataTemp = _WSRecvData
 
                 except websockets.exceptions.ConnectionClosed:
+                    print(f'0.1 {UseTooManyRes}')
+                    if UseTooManyRes:
+                        print(f'0.2 {UseTooManyRes}')
+                        raise Exceptions.UseTooManyResources()
+                    print(f'0.3 {UseTooManyRes}')
                     raise Exceptions.ConnectionClosed()
                 except websockets.exceptions.ConnectionClosedOK:
                     raise Exceptions.ConnectionClosed()
@@ -326,7 +334,10 @@ class API(object):
                             self._RDQ.add(Screen)
                             # self._ReceiveDataQueue.append(Screen)
                             if Target == self._UseTooManyResources:
-                                continue
+                                print('!!!!!!!!!!!!!!!')
+                                UseTooManyRes = True
+                                print(f'1 {UseTooManyRes}')
+                                break
                             Target.raiseException()
 
                         FindTarget = True
@@ -366,6 +377,12 @@ class API(object):
                             BreakIndex = TargetList.index(Target)
                             BreakDetectAfterSend = True
                         break
+                
+                print(f'2 {UseTooManyRes}')
+                if UseTooManyRes:
+                    print(f'3 {UseTooManyRes}')
+                    continue
+                print(f'4 {UseTooManyRes}')
 
                 if FindTarget:
                     break
