@@ -1115,10 +1115,19 @@ def Bucket():
 
 
 def SearchUser():
-    userlist = PTTBot.searchUser('abc', minpage=1, maxpage=3)
+    userlist = PTTBot.searchUser(
+        'abcd',
+        # minpage=1,
+        # maxpage=10
+    )
     # PushNumber = list(filter(None, PushNumber))
     print(userlist)
     print(len(userlist))
+
+    if 'abcd0800' in userlist:
+        print('exist')
+    else:
+        print('Not exist')
 
 
 if __name__ == '__main__':
@@ -1137,7 +1146,7 @@ if __name__ == '__main__':
         # ThreadingTest()
 
         PTTBot = PTT.Library(
-            LogLevel=PTT.LogLevel.TRACE,
+            # LogLevel=PTT.LogLevel.TRACE,
             # LogLevel=PTT.LogLevel.DEBUG,
             # Host=PTT.Host.PTT2
         )
@@ -1172,8 +1181,7 @@ if __name__ == '__main__':
         # GetBoardList()
         # ReplyPost()
         # GetFavouriteBoard()
-        SearchUser()
-
+        # SearchUser()
 
         # Bucket()
         # SetBoardTitle()
