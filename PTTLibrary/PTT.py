@@ -4125,6 +4125,109 @@ class Library:
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
+    def searchUser(self, target, minpage=None, maxpage=None):
+
+        self._OneThread()
+
+        if not self._LoginStatus:
+            raise Exceptions.RequireLogin(i18n.RequireLogin)
+
+        CheckValue.check(str, 'target', target)
+        if minpage is not None:
+            CheckValue.checkIndex(
+                'minpage',
+                minpage
+            )
+
+        if maxpage is not None:
+            CheckValue.checkIndex(
+                'maxpage',
+                maxpage
+            )
+
+        if minpage is not None and maxpage is not None:
+
+            CheckValue.checkIndexRange(
+                'minpage',
+                minpage,
+                'maxpage',
+                maxpage
+            )
+
+        CmdList = []
+        CmdList.append(Command.GoMainMenu)
+        CmdList.append('T')
+        CmdList.append(Command.Enter)
+        CmdList.append('Q')
+        CmdList.append(Command.Enter)
+        CmdList.append(target)
+
+        if minpage is not None:
+            temppage = minpage
+        else:
+            temppage = 1
+        CmdList.append(' ' * temppage)
+
+        Cmd = ''.join(CmdList)
+
+        TargetList = [
+            ConnectCore.TargetUnit(
+                i18n.AnyKeyContinue,
+                '任意鍵',
+                BreakDetect=True,
+            ),
+        ]
+
+        resultlist = []
+
+        while True:
+
+            self._ConnectCore.send(
+                Cmd,
+                TargetList
+            )
+
+            Log.log(
+                Log.Level.INFO,
+                i18n.Reading
+            )
+
+            OriScreen = self._ConnectCore.getScreenQueue()[-1]
+
+            # print(OriScreen)
+
+            OriScreen = OriScreen.split('\n')[3:-1]
+            OriScreen = '\n'.join(OriScreen)
+
+            templist = OriScreen.replace('\n', ' ')
+
+            while '  ' in templist:
+                templist = templist.replace('  ', ' ')
+
+            templist = templist.split(' ')
+            resultlist.extend(templist)
+
+            # print(friendlist)
+            # print(len(friendlist))
+
+            if len(templist) != 100 and len(templist) != 120:
+                break
+
+            if maxpage is not None:
+                temppage += 1
+                if temppage > maxpage:
+                    break
+            Cmd = f'{Cmd} '
+        
+        Log.log(
+            Log.Level.INFO,
+            i18n.ReadComplete
+        )
+
+        resultlist = list(filter(None, resultlist))
+
+        return resultlist
+
 
 if __name__ == '__main__':
 
