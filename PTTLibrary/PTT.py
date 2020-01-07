@@ -4161,14 +4161,15 @@ class Library:
         CmdList.append('Q')
         CmdList.append(Command.Enter)
         CmdList.append(target)
+        Cmd = ''.join(CmdList)
 
         if minpage is not None:
             temppage = minpage
         else:
             temppage = 1
-        CmdList.append(' ' * temppage)
 
-        Cmd = ''.join(CmdList)
+        appendstr = ' ' * temppage
+        cmdtemp = Cmd + appendstr
 
         TargetList = [
             ConnectCore.TargetUnit(
@@ -4183,18 +4184,16 @@ class Library:
         while True:
 
             self._ConnectCore.send(
-                Cmd,
+                cmdtemp,
                 TargetList
             )
+            OriScreen = self._ConnectCore.getScreenQueue()[-1]
+            # print(OriScreen)
 
             Log.log(
                 Log.Level.INFO,
                 i18n.Reading
             )
-
-            OriScreen = self._ConnectCore.getScreenQueue()[-1]
-
-            # print(OriScreen)
 
             OriScreen = OriScreen.split('\n')[3:-1]
             OriScreen = '\n'.join(OriScreen)
@@ -4207,22 +4206,45 @@ class Library:
             templist = templist.split(' ')
             resultlist.extend(templist)
 
-            # print(friendlist)
-            # print(len(friendlist))
+            # print(templist)
+            # print(len(templist))
 
             if len(templist) != 100 and len(templist) != 120:
                 break
 
+            temppage += 1
             if maxpage is not None:
-                temppage += 1
                 if temppage > maxpage:
                     break
-            Cmd = f'{Cmd} '
-        
+
+            cmdtemp = ' '
+
         Log.log(
             Log.Level.INFO,
             i18n.ReadComplete
         )
+
+        self._ConnectCore.send(
+            Command.Enter,
+            [
+                # 《ＩＤ暱稱》
+                ConnectCore.TargetUnit(
+                    '退出',
+                    '《ＩＤ暱稱》',
+                    Response=Command.Enter,
+                    LogLevel=Log.Level.DEBUG
+                ),
+                ConnectCore.TargetUnit(
+                    '退出',
+                    '查詢網友',
+                    BreakDetect=True,
+                    LogLevel=Log.Level.DEBUG
+                )
+            ]
+        )
+        # OriScreen = self._ConnectCore.getScreenQueue()[-1]
+
+        # print(OriScreen)
 
         resultlist = list(filter(None, resultlist))
 
