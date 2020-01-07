@@ -907,6 +907,18 @@ def load(inputLanguage):
         'Post To Be Confirmed',
     ])
 
+    global Reading
+    Reading = SpecificLoad(inputLanguage, [
+        '讀取中',
+        'Reading',
+    ])
+
+    global ReadComplete
+    ReadComplete = SpecificLoad(inputLanguage, [
+        f'讀取{Done}',
+        f'Read {Done}',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original
