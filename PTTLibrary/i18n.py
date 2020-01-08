@@ -901,8 +901,8 @@ def load(inputLanguage):
         'Input bucket days and reason',
     ])
 
-    global PostToBeConfirmed
-    PostToBeConfirmed = SpecificLoad(inputLanguage, [
+    global UnconfirmedPost
+    UnconfirmedPost = SpecificLoad(inputLanguage, [
         '待證實文章',
         'Post To Be Confirmed',
     ])

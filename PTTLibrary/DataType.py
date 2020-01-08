@@ -266,6 +266,7 @@ class PostInfo:
         PushNumber=None,
         Lock=False,
         OriginPost=None,
+        Unconfirmed=False
     ):
         self._Board = ParseParameter(str, Board)
         self._AID = ParseParameter(str, AID)
@@ -285,6 +286,7 @@ class PostInfo:
         self._PushNumber = ParseParameter(str, PushNumber)
         self._Lock = Lock
         self._OriginPost = ParseParameter(str, OriginPost)
+        self._Unconfirmed = ParseParameter(bool, Unconfirmed)
 
     def getBoard(self):
         return self._Board
@@ -339,6 +341,9 @@ class PostInfo:
 
     def getOriginPost(self):
         return self._OriginPost
+
+    def isUnconfirmed(self):
+        return self._Unconfirmed
 
 
 class WaterBallInfo:
@@ -409,9 +414,11 @@ class MarkType:
     DeleteD = 3
     # M 起來
     M = 4
+    # 待證實文章
+    Unconfirmed = 5
 
     MinValue = S
-    MaxValue = M
+    MaxValue = Unconfirmed
 
 
 class FavouriteBoard:
