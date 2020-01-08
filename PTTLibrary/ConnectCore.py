@@ -48,6 +48,7 @@ class TargetUnit(object):
         Exceptions=None,
         Refresh=True,
         Secret=False,
+        Handler=None
     ):
 
         self._DisplayMsg = DisplayMsg
@@ -62,6 +63,7 @@ class TargetUnit(object):
         self._Refresh = Refresh
         self._BreakAfterSend = BreakDetectAfterSend
         self._Secret = Secret
+        self._Handler = Handler
 
     def isMatch(self, Screen: str):
         if isinstance(self._DetectTarget, str):
@@ -329,6 +331,8 @@ class API(object):
 
                     Condition = Target.isMatch(Screen)
                     if Condition:
+                        if Target._Handler is not None:
+                            Target._Handler()
                         if len(Screen) > 0:
                             Screens.show(Screen)
                             self._RDQ.add(Screen)
