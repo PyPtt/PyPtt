@@ -4172,7 +4172,6 @@ class Library:
             )
 
         if minpage is not None and maxpage is not None:
-
             CheckValue.checkIndexRange(
                 'minpage',
                 minpage,
@@ -4214,36 +4213,45 @@ class Library:
                 TargetList
             )
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
-            # print(OriScreen)
-
             Log.log(
                 Log.Level.INFO,
                 i18n.Reading
             )
+            # print(OriScreen)
+            # print(len(OriScreen.split('\n')))
 
-            OriScreen = OriScreen.split('\n')[3:-1]
-            OriScreen = '\n'.join(OriScreen)
+            if len(OriScreen.split('\n')) == 2:
+                resultid = OriScreen.split('\n')[1]
+                resultid = resultid[resultid.find(' ') + 1:].strip()
+                # print(resultid)
 
-            templist = OriScreen.replace('\n', ' ')
-
-            while '  ' in templist:
-                templist = templist.replace('  ', ' ')
-
-            templist = templist.split(' ')
-            resultlist.extend(templist)
-
-            # print(templist)
-            # print(len(templist))
-
-            if len(templist) != 100 and len(templist) != 120:
+                resultlist.append(resultid)
                 break
+            else:
 
-            temppage += 1
-            if maxpage is not None:
-                if temppage > maxpage:
+                OriScreen = OriScreen.split('\n')[3:-1]
+                OriScreen = '\n'.join(OriScreen)
+
+                templist = OriScreen.replace('\n', ' ')
+
+                while '  ' in templist:
+                    templist = templist.replace('  ', ' ')
+
+                templist = templist.split(' ')
+                resultlist.extend(templist)
+
+                # print(templist)
+                # print(len(templist))
+
+                if len(templist) != 100 and len(templist) != 120:
                     break
 
-            cmdtemp = ' '
+                temppage += 1
+                if maxpage is not None:
+                    if temppage > maxpage:
+                        break
+
+                cmdtemp = ' '
 
         Log.log(
             Log.Level.INFO,
@@ -4255,22 +4263,19 @@ class Library:
             [
                 # 《ＩＤ暱稱》
                 ConnectCore.TargetUnit(
-                    '退出',
+                    i18n.QuitUserProfile,
                     '《ＩＤ暱稱》',
                     Response=Command.Enter,
-                    LogLevel=Log.Level.DEBUG
+                    # LogLevel=Log.Level.DEBUG
                 ),
                 ConnectCore.TargetUnit(
-                    '退出',
+                    i18n.Done,
                     '查詢網友',
                     BreakDetect=True,
-                    LogLevel=Log.Level.DEBUG
+                    # LogLevel=Log.Level.DEBUG
                 )
             ]
         )
-        # OriScreen = self._ConnectCore.getScreenQueue()[-1]
-
-        # print(OriScreen)
 
         resultlist = list(filter(None, resultlist))
 

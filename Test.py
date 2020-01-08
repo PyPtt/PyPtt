@@ -1125,11 +1125,11 @@ def Bucket():
 
 def SearchUser():
     userlist = PTTBot.searchUser(
-        'abc',
+        'abcd',
         # minpage=1,
         # maxpage=10
     )
-    # print(userlist)
+    print(userlist)
     print(len(userlist))
 
     # if 'abcd0800' in userlist:
@@ -1193,7 +1193,7 @@ if __name__ == '__main__':
 
         # Bucket()
         # SetBoardTitle()
-        MarkPost()
+        # MarkPost()
 
         # private test
         # getPostIndexTest()

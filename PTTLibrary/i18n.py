@@ -919,6 +919,12 @@ def load(inputLanguage):
         f'Read {Done}',
     ])
 
+    global QuitUserProfile
+    QuitUserProfile = SpecificLoad(inputLanguage, [
+        f'退出使用者檔案',
+        f'Quit User Profile',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original
