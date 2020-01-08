@@ -1018,13 +1018,19 @@ class Library:
             )
             return Post
 
+        self.Unconfirmed = False
+
+        def isUnconfirmedHandler():
+            self.Unconfirmed = True
+
         Cmd = Command.Enter * 2
         TargetList = [
             # 待證實文章
             ConnectCore.TargetUnit(
-                i18n.PostToBeConfirmed,
+                i18n.UnconfirmedPost,
                 '本篇文章內容經站方授權之板務管理人員判斷有尚待證實之處',
-                Response=' '
+                Response=' ',
+                Handler=isUnconfirmedHandler
             ),
             ConnectCore.TargetUnit(
                 [
@@ -1099,6 +1105,7 @@ class Library:
                     ControlCode=HasControlCode,
                     FormatCheck=False,
                     PushNumber=PushNumber,
+                    Unconfirmed=self.Unconfirmed,
                 )
                 return Post
 
@@ -1187,6 +1194,7 @@ class Library:
             else:
                 Cmd = Command.Right
 
+        # print(self.Unconfirmed)
         OriginPost = '\n'.join(OriginPost)
         # OriginPost = [line.strip() for line in OriginPost.split('\n')]
         # OriginPost = '\n'.join(OriginPost)
@@ -1258,6 +1266,7 @@ class Library:
                     Location=Location,
                     PushNumber=PushNumber,
                     OriginPost=OriginPost,
+                    Unconfirmed=self.Unconfirmed,
                 )
                 return Post
             PostAuthor = PatternResult.group(0)
@@ -1297,6 +1306,7 @@ class Library:
                 Location=Location,
                 PushNumber=PushNumber,
                 OriginPost=OriginPost,
+                Unconfirmed=self.Unconfirmed,
             )
             return Post
         PostTitle = PatternResult.group(0)
@@ -1334,6 +1344,7 @@ class Library:
                 Location=Location,
                 PushNumber=PushNumber,
                 OriginPost=OriginPost,
+                Unconfirmed=self.Unconfirmed,
             )
             return Post
         PostDate = PatternResult.group(0)
@@ -1394,6 +1405,7 @@ class Library:
                 Location=Location,
                 PushNumber=PushNumber,
                 OriginPost=OriginPost,
+                Unconfirmed=self.Unconfirmed,
             )
             return Post
 
@@ -1473,6 +1485,7 @@ class Library:
                     Location=Location,
                     PushNumber=PushNumber,
                     OriginPost=OriginPost,
+                    Unconfirmed=self.Unconfirmed,
                 )
                 return Post
         Log.showValue(Log.Level.DEBUG, 'IP', IP)
@@ -1580,6 +1593,7 @@ class Library:
             Location=Location,
             PushNumber=PushNumber,
             OriginPost=OriginPost,
+            Unconfirmed=self.Unconfirmed,
         )
         return Post
 
@@ -3877,6 +3891,16 @@ class Library:
             )
             CheckValue.checkIndex('PostIndex', PostIndex, MaxValue=NewestIndex)
 
+        if inputMarkType == DataType.MarkType.Unconfirmed:
+            # 批踢踢兔沒有待證文章功能 QQ
+            if Config.Host == DataType.Host.PTT2:
+                raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
+
+        self._checkBoard(
+            Board,
+            CheckModerator=True
+        )
+
         CmdList = []
         CmdList.append(Command.GoMainMenu)
         CmdList.append('qs')
@@ -3943,6 +3967,8 @@ class Library:
             CmdList.append(Command.Ctrl_D)
         elif inputMarkType == DataType.MarkType.M:
             CmdList.append('m')
+        elif inputMarkType == DataType.MarkType.Unconfirmed:
+            CmdList.append(Command.Ctrl_E + 'S')
 
         Cmd = ''.join(CmdList)
 

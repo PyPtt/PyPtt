@@ -184,7 +184,7 @@ def GetPost():
         # ('joke', '1Tc6G9eQ'),
         # ('Test', 575),
         # 待證文章
-        # ('Test', 568),
+        ('Test', '1U3pLzi0'),
 
         # PTT2
         # ('PttSuggest', 1),
@@ -251,6 +251,9 @@ def GetPost():
             show('Title', Post.getTitle())
             show('Money', Post.getMoney())
             show('URL', Post.getWebUrl())
+
+            if Post.isUnconfirmed():
+                print('待證實文章')
 
             if not Query:
                 show('Date', Post.getDate())
@@ -1027,32 +1030,38 @@ def SetBoardTitle():
 
 def MarkPost():
 
-    MarkType = PTT.MarkType.M
+    MarkType = PTT.MarkType.Unconfirmed
+
+    # PTTBot.markPost(
+    #     MarkType,
+    #     'CodingMan',
+    #     PostIndex=2
+    # )
+
+    # PTTBot.markPost(
+    #     MarkType,
+    #     'CodingMan',
+    #     PostIndex=3
+    # )
+
+    # PTTBot.markPost(
+    #     MarkType,
+    #     'CodingMan',
+    #     PostIndex=4
+    # )
+
+    # if MarkType == PTT.MarkType.D:
+    #     PTTBot.markPost(
+    #         PTT.MarkType.DeleteD,
+    #         'CodingMan',
+    #         PostIndex=4
+    #     )
 
     PTTBot.markPost(
         MarkType,
-        'CodingMan',
-        PostIndex=2
+        'give',
+        PostIndex=2000
     )
-
-    PTTBot.markPost(
-        MarkType,
-        'CodingMan',
-        PostIndex=3
-    )
-
-    PTTBot.markPost(
-        MarkType,
-        'CodingMan',
-        PostIndex=4
-    )
-
-    if MarkType == PTT.MarkType.D:
-        PTTBot.markPost(
-            PTT.MarkType.DeleteD,
-            'CodingMan',
-            PostIndex=4
-        )
 
 
 def getPostIndexTest():
@@ -1116,18 +1125,17 @@ def Bucket():
 
 def SearchUser():
     userlist = PTTBot.searchUser(
-        'abcd',
+        'abc',
         # minpage=1,
         # maxpage=10
     )
-    # PushNumber = list(filter(None, PushNumber))
-    print(userlist)
+    # print(userlist)
     print(len(userlist))
 
-    if 'abcd0800' in userlist:
-        print('exist')
-    else:
-        print('Not exist')
+    # if 'abcd0800' in userlist:
+    #     print('exist')
+    # else:
+    #     print('Not exist')
 
 
 if __name__ == '__main__':
@@ -1185,7 +1193,7 @@ if __name__ == '__main__':
 
         # Bucket()
         # SetBoardTitle()
-        # MarkPost()
+        MarkPost()
 
         # private test
         # getPostIndexTest()
