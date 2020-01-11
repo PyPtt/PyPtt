@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account3.txt') as AccountFile:
+        with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -729,7 +729,7 @@ def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        ('Test', 758),
+        ('Test', 804),
         # ('Wanted', '1Teyovc3')
     ]
 
