@@ -2345,11 +2345,12 @@ class Library:
                 i18n.NoInput
             ]))
 
-        NewestIndex = self._getNewestIndex(
-            DataType.IndexType.BBS,
-            Board=Board
-        )
-        CheckValue.checkIndex('PostIndex', PostIndex, NewestIndex)
+        if PostIndex != 0:
+            NewestIndex = self._getNewestIndex(
+                DataType.IndexType.BBS,
+                Board=Board
+            )
+            CheckValue.checkIndex('PostIndex', PostIndex, NewestIndex)
 
         self._checkBoard(Board)
 
