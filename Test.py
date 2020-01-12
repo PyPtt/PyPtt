@@ -427,7 +427,7 @@ def Post():
 
     Content = [
         '此為 PTT Library 貼文測試內容，如有打擾請告知。',
-        '程式碼: https://tinyurl.com/y2wuh8ck',
+        'github: https://tinyurl.com/umqff3v',
         '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual'
     ]
     Content = '\r\n\r\n'.join(Content)
@@ -872,7 +872,7 @@ def Mail():
         [
             '如有誤寄，對..對不起',
             'PTT Library 程式寄信測試內容',
-            '程式碼: https://tinyurl.com/y2wuh8ck'
+            'github: https://tinyurl.com/umqff3v'
         ]
     )
 
