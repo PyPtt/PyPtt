@@ -14,7 +14,7 @@
 #### 歡迎發起 pull request，提交你開發的 API
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
 #### 原始碼
-#### github: https://github.com/Truth0906/PTTLibrary
+#### github: https://github.com/PttCodingMan/PTTLibrary
 #### Pypi: https://pypi.org/project/PTTLibrary/
 
 ### 介紹影片 (感謝 NaeNPIANO 介紹)
