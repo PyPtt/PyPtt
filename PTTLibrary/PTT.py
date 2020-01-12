@@ -2300,7 +2300,11 @@ class Library:
                 Response=str(SignFile) + Command.Enter,
             ),
         ]
-        index = self._ConnectCore.send(Cmd, TargetList)
+        index = self._ConnectCore.send(
+            Cmd,
+            TargetList,
+            ScreenTimeout=Config.ScreenPostTimeOut
+        )
 
     def push(
         self,
@@ -3423,7 +3427,7 @@ class Library:
         self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            ScreenTimeout=Config.ScreenPostTimeOut
         )
 
         Log.showValue(
