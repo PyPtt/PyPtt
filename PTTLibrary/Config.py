@@ -22,6 +22,10 @@ RetryWaitTime = 3
 # 建議不要低於 10 秒，剔除其他登入最長可能會花費約六到七秒
 ScreenLongTimeOut = 10.0
 
+# ScreenPostTimeOut 秒後判定此畫面沒有可辨識的目標
+# 適用於貼文等待的情況，建議不要低於 10 秒
+ScreenPostTimeOut = 60.0
+
 # ScreenLTimeOut 秒後判定此畫面沒有可辨識的目標
 ScreenTimeOut = 3.0
 
