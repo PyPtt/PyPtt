@@ -71,7 +71,7 @@ class Library:
             try:
                 LogHandler(f'PTT Library v {Version}')
                 LogHandler('Developed by PTT CodingMan')
-            except:
+            except Exception:
                 LogHandler = None
                 setLogHandlerResult = False
         else:
