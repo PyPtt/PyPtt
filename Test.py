@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account2.txt') as AccountFile:
+        with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -964,26 +964,6 @@ def GetBoardList():
     print(f'總共有 {len(BoardList)} 個板名')
     print(f'總共有 {len(set(BoardList))} 個不重複板名')
 
-    ErrorList = []
-
-    TempStr = ''
-    for board in BoardList:
-        try:
-            BoardInfo = PTTBot.getBoardInfo(board)
-        except PTT.Exceptions.NoSuchBoard:
-            print(f'No Such Board {board}')
-            ErrorList.append(board)
-            continue
-
-        # print(f'{BoardInfo.getBoard()} {BoardInfo.getChineseDes()}')
-
-        TempStr = f'{TempStr}\n{BoardInfo.getBoard()} {BoardInfo.getChineseDes()}'
-
-    print(ErrorList)
-
-    with open('BoardList.txt', 'w', encoding='utf8') as f:
-        f.write(TempStr)
-
 
 def ReplyPost():
 
@@ -1214,7 +1194,7 @@ if __name__ == '__main__':
         # GiveMoney()
         # Mail()
         # HasNewMail()
-        GetBoardList()
+        # GetBoardList()
         # GetBoardInfo()
         # ReplyPost()
         # GetFavouriteBoard()
