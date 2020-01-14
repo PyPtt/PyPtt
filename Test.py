@@ -981,7 +981,7 @@ def GetBoardList():
 
     print(ErrorList)
 
-    with open('BoardList.txt', 'w') as f:
+    with open('BoardList.txt', 'w', encoding='utf8') as f:
         f.write(TempStr)
 
 
