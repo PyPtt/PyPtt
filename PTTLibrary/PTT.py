@@ -4327,16 +4327,19 @@ class Library:
         )
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        print(OriScreen)
+        # print(OriScreen)
         Nuser = OriScreen.split('\n')[2]
         # print(Nuser)
-        pattern = re.compile('[\d]+')
-        OnlineUser = pattern.search(Nuser).group(0)
-        Log.showValue(
-            Log.Level.DEBUG,
-            '人氣',
-            OnlineUser
-        )
+        if '[靜]' in Nuser:
+            OnlineUser = 0
+        else:
+            pattern = re.compile('[\d]+')
+            OnlineUser = pattern.search(Nuser).group(0)
+            Log.showValue(
+                Log.Level.DEBUG,
+                '人氣',
+                OnlineUser
+            )
 
         if not setting:
             return DataType.BoardInfo(Board, OnlineUser)
