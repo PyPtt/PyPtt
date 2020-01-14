@@ -435,3 +435,116 @@ class FavouriteBoard:
 
     def getBoardTitle(self):
         return self.BoardTitle
+
+
+class BoardInfo:
+    def __init__(
+        self,
+        Board,
+        OnlineUser,
+        ChineseDes=None,
+        Moderators=None,
+        OpenState=None,
+        IntoTopTenWhenHide=None,
+        NonBoardMembersPost=None,
+        ReplyPost=None,
+        SelfDelPost=None,
+        PushPost=None,
+        BooPost=None,
+        FastPush=None,
+        MinInterval=None,
+        PushRecordIP=None,
+        PushAligned=None,
+        ModeratorCanDelIllegalContent=None,
+        TranPostAutoRecordedAndRequirePostPermissions=None,
+        CoolMode=None,
+        Require18=None,
+        RequireLoginTime=None,
+        RequireIllegalPost=None,
+    ):
+        self.Board = ParseParameter(str, Board)
+        self.OnlineUser = ParseParameter(int, OnlineUser)
+        self.ChineseDes = ParseParameter(str, ChineseDes)
+        self.Moderators = ParseParameter(list, Moderators)
+        self.OpenState = ParseParameter(bool, OpenState)
+        self.IntoTopTenWhenHide = ParseParameter(bool, IntoTopTenWhenHide)
+        self.NonBoardMembersPost = ParseParameter(bool, NonBoardMembersPost)
+        self.ReplyPost = ParseParameter(bool, ReplyPost)
+        self.SelfDelPost = ParseParameter(bool, SelfDelPost)
+        self.PushPost = ParseParameter(bool, PushPost)
+        self.BooPost = ParseParameter(bool, BooPost)
+        self.FastPush = ParseParameter(bool, FastPush)
+        self.MinInterval = ParseParameter(int, MinInterval)
+        self.PushRecordIP = ParseParameter(bool, PushRecordIP)
+        self.PushAligned = ParseParameter(bool, PushAligned)
+        self.ModeratorCanDelIllegalContent = ParseParameter(
+            bool, ModeratorCanDelIllegalContent)
+        self.TranPostAutoRecordedAndRequirePostPermissions = ParseParameter(
+            bool, TranPostAutoRecordedAndRequirePostPermissions)
+        self.CoolMode = ParseParameter(bool, CoolMode)
+        self.Require18 = ParseParameter(bool, Require18)
+        self.RequireLoginTime = ParseParameter(int, RequireLoginTime)
+        self.RequireIllegalPost = ParseParameter(int, RequireIllegalPost)
+
+    def getBoard(self):
+        return self.Board
+
+    def getOnlineUser(self):
+        return self.OnlineUser
+
+    def getChineseDes(self):
+        return self.ChineseDes
+
+    def getModerators(self):
+        return self.Moderators
+
+    def isOpen(self):
+        return self.OpenState
+
+    def canIntoTopTenWhenHide(self):
+        return self.IntoTopTenWhenHide
+
+    def canNonBoardMembersPost(self):
+        return self.NonBoardMembersPost
+
+    def canReplyPost(self):
+        return self.ReplyPost
+
+    def canSelfDelPost(self):
+        return self.SelfDelPost
+
+    def canPushPost(self):
+        return self.PushPost
+
+    def canBooPost(self):
+        return self.BooPost
+
+    def canFastPush(self):
+        return self.FastPush
+
+    def getMinInterval(self):
+        return self.MinInterval
+
+    def isPushRecordIP(self):
+        return self.PushRecordIP
+
+    def isPushAligned(self):
+        return self.PushAligned
+
+    def canModeratorCanDelIllegalContent(self):
+        return self.ModeratorCanDelIllegalContent
+
+    def isTranPostAutoRecordedAndRequirePostPermissions(self):
+        return self.TranPostAutoRecordedAndRequirePostPermissions
+
+    def isCoolMode(self):
+        return self.CoolMode
+
+    def isRequire18(self):
+        return self.Require18
+
+    def getRequireLoginTime(self):
+        return self.RequireLoginTime
+
+    def getRequireIllegalPost(self):
+        return self.RequireIllegalPost
