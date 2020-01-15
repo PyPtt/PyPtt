@@ -3,10 +3,10 @@ cache: pip
 
 python:
   - '3.6'
+
 os:
   - linux
-  - osx
-  - windows
+
 install:
   - pip3 install PTTLibrary --upgrade
 
