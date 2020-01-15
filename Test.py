@@ -1160,7 +1160,7 @@ def GetBoardInfo():
               BoardInfo.isTranPostAutoRecordedAndRequirePostPermissions())
         print('是否為冷靜模式: ', BoardInfo.isCoolMode())
         print('是否需要滿十八歲才可進入: ', BoardInfo.isRequire18())
-        print('發文與推文限制需多少次以上: ', BoardInfo.getRequireLoginTime())
+        print('發文與推文限制登入次數需多少次以上: ', BoardInfo.getRequireLoginTime())
         print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.getRequireIllegalPost())
 
 
