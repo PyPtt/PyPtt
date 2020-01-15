@@ -1194,10 +1194,13 @@ if __name__ == '__main__':
 
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
-            print('CI test run success!!')
-            sys.exit()
 
-    ID, Password = getPW()
+            ID = os.getenv('PTTLibrary_ID')
+            Password = os.getenv('PTTLibrary_Password')
+            # print('CI test run success!!')
+            # sys.exit()
+    else:
+        ID, Password = getPW()
 
     try:
         # Loginout()
