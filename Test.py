@@ -1197,13 +1197,12 @@ if __name__ == '__main__':
     else:
         ID, Password = getPW()
 
-    try:
-        # Loginout()
-        # ThreadingTest()
-        if RunCI:
-            Init()
-        else:
-
+    if RunCI:
+        Init()
+    else:
+        try:
+            # Loginout()
+            # ThreadingTest()
             PTTBot = PTT.Library(
                 # LogLevel=PTT.LogLevel.TRACE,
                 # LogLevel=PTT.LogLevel.DEBUG,
@@ -1250,10 +1249,10 @@ if __name__ == '__main__':
             # private test
             # getPostIndexTest()
             # FullTest()
-    except Exception as e:
-        traceback.print_tb(e.__traceback__)
-        print(e)
-    except KeyboardInterrupt:
-        pass
+        except Exception as e:
+            traceback.print_tb(e.__traceback__)
+            print(e)
+        except KeyboardInterrupt:
+            pass
 
-    PTTBot.logout()
+        PTTBot.logout()
