@@ -2,7 +2,7 @@
 # PTT Library
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)
-[![Build Status](https://travis-ci.org/Truth0906/PTTLibrary.svg?branch=master)](https://travis-ci.org/Truth0906/PTTLibrary)
+[![Build Status](https://travis-ci.org/PttCodingMan/PTTLibrary.svg?branch=master)](https://travis-ci.org/PttCodingMan/PTTLibrary)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c52adb27e96f49d4841df3fb6fbe1d5e)](https://www.codacy.com/manual/PttCodingMan/PTTLibrary?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PTTLibrary&amp;utm_campaign=Badge_Grade)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
