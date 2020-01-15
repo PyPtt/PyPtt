@@ -3,12 +3,12 @@ cache: pip
 
 python:
   - '3.6'
+
 os:
   - linux
+
 install:
   - pip3 install PTTLibrary --upgrade
 
 script:
   - python3 Test.py -ci
-after_success:
-  - coveralls
