@@ -6,6 +6,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c52adb27e96f49d4841df3fb6fbe1d5e)](https://www.codacy.com/manual/PttCodingMan/PTTLibrary?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PTTLibrary&amp;utm_campaign=Badge_Grade)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
 #### PTT Library 是一套由 Python 所開發，用來操作 PTT 的函式庫。具備絕大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，都可以滿足你的需求。
 #### 採用快而穩的 WebSocket 連線模式，並同時支援繁體中文與英文顯示，在僅支援英文的作業系統也可以正常顯示。
@@ -51,8 +52,7 @@ pip install PTTLibrary
 #### 在這個 github 的小園地，用熱血的心為您打造在 PTT 翱翔的翅膀。
 #### 希望您可以贊助這雙翅膀，讓我們一起飛得更遠，
 ####
-#### Paypal
-#### [贊助連結](http://paypal.me/CodingMan)
+#### [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 ####
 #### XMR
 #### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
