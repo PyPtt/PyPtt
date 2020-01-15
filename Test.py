@@ -33,10 +33,6 @@ def Init():
     PTT.Library(Language=PTT.Language.Chinese)
     print('===英文顯示===')
     PTT.Library(Language=PTT.Language.English)
-    print('===Telnet===')
-    PTT.Library(ConnectMode=PTT.ConnectMode.Telnet)
-    print('===WebSocket===')
-    PTT.Library(ConnectMode=PTT.ConnectMode.WebSocket)
     print('===Log DEBUG===')
     PTT.Library(LogLevel=PTT.LogLevel.DEBUG)
     print('===Log INFO===')
@@ -53,7 +49,7 @@ def Init():
         print('通過')
     except:
         print('沒通過')
-        return
+        sys.exit(-1)
     print('===語言放字串===')
     try:
         PTT.Library(Language='PTT.Language.English')
@@ -61,7 +57,7 @@ def Init():
         print('通過')
     except:
         print('沒通過')
-        return
+        sys.exit(-1)
     # print('===Telnet===')
     # PTT.Library(ConnectMode=PTT.ConnectMode.Telnet)
     # print('===WebSocket===')
@@ -80,7 +76,6 @@ def Loginout():
     print('WebSocket 登入登出測試')
 
     PTTBot = PTT.Library(
-        ConnectMode=PTT.ConnectMode.WebSocket,
         LogLevel=PTT.LogLevel.DEBUG
     )
     try:
@@ -90,7 +85,7 @@ def Loginout():
                      )
     except PTT.Exceptions.LoginError:
         PTTBot.log('登入失敗')
-        sys.exit()
+        sys.exit(-1)
     PTTBot.log('登入成功')
     PTTBot.logout()
     PTTBot.log('登出成功')
@@ -1192,67 +1187,69 @@ if __name__ == '__main__':
     os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
 
+    RunCI = False
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
-
+            RunCI = True
             ID = os.getenv('PTTLibrary_ID')
             Password = os.getenv('PTTLibrary_Password')
-            # print('CI test run success!!')
-            # sys.exit()
+
     else:
         ID, Password = getPW()
 
     try:
         # Loginout()
         # ThreadingTest()
+        if RunCI:
+            Init()
+        else:
 
-        PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
-            # LogLevel=PTT.LogLevel.DEBUG,
-            # Host=PTT.Host.PTT2
-        )
-        try:
-            PTTBot.login(
-                ID,
-                Password,
-                # KickOtherLogin=True
+            PTTBot = PTT.Library(
+                # LogLevel=PTT.LogLevel.TRACE,
+                # LogLevel=PTT.LogLevel.DEBUG,
+                # Host=PTT.Host.PTT2
             )
-            pass
-        except PTT.Exceptions.LoginError:
-            PTTBot.log('登入失敗')
-            sys.exit()
+            try:
+                PTTBot.login(
+                    ID,
+                    Password,
+                    # KickOtherLogin=True
+                )
+                pass
+            except PTT.Exceptions.LoginError:
+                PTTBot.log('登入失敗')
+                sys.exit()
 
-        # PerformanceTest()
+            # PerformanceTest()
 
-        # GetPost()
-        # GetPostWithCondition()
-        # Post()
-        # GetNewestIndex()
-        # CrawlBoard()
-        # CrawlBoardWithCondition()
-        # Push()
-        # GetUser()
-        # ThrowWaterBall()
-        # GetWaterBall()
-        # WaterBall()
-        # CallStatus()
-        # GiveMoney()
-        # Mail()
-        # HasNewMail()
-        # GetBoardList()
-        # GetBoardInfo()
-        # ReplyPost()
-        # GetFavouriteBoard()
-        # SearchUser()
+            # GetPost()
+            # GetPostWithCondition()
+            # Post()
+            # GetNewestIndex()
+            # CrawlBoard()
+            # CrawlBoardWithCondition()
+            # Push()
+            # GetUser()
+            # ThrowWaterBall()
+            # GetWaterBall()
+            # WaterBall()
+            # CallStatus()
+            # GiveMoney()
+            # Mail()
+            # HasNewMail()
+            # GetBoardList()
+            # GetBoardInfo()
+            # ReplyPost()
+            # GetFavouriteBoard()
+            # SearchUser()
 
-        # Bucket()
-        # SetBoardTitle()
-        # MarkPost()
+            # Bucket()
+            # SetBoardTitle()
+            # MarkPost()
 
-        # private test
-        # getPostIndexTest()
-
-        # FullTest()
+            # private test
+            # getPostIndexTest()
+            # FullTest()
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
