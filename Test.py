@@ -1193,12 +1193,98 @@ if __name__ == '__main__':
             RunCI = True
             ID = os.getenv('PTTLibrary_ID')
             Password = os.getenv('PTTLibrary_Password')
-
+            if ID is None or Password is None:
+                print('從環境變數取得帳號密碼失敗')
+                ID, Password = getPW()
     else:
         ID, Password = getPW()
 
     if RunCI:
         Init()
+        PTTBot = PTT.Library()
+        try:
+            PTTBot.login(
+                ID,
+                Password,
+                # KickOtherLogin=True
+            )
+            pass
+        except PTT.Exceptions.LoginError:
+            PTTBot.log('登入失敗')
+            sys.exit(1)
+        # 基準測試
+
+        def showTestResult(board, IndexAID, result):
+            if result:
+                if isinstance(IndexAID, int):
+                    print(f'{board} index {IndexAID} 測試通過')
+                else:
+                    print(f'{board} AID {IndexAID} 測試通過')
+            else:
+                if isinstance(IndexAID, int):
+                    print(f'{board} index {IndexAID} 測試失敗')
+                else:
+                    print(f'{board} AID {IndexAID} 測試失敗')
+                    PTTBot.logout()
+                    sys.exit(1)
+
+        def GetPostTestFunc(board, IndexAID, checkStr, targetEx):
+            try:
+                if isinstance(IndexAID, int):
+                    Post = PTTBot.getPost(
+                        board,
+                        PostIndex=IndexAID,
+                    )
+                else:
+                    Post = PTTBot.getPost(
+                        board,
+                        PostAID=IndexAID,
+                    )
+            except Exception as e:
+                if isinstance(e, targetEx):
+                    showTestResult(board, IndexAID, True)
+                    return
+                showTestResult(board, IndexAID, False)
+
+                traceback.print_tb(e.__traceback__)
+                print(e)
+                sys.exit(1)
+
+            if checkStr is None and targetEx is None:
+                print(Post.getContent())
+
+            if checkStr not in Post.getContent():
+                sys.exit(1)
+
+            if isinstance(IndexAID, int):
+                print(f'{board} index {IndexAID} 測試通過')
+            else:
+                print(f'{board} AID {IndexAID} 測試通過')
+
+        TestPostList = [
+            ('Python', 1, '總算可以來想想板的走向了..XD', None),
+            ('NotExitBoard', 1, None, PTT.Exceptions.NoSuchBoard),
+            ('Python', '1TJH_XY0', '大家嗨，我是 CodingMan', None),
+            # 文章格式錯誤
+            # ('Steam', 4444),
+            # ('Baseball', 199787),
+            # ('Stock', 92324),
+            # ('Stock', '1TVnEivO'),
+            # 文章格式錯誤
+            # ('movie', 457),
+            # ('Gossiping', '1TU65Wi_'),
+            # ('Gossiping', '1TWadtnq'),
+            # ('Gossiping', '1TZBBkWP'),
+            # ('joke', '1Tc6G9eQ'),
+            # ('Test', 575),
+            # 待證文章
+            # ('Test', '1U3pLzi0'),
+        ]
+
+        for b, i, c, ex in TestPostList:
+            GetPostTestFunc(b, i, c, ex)
+
+        PTTBot.logout()
     else:
         try:
             # Loginout()
