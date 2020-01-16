@@ -82,7 +82,7 @@ class Library:
 
         self._LoginStatus = False
 
-        # Config.load()
+        Config.load()
 
         if not isinstance(Language, int):
             raise TypeError('[PTT Library] Language must be integer')
