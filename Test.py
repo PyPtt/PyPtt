@@ -1185,7 +1185,6 @@ def SearchUser():
 
 
 if __name__ == '__main__':
-    os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
 
     RunCI = False
@@ -1196,12 +1195,14 @@ if __name__ == '__main__':
             ID = os.getenv('PTTLibrary_ID')
             Password = os.getenv('PTTLibrary_Password')
             if ID is None or Password is None:
+                os.system('cls')
                 print('從環境變數取得帳號密碼失敗')
                 ID, Password = getPW()
                 TravisCI = False
             else:
                 TravisCI = True
     else:
+        os.system('cls')
         ID, Password = getPW()
 
     if RunCI:
@@ -1486,6 +1487,10 @@ PTT Library 程式貼文基準測試內文
                         Content, PostAID=BasicPostAID)
 
             Content = '貼文測試全部通過'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
+            Content = '自動化測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
 
