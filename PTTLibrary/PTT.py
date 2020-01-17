@@ -315,6 +315,11 @@ class Library:
             ),
             ConnectCore.TargetUnit(
                 i18n.PostNotFinish,
+                '請選擇暫存檔 (0-9)[0]',
+                Response=Command.Enter,
+            ),
+            ConnectCore.TargetUnit(
+                i18n.PostNotFinish,
                 '有一篇文章尚未完成',
                 Response='Q' + Command.Enter,
             ),
@@ -1623,33 +1628,8 @@ class Library:
             CmdList.append('qs')
             CmdList.append(Board)
             CmdList.append(Command.Enter)
-
-            Cmd = ''.join(CmdList)
-
-            TargetList = [
-                ConnectCore.TargetUnit(
-                    i18n.AnyKeyContinue,
-                    '任意鍵',
-                    Response=' ',
-                ),
-                ConnectCore.TargetUnit(
-                    [
-                        '動畫播放中',
-                    ],
-                    '互動式動畫播放中',
-                    Response=Command.Ctrl_C,
-                    LogLevel=Log.Level.DEBUG
-                ),
-                ConnectCore.TargetUnit(
-                    [
-                        i18n.Mark,
-                        i18n.Success,
-                    ],
-                    Screens.Target.InBoard,
-                    BreakDetect=True,
-                    LogLevel=Log.Level.DEBUG
-                ),
-            ]
+            CmdList.append(Command.Ctrl_C * 2)
+            CmdList.append(Command.Space)
 
             if SearchCondition is not None:
                 if SearchType == DataType.PostSearchType.Keyword:
@@ -1700,6 +1680,7 @@ class Library:
             index = self._ConnectCore.send(Cmd, TargetList)
             if index < 0:
                 # OriScreen = self._ConnectCore.getScreenQueue()[-1]
+                # print(OriScreen)
                 raise Exceptions.NoSuchBoard(Board)
 
             if index == 0:
@@ -1812,12 +1793,31 @@ class Library:
 
         Cmd = ''.join(CmdList)
 
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.NoPost,
-                '找不到這個文章代碼(AID)',
-                Exceptions=Exceptions.NoSuchPost(Board, AID)
-            ),
+        TargetList = []
+        if PostAID is not None:
+            NoSuchPost = i18n.NoSuchPost
+            NoSuchPost = i18n.replace(NoSuchPost, Board, AID)
+            TargetList.append(
+                ConnectCore.TargetUnit(
+                    NoSuchPost,
+                    '找不到這個文章代碼',
+                    LogLevel=Log.Level.DEBUG,
+                    Exceptions=Exceptions.NoSuchPost(Board, AID)
+                ),
+            )
+        else:
+            NoSuchPost = i18n.NoSuchPost
+            NoSuchPost = i18n.replace(NoSuchPost, Board, PostIndex)
+            TargetList.append(
+                ConnectCore.TargetUnit(
+                    NoSuchPost,
+                    '找不到這個文章代碼',
+                    LogLevel=Log.Level.DEBUG,
+                    Exceptions=Exceptions.NoSuchPost(Board, PostIndex)
+                ),
+            )
+
+        TargetList.extend([
             # 此狀態下無法使用搜尋文章代碼(AID)功能
             ConnectCore.TargetUnit(
                 i18n.CanNotUseSearchPostCodeF,
@@ -1845,16 +1845,21 @@ class Library:
                 i18n.NoSuchBoard,
                 Screens.Target.MainMenu_Exiting,
                 Exceptions=Exceptions.NoSuchBoard(Board)
+                # BreakDetect=True,
             ),
-        ]
+        ])
         index = self._ConnectCore.send(
             Cmd,
             TargetList
         )
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
         if index < 0:
-            print(OriScreen)
+            # print(OriScreen)
             raise Exceptions.NoSuchBoard(Board)
+
+        # if index == 5:
+        #     print(OriScreen)
+        #     raise Exceptions.NoSuchBoard(Board)
 
         # print(index)
         # print(OriScreen)
@@ -2432,14 +2437,39 @@ class Library:
 
         if PostAID is not None:
             CmdList.append('#' + PostAID)
+
         elif PostIndex != 0:
             CmdList.append(str(PostIndex))
         CmdList.append(Command.Enter)
-        CmdList.append(Command.Push)
+        # CmdList.append(Command.Push)
 
         Cmd = ''.join(CmdList)
 
-        TargetList = [
+        TargetList = []
+        if PostAID is not None:
+            NoSuchPost = i18n.NoSuchPost
+            NoSuchPost = i18n.replace(NoSuchPost, Board, PostAID)
+            TargetList.append(
+                ConnectCore.TargetUnit(
+                    NoSuchPost,
+                    '找不到這個文章代碼',
+                    LogLevel=Log.Level.DEBUG,
+                    Exceptions=Exceptions.NoSuchPost(Board, PostAID)
+                ),
+            )
+        else:
+            NoSuchPost = i18n.NoSuchPost
+            NoSuchPost = i18n.replace(NoSuchPost, Board, PostIndex)
+            TargetList.append(
+                ConnectCore.TargetUnit(
+                    NoSuchPost,
+                    '找不到這個文章代碼',
+                    LogLevel=Log.Level.DEBUG,
+                    Exceptions=Exceptions.NoSuchPost(Board, PostIndex)
+                ),
+            )
+
+        TargetList.extend([
             ConnectCore.TargetUnit(
                 i18n.HasPushPermission,
                 '您覺得這篇',
@@ -2480,7 +2510,17 @@ class Library:
                 BreakDetect=True,
                 Exceptions=Exceptions.NoPush()
             ),
-        ]
+            ConnectCore.TargetUnit(
+                i18n.Success,
+                Screens.Target.InBoard,
+                Response=Command.Push
+            ),
+            ConnectCore.TargetUnit(
+                i18n.Success,
+                Screens.Target.InBoardWithCursor,
+                Response=Command.Push
+            ),
+        ])
 
         index = self._ConnectCore.send(
             Cmd,
@@ -2496,7 +2536,7 @@ class Library:
 
         CmdList = []
 
-        if index == 0:
+        if index == 1:
             PushOptionLine = self._ConnectCore.getScreenQueue()[-1]
             PushOptionLine = PushOptionLine.split('\n')[-1]
             Log.showValue(Log.Level.DEBUG, 'Push option line', PushOptionLine)
