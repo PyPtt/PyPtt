@@ -1148,20 +1148,26 @@ class Library:
                 FirstPage = False
                 OriginPost.append(LastScreen)
             else:
-                # print(LastScreen)
-                # print(f'LastReadLineATemp [{LastReadLineATemp}]')
-                # print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
-                # print(f'ContentStartJump {ContentStartJump}')
-                # print(f'GetLineB {LastReadLineBTemp - LastReadLineB}')
-                # print(f'GetLineA {LastReadLineATemp - LastReadLineA}')
+                print(LastScreen)
+                print(f'LastReadLineATemp [{LastReadLineATemp}]')
+                print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
+                print(f'Dis [{LastReadLineBTemp - LastReadLineATemp}]')
+                print(f'ContentStartJump {ContentStartJump}')
+                print(f'GetLineB {LastReadLineBTemp - LastReadLineB}')
+                print(f'GetLineA {LastReadLineATemp - LastReadLineA}')
                 if not ControlCodeMode:
+                    GetLineA = LastReadLineATemp - LastReadLineA
                     GetLineB = LastReadLineBTemp - LastReadLineB
+                    
                     if GetLineB > 0:
                         # print('Type 1')
                         # print(f'GetLineB [{GetLineB}]')
-                        NewContentPart = '\n'.join(Lines[-GetLineB:])
+                        if LastReadLineBTemp - LastReadLineATemp >= 21:
+                            NewContentPart = '\n'.join(Lines[-GetLineB:])
+                        else:
+                            NewContentPart = '\n'.join(Lines[-(GetLineA + GetLineB):])
                     else:
-                        GetLineA = LastReadLineATemp - LastReadLineA
+                        # GetLineA = LastReadLineATemp - LastReadLineA
                         # print('Type 2')
                         # print(f'GetLineA [{GetLineA}]')
                         if GetLineA > 0:
