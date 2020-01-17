@@ -33,7 +33,7 @@ def SpecificLoad(inputLanguage, LangList):
 
 def replace(String, *args):
     for i in range(len(args)):
-        Target = args[i]
+        Target = str(args[i])
         String = String.replace('{Target' + str(i) + '}', Target)
     return String
 
