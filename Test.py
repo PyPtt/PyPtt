@@ -1507,7 +1507,7 @@ PTT Library 程式貼文基準測試內文
             # ThreadingTest()
             PTTBot = PTT.Library(
                 # LogLevel=PTT.LogLevel.TRACE,
-                # LogLevel=PTT.LogLevel.DEBUG,
+                LogLevel=PTT.LogLevel.DEBUG,
                 # Host=PTT.Host.PTT2
             )
             try:
@@ -1523,7 +1523,7 @@ PTT Library 程式貼文基準測試內文
 
             # PerformanceTest()
 
-            # GetPost()
+            GetPost()
             # GetPostWithCondition()
             # Post()
             # GetNewestIndex()
