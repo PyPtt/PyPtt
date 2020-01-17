@@ -1189,6 +1189,7 @@ if __name__ == '__main__':
     print('Welcome to PTT Library v ' + PTT.Version + ' test case')
 
     RunCI = False
+    TravisCI = False
     if len(sys.argv) == 2:
         if sys.argv[1] == '-ci':
             RunCI = True
@@ -1197,6 +1198,9 @@ if __name__ == '__main__':
             if ID is None or Password is None:
                 print('從環境變數取得帳號密碼失敗')
                 ID, Password = getPW()
+                TravisCI = False
+            else:
+                TravisCI = True
     else:
         ID, Password = getPW()
 
@@ -1324,6 +1328,14 @@ PTT Library 程式貼文基準測試內文
 
 この日本のベンチマーク
 '''
+            if TravisCI:
+                Content = '''
+此次測試由 Travis CI 啟動
+''' + Content
+            else:
+                Content = f'''
+此次測試由 {ID} 啟動
+''' + Content
             Content = Content.replace('\n', '\r\n')
 
             Board = 'Test'
