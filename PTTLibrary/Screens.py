@@ -182,16 +182,19 @@ def VT100(OriScreen: str, NoColor: bool = True):
 
     result = re.sub(r'[\x1B]', '=PTT=', result)
 
-    # print('=Start=' * 20)
-    # print(result)
-    # print('=End=' * 20)
+    # show = '奶油' in result
+    # if show:
+    #     print('=Start=' * 20)
+    #     print(result)
+    #     print('=End=' * 20)
 
     # result = '\n'.join(
     #     [x.rstrip() for x in result.split('\n')]
     # )
 
-    # while '=PTT=[H' in result:
-    #     result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
+    # 編輯文章時可能會有莫名的清空問題，需再注意
+    while '=PTT=[H' in result:
+        result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
     while '=PTT=[2J' in result:
         result = result[result.find('=PTT=[2J') + len('=PTT=[2J'):]
 
@@ -217,7 +220,8 @@ def VT100(OriScreen: str, NoColor: bool = True):
     # print(result)
     ResultList = re.findall('=PTT=\[(\d+);(\d+)H', result)
     for (Line, Space) in ResultList:
-        # print(f'>{Line}={Space}<')
+        # if show:
+        #     print(f'>{Line}={Space}<')
         Line = int(Line)
         Space = int(Space)
         CurrentLine = result[
@@ -331,8 +335,9 @@ def VT100(OriScreen: str, NoColor: bool = True):
 
     if LastPosition is not None:
         result = result.replace(LastPosition, '')
-
-    # print('-Final-' * 20)
-    # print(result)
-    # print('-Final-' * 20)
+    
+    # if show:
+    #     print('-Final-' * 20)
+    #     print(result)
+    #     print('-Final-' * 20)
     return result
