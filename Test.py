@@ -173,10 +173,10 @@ def GetPost():
         # ('Stock', '1TVnEivO'),
         # 文章格式錯誤
         # ('movie', 457),
-        ('Gossiping', '1TU65Wi_'),
+        # ('Gossiping', '1TU65Wi_'),
         # ('Gossiping', '1TWadtnq'),
         # ('Gossiping', '1TZBBkWP'),
-        # ('joke', '1Tc6G9eQ'),
+        ('joke', '1Tc6G9eQ'),
         # ('Test', 575),
         # 待證文章
         # ('Test', '1U3pLzi0'),
