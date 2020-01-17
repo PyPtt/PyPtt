@@ -1314,10 +1314,15 @@ if __name__ == '__main__':
             print('取得看板最新文章編號測試全部通過')
 
             Title = 'PTT Library 程式貼文基準測試標題'
-            Content = 'PTT Library 程式貼文基準測試內文'
+            Content = '''PTT Library 程式貼文基準測試內文
 
+この日本のベンチマーク
+'''
+            Content = Content.replace('\n', '\r\n')
+
+            Board = 'Test'
             PTTBot.post(
-                'Test',
+                Board,
                 Title,
                 Content,
                 1,
@@ -1326,28 +1331,69 @@ if __name__ == '__main__':
 
             Index = PTTBot.getNewestIndex(
                 PTT.IndexType.BBS,
-                Board='Test'
+                Board=Board
             )
 
             BasicPostAID = None
+            BasicPostIndex = 0
             for i in range(5):
 
                 Post = PTTBot.getPost(
-                    'Test',
+                    Board,
                     PostIndex=Index - i,
                 )
 
-                if ID in Post.getAuthor() and Content in Post.getContent() and\
+                if ID in Post.getAuthor() and 'PTT Library 程式貼文基準測試內文' in Post.getContent() and\
                    Title in Post.getTitle():
-                    BasicPostAID = Post.getAID()
-                    break
+                    print('使用文章編號取得基準文章成功')
+                    Post = PTTBot.getPost(
+                        Board,
+                        PostAID=Post.getAID(),
+                    )
+                    if ID in Post.getAuthor() and 'PTT Library 程式貼文基準測試內文' in Post.getContent() and\
+                       Title in Post.getTitle():
+                        print('使用文章代碼取得基準文章成功')
+                        BasicPostAID = Post.getAID()
+                        BasicPostIndex = Index - i
+                        break
 
             if BasicPostAID is None:
                 print('取得基準文章失敗')
                 sys.exit(1)
             print('取得基準文章成功')
+            print('貼文測試全部通過')
 
+            Content1 = '編號推文基準文字123'
+            PTTBot.push(Board, PTT.PushType.Push,
+                        Content1, PostIndex=BasicPostIndex)
 
+            Content2 = '代碼推文基準文字123'
+            PTTBot.push(Board, PTT.PushType.Push,
+                        Content2, PostAID=BasicPostAID)
+
+            Post = PTTBot.getPost(
+                Board,
+                PostAID=Post.getAID(),
+            )
+
+            Content1Check = False
+            Content2Check = False
+            for push in Post.getPushList():
+                if Content1 in push.getContent():
+                    Content1Check = True
+                if Content2 in push.getContent():
+                    Content2Check = True
+
+            if not Content1Check:
+                print('編號推文基準測試失敗')
+                sys.exit(1)
+            print('編號推文基準測試成功')
+            if not Content2Check:
+                print('代碼推文基準測試失敗')
+                sys.exit(1)
+            print('代碼推文基準測試成功')
+
+            print('推文基準測試全部通過')
 
         except Exception as e:
             traceback.print_tb(e.__traceback__)
