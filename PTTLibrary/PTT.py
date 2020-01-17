@@ -1148,9 +1148,12 @@ class Library:
                 FirstPage = False
                 OriginPost.append(LastScreen)
             else:
+                # print(LastScreen)
                 # print(f'LastReadLineATemp [{LastReadLineATemp}]')
                 # print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
                 # print(f'ContentStartJump {ContentStartJump}')
+                # print(f'GetLineB {LastReadLineBTemp - LastReadLineB}')
+                # print(f'GetLineA {LastReadLineATemp - LastReadLineA}')
                 if not ControlCodeMode:
                     GetLineB = LastReadLineBTemp - LastReadLineB
                     if GetLineB > 0:
