@@ -173,13 +173,13 @@ def GetPost():
         # ('Stock', '1TVnEivO'),
         # 文章格式錯誤
         # ('movie', 457),
-        # ('Gossiping', '1TU65Wi_'),
+        ('Gossiping', '1TU65Wi_'),
         # ('Gossiping', '1TWadtnq'),
         # ('Gossiping', '1TZBBkWP'),
         # ('joke', '1Tc6G9eQ'),
         # ('Test', 575),
         # 待證文章
-        ('Test', '1U3pLzi0'),
+        # ('Test', '1U3pLzi0'),
 
         # PTT2
         # ('PttSuggest', 1),
@@ -1228,7 +1228,7 @@ if __name__ == '__main__':
                     PTTBot.logout()
                     sys.exit(1)
 
-        def GetPostTestFunc(board, IndexAID, checkStr, targetEx):
+        def GetPostTestFunc(board, IndexAID, targetEx, checkformat, checkStr):
             try:
                 if isinstance(IndexAID, int):
                     Post = PTTBot.getPost(
@@ -1241,7 +1241,7 @@ if __name__ == '__main__':
                         PostAID=IndexAID,
                     )
             except Exception as e:
-                if isinstance(e, targetEx):
+                if targetEx is not None and isinstance(e, targetEx):
                     showTestResult(board, IndexAID, True)
                     return
                 showTestResult(board, IndexAID, False)
@@ -1250,10 +1250,14 @@ if __name__ == '__main__':
                 print(e)
                 sys.exit(1)
 
-            if checkStr is None and targetEx is None:
+            if checkStr is None and targetEx is None and not checkformat:
                 print(Post.getContent())
 
-            if checkStr not in Post.getContent():
+            if checkformat and not Post.isFormatCheck():
+                showTestResult(board, IndexAID, True)
+                return
+
+            if checkStr is not None and checkStr not in Post.getContent():
                 sys.exit(1)
 
             if isinstance(IndexAID, int):
@@ -1261,28 +1265,95 @@ if __name__ == '__main__':
             else:
                 print(f'{board} AID {IndexAID} 測試通過')
 
-        TestPostList = [
-            ('Python', 1, '總算可以來想想板的走向了..XD', None),
-            ('NotExitBoard', 1, None, PTT.Exceptions.NoSuchBoard),
-            ('Python', '1TJH_XY0', '大家嗨，我是 CodingMan', None),
-            # 文章格式錯誤
-            # ('Steam', 4444),
-            # ('Baseball', 199787),
-            # ('Stock', 92324),
-            # ('Stock', '1TVnEivO'),
-            # 文章格式錯誤
-            # ('movie', 457),
-            # ('Gossiping', '1TU65Wi_'),
-            # ('Gossiping', '1TWadtnq'),
-            # ('Gossiping', '1TZBBkWP'),
-            # ('joke', '1Tc6G9eQ'),
-            # ('Test', 575),
-            # 待證文章
-            # ('Test', '1U3pLzi0'),
-        ]
+        try:
 
-        for b, i, c, ex in TestPostList:
-            GetPostTestFunc(b, i, c, ex)
+            TestPostList = [
+                ('Python', 1, None, False, '總算可以來想想板的走向了..XD'),
+                ('NotExitBoard', 1, PTT.Exceptions.NoSuchBoard, False, None),
+                ('Python', '1TJH_XY0', None, False, '大家嗨，我是 CodingMan'),
+                # 文章格式錯誤
+                ('Steam', 4444, None, True, None),
+                # 文章格式錯誤
+                ('movie', 457, None, True, None),
+                ('Gossiping', '1TU65Wi_', None, False, None),
+                ('joke', '1Tc6G9eQ', None, False, None),
+                # 待證文章
+                ('Test', '1U3pLzi0', None, False, None),
+            ]
+
+            for b, i, ex, checkformat, c in TestPostList:
+                GetPostTestFunc(b, i, ex, checkformat, c)
+
+            print('取得文章測試全部通過')
+
+            TestBoardList = [
+                'Wanted',
+                'Gossiping',
+                'Test',
+                'Stock',
+                'movie'
+            ]
+
+            for Board in TestBoardList:
+                BasicIndex = 0
+                for _ in range(100):
+                    Index = PTTBot.getNewestIndex(
+                        PTT.IndexType.BBS,
+                        Board=Board
+                    )
+
+                    if BasicIndex == 0:
+                        print(f'{Board} 最新文章編號 {Index}')
+                        BasicIndex = Index
+                    elif abs(BasicIndex - Index) > 5:
+                        print(f'{Board} 最新文章編號 {Index}')
+                        print(f'BasicIndex {BasicIndex}')
+                        print(f'Index {Index}')
+                        print('取得看板最新文章編號測試失敗')
+                        sys.exit(1)
+            print('取得看板最新文章編號測試全部通過')
+
+            Title = 'PTT Library 程式貼文基準測試標題'
+            Content = 'PTT Library 程式貼文基準測試內文'
+
+            PTTBot.post(
+                'Test',
+                Title,
+                Content,
+                1,
+                1
+            )
+
+            Index = PTTBot.getNewestIndex(
+                PTT.IndexType.BBS,
+                Board='Test'
+            )
+
+            BasicPostAID = None
+            for i in range(5):
+
+                Post = PTTBot.getPost(
+                    'Test',
+                    PostIndex=Index - i,
+                )
+
+                if ID in Post.getAuthor() and Content in Post.getContent() and\
+                   Title in Post.getTitle():
+                    BasicPostAID = Post.getAID()
+                    break
+
+            if BasicPostAID is None:
+                print('取得基準文章失敗')
+                sys.exit(1)
+            print('取得基準文章成功')
+
+
+
+        except Exception as e:
+            traceback.print_tb(e.__traceback__)
+            print(e)
+        except KeyboardInterrupt:
+            pass
 
         PTTBot.logout()
     else:
