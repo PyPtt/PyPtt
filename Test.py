@@ -352,47 +352,41 @@ def GetPostWithCondition():
     Query = False
 
     for (Board, SearchType, Condition) in TestList:
-        try:
-            showCondition(Board, SearchType, Condition)
-            Index = PTTBot.getNewestIndex(
-                PTT.IndexType.BBS,
+        showCondition(Board, SearchType, Condition)
+        Index = PTTBot.getNewestIndex(
+            PTT.IndexType.BBS,
+            Board,
+            SearchType=SearchType,
+            SearchCondition=Condition,
+        )
+        print(f'{Board} 最新文章編號 {Index}')
+
+        for i in range(TestRange):
+            Post = PTTBot.getPost(
                 Board,
+                PostIndex=Index - i,
+                # PostIndex=611,
                 SearchType=SearchType,
                 SearchCondition=Condition,
+                Query=Query
             )
-            print(f'{Board} 最新文章編號 {Index}')
 
-            for i in range(TestRange):
-                Post = PTTBot.getPost(
-                    Board,
-                    PostIndex=Index - i,
-                    # PostIndex=611,
-                    SearchType=SearchType,
-                    SearchCondition=Condition,
-                    Query=Query
-                )
+            print('列表日期:')
+            print(Post.getListDate())
+            print('作者:')
+            print(Post.getAuthor())
+            print('標題:')
+            print(Post.getTitle())
 
-                print('列表日期:')
-                print(Post.getListDate())
-                print('作者:')
-                print(Post.getAuthor())
-                print('標題:')
-                print(Post.getTitle())
-
-                if Post.getDeleteStatus() == PTT.PostDeleteStatus.NotDeleted:
-                    if not Query:
-                        print('內文:')
-                        print(Post.getContent())
-                elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-                    print('文章被作者刪除')
-                elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-                    print('文章被版主刪除')
-                print('=' * 50)
-
-        except Exception as e:
-
-            traceback.print_tb(e.__traceback__)
-            print(e)
+            if Post.getDeleteStatus() == PTT.PostDeleteStatus.NotDeleted:
+                if not Query:
+                    print('內文:')
+                    print(Post.getContent())
+            elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+                print('文章被作者刪除')
+            elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+                print('文章被版主刪除')
+            print('=' * 50)
 
     # TestList = [
     #     ('Python', PTT.PostSearchType.Keyword, '[公告]')
@@ -724,18 +718,25 @@ def Push():
 
     TestPostList = [
         # ('Gossiping', 95693),
-        ('Test', 804),
+        # ('Test', 'QQQQQQ'),
+        ('Test', '1U8Li2Uj'),
         # ('Wanted', '1Teyovc3')
     ]
 
     Content = '''
 推文測試
 '''
-    for (Board, Index) in TestPostList:
-        if isinstance(Index, int):
-            PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
-        else:
-            PTTBot.push(Board, PTT.PushType.Push, Content, PostAID=Index)
+    # for (Board, Index) in TestPostList:
+    #     if isinstance(Index, int):
+    #         PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
+    #     else:
+    #         PTTBot.push(Board, PTT.PushType.Push, Content, PostAID=Index)
+
+    Index = PTTBot.getNewestIndex(
+        PTT.IndexType.BBS,
+        Board='Test'
+    )
+    PTTBot.push('Test', PTT.PushType.Push, Content, PostIndex=Index + 1)
 
 
 def ThrowWaterBall():
@@ -1201,7 +1202,9 @@ if __name__ == '__main__':
 
     if RunCI:
         Init()
-        PTTBot = PTT.Library()
+        PTTBot = PTT.Library(
+            # LogLevel=PTT.LogLevel.TRACE,
+        )
         try:
             PTTBot.login(
                 ID,
@@ -1314,7 +1317,10 @@ if __name__ == '__main__':
             print('取得看板最新文章編號測試全部通過')
 
             Title = 'PTT Library 程式貼文基準測試標題'
-            Content = '''PTT Library 程式貼文基準測試內文
+            Content = f'''
+PTT Library v {PTTBot.getVersion()}
+
+PTT Library 程式貼文基準測試內文
 
 この日本のベンチマーク
 '''
@@ -1363,6 +1369,24 @@ if __name__ == '__main__':
             print('取得基準文章成功')
             print('貼文測試全部通過')
 
+            try:
+                Content1 = '編號推文基準文字123'
+                PTTBot.push(Board, PTT.PushType.Push,
+                            Content1, PostAID='QQQQQQQ')
+            except PTT.Exceptions.NoSuchPost:
+                print('推文反向測試通過')
+
+            try:
+                Index = PTTBot.getNewestIndex(
+                    PTT.IndexType.BBS,
+                    Board=Board
+                )
+                Content1 = '編號推文基準文字123'
+                PTTBot.push(Board, PTT.PushType.Push,
+                            Content1, PostIndex=Index + 1)
+            except ValueError:
+                print('推文反向測試通過')
+
             Content1 = '編號推文基準文字123'
             PTTBot.push(Board, PTT.PushType.Push,
                         Content1, PostIndex=BasicPostIndex)
@@ -1393,7 +1417,65 @@ if __name__ == '__main__':
                 sys.exit(1)
             print('代碼推文基準測試成功')
 
-            print('推文基準測試全部通過')
+            Content = '推文基準測試全部通過'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
+            TestList = [
+                ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+                ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+                ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
+                ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
+                ('Gossiping', PTT.PostSearchType.Keyword, '普悠瑪'),
+            ]
+
+            TestRange = 1
+
+            for (Board, SearchType, Condition) in TestList:
+                showCondition(Board, SearchType, Condition)
+                Index = PTTBot.getNewestIndex(
+                    PTT.IndexType.BBS,
+                    Board,
+                    SearchType=SearchType,
+                    SearchCondition=Condition,
+                )
+                print(f'{Board} 最新文章編號 {Index}')
+
+                for i in range(TestRange):
+                    Post = PTTBot.getPost(
+                        Board,
+                        PostIndex=Index - i,
+                        SearchType=SearchType,
+                        SearchCondition=Condition,
+                        Query=False
+                    )
+
+                    print('列表日期:')
+                    print(Post.getListDate())
+                    print('作者:')
+                    print(Post.getAuthor())
+                    print('標題:')
+                    print(Post.getTitle())
+
+                    if Post.getDeleteStatus() == PTT.PostDeleteStatus.NotDeleted:
+                        if not Query:
+                            print('內文:')
+                            print(Post.getContent())
+                    elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+                        print('文章被作者刪除')
+                    elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+                        print('文章被版主刪除')
+                    print('=' * 50)
+
+            Board = 'Test'
+
+            Content = '取得文章測試全部通過'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
+            Content = '貼文測試全部通過'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
 
         except Exception as e:
             traceback.print_tb(e.__traceback__)
