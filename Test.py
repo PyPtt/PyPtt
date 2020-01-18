@@ -1612,7 +1612,7 @@ PTT Library 程式貼文基準測試內文
             # CrawlBoard()
             # CrawlBoardWithCondition()
             # Push()
-            GetUser()
+            # GetUser()
             # ThrowWaterBall()
             # GetWaterBall()
             # WaterBall()
