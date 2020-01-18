@@ -176,7 +176,8 @@ def GetPost():
         # ('Gossiping', '1TU65Wi_'),
         # ('Gossiping', '1TWadtnq'),
         # ('Gossiping', '1TZBBkWP'),
-        ('joke', '1Tc6G9eQ'),
+        # ('joke', '1Tc6G9eQ'),
+        # 135193
         # ('Test', 575),
         # 待證文章
         # ('Test', '1U3pLzi0'),
@@ -1304,7 +1305,7 @@ if __name__ == '__main__':
 
             for Board in TestBoardList:
                 BasicIndex = 0
-                for _ in range(100):
+                for _ in range(50):
                     Index = PTTBot.getNewestIndex(
                         PTT.IndexType.BBS,
                         Board=Board
@@ -1386,6 +1387,8 @@ PTT Library 程式貼文基準測試內文
                 Content1 = '編號推文基準文字123'
                 PTTBot.push(Board, PTT.PushType.Push,
                             Content1, PostAID='QQQQQQQ')
+                print('推文反向測試失敗')
+                sys.exit(1)
             except PTT.Exceptions.NoSuchPost:
                 print('推文反向測試通過')
 
@@ -1397,6 +1400,8 @@ PTT Library 程式貼文基準測試內文
                 Content1 = '編號推文基準文字123'
                 PTTBot.push(Board, PTT.PushType.Push,
                             Content1, PostIndex=Index + 1)
+                print('推文反向測試失敗')
+                sys.exit(1)
             except ValueError:
                 print('推文反向測試通過')
 
@@ -1490,6 +1495,51 @@ PTT Library 程式貼文基準測試內文
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
 
+            TestBoardList = [
+                'Wanted',
+                'joke',
+                'Gossiping',
+                'C_Chat'
+            ]
+
+            for testboard in TestBoardList:
+
+                NewestIndex = PTTBot.getNewestIndex(
+                    PTT.IndexType.BBS,
+                    Board=testboard
+                ) - 10000
+                # 到很久之前的文章去才不會撞到被刪掉的文章
+
+                ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                    crawlHandler,
+                    PTT.CrawlType.BBS,
+                    testboard,
+                    StartIndex=NewestIndex - 100 + 1,
+                    EndIndex=NewestIndex,
+                    Query=Query
+                )
+
+                StartPost = PTTBot.getPost(
+                    testboard,
+                    PostIndex=NewestIndex - 100 + 1,
+                )
+                EndPost = PTTBot.getPost(
+                    testboard,
+                    PostIndex=NewestIndex,
+                )
+
+                ErrorPostList, DelPostList = PTTBot.crawlBoard(
+                    crawlHandler,
+                    PTT.CrawlType.BBS,
+                    testboard,
+                    StartAID=StartPost.getAID(),
+                    EndAID=EndPost.getAID()
+                )
+            
+            Content = '爬板測試全部完成'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
             Content = '自動化測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
@@ -1523,11 +1573,11 @@ PTT Library 程式貼文基準測試內文
 
             # PerformanceTest()
 
-            GetPost()
+            # GetPost()
             # GetPostWithCondition()
             # Post()
             # GetNewestIndex()
-            # CrawlBoard()
+            CrawlBoard()
             # CrawlBoardWithCondition()
             # Push()
             # GetUser()
