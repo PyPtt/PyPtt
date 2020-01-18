@@ -1505,7 +1505,9 @@ PTT Library 程式貼文基準測試內文
                 'Gossiping',
                 'C_Chat'
             ]
-
+            
+            # 改成 20 篇，不然 100 篇太耗時間了
+            Range = 20
             for testboard in TestBoardList:
 
                 NewestIndex = PTTBot.getNewestIndex(
@@ -1518,14 +1520,14 @@ PTT Library 程式貼文基準測試內文
                     crawlHandler,
                     PTT.CrawlType.BBS,
                     testboard,
-                    StartIndex=NewestIndex - 100 + 1,
+                    StartIndex=NewestIndex - Range + 1,
                     EndIndex=NewestIndex,
                     Query=Query
                 )
 
                 StartPost = PTTBot.getPost(
                     testboard,
-                    PostIndex=NewestIndex - 100 + 1,
+                    PostIndex=NewestIndex - Range + 1,
                 )
                 EndPost = PTTBot.getPost(
                     testboard,
