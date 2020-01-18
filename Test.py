@@ -720,24 +720,26 @@ def Push():
     TestPostList = [
         # ('Gossiping', 95693),
         # ('Test', 'QQQQQQ'),
-        ('Test', '1U8Li2Uj'),
+        # ('Test', 637),
         # ('Wanted', '1Teyovc3')
     ]
 
     Content = '''
 推文測試
 '''
-    # for (Board, Index) in TestPostList:
-    #     if isinstance(Index, int):
-    #         PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
-    #     else:
-    #         PTTBot.push(Board, PTT.PushType.Push, Content, PostAID=Index)
+    testround = 10
+    for (Board, Index) in TestPostList:
+        for _ in range(testround):
+            if isinstance(Index, int):
+                PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
+            else:
+                PTTBot.push(Board, PTT.PushType.Push, Content, PostAID=Index)
 
-    Index = PTTBot.getNewestIndex(
-        PTT.IndexType.BBS,
-        Board='Test'
-    )
-    PTTBot.push('Test', PTT.PushType.Push, Content, PostIndex=Index + 1)
+    # Index = PTTBot.getNewestIndex(
+    #     PTT.IndexType.BBS,
+    #     Board='Test'
+    # )
+    # PTTBot.push('Test', PTT.PushType.Push, Content, PostIndex=Index + 1)
 
 
 def ThrowWaterBall():
@@ -1591,7 +1593,7 @@ PTT Library 程式貼文基準測試內文
             # ThreadingTest()
             PTTBot = PTT.Library(
                 # LogLevel=PTT.LogLevel.TRACE,
-                LogLevel=PTT.LogLevel.DEBUG,
+                # LogLevel=PTT.LogLevel.DEBUG,
                 # Host=PTT.Host.PTT2
             )
             try:
