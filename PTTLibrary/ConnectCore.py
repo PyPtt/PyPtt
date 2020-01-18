@@ -138,8 +138,9 @@ class ReceiveDataQueue(object):
 
 
 class API(object):
-    def __init__(self, Host: int):
+    def __init__(self, Config, Host: int):
 
+        self.Config = Config
         self._Host = Host
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
@@ -158,14 +159,14 @@ class API(object):
 
     def connect(self):
         def _wait():
-            for i in range(Config.RetryWaitTime):
+            for i in range(self.Config.RetryWaitTime):
                 Log.showValue(Log.Level.INFO, [
                     i18n.Prepare,
                     i18n.Again,
                     i18n.Connect,
                     i18n.PTT,
                 ],
-                    str(Config.RetryWaitTime - i)
+                    str(self.Config.RetryWaitTime - i)
                 )
                 time.sleep(1)
 
@@ -243,7 +244,7 @@ class API(object):
             TargetList.append(self._UseTooManyResources)
 
         if ScreenTimeout == 0:
-            CurrentScreenTimeout = Config.ScreenTimeOut
+            CurrentScreenTimeout = self.Config.ScreenTimeOut
         else:
             CurrentScreenTimeout = ScreenTimeout
 
@@ -381,7 +382,7 @@ class API(object):
                             BreakIndex = TargetList.index(Target)
                             BreakDetectAfterSend = True
                         break
-                
+
                 # print(f'2 {UseTooManyRes}')
                 if UseTooManyRes:
                     # print(f'3 {UseTooManyRes}')
