@@ -1484,6 +1484,10 @@ PTT Library 程式貼文基準測試內文
                     elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
                         print('文章被版主刪除')
                     print('=' * 50)
+                
+                Content = f'{Board} 取得文章測試完成'
+                PTTBot.push('Test', PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
 
             Board = 'Test'
 
@@ -1535,10 +1539,38 @@ PTT Library 程式貼文基準測試內文
                     StartAID=StartPost.getAID(),
                     EndAID=EndPost.getAID()
                 )
+                Content = f'{testboard} 爬板測試完成'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
             
             Content = '爬板測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
+
+            User = PTTBot.getUser(ID)
+            if User is None:
+                print('取得使用者測試失敗')
+                sys.exit(1)
+
+            PTTBot.log('使用者ID: ' + User.getID())
+            PTTBot.log('使用者經濟狀況: ' + str(User.getMoney()))
+            PTTBot.log('登入次數: ' + str(User.getLoginTime()))
+            PTTBot.log('有效文章數: ' + str(User.getLegalPost()))
+            PTTBot.log('退文文章數: ' + str(User.getIllegalPost()))
+            PTTBot.log('目前動態: ' + User.getState())
+            PTTBot.log('信箱狀態: ' + User.getMail())
+            PTTBot.log('最後登入時間: ' + User.getLastLogin())
+            PTTBot.log('上次故鄉: ' + User.getLastIP())
+            PTTBot.log('五子棋戰績: ' + User.getFiveChess())
+            PTTBot.log('象棋戰績:' + User.getChess())
+            PTTBot.log('簽名檔:' + User.getSignatureFile())
+
+            try:
+                User = PTTBot.getUser('sdjfklsdj')
+                print('取得使用者反向測試失敗')
+                sys.exit(1)
+            except PTT.Exceptions.NoSuchUser:
+                print('取得使用者反向測試通過')
 
             Content = '自動化測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
@@ -1577,10 +1609,10 @@ PTT Library 程式貼文基準測試內文
             # GetPostWithCondition()
             # Post()
             # GetNewestIndex()
-            CrawlBoard()
+            # CrawlBoard()
             # CrawlBoardWithCondition()
             # Push()
-            # GetUser()
+            GetUser()
             # ThrowWaterBall()
             # GetWaterBall()
             # WaterBall()
