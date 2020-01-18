@@ -2457,39 +2457,14 @@ class Library:
 
         if PostAID is not None:
             CmdList.append('#' + PostAID)
-
         elif PostIndex != 0:
             CmdList.append(str(PostIndex))
         CmdList.append(Command.Enter)
-        # CmdList.append(Command.Push)
+        CmdList.append(Command.Push)
 
         Cmd = ''.join(CmdList)
 
-        TargetList = []
-        if PostAID is not None:
-            NoSuchPost = i18n.NoSuchPost
-            NoSuchPost = i18n.replace(NoSuchPost, Board, PostAID)
-            TargetList.append(
-                ConnectCore.TargetUnit(
-                    NoSuchPost,
-                    '找不到這個文章代碼',
-                    LogLevel=Log.Level.DEBUG,
-                    Exceptions=Exceptions.NoSuchPost(Board, PostAID)
-                ),
-            )
-        else:
-            NoSuchPost = i18n.NoSuchPost
-            NoSuchPost = i18n.replace(NoSuchPost, Board, PostIndex)
-            TargetList.append(
-                ConnectCore.TargetUnit(
-                    NoSuchPost,
-                    '找不到這個文章代碼',
-                    LogLevel=Log.Level.DEBUG,
-                    Exceptions=Exceptions.NoSuchPost(Board, PostIndex)
-                ),
-            )
-
-        TargetList.extend([
+        TargetList = [
             ConnectCore.TargetUnit(
                 i18n.HasPushPermission,
                 '您覺得這篇',
@@ -2530,25 +2505,18 @@ class Library:
                 BreakDetect=True,
                 Exceptions=Exceptions.NoPush()
             ),
-            ConnectCore.TargetUnit(
-                i18n.Success,
-                Screens.Target.InBoard,
-                Response=Command.Push
-            ),
-            ConnectCore.TargetUnit(
-                i18n.Success,
-                Screens.Target.InBoardWithCursor,
-                Response=Command.Push
-            ),
-        ])
+        ]
 
         index = self._ConnectCore.send(
             Cmd,
             TargetList
         )
 
-        # print(index)
-        # print(self._ConnectCore.getScreenQueue()[-1].split('\n')[-1])
+        if index == -1:
+            if PostAID is not None:
+                raise Exceptions.NoSuchPost(Board, PostAID)
+            else:
+                raise Exceptions.NoSuchPost(Board, PostIndex)
 
         EnablePush = False
         EnableBoo = False
@@ -2556,7 +2524,7 @@ class Library:
 
         CmdList = []
 
-        if index == 1:
+        if index == 0:
             PushOptionLine = self._ConnectCore.getScreenQueue()[-1]
             PushOptionLine = PushOptionLine.split('\n')[-1]
             Log.showValue(Log.Level.DEBUG, 'Push option line', PushOptionLine)
