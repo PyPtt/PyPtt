@@ -1092,6 +1092,8 @@ class Library:
 
         FirstPage = True
         OriginPost = []
+        StopDict = dict()
+
         while True:
             index = self._ConnectCore.send(Cmd, TargetList)
 
@@ -1148,32 +1150,36 @@ class Library:
                 FirstPage = False
                 OriginPost.append(LastScreen)
             else:
-                print(LastScreen)
-                print(f'LastReadLineATemp [{LastReadLineATemp}]')
-                print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
-                print(f'Dis [{LastReadLineBTemp - LastReadLineATemp}]')
-                print(f'ContentStartJump {ContentStartJump}')
-                print(f'GetLineB {LastReadLineBTemp - LastReadLineB}')
-                print(f'GetLineA {LastReadLineATemp - LastReadLineA}')
+                # print(LastScreen)
+                # print(f'LastReadLineATemp [{LastReadLineATemp}]')
+                # print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
+                # print(f'Dis [{23 - (LastReadLineBTemp - LastReadLineATemp)}]')
+                # print(f'ContentStartJump {ContentStartJump}')
+                # print(f'GetLineB {LastReadLineBTemp - LastReadLineB}')
+                # print(f'GetLineA {LastReadLineATemp - LastReadLineA}')
                 if not ControlCodeMode:
-                    GetLineA = LastReadLineATemp - LastReadLineA
-                    GetLineB = LastReadLineBTemp - LastReadLineB
-                    
-                    if GetLineB > 0:
-                        # print('Type 1')
-                        # print(f'GetLineB [{GetLineB}]')
-                        if LastReadLineBTemp - LastReadLineATemp >= 21:
+
+                    if LastReadLineATemp in StopDict:
+                        NewContentPart = '\n'.join(Lines[-StopDict[LastReadLineATemp]:])
+                    else:
+                        GetLineB = LastReadLineBTemp - LastReadLineB
+                        if GetLineB > 0:
+                            # print('Type 1')
+                            # print(f'GetLineB [{GetLineB}]')
                             NewContentPart = '\n'.join(Lines[-GetLineB:])
                         else:
-                            NewContentPart = '\n'.join(Lines[-(GetLineA + GetLineB):])
-                    else:
-                        # GetLineA = LastReadLineATemp - LastReadLineA
-                        # print('Type 2')
-                        # print(f'GetLineA [{GetLineA}]')
-                        if GetLineA > 0:
-                            NewContentPart = '\n'.join(Lines[-GetLineA:])
-                        else:
-                            NewContentPart = '\n'.join(Lines)
+                            # 駐足現象，LastReadLineB跟上一次相比並沒有改變
+                            if (LastReadLineBTemp + 1) not in StopDict:
+                                StopDict[LastReadLineBTemp + 1] = 1
+                            StopDict[LastReadLineBTemp + 1] += 1
+
+                            GetLineA = LastReadLineATemp - LastReadLineA
+
+                            if GetLineA > 0:
+                                NewContentPart = '\n'.join(Lines[-GetLineA:])
+                            else:
+                                NewContentPart = '\n'.join(Lines)
+
                 else:
                     NewContentPart = Lines[-1]
 
