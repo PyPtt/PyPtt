@@ -1,13 +1,13 @@
 import sys
 import re
 try:
-    from . import Config
     from . import Util
     from . import Log
 except ModuleNotFoundError:
-    import Config
     import Util
     import Log
+
+Config = None
 
 
 class Target(object):

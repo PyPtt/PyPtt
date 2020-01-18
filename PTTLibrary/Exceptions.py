@@ -1,12 +1,12 @@
 
 try:
     from . import DataType
-    from . import Config
     from . import i18n
 except ModuleNotFoundError:
     import DataType
-    import Config
     import i18n
+
+Config = None
 
 
 class Error(Exception):

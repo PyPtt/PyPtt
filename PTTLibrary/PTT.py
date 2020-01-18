@@ -18,6 +18,7 @@ try:
     from . import Exceptions
     from . import Command
     from . import CheckValue
+    from . import Ver
 except ModuleNotFoundError:
     import DataType
     import Config
@@ -29,9 +30,10 @@ except ModuleNotFoundError:
     import Exceptions
     import Command
     import CheckValue
+    import Ver
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-Version = Config.Version
+Version = Ver.V
 
 Language = i18n.Language
 ConnectMode = ConnectCore.ConnectMode
@@ -82,7 +84,10 @@ class Library:
 
         self._LoginStatus = False
 
-        Config.load()
+        self.Config = Config.Config()
+        Exceptions.Config = self.Config
+        Log.Config = self.Config
+        Screens.Config = self.Config
 
         if not isinstance(Language, int):
             raise TypeError('[PTT Library] Language must be integer')
@@ -98,23 +103,23 @@ class Library:
             raise TypeError('[PTT Library] Host must be integer')
 
         if ScreenTimeOut != 0:
-            Config.ScreenTimeOut = ScreenTimeOut
+            self.Config.ScreenTimeOut = ScreenTimeOut
         if ScreenLongTimeOut != 0:
-            Config.ScreenLongTimeOut = ScreenLongTimeOut
+            self.Config.ScreenLongTimeOut = ScreenLongTimeOut
 
         if LogLevel == 0:
-            LogLevel = Config.LogLevel
+            LogLevel = self.Config.LogLevel
         elif not Util.checkRange(Log.Level, LogLevel):
             raise ValueError('[PTT Library] Unknow LogLevel', LogLevel)
         else:
-            Config.LogLevel = LogLevel
+            self.Config.LogLevel = LogLevel
 
         if Language == 0:
-            Language = Config.Language
+            Language = self.Config.Language
         elif not Util.checkRange(i18n.Language, Language):
             raise ValueError('[PTT Library] Unknow language', Language)
         else:
-            Config.Language = Language
+            self.Config.Language = Language
         i18n.load(Language)
 
         if LogHandler is not None:
@@ -150,17 +155,17 @@ class Library:
             )
 
         if ConnectMode == 0:
-            ConnectMode = Config.ConnectMode
+            ConnectMode = self.Config.ConnectMode
         elif not Util.checkRange(ConnectCore.ConnectMode, ConnectMode):
             raise ValueError('[PTT Library] Unknow ConnectMode', ConnectMode)
         else:
-            Config.ConnectMode = ConnectMode
+            self.Config.ConnectMode = ConnectMode
 
         if Host == 0:
-            Host = Config.Host
+            Host = self.Config.Host
         elif not Util.checkRange(DataType.Host, Host):
             raise ValueError('[PTT Library] Unknow Host', Host)
-        Config.Host = Host
+        self.Config.Host = Host
 
         if Host == DataType.Host.PTT1:
             Log.showValue(
@@ -181,7 +186,7 @@ class Library:
                 i18n.PTT2
             )
 
-        self._ConnectCore = ConnectCore.API(Host)
+        self._ConnectCore = ConnectCore.API(self.Config, Host)
         self._ExistBoardList = []
         self._ModeratorList = dict()
         self._LastThroWaterBallTime = 0
@@ -220,7 +225,7 @@ class Library:
 
     def getVersion(self) -> str:
         self._OneThread()
-        return Config.Version
+        return self.Config.Version
 
     def _login(
         self,
@@ -236,15 +241,15 @@ class Library:
         CheckValue.check(str, 'Password', Password)
         CheckValue.check(bool, 'KickOtherLogin', KickOtherLogin)
 
-        Config.KickOtherLogin = KickOtherLogin
+        self.Config.KickOtherLogin = KickOtherLogin
 
         def KickOtherLoginDisplayMsg():
-            if Config.KickOtherLogin:
+            if self.Config.KickOtherLogin:
                 return i18n.KickOtherLogin
             return i18n.NotKickOtherLogin
 
         def KickOtherLoginResponse(Screen):
-            if Config.KickOtherLogin:
+            if self.Config.KickOtherLogin:
                 return 'y' + Command.Enter
             return 'n' + Command.Enter
 
@@ -266,7 +271,7 @@ class Library:
             ID
         )
 
-        Config.KickOtherLogin = KickOtherLogin
+        self.Config.KickOtherLogin = KickOtherLogin
 
         self._ConnectCore.connect()
 
@@ -354,7 +359,7 @@ class Library:
         index = self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut,
+            ScreenTimeout=self.Config.ScreenLongTimeOut,
             Refresh=False,
             Secret=True
         )
@@ -1481,7 +1486,7 @@ class Library:
                 IP = IP.replace('-', '.')
                 # print(f'IP -> [{IP}]')
                 break
-        if Config.Host == DataType.Host.PTT1:
+        if self.Config.Host == DataType.Host.PTT1:
             if IP is None:
                 Log.showValue(
                     Log.Level.DEBUG,
@@ -1566,7 +1571,7 @@ class Library:
             ]
             # PushContent = PushContent.replace(PushDate, '')
 
-            if Config.Host == DataType.Host.PTT1:
+            if self.Config.Host == DataType.Host.PTT1:
                 PushContent = PushContent[
                     :PushContent.rfind(PushDate)
                 ]
@@ -1809,7 +1814,7 @@ class Library:
         Cmd = ''.join(CmdList)
 
         TargetList = []
-        if PostAID is not None:
+        if AID is not None:
             NoSuchPost = i18n.NoSuchPost
             NoSuchPost = i18n.replace(NoSuchPost, Board, AID)
             TargetList.append(
@@ -2027,7 +2032,7 @@ class Library:
 
             ErrorPostList = []
             DelPostList = []
-            if Config.LogLevel == Log.Level.INFO:
+            if self.Config.LogLevel == Log.Level.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=EndIndex - StartIndex + 1,
                     redirect_stdout=True
@@ -2071,7 +2076,7 @@ class Library:
                         self._login(
                             self._ID,
                             self._Password,
-                            Config.KickOtherLogin
+                            self.Config.KickOtherLogin
                         )
                         NeedContinue = True
                     except Exceptions.UseTooManyResources as e:
@@ -2084,7 +2089,7 @@ class Library:
                         self._login(
                             self._ID,
                             self._Password,
-                            Config.KickOtherLogin
+                            self.Config.KickOtherLogin
                         )
                         NeedContinue = True
 
@@ -2103,7 +2108,7 @@ class Library:
 
                     break
 
-                if Config.LogLevel == Log.Level.INFO:
+                if self.Config.LogLevel == Log.Level.INFO:
                     PB.update(index - StartIndex)
                 if Post is None:
                     ErrorPostList.append(index)
@@ -2117,13 +2122,13 @@ class Library:
                 if Post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
                     DelPostList.append(index)
                 PostHandler(Post)
-            if Config.LogLevel == Log.Level.INFO:
+            if self.Config.LogLevel == Log.Level.INFO:
                 PB.finish()
 
             return ErrorPostList, DelPostList
 
         else:
-            if Config.Host == DataType.Host.PTT2:
+            if self.Config.Host == DataType.Host.PTT2:
                 raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
 
             # 網頁版本爬蟲
@@ -2150,7 +2155,7 @@ class Library:
             # PostAID = ""
             _url = 'https://www.ptt.cc/bbs/'
             index = str(NewestIndex)
-            if Config.LogLevel == Log.Level.INFO:
+            if self.Config.LogLevel == Log.Level.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=EndPage - StartPage + 1,
                     redirect_stdout=True
@@ -2209,7 +2214,7 @@ class Library:
                     )
                     PostHandler(Post)
 
-                if Config.LogLevel == Log.Level.INFO:
+                if self.Config.LogLevel == Log.Level.INFO:
                     PB.update(index - StartPage)
 
             Log.showValue(
@@ -2221,7 +2226,7 @@ class Library:
             # 4. 把組合出來的 Post 塞給 handler
 
             # 5. 顯示 progress bar
-            if Config.LogLevel == Log.Level.INFO:
+            if self.Config.LogLevel == Log.Level.INFO:
                 PB.finish()
 
             return ErrorPostList, DelPostList
@@ -2323,7 +2328,7 @@ class Library:
         index = self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenPostTimeOut
+            ScreenTimeout=self.Config.ScreenPostTimeOut
         )
 
     def push(
@@ -2690,7 +2695,7 @@ class Library:
         LegalPost = int(Temp[0])
 
         # PTT2 沒有退文
-        if Config.Host == DataType.Host.PTT1:
+        if self.Config.Host == DataType.Host.PTT1:
             IllegalPost = int(Temp[1])
         else:
             IllegalPost = -1
@@ -2863,7 +2868,7 @@ class Library:
             index = self._ConnectCore.send(
                 Cmd,
                 TargetList,
-                ScreenTimeout=Config.ScreenLongTimeOut
+                ScreenTimeout=self.Config.ScreenLongTimeOut
             )
 
             self._LastThroWaterBallTime = time.time()
@@ -3045,7 +3050,7 @@ class Library:
 
         AllWaterball = '\n'.join(AllWaterball)
 
-        if Config.Host == DataType.Host.PTT1:
+        if self.Config.Host == DataType.Host.PTT1:
             AllWaterball = AllWaterball.replace(
                 ']\n', ']==PTTWaterBallNewLine==')
             AllWaterball = AllWaterball.replace('\n', '')
@@ -3279,7 +3284,7 @@ class Library:
             self._ConnectCore.send(
                 Cmd,
                 TargetList,
-                ScreenTimeout=Config.ScreenLongTimeOut
+                ScreenTimeout=self.Config.ScreenLongTimeOut
             )
 
             CurrentCallStatus = self._getCallStatus()
@@ -3369,7 +3374,7 @@ class Library:
         self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            ScreenTimeout=self.Config.ScreenLongTimeOut
         )
 
     def mail(
@@ -3433,7 +3438,7 @@ class Library:
         self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            ScreenTimeout=self.Config.ScreenLongTimeOut
         )
 
         CmdList = []
@@ -3482,7 +3487,7 @@ class Library:
         self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenPostTimeOut
+            ScreenTimeout=self.Config.ScreenPostTimeOut
         )
 
         Log.showValue(
@@ -3521,7 +3526,7 @@ class Library:
         self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            ScreenTimeout=self.Config.ScreenLongTimeOut
         )
 
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
@@ -3554,7 +3559,7 @@ class Library:
         self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            ScreenTimeout=self.Config.ScreenLongTimeOut
         )
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
@@ -3581,7 +3586,7 @@ class Library:
             MaxNo
         )
 
-        if Config.LogLevel == Log.Level.INFO:
+        if self.Config.LogLevel == Log.Level.INFO:
             PB = progressbar.ProgressBar(
                 max_value=MaxNo,
                 redirect_stdout=True
@@ -3601,7 +3606,7 @@ class Library:
             self._ConnectCore.send(
                 Cmd,
                 TargetList,
-                ScreenTimeout=Config.ScreenLongTimeOut
+                ScreenTimeout=self.Config.ScreenLongTimeOut
             )
 
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
@@ -3647,14 +3652,14 @@ class Library:
 
                 BoardList.append(BoardName)
 
-                if Config.LogLevel == Log.Level.INFO:
+                if self.Config.LogLevel == Log.Level.INFO:
                     PB.update(No)
 
             if No == MaxNo:
                 break
             Cmd = Command.Ctrl_F
 
-        if Config.LogLevel == Log.Level.INFO:
+        if self.Config.LogLevel == Log.Level.INFO:
             PB.finish()
 
         return BoardList
@@ -3803,7 +3808,7 @@ class Library:
         self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            ScreenTimeout=self.Config.ScreenLongTimeOut
         )
 
         Log.log(
@@ -3862,7 +3867,7 @@ class Library:
         self._ConnectCore.send(
             Cmd,
             TargetList,
-            ScreenTimeout=Config.ScreenLongTimeOut
+            ScreenTimeout=self.Config.ScreenLongTimeOut
         )
 
     def markPost(
@@ -3953,7 +3958,7 @@ class Library:
 
         if inputMarkType == DataType.MarkType.Unconfirmed:
             # 批踢踢兔沒有待證文章功能 QQ
-            if Config.Host == DataType.Host.PTT2:
+            if self.Config.Host == DataType.Host.PTT2:
                 raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
 
         self._checkBoard(
