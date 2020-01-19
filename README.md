@@ -17,6 +17,8 @@
 #### github: https://github.com/PttCodingMan/PTTLibrary
 #### Pypi: https://pypi.org/project/PTTLibrary/
 
+![Imgur](https://i.imgur.com/wfaf8Bk.gif)
+
 ### 介紹影片 (感謝 NaeNPIANO 介紹)
 [![](http://img.youtube.com/vi/ng48ITuePlg/0.jpg)](http://www.youtube.com/watch?v=ng48ITuePlg "")
 
