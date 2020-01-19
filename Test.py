@@ -1594,9 +1594,62 @@ PTT Library 程式貼文基準測試內文
             except PTT.Exceptions.NoSuchUser:
                 print('取得使用者反向測試通過')
 
-            result = PTTBot.hasNewMail()
-            print(f'有 {result} 封新信')
+            NewMail1 = PTTBot.hasNewMail()
+            print(f'有 {NewMail1} 封新信')
             Content = '取得幾封新信測試通過'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
+            try:
+                PTTBot.mail(
+                    'sdjfkdsjfls',
+                    '程式寄信標題',
+                    Content,
+                    0
+                )
+
+                Content = '寄信反向測試失敗'
+                print(Content)
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+                PTTBot.logout()
+                sys.exit(1)
+
+            except PTT.Exceptions.NoSuchUser:
+                Content = '寄信反向測試成功'
+                print(Content)
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+
+            Content = '''如有誤寄，對..對不起
+PTT Library 程式寄信測試內容
+
+github: https://tinyurl.com/umqff3v
+'''
+            Content = Content.replace('\n', '\r\n')
+            PTTBot.mail(
+                ID,
+                '程式寄信標題',
+                Content,
+                0
+            )
+
+            NewMail2 = PTTBot.hasNewMail()
+            print(f'有 {NewMail2} 封新信')
+            if NewMail2 > NewMail1:
+                Content = '寄信測試通過'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+            else:
+                Content = '寄信測試失敗'
+                print(Content)
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+                PTTBot.logout()
+                sys.exit(1)
+            
+            Content = '寄信測試成功'
+            print(Content)
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
 
@@ -1669,6 +1722,19 @@ PTT Library 程式貼文基準測試內文
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
 
+            userlist = PTTBot.searchUser(
+                'coding'
+            )
+            if len(userlist) != 14:
+                Content = '查詢網友測試失敗'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+                PTTBot.logout()
+                sys.exit(1)
+            Content = '查詢網友測試成功'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
             Content = '自動化測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
@@ -1723,7 +1789,7 @@ PTT Library 程式貼文基準測試內文
             # GetBoardList()
             # GetBoardInfo()
             # ReplyPost()
-            GetFavouriteBoard()
+            # GetFavouriteBoard()
             # SearchUser()
 
             # Bucket()
