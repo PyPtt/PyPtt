@@ -44,3 +44,5 @@ class Config:
 
     # 預設登入 PTT1
     Host = DataType.Host.PTT1
+
+    LogHandler = None
