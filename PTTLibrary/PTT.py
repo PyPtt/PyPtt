@@ -120,7 +120,8 @@ class Library:
         i18n.load(Language)
 
         if LogHandler is not None:
-            Log.Handler = LogHandler
+            # Log.Handler = LogHandler
+            self.Config.LogHandler = LogHandler
             Log.showValue(
                 self.Config,
                 Log.Level.INFO,
