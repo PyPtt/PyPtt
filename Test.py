@@ -1259,6 +1259,7 @@ if __name__ == '__main__':
 
                 traceback.print_tb(e.__traceback__)
                 print(e)
+                PTTBot.logout()
                 sys.exit(1)
 
             if checkStr is None and targetEx is None and not checkformat:
@@ -1269,6 +1270,7 @@ if __name__ == '__main__':
                 return
 
             if checkStr is not None and checkStr not in Post.getContent():
+                PTTBot.logout()
                 sys.exit(1)
 
             if isinstance(IndexAID, int):
@@ -1321,6 +1323,8 @@ if __name__ == '__main__':
                         print(f'BasicIndex {BasicIndex}')
                         print(f'Index {Index}')
                         print('取得看板最新文章編號測試失敗')
+
+                        PTTBot.logout()
                         sys.exit(1)
             print('取得看板最新文章編號測試全部通過')
 
@@ -1381,6 +1385,7 @@ PTT Library 程式貼文基準測試內文
 
             if BasicPostAID is None:
                 print('取得基準文章失敗')
+                PTTBot.logout()
                 sys.exit(1)
             print('取得基準文章成功')
             print('貼文測試全部通過')
@@ -1390,6 +1395,7 @@ PTT Library 程式貼文基準測試內文
                 PTTBot.push(Board, PTT.PushType.Push,
                             Content1, PostAID='QQQQQQQ')
                 print('推文反向測試失敗')
+                PTTBot.logout()
                 sys.exit(1)
             except PTT.Exceptions.NoSuchPost:
                 print('推文反向測試通過')
@@ -1403,6 +1409,7 @@ PTT Library 程式貼文基準測試內文
                 PTTBot.push(Board, PTT.PushType.Push,
                             Content1, PostIndex=Index + 1)
                 print('推文反向測試失敗')
+                PTTBot.logout()
                 sys.exit(1)
             except ValueError:
                 print('推文反向測試通過')
@@ -1430,10 +1437,12 @@ PTT Library 程式貼文基準測試內文
 
             if not Content1Check:
                 print('編號推文基準測試失敗')
+                PTTBot.logout()
                 sys.exit(1)
             print('編號推文基準測試成功')
             if not Content2Check:
                 print('代碼推文基準測試失敗')
+                PTTBot.logout()
                 sys.exit(1)
             print('代碼推文基準測試成功')
 
@@ -1486,7 +1495,7 @@ PTT Library 程式貼文基準測試內文
                     elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
                         print('文章被版主刪除')
                     print('=' * 50)
-                
+
                 Content = f'{Board} 取得文章測試完成'
                 PTTBot.push('Test', PTT.PushType.Arrow,
                             Content, PostAID=BasicPostAID)
@@ -1507,9 +1516,9 @@ PTT Library 程式貼文基準測試內文
                 'Gossiping',
                 'C_Chat'
             ]
-            
-            # 改成 20 篇，不然 100 篇太耗時間了
-            Range = 20
+
+            # 改成 10 篇，不然 100 篇太耗時間了
+            Range = 10
             for testboard in TestBoardList:
 
                 NewestIndex = PTTBot.getNewestIndex(
@@ -1546,7 +1555,7 @@ PTT Library 程式貼文基準測試內文
                 Content = f'{testboard} 爬板測試完成'
                 PTTBot.push(Board, PTT.PushType.Arrow,
                             Content, PostAID=BasicPostAID)
-            
+
             Content = '爬板測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
@@ -1554,6 +1563,10 @@ PTT Library 程式貼文基準測試內文
             User = PTTBot.getUser(ID)
             if User is None:
                 print('取得使用者測試失敗')
+                Content = '取得使用者測試失敗'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+                PTTBot.logout()
                 sys.exit(1)
 
             PTTBot.log('使用者ID: ' + User.getID())
@@ -1572,9 +1585,89 @@ PTT Library 程式貼文基準測試內文
             try:
                 User = PTTBot.getUser('sdjfklsdj')
                 print('取得使用者反向測試失敗')
+                Content = '取得使用者反向測試失敗'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+
+                PTTBot.logout()
                 sys.exit(1)
             except PTT.Exceptions.NoSuchUser:
                 print('取得使用者反向測試通過')
+
+            result = PTTBot.hasNewMail()
+            print(f'有 {result} 封新信')
+            Content = '取得幾封新信測試通過'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
+            BoardList = PTTBot.getBoardList()
+            print(f'總共有 {len(BoardList)} 個板名')
+            print(f'總共有 {len(set(BoardList))} 個不重複板名')
+
+            Content = '取得全站看板測試通過'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+            Content = f'總共有 {len(set(BoardList))} 個不重複板名'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
+            try:
+                PTTBot.getBoardInfo('NotExistBoard')
+
+                print('取得看板資訊反向測試失敗')
+                Content = '取得看板資訊反向測試失敗'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+
+                PTTBot.logout()
+                sys.exit(1)
+            except PTT.Exceptions.NoSuchBoard:
+                print('取得看板資訊反向測試成功')
+                Content = '取得看板資訊反向測試成功'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+
+            BoardInfo = PTTBot.getBoardInfo('Gossiping')
+            print('板名: ', BoardInfo.getBoard())
+            print('線上人數: ', BoardInfo.getOnlineUser())
+            # setting
+            print('中文敘述: ', BoardInfo.getChineseDes())
+            print('板主: ', BoardInfo.getModerators())
+            print('公開狀態(是否隱形): ', BoardInfo.isOpen())
+            print('隱板時是否可進入十大排行榜: ', BoardInfo.canIntoTopTenWhenHide())
+            print('是否開放非看板會員發文: ', BoardInfo.canNonBoardMembersPost())
+            print('是否開放回應文章: ', BoardInfo.canReplyPost())
+            print('是否開放自刪文章: ', BoardInfo.canSelfDelPost())
+            print('是否開放推薦文章: ', BoardInfo.canPushPost())
+            print('是否開放噓文: ', BoardInfo.canBooPost())
+            print('是否可以快速連推文章: ', BoardInfo.canFastPush())
+            print('推文最低間隔時間: ', BoardInfo.getMinInterval())
+            print('推文時是否記錄來源 IP: ', BoardInfo.isPushRecordIP())
+            print('推文時是否對齊開頭: ', BoardInfo.isPushAligned())
+            print('板主是否可刪除部份違規文字: ', BoardInfo.canModeratorCanDelIllegalContent())
+            print('轉錄文章是否自動記錄，且是否需要發文權限: ',
+                  BoardInfo.isTranPostAutoRecordedAndRequirePostPermissions())
+            print('是否為冷靜模式: ', BoardInfo.isCoolMode())
+            print('是否需要滿十八歲才可進入: ', BoardInfo.isRequire18())
+            print('發文與推文限制登入次數需多少次以上: ', BoardInfo.getRequireLoginTime())
+            print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.getRequireIllegalPost())
+
+            Content = '取得看板資訊測試成功'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+
+            FBlist = PTTBot.getFavouriteBoard()
+            for testboard in FBlist:
+                if testboard.getBoard() is None or testboard.getType() is None or testboard.getBoardTitle() is None:
+                    Content = '取得我的最愛測試失敗'
+                    PTTBot.push(Board, PTT.PushType.Arrow,
+                                Content, PostAID=BasicPostAID)
+                    PTTBot.logout()
+                    sys.exit(1)
+
+            Content = '取得我的最愛測試成功'
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
 
             Content = '自動化測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
@@ -1583,6 +1676,9 @@ PTT Library 程式貼文基準測試內文
         except Exception as e:
             traceback.print_tb(e.__traceback__)
             print(e)
+            Content = str(e)
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
         except KeyboardInterrupt:
             pass
 
@@ -1627,7 +1723,7 @@ PTT Library 程式貼文基準測試內文
             # GetBoardList()
             # GetBoardInfo()
             # ReplyPost()
-            # GetFavouriteBoard()
+            GetFavouriteBoard()
             # SearchUser()
 
             # Bucket()
