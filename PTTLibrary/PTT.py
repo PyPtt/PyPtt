@@ -85,9 +85,6 @@ class Library:
         self._LoginStatus = False
 
         self.Config = Config.Config()
-        Exceptions.Config = self.Config
-        Log.Config = self.Config
-        Screens.Config = self.Config
 
         if not isinstance(Language, int):
             raise TypeError('[PTT Library] Language must be integer')
@@ -125,12 +122,14 @@ class Library:
         if LogHandler is not None:
             Log.Handler = LogHandler
             Log.showValue(
+                self.Config,
                 Log.Level.INFO,
                 i18n.LogHandler,
                 i18n.Init
             )
         elif hasLogHandler and not setLogHandlerResult:
             Log.showValue(
+                self.Config,
                 Log.Level.INFO,
                 i18n.LogHandler,
                 [
@@ -140,14 +139,14 @@ class Library:
             )
 
         if Language == i18n.Language.Chinese:
-            Log.showValue(Log.Level.INFO, [
+            Log.showValue(self.Config, Log.Level.INFO, [
                 i18n.ChineseTranditional,
                 i18n.LanguageModule
             ],
                 i18n.Init
             )
         elif Language == i18n.Language.English:
-            Log.showValue(Log.Level.INFO, [
+            Log.showValue(self.Config, Log.Level.INFO, [
                 i18n.English,
                 i18n.LanguageModule
             ],
@@ -169,6 +168,7 @@ class Library:
 
         if Host == DataType.Host.PTT1:
             Log.showValue(
+                self.Config,
                 Log.Level.INFO,
                 [
                     i18n.Connect,
@@ -178,6 +178,7 @@ class Library:
             )
         if Host == DataType.Host.PTT2:
             Log.showValue(
+                self.Config,
                 Log.Level.INFO,
                 [
                     i18n.Connect,
@@ -193,12 +194,14 @@ class Library:
         self._ThreadID = threading.get_ident()
 
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             'ThreadID',
             self._ThreadID
         )
 
         Log.showValue(
+            self.Config,
             Log.Level.INFO, [
                 i18n.PTT,
                 i18n.Library,
@@ -212,11 +215,13 @@ class Library:
         if CurrentThreadID == self._ThreadID:
             return
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             'ThreadID',
             self._ThreadID
         )
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             'Current thread id',
             CurrentThreadID
@@ -237,9 +242,9 @@ class Library:
         if self._LoginStatus:
             self.logout()
 
-        CheckValue.check(str, 'ID', ID)
-        CheckValue.check(str, 'Password', Password)
-        CheckValue.check(bool, 'KickOtherLogin', KickOtherLogin)
+        CheckValue.check(self.Config, str, 'ID', ID)
+        CheckValue.check(self.Config, str, 'Password', Password)
+        CheckValue.check(self.Config, bool, 'KickOtherLogin', KickOtherLogin)
 
         self.Config.KickOtherLogin = KickOtherLogin
 
@@ -263,6 +268,7 @@ class Library:
         self._Password = Password
 
         Log.showValue(
+            self.Config,
             Log.Level.INFO,
             [
                 i18n.Login,
@@ -373,12 +379,14 @@ class Library:
         if '> (' in OriScreen:
             self._Cursor = DataType.Cursor.New
             Log.log(
+                self.Config,
                 Log.Level.DEBUG,
                 i18n.NewCursor
             )
         else:
             self._Cursor = DataType.Cursor.Old
             Log.log(
+                self.Config,
                 Log.Level.DEBUG,
                 i18n.OldCursor
             )
@@ -396,6 +404,7 @@ class Library:
 
         if self._UnregisteredUser:
             Log.log(
+                self.Config,
                 Log.Level.INFO,
                 i18n.UnregisteredUserCantUseAllAPI
             )
@@ -449,6 +458,7 @@ class Library:
         ]
 
         Log.log(
+            self.Config,
             Log.Level.INFO,
             [
                 i18n.Start,
@@ -467,6 +477,7 @@ class Library:
         self._LoginStatus = False
 
         Log.showValue(
+            self.Config,
             Log.Level.INFO,
             i18n.Logout,
             i18n.Done
@@ -474,7 +485,7 @@ class Library:
 
     def log(self, Msg):
         self._OneThread()
-        Log.log(Log.Level.INFO, Msg)
+        Log.log(self.Config, Log.Level.INFO, Msg)
 
     def getTime(self) -> str:
         self._OneThread()
@@ -533,14 +544,15 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(self.Config, str, 'Board', Board)
         if PostAID is not None:
-            CheckValue.check(str, 'PostAID', PostAID)
-        CheckValue.check(int, 'PostIndex', PostIndex)
-        CheckValue.check(int, 'SearchType', SearchType,
+            CheckValue.check(self.Config, str, 'PostAID', PostAID)
+        CheckValue.check(self.Config, int, 'PostIndex', PostIndex)
+        CheckValue.check(self.Config, int, 'SearchType', SearchType,
                          Class=DataType.PostSearchType)
         if SearchCondition is not None:
-            CheckValue.check(str, 'SearchCondition', SearchCondition)
+            CheckValue.check(self.Config, str,
+                             'SearchCondition', SearchCondition)
 
         if len(Board) == 0:
             raise ValueError(Log.merge([
@@ -645,6 +657,7 @@ class Library:
 
             if NeedContinue:
                 Log.log(
+                    self.Config,
                     Log.Level.DEBUG,
                     'Wait for retry repost'
                 )
@@ -687,13 +700,13 @@ class Library:
 
             index = self._ConnectCore.send(Cmd, TargetList)
             if index < 0:
-                raise Exceptions.NoSuchBoard(Board)
+                raise Exceptions.NoSuchBoard(self.Config, Board)
 
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
 
             # print(OriScreen)
             # if index == 1:
-            #     raise Exceptions.NoSuchBoard(Board)
+            #     raise Exceptions.NoSuchBoard(self.Config, Board)
 
             BoardNameLine = [line.strip() for line in OriScreen.split(
                 '\n') if line.strip().startswith('《')]
@@ -706,6 +719,7 @@ class Library:
             BoardName = BoardNameLine[1:BoardNameLine.find('》')].lower()
 
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'Find Board Name',
                 BoardName
@@ -714,7 +728,7 @@ class Library:
             self._ExistBoardList.append(BoardName)
 
             if BoardName != Board.lower():
-                raise Exceptions.NoSuchBoard(Board)
+                raise Exceptions.NoSuchBoard(self.Config, Board)
 
             CheckModeratorLine = [line.strip() for line in OriScreen.split(
                 '\n') if line.strip().startswith('板主名單:')]
@@ -730,6 +744,7 @@ class Library:
                 CheckModeratorList = CheckModeratorLine.split('/')
                 CheckModeratorList = [x.lower() for x in CheckModeratorList]
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'CheckModeratorLine',
                     CheckModeratorLine
@@ -810,7 +825,7 @@ class Library:
             ConnectCore.TargetUnit(
                 i18n.NoSuchBoard,
                 Screens.Target.MainMenu_Exiting,
-                Exceptions=Exceptions.NoSuchBoard(Board)
+                Exceptions=Exceptions.NoSuchBoard(self.Config, Board)
             ),
         ]
 
@@ -821,10 +836,11 @@ class Library:
         PostTitle = None
         if index < 0 or index == 1:
             # 文章被刪除
-            Log.log(Log.Level.DEBUG, i18n.PostDeleted)
+            Log.log(self.Config, Log.Level.DEBUG, i18n.PostDeleted)
             PostDelStatus = 0
 
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'OriScreen',
                 OriScreen
@@ -838,6 +854,7 @@ class Library:
 
             CursorLine = CursorLine[0]
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'CursorLine',
                 CursorLine
@@ -869,9 +886,11 @@ class Library:
                 PostAuthor = None
                 PostDelStatus = DataType.PostDeleteStatus.ByUnknow
 
-            Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
-            Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
-            Log.showValue(Log.Level.DEBUG, 'PostDelStatus', PostDelStatus)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'ListDate', ListDate)
+            Log.showValue(self.Config, Log.Level.DEBUG,
+                          'PostAuthor', PostAuthor)
+            Log.showValue(self.Config, Log.Level.DEBUG,
+                          'PostDelStatus', PostDelStatus)
 
             return DataType.PostInfo(
                 Board=Board,
@@ -991,13 +1010,15 @@ class Library:
                     PushNumber = None
 
             # print(PushNumber)
-            Log.showValue(Log.Level.DEBUG, 'PostAuthor', PostAuthor)
-            Log.showValue(Log.Level.DEBUG, 'PostTitle', PostTitle)
-            Log.showValue(Log.Level.DEBUG, 'PostAID', PostAID)
-            Log.showValue(Log.Level.DEBUG, 'PostWeb', PostWeb)
-            Log.showValue(Log.Level.DEBUG, 'PostMoney', PostMoney)
-            Log.showValue(Log.Level.DEBUG, 'ListDate', ListDate)
-            Log.showValue(Log.Level.DEBUG, 'PushNumber', PushNumber)
+            Log.showValue(self.Config, Log.Level.DEBUG,
+                          'PostAuthor', PostAuthor)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'PostTitle', PostTitle)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'PostAID', PostAID)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'PostWeb', PostWeb)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'PostMoney', PostMoney)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'ListDate', ListDate)
+            Log.showValue(self.Config, Log.Level.DEBUG,
+                          'PushNumber', PushNumber)
 
             if LockPost:
                 Post = DataType.PostInfo(
@@ -1165,7 +1186,8 @@ class Library:
                 if not ControlCodeMode:
 
                     if LastReadLineATemp in StopDict:
-                        NewContentPart = '\n'.join(Lines[-StopDict[LastReadLineATemp]:])
+                        NewContentPart = '\n'.join(
+                            Lines[-StopDict[LastReadLineATemp]:])
                     else:
                         GetLineB = LastReadLineBTemp - LastReadLineB
                         if GetLineB > 0:
@@ -1190,6 +1212,7 @@ class Library:
 
                 OriginPost.append(NewContentPart)
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'NewContentPart',
                     NewContentPart
@@ -1225,6 +1248,7 @@ class Library:
         # OriginPost = '\n'.join(OriginPost)
 
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             'OriginPost',
             OriginPost
@@ -1258,6 +1282,7 @@ class Library:
                 if len(BoardTemp) > 0:
                     Board = BoardTemp
                     Log.showValue(
+                        self.Config,
                         Log.Level.DEBUG,
                         i18n.Board,
                         Board
@@ -1270,6 +1295,7 @@ class Library:
             PatternResult = PostAuthorPattern_Old.search(AuthorLine)
             if PatternResult is None:
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     i18n.SubstandardPost,
                     i18n.Author
@@ -1299,6 +1325,7 @@ class Library:
         PostAuthor = PostAuthor[4:].strip()
 
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             i18n.Author,
             PostAuthor
@@ -1310,6 +1337,7 @@ class Library:
         PatternResult = PostTitlePattern.search(TitleLine)
         if PatternResult is None:
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 i18n.SubstandardPost,
                 i18n.Title
@@ -1338,6 +1366,7 @@ class Library:
         PostTitle = PostTitle[4:].strip()
 
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             i18n.Title,
             PostTitle
@@ -1348,6 +1377,7 @@ class Library:
         PatternResult = PostDatePattern.search(DateLine)
         if PatternResult is None:
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 i18n.SubstandardPost,
                 i18n.Date
@@ -1376,6 +1406,7 @@ class Library:
         PostDate = PostDate[4:].strip()
 
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             i18n.Date,
             PostDate
@@ -1409,6 +1440,7 @@ class Library:
 
         if ContentFail:
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 i18n.SubstandardPost,
                 i18n.Content
@@ -1435,6 +1467,7 @@ class Library:
             return Post
 
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             i18n.Content,
             PostContent
@@ -1448,6 +1481,7 @@ class Library:
         pattern_p2 = re.compile('[\d]+-[\d]+-[\d]+-[\d]+')
         for line in reversed(InfoLines):
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'IP Line',
                 line
@@ -1477,7 +1511,8 @@ class Library:
                 # print(f'=>[{LocationTemp}]')
                 if ' ' not in LocationTemp and len(LocationTemp) > 0:
                     Location = LocationTemp
-                    Log.showValue(Log.Level.DEBUG, 'Location', Location)
+                    Log.showValue(self.Config, Log.Level.DEBUG,
+                                  'Location', Location)
                 break
 
             PatternResult = pattern_p2.search(line)
@@ -1489,6 +1524,7 @@ class Library:
         if self.Config.Host == DataType.Host.PTT1:
             if IP is None:
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     i18n.SubstandardPost,
                     'IP'
@@ -1513,7 +1549,7 @@ class Library:
                     Unconfirmed=self.Unconfirmed,
                 )
                 return Post
-        Log.showValue(Log.Level.DEBUG, 'IP', IP)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'IP', IP)
 
         PushAuthorPattern = re.compile('[推|噓|→] [\w| ]+:')
         PushDatePattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
@@ -1537,7 +1573,7 @@ class Library:
                 # 不符合推文格式
                 continue
             PushAuthor = Result.group(0)[2:-1].strip()
-            Log.showValue(Log.Level.DEBUG, [
+            Log.showValue(self.Config, Log.Level.DEBUG, [
                 i18n.Push,
                 i18n.ID,
             ],
@@ -1548,7 +1584,7 @@ class Library:
             if Result is None:
                 continue
             PushDate = Result.group(0)
-            Log.showValue(Log.Level.DEBUG, [
+            Log.showValue(self.Config, Log.Level.DEBUG, [
                 i18n.Push,
                 i18n.Date,
             ],
@@ -1559,7 +1595,7 @@ class Library:
             Result = PushIPPattern.search(line)
             if Result is not None:
                 PushIP = Result.group(0)
-                Log.showValue(Log.Level.DEBUG, [
+                Log.showValue(self.Config, Log.Level.DEBUG, [
                     i18n.Push,
                     'IP',
                 ],
@@ -1585,7 +1621,7 @@ class Library:
             PushContent = PushContent[
                 PushContent.find(':') + 1:
             ].strip()
-            Log.showValue(Log.Level.DEBUG, [
+            Log.showValue(self.Config, Log.Level.DEBUG, [
                 i18n.Push,
                 i18n.Content,
             ],
@@ -1630,18 +1666,20 @@ class Library:
         SearchType: int = 0,
         SearchCondition: str = None
     ):
-        CheckValue.check(int, 'IndexType', IndexType, Class=DataType.IndexType)
-        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(self.Config, int, 'IndexType',
+                         IndexType, Class=DataType.IndexType)
+        CheckValue.check(self.Config, str, 'Board', Board)
 
         if IndexType == DataType.IndexType.BBS:
 
             self._checkBoard(Board)
 
-            CheckValue.check(int, 'SearchType', SearchType,
+            CheckValue.check(self.Config, int, 'SearchType', SearchType,
                              Class=DataType.PostSearchType)
             if SearchCondition is not None:
-                CheckValue.check(str, 'SearchCondition', SearchCondition)
-            CheckValue.check(int, 'SearchType', SearchType)
+                CheckValue.check(self.Config, str,
+                                 'SearchCondition', SearchCondition)
+            CheckValue.check(self.Config, int, 'SearchType', SearchType)
 
             CmdList = []
             CmdList.append(Command.GoMainMenu)
@@ -1694,14 +1732,14 @@ class Library:
                 ConnectCore.TargetUnit(
                     i18n.NoSuchBoard,
                     Screens.Target.MainMenu_Exiting,
-                    Exceptions=Exceptions.NoSuchBoard(Board)
+                    Exceptions=Exceptions.NoSuchBoard(self.Config, Board)
                 ),
             ]
             index = self._ConnectCore.send(Cmd, TargetList)
             if index < 0:
                 # OriScreen = self._ConnectCore.getScreenQueue()[-1]
                 # print(OriScreen)
-                raise Exceptions.NoSuchBoard(Board)
+                raise Exceptions.NoSuchBoard(self.Config, Board)
 
             if index == 0:
                 return 0
@@ -1730,6 +1768,7 @@ class Library:
                         break
                 if Continue:
                     Log.showValue(
+                        self.Config,
                         Log.Level.DEBUG,
                         i18n.FindNewestIndex,
                         IndexTemp
@@ -1738,7 +1777,7 @@ class Library:
                     break
 
             if NewestIndex == 0:
-                Screens.show(self._ConnectCore.getScreenQueue())
+                Screens.show(self.Config, self._ConnectCore.getScreenQueue())
                 raise Exceptions.UnknowError(i18n.UnknowError)
 
         elif DataType.IndexType.Web:
@@ -1750,7 +1789,7 @@ class Library:
             r = requests.get(url, cookies={'over18': '1'})
 
             if r.status_code != requests.codes.ok:
-                raise Exceptions.NoSuchBoard(Board)
+                raise Exceptions.NoSuchBoard(self.Config, Board)
             soup = BeautifulSoup(r.text, 'html.parser')
 
             for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
@@ -1864,7 +1903,7 @@ class Library:
             ConnectCore.TargetUnit(
                 i18n.NoSuchBoard,
                 Screens.Target.MainMenu_Exiting,
-                Exceptions=Exceptions.NoSuchBoard(Board)
+                Exceptions=Exceptions.NoSuchBoard(self.Config, Board)
                 # BreakDetect=True,
             ),
         ])
@@ -1875,11 +1914,11 @@ class Library:
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
         if index < 0:
             # print(OriScreen)
-            raise Exceptions.NoSuchBoard(Board)
+            raise Exceptions.NoSuchBoard(self.Config, Board)
 
         # if index == 5:
         #     print(OriScreen)
-        #     raise Exceptions.NoSuchBoard(Board)
+        #     raise Exceptions.NoSuchBoard(self.Config, Board)
 
         # print(index)
         # print(OriScreen)
@@ -1927,8 +1966,9 @@ class Library:
 
         self._OneThread()
 
-        CheckValue.check(int, 'CrawlType', CrawlType, Class=DataType.CrawlType)
-        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(self.Config, int, 'CrawlType',
+                         CrawlType, Class=DataType.CrawlType)
+        CheckValue.check(self.Config, str, 'Board', Board)
 
         if len(Board) == 0:
             raise ValueError(Log.merge([
@@ -1941,13 +1981,14 @@ class Library:
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-            CheckValue.check(int, 'SearchType', SearchType)
+            CheckValue.check(self.Config, int, 'SearchType', SearchType)
             if SearchCondition is not None:
-                CheckValue.check(str, 'SearchCondition', SearchCondition)
+                CheckValue.check(self.Config, str,
+                                 'SearchCondition', SearchCondition)
             if StartAID is not None:
-                CheckValue.check(str, 'StartAID', StartAID)
+                CheckValue.check(self.Config, str, 'StartAID', StartAID)
             if EndAID is not None:
-                CheckValue.check(str, 'EndAID', EndAID)
+                CheckValue.check(self.Config, str, 'EndAID', EndAID)
 
             if (StartAID is not None or EndAID is not None) and \
                (StartIndex != 0 or EndIndex != 0):
@@ -1990,6 +2031,7 @@ class Library:
                     SearchCondition=SearchCondition
                 )
                 CheckValue.checkIndexRange(
+                    self.Config,
                     'StartIndex',
                     StartIndex,
                     'EndIndex',
@@ -2007,6 +2049,7 @@ class Library:
                 )
 
                 CheckValue.checkIndexRange(
+                    self.Config,
                     'StartAID',
                     StartIndex,
                     'EndAID',
@@ -2019,12 +2062,14 @@ class Library:
                 ]))
 
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'StartIndex',
                 StartIndex
             )
 
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'EndIndex',
                 EndIndex
@@ -2070,6 +2115,7 @@ class Library:
                         if i == 1:
                             raise e
                         Log.log(
+                            self.Config,
                             Log.Level.INFO,
                             i18n.RestoreConnection
                         )
@@ -2083,6 +2129,7 @@ class Library:
                         if i == 1:
                             raise e
                         Log.log(
+                            self.Config,
                             Log.Level.INFO,
                             i18n.RestoreConnection
                         )
@@ -2100,6 +2147,7 @@ class Library:
 
                     if NeedContinue:
                         Log.log(
+                            self.Config,
                             Log.Level.DEBUG,
                             'Wait for retry repost'
                         )
@@ -2142,6 +2190,7 @@ class Library:
             # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
 
             CheckValue.checkIndexRange(
+                self.Config,
                 'StartPage',
                 StartPage,
                 'EndPage',
@@ -2174,6 +2223,7 @@ class Library:
 
             for index in range(StartPage, NewestIndex + 1):
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'CurrentPage',
                     index
@@ -2182,7 +2232,7 @@ class Library:
                 url = _url + Board + '/index' + str(index) + '.html'
                 r = requests.get(url, cookies={'over18': '1'})
                 if r.status_code != requests.codes.ok:
-                    raise Exceptions.NoSuchBoard(Board)
+                    raise Exceptions.NoSuchBoard(self.Config, Board)
                 soup = BeautifulSoup(r.text, 'html.parser')
 
                 for div in soup.select('div.r-ent'):
@@ -2218,6 +2268,7 @@ class Library:
                     PB.update(index - StartPage)
 
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'DelPostList',
                 DelPostList
@@ -2244,10 +2295,10 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'Board', Board)
-        CheckValue.check(str, 'Title', Title)
-        CheckValue.check(str, 'Content', Content)
-        CheckValue.check(int, 'PostType', PostType)
+        CheckValue.check(self.Config, str, 'Board', Board)
+        CheckValue.check(self.Config, str, 'Title', Title)
+        CheckValue.check(self.Config, str, 'Content', Content)
+        CheckValue.check(self.Config, int, 'PostType', PostType)
 
         CheckSignFile = False
         for i in range(0, 10):
@@ -2291,12 +2342,12 @@ class Library:
         ]
         index = self._ConnectCore.send(Cmd, TargetList)
         if index < 0:
-            Screens.show(self._ConnectCore.getScreenQueue())
+            Screens.show(self.Config, self._ConnectCore.getScreenQueue())
             raise Exceptions.UnknowError(i18n.UnknowError)
         if index == 1:
             raise Exceptions.NoPermission(i18n.NoPermission)
 
-        Screens.show(self._ConnectCore.getScreenQueue())
+        Screens.show(self.Config, self._ConnectCore.getScreenQueue())
 
         CmdList = []
         CmdList.append(str(PostType))
@@ -2344,12 +2395,13 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'Board', Board)
-        CheckValue.check(int, 'PushType', PushType, Class=DataType.PushType)
-        CheckValue.check(str, 'PushContent', PushContent)
+        CheckValue.check(self.Config, str, 'Board', Board)
+        CheckValue.check(self.Config, int, 'PushType',
+                         PushType, Class=DataType.PushType)
+        CheckValue.check(self.Config, str, 'PushContent', PushContent)
         if PostAID is not None:
-            CheckValue.check(str, 'PostAID', PostAID)
-        CheckValue.check(int, 'PostIndex', PostIndex)
+            CheckValue.check(self.Config, str, 'PostAID', PostAID)
+        CheckValue.check(self.Config, int, 'PostIndex', PostIndex)
 
         if len(Board) == 0:
             raise ValueError(Log.merge([
@@ -2379,7 +2431,8 @@ class Library:
                 DataType.IndexType.BBS,
                 Board=Board
             )
-            CheckValue.checkIndex('PostIndex', PostIndex, NewestIndex)
+            CheckValue.checkIndex(self.Config, 'PostIndex',
+                                  PostIndex, NewestIndex)
 
         self._checkBoard(Board)
 
@@ -2416,6 +2469,7 @@ class Library:
 
         for push in PushList:
             Log.showValue(
+                self.Config,
                 Log.Level.INFO,
                 i18n.Push,
                 push
@@ -2432,8 +2486,9 @@ class Library:
                     )
                     break
                 except Exceptions.NoFastPush:
-                    # Screens.show(self._ConnectCore.getScreenQueue())
+                    # Screens.show(self.Config, self._ConnectCore.getScreenQueue())
                     Log.log(
+                        self.Config,
                         Log.Level.INFO,
                         '等待快速推文'
                     )
@@ -2527,15 +2582,16 @@ class Library:
         if index == 0:
             PushOptionLine = self._ConnectCore.getScreenQueue()[-1]
             PushOptionLine = PushOptionLine.split('\n')[-1]
-            Log.showValue(Log.Level.DEBUG, 'Push option line', PushOptionLine)
+            Log.showValue(self.Config, Log.Level.DEBUG,
+                          'Push option line', PushOptionLine)
 
             EnablePush = '值得推薦' in PushOptionLine
             EnableBoo = '給它噓聲' in PushOptionLine
             EnableArrow = '只加→註解' in PushOptionLine
 
-            Log.showValue(Log.Level.DEBUG, 'Push', EnablePush)
-            Log.showValue(Log.Level.DEBUG, 'Boo', EnableBoo)
-            Log.showValue(Log.Level.DEBUG, 'Arrow', EnableArrow)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'Push', EnablePush)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'Boo', EnableBoo)
+            Log.showValue(self.Config, Log.Level.DEBUG, 'Arrow', EnableArrow)
 
             if PushType == DataType.PushType.Push and not EnablePush:
                 PushType = DataType.PushType.Arrow
@@ -2574,7 +2630,7 @@ class Library:
 
     def _getUser(self, UserID):
 
-        CheckValue.check(str, 'UserID', UserID)
+        CheckValue.check(self.Config, str, 'UserID', UserID)
         if len(UserID) < 3:
             raise ValueError(Log.merge([
                 'UserID',
@@ -2618,6 +2674,7 @@ class Library:
         )
         OriScreen = self._ConnectCore.getScreenQueue()[-1]
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             'OriScreen',
             OriScreen
@@ -2677,18 +2734,19 @@ class Library:
 
         SignatureFile = '\n'.join(OriScreen.split('\n')[6:-1]).strip()
 
-        Log.showValue(Log.Level.DEBUG, 'ID', ID)
-        Log.showValue(Log.Level.DEBUG, 'Money', Money)
-        Log.showValue(Log.Level.DEBUG, 'LoginTime', LoginTime)
-        Log.showValue(Log.Level.DEBUG, 'LegalPost', LegalPost)
-        Log.showValue(Log.Level.DEBUG, 'IllegalPost', IllegalPost)
-        Log.showValue(Log.Level.DEBUG, 'State', State)
-        Log.showValue(Log.Level.DEBUG, 'Mail', Mail)
-        Log.showValue(Log.Level.DEBUG, 'LastLogin', LastLogin)
-        Log.showValue(Log.Level.DEBUG, 'LastIP', LastIP)
-        Log.showValue(Log.Level.DEBUG, 'FiveChess', FiveChess)
-        Log.showValue(Log.Level.DEBUG, 'Chess', Chess)
-        Log.showValue(Log.Level.DEBUG, 'SignatureFile', SignatureFile)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'ID', ID)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'Money', Money)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'LoginTime', LoginTime)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'LegalPost', LegalPost)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'IllegalPost', IllegalPost)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'State', State)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'Mail', Mail)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'LastLogin', LastLogin)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'LastIP', LastIP)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'FiveChess', FiveChess)
+        Log.showValue(self.Config, Log.Level.DEBUG, 'Chess', Chess)
+        Log.showValue(self.Config, Log.Level.DEBUG,
+                      'SignatureFile', SignatureFile)
 
         User = DataType.UserInfo(
             ID,
@@ -2726,8 +2784,8 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        CheckValue.check(str, 'TargetID', TargetID)
-        CheckValue.check(str, 'Content', Content)
+        CheckValue.check(self.Config, str, 'TargetID', TargetID)
+        CheckValue.check(self.Config, str, 'Content', Content)
 
         if len(TargetID) <= 2:
             raise ValueError(Log.merge([
@@ -2780,6 +2838,7 @@ class Library:
                     CurrentTime = time.time()
 
             Log.showValue(
+                self.Config,
                 Log.Level.INFO,
                 i18n.WaterBall,
                 waterball
@@ -2850,7 +2909,7 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        CheckValue.check(int, 'OperateType', OperateType,
+        CheckValue.check(self.Config, int, 'OperateType', OperateType,
                          Class=DataType.WaterBallOperateType)
 
         if OperateType == DataType.WaterBallOperateType.DoNothing:
@@ -2914,6 +2973,7 @@ class Library:
                 ScreenTimeout=1
             )
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'index',
                 index
@@ -2933,12 +2993,14 @@ class Library:
             # print('=' * 50)
             ScreenTemp = OriScreen
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'OriScreen',
                 OriScreen
             )
 
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'LastLine',
                 LastLine
@@ -3003,6 +3065,7 @@ class Library:
 
                 AllWaterball.append(NewContentPart)
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'NewContentPart',
                     NewContentPart
@@ -3027,6 +3090,7 @@ class Library:
         else:
             AllWaterball = AllWaterball.replace('\\\n', '')
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             'AllWaterball',
             AllWaterball
@@ -3040,12 +3104,14 @@ class Library:
 
             if (not line.startswith('To')) and (not line.startswith('★')):
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'Discard waterball',
                     line
                 )
                 continue
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'Ready to parse waterball',
                 line
@@ -3053,6 +3119,7 @@ class Library:
 
             if line.startswith('To'):
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'Waterball Type',
                     'Send'
@@ -3073,6 +3140,7 @@ class Library:
 
             elif line.startswith('★'):
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'Waterball Type',
                     'Catch'
@@ -3092,16 +3160,19 @@ class Library:
                 Content = Content.strip()
 
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'Waterball Target',
                 Target
             )
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'Waterball Content',
                 Content
             )
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 'Waterball Date',
                 Date
@@ -3223,7 +3294,7 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(int, 'CallStatus', inputCallStatus,
+        CheckValue.check(self.Config, int, 'CallStatus', inputCallStatus,
                          Class=DataType.CallStatus)
 
         # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
@@ -3266,8 +3337,8 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        CheckValue.check(str, 'ID', ID)
-        CheckValue.check(int, 'Money', Money)
+        CheckValue.check(self.Config, str, 'ID', ID)
+        CheckValue.check(self.Config, int, 'Money', Money)
 
         CmdList = []
         CmdList.append(Command.GoMainMenu)
@@ -3357,9 +3428,9 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'ID', ID)
-        CheckValue.check(str, 'Title', Title)
-        CheckValue.check(str, 'Content', Content)
+        CheckValue.check(self.Config, str, 'ID', ID)
+        CheckValue.check(self.Config, str, 'Title', Title)
+        CheckValue.check(self.Config, str, 'Content', Content)
 
         CheckSignFile = False
         for i in range(0, 10):
@@ -3459,6 +3530,7 @@ class Library:
         )
 
         Log.showValue(
+            self.Config,
             Log.Level.INFO,
             i18n.SendMail,
             i18n.Success
@@ -3549,6 +3621,7 @@ class Library:
             MaxNo = int(FrontPartList[0])
 
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             'MaxNo',
             MaxNo
@@ -3600,6 +3673,7 @@ class Library:
                 # print(f'LastNo =>{LastNo}<=')
 
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'Board NO',
                     No
@@ -3610,6 +3684,7 @@ class Library:
                     BoardName = BoardName[1:]
 
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG,
                     'Board Name',
                     BoardName
@@ -3646,12 +3721,12 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(int, 'ReplyType', inputReplyType,
+        CheckValue.check(self.Config, int, 'ReplyType', inputReplyType,
                          Class=DataType.ReplyType)
-        CheckValue.check(str, 'Board', Board)
-        CheckValue.check(str, 'Content', Content)
+        CheckValue.check(self.Config, str, 'Board', Board)
+        CheckValue.check(self.Config, str, 'Content', Content)
         if PostAID is not None:
-            CheckValue.check(str, 'PostAID', PostAID)
+            CheckValue.check(self.Config, str, 'PostAID', PostAID)
 
         if PostIndex != 0:
 
@@ -3659,7 +3734,8 @@ class Library:
                 DataType.IndexType.BBS,
                 Board=Board,
             )
-            CheckValue.checkIndex('PostIndex', PostIndex, MaxValue=NewestIndex)
+            CheckValue.checkIndex(self.Config, 'PostIndex',
+                                  PostIndex, MaxValue=NewestIndex)
 
         SignFileList = [str(x) for x in range(0, 10)]
         SignFileList.append('x')
@@ -3780,6 +3856,7 @@ class Library:
         )
 
         Log.log(
+            self.Config,
             Log.Level.INFO,
             i18n.RespondSuccess
         )
@@ -3795,8 +3872,8 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'Board', Board)
-        CheckValue.check(str, 'NewTitle', NewTitle)
+        CheckValue.check(self.Config, str, 'Board', Board)
+        CheckValue.check(self.Config, str, 'NewTitle', NewTitle)
 
         self._checkBoard(
             Board,
@@ -3853,16 +3930,17 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(int, 'MarkType', inputMarkType,
+        CheckValue.check(self.Config, int, 'MarkType', inputMarkType,
                          Class=DataType.MarkType)
-        CheckValue.check(str, 'Board', Board)
+        CheckValue.check(self.Config, str, 'Board', Board)
         if PostAID is not None:
-            CheckValue.check(str, 'PostAID', PostAID)
-        CheckValue.check(int, 'PostIndex', PostIndex)
-        CheckValue.check(int, 'SearchType', SearchType,
+            CheckValue.check(self.Config, str, 'PostAID', PostAID)
+        CheckValue.check(self.Config, int, 'PostIndex', PostIndex)
+        CheckValue.check(self.Config, int, 'SearchType', SearchType,
                          Class=DataType.PostSearchType)
         if SearchCondition is not None:
-            CheckValue.check(str, 'SearchCondition', SearchCondition)
+            CheckValue.check(self.Config, str,
+                             'SearchCondition', SearchCondition)
 
         if len(Board) == 0:
             raise ValueError(Log.merge([
@@ -3922,7 +4000,8 @@ class Library:
                 SearchType=SearchType,
                 SearchCondition=SearchCondition
             )
-            CheckValue.checkIndex('PostIndex', PostIndex, MaxValue=NewestIndex)
+            CheckValue.checkIndex(self.Config, 'PostIndex',
+                                  PostIndex, MaxValue=NewestIndex)
 
         if inputMarkType == DataType.MarkType.Unconfirmed:
             # 批踢踢兔沒有待證文章功能 QQ
@@ -4117,10 +4196,10 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'Board', Board)
-        CheckValue.check(int, 'BucketDays', BucketDays)
-        CheckValue.check(str, 'Reason', Reason)
-        CheckValue.check(str, 'TargetID', TargetID)
+        CheckValue.check(self.Config, str, 'Board', Board)
+        CheckValue.check(self.Config, int, 'BucketDays', BucketDays)
+        CheckValue.check(self.Config, str, 'Reason', Reason)
+        CheckValue.check(self.Config, str, 'TargetID', TargetID)
 
         self._checkBoard(
             Board,
@@ -4191,21 +4270,23 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'target', target)
+        CheckValue.check(self.Config, str, 'target', target)
         if minpage is not None:
             CheckValue.checkIndex(
+                self.Config,
                 'minpage',
                 minpage
             )
 
         if maxpage is not None:
-            CheckValue.checkIndex(
-                'maxpage',
-                maxpage
-            )
+            CheckValue.checkIndex(self.Config,
+                                  'maxpage',
+                                  maxpage
+                                  )
 
         if minpage is not None and maxpage is not None:
             CheckValue.checkIndexRange(
+                self.Config,
                 'minpage',
                 minpage,
                 'maxpage',
@@ -4247,6 +4328,7 @@ class Library:
             )
             OriScreen = self._ConnectCore.getScreenQueue()[-1]
             Log.log(
+                self.Config,
                 Log.Level.INFO,
                 i18n.Reading
             )
@@ -4287,6 +4369,7 @@ class Library:
                 cmdtemp = ' '
 
         Log.log(
+            self.Config,
             Log.Level.INFO,
             i18n.ReadComplete
         )
@@ -4325,8 +4408,8 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(str, 'Board', Board)
-        CheckValue.check(bool, 'setting', setting)
+        CheckValue.check(self.Config, str, 'Board', Board)
+        CheckValue.check(self.Config, bool, 'setting', setting)
         self._checkBoard(Board)
 
         CmdList = []
@@ -4364,6 +4447,7 @@ class Library:
             pattern = re.compile('[\d]+')
             OnlineUser = pattern.search(Nuser).group(0)
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 '人氣',
                 OnlineUser
@@ -4394,6 +4478,7 @@ class Library:
         if r is not None:
             ChineseDes = r.group(0)[5:].strip()
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '中文敘述',
             ChineseDes
@@ -4405,6 +4490,7 @@ class Library:
             ModeratorLine = r.group(0)[5:].strip()
             Moderators = ModeratorLine.split('/')
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '板主名單',
             Moderators
@@ -4412,6 +4498,7 @@ class Library:
 
         OpenState = ('公開狀態(是否隱形): 公開' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '公開狀態',
             OpenState
@@ -4421,6 +4508,7 @@ class Library:
             '隱板時 可以 進入十大排行榜' in OriScreen
         )
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '隱板時可以進入十大排行榜',
             IntoTopTenWhenHide
@@ -4428,6 +4516,7 @@ class Library:
 
         NonBoardMembersPost = ('開放 非看板會員發文' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '非看板會員發文',
             NonBoardMembersPost
@@ -4435,6 +4524,7 @@ class Library:
 
         ReplyPost = ('開放 回應文章' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '回應文章',
             ReplyPost
@@ -4442,6 +4532,7 @@ class Library:
 
         SelfDelPost = ('開放 自刪文章' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '自刪文章',
             SelfDelPost
@@ -4449,6 +4540,7 @@ class Library:
 
         PushPost = ('開放 推薦文章' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '推薦文章',
             PushPost
@@ -4456,6 +4548,7 @@ class Library:
 
         BooPost = ('開放 噓文' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '噓文',
             BooPost
@@ -4466,6 +4559,7 @@ class Library:
 
         FastPush = ('開放 快速連推文章' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '快速連推文章',
             FastPush
@@ -4480,6 +4574,7 @@ class Library:
             else:
                 MinInterval = 0
             Log.showValue(
+                self.Config,
                 Log.Level.DEBUG,
                 '最低間隔時間',
                 MinInterval
@@ -4491,6 +4586,7 @@ class Library:
         # 推文時 不會 記錄來源 IP
         PushRecordIP = ('推文時 自動 記錄來源 IP' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '記錄來源 IP',
             PushRecordIP
@@ -4500,6 +4596,7 @@ class Library:
         # 推文時 不用對齊 開頭
         PushAligned = ('推文時 對齊 開頭' in OriScreen)
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '對齊開頭',
             PushAligned
@@ -4510,6 +4607,7 @@ class Library:
             '板主 可 刪除部份違規文字' in OriScreen
         )
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '板主可刪除部份違規文字',
             ModeratorCanDelIllegalContent
@@ -4520,6 +4618,7 @@ class Library:
             '轉錄文章 會 自動記錄，且 需要 發文權限' in OriScreen
         )
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '轉錄文章 會 自動記錄，且 需要 發文權限',
             TranPostAutoRecordedAndRequirePostPermissions
@@ -4529,6 +4628,7 @@ class Library:
             '未 設為冷靜模式' not in OriScreen
         )
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '冷靜模式',
             CoolMode
@@ -4539,6 +4639,7 @@ class Library:
         )
 
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '禁止未滿十八歲進入',
             Require18
@@ -4552,6 +4653,7 @@ class Library:
         else:
             RequireLoginTime = 0
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '發文限制登入次數',
             RequireLoginTime
@@ -4565,6 +4667,7 @@ class Library:
         else:
             RequireIllegalPost = 0
         Log.showValue(
+            self.Config,
             Log.Level.DEBUG,
             '發文限制退文篇數',
             RequireIllegalPost
