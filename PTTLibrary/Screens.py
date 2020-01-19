@@ -7,8 +7,6 @@ except ModuleNotFoundError:
     import Util
     import Log
 
-Config = None
-
 
 class Target(object):
     MainMenu = [
@@ -132,7 +130,7 @@ class Target(object):
     ]
 
 
-def show(ScreenQueue, FunctionName=None):
+def show(Config, ScreenQueue, FunctionName=None):
     if Config.LogLevel != Log.Level.TRACE:
         return
 

@@ -8,7 +8,6 @@ except ModuleNotFoundError:
     import Util
     import i18n
 
-Config = None
 # Log Handler
 Handler = None
 
@@ -24,7 +23,7 @@ class Level(object):
     MaxValue = SLIENT
 
 
-def merge(Msg) -> str:
+def merge(Config, Msg) -> str:
     if isinstance(Msg, list):
         if Config.Language == i18n.Language.Chinese:
 
@@ -46,7 +45,7 @@ def merge(Msg) -> str:
     return Msg
 
 
-def log(LogLevel, Msg):
+def log(Config, LogLevel, Msg):
 
     if not Util.checkRange(Level, LogLevel):
         raise ValueError('LogLevel', LogLevel)
@@ -55,7 +54,7 @@ def log(LogLevel, Msg):
         return
     if len(Msg) == 0:
         return
-    Msg = merge(Msg)
+    Msg = merge(Config, Msg)
 
     TotalMessage = '[' + strftime('%m%d %H:%M:%S') + ']'
     if LogLevel == Level.DEBUG:
@@ -81,7 +80,7 @@ def log(LogLevel, Msg):
 LastValue = None
 
 
-def showValue(LogLevel, Msg, Value):
+def showValue(Config, LogLevel, Msg, Value):
 
     if not Util.checkRange(Level, LogLevel):
         raise ValueError('LogLevel', LogLevel)
@@ -90,9 +89,9 @@ def showValue(LogLevel, Msg, Value):
         return
     global LastValue
 
-    CheckPTTMsg = merge([i18n.PTT, i18n.Msg])
-    Msg = merge(Msg)
-    Value = merge(Value)
+    CheckPTTMsg = merge(Config, [i18n.PTT, i18n.Msg])
+    Msg = merge(Config, Msg)
+    Value = merge(Config, Value)
 
     if len(Msg) == 0:
         return
@@ -108,6 +107,6 @@ def showValue(LogLevel, Msg, Value):
     TotalMessage.append(Value)
     TotalMessage.append(']')
 
-    log(LogLevel, ''.join(TotalMessage))
+    log(Config, LogLevel, ''.join(TotalMessage))
 
     LastValue = Value

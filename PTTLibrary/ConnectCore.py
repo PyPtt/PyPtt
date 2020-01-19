@@ -151,7 +151,7 @@ class API(object):
             Exceptions=Exceptions.UseTooManyResources
         )
 
-        Log.showValue(Log.Level.INFO, [
+        Log.showValue(self.Config, Log.Level.INFO, [
             i18n.ConnectCore,
         ],
             i18n.Init
@@ -160,7 +160,7 @@ class API(object):
     def connect(self):
         def _wait():
             for i in range(self.Config.RetryWaitTime):
-                Log.showValue(Log.Level.INFO, [
+                Log.showValue(self.Config, Log.Level.INFO, [
                     i18n.Prepare,
                     i18n.Again,
                     i18n.Connect,
@@ -170,7 +170,7 @@ class API(object):
                 )
                 time.sleep(1)
 
-        Log.showValue(Log.Level.INFO, [
+        Log.showValue(self.Config, Log.Level.INFO, [
             i18n.ConnectCore,
         ],
             i18n.Active
@@ -207,14 +207,14 @@ class API(object):
                 traceback.print_tb(e.__traceback__)
                 print(e)
                 if self._Host == DataType.Host.PTT1:
-                    Log.showValue(Log.Level.INFO, [
+                    Log.showValue(self.Config, Log.Level.INFO, [
                         i18n.Connect,
                         i18n.PTT,
                     ],
                         i18n.Fail
                     )
                 else:
-                    Log.showValue(Log.Level.INFO, [
+                    Log.showValue(self.Config, Log.Level.INFO, [
                         i18n.Connect,
                         i18n.PTT2,
                     ],
@@ -226,7 +226,7 @@ class API(object):
             break
 
         if not ConnectSuccess:
-            raise Exceptions.ConnectError()
+            raise Exceptions.ConnectError(self.Config)
 
     def send(
         self,
@@ -269,6 +269,7 @@ class API(object):
 
             if isSecret:
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG, [
                         i18n.SendMsg
                     ],
@@ -276,6 +277,7 @@ class API(object):
                 )
             else:
                 Log.showValue(
+                    self.Config,
                     Log.Level.DEBUG, [
                         i18n.SendMsg
                     ],
@@ -335,7 +337,7 @@ class API(object):
                         if Target._Handler is not None:
                             Target._Handler()
                         if len(Screen) > 0:
-                            Screens.show(Screen)
+                            Screens.show(self.Config, Screen)
                             self._RDQ.add(Screen)
                             # self._ReceiveDataQueue.append(Screen)
                             if Target == self._UseTooManyResources:
@@ -347,17 +349,21 @@ class API(object):
 
                         FindTarget = True
 
-                        Log.showValue(Target.getLogLevel(), [
-                            i18n.PTT,
-                            i18n.Msg
-                        ],
+                        Log.showValue(
+                            self.Config,
+                            Target.getLogLevel(), [
+                                i18n.PTT,
+                                i18n.Msg
+                            ],
                             Target.getDisplayMsg()
                         )
 
                         EndTime = time.time()
-                        Log.showValue(Log.Level.DEBUG, [
-                            i18n.SpendTime,
-                        ],
+                        Log.showValue(
+                            self.Config,
+                            Log.Level.DEBUG, [
+                                i18n.SpendTime,
+                            ],
                             round(EndTime - StartTime, 2)
                         )
 
@@ -392,7 +398,7 @@ class API(object):
                 if FindTarget:
                     break
                 if len(Screen) > 0:
-                    Screens.show(Screen)
+                    Screens.show(self.Config, Screen)
                     self._RDQ.add(Screen)
                     # self._ReceiveDataQueue.append(Screen)
 

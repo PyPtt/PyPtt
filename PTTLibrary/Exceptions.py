@@ -6,8 +6,6 @@ except ModuleNotFoundError:
     import DataType
     import i18n
 
-Config = None
-
 
 class Error(Exception):
     def __init__(self, message):
@@ -46,24 +44,18 @@ class NoPermission(Exception):
 
 class LoginError(Exception):
     def __init__(self):
-        self.message = [i18n.LoginFail]
+        self.message = i18n.LoginFail
 
     def __str__(self):
-
-        if Config.Language == i18n.Language.Chinese:
-            return ''.join(self.message)
-        return ' '.join(self.message)
+        return self.message
 
 
 class NoFastPush(Exception):
     def __init__(self):
-        self.message = [i18n.NoFastPush]
+        self.message = i18n.NoFastPush
 
     def __str__(self):
-
-        if Config.Language == i18n.Language.Chinese:
-            return ''.join(self.message)
-        return ' '.join(self.message)
+        return self.message
 
 
 class NoSuchUser(Exception):
@@ -107,9 +99,7 @@ class MoneyTooFew(Exception):
 
 
 class NoSuchBoard(Exception):
-    def __init__(self, Board):
-        # self.message = i18n.NoSuchBoard + ': ' + Board
-        self.board = Board
+    def __init__(self, Config, Board):
         if Config.Host == DataType.Host.PTT1:
             self.message = [
                 i18n.PTT,
@@ -121,11 +111,13 @@ class NoSuchBoard(Exception):
                 i18n.NoSuchBoard
             ]
 
-    def __str__(self):
-
         if Config.Language == i18n.Language.Chinese:
-            return ''.join(self.message) + ': ' + self.board
-        return ' '.join(self.message) + ': ' + self.board
+            self.message = ''.join(self.message) + ': ' + Board
+        else:
+            self.message = ' '.join(self.message) + ': ' + Board
+
+    def __str__(self):
+        return self.message
 
 
 class ConnectionClosed(Exception):
@@ -209,14 +201,16 @@ class NeedModeratorPermission(Exception):
 
 
 class ConnectError(Exception):
-    def __init__(self):
+    def __init__(self, Config):
         self.message = [i18n.Connect, i18n.Fail]
 
-    def __str__(self):
-
         if Config.Language == i18n.Language.Chinese:
-            return ''.join(self.message)
-        return ' '.join(self.message)
+            self.message = ''.join(self.message)
+        else:
+            self.message = ' '.join(self.message)
+
+    def __str__(self):
+        return self.message
 
 
 class NoMatchTargetError(Exception):
