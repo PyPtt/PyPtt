@@ -8,9 +8,10 @@
 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
-#### PTT Library 是一套由 Python 所開發，用來操作 PTT 的函式庫。具備絕大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，都可以滿足你的需求。
-#### 採用快而穩的 WebSocket 連線模式，並同時支援繁體中文與英文顯示，在僅支援英文的作業系統也可以正常顯示。
-#### 程式碼相容 PTT2，並備有完整的說明手冊 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
+#### PTT Library 是一套由 Python 所開發，用來操作 PTT 的函式庫。具備絕大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，都可以滿足你的需求
+#### 採用 WebSocket 連線模式，支援繁體中文與英文顯示，在僅支援英文的作業系統也可以正常顯示
+#### 程式碼相容 PTT2
+#### 備有完整的說明手冊 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
 #### 如果你有 PTT Library 沒有的 API，歡迎發起 pull request
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
 #### 原始碼
