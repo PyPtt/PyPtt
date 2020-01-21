@@ -3706,14 +3706,13 @@ class Library:
         return BoardList
 
     def replyPost(
-        self,
-        inputReplyType: int,
-        Board: str,
-        Content: str,
-        SignFile=0,
-        PostAID: str = None,
-        PostIndex: int = 0
-    ):
+            self,
+            inputReplyType: int,
+            Board: str,
+            Content: str,
+            SignFile=0,
+            PostAID: str = None,
+            PostIndex: int = 0):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -3727,13 +3726,12 @@ class Library:
             CheckValue.check(self.Config, str, 'PostAID', PostAID)
 
         if PostIndex != 0:
-
             NewestIndex = self._getNewestIndex(
                 DataType.IndexType.BBS,
-                Board=Board,
-            )
-            CheckValue.checkIndex(self.Config, 'PostIndex',
-                                  PostIndex, MaxValue=NewestIndex)
+                Board=Board)
+            CheckValue.checkIndex(
+                self.Config, 'PostIndex',
+                PostIndex, MaxValue=NewestIndex)
 
         SignFileList = [str(x) for x in range(0, 10)]
         SignFileList.append('x')
@@ -3754,116 +3752,24 @@ class Library:
 
         self._checkBoard(Board)
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('qs')
-        CmdList.append(Board)
-        CmdList.append(Command.Enter)
-        CmdList.append(Command.Ctrl_C * 2)
-        CmdList.append(Command.Space)
-
-        if PostAID is not None:
-            CmdList.append('#' + PostAID)
-        elif PostIndex != 0:
-            CmdList.append(str(PostIndex))
-        CmdList.append(Command.Enter * 2)
-        CmdList.append('r')
-
-        if inputReplyType == DataType.ReplyType.Board:
-            ReplyTargetUnit = ConnectCore.TargetUnit(
-                i18n.ReplyBoard,
-                '▲ 回應至',
-                LogLevel=Log.Level.INFO,
-                Response='F' + Command.Enter
-            )
-        elif inputReplyType == DataType.ReplyType.Mail:
-            ReplyTargetUnit = ConnectCore.TargetUnit(
-                i18n.ReplyMail,
-                '▲ 回應至',
-                LogLevel=Log.Level.INFO,
-                Response='M' + Command.Enter
-            )
-        elif inputReplyType == DataType.ReplyType.Board_Mail:
-            ReplyTargetUnit = ConnectCore.TargetUnit(
-                i18n.ReplyBoard_Mail,
-                '▲ 回應至',
-                LogLevel=Log.Level.INFO,
-                Response='B' + Command.Enter
-            )
-
-        Cmd = ''.join(CmdList)
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.AnyKeyContinue,
-                '任意鍵繼續',
-                BreakDetect=True,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.NoResponse,
-                '◆ 很抱歉, 此文章已結案並標記, 不得回應',
-                LogLevel=Log.Level.INFO,
-                Exceptions=Exceptions.NoResponse()
-            ),
-            ConnectCore.TargetUnit(
-                i18n.ForcedWrite,
-                '(E)繼續編輯 (W)強制寫入',
-                LogLevel=Log.Level.INFO,
-                Response='W' + Command.Enter
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SelectSignature,
-                '請選擇簽名檔',
-                Response=str(SignFile) + Command.Enter,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SaveFile,
-                '確定要儲存檔案嗎',
-                Response='s' + Command.Enter,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.EditPost,
-                '編輯文章',
-                LogLevel=Log.Level.INFO,
-                Response=str(Content) + Command.Enter + Command.Ctrl_X
-            ),
-            ConnectCore.TargetUnit(
-                i18n.QuoteOriginal,
-                '請問要引用原文嗎',
-                LogLevel=Log.Level.DEBUG,
-                Response='Y' + Command.Enter
-            ),
-            ConnectCore.TargetUnit(
-                i18n.UseTheOriginalTitle,
-                '採用原標題[Y/n]?',
-                LogLevel=Log.Level.DEBUG,
-                Response='Y' + Command.Enter
-            ),
-            ReplyTargetUnit,
-            ConnectCore.TargetUnit(
-                i18n.SelfSaveDraft,
-                '已順利寄出，是否自存底稿',
-                LogLevel=Log.Level.DEBUG,
-                Response='Y' + Command.Enter
-            ),
-        ]
-
-        self._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=self.Config.ScreenLongTimeOut
-        )
-
-        Log.log(
-            self.Config,
-            Log.Level.INFO,
-            i18n.RespondSuccess
-        )
+        try:
+            from . import api_replyPost
+        except ModuleNotFoundError:
+            import api_replyPost
+        
+        api_replyPost.replyPost(
+            self,
+            inputReplyType,
+            Board,
+            Content,
+            SignFile,
+            PostAID,
+            PostIndex)
 
     def setBoardTitle(
-        self,
-        Board: str,
-        NewTitle: str
-    ):
+            self,
+            Board: str,
+            NewTitle: str):
         # 第一支板主專用 API
         self._OneThread()
 
@@ -3878,40 +3784,12 @@ class Library:
             CheckModerator=True
         )
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('qs')
-        CmdList.append(Board)
-        CmdList.append(Command.Enter)
-        CmdList.append(Command.Ctrl_C * 2)
-        CmdList.append(Command.Space)
-        CmdList.append('I')
-        CmdList.append(Command.Ctrl_P)
-        CmdList.append('b')
-        CmdList.append(Command.Enter)
-        CmdList.append(Command.Backspace * 31)
-        CmdList.append(NewTitle)
-        CmdList.append(Command.Enter * 2)
-        Cmd = ''.join(CmdList)
+        try:
+            from . import api_setBoardTitle
+        except ModuleNotFoundError:
+            import api_setBoardTitle
 
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.NewSettingsHaveBeenSaved,
-                '◆ 已儲存新設定',
-                BreakDetect=True,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.NoChanges,
-                '◆ 未改變任何設定',
-                BreakDetect=True,
-            ),
-        ]
-
-        self._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=self.Config.ScreenLongTimeOut
-        )
+        api_setBoardTitle.setBoardTitle(self, Board, NewTitle)
 
     def markPost(
         self,

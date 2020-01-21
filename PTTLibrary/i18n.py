@@ -853,6 +853,12 @@ def load(inputLanguage):
         'Mark',
     ])
 
+    global MarkPost
+    MarkPost = SpecificLoad(inputLanguage, [
+        '標記文章',
+        'Mark Post',
+    ])
+
     global DelAllMarkPost
     DelAllMarkPost = SpecificLoad(inputLanguage, [
         '刪除所有標記文章',

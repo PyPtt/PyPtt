@@ -25,6 +25,16 @@ def markPost(
         SearchType: int,
         SearchCondition: str):
 
+    Log.showValue(
+        api.Config,
+        Log.Level.INFO,
+        [
+            i18n.PTT,
+            i18n.Msg
+        ],
+        i18n.MarkPost
+    )
+
     CheckValue.check(api.Config, int, 'MarkType', inputMarkType,
                      Class=DataType.MarkType)
     CheckValue.check(api.Config, str, 'Board', Board)
