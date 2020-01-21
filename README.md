@@ -8,19 +8,16 @@
 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
-#### PTT Library 是一套由 Python 所開發，用來操作 PTT 的函式庫。具備絕大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，都可以滿足你的需求
-#### 採用 WebSocket 連線模式，支援繁體中文與英文顯示，在僅支援英文的作業系統也可以正常顯示
+#### PTT Library 是一套使用 Python 開發的一套 PTT API。具備大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，你都可以在這裡找到完整的使用範例
+#### 採用最新支援的 WebSocket 連線協定，並且支援繁體中文與英文顯示，在僅支援英文的作業系統也沒有問題
 #### 程式碼相容 PTT2
 #### 備有完整的說明手冊 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
-#### 如果你有 PTT Library 沒有的 API，歡迎發起 pull request
 #### 測試平台: Windows 10, Ubuntu 18.04, MacOS 10.14
-#### 原始碼
-#### github: https://github.com/PttCodingMan/PTTLibrary
 #### Pypi: https://pypi.org/project/PTTLibrary/
 <img src="https://i.imgur.com/wfaf8Bk.gif" width="480">
 
 ## 為什麼選擇 PTT Library
-#### 完整的支援: PTT Library 是目前支援最完整的 PTT API，可以滿足你絕大部分的需求 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
+#### 完整的支援: PTT Library 是目前支援最完整的 PTT API，除了 PTT 也相容於 PTT2，詳細範例請參考 [PTT Library 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
 #### 高效能爬蟲: 首創登入式爬蟲，可以取得最即時的推文，並且比網頁式爬蟲擁有更好的效能 [效能比較表](https://hackmd.io/@CodingMan/crawlerbenchmark)
 #### 快速的客服: 如果遇到問題你可以在 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge) 找到我
 #### 完整的測試: 每一次有新的 push，CI 都會自動開始測試，你可以在 [![Build Status](https://travis-ci.org/PttCodingMan/PTTLibrary.svg?branch=master)](https://travis-ci.org/PttCodingMan/PTTLibrary) 找到測試結果
