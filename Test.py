@@ -464,7 +464,7 @@ def detectNone(Name, Obj, Enable=True):
         raise ValueError(Name + ' is None')
 
 
-Query = True
+Query = False
 
 
 def crawlHandler(Post):
@@ -523,10 +523,10 @@ def CrawlBoard():
     global Query
     TestBoardList = [
         # 'Test',
-        'Wanted',
+        # 'Wanted',
         'Gossiping',
-        'Stock',
-        'movie',
+        # 'Stock',
+        # 'movie',
         # 'C_Chat',
         # 'Baseball',
         # 'NBA',
@@ -543,7 +543,7 @@ def CrawlBoard():
 
     Type = 'Index'
 
-    TestRange = 5000
+    TestRange = 100
     TestRound = 5
 
     for _ in range(TestRound):
@@ -1787,7 +1787,7 @@ github: https://tinyurl.com/umqff3v
             # Mail()
             # HasNewMail()
             # GetBoardList()
-            # GetBoardInfo()
+            GetBoardInfo()
             # ReplyPost()
             # GetFavouriteBoard()
             # SearchUser()
