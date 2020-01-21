@@ -30,12 +30,12 @@ def getFavouriteBoard(api):
     FavouriteBoardList = []
     while True:
 
-        self._ConnectCore.send(
+        api._ConnectCore.send(
             Cmd,
             TargetList
         )
 
-        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+        OriScreen = api._ConnectCore.getScreenQueue()[-1]
         # print(OriScreen)
         ScreenBuf = OriScreen
         ScreenBuf = [x for x in ScreenBuf.split('\n')][3:][:-1]
