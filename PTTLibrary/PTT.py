@@ -3690,9 +3690,6 @@ class Library:
                     'Board Name',
                     BoardName
                 )
-                # 版名重複
-                # > 10609   BR_Joseyen   苦甜 ◎Josey的異想世界                    1 joseyen
-                #   10610   BR_Joseyen   苦甜 ◎Josey的異想世界                      joseyen
 
                 BoardList.append(BoardName)
 
@@ -4111,84 +4108,12 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('F')
-        CmdList.append(Command.Enter)
-        CmdList.append('0')
-        Cmd = ''.join(CmdList)
+        try:
+            from . import api_getFavouriteBoard
+        except ModuleNotFoundError:
+            import api_getFavouriteBoard
 
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.FavouriteBoardList,
-                '選擇看板',
-                BreakDetect=True
-            )
-        ]
-
-        FavouriteBoardList = []
-        while True:
-
-            self._ConnectCore.send(
-                Cmd,
-                TargetList
-            )
-
-            OriScreen = self._ConnectCore.getScreenQueue()[-1]
-            # print(OriScreen)
-            ScreenBuf = OriScreen
-            ScreenBuf = [x for x in ScreenBuf.split('\n')][3:][:-1]
-            ScreenBuf[0] = '  ' + ScreenBuf[0][1:]
-            ScreenBuf = [x for x in ScreenBuf]
-
-            MinLen = 47
-
-            # for line in ScreenBuf:
-            #     print(line[:MinLen - len(line)])
-            #     print(len(line))
-            for i, line in enumerate(ScreenBuf):
-                if len(ScreenBuf[i]) == 0:
-                    continue
-                if len(ScreenBuf[i]) <= MinLen:
-                    # print(f'[{ScreenBuf[i]}]')
-                    ScreenBuf[i] = ScreenBuf[i] + \
-                        (' ' * ((MinLen + 1) - len(ScreenBuf[i])))
-            ScreenBuf = [x[10:MinLen - len(x)].strip() for x in ScreenBuf]
-            ScreenBuf = list(filter(None, ScreenBuf))
-
-            for i, line in enumerate(ScreenBuf):
-                # print(i)
-                # 16 = line.find('◎')
-                linebuff = line[:16].strip()
-
-                Type = linebuff[-2:]
-                Board = linebuff[:-2].strip()
-
-                BoardTitle = line[17:].strip()
-                # print(line)
-                # print('\t' + Type)
-                # print('\t' + Board)
-                # print('\t' + BoardTitle)
-
-                FBoard = DataType.FavouriteBoard(
-                    Board,
-                    Type,
-                    BoardTitle
-                )
-
-                FavouriteBoardList.append(FBoard)
-
-            # print(len(FavouriteBoardList))
-            # print(len(ScreenBuf))
-            if len(ScreenBuf) < 20:
-                break
-
-            Cmd = Command.Ctrl_F
-
-        # ScreenBuf = '\n'.join(ScreenBuf)
-        # print(ScreenBuf)
-        # print(len(FavouriteBoardList))
-        return FavouriteBoardList
+        return api_getFavouriteBoard.getFavouriteBoard(self)
 
     def bucket(self, Board, BucketDays, Reason, TargetID):
 
@@ -4202,67 +4127,20 @@ class Library:
         CheckValue.check(self.Config, str, 'Reason', Reason)
         CheckValue.check(self.Config, str, 'TargetID', TargetID)
 
+        self._getUser(TargetID)
+
         self._checkBoard(
             Board,
             CheckModerator=True
         )
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('qs')
-        CmdList.append(Board)
-        CmdList.append(Command.Enter)
-        CmdList.append(Command.Ctrl_C * 2)
-        CmdList.append(Command.Space)
-        CmdList.append('i')
-        CmdList.append(Command.Ctrl_P)
-        CmdList.append('w')
-        CmdList.append(Command.Enter)
-        CmdList.append('a')
-        CmdList.append(Command.Enter)
-        CmdList.append(TargetID)
-        CmdList.append(Command.Enter)
-        Cmd = ''.join(CmdList)
+        try:
+            from . import api_bucket
+        except ModuleNotFoundError:
+            import api_bucket
 
-        CmdList = []
-        CmdList.append(str(BucketDays))
-        CmdList.append(Command.Enter)
-        CmdList.append(Reason)
-        CmdList.append(Command.Enter)
-        CmdList.append('y')
-        CmdList.append(Command.Enter)
-        CmdPart2 = ''.join(CmdList)
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                [
-                    i18n.bucket,
-                    i18n.Fail,
-                ],
-                '◆ 使用者之前已被禁言',
-                Exceptions=Exceptions.UserHasPreviouslyBeenBanned()
-            ),
-            ConnectCore.TargetUnit(
-                [
-                    i18n.bucket,
-                    i18n.Success,
-                ],
-                '任意鍵',
-                BreakDetect=True,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.InputBucketDays_Reason,
-                '請以數字跟單位(預設為天)輸入期限',
-                Response=CmdPart2,
-            ),
-        ]
-
-        self._ConnectCore.send(
-            Cmd,
-            TargetList
-        )
-
-        OriScreen = self._ConnectCore.getScreenQueue()[-1]
+        resultlist = api_bucket.bucket(
+            self, Board, BucketDays, Reason, TargetID)
 
     def searchUser(self, target, minpage=None, maxpage=None):
 
@@ -4293,9 +4171,12 @@ class Library:
                 maxpage
             )
 
-        from . import api_searchuser
-        resultlist = api_searchuser.searchuser(self, target, minpage, maxpage)
-        return resultlist
+        try:
+            from . import api_searchuser
+        except ModuleNotFoundError:
+            import api_searchuser
+
+        return api_searchuser.searchuser(self, target, minpage, maxpage)
 
     def getBoardInfo(
         self,
@@ -4312,9 +4193,12 @@ class Library:
         CheckValue.check(self.Config, bool, 'setting', setting)
         self._checkBoard(Board)
 
-        from . import api_getBoardInfo
-        BoardInfo = api_getBoardInfo.getBoardInfo(self, Board, setting)
-        return BoardInfo
+        try:
+            from . import api_getBoardInfo
+        except ModuleNotFoundError:
+            import api_getBoardInfo
+
+        return api_getBoardInfo.getBoardInfo(self, Board, setting)
 
 
 if __name__ == '__main__':
