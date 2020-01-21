@@ -966,7 +966,7 @@ def GetBoardList():
 
 def ReplyPost():
 
-    ReplyPostIndex = 755
+    ReplyPostIndex = 420
 
     PTTBot.replyPost(
         PTT.ReplyType.Board,
@@ -997,7 +997,7 @@ def SetBoardTitle():
         Time = strftime('%H:%M:%S')
         try:
             PTTBot.setBoardTitle(
-                'CodingMan',
+                'give',
                 f'現在時間 {Time}'
             )
         except PTT.Exceptions.ConnectionClosed:
@@ -1005,8 +1005,7 @@ def SetBoardTitle():
                 try:
                     PTTBot.login(
                         ID,
-                        Password,
-                        KickOtherLogin=True
+                        Password
                     )
                     break
                 except PTT.Exceptions.LoginError:
@@ -1021,8 +1020,8 @@ def SetBoardTitle():
         except KeyboardInterrupt:
             print('已經更新時間 ' + Time)
             PTTBot.setBoardTitle(
-                'CodingMan',
-                '專業程式 BUG 製造機'
+                'give',
+                '[贈送] 注意標題  不合砍文'
             )
             print('板標已經恢復')
             break
@@ -1030,7 +1029,7 @@ def SetBoardTitle():
 
 def MarkPost():
 
-    MarkType = PTT.MarkType.Unconfirmed
+    MarkType = PTT.MarkType.S
 
     # PTTBot.markPost(
     #     MarkType,
@@ -1056,6 +1055,12 @@ def MarkPost():
     #         'CodingMan',
     #         PostIndex=4
     #     )
+
+    PTTBot.markPost(
+        MarkType,
+        'give',
+        PostIndex=2000
+    )
 
     PTTBot.markPost(
         MarkType,
@@ -1754,7 +1759,7 @@ github: https://tinyurl.com/umqff3v
             # Loginout()
             # ThreadingTest()
             PTTBot = PTT.Library(
-                # LogLevel=PTT.LogLevel.TRACE,
+                LogLevel=PTT.LogLevel.TRACE,
                 # LogLevel=PTT.LogLevel.DEBUG,
                 # Host=PTT.Host.PTT2
             )
@@ -1788,7 +1793,7 @@ github: https://tinyurl.com/umqff3v
             # HasNewMail()
             # GetBoardList()
             # GetBoardInfo()
-            # ReplyPost()
+            ReplyPost()
             # GetFavouriteBoard()
             # SearchUser()
 
