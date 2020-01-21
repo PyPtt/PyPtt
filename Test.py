@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account.txt') as AccountFile:
+        with open('Account3.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -1787,7 +1787,7 @@ github: https://tinyurl.com/umqff3v
             # Mail()
             # HasNewMail()
             # GetBoardList()
-            GetBoardInfo()
+            # GetBoardInfo()
             # ReplyPost()
             # GetFavouriteBoard()
             # SearchUser()
