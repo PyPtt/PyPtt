@@ -180,7 +180,7 @@ def VT100(OriScreen: str, NoColor: bool = True):
 
     result = re.sub(r'[\x1B]', '=PTT=', result)
 
-    # show = '奶油' in result
+    # show = True
     # if show:
     #     print('=Start=' * 20)
     #     print(result)
@@ -191,7 +191,11 @@ def VT100(OriScreen: str, NoColor: bool = True):
     # )
 
     # 編輯文章時可能會有莫名的清空問題，需再注意
+    # if result.endswith('=PTT=[H'):
+    #     print('!!!!!!!!=PTT=[H=PTT=[H=PTT=!!!!!!!!!!!!!!!')
     while '=PTT=[H' in result:
+        if result.count('=PTT=[H') == 1 and result.endswith('=PTT=[H'):
+            break
         result = result[result.find('=PTT=[H') + len('=PTT=[H'):]
     while '=PTT=[2J' in result:
         result = result[result.find('=PTT=[2J') + len('=PTT=[2J'):]
