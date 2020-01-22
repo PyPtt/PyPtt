@@ -4,12 +4,14 @@ try:
     from . import i18n
     from . import ConnectCore
     from . import Log
+    from . import Exceptions
     from . import Command
 except ModuleNotFoundError:
     import DataType
     import i18n
     import ConnectCore
     import Log
+    import Exceptions
     import Command
 
 
@@ -47,8 +49,13 @@ def getBoardInfo(api, board, setting):
     if '[靜]' in Nuser:
         OnlineUser = 0
     else:
+        if '編號' not in Nuser or '人氣' not in Nuser:
+            raise Exceptions.NoSuchBoard(api.Config, board)
         pattern = re.compile('[\d]+')
-        OnlineUser = pattern.search(Nuser).group(0)
+        r = pattern.search(Nuser)
+        if r is None:
+            raise Exceptions.NoSuchBoard(api.Config, board)
+        OnlineUser = r.group(0)
         Log.showValue(
             api.Config,
             Log.Level.DEBUG,

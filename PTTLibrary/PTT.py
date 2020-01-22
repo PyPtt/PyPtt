@@ -450,84 +450,14 @@ class Library:
         CheckModerator: bool = False
     ):
         if Board.lower() not in self._ExistBoardList:
-            CmdList = []
-            CmdList.append(Command.GoMainMenu)
-            CmdList.append('qs')
-            CmdList.append(Board)
-            CmdList.append(Command.Enter)
-            CmdList.append(Command.Ctrl_C * 2)
-            CmdList.append(Command.Space)
-            CmdList.append('i')
-            Cmd = ''.join(CmdList)
+            boardinfo = self._getBoardInfo(Board, True)
+            self._ExistBoardList.append(Board.lower())
 
-            TargetList = [
-                ConnectCore.TargetUnit(
-                    i18n.AnyKeyContinue,
-                    '任意鍵繼續',
-                    BreakDetect=True,
-                    LogLevel=Log.Level.DEBUG
-                ),
-                # ConnectCore.TargetUnit(
-                #     i18n.NoSuchBoard,
-                #     Screens.Target.MainMenu,
-                #     BreakDetect=True,
-                #     LogLevel=Log.Level.DEBUG
-                # ),
-            ]
+            if Board.lower() not in self._ModeratorList:
 
-            index = self._ConnectCore.send(Cmd, TargetList)
-            if index < 0:
-                raise Exceptions.NoSuchBoard(self.Config, Board)
-
-            OriScreen = self._ConnectCore.getScreenQueue()[-1]
-
-            # print(OriScreen)
-            # if index == 1:
-            #     raise Exceptions.NoSuchBoard(self.Config, Board)
-
-            BoardNameLine = [line.strip() for line in OriScreen.split(
-                '\n') if line.strip().startswith('《')]
-            if len(BoardNameLine) != 1:
-                raise Exceptions.UnknowError(OriScreen)
-            BoardNameLine = BoardNameLine[0]
-            if '《' not in BoardNameLine or '》' not in BoardNameLine:
-                raise Exceptions.UnknowError(BoardNameLine)
-
-            BoardName = BoardNameLine[1:BoardNameLine.find('》')].lower()
-
-            Log.showValue(
-                self.Config,
-                Log.Level.DEBUG,
-                'Find Board Name',
-                BoardName
-            )
-
-            self._ExistBoardList.append(BoardName)
-
-            if BoardName != Board.lower():
-                raise Exceptions.NoSuchBoard(self.Config, Board)
-
-            CheckModeratorLine = [line.strip() for line in OriScreen.split(
-                '\n') if line.strip().startswith('板主名單:')]
-
-            if len(CheckModeratorLine) != 1:
-                raise Exceptions.UnknowError(OriScreen)
-
-            if BoardName not in self._ModeratorList:
-
-                CheckModeratorLine = CheckModeratorLine[0]
-                CheckModeratorLine = CheckModeratorLine[5:].strip()
-
-                CheckModeratorList = CheckModeratorLine.split('/')
-                CheckModeratorList = [x.lower() for x in CheckModeratorList]
-                Log.showValue(
-                    self.Config,
-                    Log.Level.DEBUG,
-                    'CheckModeratorLine',
-                    CheckModeratorLine
-                )
-
-                self._ModeratorList[BoardName] = CheckModeratorList
+                Moderators = boardinfo.getModerators()
+                Moderators = [x.lower() for x in Moderators]
+                self._ModeratorList[Board.lower()] = Moderators
 
         if CheckModerator:
             if self._ID.lower() not in self._ModeratorList[Board.lower()]:
@@ -600,7 +530,7 @@ class Library:
                 SearchType,
                 SearchCondition
             )
-        except:
+        except Exception:
             return self._getNewestIndex(
                 IndexType,
                 Board,
@@ -1549,7 +1479,13 @@ class Library:
 
         CheckValue.check(self.Config, str, 'Board', Board)
         CheckValue.check(self.Config, bool, 'setting', setting)
-        self._checkBoard(Board)
+
+        return self._getBoardInfo(Board, setting)
+
+    def _getBoardInfo(
+            self,
+            Board,
+            setting=True):
 
         try:
             from . import api_getBoardInfo
