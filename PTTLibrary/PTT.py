@@ -1465,10 +1465,7 @@ class Library:
 
         return api_searchuser.searchuser(self, target, minpage, maxpage)
 
-    def getBoardInfo(
-            self,
-            Board,
-            setting=True):
+    def getBoardInfo(self, Board):
 
         self._OneThread()
 
@@ -1476,21 +1473,17 @@ class Library:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CheckValue.check(self.Config, str, 'Board', Board)
-        CheckValue.check(self.Config, bool, 'setting', setting)
 
-        return self._getBoardInfo(Board, setting)
+        return self._getBoardInfo(Board)
 
-    def _getBoardInfo(
-            self,
-            Board,
-            setting=True):
+    def _getBoardInfo(self, Board):
 
         try:
             from . import api_getBoardInfo
         except ModuleNotFoundError:
             import api_getBoardInfo
 
-        return api_getBoardInfo.getBoardInfo(self, Board, setting)
+        return api_getBoardInfo.getBoardInfo(self, Board)
 
 
 if __name__ == '__main__':
