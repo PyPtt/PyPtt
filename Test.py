@@ -1140,32 +1140,29 @@ def GetBoardInfo():
     # j - 未 設為冷靜模式                            p)進板畫面
     # 8 - 禁止 未滿十八歲進入
 
-    getSetting = True
-
-    BoardInfo = PTTBot.getBoardInfo('Gossiping', setting=getSetting)
+    BoardInfo = PTTBot.getBoardInfo('Gossiping')
     print('板名: ', BoardInfo.getBoard())
     print('線上人數: ', BoardInfo.getOnlineUser())
-    if getSetting:
-        print('中文敘述: ', BoardInfo.getChineseDes())
-        print('板主: ', BoardInfo.getModerators())
-        print('公開狀態(是否隱形): ', BoardInfo.isOpen())
-        print('隱板時是否可進入十大排行榜: ', BoardInfo.canIntoTopTenWhenHide())
-        print('是否開放非看板會員發文: ', BoardInfo.canNonBoardMembersPost())
-        print('是否開放回應文章: ', BoardInfo.canReplyPost())
-        print('是否開放自刪文章: ', BoardInfo.canSelfDelPost())
-        print('是否開放推薦文章: ', BoardInfo.canPushPost())
-        print('是否開放噓文: ', BoardInfo.canBooPost())
-        print('是否可以快速連推文章: ', BoardInfo.canFastPush())
-        print('推文最低間隔時間: ', BoardInfo.getMinInterval())
-        print('推文時是否記錄來源 IP: ', BoardInfo.isPushRecordIP())
-        print('推文時是否對齊開頭: ', BoardInfo.isPushAligned())
-        print('板主是否可刪除部份違規文字: ', BoardInfo.canModeratorCanDelIllegalContent())
-        print('轉錄文章是否自動記錄，且是否需要發文權限: ',
-              BoardInfo.isTranPostAutoRecordedAndRequirePostPermissions())
-        print('是否為冷靜模式: ', BoardInfo.isCoolMode())
-        print('是否需要滿十八歲才可進入: ', BoardInfo.isRequire18())
-        print('發文與推文限制登入次數需多少次以上: ', BoardInfo.getRequireLoginTime())
-        print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.getRequireIllegalPost())
+    print('中文敘述: ', BoardInfo.getChineseDes())
+    print('板主: ', BoardInfo.getModerators())
+    print('公開狀態(是否隱形): ', BoardInfo.isOpen())
+    print('隱板時是否可進入十大排行榜: ', BoardInfo.canIntoTopTenWhenHide())
+    print('是否開放非看板會員發文: ', BoardInfo.canNonBoardMembersPost())
+    print('是否開放回應文章: ', BoardInfo.canReplyPost())
+    print('是否開放自刪文章: ', BoardInfo.canSelfDelPost())
+    print('是否開放推薦文章: ', BoardInfo.canPushPost())
+    print('是否開放噓文: ', BoardInfo.canBooPost())
+    print('是否可以快速連推文章: ', BoardInfo.canFastPush())
+    print('推文最低間隔時間: ', BoardInfo.getMinInterval())
+    print('推文時是否記錄來源 IP: ', BoardInfo.isPushRecordIP())
+    print('推文時是否對齊開頭: ', BoardInfo.isPushAligned())
+    print('板主是否可刪除部份違規文字: ', BoardInfo.canModeratorCanDelIllegalContent())
+    print('轉錄文章是否自動記錄，且是否需要發文權限: ',
+          BoardInfo.isTranPostAutoRecordedAndRequirePostPermissions())
+    print('是否為冷靜模式: ', BoardInfo.isCoolMode())
+    print('是否需要滿十八歲才可進入: ', BoardInfo.isRequire18())
+    print('發文與推文限制登入次數需多少次以上: ', BoardInfo.getRequireLoginTime())
+    print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.getRequireIllegalPost())
 
 
 def Bucket():
