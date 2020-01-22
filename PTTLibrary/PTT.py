@@ -453,11 +453,9 @@ class Library:
             boardinfo = self._getBoardInfo(Board, True)
             self._ExistBoardList.append(Board.lower())
 
-            if Board.lower() not in self._ModeratorList:
-
-                Moderators = boardinfo.getModerators()
-                Moderators = [x.lower() for x in Moderators]
-                self._ModeratorList[Board.lower()] = Moderators
+            Moderators = boardinfo.getModerators()
+            Moderators = [x.lower() for x in Moderators]
+            self._ModeratorList[Board.lower()] = Moderators
 
         if CheckModerator:
             if self._ID.lower() not in self._ModeratorList[Board.lower()]:
