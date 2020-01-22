@@ -1,16 +1,11 @@
 import re
-import time
 try:
-    from . import DataType
-    from . import Util
     from . import i18n
     from . import ConnectCore
     from . import Screens
     from . import Exceptions
     from . import Command
 except ModuleNotFoundError:
-    import DataType
-    import Util
     import i18n
     import ConnectCore
     import Screens

@@ -8,7 +8,6 @@ try:
     from . import Screens
     from . import Exceptions
     from . import Command
-    from . import CheckValue
 except ModuleNotFoundError:
     import DataType
     import i18n
@@ -17,7 +16,6 @@ except ModuleNotFoundError:
     import Screens
     import Exceptions
     import Command
-    import CheckValue
 
 
 def getWaterBall(api, OperateType):
@@ -101,7 +99,7 @@ def getWaterBall(api, OperateType):
         # print('=' * 50)
         # print(OriScreen)
         # print('=' * 50)
-        ScreenTemp = OriScreen
+        # ScreenTemp = OriScreen
         Log.showValue(
             api.Config,
             Log.Level.DEBUG,
@@ -394,7 +392,7 @@ def throwWaterBall(api, TargetID, Content):
 
         Cmd = ''.join(CmdList)
 
-        index = api._ConnectCore.send(
+        api._ConnectCore.send(
             Cmd,
             TargetList,
             ScreenTimeout=api.Config.ScreenLongTimeOut
