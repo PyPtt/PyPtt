@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def getBoardInfo(api, board, setting):
+def getBoardInfo(api, board):
 
     CmdList = []
     CmdList.append(Command.GoMainMenu)
@@ -63,9 +63,6 @@ def getBoardInfo(api, board, setting):
             OnlineUser
         )
 
-    if not setting:
-        return DataType.BoardInfo(board, OnlineUser)
-
     TargetList = [
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
@@ -82,6 +79,20 @@ def getBoardInfo(api, board, setting):
 
     OriScreen = api._ConnectCore.getScreenQueue()[-1]
     # print(OriScreen)
+
+    p = re.compile('《(.+)》看板設定')
+    r = p.search(OriScreen)
+    if r is not None:
+        boardname = r.group(0)[1:-5].strip()
+    Log.showValue(
+        api.Config,
+        Log.Level.DEBUG,
+        '看板名稱',
+        boardname
+    )
+
+    if boardname != board:
+        raise Exceptions.NoSuchBoard(api.Config, board)
 
     p = re.compile('中文敘述: (.+)')
     r = p.search(OriScreen)
@@ -284,7 +295,7 @@ def getBoardInfo(api, board, setting):
     )
 
     BoardInfo = DataType.BoardInfo(
-        board,
+        boardname,
         OnlineUser,
         ChineseDes,
         Moderators,
