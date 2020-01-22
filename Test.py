@@ -12,7 +12,7 @@ from PTTLibrary import PTT
 
 def getPW():
     try:
-        with open('Account3.txt') as AccountFile:
+        with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -450,7 +450,7 @@ def GetNewestIndex():
     ]
 
     for Board in TestBoardList:
-        for _ in range(1):
+        for _ in range(100):
             Index = PTTBot.getNewestIndex(PTT.IndexType.BBS, Board=Board)
             print(f'{Board} 最新文章編號 {Index}')
 
@@ -1652,7 +1652,7 @@ github: https://tinyurl.com/umqff3v
                             Content, PostAID=BasicPostAID)
                 PTTBot.logout()
                 sys.exit(1)
-            
+
             Content = '寄信測試成功'
             print(Content)
             PTTBot.push(Board, PTT.PushType.Arrow,
@@ -1759,7 +1759,7 @@ github: https://tinyurl.com/umqff3v
             # Loginout()
             # ThreadingTest()
             PTTBot = PTT.Library(
-                LogLevel=PTT.LogLevel.TRACE,
+                # LogLevel=PTT.LogLevel.TRACE,
                 # LogLevel=PTT.LogLevel.DEBUG,
                 # Host=PTT.Host.PTT2
             )
@@ -1793,7 +1793,7 @@ github: https://tinyurl.com/umqff3v
             # HasNewMail()
             # GetBoardList()
             # GetBoardInfo()
-            ReplyPost()
+            # ReplyPost()
             # GetFavouriteBoard()
             # SearchUser()
 
