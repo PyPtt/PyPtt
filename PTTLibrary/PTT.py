@@ -2319,70 +2319,18 @@ class Library:
 
         self._checkBoard(Board)
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('qs')
-        CmdList.append(Board)
-        CmdList.append(Command.Enter)
-        CmdList.append(Command.Ctrl_C * 2)
-        CmdList.append(Command.Space)
-        CmdList.append(Command.Ctrl_P)
+        try:
+            from . import api_post
+        except ModuleNotFoundError:
+            import api_post
 
-        Cmd = ''.join(CmdList)
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.HasPostPermission,
-                '發表文章於【',
-                BreakDetect=True,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.NoPermission,
-                '使用者不可發言',
-                BreakDetect=True,
-            )
-        ]
-        index = self._ConnectCore.send(Cmd, TargetList)
-        if index < 0:
-            Screens.show(self.Config, self._ConnectCore.getScreenQueue())
-            raise Exceptions.UnknowError(i18n.UnknowError)
-        if index == 1:
-            raise Exceptions.NoPermission(i18n.NoPermission)
-
-        Screens.show(self.Config, self._ConnectCore.getScreenQueue())
-
-        CmdList = []
-        CmdList.append(str(PostType))
-        CmdList.append(Command.Enter)
-        CmdList.append(str(Title))
-        CmdList.append(Command.Enter)
-        CmdList.append(Command.Ctrl_Y * 30)
-        CmdList.append(str(Content))
-        CmdList.append(Command.Ctrl_X)
-        Cmd = ''.join(CmdList)
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.AnyKeyContinue,
-                '任意鍵繼續',
-                BreakDetect=True,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SaveFile,
-                '確定要儲存檔案嗎',
-                Response='s' + Command.Enter,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SelectSignature,
-                'x=隨機',
-                Response=str(SignFile) + Command.Enter,
-            ),
-        ]
-        index = self._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=self.Config.ScreenPostTimeOut
-        )
+        return api_post.post(
+            self,
+            Board,
+            Title,
+            Content,
+            PostType,
+            SignFile)
 
     def push(
         self,
