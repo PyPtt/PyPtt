@@ -450,7 +450,7 @@ class Library:
         CheckModerator: bool = False
     ):
         if Board.lower() not in self._ExistBoardList:
-            boardinfo = self._getBoardInfo(Board, True)
+            boardinfo = self._getBoardInfo(Board)
             self._ExistBoardList.append(Board.lower())
 
             Moderators = boardinfo.getModerators()
