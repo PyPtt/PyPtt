@@ -37,7 +37,7 @@ def getBoardInfo(api, board):
         ),
     ]
 
-    index = api._ConnectCore.send(
+    api._ConnectCore.send(
         Cmd,
         TargetList
     )

@@ -1,6 +1,5 @@
 
 try:
-    from . import Util
     from . import i18n
     from . import ConnectCore
     from . import Log
@@ -9,7 +8,6 @@ try:
     from . import Command
     from . import CheckValue
 except ModuleNotFoundError:
-    import Util
     import i18n
     import ConnectCore
     import Log
@@ -38,31 +36,16 @@ def getPostIndex(
 
     Cmd = ''.join(CmdList)
 
-    TargetList = []
-    if AID is not None:
-        NoSuchPost = i18n.NoSuchPost
-        NoSuchPost = i18n.replace(NoSuchPost, Board, AID)
-        TargetList.append(
-            ConnectCore.TargetUnit(
-                NoSuchPost,
-                '找不到這個文章代碼',
-                LogLevel=Log.Level.DEBUG,
-                Exceptions=Exceptions.NoSuchPost(Board, AID)
-            ),
-        )
-    else:
-        NoSuchPost = i18n.NoSuchPost
-        NoSuchPost = i18n.replace(NoSuchPost, Board, PostIndex)
-        TargetList.append(
-            ConnectCore.TargetUnit(
-                NoSuchPost,
-                '找不到這個文章代碼',
-                LogLevel=Log.Level.DEBUG,
-                Exceptions=Exceptions.NoSuchPost(Board, PostIndex)
-            ),
-        )
+    NoSuchPost = i18n.NoSuchPost
+    NoSuchPost = i18n.replace(NoSuchPost, Board, AID)
 
-    TargetList.extend([
+    TargetList = [
+        ConnectCore.TargetUnit(
+            NoSuchPost,
+            '找不到這個文章代碼',
+            LogLevel=Log.Level.DEBUG,
+            Exceptions=Exceptions.NoSuchPost(Board, AID)
+        ),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
         ConnectCore.TargetUnit(
             i18n.CanNotUseSearchPostCodeF,
@@ -91,8 +74,9 @@ def getPostIndex(
             Screens.Target.MainMenu_Exiting,
             Exceptions=Exceptions.NoSuchBoard(api.Config, Board)
             # BreakDetect=True,
-        ),
-    ])
+        )
+    ]
+
     index = api._ConnectCore.send(
         Cmd,
         TargetList
