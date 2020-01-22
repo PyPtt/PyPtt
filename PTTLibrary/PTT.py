@@ -1475,7 +1475,8 @@ class Library:
         )
 
         InfoLines = [
-            line for line in OriginPostLines if line.startswith('※') or line.startswith('◆')
+            line for line in OriginPostLines if line.startswith('※') or
+            line.startswith('◆')
         ]
 
         pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
@@ -3581,129 +3582,12 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('F')
-        CmdList.append(Command.Enter)
-        CmdList.append('y')
-        CmdList.append('$')
-        Cmd = ''.join(CmdList)
+        try:
+            from . import api_getBoardList
+        except ModuleNotFoundError:
+            import api_getBoardList
 
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.BoardList,
-                Screens.Target.InBoardList,
-                BreakDetect=True
-            )
-        ]
-
-        self._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=self.Config.ScreenLongTimeOut
-        )
-        OriScreen = self._ConnectCore.getScreenQueue()[-1]
-
-        MaxNo = 0
-
-        for line in OriScreen.split('\n'):
-            if '◎' not in line:
-                continue
-
-            if line.startswith(self._Cursor):
-                line = line[len(self._Cursor):]
-
-            # print(f'->{line}<')
-
-            FrontPart = line[:line.find('◎')]
-            FrontPartList = [x for x in FrontPart.split(' ')]
-            FrontPartList = list(filter(None, FrontPartList))
-            # print(f'FrontPartList =>{FrontPartList}<=')
-            MaxNo = int(FrontPartList[0])
-
-        Log.showValue(
-            self.Config,
-            Log.Level.DEBUG,
-            'MaxNo',
-            MaxNo
-        )
-
-        if self.Config.LogLevel == Log.Level.INFO:
-            PB = progressbar.ProgressBar(
-                max_value=MaxNo,
-                redirect_stdout=True
-            )
-
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('F')
-        CmdList.append(Command.Enter)
-        CmdList.append('y')
-        CmdList.append('0')
-        Cmd = ''.join(CmdList)
-
-        BoardList = []
-        while True:
-
-            self._ConnectCore.send(
-                Cmd,
-                TargetList,
-                ScreenTimeout=self.Config.ScreenLongTimeOut
-            )
-
-            OriScreen = self._ConnectCore.getScreenQueue()[-1]
-            # print(OriScreen)
-            for line in OriScreen.split('\n'):
-                if '◎' not in line and '●' not in line:
-                    continue
-
-                if line.startswith(self._Cursor):
-                    line = line[len(self._Cursor):]
-
-                # print(f'->{line}<')
-
-                if '◎' in line:
-                    FrontPart = line[:line.find('◎')]
-                else:
-                    FrontPart = line[:line.find('●')]
-                FrontPartList = [x for x in FrontPart.split(' ')]
-                FrontPartList = list(filter(None, FrontPartList))
-                # print(f'FrontPartList =>{FrontPartList}<=')
-                No = int(FrontPartList[0])
-                # print(f'No  =>{No}<=')
-                # print(f'LastNo =>{LastNo}<=')
-
-                Log.showValue(
-                    self.Config,
-                    Log.Level.DEBUG,
-                    'Board NO',
-                    No
-                )
-
-                BoardName = FrontPartList[1]
-                if BoardName.startswith('ˇ'):
-                    BoardName = BoardName[1:]
-
-                Log.showValue(
-                    self.Config,
-                    Log.Level.DEBUG,
-                    'Board Name',
-                    BoardName
-                )
-
-                BoardList.append(BoardName)
-
-                if self.Config.LogLevel == Log.Level.INFO:
-                    PB.update(No)
-
-            if No == MaxNo:
-                break
-            Cmd = Command.Ctrl_F
-
-        if self.Config.LogLevel == Log.Level.INFO:
-            PB.finish()
-
-        return BoardList
+        return api_getBoardList.getBoardList(self)
 
     def replyPost(
             self,
