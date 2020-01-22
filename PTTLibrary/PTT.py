@@ -3544,37 +3544,12 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('M')
-        CmdList.append(Command.Enter)
-        CmdList.append('R')
-        CmdList.append(Command.Enter)
-        CmdList.append('1')
-        CmdList.append(Command.Enter)
-        CmdList.append('$')
-        Cmd = ''.join(CmdList)
+        try:
+            from . import api_hasNewMail
+        except ModuleNotFoundError:
+            import api_hasNewMail
 
-        #
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.MailBox,
-                Screens.Target.InMailBox,
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
-            )
-        ]
-
-        self._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=self.Config.ScreenLongTimeOut
-        )
-
-        OriScreen = self._ConnectCore.getScreenQueue()[-1]
-
-        pattern = re.findall('[\s]+[\d]+ (\+)[\s]+', OriScreen)
-        return len(pattern)
+        return api_hasNewMail.hasNewMail(self)
 
     def getBoardList(self):
         self._OneThread()
