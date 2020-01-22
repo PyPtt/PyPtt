@@ -240,177 +240,16 @@ class Library:
         KickOtherLogin: bool = False
     ):
 
-        if self._LoginStatus:
-            self.logout()
+        try:
+            from . import api_loginout
+        except ModuleNotFoundError:
+            import api_loginout
 
-        CheckValue.check(self.Config, str, 'ID', ID)
-        CheckValue.check(self.Config, str, 'Password', Password)
-        CheckValue.check(self.Config, bool, 'KickOtherLogin', KickOtherLogin)
-
-        self.Config.KickOtherLogin = KickOtherLogin
-
-        def KickOtherLoginDisplayMsg():
-            if self.Config.KickOtherLogin:
-                return i18n.KickOtherLogin
-            return i18n.NotKickOtherLogin
-
-        def KickOtherLoginResponse(Screen):
-            if self.Config.KickOtherLogin:
-                return 'y' + Command.Enter
-            return 'n' + Command.Enter
-
-        if len(Password) > 8:
-            Password = Password[:8]
-
-        ID = ID.strip()
-        Password = Password.strip()
-
-        self._ID = ID
-        self._Password = Password
-
-        Log.showValue(
-            self.Config,
-            Log.Level.INFO,
-            [
-                i18n.Login,
-                i18n.ID
-            ],
-            ID
-        )
-
-        self.Config.KickOtherLogin = KickOtherLogin
-
-        self._ConnectCore.connect()
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.HasNewMailGotoMainMenu,
-                '你有新信件',
-                Response=Command.GoMainMenu,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.LoginSuccess,
-                Screens.Target.MainMenu,
-                BreakDetect=True
-            ),
-            ConnectCore.TargetUnit(
-                i18n.GoMainMenu,
-                '【看板列表】',
-                Response=Command.GoMainMenu,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.ErrorIDPW,
-                '密碼不對或無此帳號',
-                BreakDetect=True,
-                Exceptions=Exceptions.WrongIDorPassword()
-            ),
-            ConnectCore.TargetUnit(
-                i18n.LoginTooOften,
-                '登入太頻繁',
-                BreakDetect=True,
-                Exceptions=Exceptions.LoginTooOften()
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SystemBusyTryLater,
-                '系統過載',
-                BreakDetect=True,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.DelWrongPWRecord,
-                '您要刪除以上錯誤嘗試的記錄嗎',
-                Response='y' + Command.Enter,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.MailBoxFull,
-                '您保存信件數目',
-                Response=Command.GoMainMenu,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.PostNotFinish,
-                '請選擇暫存檔 (0-9)[0]',
-                Response=Command.Enter,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.PostNotFinish,
-                '有一篇文章尚未完成',
-                Response='Q' + Command.Enter,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SigningUnPleaseWait,
-                '登入中，請稍候',
-            ),
-            ConnectCore.TargetUnit(
-                KickOtherLoginDisplayMsg,
-                '您想刪除其他重複登入的連線嗎',
-                Response=KickOtherLoginResponse,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.AnyKeyContinue,
-                '任意鍵',
-                Response=Command.Enter
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SigningUpdate,
-                '正在更新與同步線上使用者及好友名單',
-            ),
-        ]
-
-        CmdList = []
-        CmdList.append(ID)
-        CmdList.append(Command.Enter)
-        CmdList.append(Password)
-        CmdList.append(Command.Enter)
-
-        Cmd = ''.join(CmdList)
-
-        index = self._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=self.Config.ScreenLongTimeOut,
-            Refresh=False,
-            Secret=True
-        )
-
-        if TargetList[index].getDisplayMsg() != i18n.LoginSuccess:
-            # OriScreen = self._ConnectCore.getScreenQueue()[-1]
-            # print(OriScreen)
-            raise Exceptions.LoginError()
-
-        OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        if '> (' in OriScreen:
-            self._Cursor = DataType.Cursor.New
-            Log.log(
-                self.Config,
-                Log.Level.DEBUG,
-                i18n.NewCursor
-            )
-        else:
-            self._Cursor = DataType.Cursor.Old
-            Log.log(
-                self.Config,
-                Log.Level.DEBUG,
-                i18n.OldCursor
-            )
-
-        if self._Cursor not in Screens.Target.InBoardWithCursor:
-            Screens.Target.InBoardWithCursor.append('\n' + self._Cursor)
-
-        self._UnregisteredUser = False
-        if '(T)alk' not in OriScreen:
-            self._UnregisteredUser = True
-        if '(P)lay' not in OriScreen:
-            self._UnregisteredUser = True
-        if '(N)amelist' not in OriScreen:
-            self._UnregisteredUser = True
-
-        if self._UnregisteredUser:
-            Log.log(
-                self.Config,
-                Log.Level.INFO,
-                i18n.UnregisteredUserCantUseAllAPI
-            )
-
-        self._LoginStatus = True
+        return api_loginout.login(
+            self,
+            ID,
+            Password,
+            KickOtherLogin)
 
     def login(
         self,
@@ -419,6 +258,11 @@ class Library:
         KickOtherLogin: bool = False
     ):
         self._OneThread()
+
+        CheckValue.check(self.Config, str, 'ID', ID)
+        CheckValue.check(self.Config, str, 'Password', Password)
+        CheckValue.check(self.Config, bool, 'KickOtherLogin', KickOtherLogin)
+
         try:
             return self._login(
                 ID,
@@ -438,51 +282,12 @@ class Library:
         if not self._LoginStatus:
             return
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('g')
-        CmdList.append(Command.Enter)
-        CmdList.append('y')
-        CmdList.append(Command.Enter)
-
-        Cmd = ''.join(CmdList)
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                [
-                    i18n.Logout,
-                    i18n.Success,
-                ],
-                '任意鍵',
-                BreakDetect=True,
-            ),
-        ]
-
-        Log.log(
-            self.Config,
-            Log.Level.INFO,
-            [
-                i18n.Start,
-                i18n.Logout
-            ]
-        )
-
         try:
-            self._ConnectCore.send(Cmd, TargetList)
-            self._ConnectCore.close()
-        except Exceptions.ConnectionClosed:
-            pass
-        except RuntimeError:
-            pass
+            from . import api_loginout
+        except ModuleNotFoundError:
+            import api_loginout
 
-        self._LoginStatus = False
-
-        Log.showValue(
-            self.Config,
-            Log.Level.INFO,
-            i18n.Logout,
-            i18n.Done
-        )
+        return api_loginout.logout(self)
 
     def log(self, Msg):
         self._OneThread()
