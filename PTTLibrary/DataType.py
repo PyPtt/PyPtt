@@ -4,10 +4,10 @@ from uao import register_uao
 register_uao()
 
 
-def ParseParameter(type, input):
-    if input is None:
+def ParseParameter(type, parameter):
+    if parameter is None:
         return None
-    result = type(input)
+    result = type(parameter)
     if isinstance(result, str):
         result = result.rstrip()
     return result

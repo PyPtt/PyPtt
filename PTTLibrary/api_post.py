@@ -1,21 +1,15 @@
 import re
 import time
 try:
-    from . import DataType
-    from . import Util
     from . import i18n
     from . import ConnectCore
-    from . import Log
     from . import Screens
     from . import Exceptions
     from . import Command
     from . import CheckValue
 except ModuleNotFoundError:
-    import DataType
-    import Util
     import i18n
     import ConnectCore
-    import Log
     import Screens
     import Exceptions
     import Command

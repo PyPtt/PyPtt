@@ -1200,14 +1200,12 @@ if __name__ == '__main__':
             ID = os.getenv('PTTLibrary_ID')
             Password = os.getenv('PTTLibrary_Password')
             if ID is None or Password is None:
-                os.system('cls')
                 print('從環境變數取得帳號密碼失敗')
                 ID, Password = getPW()
                 TravisCI = False
             else:
                 TravisCI = True
     else:
-        os.system('cls')
         ID, Password = getPW()
 
     if RunCI:

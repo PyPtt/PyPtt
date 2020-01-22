@@ -1,16 +1,12 @@
 try:
-    from . import DataType
     from . import i18n
     from . import ConnectCore
-    from . import Log
     from . import Screens
     from . import Command
     from . import CheckValue
 except ModuleNotFoundError:
-    import DataType
     import i18n
     import ConnectCore
-    import Log
     import Screens
     import Command
     import CheckValue
