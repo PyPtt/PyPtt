@@ -2911,8 +2911,9 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        CheckValue.check(self.Config, int, 'OperateType', OperateType,
-                         Class=DataType.WaterBallOperateType)
+        CheckValue.check(
+            self.Config, int, 'OperateType', OperateType,
+            Class=DataType.WaterBallOperateType)
 
         if OperateType == DataType.WaterBallOperateType.DoNothing:
             WaterBallOperateType = 'R'
@@ -3201,96 +3202,16 @@ class Library:
 
     def _getCallStatus(self):
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('A')
-        CmdList.append(Command.Right)
-        CmdList.append(Command.Left)
+        try:
+            from . import api_CallStatus
+        except ModuleNotFoundError:
+            import api_CallStatus
 
-        Cmd = ''.join(CmdList)
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetCallStatus,
-                    i18n.Success,
-                ],
-                '[呼叫器]打開',
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
-            ),
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetCallStatus,
-                    i18n.Success,
-                ],
-                '[呼叫器]拔掉',
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
-            ),
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetCallStatus,
-                    i18n.Success,
-                ],
-                '[呼叫器]防水',
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
-            ),
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetCallStatus,
-                    i18n.Success,
-                ],
-                '[呼叫器]好友',
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
-            ),
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetCallStatus,
-                    i18n.Success,
-                ],
-                '[呼叫器]關閉',
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
-            ),
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetCallStatus,
-                ],
-                '★',
-                Response=Cmd,
-                LogLevel=Log.Level.DEBUG
-            ),
-        ]
-
-        for i in range(2):
-            index = self._ConnectCore.send(Cmd, TargetList)
-            if index < 0:
-                if i == 0:
-                    continue
-                OriScreen = self._ConnectCore.getScreenQueue()[-1]
-                raise Exceptions.UnknowError(OriScreen)
-
-        if index == 0:
-            return DataType.CallStatus.On
-        if index == 1:
-            return DataType.CallStatus.Unplug
-        if index == 2:
-            return DataType.CallStatus.Waterproof
-        if index == 3:
-            return DataType.CallStatus.Friend
-        if index == 4:
-            return DataType.CallStatus.Off
-
-        OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        raise Exceptions.UnknowError(OriScreen)
+        return api_CallStatus.getCallStatus(self)
 
     def setCallStatus(
-        self,
-        inputCallStatus
-    ):
+            self,
+            inputCallStatus):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -3299,36 +3220,12 @@ class Library:
         CheckValue.check(self.Config, int, 'CallStatus', inputCallStatus,
                          Class=DataType.CallStatus)
 
-        # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
+        try:
+            from . import api_CallStatus
+        except ModuleNotFoundError:
+            import api_CallStatus
 
-        CurrentCallStatus = self._getCallStatus()
-
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append(Command.Ctrl_U)
-        CmdList.append('p')
-
-        Cmd = ''.join(CmdList)
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                [
-                    i18n.SetCallStatus,
-                    i18n.Success
-                ],
-                Screens.Target.InUserList,
-                BreakDetect=True
-            )
-        ]
-
-        while CurrentCallStatus != inputCallStatus:
-            self._ConnectCore.send(
-                Cmd,
-                TargetList,
-                ScreenTimeout=self.Config.ScreenLongTimeOut
-            )
-
-            CurrentCallStatus = self._getCallStatus()
+        return api_CallStatus.setCallStatus(self, inputCallStatus)
 
     def giveMoney(self, ID, Money):
         self._OneThread()
