@@ -60,7 +60,6 @@ def SendEcho():
 
 
 if __name__ == '__main__':
-    os.system('cls')
     print('Welcome to PTT Library v ' + PTT.Version + ' Echo Server')
 
     ID, Password = getPW()

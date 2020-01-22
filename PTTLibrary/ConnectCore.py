@@ -9,8 +9,6 @@ register_uao()
 
 try:
     from . import DataType
-    from . import Config
-    from . import Util
     from . import i18n
     from . import Log
     from . import Screens
@@ -18,8 +16,6 @@ try:
     from . import Exceptions
 except ModuleNotFoundError:
     import DataType
-    import Config
-    import Util
     import i18n
     import Log
     import Screens
@@ -96,7 +92,7 @@ class TargetUnit(object):
         return self._BreakDetect
 
     def raiseException(self):
-        if self._Exception is not None:
+        if isinstance(self._Exception, Exception):
             raise self._Exception
 
     def isRefresh(self):
@@ -237,6 +233,28 @@ class API(object):
         Secret: bool = False
     ) -> int:
 
+        def cleanScreen(screen: str, NoColor: bool = True) -> str:
+
+            if not screen:
+                return screen
+            # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
+
+                # screen = re.sub('\[[\d+;]*m', '', screen)
+
+            screen = re.sub(r'[\r]', '', screen)
+            screen = re.sub(r'[\x00-\x08]', '', screen)
+            screen = re.sub(r'[\x0b\x0c]', '', screen)
+            # screen = re.sub(r'[\x0e-\x1f]', '', screen)
+
+            screen = re.sub(r'[\x0e-\x1A]', '', screen)
+
+            screen = re.sub(r'[\x1C-\x1F]', '', screen)
+            screen = re.sub(r'[\x7f-\xff]', '', screen)
+
+            screen = Screens.VT100(screen)
+
+            return screen
+
         if not all(isinstance(T, TargetUnit) for T in TargetList):
             raise ValueError('Item of TargetList must be TargetUnit')
 
@@ -327,7 +345,7 @@ class API(object):
                 ReceiveDataTemp = ReceiveDataBuffer.decode(
                     'big5-uao', errors='replace'
                 )
-                Screen = self._cleanScreen(ReceiveDataTemp)
+                Screen = cleanScreen(ReceiveDataTemp)
 
                 FindTarget = False
                 for Target in TargetList:
@@ -410,28 +428,6 @@ class API(object):
 
     def close(self):
         asyncio.get_event_loop().run_until_complete(self._Core.close())
-
-    def _cleanScreen(self, screen: str, NoColor: bool = True) -> str:
-
-        if not screen:
-            return screen
-        # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
-
-            # screen = re.sub('\[[\d+;]*m', '', screen)
-
-        screen = re.sub(r'[\r]', '', screen)
-        screen = re.sub(r'[\x00-\x08]', '', screen)
-        screen = re.sub(r'[\x0b\x0c]', '', screen)
-        # screen = re.sub(r'[\x0e-\x1f]', '', screen)
-
-        screen = re.sub(r'[\x0e-\x1A]', '', screen)
-
-        screen = re.sub(r'[\x1C-\x1F]', '', screen)
-        screen = re.sub(r'[\x7f-\xff]', '', screen)
-
-        screen = Screens.VT100(screen)
-
-        return screen
 
     def getScreenQueue(self) -> list:
         return self._RDQ.get(1)

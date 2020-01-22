@@ -7,7 +7,6 @@ try:
     from . import Screens
     from . import Exceptions
     from . import Command
-    from . import CheckValue
 except ModuleNotFoundError:
     import DataType
     import i18n
@@ -16,7 +15,6 @@ except ModuleNotFoundError:
     import Screens
     import Exceptions
     import Command
-    import CheckValue
 
 
 def mail(

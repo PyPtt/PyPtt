@@ -249,7 +249,8 @@ def VT100(OriScreen: str, NoColor: bool = True):
 
                 # OriginIndex = -1
                 OriginLine = None
-                for i, line in enumerate(ResultLines):
+                # for i, line in enumerate(ResultLines):
+                for line in ResultLines:
                     if f'=PTT=[{Line};{Space}H=PTT=[K' in line:
                         # OriginIndex = i
                         OriginLine = line
@@ -337,7 +338,7 @@ def VT100(OriScreen: str, NoColor: bool = True):
 
     if LastPosition is not None:
         result = result.replace(LastPosition, '')
-    
+
     # if show:
     #     print('-Final-' * 20)
     #     print(result)
