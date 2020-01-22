@@ -3419,12 +3419,11 @@ class Library:
         )
 
     def mail(
-        self,
-        ID: str,
-        Title: str,
-        Content: str,
-        SignFile
-    ):
+            self,
+            ID: str,
+            Title: str,
+            Content: str,
+            SignFile):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -3449,94 +3448,17 @@ class Library:
                     SignFile
                 ]))
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('M')
-        CmdList.append(Command.Enter)
-        CmdList.append('S')
-        CmdList.append(Command.Enter)
-        CmdList.append(ID)
-        CmdList.append(Command.Enter)
+        try:
+            from . import api_mail
+        except ModuleNotFoundError:
+            import api_mail
 
-        Cmd = ''.join(CmdList)
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                [
-                    i18n.Start,
-                    i18n.SendMail
-                ],
-                '主題：',
-                BreakDetect=True
-            ),
-            ConnectCore.TargetUnit(
-                i18n.NoSuchUser,
-                '【電子郵件】',
-                Exceptions=Exceptions.NoSuchUser(ID)
-            ),
-        ]
-
-        self._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=self.Config.ScreenLongTimeOut
-        )
-
-        CmdList = []
-        CmdList.append(Title)
-        CmdList.append(Command.Enter)
-        CmdList.append(Content)
-        CmdList.append(Command.Ctrl_X)
-
-        Cmd = ''.join(CmdList)
-
-        if SignFile == 0:
-            SingFileSelection = i18n.NoSignatureFile
-        else:
-            SingFileSelection = i18n.Select + ' ' + \
-                str(SignFile) + 'th ' + i18n.SignatureFile
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                i18n.AnyKeyContinue,
-                '任意鍵',
-                BreakDetect=True
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SaveFile,
-                '確定要儲存檔案嗎',
-                Response='s' + Command.Enter,
-                # Refresh=False,
-            ),
-            ConnectCore.TargetUnit(
-                i18n.SelfSaveDraft,
-                '是否自存底稿',
-                Response='y' + Command.Enter
-            ),
-            ConnectCore.TargetUnit(
-                SingFileSelection,
-                '選擇簽名檔',
-                Response=str(SignFile) + Command.Enter
-            ),
-            ConnectCore.TargetUnit(
-                SingFileSelection,
-                'x=隨機',
-                Response=str(SignFile) + Command.Enter
-            ),
-        ]
-
-        self._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=self.Config.ScreenPostTimeOut
-        )
-
-        Log.showValue(
-            self.Config,
-            Log.Level.INFO,
-            i18n.SendMail,
-            i18n.Success
-        )
+        return api_mail.mail(
+            self,
+            ID,
+            Title,
+            Content,
+            SignFile)
 
     def hasNewMail(self):
         self._OneThread()
@@ -3615,7 +3537,7 @@ class Library:
             from . import api_replyPost
         except ModuleNotFoundError:
             import api_replyPost
-        
+
         api_replyPost.replyPost(
             self,
             inputReplyType,
