@@ -493,43 +493,12 @@ class Library:
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('A')
-        CmdList.append(Command.Right)
-        CmdList.append(Command.Left)
+        try:
+            from . import api_getTime
+        except ModuleNotFoundError:
+            import api_getTime
 
-        Cmd = ''.join(CmdList)
-
-        TargetList = [
-            ConnectCore.TargetUnit(
-                [
-                    i18n.GetPTTTime,
-                    i18n.Success,
-                ],
-                Screens.Target.MainMenu,
-                BreakDetect=True
-            ),
-        ]
-
-        index = self._ConnectCore.send(Cmd, TargetList)
-        if index != 0:
-            return None
-
-        OriScreen = self._ConnectCore.getScreenQueue()[-1]
-        LineList = OriScreen.split('\n')
-        pattern = re.compile('[\d]+:[\d][\d]')
-
-        LineList = LineList[-3:]
-
-        # 0:00
-
-        for line in LineList:
-            if '星期' in line and '線上' in line and '我是' in line:
-                Result = pattern.search(line)
-                if Result is not None:
-                    return Result.group(0)
-        return None
+        return api_getTime.getTime(self)
 
     def getPost(
         self,
