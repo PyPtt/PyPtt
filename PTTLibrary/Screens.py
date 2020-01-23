@@ -10,6 +10,7 @@ except ModuleNotFoundError:
 
 class Target(object):
     MainMenu = [
+        '精華公佈欄',
         '人, 我是',
         '[呼叫器]',
     ]
