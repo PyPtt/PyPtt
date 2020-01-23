@@ -4,7 +4,6 @@ import time
 import json
 import random
 import traceback
-import PTTLibrary
 import threading
 
 from PTTLibrary import PTT
