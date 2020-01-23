@@ -1,4 +1,3 @@
-import re
 try:
     from . import DataType
     from . import i18n
@@ -232,6 +231,7 @@ def login(
         api._UnregisteredUser = True
 
     if api._UnregisteredUser:
+        print(OriScreen)
         Log.log(
             api.Config,
             Log.Level.INFO,

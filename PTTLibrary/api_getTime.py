@@ -3,13 +3,11 @@ try:
     from . import i18n
     from . import ConnectCore
     from . import Screens
-    from . import Exceptions
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
     import Screens
-    import Exceptions
     import Command
 
 
