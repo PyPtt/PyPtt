@@ -1,19 +1,15 @@
-import re
-import time
 try:
     from . import i18n
     from . import ConnectCore
     from . import Screens
     from . import Exceptions
     from . import Command
-    from . import CheckValue
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
     import Screens
     import Exceptions
     import Command
-    import CheckValue
 
 
 def post(
