@@ -1,15 +1,11 @@
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Screens
     from . import Command
-    from . import CheckValue
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Screens
     import Command
-    import CheckValue
 
 
 def setBoardTitle(
