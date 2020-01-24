@@ -1,6 +1,4 @@
-﻿import sys
-import time
-import re
+﻿import time
 import progressbar
 import threading
 import requests
@@ -14,7 +12,7 @@ try:
     from . import i18n
     from . import ConnectCore
     from . import Log
-    from . import Screens
+    # from . import Screens
     from . import Exceptions
     from . import Command
     from . import CheckValue
@@ -26,7 +24,7 @@ except ModuleNotFoundError:
     import i18n
     import ConnectCore
     import Log
-    import Screens
+    # import Screens
     import Exceptions
     import Command
     import CheckValue
@@ -330,55 +328,69 @@ class Library:
                              'SearchCondition', SearchCondition)
 
         if len(Board) == 0:
-            raise ValueError(Log.merge([
-                i18n.Board,
-                i18n.ErrorParameter,
-                Board
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    i18n.Board,
+                    i18n.ErrorParameter,
+                    Board
+                ]))
 
         if PostIndex != 0 and isinstance(PostAID, str):
-            raise ValueError(Log.merge([
-                'PostIndex',
-                'PostAID',
-                i18n.ErrorParameter,
-                i18n.BothInput
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter,
+                    i18n.BothInput
+                ]))
 
         if PostIndex == 0 and PostAID is None:
-            raise ValueError(Log.merge([
-                'PostIndex',
-                'PostAID',
-                i18n.ErrorParameter
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter
+                ]))
 
         if SearchCondition is not None and SearchType == 0:
-            raise ValueError(Log.merge([
-                'SearchType',
-                i18n.ErrorParameter,
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'SearchType',
+                    i18n.ErrorParameter,
+                ]))
 
         if SearchType == DataType.PostSearchType.Push:
             try:
                 S = int(SearchCondition)
             except ValueError:
-                raise ValueError(Log.merge([
-                    'SearchCondition',
-                    i18n.ErrorParameter,
-                ]))
+                raise ValueError(Log.merge(
+                    self.Config,
+                    [
+                        'SearchCondition',
+                        i18n.ErrorParameter,
+                    ]))
 
             if not (-100 <= S <= 110):
-                raise ValueError(Log.merge([
-                    'SearchCondition',
-                    i18n.ErrorParameter,
-                ]))
+                raise ValueError(Log.merge(
+                    self.Config,
+                    [
+                        'SearchCondition',
+                        i18n.ErrorParameter,
+                    ]))
 
         if PostAID is not None and SearchCondition is not None:
-            raise ValueError(Log.merge([
-                'PostAID',
-                'SearchCondition',
-                i18n.ErrorParameter,
-                i18n.BothInput,
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'PostAID',
+                    'SearchCondition',
+                    i18n.ErrorParameter,
+                    i18n.BothInput,
+                ]))
 
         if PostIndex != 0:
             NewestIndex = self._getNewestIndex(
@@ -389,11 +401,13 @@ class Library:
             )
 
             if PostIndex < 1 or NewestIndex < PostIndex:
-                raise ValueError(Log.merge([
-                    'PostIndex',
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                ]))
+                raise ValueError(Log.merge(
+                    self.Config,
+                    [
+                        'PostIndex',
+                        i18n.ErrorParameter,
+                        i18n.OutOfRange,
+                    ]))
 
         self._checkBoard(Board)
 
@@ -576,11 +590,13 @@ class Library:
         CheckValue.check(self.Config, str, 'Board', Board)
 
         if len(Board) == 0:
-            raise ValueError(Log.merge([
-                i18n.Board,
-                i18n.ErrorParameter,
-                Board
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    i18n.Board,
+                    i18n.ErrorParameter,
+                    Board
+                ]))
 
         if CrawlType == DataType.CrawlType.BBS:
             if not self._LoginStatus:
@@ -597,36 +613,44 @@ class Library:
 
             if (StartAID is not None or EndAID is not None) and \
                (StartIndex != 0 or EndIndex != 0):
-                raise ValueError(Log.merge([
-                    'AID',
-                    'Index',
-                    i18n.ErrorParameter,
-                    i18n.BothInput
-                ]))
+                raise ValueError(Log.merge(
+                    self.Config,
+                    [
+                        'AID',
+                        'Index',
+                        i18n.ErrorParameter,
+                        i18n.BothInput
+                    ]))
 
             if (StartAID is not None or EndAID is not None) and \
                (SearchCondition is not None):
-                raise ValueError(Log.merge([
-                    'AID',
-                    'SearchCondition',
-                    i18n.ErrorParameter,
-                    i18n.BothInput
-                ]))
+                raise ValueError(Log.merge(
+                    self.Config,
+                    [
+                        'AID',
+                        'SearchCondition',
+                        i18n.ErrorParameter,
+                        i18n.BothInput
+                    ]))
 
             if SearchType == DataType.PostSearchType.Push:
                 try:
                     S = int(SearchCondition)
                 except ValueError:
-                    raise ValueError(Log.merge([
-                        'SearchCondition',
-                        i18n.ErrorParameter,
-                    ]))
+                    raise ValueError(Log.merge(
+                        self.Config,
+                        [
+                            'SearchCondition',
+                            i18n.ErrorParameter,
+                        ]))
 
                 if not (-100 <= S <= 110):
-                    raise ValueError(Log.merge([
-                        'SearchCondition',
-                        i18n.ErrorParameter,
-                    ]))
+                    raise ValueError(Log.merge(
+                        self.Config,
+                        [
+                            'SearchCondition',
+                            i18n.ErrorParameter,
+                        ]))
 
             if StartIndex != 0:
                 NewestIndex = self._getNewestIndex(
@@ -661,10 +685,12 @@ class Library:
                     EndIndex
                 )
             else:
-                raise ValueError(Log.merge([
-                    i18n.ErrorParameter,
-                    i18n.NoInput
-                ]))
+                raise ValueError(Log.merge(
+                    self.Config,
+                    [
+                        i18n.ErrorParameter,
+                        i18n.NoInput
+                    ]))
 
             Log.showValue(
                 self.Config,
@@ -914,11 +940,13 @@ class Library:
         if not CheckSignFile:
             SignFile = SignFile.lower()
             if SignFile != 'x':
-                raise ValueError(Log.merge([
-                    'SignFile',
-                    i18n.ErrorParameter,
-                    SignFile
-                ]))
+                raise ValueError(Log.merge(
+                    self.Config,
+                    [
+                        'SignFile',
+                        i18n.ErrorParameter,
+                        SignFile
+                    ]))
 
         self._checkBoard(Board)
 
@@ -956,27 +984,33 @@ class Library:
         CheckValue.check(self.Config, int, 'PostIndex', PostIndex)
 
         if len(Board) == 0:
-            raise ValueError(Log.merge([
-                i18n.Board,
-                i18n.ErrorParameter,
-                Board
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    i18n.Board,
+                    i18n.ErrorParameter,
+                    Board
+                ]))
 
         if PostIndex != 0 and isinstance(PostAID, str):
-            raise ValueError(Log.merge([
-                'PostIndex',
-                'PostAID',
-                i18n.ErrorParameter,
-                i18n.BothInput
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter,
+                    i18n.BothInput
+                ]))
 
         if PostIndex == 0 and PostAID is None:
-            raise ValueError(Log.merge([
-                'PostIndex',
-                'PostAID',
-                i18n.ErrorParameter,
-                i18n.NoInput
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter,
+                    i18n.NoInput
+                ]))
 
         if PostIndex != 0:
             NewestIndex = self._getNewestIndex(
@@ -1071,11 +1105,13 @@ class Library:
 
         CheckValue.check(self.Config, str, 'UserID', UserID)
         if len(UserID) < 3:
-            raise ValueError(Log.merge([
-                'UserID',
-                i18n.ErrorParameter,
-                UserID
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'UserID',
+                    i18n.ErrorParameter,
+                    UserID
+                ]))
 
         try:
             from . import api_getUser
@@ -1108,11 +1144,13 @@ class Library:
         CheckValue.check(self.Config, str, 'Content', Content)
 
         if len(TargetID) <= 2:
-            raise ValueError(Log.merge([
-                'TargetID',
-                i18n.ErrorParameter,
-                TargetID
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'TargetID',
+                    i18n.ErrorParameter,
+                    TargetID
+                ]))
 
         User = self._getUser(TargetID)
         if '不在站上' in User.getState():
@@ -1225,11 +1263,13 @@ class Library:
         if not CheckSignFile:
             SignFile = SignFile.lower()
             if SignFile != 'x':
-                raise ValueError(Log.merge([
-                    'SignFile',
-                    i18n.ErrorParameter,
-                    SignFile
-                ]))
+                raise ValueError(Log.merge(
+                    self.Config,
+                    [
+                        'SignFile',
+                        i18n.ErrorParameter,
+                        SignFile
+                    ]))
 
         try:
             from . import api_mail
@@ -1301,18 +1341,22 @@ class Library:
         SignFileList.append('x')
 
         if str(SignFile) not in SignFileList:
-            raise ValueError(Log.merge([
-                'SignFile',
-                i18n.ErrorParameter
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'SignFile',
+                    i18n.ErrorParameter
+                ]))
 
         if PostAID is not None and PostIndex != 0:
-            raise ValueError(Log.merge([
-                'PostIndex',
-                'PostAID',
-                i18n.ErrorParameter,
-                i18n.BothInput
-            ]))
+            raise ValueError(Log.merge(
+                self.Config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter,
+                    i18n.BothInput
+                ]))
 
         self._checkBoard(Board)
 
