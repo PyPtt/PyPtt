@@ -105,18 +105,20 @@ class TargetUnit(object):
         return self._Secret
 
 
-_WSRecvData = None
+class RecvData:
+    def __init__(self):
+        self.data = None
 
 
-async def WebsocketRecvFunc(Core):
-    global _WSRecvData
-    _WSRecvData = await Core.recv()
+async def WebsocketRecvFunc(Core, RecvDataObj):
+
+    RecvDataObj.data = await Core.recv()
 
 
-async def WebsocketReceiver(Core, ScreenTimeOut):
+async def WebsocketReceiver(Core, ScreenTimeOut, RecvDataObj):
     # Wait for at most 1 second
     await asyncio.wait_for(
-        WebsocketRecvFunc(Core),
+        WebsocketRecvFunc(Core, RecvDataObj),
         timeout=ScreenTimeOut
     )
 
@@ -324,10 +326,11 @@ class API(object):
             MidTime = time.time()
             while MidTime - StartTime < CurrentScreenTimeout:
                 try:
+                    RecvDataObj = RecvData()
                     asyncio.get_event_loop().run_until_complete(
-                        WebsocketReceiver(self._Core, CurrentScreenTimeout)
+                        WebsocketReceiver(
+                            self._Core, CurrentScreenTimeout, RecvDataObj)
                     )
-                    ReceiveDataTemp = _WSRecvData
 
                 except websockets.exceptions.ConnectionClosed:
                     # print(f'0.1 {UseTooManyRes}')
@@ -341,7 +344,7 @@ class API(object):
                 except asyncio.TimeoutError:
                     return -1
 
-                ReceiveDataBuffer += ReceiveDataTemp
+                ReceiveDataBuffer += RecvDataObj.data
                 ReceiveDataTemp = ReceiveDataBuffer.decode(
                     'big5-uao', errors='replace'
                 )
