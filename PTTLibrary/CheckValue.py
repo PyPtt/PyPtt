@@ -70,6 +70,18 @@ def checkIndex(
 
     if MaxValue is not None:
         if Index > MaxValue:
+            Log.showValue(
+                Config,
+                Log.Level.INFO,
+                'Index',
+                Index
+            )
+            Log.showValue(
+                Config,
+                Log.Level.INFO,
+                'MaxValue',
+                MaxValue
+            )
             raise ValueError(
                 Log.merge(
                     Config,
