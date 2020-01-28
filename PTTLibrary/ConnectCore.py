@@ -22,6 +22,8 @@ except ModuleNotFoundError:
     import Command
     import Exceptions
 
+neweventloop = False
+
 
 class ConnectMode(object):
 
@@ -175,15 +177,19 @@ class API(object):
         )
 
         ConnectSuccess = False
+        global neweventloop
 
         for _ in range(2):
 
             try:
-                try:
-                    loop = asyncio.new_event_loop()
-                    asyncio.set_event_loop(loop)
-                except Exception as e:
-                    pass
+
+                if not neweventloop:
+                    neweventloop = True
+                    try:
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                    except Exception as e:
+                        pass
 
                 if self._Host == DataType.Host.PTT1:
                     self._Core = asyncio.get_event_loop().run_until_complete(
