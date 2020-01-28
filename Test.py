@@ -9,9 +9,9 @@ import threading
 from PTTLibrary import PTT
 
 
-def getPW():
+def getPW(passfile):
     try:
-        with open('Account.txt') as AccountFile:
+        with open(passfile) as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -1200,12 +1200,12 @@ if __name__ == '__main__':
             Password = os.getenv('PTTLibrary_Password')
             if ID is None or Password is None:
                 print('從環境變數取得帳號密碼失敗')
-                ID, Password = getPW()
+                ID, Password = getPW('Account.txt')
                 TravisCI = False
             else:
                 TravisCI = True
     else:
-        ID, Password = getPW()
+        ID, Password = getPW('Account.txt')
 
     if RunCI:
         Init()
@@ -1544,6 +1544,10 @@ PTT Library 程式貼文基準測試內文
                     PostIndex=NewestIndex,
                 )
 
+                print(testboard)
+                print(f'StartPost index {NewestIndex - Range + 1}')
+                print(f'EndPost index {NewestIndex}')
+
                 ErrorPostList, DelPostList = PTTBot.crawlBoard(
                     crawlHandler,
                     PTT.CrawlType.BBS,
@@ -1734,6 +1738,134 @@ github: https://tinyurl.com/umqff3v
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
 
+            PTTBot.replyPost(
+                PTT.ReplyType.Board,
+                Board,
+                '使用文章編號測試回應到板上',
+                PostIndex=BasicPostIndex
+            )
+
+            Index = PTTBot.getNewestIndex(
+                PTT.IndexType.BBS,
+                Board=Board
+            )
+
+            TestPass = False
+            for i in range(5):
+
+                Post = PTTBot.getPost(
+                    Board,
+                    PostIndex=Index - i,
+                )
+
+                if ID in Post.getAuthor() and '使用文章編號測試回應到板上' in Post.getContent():
+                    TestPass = True
+                    Content = '使用文章編號測試回應到板上成功'
+                    print(Content)
+                    PTTBot.push(
+                        Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+                    break
+            if not TestPass:
+                Content = '使用文章編號測試回應到板上失敗'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+                PTTBot.logout()
+                sys.exit(1)
+
+            PTTBot.replyPost(
+                PTT.ReplyType.Board,
+                Board,
+                '使用文章ID測試回應到板上',
+                PostAID=BasicPostAID
+            )
+
+            Index = PTTBot.getNewestIndex(
+                PTT.IndexType.BBS,
+                Board=Board
+            )
+
+            TestPass = False
+            for i in range(5):
+
+                Post = PTTBot.getPost(
+                    Board,
+                    PostIndex=Index - i,
+                )
+
+                if ID in Post.getAuthor() and '使用文章ID測試回應到板上' in Post.getContent():
+                    TestPass = True
+                    Content = '使用文章ID測試回應到板上成功'
+                    print(Content)
+                    PTTBot.push(
+                        Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+                    break
+            if not TestPass:
+                Content = '使用文章ID測試回應到板上失敗'
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+                PTTBot.logout()
+                sys.exit(1)
+
+            if TravisCI:
+                ID2 = os.getenv('PTTLibrary_ID2')
+                Password2 = os.getenv('PTTLibrary_Password2')
+            else:
+                ID2, Password2 = getPW('Account2.txt')
+
+            PTTBot2 = PTT.Library(
+                # LogLevel=PTT.LogLevel.TRACE,
+            )
+            try:
+                PTTBot2.login(
+                    ID2,
+                    Password2,
+                    # KickOtherLogin=True
+                )
+                pass
+            except PTT.Exceptions.LoginError:
+                PTTBot2.log('PTTBot2登入失敗')
+                sys.exit(1)
+
+            OperateType = PTT.WaterBallOperateType.Clear
+            PTTBot.getWaterBall(OperateType)
+            PTTBot2.getWaterBall(OperateType)
+
+            PTTBot.setCallStatus(PTT.CallStatus.Off)
+            PTTBot2.setCallStatus(PTT.CallStatus.Off)
+
+            TestPass = False
+            PTTBot2.throwWaterBall(ID, '水球測試基準訊息')
+            WaterBallList = PTTBot.getWaterBall(OperateType)
+            for WaterBall in WaterBallList:
+                if not WaterBall.getType() == PTT.WaterBallType.Catch:
+                    continue
+
+                Target = WaterBall.getTarget()
+                Content = WaterBall.getContent()
+
+                print(f'收到來自 {Target} 的水球 [{Content}]')
+
+                if '水球測試基準訊息' in Content:
+                    TestPass = True
+                    break
+            
+            if not TestPass:
+                Content = '水球測試基準測試失敗'
+                print(Content)
+                PTTBot.push(Board, PTT.PushType.Arrow,
+                            Content, PostAID=BasicPostAID)
+                PTTBot.logout()
+                PTTBot2.logout()
+                sys.exit(1)
+            
+            Content = '水球測試基準測試成功'
+            print(Content)
+            PTTBot.push(Board, PTT.PushType.Arrow,
+                        Content, PostAID=BasicPostAID)
+            PTTBot2.logout()
+
             Content = '自動化測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
                         Content, PostAID=BasicPostAID)
@@ -1787,7 +1919,7 @@ github: https://tinyurl.com/umqff3v
             # HasNewMail()
             # GetBoardList()
             # GetBoardInfo()
-            # ReplyPost()
+            ReplyPost()
             # GetFavouriteBoard()
             # SearchUser()
 

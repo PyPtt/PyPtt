@@ -199,8 +199,8 @@ def login(
     )
 
     if TargetList[index].getDisplayMsg() != i18n.LoginSuccess:
-        # OriScreen = api._ConnectCore.getScreenQueue()[-1]
-        # print(OriScreen)
+        OriScreen = api._ConnectCore.getScreenQueue()[-1]
+        print(OriScreen)
         raise Exceptions.LoginError()
 
     OriScreen = api._ConnectCore.getScreenQueue()[-1]

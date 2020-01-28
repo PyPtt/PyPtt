@@ -676,7 +676,6 @@ class Library:
                     Board,
                     EndAID,
                 )
-
                 CheckValue.checkIndexRange(
                     self.Config,
                     'StartAID',
