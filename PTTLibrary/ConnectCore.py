@@ -4,6 +4,7 @@ import asyncio
 import websockets
 import re
 import traceback
+import threading
 from uao import register_uao
 register_uao()
 
@@ -22,7 +23,7 @@ except ModuleNotFoundError:
     import Command
     import Exceptions
 
-neweventloop = False
+neweventloop = []
 
 
 class ConnectMode(object):
@@ -177,14 +178,16 @@ class API(object):
         )
 
         ConnectSuccess = False
+
         global neweventloop
+        threadid = threading.get_ident()
 
         for _ in range(2):
 
             try:
 
-                if not neweventloop:
-                    neweventloop = True
+                if threadid not in neweventloop:
+                    neweventloop.append(threadid)
                     try:
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)

@@ -1850,7 +1850,7 @@ github: https://tinyurl.com/umqff3v
                 if '水球測試基準訊息' in Content:
                     TestPass = True
                     break
-            
+
             if not TestPass:
                 Content = '水球測試基準測試失敗'
                 print(Content)
@@ -1859,7 +1859,7 @@ github: https://tinyurl.com/umqff3v
                 PTTBot.logout()
                 PTTBot2.logout()
                 sys.exit(1)
-            
+
             Content = '水球測試基準測試成功'
             print(Content)
             PTTBot.push(Board, PTT.PushType.Arrow,
@@ -1919,7 +1919,7 @@ github: https://tinyurl.com/umqff3v
             # HasNewMail()
             # GetBoardList()
             # GetBoardInfo()
-            ReplyPost()
+            # ReplyPost()
             # GetFavouriteBoard()
             # SearchUser()
 
