@@ -13,7 +13,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def getBoardList(api):
+def get_board_list(api):
 
     # Log.showValue(
     #     api.Config,
@@ -25,15 +25,15 @@ def getBoardList(api):
     #     i18n.MarkPost
     # )
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('F')
-    CmdList.append(Command.Enter)
-    CmdList.append('y')
-    CmdList.append('$')
-    Cmd = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('F')
+    cmd_list.append(Command.Enter)
+    cmd_list.append('y')
+    cmd_list.append('$')
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.BoardList,
             Screens.Target.InBoardList,
@@ -42,15 +42,15 @@ def getBoardList(api):
     ]
 
     api._ConnectCore.send(
-        Cmd,
-        TargetList,
+        cmd,
+        target_list,
         ScreenTimeout=api.Config.ScreenLongTimeOut
     )
-    OriScreen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.getScreenQueue()[-1]
 
-    MaxNo = 0
+    max_no = 0
 
-    for line in OriScreen.split('\n'):
+    for line in ori_screen.split('\n'):
         if '◎' not in line:
             continue
 
@@ -59,45 +59,45 @@ def getBoardList(api):
 
         # print(f'->{line}<')
 
-        FrontPart = line[:line.find('◎')]
-        FrontPartList = [x for x in FrontPart.split(' ')]
-        FrontPartList = list(filter(None, FrontPartList))
+        front_part = line[:line.find('◎')]
+        front_part_list = [x for x in front_part.split(' ')]
+        front_part_list = list(filter(None, front_part_list))
         # print(f'FrontPartList =>{FrontPartList}<=')
-        MaxNo = int(FrontPartList[0])
+        max_no = int(front_part_list[0])
 
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         'MaxNo',
-        MaxNo
+        max_no
     )
 
     if api.Config.LogLevel == Log.Level.INFO:
         PB = progressbar.ProgressBar(
-            max_value=MaxNo,
+            max_value=max_no,
             redirect_stdout=True
         )
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('F')
-    CmdList.append(Command.Enter)
-    CmdList.append('y')
-    CmdList.append('0')
-    Cmd = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('F')
+    cmd_list.append(Command.Enter)
+    cmd_list.append('y')
+    cmd_list.append('0')
+    cmd = ''.join(cmd_list)
 
-    BoardList = []
+    board_list = []
     while True:
 
         api._ConnectCore.send(
-            Cmd,
-            TargetList,
+            cmd,
+            target_list,
             ScreenTimeout=api.Config.ScreenLongTimeOut
         )
 
-        OriScreen = api._ConnectCore.getScreenQueue()[-1]
+        ori_screen = api._ConnectCore.getScreenQueue()[-1]
         # print(OriScreen)
-        for line in OriScreen.split('\n'):
+        for line in ori_screen.split('\n'):
             if '◎' not in line and '●' not in line:
                 continue
 
@@ -107,13 +107,13 @@ def getBoardList(api):
             # print(f'->{line}<')
 
             if '◎' in line:
-                FrontPart = line[:line.find('◎')]
+                front_part = line[:line.find('◎')]
             else:
-                FrontPart = line[:line.find('●')]
-            FrontPartList = [x for x in FrontPart.split(' ')]
-            FrontPartList = list(filter(None, FrontPartList))
+                front_part = line[:line.find('●')]
+            front_part_list = [x for x in front_part.split(' ')]
+            front_part_list = list(filter(None, front_part_list))
             # print(f'FrontPartList =>{FrontPartList}<=')
-            No = int(FrontPartList[0])
+            no = int(front_part_list[0])
             # print(f'No  =>{No}<=')
             # print(f'LastNo =>{LastNo}<=')
 
@@ -121,30 +121,30 @@ def getBoardList(api):
                 api.Config,
                 Log.Level.DEBUG,
                 'Board NO',
-                No
+                no
             )
 
-            BoardName = FrontPartList[1]
-            if BoardName.startswith('ˇ'):
-                BoardName = BoardName[1:]
+            board_name = front_part_list[1]
+            if board_name.startswith('ˇ'):
+                board_name = board_name[1:]
 
             Log.showValue(
                 api.Config,
                 Log.Level.DEBUG,
                 'Board Name',
-                BoardName
+                board_name
             )
 
-            BoardList.append(BoardName)
+            board_list.append(board_name)
 
             if api.Config.LogLevel == Log.Level.INFO:
-                PB.update(No)
+                PB.update(no)
 
-        if No == MaxNo:
+        if no == max_no:
             break
-        Cmd = Command.Ctrl_F
+        cmd = Command.Ctrl_F
 
     if api.Config.LogLevel == Log.Level.INFO:
         PB.finish()
 
-    return BoardList
+    return board_list

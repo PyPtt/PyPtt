@@ -1,4 +1,6 @@
 import re
+import requests
+from bs4 import BeautifulSoup
 try:
     from . import DataType
     from . import i18n
@@ -19,57 +21,57 @@ except ModuleNotFoundError:
     import CheckValue
 
 
-def getNewestIndex(
+def get_newest_index(
         api,
-        IndexType: int,
-        Board: str = None,
+        index_type: int,
+        board: str = None,
         # BBS
-        SearchType: int = 0,
-        SearchCondition: str = None):
+        search_type: int = 0,
+        search_condition: str = None) -> int:
 
-    if IndexType == DataType.IndexType.BBS:
+    if index_type == DataType.IndexType.BBS:
 
-        api._checkBoard(Board)
+        api._check_board(board)
 
         CheckValue.check(
-            api.Config, int, 'SearchType', SearchType,
+            api.Config, int, 'SearchType', search_type,
             Class=DataType.PostSearchType)
-        if SearchCondition is not None:
+        if search_condition is not None:
             CheckValue.check(
                 api.Config, str,
-                'SearchCondition', SearchCondition)
-        CheckValue.check(api.Config, int, 'SearchType', SearchType)
+                'SearchCondition', search_condition)
+        CheckValue.check(api.Config, int, 'SearchType', search_type)
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('qs')
-        CmdList.append(Board)
-        CmdList.append(Command.Enter)
-        CmdList.append(Command.Ctrl_C * 2)
-        CmdList.append(Command.Space)
+        cmd_list = []
+        cmd_list.append(Command.GoMainMenu)
+        cmd_list.append('qs')
+        cmd_list.append(board)
+        cmd_list.append(Command.Enter)
+        cmd_list.append(Command.Ctrl_C * 2)
+        cmd_list.append(Command.Space)
 
-        if SearchCondition is not None:
-            if SearchType == DataType.PostSearchType.Keyword:
-                CmdList.append('/')
-            elif SearchType == DataType.PostSearchType.Author:
-                CmdList.append('a')
-            elif SearchType == DataType.PostSearchType.Push:
-                CmdList.append('Z')
-            elif SearchType == DataType.PostSearchType.Mark:
-                CmdList.append('G')
-            elif SearchType == DataType.PostSearchType.Money:
-                CmdList.append('A')
+        if search_condition is not None:
+            if search_type == DataType.PostSearchType.Keyword:
+                cmd_list.append('/')
+            elif search_type == DataType.PostSearchType.Author:
+                cmd_list.append('a')
+            elif search_type == DataType.PostSearchType.Push:
+                cmd_list.append('Z')
+            elif search_type == DataType.PostSearchType.Mark:
+                cmd_list.append('G')
+            elif search_type == DataType.PostSearchType.Money:
+                cmd_list.append('A')
 
-            CmdList.append(SearchCondition)
-            CmdList.append(Command.Enter)
+            cmd_list.append(search_condition)
+            cmd_list.append(Command.Enter)
 
-        CmdList.append('1')
-        CmdList.append(Command.Enter)
-        CmdList.append('$')
+        cmd_list.append('1')
+        cmd_list.append(Command.Enter)
+        cmd_list.append('$')
 
-        Cmd = ''.join(CmdList)
+        cmd = ''.join(cmd_list)
 
-        TargetList = [
+        target_list = [
             ConnectCore.TargetUnit(
                 i18n.NoPost,
                 '沒有文章...',
@@ -91,64 +93,64 @@ def getNewestIndex(
             ConnectCore.TargetUnit(
                 i18n.NoSuchBoard,
                 Screens.Target.MainMenu_Exiting,
-                Exceptions=Exceptions.NoSuchBoard(api.Config, Board)
+                Exceptions=Exceptions.NoSuchBoard(api.Config, board)
             ),
         ]
-        index = api._ConnectCore.send(Cmd, TargetList)
+        index = api._ConnectCore.send(cmd, target_list)
         if index < 0:
             # OriScreen = api._ConnectCore.getScreenQueue()[-1]
             # print(OriScreen)
-            raise Exceptions.NoSuchBoard(api.Config, Board)
+            raise Exceptions.NoSuchBoard(api.Config, board)
 
         if index == 0:
             return 0
 
-        LastScreen = api._ConnectCore.getScreenQueue()[-1]
-        AllIndex = re.findall(r'\d+ ', LastScreen)
+        last_screen = api._ConnectCore.getScreenQueue()[-1]
+        all_index = re.findall(r'\d+ ', last_screen)
 
-        if len(AllIndex) == 0:
-            print(LastScreen)
+        if len(all_index) == 0:
+            print(last_screen)
             raise Exceptions.UnknownError(i18n.UnknownError)
 
-        AllIndex = list(map(int, AllIndex))
-        AllIndex.sort(reverse=True)
+        all_index = list(map(int, all_index))
+        all_index.sort(reverse=True)
 
-        MaxCheckRange = 6
-        NewestIndex = 0
-        for IndexTemp in AllIndex:
-            Continue = True
-            if IndexTemp > MaxCheckRange:
-                CheckRange = MaxCheckRange
+        max_check_range = 6
+        newest_index = 0
+        for IndexTemp in all_index:
+            need_continue = True
+            if IndexTemp > max_check_range:
+                check_range = max_check_range
             else:
-                CheckRange = IndexTemp
-            for i in range(1, CheckRange):
-                if str(IndexTemp - i) not in LastScreen:
-                    Continue = False
+                check_range = IndexTemp
+            for i in range(1, check_range):
+                if str(IndexTemp - i) not in last_screen:
+                    need_continue = False
                     break
-            if Continue:
+            if need_continue:
                 Log.showValue(
                     api.Config,
                     Log.Level.DEBUG,
                     i18n.FindNewestIndex,
                     IndexTemp
                 )
-                NewestIndex = IndexTemp
+                newest_index = IndexTemp
                 break
 
-        if NewestIndex == 0:
+        if newest_index == 0:
             Screens.show(api.Config, api._ConnectCore.getScreenQueue())
             raise Exceptions.UnknownError(i18n.UnknownError)
 
     elif DataType.IndexType.Web:
         # web
         _NewestIndex = None
-        NewestIndex = 0
+        newest_index = 0
         _url = 'https://www.ptt.cc/bbs/'
-        url = _url + Board
+        url = _url + board
         r = requests.get(url, cookies={'over18': '1'})
 
         if r.status_code != requests.codes.ok:
-            raise Exceptions.NoSuchBoard(api.Config, Board)
+            raise Exceptions.NoSuchBoard(api.Config, board)
         soup = BeautifulSoup(r.text, 'html.parser')
 
         for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
@@ -161,5 +163,5 @@ def getNewestIndex(
 
         if _NewestIndex is None:
             raise Exceptions.UnknownError('')
-        NewestIndex = (_NewestIndex) + 1
-    return NewestIndex
+        newest_index = (_NewestIndex) + 1
+    return newest_index

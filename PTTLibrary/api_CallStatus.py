@@ -18,15 +18,15 @@ except ModuleNotFoundError:
 
 def getCallStatus(api):
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('A')
-    CmdList.append(Command.Right)
-    CmdList.append(Command.Left)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('A')
+    cmd_list.append(Command.Right)
+    cmd_list.append(Command.Left)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -77,18 +77,18 @@ def getCallStatus(api):
                 i18n.GetCallStatus,
             ],
             '★',
-            Response=Cmd,
+            Response=cmd,
             LogLevel=Log.Level.DEBUG
         ),
     ]
 
     for i in range(2):
-        index = api._ConnectCore.send(Cmd, TargetList)
+        index = api._ConnectCore.send(cmd, target_list)
         if index < 0:
             if i == 0:
                 continue
-            OriScreen = api._ConnectCore.getScreenQueue()[-1]
-            raise Exceptions.UnknownError(OriScreen)
+            ori_screen = api._ConnectCore.getScreenQueue()[-1]
+            raise Exceptions.UnknownError(ori_screen)
 
     if index == 0:
         return DataType.CallStatus.On
@@ -101,23 +101,23 @@ def getCallStatus(api):
     if index == 4:
         return DataType.CallStatus.Off
 
-    OriScreen = api._ConnectCore.getScreenQueue()[-1]
-    raise Exceptions.UnknownError(OriScreen)
+    ori_screen = api._ConnectCore.getScreenQueue()[-1]
+    raise Exceptions.UnknownError(ori_screen)
 
 
-def setCallStatus(api, inputCallStatus):
+def set_callstatus(api, inputCallStatus):
     # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
 
-    CurrentCallStatus = api._getCallStatus()
+    current_call_status = api._get_callstatus()
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append(Command.Ctrl_U)
-    CmdList.append('p')
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(Command.Ctrl_U)
+    cmd_list.append('p')
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             [
                 i18n.SetCallStatus,
@@ -128,11 +128,11 @@ def setCallStatus(api, inputCallStatus):
         )
     ]
 
-    while CurrentCallStatus != inputCallStatus:
+    while current_call_status != inputCallStatus:
         api._ConnectCore.send(
-            Cmd,
-            TargetList,
+            cmd,
+            target_list,
             ScreenTimeout=api.Config.ScreenLongTimeOut
         )
 
-        CurrentCallStatus = api._getCallStatus()
+        current_call_status = api._get_callstatus()
