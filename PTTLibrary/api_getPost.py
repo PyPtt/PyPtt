@@ -142,7 +142,7 @@ def getPost(
             PostAuthor = PatternResult.group(0)[1:-1]
         else:
             PostAuthor = None
-            PostDelStatus = DataType.PostDeleteStatus.ByUnknow
+            PostDelStatus = DataType.PostDeleteStatus.ByUnknown
 
         Log.showValue(api.Config, Log.Level.DEBUG, 'ListDate', ListDate)
         Log.showValue(api.Config, Log.Level.DEBUG,
@@ -151,11 +151,11 @@ def getPost(
                       'PostDelStatus', PostDelStatus)
 
         return DataType.PostInfo(
-            Board=Board,
-            Author=PostAuthor,
-            ListDate=ListDate,
-            DeleteStatus=PostDelStatus,
-            FormatCheck=True
+            board=Board,
+            author=PostAuthor,
+            list_date=ListDate,
+            delete_status=PostDelStatus,
+            format_check=True
         )
 
     elif index == 0:
@@ -280,30 +280,30 @@ def getPost(
 
         if LockPost:
             Post = DataType.PostInfo(
-                Board=Board,
-                AID=PostAID,
-                Author=PostAuthor,
-                Title=PostTitle,
-                WebUrl=PostWeb,
-                Money=PostMoney,
-                ListDate=ListDate,
-                FormatCheck=True,
-                PushNumber=PushNumber,
-                Lock=True,
+                board=Board,
+                aid=PostAID,
+                author=PostAuthor,
+                title=PostTitle,
+                web_url=PostWeb,
+                money=PostMoney,
+                list_date=ListDate,
+                format_check=True,
+                push_number=PushNumber,
+                lock=True,
             )
             return Post
 
     if Query:
         Post = DataType.PostInfo(
-            Board=Board,
-            AID=PostAID,
-            Author=PostAuthor,
-            Title=PostTitle,
-            WebUrl=PostWeb,
-            Money=PostMoney,
-            ListDate=ListDate,
-            FormatCheck=True,
-            PushNumber=PushNumber,
+            board=Board,
+            aid=PostAID,
+            author=PostAuthor,
+            title=PostTitle,
+            web_url=PostWeb,
+            money=PostMoney,
+            list_date=ListDate,
+            format_check=True,
+            push_number=PushNumber,
         )
         return Post
 
@@ -383,20 +383,20 @@ def getPost(
 
         if index == 3 or index == 4:
             Post = DataType.PostInfo(
-                Board=Board,
-                AID=PostAID,
-                Author=PostAuthor,
+                board=Board,
+                aid=PostAID,
+                author=PostAuthor,
                 # Date=PostDate,
-                Title=PostTitle,
-                WebUrl=PostWeb,
-                Money=PostMoney,
+                title=PostTitle,
+                web_url=PostWeb,
+                money=PostMoney,
                 # Content=PostContent,
                 # PushList=PushList,
-                ListDate=ListDate,
-                ControlCode=HasControlCode,
-                FormatCheck=False,
-                PushNumber=PushNumber,
-                Unconfirmed=api.Unconfirmed,
+                list_date=ListDate,
+                control_code=HasControlCode,
+                format_check=False,
+                push_number=PushNumber,
+                unconfirmed=api.Unconfirmed,
             )
             return Post
 
@@ -559,23 +559,23 @@ def getPost(
                 i18n.Author
             )
             Post = DataType.PostInfo(
-                Board=Board,
-                AID=PostAID,
-                Author=PostAuthor,
-                Date=PostDate,
-                Title=PostTitle,
-                WebUrl=PostWeb,
-                Money=PostMoney,
-                Content=PostContent,
-                IP=IP,
-                PushList=PushList,
-                ListDate=ListDate,
-                ControlCode=HasControlCode,
-                FormatCheck=False,
-                Location=Location,
-                PushNumber=PushNumber,
-                OriginPost=OriginPost,
-                Unconfirmed=api.Unconfirmed,
+                board=Board,
+                aid=PostAID,
+                author=PostAuthor,
+                date=PostDate,
+                title=PostTitle,
+                web_url=PostWeb,
+                money=PostMoney,
+                content=PostContent,
+                ip=IP,
+                push_list=PushList,
+                list_date=ListDate,
+                control_code=HasControlCode,
+                format_check=False,
+                location=Location,
+                push_number=PushNumber,
+                origin_post=OriginPost,
+                unconfirmed=api.Unconfirmed,
             )
             return Post
         PostAuthor = PatternResult.group(0)
@@ -601,23 +601,23 @@ def getPost(
             i18n.Title
         )
         Post = DataType.PostInfo(
-            Board=Board,
-            AID=PostAID,
-            Author=PostAuthor,
-            Date=PostDate,
-            Title=PostTitle,
-            WebUrl=PostWeb,
-            Money=PostMoney,
-            Content=PostContent,
-            IP=IP,
-            PushList=PushList,
-            ListDate=ListDate,
-            ControlCode=HasControlCode,
-            FormatCheck=False,
-            Location=Location,
-            PushNumber=PushNumber,
-            OriginPost=OriginPost,
-            Unconfirmed=api.Unconfirmed,
+            board=Board,
+            aid=PostAID,
+            author=PostAuthor,
+            date=PostDate,
+            title=PostTitle,
+            web_url=PostWeb,
+            money=PostMoney,
+            content=PostContent,
+            ip=IP,
+            push_list=PushList,
+            list_date=ListDate,
+            control_code=HasControlCode,
+            format_check=False,
+            location=Location,
+            push_number=PushNumber,
+            origin_post=OriginPost,
+            unconfirmed=api.Unconfirmed,
         )
         return Post
     PostTitle = PatternResult.group(0)
@@ -641,23 +641,23 @@ def getPost(
             i18n.Date
         )
         Post = DataType.PostInfo(
-            Board=Board,
-            AID=PostAID,
-            Author=PostAuthor,
-            Date=PostDate,
-            Title=PostTitle,
-            WebUrl=PostWeb,
-            Money=PostMoney,
-            Content=PostContent,
-            IP=IP,
-            PushList=PushList,
-            ListDate=ListDate,
-            ControlCode=HasControlCode,
-            FormatCheck=False,
-            Location=Location,
-            PushNumber=PushNumber,
-            OriginPost=OriginPost,
-            Unconfirmed=api.Unconfirmed,
+            board=Board,
+            aid=PostAID,
+            author=PostAuthor,
+            date=PostDate,
+            title=PostTitle,
+            web_url=PostWeb,
+            money=PostMoney,
+            content=PostContent,
+            ip=IP,
+            push_list=PushList,
+            list_date=ListDate,
+            control_code=HasControlCode,
+            format_check=False,
+            location=Location,
+            push_number=PushNumber,
+            origin_post=OriginPost,
+            unconfirmed=api.Unconfirmed,
         )
         return Post
     PostDate = PatternResult.group(0)
@@ -704,23 +704,23 @@ def getPost(
             i18n.Content
         )
         Post = DataType.PostInfo(
-            Board=Board,
-            AID=PostAID,
-            Author=PostAuthor,
-            Date=PostDate,
-            Title=PostTitle,
-            WebUrl=PostWeb,
-            Money=PostMoney,
-            Content=PostContent,
-            IP=IP,
-            PushList=PushList,
-            ListDate=ListDate,
-            ControlCode=HasControlCode,
-            FormatCheck=False,
-            Location=Location,
-            PushNumber=PushNumber,
-            OriginPost=OriginPost,
-            Unconfirmed=api.Unconfirmed,
+            board=Board,
+            aid=PostAID,
+            author=PostAuthor,
+            date=PostDate,
+            title=PostTitle,
+            web_url=PostWeb,
+            money=PostMoney,
+            content=PostContent,
+            ip=IP,
+            push_list=PushList,
+            list_date=ListDate,
+            control_code=HasControlCode,
+            format_check=False,
+            location=Location,
+            push_number=PushNumber,
+            origin_post=OriginPost,
+            unconfirmed=api.Unconfirmed,
         )
         return Post
 
@@ -789,23 +789,23 @@ def getPost(
                 'IP'
             )
             Post = DataType.PostInfo(
-                Board=Board,
-                AID=PostAID,
-                Author=PostAuthor,
-                Date=PostDate,
-                Title=PostTitle,
-                WebUrl=PostWeb,
-                Money=PostMoney,
-                Content=PostContent,
-                IP=IP,
-                PushList=PushList,
-                ListDate=ListDate,
-                ControlCode=HasControlCode,
-                FormatCheck=False,
-                Location=Location,
-                PushNumber=PushNumber,
-                OriginPost=OriginPost,
-                Unconfirmed=api.Unconfirmed,
+                board=Board,
+                aid=PostAID,
+                author=PostAuthor,
+                date=PostDate,
+                title=PostTitle,
+                web_url=PostWeb,
+                money=PostMoney,
+                content=PostContent,
+                ip=IP,
+                push_list=PushList,
+                list_date=ListDate,
+                control_code=HasControlCode,
+                format_check=False,
+                location=Location,
+                push_number=PushNumber,
+                origin_post=OriginPost,
+                unconfirmed=api.Unconfirmed,
             )
             return Post
     Log.showValue(api.Config, Log.Level.DEBUG, 'IP', IP)
@@ -897,22 +897,22 @@ def getPost(
         PushList.append(CurrentPush)
 
     Post = DataType.PostInfo(
-        Board=Board,
-        AID=PostAID,
-        Author=PostAuthor,
-        Date=PostDate,
-        Title=PostTitle,
-        WebUrl=PostWeb,
-        Money=PostMoney,
-        Content=PostContent,
-        IP=IP,
-        PushList=PushList,
-        ListDate=ListDate,
-        ControlCode=HasControlCode,
-        FormatCheck=True,
-        Location=Location,
-        PushNumber=PushNumber,
-        OriginPost=OriginPost,
-        Unconfirmed=api.Unconfirmed,
+        board=Board,
+        aid=PostAID,
+        author=PostAuthor,
+        date=PostDate,
+        title=PostTitle,
+        web_url=PostWeb,
+        money=PostMoney,
+        content=PostContent,
+        ip=IP,
+        push_list=PushList,
+        list_date=ListDate,
+        control_code=HasControlCode,
+        format_check=True,
+        location=Location,
+        push_number=PushNumber,
+        origin_post=OriginPost,
+        unconfirmed=api.Unconfirmed,
     )
     return Post

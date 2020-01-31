@@ -39,11 +39,11 @@ def Echo():
 
             # print('=' * 30)
 
-            if not WaterBall.getType() == PTT.WaterBallType.Catch:
+            if not WaterBall.get_type() == PTT.WaterBallType.Catch:
                 continue
 
-            Target = WaterBall.getTarget()
-            Content = WaterBall.getContent()
+            Target = WaterBall.get_target()
+            Content = WaterBall.get_content()
 
             print(f'收到來自 {Target} 的水球 [{Content}]')
 
@@ -68,8 +68,8 @@ def listWaterBall():
             continue
         for WaterBall in WaterBallList:
 
-            Target = WaterBall.getTarget()
-            Content = WaterBall.getContent()
+            Target = WaterBall.get_target()
+            Content = WaterBall.get_content()
 
             print(f'收到來自 {Target} 的水球 [{Content}]')
 
