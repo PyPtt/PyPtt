@@ -238,8 +238,7 @@ class Library:
             self,
             id: str,
             password: str,
-            kick_other_login: bool = False
-    ):
+            kick_other_login: bool = False):
 
         try:
             from . import api_loginout
@@ -254,25 +253,24 @@ class Library:
 
     def login(
             self,
-            id: str,
+            pttid: str,
             password: str,
-            kick_other_login: bool = False
-    ):
+            kick_other_login: bool = False):
         self._OneThread()
 
-        CheckValue.check(self.Config, str, 'ID', id)
+        CheckValue.check(self.Config, str, 'ID', pttid)
         CheckValue.check(self.Config, str, 'Password', password)
         CheckValue.check(self.Config, bool, 'KickOtherLogin', kick_other_login)
 
         try:
             return self._login(
-                id,
+                pttid,
                 password,
                 kick_other_login=kick_other_login
             )
         except Exceptions.LoginError:
             return self._login(
-                id,
+                pttid,
                 password,
                 kick_other_login=kick_other_login
             )
@@ -313,8 +311,7 @@ class Library:
             post_index: int = 0,
             search_type: int = 0,
             search_condition: str = None,
-            query: bool = False
-    ):
+            query: bool = False) -> DataType.PostInfo:
         self._OneThread()
 
         if not self._LoginStatus:
@@ -446,7 +443,7 @@ class Library:
 
             if post is None:
                 need_continue = True
-            elif not post.isFormatCheck():
+            elif not post.is_format_check():
                 need_continue = True
 
             if need_continue:
@@ -463,14 +460,13 @@ class Library:
 
     def _checkBoard(
             self,
-            board,
-            check_moderator: bool = False
-    ):
+            board: str,
+            check_moderator: bool = False):
         if board.lower() not in self._ExistBoardList:
             boardinfo = self._getBoardInfo(board)
             self._ExistBoardList.append(board.lower())
 
-            moderators = boardinfo.getModerators()
+            moderators = boardinfo.get_moderators()
             moderators = [x.lower() for x in moderators]
             self._ModeratorList[board.lower()] = moderators
 
@@ -504,10 +500,10 @@ class Library:
     def _getNewestIndex(
             self,
             index_type: int,
-            board: object = None,
+            board: str = None,
             # BBS
-            search_type: object = 0,
-            search_condition: object = None) -> object:
+            search_type: int = 0,
+            search_condition: str = None) -> int:
 
         CheckValue.check(
             self.Config, int, 'IndexType',
@@ -531,7 +527,7 @@ class Library:
             index_type: int,
             board: str = None,
             search_type: int = 0,
-            search_condition: str = None):
+            search_condition: str = None) -> int:
         self._OneThread()
 
         if index_type == DataType.IndexType.BBS:
@@ -555,8 +551,8 @@ class Library:
 
     def _getPostIndex(
             self,
-            board,
-            aid):
+            board: str,
+            aid) -> int:
 
         try:
             from . import api_getPostIndex
@@ -583,7 +579,7 @@ class Library:
             query: bool = False,
             # 網頁版本
             start_page: int = 0,
-            end_page: int = 0):
+            end_page: int = 0) -> list:
 
         self._OneThread()
 
@@ -775,7 +771,7 @@ class Library:
 
                     if post is None:
                         need_continue = True
-                    elif not post.isFormatCheck():
+                    elif not post.is_format_check():
                         need_continue = True
 
                     if need_continue:
@@ -794,13 +790,13 @@ class Library:
                 if post is None:
                     error_post_list.append(index)
                     continue
-                if not post.isFormatCheck():
-                    if post.getAID() is not None:
-                        error_post_list.append(post.getAID())
+                if not post.is_format_check():
+                    if post.get_aid() is not None:
+                        error_post_list.append(post.get_aid())
                     else:
                         error_post_list.append(index)
                     continue
-                if post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
+                if post.get_delete_status() != DataType.PostDeleteStatus.NotDeleted:
                     del_post_list.append(index)
                 post_handler(post)
             if self.Config.LogLevel == Log.Level.INFO:
@@ -850,7 +846,7 @@ class Library:
                     elif post_title.startswith('(已被'):
                         return DataType.PostDeleteStatus.ByModerator
                     else:
-                        return DataType.PostDeleteStatus.ByUnknow
+                        return DataType.PostDeleteStatus.ByUnknown
                 else:
                     return DataType.PostDeleteStatus.NotDeleted
 
@@ -889,11 +885,11 @@ class Library:
                                 1].split('>')[0]
 
                     post = DataType.PostInfo(
-                        Board=board,
-                        Author=post['author'],
-                        Title=post['title'],
-                        WebUrl='https://www.ptt.cc' + post['web'],
-                        DeleteStatus=deleted_post(post['title'])
+                        board=board,
+                        author=post['author'],
+                        title=post['title'],
+                        web_url='https://www.ptt.cc' + post['web'],
+                        delete_status=deleted_post(post['title'])
                     )
                     post_handler(post)
 
@@ -921,8 +917,7 @@ class Library:
             title: str,
             content: str,
             post_type: int,
-            sign_file
-    ):
+            sign_file):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -971,7 +966,7 @@ class Library:
             push_type: int,
             push_content: str,
             post_aid: str = None,
-            post_index: int = 0):
+            post_index: int = 0) -> None:
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1155,7 +1150,7 @@ class Library:
                 ]))
 
         User = self._getUser(pttid)
-        if '不在站上' in User.getState():
+        if '不在站上' in User.get_state():
             raise Exceptions.UserOffline(pttid)
 
         try:
@@ -1165,7 +1160,7 @@ class Library:
 
         return api_WaterBall.throwWaterBall(self, pttid, content)
 
-    def getWaterBall(self, operate_type):
+    def getWaterBall(self, operate_type: int) -> list:
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1185,7 +1180,7 @@ class Library:
 
         return api_WaterBall.get_waterball(self, operate_type)
 
-    def getCallStatus(self):
+    def getCallStatus(self) -> int:
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1193,7 +1188,7 @@ class Library:
 
         return self._getCallStatus()
 
-    def _getCallStatus(self):
+    def _getCallStatus(self) -> int:
 
         try:
             from . import api_CallStatus
@@ -1220,7 +1215,7 @@ class Library:
 
         return api_CallStatus.setCallStatus(self, call_status)
 
-    def giveMoney(self, pttid, money):
+    def giveMoney(self, pttid: str, money: int):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1285,7 +1280,7 @@ class Library:
             content,
             sign_file)
 
-    def hasNewMail(self):
+    def hasNewMail(self) -> int:
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1298,7 +1293,7 @@ class Library:
 
         return api_hasNewMail.hasNewMail(self)
 
-    def getBoardList(self):
+    def getBoardList(self) -> list:
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1408,8 +1403,7 @@ class Library:
             post_aid: str = None,
             post_index: int = 0,
             search_type: int = 0,
-            search_condition: str = None,
-    ):
+            search_condition: str = None, ):
         # 標記文章
         self._OneThread()
 
@@ -1431,7 +1425,7 @@ class Library:
             search_condition
         )
 
-    def getFavouriteBoard(self):
+    def getFavouriteBoard(self) -> list:
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1474,8 +1468,8 @@ class Library:
     def searchUser(
             self,
             target: str,
-            minpage: int = None,
-            maxpage: int = None):
+            min_page: int = None,
+            max_page: int = None) -> list:
 
         self._OneThread()
 
@@ -1483,25 +1477,25 @@ class Library:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         CheckValue.check(self.Config, str, 'target', target)
-        if minpage is not None:
+        if min_page is not None:
             CheckValue.checkIndex(
                 self.Config,
                 'minpage',
-                minpage
+                min_page
             )
-        if maxpage is not None:
+        if max_page is not None:
             CheckValue.checkIndex(
                 self.Config,
                 'maxpage',
-                maxpage
+                max_page
             )
-        if minpage is not None and maxpage is not None:
+        if min_page is not None and max_page is not None:
             CheckValue.checkIndexRange(
                 self.Config,
                 'minpage',
-                minpage,
+                min_page,
                 'maxpage',
-                maxpage
+                max_page
             )
 
         try:
@@ -1509,9 +1503,9 @@ class Library:
         except ModuleNotFoundError:
             import api_searchuser
 
-        return api_searchuser.searchuser(self, target, minpage, maxpage)
+        return api_searchuser.searchuser(self, target, min_page, max_page)
 
-    def getBoardInfo(self, board):
+    def getBoardInfo(self, board: str) -> DataType.BoardInfo:
 
         self._OneThread()
 
@@ -1522,7 +1516,7 @@ class Library:
 
         return self._getBoardInfo(board)
 
-    def _getBoardInfo(self, board):
+    def _getBoardInfo(self, board: str) -> DataType.BoardInfo:
 
         try:
             from . import api_getBoardInfo
