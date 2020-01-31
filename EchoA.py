@@ -23,20 +23,20 @@ def getPW():
 def SendEcho():
 
     OperateType = PTT.WaterBallOperateType.Clear
-    WaterBallList = PTTBot.getWaterBall(OperateType)
+    WaterBallList = PTTBot.get_waterball(OperateType)
 
     while True:
         try:
-            PTTBot.throwWaterBall('DeepLearning', 'Hey')
+            PTTBot.throw_waterball('DeepLearning', 'Hey')
         except PTT.Exceptions.UserOffline:
             time.sleep(1)
             continue
         break
 
     while True:
-        PTTBot.setCallStatus(PTT.CallStatus.Off)
+        PTTBot.set_callstatus(PTT.CallStatus.Off)
         time.sleep(1)
-        WaterBallList = PTTBot.getWaterBall(OperateType)
+        WaterBallList = PTTBot.get_waterball(OperateType)
         if WaterBallList is None:
             continue
 
@@ -51,7 +51,7 @@ def SendEcho():
 
             while True:
                 try:
-                    PTTBot.throwWaterBall(Target, 'Hey')
+                    PTTBot.throw_waterball(Target, 'Hey')
                 except PTT.Exceptions.UserOffline:
                     time.sleep(1)
                     continue

@@ -212,7 +212,7 @@ class Library:
             i18n.Init
         )
 
-    def _OneThread(self):
+    def _one_thread(self):
         current_thread_id = threading.get_ident()
         if current_thread_id == self._ThreadID:
             return
@@ -230,13 +230,13 @@ class Library:
         )
         raise Exceptions.MultiThreadOperated()
 
-    def getVersion(self) -> str:
-        self._OneThread()
+    def get_version(self) -> str:
+        self._one_thread()
         return self.Config.Version
 
     def _login(
             self,
-            id: str,
+            pttid: str,
             password: str,
             kick_other_login: bool = False):
 
@@ -247,7 +247,7 @@ class Library:
 
         return api_loginout.login(
             self,
-            id,
+            pttid,
             password,
             kick_other_login)
 
@@ -256,7 +256,7 @@ class Library:
             pttid: str,
             password: str,
             kick_other_login: bool = False):
-        self._OneThread()
+        self._one_thread()
 
         CheckValue.check(self.Config, str, 'ID', pttid)
         CheckValue.check(self.Config, str, 'Password', password)
@@ -276,7 +276,7 @@ class Library:
             )
 
     def logout(self):
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             return
@@ -289,11 +289,11 @@ class Library:
         return api_loginout.logout(self)
 
     def log(self, msg):
-        self._OneThread()
+        self._one_thread()
         Log.log(self.Config, Log.Level.INFO, msg)
 
-    def getTime(self) -> str:
-        self._OneThread()
+    def get_time(self) -> str:
+        self._one_thread()
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
@@ -304,7 +304,7 @@ class Library:
 
         return api_getTime.getTime(self)
 
-    def getPost(
+    def get_post(
             self,
             board: str,
             post_aid: str = None,
@@ -312,7 +312,7 @@ class Library:
             search_type: int = 0,
             search_condition: str = None,
             query: bool = False) -> DataType.PostInfo:
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -393,7 +393,7 @@ class Library:
                 ]))
 
         if post_index != 0:
-            newest_index = self._getNewestIndex(
+            newest_index = self._get_newest_index(
                 DataType.IndexType.BBS,
                 board=board,
                 search_type=search_type,
@@ -409,14 +409,14 @@ class Library:
                         i18n.OutOfRange,
                     ]))
 
-        self._checkBoard(board)
+        self._check_board(board)
 
         for i in range(2):
 
             need_continue = False
             post = None
             try:
-                post = self._getPost(
+                post = self._get_post(
                     board,
                     post_aid,
                     post_index,
@@ -458,12 +458,12 @@ class Library:
             break
         return post
 
-    def _checkBoard(
+    def _check_board(
             self,
             board: str,
             check_moderator: bool = False):
         if board.lower() not in self._ExistBoardList:
-            boardinfo = self._getBoardInfo(board)
+            boardinfo = self._get_board_info(board)
             self._ExistBoardList.append(board.lower())
 
             moderators = boardinfo.get_moderators()
@@ -474,7 +474,7 @@ class Library:
             if self._ID.lower() not in self._ModeratorList[board.lower()]:
                 raise Exceptions.NeedModeratorPermission(board)
 
-    def _getPost(
+    def _get_post(
             self,
             board: str,
             post_aid: str = None,
@@ -488,7 +488,7 @@ class Library:
         except ModuleNotFoundError:
             import api_getPost
 
-        return api_getPost.getPost(
+        return api_getPost.get_post(
             self,
             board,
             post_aid,
@@ -497,7 +497,7 @@ class Library:
             search_condition,
             query)
 
-    def _getNewestIndex(
+    def _get_newest_index(
             self,
             index_type: int,
             board: str = None,
@@ -515,41 +515,41 @@ class Library:
         except ModuleNotFoundError:
             import api_getNewestIndex
 
-        return api_getNewestIndex.getNewestIndex(
+        return api_getNewestIndex.get_newest_index(
             self,
             index_type,
             board,
             search_type,
             search_condition)
 
-    def getNewestIndex(
+    def get_newest_index(
             self,
             index_type: int,
             board: str = None,
             search_type: int = 0,
             search_condition: str = None) -> int:
-        self._OneThread()
+        self._one_thread()
 
         if index_type == DataType.IndexType.BBS:
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         try:
-            return self._getNewestIndex(
+            return self._get_newest_index(
                 index_type,
                 board,
                 search_type,
                 search_condition
             )
         except Exception:
-            return self._getNewestIndex(
+            return self._get_newest_index(
                 index_type,
                 board,
                 search_type,
                 search_condition
             )
 
-    def _getPostIndex(
+    def _get_post_index(
             self,
             board: str,
             aid) -> int:
@@ -564,7 +564,7 @@ class Library:
             board,
             aid)
 
-    def crawlBoard(
+    def crawl_board(
             self,
             crawl_type: int,
             post_handler,
@@ -581,7 +581,7 @@ class Library:
             start_page: int = 0,
             end_page: int = 0) -> list:
 
-        self._OneThread()
+        self._one_thread()
 
         CheckValue.check(
             self.Config, int, 'CrawlType',
@@ -652,7 +652,7 @@ class Library:
                         ]))
 
             if start_index != 0:
-                newest_index = self._getNewestIndex(
+                newest_index = self._get_newest_index(
                     DataType.IndexType.BBS,
                     board=board,
                     search_type=search_type,
@@ -667,11 +667,11 @@ class Library:
                     MaxValue=newest_index
                 )
             elif start_aid is not None and end_aid is not None:
-                start_index = self._getPostIndex(
+                start_index = self._get_post_index(
                     board,
                     start_aid,
                 )
-                end_index = self._getPostIndex(
+                end_index = self._get_post_index(
                     board,
                     end_aid,
                 )
@@ -717,7 +717,7 @@ class Library:
                     need_continue = False
                     post = None
                     try:
-                        post = self._getPost(
+                        post = self._get_post(
                             board,
                             post_index=index,
                             search_type=search_type,
@@ -812,7 +812,7 @@ class Library:
             # https://www.ptt.cc/bbs/index.html
 
             # 1. 取得總共有幾頁 MaxPage
-            newest_index = self._getNewestIndex(
+            newest_index = self._get_newest_index(
                 DataType.IndexType.Web,
                 board=board
             )
@@ -917,8 +917,8 @@ class Library:
             title: str,
             content: str,
             post_type: int,
-            sign_file):
-        self._OneThread()
+            sign_file) -> None:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -945,7 +945,7 @@ class Library:
                         sign_file
                     ]))
 
-        self._checkBoard(board)
+        self._check_board(board)
 
         try:
             from . import api_post
@@ -967,7 +967,7 @@ class Library:
             push_content: str,
             post_aid: str = None,
             post_index: int = 0) -> None:
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1010,14 +1010,14 @@ class Library:
                 ]))
 
         if post_index != 0:
-            newest_index = self._getNewestIndex(
+            newest_index = self._get_newest_index(
                 DataType.IndexType.BBS,
                 board=board
             )
             CheckValue.checkIndex(self.Config, 'PostIndex',
                                   post_index, newest_index)
 
-        self._checkBoard(board)
+        self._check_board(board)
 
         max_push_length = 33
         push_list = []
@@ -1083,7 +1083,7 @@ class Library:
             push_type: int,
             push_content: str,
             post_aid: str = None,
-            post_index: int = 0):
+            post_index: int = 0) -> None:
 
         try:
             from . import api_push
@@ -1098,7 +1098,7 @@ class Library:
             post_aid,
             post_index)
 
-    def _getUser(self, user_id):
+    def _get_user(self, user_id) -> DataType.UserInfo:
 
         CheckValue.check(self.Config, str, 'UserID', user_id)
         if len(user_id) < 3:
@@ -1117,8 +1117,8 @@ class Library:
 
         return api_getUser.getUser(self, user_id)
 
-    def getUser(self, user_id):
-        self._OneThread()
+    def get_user(self, user_id) -> DataType.UserInfo:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1126,10 +1126,10 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        return self._getUser(user_id)
+        return self._get_user(user_id)
 
-    def throwWaterBall(self, pttid, content):
-        self._OneThread()
+    def throw_waterball(self, pttid, content) -> None:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1137,20 +1137,20 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        CheckValue.check(self.Config, str, 'TargetID', pttid)
-        CheckValue.check(self.Config, str, 'Content', content)
+        CheckValue.check(self.Config, str, 'pttid', pttid)
+        CheckValue.check(self.Config, str, 'content', content)
 
         if len(pttid) <= 2:
             raise ValueError(Log.merge(
                 self.Config,
                 [
-                    'TargetID',
+                    'pttid',
                     i18n.ErrorParameter,
                     pttid
                 ]))
 
-        User = self._getUser(pttid)
-        if '不在站上' in User.get_state():
+        user = self._get_user(pttid)
+        if '不在站上' in user.get_state():
             raise Exceptions.UserOffline(pttid)
 
         try:
@@ -1160,8 +1160,8 @@ class Library:
 
         return api_WaterBall.throwWaterBall(self, pttid, content)
 
-    def getWaterBall(self, operate_type: int) -> list:
-        self._OneThread()
+    def get_waterball(self, operate_type: int) -> list:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1180,15 +1180,15 @@ class Library:
 
         return api_WaterBall.get_waterball(self, operate_type)
 
-    def getCallStatus(self) -> int:
-        self._OneThread()
+    def get_callstatus(self) -> int:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        return self._getCallStatus()
+        return self._get_callstatus()
 
-    def _getCallStatus(self) -> int:
+    def _get_callstatus(self) -> int:
 
         try:
             from . import api_CallStatus
@@ -1197,10 +1197,10 @@ class Library:
 
         return api_CallStatus.getCallStatus(self)
 
-    def setCallStatus(
+    def set_callstatus(
             self,
             call_status):
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1213,10 +1213,10 @@ class Library:
         except ModuleNotFoundError:
             import api_CallStatus
 
-        return api_CallStatus.setCallStatus(self, call_status)
+        return api_CallStatus.set_callstatus(self, call_status)
 
-    def giveMoney(self, pttid: str, money: int):
-        self._OneThread()
+    def give_money(self, pttid: str, money: int):
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1227,7 +1227,7 @@ class Library:
         CheckValue.check(self.Config, str, 'ID', pttid)
         CheckValue.check(self.Config, int, 'Money', money)
         # Check user
-        self.getUser(pttid)
+        self.get_user(pttid)
 
         try:
             from . import api_giveMoney
@@ -1241,15 +1241,15 @@ class Library:
             pttid: str,
             title: str,
             content: str,
-            sign_file):
-        self._OneThread()
+            sign_file) -> None:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'ID', pttid)
-        CheckValue.check(self.Config, str, 'Title', title)
-        CheckValue.check(self.Config, str, 'Content', content)
+        CheckValue.check(self.Config, str, 'pttid', pttid)
+        CheckValue.check(self.Config, str, 'title', title)
+        CheckValue.check(self.Config, str, 'content', content)
 
         check_sign_file = False
         for i in range(0, 10):
@@ -1280,8 +1280,8 @@ class Library:
             content,
             sign_file)
 
-    def hasNewMail(self) -> int:
-        self._OneThread()
+    def has_new_mail(self) -> int:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1293,8 +1293,8 @@ class Library:
 
         return api_hasNewMail.hasNewMail(self)
 
-    def getBoardList(self) -> list:
-        self._OneThread()
+    def get_board_list(self) -> list:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1304,17 +1304,17 @@ class Library:
         except ModuleNotFoundError:
             import api_getBoardList
 
-        return api_getBoardList.getBoardList(self)
+        return api_getBoardList.get_board_list(self)
 
-    def replyPost(
+    def reply_post(
             self,
             reply_type: int,
             board: str,
             content: str,
             sign_file=0,
             post_aid: str = None,
-            post_index: int = 0):
-        self._OneThread()
+            post_index: int = 0) -> None:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1327,7 +1327,7 @@ class Library:
             CheckValue.check(self.Config, str, 'PostAID', post_aid)
 
         if post_index != 0:
-            newest_index = self._getNewestIndex(
+            newest_index = self._get_newest_index(
                 DataType.IndexType.BBS,
                 board=board)
             CheckValue.checkIndex(
@@ -1355,7 +1355,7 @@ class Library:
                     i18n.BothInput
                 ]))
 
-        self._checkBoard(board)
+        self._check_board(board)
 
         try:
             from . import api_replyPost
@@ -1371,23 +1371,22 @@ class Library:
             post_aid,
             post_index)
 
-    def setBoardTitle(
+    def set_board_title(
             self,
             board: str,
-            new_title: str):
+            new_title: str) -> None:
         # 第一支板主專用 API
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', board)
-        CheckValue.check(self.Config, str, 'NewTitle', new_title)
+        CheckValue.check(self.Config, str, 'board', board)
+        CheckValue.check(self.Config, str, 'new_title', new_title)
 
-        self._checkBoard(
+        self._check_board(
             board,
-            check_moderator=True
-        )
+            check_moderator=True)
 
         try:
             from . import api_setBoardTitle
@@ -1396,16 +1395,16 @@ class Library:
 
         api_setBoardTitle.setBoardTitle(self, board, new_title)
 
-    def markPost(
+    def mark_post(
             self,
             mark_type: int,
             board: str,
             post_aid: str = None,
             post_index: int = 0,
             search_type: int = 0,
-            search_condition: str = None, ):
+            search_condition: str = None) -> None:
         # 標記文章
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1425,8 +1424,8 @@ class Library:
             search_condition
         )
 
-    def getFavouriteBoard(self) -> list:
-        self._OneThread()
+    def get_favourite_board(self) -> list:
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
@@ -1436,26 +1435,25 @@ class Library:
         except ModuleNotFoundError:
             import api_getFavouriteBoard
 
-        return api_getFavouriteBoard.getFavouriteBoard(self)
+        return api_getFavouriteBoard.get_favourite_board(self)
 
-    def bucket(self, board: str, bucket_days: int, reason: str, pttid: str):
+    def bucket(self, board: str, bucket_days: int, reason: str, pttid: str) -> None:
 
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', board)
-        CheckValue.check(self.Config, int, 'BucketDays', bucket_days)
-        CheckValue.check(self.Config, str, 'Reason', reason)
-        CheckValue.check(self.Config, str, 'TargetID', pttid)
+        CheckValue.check(self.Config, str, 'board', board)
+        CheckValue.check(self.Config, int, 'bucket_days', bucket_days)
+        CheckValue.check(self.Config, str, 'reason', reason)
+        CheckValue.check(self.Config, str, 'pttid', pttid)
 
-        self._getUser(pttid)
+        self._get_user(pttid)
 
-        self._checkBoard(
+        self._check_board(
             board,
-            check_moderator=True
-        )
+            check_moderator=True)
 
         try:
             from . import api_bucket
@@ -1465,36 +1463,36 @@ class Library:
         api_bucket.bucket(
             self, board, bucket_days, reason, pttid)
 
-    def searchUser(
+    def search_user(
             self,
-            target: str,
+            pttid: str,
             min_page: int = None,
             max_page: int = None) -> list:
 
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'target', target)
+        CheckValue.check(self.Config, str, 'pttid', pttid)
         if min_page is not None:
             CheckValue.checkIndex(
                 self.Config,
-                'minpage',
+                'min_page',
                 min_page
             )
         if max_page is not None:
             CheckValue.checkIndex(
                 self.Config,
-                'maxpage',
+                'max_page',
                 max_page
             )
         if min_page is not None and max_page is not None:
             CheckValue.checkIndexRange(
                 self.Config,
-                'minpage',
+                'min_page',
                 min_page,
-                'maxpage',
+                'max_page',
                 max_page
             )
 
@@ -1503,27 +1501,27 @@ class Library:
         except ModuleNotFoundError:
             import api_searchuser
 
-        return api_searchuser.searchuser(self, target, min_page, max_page)
+        return api_searchuser.searchuser(self, pttid, min_page, max_page)
 
-    def getBoardInfo(self, board: str) -> DataType.BoardInfo:
+    def get_board_info(self, board: str) -> DataType.BoardInfo:
 
-        self._OneThread()
+        self._one_thread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', board)
+        CheckValue.check(self.Config, str, 'board', board)
 
-        return self._getBoardInfo(board)
+        return self._get_board_info(board)
 
-    def _getBoardInfo(self, board: str) -> DataType.BoardInfo:
+    def _get_board_info(self, board: str) -> DataType.BoardInfo:
 
         try:
             from . import api_getBoardInfo
         except ModuleNotFoundError:
             import api_getBoardInfo
 
-        return api_getBoardInfo.getBoardInfo(self, board)
+        return api_getBoardInfo.get_board_info(self, board)
 
 
 if __name__ == '__main__':

@@ -23,12 +23,12 @@ def getPW():
 def Echo():
 
     OperateType = PTT.WaterBallOperateType.Clear
-    WaterBallList = PTTBot.getWaterBall(OperateType)
+    WaterBallList = PTTBot.get_waterball(OperateType)
 
     while True:
-        PTTBot.setCallStatus(PTT.CallStatus.Off)
+        PTTBot.set_callstatus(PTT.CallStatus.Off)
         time.sleep(1)
-        WaterBallList = PTTBot.getWaterBall(OperateType)
+        WaterBallList = PTTBot.get_waterball(OperateType)
         if WaterBallList is None:
             continue
         for WaterBall in WaterBallList:
@@ -49,7 +49,7 @@ def Echo():
 
             while True:
                 try:
-                    PTTBot.throwWaterBall(Target, 'I heard')
+                    PTTBot.throw_waterball(Target, 'I heard')
                 except PTT.Exceptions.UserOffline:
                     time.sleep(1)
                     continue
@@ -58,12 +58,12 @@ def Echo():
 
 def listWaterBall():
     OperateType = PTT.WaterBallOperateType.Clear
-    WaterBallList = PTTBot.getWaterBall(OperateType)
+    WaterBallList = PTTBot.get_waterball(OperateType)
     OperateType = PTT.WaterBallOperateType.DoNothing
     while True:
-        PTTBot.setCallStatus(PTT.CallStatus.Off)
+        PTTBot.set_callstatus(PTT.CallStatus.Off)
         time.sleep(1)
-        WaterBallList = PTTBot.getWaterBall(OperateType)
+        WaterBallList = PTTBot.get_waterball(OperateType)
         if WaterBallList is None:
             continue
         for WaterBall in WaterBallList:

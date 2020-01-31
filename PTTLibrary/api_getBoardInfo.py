@@ -15,18 +15,18 @@ except ModuleNotFoundError:
     import Command
 
 
-def getBoardInfo(api, board):
+def get_board_info(api, board):
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('qs')
-    CmdList.append(board)
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Ctrl_C * 2)
-    CmdList.append(Command.Space)
-    Cmd = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Ctrl_C * 2)
+    cmd_list.append(Command.Space)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.LoginSuccess,
             [
@@ -38,32 +38,33 @@ def getBoardInfo(api, board):
     ]
 
     api._ConnectCore.send(
-        Cmd,
-        TargetList
+        cmd,
+        target_list
     )
 
-    OriScreen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.getScreenQueue()[-1]
     # print(OriScreen)
-    Nuser = OriScreen.split('\n')[2]
+    nuser = ori_screen.split('\n')[2]
     # print(Nuser)
-    if '[靜]' in Nuser:
-        OnlineUser = 0
+    if '[靜]' in nuser:
+        online_user = 0
     else:
-        if '編號' not in Nuser or '人氣' not in Nuser:
+        if '編號' not in nuser or '人氣' not in nuser:
             raise Exceptions.NoSuchBoard(api.Config, board)
         pattern = re.compile('[\d]+')
-        r = pattern.search(Nuser)
+        r = pattern.search(nuser)
         if r is None:
             raise Exceptions.NoSuchBoard(api.Config, board)
-        OnlineUser = r.group(0)
-        Log.showValue(
-            api.Config,
-            Log.Level.DEBUG,
-            '人氣',
-            OnlineUser
-        )
+        # 減一是把自己本身拿掉
+        online_user = int(r.group(0)) - 1
+    Log.showValue(
+        api.Config,
+        Log.Level.DEBUG,
+        '人氣',
+        online_user
+    )
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵繼續',
@@ -74,14 +75,14 @@ def getBoardInfo(api, board):
 
     api._ConnectCore.send(
         'i',
-        TargetList
+        target_list
     )
 
-    OriScreen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.getScreenQueue()[-1]
     # print(OriScreen)
 
     p = re.compile('《(.+)》看板設定')
-    r = p.search(OriScreen)
+    r = p.search(ori_screen)
     if r is not None:
         boardname = r.group(0)[1:-5].strip()
     Log.showValue(
@@ -95,226 +96,226 @@ def getBoardInfo(api, board):
         raise Exceptions.NoSuchBoard(api.Config, board)
 
     p = re.compile('中文敘述: (.+)')
-    r = p.search(OriScreen)
+    r = p.search(ori_screen)
     if r is not None:
-        ChineseDes = r.group(0)[5:].strip()
+        chinese_des = r.group(0)[5:].strip()
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '中文敘述',
-        ChineseDes
+        chinese_des
     )
 
     p = re.compile('板主名單: (.+)')
-    r = p.search(OriScreen)
+    r = p.search(ori_screen)
     if r is not None:
-        ModeratorLine = r.group(0)[5:].strip()
-        Moderators = ModeratorLine.split('/')
+        moderator_line = r.group(0)[5:].strip()
+        moderators = moderator_line.split('/')
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '板主名單',
-        Moderators
+        moderators
     )
 
-    OpenState = ('公開狀態(是否隱形): 公開' in OriScreen)
+    open_state = ('公開狀態(是否隱形): 公開' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '公開狀態',
-        OpenState
+        open_state
     )
 
-    IntoTopTenWhenHide = (
-        '隱板時 可以 進入十大排行榜' in OriScreen
+    into_top_ten_when_hide = (
+        '隱板時 可以 進入十大排行榜' in ori_screen
     )
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '隱板時可以進入十大排行榜',
-        IntoTopTenWhenHide
+        into_top_ten_when_hide
     )
 
-    NonBoardMembersPost = ('開放 非看板會員發文' in OriScreen)
+    non_board_members_post = ('開放 非看板會員發文' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '非看板會員發文',
-        NonBoardMembersPost
+        non_board_members_post
     )
 
-    ReplyPost = ('開放 回應文章' in OriScreen)
+    reply_post = ('開放 回應文章' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '回應文章',
-        ReplyPost
+        reply_post
     )
 
-    SelfDelPost = ('開放 自刪文章' in OriScreen)
+    self_del_post = ('開放 自刪文章' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '自刪文章',
-        SelfDelPost
+        self_del_post
     )
 
-    PushPost = ('開放 推薦文章' in OriScreen)
+    push_post = ('開放 推薦文章' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '推薦文章',
-        PushPost
+        push_post
     )
 
-    BooPost = ('開放 噓文' in OriScreen)
+    boo_post = ('開放 噓文' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '噓文',
-        BooPost
+        boo_post
     )
 
     # 限制 快速連推文章, 最低間隔時間: 5 秒
     # 開放 快速連推文章
 
-    FastPush = ('開放 快速連推文章' in OriScreen)
+    fast_push = ('開放 快速連推文章' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '快速連推文章',
-        FastPush
+        fast_push
     )
 
-    if not FastPush:
+    if not fast_push:
         p = re.compile('最低間隔時間: [\d]+')
-        r = p.search(OriScreen)
+        r = p.search(ori_screen)
         if r is not None:
-            MinInterval = r.group(0)[7:].strip()
-            MinInterval = int(MinInterval)
+            min_interval = r.group(0)[7:].strip()
+            min_interval = int(min_interval)
         else:
-            MinInterval = 0
+            min_interval = 0
         Log.showValue(
             api.Config,
             Log.Level.DEBUG,
             '最低間隔時間',
-            MinInterval
+            min_interval
         )
     else:
-        MinInterval = 0
+        min_interval = 0
 
     # 推文時 自動 記錄來源 IP
     # 推文時 不會 記錄來源 IP
-    PushRecordIP = ('推文時 自動 記錄來源 IP' in OriScreen)
+    push_record_ip = ('推文時 自動 記錄來源 IP' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '記錄來源 IP',
-        PushRecordIP
+        push_record_ip
     )
 
     # 推文時 對齊 開頭
     # 推文時 不用對齊 開頭
-    PushAligned = ('推文時 對齊 開頭' in OriScreen)
+    push_aligned = ('推文時 對齊 開頭' in ori_screen)
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '對齊開頭',
-        PushAligned
+        push_aligned
     )
 
     # 板主 可 刪除部份違規文字
-    ModeratorCanDelIllegalContent = (
-        '板主 可 刪除部份違規文字' in OriScreen
+    moderator_can_del_illegal_content = (
+        '板主 可 刪除部份違規文字' in ori_screen
     )
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '板主可刪除部份違規文字',
-        ModeratorCanDelIllegalContent
+        moderator_can_del_illegal_content
     )
 
     # 轉錄文章 會 自動記錄，且 需要 發文權限
-    TranPostAutoRecordedAndRequirePostPermissions = (
-        '轉錄文章 會 自動記錄，且 需要 發文權限' in OriScreen
+    tran_post_auto_recorded_and_require_post_permissions = (
+        '轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen
     )
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '轉錄文章 會 自動記錄，且 需要 發文權限',
-        TranPostAutoRecordedAndRequirePostPermissions
+        tran_post_auto_recorded_and_require_post_permissions
     )
 
-    CoolMode = (
-        '未 設為冷靜模式' not in OriScreen
+    cool_mode = (
+        '未 設為冷靜模式' not in ori_screen
     )
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '冷靜模式',
-        CoolMode
+        cool_mode
     )
 
-    Require18 = (
-        '禁止 未滿十八歲進入' in OriScreen
+    require18 = (
+        '禁止 未滿十八歲進入' in ori_screen
     )
 
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '禁止未滿十八歲進入',
-        Require18
+        require18
     )
 
     p = re.compile('登入次數 [\d]+ 次以上')
-    r = p.search(OriScreen)
+    r = p.search(ori_screen)
     if r is not None:
-        RequireLoginTime = r.group(0).split(' ')[1]
-        RequireLoginTime = int(RequireLoginTime)
+        require_login_time = r.group(0).split(' ')[1]
+        require_login_time = int(require_login_time)
     else:
-        RequireLoginTime = 0
+        require_login_time = 0
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '發文限制登入次數',
-        RequireLoginTime
+        require_login_time
     )
 
     p = re.compile('退文篇數 [\d]+ 篇以下')
-    r = p.search(OriScreen)
+    r = p.search(ori_screen)
     if r is not None:
-        RequireIllegalPost = r.group(0).split(' ')[1]
-        RequireIllegalPost = int(RequireIllegalPost)
+        require_illegal_post = r.group(0).split(' ')[1]
+        require_illegal_post = int(require_illegal_post)
     else:
-        RequireIllegalPost = 0
+        require_illegal_post = 0
     Log.showValue(
         api.Config,
         Log.Level.DEBUG,
         '發文限制退文篇數',
-        RequireIllegalPost
+        require_illegal_post
     )
 
-    BoardInfo = DataType.BoardInfo(
+    board_info = DataType.BoardInfo(
         boardname,
-        OnlineUser,
-        ChineseDes,
-        Moderators,
-        OpenState,
-        IntoTopTenWhenHide,
-        NonBoardMembersPost,
-        ReplyPost,
-        SelfDelPost,
-        PushPost,
-        BooPost,
-        FastPush,
-        MinInterval,
-        PushRecordIP,
-        PushAligned,
-        ModeratorCanDelIllegalContent,
-        TranPostAutoRecordedAndRequirePostPermissions,
-        CoolMode,
-        Require18,
-        RequireLoginTime,
-        RequireIllegalPost,
+        online_user,
+        chinese_des,
+        moderators,
+        open_state,
+        into_top_ten_when_hide,
+        non_board_members_post,
+        reply_post,
+        self_del_post,
+        push_post,
+        boo_post,
+        fast_push,
+        min_interval,
+        push_record_ip,
+        push_aligned,
+        moderator_can_del_illegal_content,
+        tran_post_auto_recorded_and_require_post_permissions,
+        cool_mode,
+        require18,
+        require_login_time,
+        require_illegal_post,
     )
-    return BoardInfo
+    return board_info

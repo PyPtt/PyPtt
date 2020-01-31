@@ -10,16 +10,16 @@ except ModuleNotFoundError:
     import Command
 
 
-def getFavouriteBoard(api):
+def get_favourite_board(api):
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('F')
-    CmdList.append(Command.Enter)
-    CmdList.append('0')
-    Cmd = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('F')
+    cmd_list.append(Command.Enter)
+    cmd_list.append('0')
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.FavouriteBoardList,
             '選擇看板',
@@ -27,66 +27,66 @@ def getFavouriteBoard(api):
         )
     ]
 
-    FavouriteBoardList = []
+    favourite_board_list = []
     while True:
 
         api._ConnectCore.send(
-            Cmd,
-            TargetList
+            cmd,
+            target_list
         )
 
-        OriScreen = api._ConnectCore.getScreenQueue()[-1]
+        ori_screen = api._ConnectCore.getScreenQueue()[-1]
         # print(OriScreen)
-        ScreenBuf = OriScreen
-        ScreenBuf = [x for x in ScreenBuf.split('\n')][3:][:-1]
-        ScreenBuf[0] = '  ' + ScreenBuf[0][1:]
-        ScreenBuf = [x for x in ScreenBuf]
+        screen_buf = ori_screen
+        screen_buf = [x for x in screen_buf.split('\n')][3:][:-1]
+        screen_buf[0] = '  ' + screen_buf[0][1:]
+        screen_buf = [x for x in screen_buf]
 
-        MinLen = 47
+        min_len = 47
 
         # for line in ScreenBuf:
         #     print(line[:MinLen - len(line)])
         #     print(len(line))
-        for i, line in enumerate(ScreenBuf):
-            if len(ScreenBuf[i]) == 0:
+        for i, line in enumerate(screen_buf):
+            if len(screen_buf[i]) == 0:
                 continue
-            if len(ScreenBuf[i]) <= MinLen:
+            if len(screen_buf[i]) <= min_len:
                 # print(f'[{ScreenBuf[i]}]')
-                ScreenBuf[i] = ScreenBuf[i] + \
-                    (' ' * ((MinLen + 1) - len(ScreenBuf[i])))
-        ScreenBuf = [x[10:MinLen - len(x)].strip() for x in ScreenBuf]
-        ScreenBuf = list(filter(None, ScreenBuf))
+                screen_buf[i] = screen_buf[i] + \
+                    (' ' * ((min_len + 1) - len(screen_buf[i])))
+        screen_buf = [x[10:min_len - len(x)].strip() for x in screen_buf]
+        screen_buf = list(filter(None, screen_buf))
 
-        for i, line in enumerate(ScreenBuf):
+        for i, line in enumerate(screen_buf):
             # print(i)
             # 16 = line.find('◎')
             linebuff = line[:16].strip()
 
-            Type = linebuff[-2:]
-            Board = linebuff[:-2].strip()
+            board_type = linebuff[-2:]
+            board = linebuff[:-2].strip()
 
-            BoardTitle = line[17:].strip()
+            board_title = line[17:].strip()
             # print(line)
             # print('\t' + Type)
             # print('\t' + Board)
             # print('\t' + BoardTitle)
 
-            FBoard = DataType.FavouriteBoard(
-                Board,
-                Type,
-                BoardTitle
+            f_board = DataType.FavouriteBoard(
+                board,
+                board_type,
+                board_title
             )
 
-            FavouriteBoardList.append(FBoard)
+            favourite_board_list.append(f_board)
 
         # print(len(FavouriteBoardList))
         # print(len(ScreenBuf))
-        if len(ScreenBuf) < 20:
+        if len(screen_buf) < 20:
             break
 
-        Cmd = Command.Ctrl_F
+        cmd = Command.Ctrl_F
 
     # ScreenBuf = '\n'.join(ScreenBuf)
     # print(ScreenBuf)
     # print(len(FavouriteBoardList))
-    return FavouriteBoardList
+    return favourite_board_list

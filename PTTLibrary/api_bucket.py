@@ -12,35 +12,35 @@ except ModuleNotFoundError:
     import Command
 
 
-def bucket(api, Board, BucketDays, Reason, TargetID):
+def bucket(api, board, bucket_days, reason, pttid):
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('qs')
-    CmdList.append(Board)
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Ctrl_C * 2)
-    CmdList.append(Command.Space)
-    CmdList.append('i')
-    CmdList.append(Command.Ctrl_P)
-    CmdList.append('w')
-    CmdList.append(Command.Enter)
-    CmdList.append('a')
-    CmdList.append(Command.Enter)
-    CmdList.append(TargetID)
-    CmdList.append(Command.Enter)
-    Cmd = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Ctrl_C * 2)
+    cmd_list.append(Command.Space)
+    cmd_list.append('i')
+    cmd_list.append(Command.Ctrl_P)
+    cmd_list.append('w')
+    cmd_list.append(Command.Enter)
+    cmd_list.append('a')
+    cmd_list.append(Command.Enter)
+    cmd_list.append(pttid)
+    cmd_list.append(Command.Enter)
+    cmd = ''.join(cmd_list)
 
-    CmdList = []
-    CmdList.append(str(BucketDays))
-    CmdList.append(Command.Enter)
-    CmdList.append(Reason)
-    CmdList.append(Command.Enter)
-    CmdList.append('y')
-    CmdList.append(Command.Enter)
-    CmdPart2 = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(str(bucket_days))
+    cmd_list.append(Command.Enter)
+    cmd_list.append(reason)
+    cmd_list.append(Command.Enter)
+    cmd_list.append('y')
+    cmd_list.append(Command.Enter)
+    cmd_part2 = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             [
                 i18n.bucket,
@@ -52,7 +52,7 @@ def bucket(api, Board, BucketDays, Reason, TargetID):
         ConnectCore.TargetUnit(
             i18n.InputBucketDays_Reason,
             '請以數字跟單位(預設為天)輸入期限',
-            Response=CmdPart2,
+            Response=cmd_part2,
         ),
         ConnectCore.TargetUnit(
             [
@@ -89,8 +89,8 @@ def bucket(api, Board, BucketDays, Reason, TargetID):
     ]
 
     api._ConnectCore.send(
-        Cmd,
-        TargetList
+        cmd,
+        target_list
     )
 
     # OriScreen = api._ConnectCore.getScreenQueue()[-1]

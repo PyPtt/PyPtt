@@ -99,7 +99,7 @@ def markPost(
         ]))
 
     if PostIndex != 0:
-        NewestIndex = api._getNewestIndex(
+        NewestIndex = api._get_newest_index(
             DataType.IndexType.BBS,
             board=Board,
             search_type=SearchType,
@@ -113,7 +113,7 @@ def markPost(
         if api.Config.Host == DataType.Host.PTT2:
             raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
 
-    api._checkBoard(
+    api._check_board(
         Board,
         check_moderator=True
     )
