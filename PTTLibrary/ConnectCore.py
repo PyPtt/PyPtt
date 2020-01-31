@@ -23,7 +23,7 @@ except ModuleNotFoundError:
     import Command
     import Exceptions
 
-neweventloop = []
+new_event_loop = []
 
 
 class ConnectMode(object):
@@ -38,73 +38,72 @@ class ConnectMode(object):
 class TargetUnit(object):
     def __init__(
         self,
-        DisplayMsg,
-        DetectTarget,
-        LogLevel: int = 0,
-        Response: str = '',
-        BreakDetect=False,
-        BreakDetectAfterSend=False,
-        Exceptions=None,
-        Refresh=True,
-        Secret=False,
-        Handler=None
-    ):
+        display_msg,
+        detect_target,
+        log_level: int = 0,
+        response: str = '',
+        break_detect=False,
+        break_detect_after_send=False,
+        exceptions=None,
+        refresh=True,
+        secret=False,
+        handler=None):
 
-        self._DisplayMsg = DisplayMsg
-        self._DetectTarget = DetectTarget
-        if LogLevel == 0:
+        self._DisplayMsg = display_msg
+        self._DetectTarget = detect_target
+        if log_level == 0:
             self._LogLevel = Log.Level.INFO
         else:
-            self._LogLevel = LogLevel
-        self._Response = Response
-        self._BreakDetect = BreakDetect
-        self._Exception = Exceptions
-        self._Refresh = Refresh
-        self._BreakAfterSend = BreakDetectAfterSend
-        self._Secret = Secret
-        self._Handler = Handler
+            self._LogLevel = log_level
+        self._Response = response
+        self._BreakDetect = break_detect
+        self._Exception = exceptions
+        self._Refresh = refresh
+        self._BreakAfterSend = break_detect_after_send
+        self._Secret = secret
+        self._Handler = handler
 
-    def isMatch(self, Screen: str):
+    def is_match(self, screen: str):
         if isinstance(self._DetectTarget, str):
-            if self._DetectTarget in Screen:
+            if self._DetectTarget in screen:
                 return True
             return False
         elif isinstance(self._DetectTarget, list):
             for Target in self._DetectTarget:
-                if Target not in Screen:
+                if Target not in screen:
                     return False
             return True
 
-    def getDisplayMsg(self):
+    def get_display_msg(self):
         if callable(self._DisplayMsg):
             return self._DisplayMsg()
         return self._DisplayMsg
 
-    def getDetectTarget(self):
+    def get_detect_target(self):
         return self._DetectTarget
 
-    def getLogLevel(self):
+    def get_log_level(self):
         return self._LogLevel
 
-    def getResponse(self, Screen: str):
+    def get_response(self, Screen: str):
         if callable(self._Response):
             return self._Response(Screen)
         return self._Response
 
-    def isBreak(self):
+    def is_break(self):
         return self._BreakDetect
 
-    def raiseException(self):
+    def raise_exception(self):
         if isinstance(self._Exception, Exception):
             raise self._Exception
 
-    def isRefresh(self):
+    def is_refresh(self):
         return self._Refresh
 
-    def isBreakAfterSend(self):
+    def is_break_after_send(self):
         return self._BreakAfterSend
 
-    def isSecret(self):
+    def is_secret(self):
         return self._Secret
 
 
@@ -113,16 +112,16 @@ class RecvData:
         self.data = None
 
 
-async def WebsocketRecvFunc(Core, RecvDataObj):
+async def websocket_recv_func(core, recv_data_obj):
 
-    RecvDataObj.data = await Core.recv()
+    recv_data_obj.data = await core.recv()
 
 
-async def WebsocketReceiver(Core, ScreenTimeOut, RecvDataObj):
+async def websocket_receiver(core, screen_time_out, recv_data_obj):
     # Wait for at most 1 second
     await asyncio.wait_for(
-        WebsocketRecvFunc(Core, RecvDataObj),
-        timeout=ScreenTimeOut
+        websocket_recv_func(core, recv_data_obj),
+        timeout=screen_time_out
     )
 
 
@@ -130,64 +129,64 @@ class ReceiveDataQueue(object):
     def __init__(self):
         self._ReceiveDataQueue = []
 
-    def add(self, Screen):
-        self._ReceiveDataQueue.append(Screen)
+    def add(self, screen):
+        self._ReceiveDataQueue.append(screen)
         self._ReceiveDataQueue = self._ReceiveDataQueue[-10:]
 
-    def get(self, Last=1):
-        return self._ReceiveDataQueue[-Last:]
+    def get(self, last=1):
+        return self._ReceiveDataQueue[-last:]
 
 
 class API(object):
-    def __init__(self, Config, Host: int):
+    def __init__(self, config, host: int):
 
-        self.Config = Config
-        self._Host = Host
+        self.Config = config
+        self._Host = host
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
             [
                 i18n.UseTooManyResources,
             ],
             Screens.Target.UseTooManyResources,
-            Exceptions=Exceptions.UseTooManyResources
+            exceptions=Exceptions.UseTooManyResources
         )
 
-        Log.showValue(self.Config, Log.Level.INFO, [
+        Log.show_value(self.Config, Log.Level.INFO, [
             i18n.ConnectCore,
         ],
-            i18n.Init
-        )
+                       i18n.Init
+                       )
 
     def connect(self):
         def _wait():
             for i in range(self.Config.RetryWaitTime):
-                Log.showValue(self.Config, Log.Level.INFO, [
+                Log.show_value(self.Config, Log.Level.INFO, [
                     i18n.Prepare,
                     i18n.Again,
                     i18n.Connect,
                     i18n.PTT,
                 ],
-                    str(self.Config.RetryWaitTime - i)
-                )
+                               str(self.Config.RetryWaitTime - i)
+                               )
                 time.sleep(1)
 
-        Log.showValue(self.Config, Log.Level.INFO, [
+        Log.show_value(self.Config, Log.Level.INFO, [
             i18n.ConnectCore,
         ],
-            i18n.Active
-        )
+                       i18n.Active
+                       )
 
-        ConnectSuccess = False
+        connect_success = False
 
-        global neweventloop
+        global new_event_loop
         threadid = threading.get_ident()
 
         for _ in range(2):
 
             try:
 
-                if threadid not in neweventloop:
-                    neweventloop.append(threadid)
+                if threadid not in new_event_loop:
+                    new_event_loop.append(threadid)
                     try:
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
@@ -209,42 +208,42 @@ class API(object):
                         )
                     )
 
-                ConnectSuccess = True
+                connect_success = True
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
                 if self._Host == DataType.Host.PTT1:
-                    Log.showValue(self.Config, Log.Level.INFO, [
+                    Log.show_value(self.Config, Log.Level.INFO, [
                         i18n.Connect,
                         i18n.PTT,
                     ],
-                        i18n.Fail
-                    )
+                                   i18n.Fail
+                                   )
                 else:
-                    Log.showValue(self.Config, Log.Level.INFO, [
+                    Log.show_value(self.Config, Log.Level.INFO, [
                         i18n.Connect,
                         i18n.PTT2,
                     ],
-                        i18n.Fail
-                    )
+                                   i18n.Fail
+                                   )
                 _wait()
                 continue
 
             break
 
-        if not ConnectSuccess:
+        if not connect_success:
             raise Exceptions.ConnectError(self.Config)
 
     def send(
         self,
-        Msg: str,
-        TargetList: list,
-        ScreenTimeout: int = 0,
-        Refresh: bool = True,
-        Secret: bool = False
+        msg: str,
+        target_list: list,
+        screen_timeout: int = 0,
+        refresh: bool = True,
+        secret: bool = False
     ) -> int:
 
-        def cleanScreen(screen: str, NoColor: bool = True) -> str:
+        def clean_screen(screen: str, NoColor: bool = True) -> str:
 
             if not screen:
                 return screen
@@ -262,42 +261,42 @@ class API(object):
             screen = re.sub(r'[\x1C-\x1F]', '', screen)
             screen = re.sub(r'[\x7f-\xff]', '', screen)
 
-            screen = Screens.VT100(screen)
+            screen = Screens.vt100(screen)
 
             return screen
 
-        if not all(isinstance(T, TargetUnit) for T in TargetList):
+        if not all(isinstance(T, TargetUnit) for T in target_list):
             raise ValueError('Item of TargetList must be TargetUnit')
 
-        if self._UseTooManyResources not in TargetList:
-            TargetList.append(self._UseTooManyResources)
+        if self._UseTooManyResources not in target_list:
+            target_list.append(self._UseTooManyResources)
 
-        if ScreenTimeout == 0:
-            CurrentScreenTimeout = self.Config.ScreenTimeOut
+        if screen_timeout == 0:
+            current_screen_timeout = self.Config.ScreenTimeOut
         else:
-            CurrentScreenTimeout = ScreenTimeout
+            current_screen_timeout = screen_timeout
 
-        BreakDetectAfterSend = False
-        BreakIndex = -1
-        isSecret = Secret
+        break_detect_after_send = False
+        break_index = -1
+        is_secret = secret
 
-        UseTooManyRes = False
+        use_too_many_res = False
         while True:
 
-            if Refresh and not Msg.endswith(Command.Refresh):
-                Msg = Msg + Command.Refresh
+            if refresh and not msg.endswith(Command.Refresh):
+                msg = msg + Command.Refresh
             try:
-                Msg = Msg.encode('big5-uao', 'replace')
+                msg = msg.encode('big5-uao', 'replace')
 
             except AttributeError:
                 pass
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                Msg = Msg.encode('big5', 'replace')
+                msg = msg.encode('big5', 'replace')
 
-            if isSecret:
-                Log.showValue(
+            if is_secret:
+                Log.show_value(
                     self.Config,
                     Log.Level.DEBUG, [
                         i18n.SendMsg
@@ -305,17 +304,17 @@ class API(object):
                     i18n.HideSensitiveInfor
                 )
             else:
-                Log.showValue(
+                Log.show_value(
                     self.Config,
                     Log.Level.DEBUG, [
                         i18n.SendMsg
                     ],
-                    Msg
+                    msg
                 )
 
             try:
                 asyncio.get_event_loop().run_until_complete(
-                    self._Core.send(Msg)
+                    self._Core.send(msg)
                 )
             except websockets.exceptions.ConnectionClosedError:
                 raise Exceptions.ConnectionClosed()
@@ -324,122 +323,122 @@ class API(object):
             except websockets.exceptions.ConnectionClosedOK:
                 raise Exceptions.ConnectionClosed()
 
-            if BreakDetectAfterSend:
-                return BreakIndex
+            if break_detect_after_send:
+                return break_index
 
-            Msg = ''
-            ReceiveDataBuffer = bytes()
+            msg = ''
+            receive_data_buffer = bytes()
 
-            # print(f'0 {UseTooManyRes}')
-            StartTime = time.time()
-            MidTime = time.time()
-            while MidTime - StartTime < CurrentScreenTimeout:
+            # print(f'0 {use_too_many_res}')
+            start_time = time.time()
+            mid_time = time.time()
+            while mid_time - start_time < current_screen_timeout:
                 try:
-                    RecvDataObj = RecvData()
+                    recv_data_obj = RecvData()
                     asyncio.get_event_loop().run_until_complete(
-                        WebsocketReceiver(
-                            self._Core, CurrentScreenTimeout, RecvDataObj)
+                        websocket_receiver(
+                            self._Core, current_screen_timeout, recv_data_obj)
                     )
 
                 except websockets.exceptions.ConnectionClosed:
-                    # print(f'0.1 {UseTooManyRes}')
-                    if UseTooManyRes:
-                        # print(f'0.2 {UseTooManyRes}')
+                    # print(f'0.1 {use_too_many_res}')
+                    if use_too_many_res:
+                        # print(f'0.2 {use_too_many_res}')
                         raise Exceptions.UseTooManyResources()
-                    # print(f'0.3 {UseTooManyRes}')
+                    # print(f'0.3 {use_too_many_res}')
                     raise Exceptions.ConnectionClosed()
                 except websockets.exceptions.ConnectionClosedOK:
                     raise Exceptions.ConnectionClosed()
                 except asyncio.TimeoutError:
                     return -1
 
-                ReceiveDataBuffer += RecvDataObj.data
-                ReceiveDataTemp = ReceiveDataBuffer.decode(
+                receive_data_buffer += recv_data_obj.data
+                receive_data_temp = receive_data_buffer.decode(
                     'big5-uao', errors='replace'
                 )
-                Screen = cleanScreen(ReceiveDataTemp)
+                screen = clean_screen(receive_data_temp)
 
-                FindTarget = False
-                for Target in TargetList:
+                find_target = False
+                for Target in target_list:
 
-                    Condition = Target.isMatch(Screen)
-                    if Condition:
+                    condition = Target.is_match(screen)
+                    if condition:
                         if Target._Handler is not None:
                             Target._Handler()
-                        if len(Screen) > 0:
-                            Screens.show(self.Config, Screen)
-                            self._RDQ.add(Screen)
-                            # self._ReceiveDataQueue.append(Screen)
+                        if len(screen) > 0:
+                            Screens.show(self.Config, screen)
+                            self._RDQ.add(screen)
+                            # self._ReceiveDataQueue.append(screen)
                             if Target == self._UseTooManyResources:
                                 # print('!!!!!!!!!!!!!!!')
-                                UseTooManyRes = True
-                                # print(f'1 {UseTooManyRes}')
+                                use_too_many_res = True
+                                # print(f'1 {use_too_many_res}')
                                 break
-                            Target.raiseException()
+                            Target.raise_exception()
 
-                        FindTarget = True
+                        find_target = True
 
-                        Log.showValue(
+                        Log.show_value(
                             self.Config,
-                            Target.getLogLevel(), [
+                            Target.get_log_level(), [
                                 i18n.PTT,
                                 i18n.Msg
                             ],
-                            Target.getDisplayMsg()
+                            Target.get_display_msg()
                         )
 
-                        EndTime = time.time()
-                        Log.showValue(
+                        end_time = time.time()
+                        Log.show_value(
                             self.Config,
                             Log.Level.DEBUG, [
                                 i18n.SpendTime,
                             ],
-                            round(EndTime - StartTime, 2)
+                            round(end_time - start_time, 2)
                         )
 
-                        if Target.isBreak():
-                            return TargetList.index(Target)
+                        if Target.is_break():
+                            return target_list.index(Target)
 
-                        Msg = Target.getResponse(Screen)
+                        msg = Target.get_response(screen)
 
-                        AddRefresh = False
-                        if Target.isRefresh():
-                            AddRefresh = True
-                        elif Refresh:
-                            AddRefresh = True
+                        add_refresh = False
+                        if Target.is_refresh():
+                            add_refresh = True
+                        elif refresh:
+                            add_refresh = True
 
-                        if AddRefresh:
-                            if not Msg.endswith(Command.Refresh):
-                                Msg = Msg + Command.Refresh
+                        if add_refresh:
+                            if not msg.endswith(Command.Refresh):
+                                msg = msg + Command.Refresh
 
-                        isSecret = Target.isSecret()
+                        is_secret = Target.is_secret()
 
-                        if Target.isBreakAfterSend():
-                            BreakIndex = TargetList.index(Target)
-                            BreakDetectAfterSend = True
+                        if Target.is_break_after_send():
+                            break_index = target_list.index(Target)
+                            break_detect_after_send = True
                         break
 
-                # print(f'2 {UseTooManyRes}')
-                if UseTooManyRes:
-                    # print(f'3 {UseTooManyRes}')
+                # print(f'2 {use_too_many_res}')
+                if use_too_many_res:
+                    # print(f'3 {use_too_many_res}')
                     continue
-                # print(f'4 {UseTooManyRes}')
+                # print(f'4 {use_too_many_res}')
 
-                if FindTarget:
+                if find_target:
                     break
-                if len(Screen) > 0:
-                    Screens.show(self.Config, Screen)
-                    self._RDQ.add(Screen)
-                    # self._ReceiveDataQueue.append(Screen)
+                if len(screen) > 0:
+                    Screens.show(self.Config, screen)
+                    self._RDQ.add(screen)
+                    # self._ReceiveDataQueue.append(screen)
 
-                MidTime = time.time()
+                mid_time = time.time()
 
-            if not FindTarget:
+            if not find_target:
                 raise Exceptions.NoMatchTargetError(self._RDQ)
         raise Exceptions.NoMatchTargetError(self._RDQ)
 
     def close(self):
         asyncio.get_event_loop().run_until_complete(self._Core.close())
 
-    def getScreenQueue(self) -> list:
+    def get_screen_queue(self) -> list:
         return self._RDQ.get(1)

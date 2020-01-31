@@ -35,7 +35,7 @@ def get_newest_index(
 
         CheckValue.check(
             api.Config, int, 'SearchType', search_type,
-            Class=DataType.PostSearchType)
+            value_class=DataType.PostSearchType)
         if search_condition is not None:
             CheckValue.check(
                 api.Config, str,
@@ -75,25 +75,25 @@ def get_newest_index(
             ConnectCore.TargetUnit(
                 i18n.NoPost,
                 '沒有文章...',
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
+                break_detect=True,
+                log_level=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.Success,
                 Screens.Target.InBoard,
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
+                break_detect=True,
+                log_level=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.Success,
                 Screens.Target.InBoardWithCursor,
-                BreakDetect=True,
-                LogLevel=Log.Level.DEBUG
+                break_detect=True,
+                log_level=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.NoSuchBoard,
                 Screens.Target.MainMenu_Exiting,
-                Exceptions=Exceptions.NoSuchBoard(api.Config, board)
+                exceptions=Exceptions.NoSuchBoard(api.Config, board)
             ),
         ]
         index = api._ConnectCore.send(cmd, target_list)
@@ -105,7 +105,7 @@ def get_newest_index(
         if index == 0:
             return 0
 
-        last_screen = api._ConnectCore.getScreenQueue()[-1]
+        last_screen = api._ConnectCore.get_screen_queue()[-1]
         all_index = re.findall(r'\d+ ', last_screen)
 
         if len(all_index) == 0:
@@ -128,7 +128,7 @@ def get_newest_index(
                     need_continue = False
                     break
             if need_continue:
-                Log.showValue(
+                Log.show_value(
                     api.Config,
                     Log.Level.DEBUG,
                     i18n.FindNewestIndex,
@@ -138,7 +138,7 @@ def get_newest_index(
                 break
 
         if newest_index == 0:
-            Screens.show(api.Config, api._ConnectCore.getScreenQueue())
+            Screens.show(api.Config, api._ConnectCore.get_screen_queue())
             raise Exceptions.UnknownError(i18n.UnknownError)
 
     elif DataType.IndexType.Web:

@@ -129,8 +129,8 @@ class ConnectionClosed(Exception):
 
 
 class UnregisteredUser(Exception):
-    def __init__(self, ApiName):
-        self.message = i18n.UnregisteredUserCantUseThisAPI + ': ' + ApiName
+    def __init__(self, api_name):
+        self.message = i18n.UnregisteredUserCantUseThisAPI + ': ' + api_name
 
     def __str__(self):
         return self.message
@@ -169,8 +169,8 @@ class UseTooManyResources(Exception):
 
 
 class HostNotSupport(Exception):
-    def __init__(self, API):
-        self.message = f'{i18n.PTT2NotSupport}: {API}'
+    def __init__(self, api):
+        self.message = f'{i18n.PTT2NotSupport}: {api}'
 
     def __str__(self):
         return self.message
@@ -193,18 +193,18 @@ class NoResponse(Exception):
 
 
 class NeedModeratorPermission(Exception):
-    def __init__(self, Board):
-        self.message = f'{i18n.NeedModeratorPermission}: {Board}'
+    def __init__(self, board):
+        self.message = f'{i18n.NeedModeratorPermission}: {board}'
 
     def __str__(self):
         return self.message
 
 
 class ConnectError(Exception):
-    def __init__(self, Config):
+    def __init__(self, config):
         self.message = [i18n.Connect, i18n.Fail]
 
-        if Config.Language == i18n.Language.Chinese:
+        if config.Language == i18n.Language.Chinese:
             self.message = ''.join(self.message)
         else:
             self.message = ' '.join(self.message)
@@ -214,20 +214,20 @@ class ConnectError(Exception):
 
 
 class NoMatchTargetError(Exception):
-    def __init__(self, ScreenQueue: list):
-        self.ScreenQueue = ScreenQueue
+    def __init__(self, screen_queue: list):
+        self.ScreenQueue = screen_queue
 
     def __str__(self):
-        Screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
-        return Screens + '\n' + i18n.ScreenNoMatchTarget
+        screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
+        return screens + '\n' + i18n.ScreenNoMatchTarget
 
 
 class NoSuchPost(Exception):
-    def __init__(self, Board, AID):
+    def __init__(self, board, aid):
         self.message = i18n.replace(
             i18n.NoSuchPost,
-            Board,
-            AID
+            board,
+            aid
         )
 
     def __str__(self):

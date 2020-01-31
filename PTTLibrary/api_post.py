@@ -13,74 +13,74 @@ except ModuleNotFoundError:
 
 
 def post(
-        api,
-        Board,
-        Title,
-        Content,
-        PostType,
-        SignFile):
+        api: object,
+        board: str,
+        title: str,
+        content: str,
+        post_type: int,
+        sign_file) -> None:
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('qs')
-    CmdList.append(Board)
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Ctrl_C * 2)
-    CmdList.append(Command.Space)
-    CmdList.append(Command.Ctrl_P)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Ctrl_C * 2)
+    cmd_list.append(Command.Space)
+    cmd_list.append(Command.Ctrl_P)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.HasPostPermission,
             '發表文章於【',
-            BreakDetect=True,
+            break_detect=True,
         ),
         ConnectCore.TargetUnit(
             i18n.NoPermission,
             '使用者不可發言',
-            BreakDetect=True,
+            break_detect=True,
         )
     ]
-    index = api._ConnectCore.send(Cmd, TargetList)
+    index = api._ConnectCore.send(cmd, target_list)
     if index < 0:
-        Screens.show(api.Config, api._ConnectCore.getScreenQueue())
+        Screens.show(api.Config, api._ConnectCore.get_screen_queue())
         raise Exceptions.UnknownError(i18n.UnknownError)
     if index == 1:
         raise Exceptions.NoPermission(i18n.NoPermission)
 
-    Screens.show(api.Config, api._ConnectCore.getScreenQueue())
+    Screens.show(api.Config, api._ConnectCore.get_screen_queue())
 
-    CmdList = []
-    CmdList.append(str(PostType))
-    CmdList.append(Command.Enter)
-    CmdList.append(str(Title))
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Ctrl_Y * 30)
-    CmdList.append(str(Content))
-    CmdList.append(Command.Ctrl_X)
-    Cmd = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(str(post_type))
+    cmd_list.append(Command.Enter)
+    cmd_list.append(str(title))
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Ctrl_Y * 30)
+    cmd_list.append(str(content))
+    cmd_list.append(Command.Ctrl_X)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵繼續',
-            BreakDetect=True,
+            break_detect=True,
         ),
         ConnectCore.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            Response='s' + Command.Enter,
+            response='s' + Command.Enter,
         ),
         ConnectCore.TargetUnit(
             i18n.SelectSignature,
             'x=隨機',
-            Response=str(SignFile) + Command.Enter,
+            response=str(sign_file) + Command.Enter,
         ),
     ]
     index = api._ConnectCore.send(
-        Cmd,
-        TargetList,
-        ScreenTimeout=api.Config.ScreenPostTimeOut
+        cmd,
+        target_list,
+        screen_timeout=api.Config.ScreenPostTimeOut
     )

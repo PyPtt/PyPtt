@@ -18,134 +18,130 @@ except ModuleNotFoundError:
 
 def push(
         api,
-        Board: str,
-        PushType: int,
-        PushContent: str,
-        PostAID: str,
-        PostIndex: int):
+        board: str,
+        push_type: int,
+        push_content: str,
+        post_aid: str,
+        post_index: int) -> None:
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('qs')
-    CmdList.append(Board)
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Ctrl_C * 2)
-    CmdList.append(Command.Space)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Ctrl_C * 2)
+    cmd_list.append(Command.Space)
 
-    if PostAID is not None:
-        CmdList.append('#' + PostAID)
-    elif PostIndex != 0:
-        CmdList.append(str(PostIndex))
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Push)
+    if post_aid is not None:
+        cmd_list.append('#' + post_aid)
+    elif post_index != 0:
+        cmd_list.append(str(post_index))
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Push)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.HasPushPermission,
             '您覺得這篇',
-            LogLevel=Log.Level.DEBUG,
-            BreakDetect=True
+            log_level=Log.Level.DEBUG,
+            break_detect=True
         ),
         ConnectCore.TargetUnit(
             i18n.OnlyArrow,
             '加註方式',
-            LogLevel=Log.Level.DEBUG,
-            BreakDetect=True
+            log_level=Log.Level.DEBUG,
+            break_detect=True
         ),
         ConnectCore.TargetUnit(
             i18n.NoFastPush,
             '禁止快速連續推文',
-            LogLevel=Log.Level.INFO,
-            BreakDetect=True,
-            Exceptions=Exceptions.NoFastPush()
+            log_level=Log.Level.INFO,
+            break_detect=True,
+            exceptions=Exceptions.NoFastPush()
         ),
         ConnectCore.TargetUnit(
             i18n.NoFastPush,
             '禁止短時間內大量推文',
-            LogLevel=Log.Level.INFO,
-            BreakDetect=True,
-            Exceptions=Exceptions.NoFastPush()
+            log_level=Log.Level.INFO,
+            break_detect=True,
+            exceptions=Exceptions.NoFastPush()
         ),
         ConnectCore.TargetUnit(
             i18n.NoPermission,
             '使用者不可發言',
-            LogLevel=Log.Level.INFO,
-            BreakDetect=True,
-            Exceptions=Exceptions.NoPermission(i18n.NoPermission)
+            log_level=Log.Level.INFO,
+            break_detect=True,
+            exceptions=Exceptions.NoPermission(i18n.NoPermission)
         ),
         ConnectCore.TargetUnit(
             i18n.NoPush,
             '◆ 抱歉, 禁止推薦',
-            LogLevel=Log.Level.INFO,
-            BreakDetect=True,
-            Exceptions=Exceptions.NoPush()
+            log_level=Log.Level.INFO,
+            break_detect=True,
+            exceptions=Exceptions.NoPush()
         ),
     ]
 
     index = api._ConnectCore.send(
-        Cmd,
-        TargetList
+        cmd,
+        target_list
     )
 
     if index == -1:
-        if PostAID is not None:
-            raise Exceptions.NoSuchPost(Board, PostAID)
+        if post_aid is not None:
+            raise Exceptions.NoSuchPost(board, post_aid)
         else:
-            raise Exceptions.NoSuchPost(Board, PostIndex)
+            raise Exceptions.NoSuchPost(board, post_index)
 
-    EnablePush = False
-    EnableBoo = False
-    EnableArrow = False
-
-    CmdList = []
+    cmd_list = []
 
     if index == 0:
-        PushOptionLine = api._ConnectCore.getScreenQueue()[-1]
-        PushOptionLine = PushOptionLine.split('\n')[-1]
-        Log.showValue(api.Config, Log.Level.DEBUG,
-                      'Push option line', PushOptionLine)
+        push_option_line = api._ConnectCore.get_screen_queue()[-1]
+        push_option_line = push_option_line.split('\n')[-1]
+        Log.show_value(api.Config, Log.Level.DEBUG,
+                      'Push option line', push_option_line)
 
-        EnablePush = '值得推薦' in PushOptionLine
-        EnableBoo = '給它噓聲' in PushOptionLine
-        EnableArrow = '只加→註解' in PushOptionLine
+        enable_push = '值得推薦' in push_option_line
+        enable_boo = '給它噓聲' in push_option_line
+        enable_arrow = '只加→註解' in push_option_line
 
-        Log.showValue(api.Config, Log.Level.DEBUG, 'Push', EnablePush)
-        Log.showValue(api.Config, Log.Level.DEBUG, 'Boo', EnableBoo)
-        Log.showValue(api.Config, Log.Level.DEBUG, 'Arrow', EnableArrow)
+        Log.show_value(api.Config, Log.Level.DEBUG, 'Push', enable_push)
+        Log.show_value(api.Config, Log.Level.DEBUG, 'Boo', enable_boo)
+        Log.show_value(api.Config, Log.Level.DEBUG, 'Arrow', enable_arrow)
 
-        if PushType == DataType.PushType.Push and not EnablePush:
-            PushType = DataType.PushType.Arrow
-        elif PushType == DataType.PushType.Boo and not EnableBoo:
-            PushType = DataType.PushType.Arrow
-        elif PushType == DataType.PushType.Arrow and not EnableArrow:
-            PushType = DataType.PushType.Push
+        if push_type == DataType.PushType.Push and not enable_push:
+            push_type = DataType.PushType.Arrow
+        elif push_type == DataType.PushType.Boo and not enable_boo:
+            push_type = DataType.PushType.Arrow
+        elif push_type == DataType.PushType.Arrow and not enable_arrow:
+            push_type = DataType.PushType.Push
 
-        CmdList.append(str(PushType))
-    elif index == 1:
-        PushType = DataType.PushType.Arrow
+        cmd_list.append(str(push_type))
+    # elif index == 1:
+    #     push_type = DataType.PushType.Arrow
 
-    CmdList.append(PushContent)
-    CmdList.append(Command.Enter)
-    CmdList.append('y')
-    CmdList.append(Command.Enter)
+    cmd_list.append(push_content)
+    cmd_list.append(Command.Enter)
+    cmd_list.append('y')
+    cmd_list.append(Command.Enter)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             [
                 i18n.Push,
                 i18n.Success,
             ],
             Screens.Target.InBoard,
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
     ]
 
-    index = api._ConnectCore.send(
-        Cmd,
-        TargetList
+    api._ConnectCore.send(
+        cmd,
+        target_list
     )

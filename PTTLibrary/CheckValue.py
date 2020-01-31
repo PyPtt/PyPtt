@@ -1,4 +1,3 @@
-
 try:
     from . import i18n
     from . import Log
@@ -10,147 +9,143 @@ except ModuleNotFoundError:
 
 
 def check(
-    Config,
-    Type,
-    Name,
-    Value,
-    Class=None
-):
-
-    if not isinstance(Value, Type):
-        if Type is str:
+        config,
+        value_type,
+        name,
+        value,
+        value_class=None) ->None:
+    if not isinstance(value, value_type):
+        if value_type is str:
             raise TypeError(
                 Log.merge(
-                    Config,
+                    config,
                     [
-                        Name,
+                        name,
                         i18n.MustBe,
                         i18n.String
                     ]))
-        elif Type is int:
+        elif value_type is int:
             raise TypeError(
                 Log.merge(
-                    Config,
+                    config,
                     [
-                        Name,
+                        name,
                         i18n.MustBe,
                         i18n.Integer
                     ]))
-        elif Type is bool:
+        elif value_type is bool:
             raise TypeError(
                 Log.merge(
-                    Config,
+                    config,
                     [
-                        Name,
+                        name,
                         i18n.MustBe,
                         i18n.Boolean
                     ]))
 
-    if Class is not None:
-        if not Util.checkRange(Class, Value):
-            raise ValueError(f'Unknow {Name}', Value)
+    if value_class is not None:
+        if not Util.check_range(value_class, value):
+            raise ValueError(f'Unknown {name}', value)
 
 
-def checkIndex(
-    Config,
-    IndexName,
-    Index,
-    MaxValue=None
-):
-    check(Config, int, IndexName, Index)
-    if Index < 1:
+def check_index(
+        config,
+        index_name,
+        index,
+        max_value=None):
+    check(config, int, index_name, index)
+    if index < 1:
         raise ValueError(
             Log.merge(
-                Config,
+                config,
                 [
-                    IndexName,
+                    index_name,
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
 
-    if MaxValue is not None:
-        if Index > MaxValue:
-            Log.showValue(
-                Config,
+    if max_value is not None:
+        if index > max_value:
+            Log.show_value(
+                config,
                 Log.Level.INFO,
                 'Index',
-                Index
+                index
             )
-            Log.showValue(
-                Config,
+            Log.show_value(
+                config,
                 Log.Level.INFO,
                 'MaxValue',
-                MaxValue
+                max_value
             )
             raise ValueError(
                 Log.merge(
-                    Config,
+                    config,
                     [
-                        IndexName,
+                        index_name,
                         i18n.ErrorParameter,
                         i18n.OutOfRange,
                     ]))
 
 
-def checkIndexRange(
-    Config,
-    StartName,
-    StartIndex,
-    EndName,
-    EndIndex,
-    MaxValue=None
+def check_index_range(
+        config,
+        start_name,
+        start_index,
+        end_name,
+        end_index,
+        max_value=None
 ):
+    check(config, int, start_name, start_index)
+    check(config, int, end_name, end_index)
 
-    check(Config, int, StartName, StartIndex)
-    check(Config, int, EndName, EndIndex)
-
-    if StartIndex < 1:
+    if start_index < 1:
         raise ValueError(
             Log.merge(
-                Config,
+                config,
                 [
-                    StartName,
+                    start_name,
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
 
-    if StartIndex < 1:
+    if start_index < 1:
         raise ValueError(
             Log.merge(
-                Config,
+                config,
                 [
-                    StartName,
+                    start_name,
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
 
-    if StartIndex > EndIndex:
+    if start_index > end_index:
         raise ValueError(
             Log.merge(
-                Config,
+                config,
                 [
-                    StartName,
+                    start_name,
                     i18n.MustSmallOrEqual,
-                    EndName,
+                    end_name,
                 ]))
 
-    if MaxValue is not None:
-        if StartIndex > MaxValue:
+    if max_value is not None:
+        if start_index > max_value:
             raise ValueError(
                 Log.merge(
-                    Config,
+                    config,
                     [
-                        StartName,
+                        start_name,
                         i18n.ErrorParameter,
                         i18n.OutOfRange,
                     ]))
 
-        if EndIndex > MaxValue:
+        if end_index > max_value:
             raise ValueError(
                 Log.merge(
-                    Config,
+                    config,
                     [
-                        EndName,
+                        end_name,
                         i18n.ErrorParameter,
                         i18n.OutOfRange,
                     ]))

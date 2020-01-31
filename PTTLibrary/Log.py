@@ -14,95 +14,95 @@ class Level(object):
     TRACE = 1
     DEBUG = 2
     INFO = 3
-    SLIENT = 4
+    SILENT = 4
 
     MinValue = TRACE
-    MaxValue = SLIENT
+    MaxValue = SILENT
 
 
-def merge(Config, Msg) -> str:
-    if isinstance(Msg, list):
-        if Config.Language == i18n.Language.Chinese:
+def merge(config, msg) -> str:
+    if isinstance(msg, list):
+        if config.Language == i18n.Language.Chinese:
 
-            for i, element in enumerate(Msg):
+            for i, element in enumerate(msg):
                 if len(element) == 0:
                     continue
                 if element[0].upper() != element[0].lower() and i != 0:
-                    Msg[i] = ' ' + element.lstrip()
+                    msg[i] = ' ' + element.lstrip()
                 if (element[-1].upper() != element[-1].lower() and
-                        i != len(Msg) - 1):
-                    Msg[i] = element.lstrip() + ' '
+                        i != len(msg) - 1):
+                    msg[i] = element.lstrip() + ' '
 
-            Msg = ''.join(Msg)
+            msg = ''.join(msg)
         else:
-            Msg = ' '.join(Msg)
-    Msg = str(Msg)
-    Msg = Msg.replace('  ', ' ')
+            msg = ' '.join(msg)
+    msg = str(msg)
+    msg = msg.replace('  ', ' ')
 
-    return Msg
+    return msg
 
 
-def log(Config, LogLevel, Msg):
+def log(config, log_level, msg):
 
-    if not Util.checkRange(Level, LogLevel):
-        raise ValueError('LogLevel', LogLevel)
+    if not Util.check_range(Level, log_level):
+        raise ValueError('LogLevel', log_level)
 
-    if Config.LogLevel > LogLevel:
+    if config.LogLevel > log_level:
         return
-    if len(Msg) == 0:
+    if len(msg) == 0:
         return
-    Msg = merge(Config, Msg)
+    msg = merge(config, msg)
 
-    TotalMessage = '[' + strftime('%m%d %H:%M:%S') + ']'
-    if LogLevel == Level.DEBUG:
-        TotalMessage += '[' + i18n.Debug + '] ' + Msg
-    elif LogLevel == Level.INFO:
-        TotalMessage += '[' + i18n.Info + '] ' + Msg
+    total_message = '[' + strftime('%m%d %H:%M:%S') + ']'
+    if log_level == Level.DEBUG:
+        total_message += '[' + i18n.Debug + '] ' + msg
+    elif log_level == Level.INFO:
+        total_message += '[' + i18n.Info + '] ' + msg
 
     try:
-        print(TotalMessage.encode(
+        print(total_message.encode(
             sys.stdin.encoding,
             'replace'
         ).decode(
             sys.stdin.encoding
         ))
     except Exception:
-        print(TotalMessage.encode('utf-8', "replace").decode('utf-8'))
+        print(total_message.encode('utf-8', "replace").decode('utf-8'))
 
-    if Config.LogHandler is not None:
-        Config.LogHandler(TotalMessage)
+    if config.LogHandler is not None:
+        config.LogHandler(total_message)
 
 
 LastValue = None
 
 
-def showValue(Config, LogLevel, Msg, Value):
+def show_value(config, log_level, msg, value):
 
-    if not Util.checkRange(Level, LogLevel):
-        raise ValueError('LogLevel', LogLevel)
+    if not Util.check_range(Level, log_level):
+        raise ValueError('LogLevel', log_level)
 
-    if Config.LogLevel > LogLevel:
+    if config.LogLevel > log_level:
         return
     global LastValue
 
-    CheckPTTMsg = merge(Config, [i18n.PTT, i18n.Msg])
-    Msg = merge(Config, Msg)
-    Value = merge(Config, Value)
+    check_ptt_msg = merge(config, [i18n.PTT, i18n.Msg])
+    msg = merge(config, msg)
+    value = merge(config, value)
 
-    if len(Msg) == 0:
+    if len(msg) == 0:
         return
     # if len(Value) == 0:
     #     return
 
-    if CheckPTTMsg == Msg and Value == LastValue:
+    if check_ptt_msg == msg and value == LastValue:
         return
 
-    TotalMessage = []
-    TotalMessage.append(Msg)
-    TotalMessage.append(' [')
-    TotalMessage.append(Value)
-    TotalMessage.append(']')
+    total_message = []
+    total_message.append(msg)
+    total_message.append(' [')
+    total_message.append(value)
+    total_message.append(']')
 
-    log(Config, LogLevel, ''.join(TotalMessage))
+    log(config, log_level, ''.join(total_message))
 
-    LastValue = Value
+    LastValue = value

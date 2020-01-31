@@ -16,7 +16,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def getCallStatus(api):
+def get_callstatus(api) -> None:
 
     cmd_list = []
     cmd_list.append(Command.GoMainMenu)
@@ -33,8 +33,8 @@ def getCallStatus(api):
                 i18n.Success,
             ],
             '[呼叫器]打開',
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
@@ -42,8 +42,8 @@ def getCallStatus(api):
                 i18n.Success,
             ],
             '[呼叫器]拔掉',
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
@@ -51,8 +51,8 @@ def getCallStatus(api):
                 i18n.Success,
             ],
             '[呼叫器]防水',
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
@@ -60,8 +60,8 @@ def getCallStatus(api):
                 i18n.Success,
             ],
             '[呼叫器]好友',
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
@@ -69,16 +69,16 @@ def getCallStatus(api):
                 i18n.Success,
             ],
             '[呼叫器]關閉',
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
                 i18n.GetCallStatus,
             ],
             '★',
-            Response=cmd,
-            LogLevel=Log.Level.DEBUG
+            response=cmd,
+            log_level=Log.Level.DEBUG
         ),
     ]
 
@@ -87,7 +87,7 @@ def getCallStatus(api):
         if index < 0:
             if i == 0:
                 continue
-            ori_screen = api._ConnectCore.getScreenQueue()[-1]
+            ori_screen = api._ConnectCore.get_screen_queue()[-1]
             raise Exceptions.UnknownError(ori_screen)
 
     if index == 0:
@@ -101,11 +101,11 @@ def getCallStatus(api):
     if index == 4:
         return DataType.CallStatus.Off
 
-    ori_screen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.get_screen_queue()[-1]
     raise Exceptions.UnknownError(ori_screen)
 
 
-def set_callstatus(api, inputCallStatus):
+def set_callstatus(api, callstatus) -> None:
     # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
 
     current_call_status = api._get_callstatus()
@@ -124,15 +124,15 @@ def set_callstatus(api, inputCallStatus):
                 i18n.Success
             ],
             Screens.Target.InUserList,
-            BreakDetect=True
+            break_detect=True
         )
     ]
 
-    while current_call_status != inputCallStatus:
+    while current_call_status != callstatus:
         api._ConnectCore.send(
             cmd,
             target_list,
-            ScreenTimeout=api.Config.ScreenLongTimeOut
+            screen_timeout=api.Config.ScreenLongTimeOut
         )
 
         current_call_status = api._get_callstatus()

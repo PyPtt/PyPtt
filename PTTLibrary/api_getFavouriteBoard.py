@@ -10,7 +10,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def get_favourite_board(api):
+def get_favourite_board(api) -> list:
 
     cmd_list = []
     cmd_list.append(Command.GoMainMenu)
@@ -23,7 +23,7 @@ def get_favourite_board(api):
         ConnectCore.TargetUnit(
             i18n.FavouriteBoardList,
             '選擇看板',
-            BreakDetect=True
+            break_detect=True
         )
     ]
 
@@ -35,7 +35,7 @@ def get_favourite_board(api):
             target_list
         )
 
-        ori_screen = api._ConnectCore.getScreenQueue()[-1]
+        ori_screen = api._ConnectCore.get_screen_queue()[-1]
         # print(OriScreen)
         screen_buf = ori_screen
         screen_buf = [x for x in screen_buf.split('\n')][3:][:-1]

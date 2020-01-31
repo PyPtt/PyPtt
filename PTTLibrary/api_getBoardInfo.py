@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def get_board_info(api, board):
+def get_board_info(api, board: str) -> None:
 
     cmd_list = []
     cmd_list.append(Command.GoMainMenu)
@@ -33,7 +33,7 @@ def get_board_info(api, board):
                 '文章選讀',
                 '進板畫面'
             ],
-            BreakDetect=True
+            break_detect=True
         ),
     ]
 
@@ -42,7 +42,7 @@ def get_board_info(api, board):
         target_list
     )
 
-    ori_screen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.get_screen_queue()[-1]
     # print(OriScreen)
     nuser = ori_screen.split('\n')[2]
     # print(Nuser)
@@ -57,7 +57,7 @@ def get_board_info(api, board):
             raise Exceptions.NoSuchBoard(api.Config, board)
         # 減一是把自己本身拿掉
         online_user = int(r.group(0)) - 1
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '人氣',
@@ -68,8 +68,8 @@ def get_board_info(api, board):
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵繼續',
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
     ]
 
@@ -78,14 +78,14 @@ def get_board_info(api, board):
         target_list
     )
 
-    ori_screen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.get_screen_queue()[-1]
     # print(OriScreen)
 
     p = re.compile('《(.+)》看板設定')
     r = p.search(ori_screen)
     if r is not None:
         boardname = r.group(0)[1:-5].strip()
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '看板名稱',
@@ -99,7 +99,7 @@ def get_board_info(api, board):
     r = p.search(ori_screen)
     if r is not None:
         chinese_des = r.group(0)[5:].strip()
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '中文敘述',
@@ -111,7 +111,7 @@ def get_board_info(api, board):
     if r is not None:
         moderator_line = r.group(0)[5:].strip()
         moderators = moderator_line.split('/')
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '板主名單',
@@ -119,7 +119,7 @@ def get_board_info(api, board):
     )
 
     open_state = ('公開狀態(是否隱形): 公開' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '公開狀態',
@@ -129,7 +129,7 @@ def get_board_info(api, board):
     into_top_ten_when_hide = (
         '隱板時 可以 進入十大排行榜' in ori_screen
     )
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '隱板時可以進入十大排行榜',
@@ -137,7 +137,7 @@ def get_board_info(api, board):
     )
 
     non_board_members_post = ('開放 非看板會員發文' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '非看板會員發文',
@@ -145,7 +145,7 @@ def get_board_info(api, board):
     )
 
     reply_post = ('開放 回應文章' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '回應文章',
@@ -153,7 +153,7 @@ def get_board_info(api, board):
     )
 
     self_del_post = ('開放 自刪文章' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '自刪文章',
@@ -161,7 +161,7 @@ def get_board_info(api, board):
     )
 
     push_post = ('開放 推薦文章' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '推薦文章',
@@ -169,7 +169,7 @@ def get_board_info(api, board):
     )
 
     boo_post = ('開放 噓文' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '噓文',
@@ -180,7 +180,7 @@ def get_board_info(api, board):
     # 開放 快速連推文章
 
     fast_push = ('開放 快速連推文章' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '快速連推文章',
@@ -195,7 +195,7 @@ def get_board_info(api, board):
             min_interval = int(min_interval)
         else:
             min_interval = 0
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.DEBUG,
             '最低間隔時間',
@@ -207,7 +207,7 @@ def get_board_info(api, board):
     # 推文時 自動 記錄來源 IP
     # 推文時 不會 記錄來源 IP
     push_record_ip = ('推文時 自動 記錄來源 IP' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '記錄來源 IP',
@@ -217,7 +217,7 @@ def get_board_info(api, board):
     # 推文時 對齊 開頭
     # 推文時 不用對齊 開頭
     push_aligned = ('推文時 對齊 開頭' in ori_screen)
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '對齊開頭',
@@ -228,7 +228,7 @@ def get_board_info(api, board):
     moderator_can_del_illegal_content = (
         '板主 可 刪除部份違規文字' in ori_screen
     )
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '板主可刪除部份違規文字',
@@ -239,7 +239,7 @@ def get_board_info(api, board):
     tran_post_auto_recorded_and_require_post_permissions = (
         '轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen
     )
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '轉錄文章 會 自動記錄，且 需要 發文權限',
@@ -249,7 +249,7 @@ def get_board_info(api, board):
     cool_mode = (
         '未 設為冷靜模式' not in ori_screen
     )
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '冷靜模式',
@@ -260,7 +260,7 @@ def get_board_info(api, board):
         '禁止 未滿十八歲進入' in ori_screen
     )
 
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '禁止未滿十八歲進入',
@@ -274,7 +274,7 @@ def get_board_info(api, board):
         require_login_time = int(require_login_time)
     else:
         require_login_time = 0
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '發文限制登入次數',
@@ -288,7 +288,7 @@ def get_board_info(api, board):
         require_illegal_post = int(require_illegal_post)
     else:
         require_illegal_post = 0
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         '發文限制退文篇數',

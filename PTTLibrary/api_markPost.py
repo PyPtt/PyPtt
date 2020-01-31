@@ -18,14 +18,14 @@ except ModuleNotFoundError:
 
 def markPost(
         api,
-        inputMarkType: int,
-        Board: str,
-        PostAID: str,
-        PostIndex: int,
-        SearchType: int,
-        SearchCondition: str):
+        mark_type: int,
+        board: str,
+        post_aid: str,
+        post_index: int,
+        search_type: int,
+        search_condition: str) -> None:
 
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.INFO,
         [
@@ -35,26 +35,26 @@ def markPost(
         i18n.MarkPost
     )
 
-    CheckValue.check(api.Config, int, 'MarkType', inputMarkType,
-                     Class=DataType.MarkType)
-    CheckValue.check(api.Config, str, 'Board', Board)
-    if PostAID is not None:
-        CheckValue.check(api.Config, str, 'PostAID', PostAID)
-    CheckValue.check(api.Config, int, 'PostIndex', PostIndex)
-    CheckValue.check(api.Config, int, 'SearchType', SearchType,
-                     Class=DataType.PostSearchType)
-    if SearchCondition is not None:
+    CheckValue.check(api.Config, int, 'MarkType', mark_type,
+                     value_class=DataType.MarkType)
+    CheckValue.check(api.Config, str, 'Board', board)
+    if post_aid is not None:
+        CheckValue.check(api.Config, str, 'PostAID', post_aid)
+    CheckValue.check(api.Config, int, 'PostIndex', post_index)
+    CheckValue.check(api.Config, int, 'SearchType', search_type,
+                     value_class=DataType.PostSearchType)
+    if search_condition is not None:
         CheckValue.check(api.Config, str,
-                         'SearchCondition', SearchCondition)
+                         'SearchCondition', search_condition)
 
-    if len(Board) == 0:
+    if len(board) == 0:
         raise ValueError(Log.merge([
             i18n.Board,
             i18n.ErrorParameter,
-            Board
+            board
         ]))
 
-    if PostIndex != 0 and isinstance(PostAID, str):
+    if post_index != 0 and isinstance(post_aid, str):
         raise ValueError(Log.merge([
             'PostIndex',
             'PostAID',
@@ -62,22 +62,22 @@ def markPost(
             i18n.BothInput
         ]))
 
-    if PostIndex == 0 and PostAID is None:
+    if post_index == 0 and post_aid is None:
         raise ValueError(Log.merge([
             'PostIndex',
             'PostAID',
             i18n.ErrorParameter
         ]))
 
-    if SearchCondition is not None and SearchType == 0:
+    if search_condition is not None and search_type == 0:
         raise ValueError(Log.merge([
             'SearchType',
             i18n.ErrorParameter,
         ]))
 
-    if SearchType == DataType.PostSearchType.Push:
+    if search_type == DataType.PostSearchType.Push:
         try:
-            S = int(SearchCondition)
+            S = int(search_condition)
         except ValueError:
             raise ValueError(Log.merge([
                 'SearchCondition',
@@ -90,7 +90,7 @@ def markPost(
                 i18n.ErrorParameter,
             ]))
 
-    if PostAID is not None and SearchCondition is not None:
+    if post_aid is not None and search_condition is not None:
         raise ValueError(Log.merge([
             'PostAID',
             'SearchCondition',
@@ -98,103 +98,103 @@ def markPost(
             i18n.BothInput,
         ]))
 
-    if PostIndex != 0:
+    if post_index != 0:
         NewestIndex = api._get_newest_index(
             DataType.IndexType.BBS,
-            board=Board,
-            search_type=SearchType,
-            search_condition=SearchCondition
+            board=board,
+            search_type=search_type,
+            search_condition=search_condition
         )
-        CheckValue.checkIndex(api.Config, 'PostIndex',
-                              PostIndex, MaxValue=NewestIndex)
+        CheckValue.check_index(api.Config, 'PostIndex',
+                               post_index, max_value=NewestIndex)
 
-    if inputMarkType == DataType.MarkType.Unconfirmed:
+    if mark_type == DataType.MarkType.Unconfirmed:
         # 批踢踢兔沒有待證文章功能 QQ
         if api.Config.Host == DataType.Host.PTT2:
-            raise Exceptions.HostNotSupport(Util.getCurrentFuncName())
+            raise Exceptions.HostNotSupport(Util.get_current_func_name())
 
     api._check_board(
-        Board,
+        board,
         check_moderator=True
     )
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('qs')
-    CmdList.append(Board)
-    CmdList.append(Command.Enter)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(Command.Enter)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
-            Response=' ',
+            response=' ',
         ),
         ConnectCore.TargetUnit(
             [
                 '動畫播放中',
             ],
             '互動式動畫播放中',
-            Response=Command.Ctrl_C,
-            LogLevel=Log.Level.DEBUG
+            response=Command.Ctrl_C,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
                 '進板成功',
             ],
             Screens.Target.InBoard,
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
     ]
 
-    index = api._ConnectCore.send(Cmd, TargetList)
+    index = api._ConnectCore.send(cmd, target_list)
 
-    CmdList = []
-    if PostAID is not None:
-        CmdList.append('#' + PostAID)
+    cmd_list = []
+    if post_aid is not None:
+        cmd_list.append('#' + post_aid)
 
-    elif PostIndex != 0:
-        if SearchCondition is not None:
-            if SearchType == DataType.PostSearchType.Keyword:
-                CmdList.append('/')
-            elif SearchType == DataType.PostSearchType.Author:
-                CmdList.append('a')
-            elif SearchType == DataType.PostSearchType.Push:
-                CmdList.append('Z')
-            elif SearchType == DataType.PostSearchType.Mark:
-                CmdList.append('G')
-            elif SearchType == DataType.PostSearchType.Money:
-                CmdList.append('A')
+    elif post_index != 0:
+        if search_condition is not None:
+            if search_type == DataType.PostSearchType.Keyword:
+                cmd_list.append('/')
+            elif search_type == DataType.PostSearchType.Author:
+                cmd_list.append('a')
+            elif search_type == DataType.PostSearchType.Push:
+                cmd_list.append('Z')
+            elif search_type == DataType.PostSearchType.Mark:
+                cmd_list.append('G')
+            elif search_type == DataType.PostSearchType.Money:
+                cmd_list.append('A')
 
-            CmdList.append(SearchCondition)
-            CmdList.append(Command.Enter)
+            cmd_list.append(search_condition)
+            cmd_list.append(Command.Enter)
 
-        CmdList.append(str(PostIndex))
+        cmd_list.append(str(post_index))
 
-    CmdList.append(Command.Enter)
+    cmd_list.append(Command.Enter)
 
-    if inputMarkType == DataType.MarkType.S:
-        CmdList.append('L')
-    elif inputMarkType == DataType.MarkType.D:
-        CmdList.append('t')
-    elif inputMarkType == DataType.MarkType.DeleteD:
-        CmdList.append(Command.Ctrl_D)
-    elif inputMarkType == DataType.MarkType.M:
-        CmdList.append('m')
-    elif inputMarkType == DataType.MarkType.Unconfirmed:
-        CmdList.append(Command.Ctrl_E + 'S')
+    if mark_type == DataType.MarkType.S:
+        cmd_list.append('L')
+    elif mark_type == DataType.MarkType.D:
+        cmd_list.append('t')
+    elif mark_type == DataType.MarkType.DeleteD:
+        cmd_list.append(Command.Ctrl_D)
+    elif mark_type == DataType.MarkType.M:
+        cmd_list.append('m')
+    elif mark_type == DataType.MarkType.Unconfirmed:
+        cmd_list.append(Command.Ctrl_E + 'S')
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             [i18n.DelAllMarkPost],
             '刪除所有標記',
-            Response='y' + Command.Enter,
-            LogLevel=Log.Level.INFO
+            response='y' + Command.Enter,
+            log_level=Log.Level.INFO
         ),
         ConnectCore.TargetUnit(
             [
@@ -202,9 +202,9 @@ def markPost(
                 i18n.Success,
             ],
             Screens.Target.InBoard,
-            BreakDetect=True,
-            LogLevel=Log.Level.INFO
+            break_detect=True,
+            log_level=Log.Level.INFO
         ),
     ]
 
-    index = api._ConnectCore.send(Cmd, TargetList)
+    index = api._ConnectCore.send(cmd, target_list)

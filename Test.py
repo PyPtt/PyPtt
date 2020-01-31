@@ -36,7 +36,7 @@ def Init():
     print('===Log INFO===')
     PTT.Library(log_level=PTT.LogLevel.INFO)
     print('===Log SLIENT===')
-    PTT.Library(log_level=PTT.LogLevel.SLIENT)
+    PTT.Library(log_level=PTT.LogLevel.SILENT)
     print('===Log SLIENT======')
 
     print('===負向===')
@@ -1403,7 +1403,7 @@ PTT Library 程式貼文基準測試內文
 
             Post = PTTBot.get_post(
                 Board,
-                post_aid=post.get_aid(),
+                post_aid=BasicPostAID,
             )
 
             Content1Check = False

@@ -2,49 +2,49 @@ import os
 import traceback
 
 
-def checkRange(DefineObj, Value):
-    if Value < DefineObj.MinValue or DefineObj.MaxValue < Value:
+def check_range(define_obj, value):
+    if value < define_obj.MinValue or define_obj.MaxValue < value:
         return False
     return True
 
 
-def getFileName(String):
-    result = os.path.basename(String)
+def get_file_name(string):
+    result = os.path.basename(string)
     result = result[:result.find('.')]
     return result
 
 
-def getSubStringList(MainString, TargetA, TargetB):
+def get_sub_string_list(main_string, target_a, target_b):
 
     result = []
 
-    if not isinstance(TargetB, list):
-        TargetB = [TargetB]
+    if not isinstance(target_b, list):
+        target_b = [target_b]
 
-    while TargetA in MainString:
-        Temp = MainString[MainString.find(TargetA) + len(TargetA):]
+    while target_a in main_string:
+        temp = main_string[main_string.find(target_a) + len(target_a):]
 
-        # print(f'>{Temp}')
-        MaxIndex = len(MainString)
-        BestIndex = MaxIndex
-        for B in TargetB:
-            CurrentIndex = Temp.find(B)
-            if CurrentIndex < BestIndex and CurrentIndex >= 0:
-                BestIndex = CurrentIndex
-        #         print(f'BestIndex: {BestIndex}')
+        # print(f'>{temp}')
+        max_index = len(main_string)
+        best_index = max_index
+        for B in target_b:
+            current_index = temp.find(B)
+            if best_index > current_index >= 0:
+                best_index = current_index
+        #         print(f'best_index: {best_index}')
 
-        # print(f'QQ BestIndex: {BestIndex}')
+        # print(f'QQ best_index: {best_index}')
         # print(f'QQ len(TargetB): {len(TargetB)}')
-        if BestIndex != MaxIndex:
-            Temp = Temp[:BestIndex].strip()
-            result.append(Temp)
+        if best_index != max_index:
+            temp = temp[:best_index].strip()
+            result.append(temp)
 
-        MainString = MainString[MainString.find(TargetA) + len(TargetA):]
+        main_string = main_string[main_string.find(target_a) + len(target_a):]
 
     return result
 
 
-def getCurrentFuncName():
+def get_current_func_name():
     return traceback.extract_stack(None, 2)[0][2]
 
 

@@ -15,74 +15,74 @@ except ModuleNotFoundError:
     import Command
 
 
-def getPostIndex(
+def get_post_index(
         api,
-        Board,
-        AID):
+        board: str,
+        aid: str) -> int:
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('qs')
-    CmdList.append(Board)
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Ctrl_C * 2)
-    CmdList.append(Command.Space)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Ctrl_C * 2)
+    cmd_list.append(Command.Space)
 
-    CmdList.append('#')
-    CmdList.append(AID)
-    CmdList.append(Command.Enter)
+    cmd_list.append('#')
+    cmd_list.append(aid)
+    cmd_list.append(Command.Enter)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    NoSuchPost = i18n.NoSuchPost
-    NoSuchPost = i18n.replace(NoSuchPost, Board, AID)
+    no_such_post = i18n.NoSuchPost
+    no_such_post = i18n.replace(no_such_post, board, aid)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
-            NoSuchPost,
+            no_such_post,
             '找不到這個文章代碼',
-            LogLevel=Log.Level.DEBUG,
-            Exceptions=Exceptions.NoSuchPost(Board, AID)
+            log_level=Log.Level.DEBUG,
+            exceptions=Exceptions.NoSuchPost(board, aid)
         ),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
         ConnectCore.TargetUnit(
             i18n.CanNotUseSearchPostCodeF,
             '此狀態下無法使用搜尋文章代碼(AID)功能',
-            Exceptions=Exceptions.CanNotUseSearchPostCode()
+            exceptions=Exceptions.CanNotUseSearchPostCode()
         ),
         ConnectCore.TargetUnit(
             i18n.NoPost,
             '沒有文章...',
-            Exceptions=Exceptions.NoSuchPost(Board, AID)
+            exceptions=Exceptions.NoSuchPost(board, aid)
         ),
         ConnectCore.TargetUnit(
             i18n.Success,
             Screens.Target.InBoard,
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             i18n.Success,
             Screens.Target.InBoardWithCursor,
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             i18n.NoSuchBoard,
             Screens.Target.MainMenu_Exiting,
-            Exceptions=Exceptions.NoSuchBoard(api.Config, Board)
+            exceptions=Exceptions.NoSuchBoard(api.Config, board)
             # BreakDetect=True,
         )
     ]
 
     index = api._ConnectCore.send(
-        Cmd,
-        TargetList
+        cmd,
+        target_list
     )
-    OriScreen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.get_screen_queue()[-1]
     if index < 0:
         # print(OriScreen)
-        raise Exceptions.NoSuchBoard(api.Config, Board)
+        raise Exceptions.NoSuchBoard(api.Config, board)
 
     # if index == 5:
     #     print(OriScreen)
@@ -90,28 +90,28 @@ def getPostIndex(
 
     # print(index)
     # print(OriScreen)
-    ScreenList = OriScreen.split('\n')
+    screen_list = ori_screen.split('\n')
 
-    line = [x for x in ScreenList if x.startswith(api._Cursor)]
+    line = [x for x in screen_list if x.startswith(api._Cursor)]
     line = line[0]
-    LastLine = ScreenList[ScreenList.index(line) - 1]
+    last_line = screen_list[screen_list.index(line) - 1]
     # print(LastLine)
     # print(line)
 
-    if '編號' in LastLine and '人氣:' in LastLine:
-        Index = line[1:].strip()
-        IndexFix = False
+    if '編號' in last_line and '人氣:' in last_line:
+        index = line[1:].strip()
+        index_fix = False
     else:
-        Index = LastLine.strip()
-        IndexFix = True
-    while '  ' in Index:
-        Index = Index.replace('  ', ' ')
-    IndexList = Index.split(' ')
-    Index = IndexList[0]
-    if Index == '★':
+        index = last_line.strip()
+        index_fix = True
+    while '  ' in index:
+        index = index.replace('  ', ' ')
+    index_list = index.split(' ')
+    index = index_list[0]
+    if index == '★':
         return 0
-    Index = int(Index)
-    if IndexFix:
-        Index += 1
+    index = int(index)
+    if index_fix:
+        index += 1
     # print(Index)
-    return Index
+    return index

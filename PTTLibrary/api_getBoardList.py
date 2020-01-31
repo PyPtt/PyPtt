@@ -13,7 +13,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def get_board_list(api):
+def get_board_list(api) -> None:
 
     # Log.showValue(
     #     api.Config,
@@ -37,16 +37,16 @@ def get_board_list(api):
         ConnectCore.TargetUnit(
             i18n.BoardList,
             Screens.Target.InBoardList,
-            BreakDetect=True
+            break_detect=True
         )
     ]
 
     api._ConnectCore.send(
         cmd,
         target_list,
-        ScreenTimeout=api.Config.ScreenLongTimeOut
+        screen_timeout=api.Config.ScreenLongTimeOut
     )
-    ori_screen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.get_screen_queue()[-1]
 
     max_no = 0
 
@@ -65,7 +65,7 @@ def get_board_list(api):
         # print(f'FrontPartList =>{FrontPartList}<=')
         max_no = int(front_part_list[0])
 
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         'MaxNo',
@@ -92,10 +92,10 @@ def get_board_list(api):
         api._ConnectCore.send(
             cmd,
             target_list,
-            ScreenTimeout=api.Config.ScreenLongTimeOut
+            screen_timeout=api.Config.ScreenLongTimeOut
         )
 
-        ori_screen = api._ConnectCore.getScreenQueue()[-1]
+        ori_screen = api._ConnectCore.get_screen_queue()[-1]
         # print(OriScreen)
         for line in ori_screen.split('\n'):
             if '◎' not in line and '●' not in line:
@@ -117,7 +117,7 @@ def get_board_list(api):
             # print(f'No  =>{No}<=')
             # print(f'LastNo =>{LastNo}<=')
 
-            Log.showValue(
+            Log.show_value(
                 api.Config,
                 Log.Level.DEBUG,
                 'Board NO',
@@ -128,7 +128,7 @@ def get_board_list(api):
             if board_name.startswith('ˇ'):
                 board_name = board_name[1:]
 
-            Log.showValue(
+            Log.show_value(
                 api.Config,
                 Log.Level.DEBUG,
                 'Board Name',

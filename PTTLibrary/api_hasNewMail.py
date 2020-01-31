@@ -13,7 +13,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def hasNewMail(api):
+def has_new_mail(api) -> int:
 
     # Log.showValue(
     #     api.Config,
@@ -25,34 +25,33 @@ def hasNewMail(api):
     #     i18n.MarkPost
     # )
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('M')
-    CmdList.append(Command.Enter)
-    CmdList.append('R')
-    CmdList.append(Command.Enter)
-    CmdList.append('1')
-    CmdList.append(Command.Enter)
-    CmdList.append('$')
-    Cmd = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('M')
+    cmd_list.append(Command.Enter)
+    cmd_list.append('R')
+    cmd_list.append(Command.Enter)
+    cmd_list.append('1')
+    cmd_list.append(Command.Enter)
+    cmd_list.append('$')
+    cmd = ''.join(cmd_list)
 
-    #
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.MailBox,
             Screens.Target.InMailBox,
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         )
     ]
 
     api._ConnectCore.send(
-        Cmd,
-        TargetList,
-        ScreenTimeout=api.Config.ScreenLongTimeOut
+        cmd,
+        target_list,
+        screen_timeout=api.Config.ScreenLongTimeOut
     )
 
-    OriScreen = api._ConnectCore.getScreenQueue()[-1]
+    ori_screen = api._ConnectCore.get_screen_queue()[-1]
 
-    pattern = re.findall('[\s]+[\d]+ (\+)[\s]+', OriScreen)
+    pattern = re.findall('[\s]+[\d]+ (\+)[\s]+', ori_screen)
     return len(pattern)

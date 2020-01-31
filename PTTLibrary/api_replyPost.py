@@ -14,14 +14,14 @@ except ModuleNotFoundError:
     import Command
 
 
-def replyPost(
+def reply_post(
         api,
-        inputReplyType: int,
-        Board: str,
-        Content: str,
-        SignFile,
-        PostAID: str,
-        PostIndex: int):
+        reply_type: int,
+        board: str,
+        content: str,
+        sign_file,
+        post_aid: str,
+        post_index: int) ->None:
 
     # Log.showValue(
     #     api.Config,
@@ -33,103 +33,103 @@ def replyPost(
     #     i18n.MarkPost
     # )
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('qs')
-    CmdList.append(Board)
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Ctrl_C * 2)
-    CmdList.append(Command.Space)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Ctrl_C * 2)
+    cmd_list.append(Command.Space)
 
-    if PostAID is not None:
-        CmdList.append('#' + PostAID)
-    elif PostIndex != 0:
-        CmdList.append(str(PostIndex))
-    CmdList.append(Command.Enter * 2)
-    CmdList.append('r')
+    if post_aid is not None:
+        cmd_list.append('#' + post_aid)
+    elif post_index != 0:
+        cmd_list.append(str(post_index))
+    cmd_list.append(Command.Enter * 2)
+    cmd_list.append('r')
 
-    if inputReplyType == DataType.ReplyType.Board:
-        ReplyTargetUnit = ConnectCore.TargetUnit(
+    if reply_type == DataType.ReplyType.Board:
+        reply_target_unit = ConnectCore.TargetUnit(
             i18n.ReplyBoard,
             '▲ 回應至',
-            LogLevel=Log.Level.INFO,
-            Response='F' + Command.Enter
+            log_level=Log.Level.INFO,
+            response='F' + Command.Enter
         )
-    elif inputReplyType == DataType.ReplyType.Mail:
-        ReplyTargetUnit = ConnectCore.TargetUnit(
+    elif reply_type == DataType.ReplyType.Mail:
+        reply_target_unit = ConnectCore.TargetUnit(
             i18n.ReplyMail,
             '▲ 回應至',
-            LogLevel=Log.Level.INFO,
-            Response='M' + Command.Enter
+            log_level=Log.Level.INFO,
+            response='M' + Command.Enter
         )
-    elif inputReplyType == DataType.ReplyType.Board_Mail:
-        ReplyTargetUnit = ConnectCore.TargetUnit(
+    elif reply_type == DataType.ReplyType.Board_Mail:
+        reply_target_unit = ConnectCore.TargetUnit(
             i18n.ReplyBoard_Mail,
             '▲ 回應至',
-            LogLevel=Log.Level.INFO,
-            Response='B' + Command.Enter
+            log_level=Log.Level.INFO,
+            response='B' + Command.Enter
         )
 
-    Cmd = ''.join(CmdList)
-    TargetList = [
+    cmd = ''.join(cmd_list)
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵繼續',
-            BreakDetect=True,
+            break_detect=True,
         ),
         ConnectCore.TargetUnit(
             i18n.NoResponse,
             '◆ 很抱歉, 此文章已結案並標記, 不得回應',
-            LogLevel=Log.Level.INFO,
-            Exceptions=Exceptions.NoResponse()
+            log_level=Log.Level.INFO,
+            exceptions=Exceptions.NoResponse()
         ),
         ConnectCore.TargetUnit(
             i18n.ForcedWrite,
             '(E)繼續編輯 (W)強制寫入',
-            LogLevel=Log.Level.INFO,
-            Response='W' + Command.Enter
+            log_level=Log.Level.INFO,
+            response='W' + Command.Enter
         ),
         ConnectCore.TargetUnit(
             i18n.SelectSignature,
             '請選擇簽名檔',
-            Response=str(SignFile) + Command.Enter,
+            response=str(sign_file) + Command.Enter,
         ),
         ConnectCore.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            Response='s' + Command.Enter,
+            response='s' + Command.Enter,
         ),
         ConnectCore.TargetUnit(
             i18n.EditPost,
             '編輯文章',
-            LogLevel=Log.Level.INFO,
-            Response=str(Content) + Command.Enter + Command.Ctrl_X
+            log_level=Log.Level.INFO,
+            response=str(content) + Command.Enter + Command.Ctrl_X
         ),
         ConnectCore.TargetUnit(
             i18n.QuoteOriginal,
             '請問要引用原文嗎',
-            LogLevel=Log.Level.DEBUG,
-            Response='Y' + Command.Enter
+            log_level=Log.Level.DEBUG,
+            response='Y' + Command.Enter
         ),
         ConnectCore.TargetUnit(
             i18n.UseTheOriginalTitle,
             '採用原標題[Y/n]?',
-            LogLevel=Log.Level.DEBUG,
-            Response='Y' + Command.Enter
+            log_level=Log.Level.DEBUG,
+            response='Y' + Command.Enter
         ),
-        ReplyTargetUnit,
+        reply_target_unit,
         ConnectCore.TargetUnit(
             i18n.SelfSaveDraft,
             '已順利寄出，是否自存底稿',
-            LogLevel=Log.Level.DEBUG,
-            Response='Y' + Command.Enter
+            log_level=Log.Level.DEBUG,
+            response='Y' + Command.Enter
         ),
     ]
 
     api._ConnectCore.send(
-        Cmd,
-        TargetList,
-        ScreenTimeout=api.Config.ScreenLongTimeOut
+        cmd,
+        target_list,
+        screen_timeout=api.Config.ScreenLongTimeOut
     )
 
     Log.log(

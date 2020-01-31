@@ -11,42 +11,42 @@ except ModuleNotFoundError:
     import Command
 
 
-def getTime(api):
+def get_time(api) -> str:
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('A')
-    CmdList.append(Command.Right)
-    CmdList.append(Command.Left)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('A')
+    cmd_list.append(Command.Right)
+    cmd_list.append(Command.Left)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             [
                 i18n.GetPTTTime,
                 i18n.Success,
             ],
             Screens.Target.MainMenu,
-            BreakDetect=True
+            break_detect=True
         ),
     ]
 
-    index = api._ConnectCore.send(Cmd, TargetList)
+    index = api._ConnectCore.send(cmd, target_list)
     if index != 0:
         return None
 
-    OriScreen = api._ConnectCore.getScreenQueue()[-1]
-    LineList = OriScreen.split('\n')
+    ori_screen = api._ConnectCore.get_screen_queue()[-1]
+    line_list = ori_screen.split('\n')
     pattern = re.compile('[\d]+:[\d][\d]')
 
-    LineList = LineList[-3:]
+    line_list = line_list[-3:]
 
     # 0:00
 
-    for line in LineList:
+    for line in line_list:
         if '星期' in line and '線上' in line and '我是' in line:
-            Result = pattern.search(line)
-            if Result is not None:
-                return Result.group(0)
+            result = pattern.search(line)
+            if result is not None:
+                return result.group(0)
     return None

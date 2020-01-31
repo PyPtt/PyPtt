@@ -1,4 +1,3 @@
-
 try:
     from . import i18n
     from . import ConnectCore
@@ -11,30 +10,30 @@ except ModuleNotFoundError:
     import Command
 
 
-def searchuser(api, target, minpage, maxpage):
+def search_user(
+        api: object, pttid: str, min_page: int, max_page: int) -> list:
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('T')
+    cmd_list.append(Command.Enter)
+    cmd_list.append('Q')
+    cmd_list.append(Command.Enter)
+    cmd_list.append(pttid)
+    cmd = ''.join(cmd_list)
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('T')
-    CmdList.append(Command.Enter)
-    CmdList.append('Q')
-    CmdList.append(Command.Enter)
-    CmdList.append(target)
-    Cmd = ''.join(CmdList)
-
-    if minpage is not None:
-        temppage = minpage
+    if min_page is not None:
+        template = min_page
     else:
-        temppage = 1
+        template = 1
 
-    appendstr = ' ' * temppage
-    cmdtemp = Cmd + appendstr
+    appendstr = ' ' * template
+    cmdtemp = cmd + appendstr
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
-            BreakDetect=True,
+            break_detect=True,
         ),
     ]
 
@@ -44,9 +43,9 @@ def searchuser(api, target, minpage, maxpage):
 
         api._ConnectCore.send(
             cmdtemp,
-            TargetList
+            target_list
         )
-        OriScreen = api._ConnectCore.getScreenQueue()[-1]
+        ori_screen = api._ConnectCore.get_screen_queue()[-1]
         Log.log(
             api.Config,
             Log.Level.INFO,
@@ -55,8 +54,8 @@ def searchuser(api, target, minpage, maxpage):
         # print(OriScreen)
         # print(len(OriScreen.split('\n')))
 
-        if len(OriScreen.split('\n')) == 2:
-            resultid = OriScreen.split('\n')[1]
+        if len(ori_screen.split('\n')) == 2:
+            resultid = ori_screen.split('\n')[1]
             resultid = resultid[resultid.find(' ') + 1:].strip()
             # print(resultid)
 
@@ -64,10 +63,10 @@ def searchuser(api, target, minpage, maxpage):
             break
         else:
 
-            OriScreen = OriScreen.split('\n')[3:-1]
-            OriScreen = '\n'.join(OriScreen)
+            ori_screen = ori_screen.split('\n')[3:-1]
+            ori_screen = '\n'.join(ori_screen)
 
-            templist = OriScreen.replace('\n', ' ')
+            templist = ori_screen.replace('\n', ' ')
 
             while '  ' in templist:
                 templist = templist.replace('  ', ' ')
@@ -81,9 +80,9 @@ def searchuser(api, target, minpage, maxpage):
             if len(templist) != 100 and len(templist) != 120:
                 break
 
-            temppage += 1
-            if maxpage is not None:
-                if temppage > maxpage:
+            template += 1
+            if max_page is not None:
+                if template > max_page:
                     break
 
             cmdtemp = ' '
@@ -101,18 +100,16 @@ def searchuser(api, target, minpage, maxpage):
             ConnectCore.TargetUnit(
                 i18n.QuitUserProfile,
                 '《ＩＤ暱稱》',
-                Response=Command.Enter,
+                response=Command.Enter,
                 # LogLevel=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.Done,
                 '查詢網友',
-                BreakDetect=True,
+                break_detect=True,
                 # LogLevel=Log.Level.DEBUG
             )
         ]
     )
 
-    resultlist = list(filter(None, resultlist))
-
-    return resultlist
+    return list(filter(None, resultlist))
