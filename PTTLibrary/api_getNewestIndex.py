@@ -108,7 +108,7 @@ def getNewestIndex(
 
         if len(AllIndex) == 0:
             print(LastScreen)
-            raise Exceptions.UnknowError(i18n.UnknowError)
+            raise Exceptions.UnknownError(i18n.UnknownError)
 
         AllIndex = list(map(int, AllIndex))
         AllIndex.sort(reverse=True)
@@ -137,7 +137,7 @@ def getNewestIndex(
 
         if NewestIndex == 0:
             Screens.show(api.Config, api._ConnectCore.getScreenQueue())
-            raise Exceptions.UnknowError(i18n.UnknowError)
+            raise Exceptions.UnknownError(i18n.UnknownError)
 
     elif DataType.IndexType.Web:
         # web
@@ -160,6 +160,6 @@ def getNewestIndex(
                 _NewestIndex = int(_NewestIndex)
 
         if _NewestIndex is None:
-            raise Exceptions.UnknowError('')
+            raise Exceptions.UnknownError('')
         NewestIndex = (_NewestIndex) + 1
     return NewestIndex

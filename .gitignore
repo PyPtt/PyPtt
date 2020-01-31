@@ -13,3 +13,4 @@ Account*.txt
 *.spec
 /LogHandler.txt
 .vscode
+.idea/

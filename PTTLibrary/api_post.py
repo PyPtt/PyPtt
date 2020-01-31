@@ -46,7 +46,7 @@ def post(
     index = api._ConnectCore.send(Cmd, TargetList)
     if index < 0:
         Screens.show(api.Config, api._ConnectCore.getScreenQueue())
-        raise Exceptions.UnknowError(i18n.UnknowError)
+        raise Exceptions.UnknownError(i18n.UnknownError)
     if index == 1:
         raise Exceptions.NoPermission(i18n.NoPermission)
 

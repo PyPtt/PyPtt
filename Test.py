@@ -29,21 +29,21 @@ def Init():
     print('===預設值===')
     PTT.Library()
     print('===中文顯示===')
-    PTT.Library(Language=PTT.Language.Chinese)
+    PTT.Library(language=PTT.Language.Chinese)
     print('===英文顯示===')
-    PTT.Library(Language=PTT.Language.English)
+    PTT.Library(language=PTT.Language.English)
     print('===Log DEBUG===')
-    PTT.Library(LogLevel=PTT.LogLevel.DEBUG)
+    PTT.Library(log_level=PTT.LogLevel.DEBUG)
     print('===Log INFO===')
-    PTT.Library(LogLevel=PTT.LogLevel.INFO)
+    PTT.Library(log_level=PTT.LogLevel.INFO)
     print('===Log SLIENT===')
-    PTT.Library(LogLevel=PTT.LogLevel.SLIENT)
+    PTT.Library(log_level=PTT.LogLevel.SLIENT)
     print('===Log SLIENT======')
 
     print('===負向===')
     try:
         print('===語言 99===')
-        PTT.Library(Language=99)
+        PTT.Library(language=99)
     except ValueError:
         print('通過')
     except:
@@ -51,7 +51,7 @@ def Init():
         sys.exit(-1)
     print('===語言放字串===')
     try:
-        PTT.Library(Language='PTT.Language.English')
+        PTT.Library(language='PTT.Language.English')
     except TypeError:
         print('通過')
     except:
@@ -75,7 +75,7 @@ def Loginout():
     print('WebSocket 登入登出測試')
 
     PTTBot = PTT.Library(
-        LogLevel=PTT.LogLevel.DEBUG
+        log_level=PTT.LogLevel.DEBUG
     )
     try:
         PTTBot.login(ID,
@@ -96,11 +96,11 @@ def Loginout():
 
     print('Telnet 登入登出測試')
     PTTBot = PTT.Library(
-        ConnectMode=PTT.ConnectMode.Telnet,
+        connect_mode=PTT.ConnectMode.Telnet,
         # LogLevel=PTT.LogLevel.DEBUG
     )
     try:
-        PTTBot.login(ID, Password, KickOtherLogin=True)
+        PTTBot.login(ID, Password, kick_other_login=True)
     except PTT.Exceptions.LoginError:
         PTTBot.log('登入失敗')
         sys.exit()
@@ -212,18 +212,18 @@ def GetPost():
             if isinstance(Index, int):
                 Post = PTTBot.getPost(
                     Board,
-                    PostIndex=Index,
+                    post_index=Index,
                     # SearchType=PTT.PostSearchType.Keyword,
                     # SearchCondition='公告',
-                    Query=Query,
+                    query=Query,
                 )
             else:
                 Post = PTTBot.getPost(
                     Board,
-                    PostAID=Index,
+                    post_aid=Index,
                     # SearchType=PTT.PostSearchType.Keyword,
                     # SearchCondition='公告',
-                    Query=Query,
+                    query=Query,
                 )
             if Post is None:
                 print('Empty')
@@ -356,19 +356,19 @@ def GetPostWithCondition():
         Index = PTTBot.getNewestIndex(
             PTT.IndexType.BBS,
             Board,
-            SearchType=SearchType,
-            SearchCondition=Condition,
+            search_type=SearchType,
+            search_condition=Condition,
         )
         print(f'{Board} 最新文章編號 {Index}')
 
         for i in range(TestRange):
             Post = PTTBot.getPost(
                 Board,
-                PostIndex=Index - i,
+                post_index=Index - i,
                 # PostIndex=611,
-                SearchType=SearchType,
-                SearchCondition=Condition,
-                Query=Query
+                search_type=SearchType,
+                search_condition=Condition,
+                query=Query
             )
 
             print('列表日期:')
@@ -450,7 +450,7 @@ def GetNewestIndex():
 
     for Board in TestBoardList:
         for _ in range(100):
-            Index = PTTBot.getNewestIndex(PTT.IndexType.BBS, Board=Board)
+            Index = PTTBot.getNewestIndex(PTT.IndexType.BBS, board=Board)
             print(f'{Board} 最新文章編號 {Index}')
 
 
@@ -554,7 +554,7 @@ def CrawlBoard():
                 if Type == 'Index':
                     NewestIndex = PTTBot.getNewestIndex(
                         PTT.IndexType.BBS,
-                        Board=TestBoard
+                        board=TestBoard
                     )
                     StartIndex = NewestIndex - TestRange + 1
 
@@ -566,9 +566,9 @@ def CrawlBoard():
                         crawlHandler,
                         PTT.CrawlType.BBS,
                         TestBoard,
-                        StartIndex=StartIndex,
-                        EndIndex=NewestIndex,
-                        Query=Query
+                        start_index=StartIndex,
+                        end_index=NewestIndex,
+                        query=Query
                     )
                 elif Type == 'AID':
 
@@ -579,8 +579,8 @@ def CrawlBoard():
                         crawlHandler,
                         PTT.CrawlType.BBS,
                         TestBoard,
-                        StartAID=StartAID,
-                        EndAID=EndAID
+                        start_aid=StartAID,
+                        end_aid=EndAID
                     )
                 if len(ErrorPostList) > 0:
                     print('格式錯誤文章: \n' + '\n'.join(str(x)
@@ -595,7 +595,7 @@ def CrawlBoard():
 
                 NewestIndex = PTTBot.getNewestIndex(
                     PTT.IndexType.Web,
-                    Board=TestBoard
+                    board=TestBoard
                 )
                 EndPage = NewestIndex
 
@@ -608,8 +608,8 @@ def CrawlBoard():
                     crawlHandler,
                     PTT.CrawlType.Web,
                     TestBoard,
-                    StartPage=StartPage,
-                    EndPage=EndPage
+                    start_page=StartPage,
+                    end_page=EndPage
                     # Query=Query
                 )
 
@@ -664,8 +664,8 @@ def CrawlBoardWithCondition():
         NewestIndex = PTTBot.getNewestIndex(
             PTT.IndexType.BBS,
             Board,
-            SearchType=SearchType,
-            SearchCondition=Condition,
+            search_type=SearchType,
+            search_condition=Condition,
         )
         print(f'{Board} 最新文章編號 {NewestIndex}')
 
@@ -675,10 +675,10 @@ def CrawlBoardWithCondition():
             crawlHandler,
             PTT.CrawlType.BBS,
             Board,
-            StartIndex=StartIndex,
-            EndIndex=NewestIndex,
-            SearchType=SearchType,
-            SearchCondition=Condition,
+            start_index=StartIndex,
+            end_index=NewestIndex,
+            search_type=SearchType,
+            search_condition=Condition,
         )
 
         # print('標題: ' + Post.getTitle())
@@ -730,9 +730,9 @@ def Push():
     for (Board, Index) in TestPostList:
         for _ in range(testround):
             if isinstance(Index, int):
-                PTTBot.push(Board, PTT.PushType.Push, Content, PostIndex=Index)
+                PTTBot.push(Board, PTT.PushType.Push, Content, post_index=Index)
             else:
-                PTTBot.push(Board, PTT.PushType.Push, Content, PostAID=Index)
+                PTTBot.push(Board, PTT.PushType.Push, Content, post_aid=Index)
 
     # Index = PTTBot.getNewestIndex(
     #     PTT.IndexType.BBS,
@@ -971,21 +971,21 @@ def ReplyPost():
         PTT.ReplyType.Board,
         'Test',
         '測試回應到板上，如有打擾抱歉',
-        PostIndex=ReplyPostIndex
+        post_index=ReplyPostIndex
     )
 
     PTTBot.replyPost(
         PTT.ReplyType.Mail,
         'Test',
         '測試回應到信箱，如有打擾抱歉',
-        PostIndex=ReplyPostIndex
+        post_index=ReplyPostIndex
     )
 
     PTTBot.replyPost(
         PTT.ReplyType.Board_Mail,
         'Test',
         '測試回應到板上還有信箱，如有打擾抱歉',
-        PostIndex=ReplyPostIndex
+        post_index=ReplyPostIndex
     )
 
 
@@ -1058,13 +1058,13 @@ def MarkPost():
     PTTBot.markPost(
         MarkType,
         'give',
-        PostIndex=2000
+        post_index=2000
     )
 
     PTTBot.markPost(
         MarkType,
         'give',
-        PostIndex=2000
+        post_index=2000
     )
 
 
@@ -1087,8 +1087,8 @@ def getPostIndexTest():
 
             Post = PTTBot.getPost(
                 Board,
-                PostIndex=Index - i,
-                Query=True
+                post_index=Index - i,
+                query=True
             )
 
             if Post is None:
@@ -1243,12 +1243,12 @@ if __name__ == '__main__':
                 if isinstance(IndexAID, int):
                     Post = PTTBot.getPost(
                         board,
-                        PostIndex=IndexAID,
+                        post_index=IndexAID,
                     )
                 else:
                     Post = PTTBot.getPost(
                         board,
-                        PostAID=IndexAID,
+                        post_aid=IndexAID,
                     )
             except Exception as e:
                 if targetEx is not None and isinstance(e, targetEx):
@@ -1311,7 +1311,7 @@ if __name__ == '__main__':
                 for _ in range(50):
                     Index = PTTBot.getNewestIndex(
                         PTT.IndexType.BBS,
-                        Board=Board
+                        board=Board
                     )
 
                     if BasicIndex == 0:
@@ -1356,7 +1356,7 @@ PTT Library 程式貼文基準測試內文
 
             Index = PTTBot.getNewestIndex(
                 PTT.IndexType.BBS,
-                Board=Board
+                board=Board
             )
 
             BasicPostAID = None
@@ -1365,7 +1365,7 @@ PTT Library 程式貼文基準測試內文
 
                 Post = PTTBot.getPost(
                     Board,
-                    PostIndex=Index - i,
+                    post_index=Index - i,
                 )
 
                 if ID in Post.getAuthor() and 'PTT Library 程式貼文基準測試內文' in Post.getContent() and\
@@ -1373,7 +1373,7 @@ PTT Library 程式貼文基準測試內文
                     print('使用文章編號取得基準文章成功')
                     Post = PTTBot.getPost(
                         Board,
-                        PostAID=Post.getAID(),
+                        post_aid=Post.getAID(),
                     )
                     if ID in Post.getAuthor() and 'PTT Library 程式貼文基準測試內文' in Post.getContent() and\
                        Title in Post.getTitle():
@@ -1392,7 +1392,7 @@ PTT Library 程式貼文基準測試內文
             try:
                 Content1 = '編號推文基準文字123'
                 PTTBot.push(Board, PTT.PushType.Push,
-                            Content1, PostAID='QQQQQQQ')
+                            Content1, post_aid='QQQQQQQ')
                 print('推文反向測試失敗')
                 PTTBot.logout()
                 sys.exit(1)
@@ -1402,11 +1402,11 @@ PTT Library 程式貼文基準測試內文
             try:
                 Index = PTTBot.getNewestIndex(
                     PTT.IndexType.BBS,
-                    Board=Board
+                    board=Board
                 )
                 Content1 = '編號推文基準文字123'
                 PTTBot.push(Board, PTT.PushType.Push,
-                            Content1, PostIndex=Index + 1)
+                            Content1, post_index=Index + 1)
                 print('推文反向測試失敗')
                 PTTBot.logout()
                 sys.exit(1)
@@ -1415,15 +1415,15 @@ PTT Library 程式貼文基準測試內文
 
             Content1 = '編號推文基準文字123'
             PTTBot.push(Board, PTT.PushType.Push,
-                        Content1, PostIndex=BasicPostIndex)
+                        Content1, post_index=BasicPostIndex)
 
             Content2 = '代碼推文基準文字123'
             PTTBot.push(Board, PTT.PushType.Push,
-                        Content2, PostAID=BasicPostAID)
+                        Content2, post_aid=BasicPostAID)
 
             Post = PTTBot.getPost(
                 Board,
-                PostAID=Post.getAID(),
+                post_aid=Post.getAID(),
             )
 
             Content1Check = False
@@ -1447,7 +1447,7 @@ PTT Library 程式貼文基準測試內文
 
             Content = '推文基準測試全部通過'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             TestList = [
                 ('Python', PTT.PostSearchType.Keyword, '[公告]'),
@@ -1464,18 +1464,18 @@ PTT Library 程式貼文基準測試內文
                 Index = PTTBot.getNewestIndex(
                     PTT.IndexType.BBS,
                     Board,
-                    SearchType=SearchType,
-                    SearchCondition=Condition,
+                    search_type=SearchType,
+                    search_condition=Condition,
                 )
                 print(f'{Board} 最新文章編號 {Index}')
 
                 for i in range(TestRange):
                     Post = PTTBot.getPost(
                         Board,
-                        PostIndex=Index - i,
-                        SearchType=SearchType,
-                        SearchCondition=Condition,
-                        Query=False
+                        post_index=Index - i,
+                        search_type=SearchType,
+                        search_condition=Condition,
+                        query=False
                     )
 
                     print('列表日期:')
@@ -1497,17 +1497,17 @@ PTT Library 程式貼文基準測試內文
 
                 Content = f'{Board} 取得文章測試完成'
                 PTTBot.push('Test', PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
 
             Board = 'Test'
 
             Content = '取得文章測試全部通過'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             Content = '貼文測試全部通過'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             TestBoardList = [
                 'Wanted',
@@ -1522,7 +1522,7 @@ PTT Library 程式貼文基準測試內文
 
                 NewestIndex = PTTBot.getNewestIndex(
                     PTT.IndexType.BBS,
-                    Board=testboard
+                    board=testboard
                 ) - 10000
                 # 到很久之前的文章去才不會撞到被刪掉的文章
 
@@ -1530,18 +1530,18 @@ PTT Library 程式貼文基準測試內文
                     crawlHandler,
                     PTT.CrawlType.BBS,
                     testboard,
-                    StartIndex=NewestIndex - Range + 1,
-                    EndIndex=NewestIndex,
-                    Query=Query
+                    start_index=NewestIndex - Range + 1,
+                    end_index=NewestIndex,
+                    query=Query
                 )
 
                 StartPost = PTTBot.getPost(
                     testboard,
-                    PostIndex=NewestIndex - Range + 1,
+                    post_index=NewestIndex - Range + 1,
                 )
                 EndPost = PTTBot.getPost(
                     testboard,
-                    PostIndex=NewestIndex,
+                    post_index=NewestIndex,
                 )
 
                 print(testboard)
@@ -1552,23 +1552,23 @@ PTT Library 程式貼文基準測試內文
                     crawlHandler,
                     PTT.CrawlType.BBS,
                     testboard,
-                    StartAID=StartPost.getAID(),
-                    EndAID=EndPost.getAID()
+                    start_aid=StartPost.getAID(),
+                    end_aid=EndPost.getAID()
                 )
                 Content = f'{testboard} 爬板測試完成'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
 
             Content = '爬板測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             User = PTTBot.getUser(ID)
             if User is None:
                 print('取得使用者測試失敗')
                 Content = '取得使用者測試失敗'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
                 PTTBot.logout()
                 sys.exit(1)
 
@@ -1590,7 +1590,7 @@ PTT Library 程式貼文基準測試內文
                 print('取得使用者反向測試失敗')
                 Content = '取得使用者反向測試失敗'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
 
                 PTTBot.logout()
                 sys.exit(1)
@@ -1601,7 +1601,7 @@ PTT Library 程式貼文基準測試內文
             print(f'有 {NewMail1} 封新信')
             Content = '取得幾封新信測試通過'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             try:
                 PTTBot.mail(
@@ -1614,7 +1614,7 @@ PTT Library 程式貼文基準測試內文
                 Content = '寄信反向測試失敗'
                 print(Content)
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
                 PTTBot.logout()
                 sys.exit(1)
 
@@ -1622,7 +1622,7 @@ PTT Library 程式貼文基準測試內文
                 Content = '寄信反向測試成功'
                 print(Content)
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
 
             Content = '''如有誤寄，對..對不起
 PTT Library 程式寄信測試內容
@@ -1642,19 +1642,19 @@ github: https://tinyurl.com/umqff3v
             if NewMail2 > NewMail1:
                 Content = '寄信測試通過'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
             else:
                 Content = '寄信測試失敗'
                 print(Content)
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
                 PTTBot.logout()
                 sys.exit(1)
 
             Content = '寄信測試成功'
             print(Content)
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             BoardList = PTTBot.getBoardList()
             print(f'總共有 {len(BoardList)} 個板名')
@@ -1662,10 +1662,10 @@ github: https://tinyurl.com/umqff3v
 
             Content = '取得全站看板測試通過'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
             Content = f'總共有 {len(set(BoardList))} 個不重複板名'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             try:
                 PTTBot.getBoardInfo('NotExistBoard')
@@ -1673,7 +1673,7 @@ github: https://tinyurl.com/umqff3v
                 print('取得看板資訊反向測試失敗')
                 Content = '取得看板資訊反向測試失敗'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
 
                 PTTBot.logout()
                 sys.exit(1)
@@ -1681,7 +1681,7 @@ github: https://tinyurl.com/umqff3v
                 print('取得看板資訊反向測試成功')
                 Content = '取得看板資訊反向測試成功'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
 
             BoardInfo = PTTBot.getBoardInfo('Gossiping')
             print('板名: ', BoardInfo.getBoard())
@@ -1710,20 +1710,20 @@ github: https://tinyurl.com/umqff3v
 
             Content = '取得看板資訊測試成功'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             FBlist = PTTBot.getFavouriteBoard()
             for testboard in FBlist:
                 if testboard.getBoard() is None or testboard.getType() is None or testboard.getBoardTitle() is None:
                     Content = '取得我的最愛測試失敗'
                     PTTBot.push(Board, PTT.PushType.Arrow,
-                                Content, PostAID=BasicPostAID)
+                                Content, post_aid=BasicPostAID)
                     PTTBot.logout()
                     sys.exit(1)
 
             Content = '取得我的最愛測試成功'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             userlist = PTTBot.searchUser(
                 'coding'
@@ -1731,23 +1731,23 @@ github: https://tinyurl.com/umqff3v
             if len(userlist) != 14:
                 Content = '查詢網友測試失敗'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
                 PTTBot.logout()
                 sys.exit(1)
             Content = '查詢網友測試成功'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
             PTTBot.replyPost(
                 PTT.ReplyType.Board,
                 Board,
                 '使用文章編號測試回應到板上',
-                PostIndex=BasicPostIndex
+                post_index=BasicPostIndex
             )
 
             Index = PTTBot.getNewestIndex(
                 PTT.IndexType.BBS,
-                Board=Board
+                board=Board
             )
 
             TestPass = False
@@ -1755,7 +1755,7 @@ github: https://tinyurl.com/umqff3v
 
                 Post = PTTBot.getPost(
                     Board,
-                    PostIndex=Index - i,
+                    post_index=Index - i,
                 )
 
                 if ID in Post.getAuthor() and '使用文章編號測試回應到板上' in Post.getContent():
@@ -1764,12 +1764,12 @@ github: https://tinyurl.com/umqff3v
                     print(Content)
                     PTTBot.push(
                         Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
                     break
             if not TestPass:
                 Content = '使用文章編號測試回應到板上失敗'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
                 PTTBot.logout()
                 sys.exit(1)
 
@@ -1777,12 +1777,12 @@ github: https://tinyurl.com/umqff3v
                 PTT.ReplyType.Board,
                 Board,
                 '使用文章ID測試回應到板上',
-                PostAID=BasicPostAID
+                post_aid=BasicPostAID
             )
 
             Index = PTTBot.getNewestIndex(
                 PTT.IndexType.BBS,
-                Board=Board
+                board=Board
             )
 
             TestPass = False
@@ -1790,7 +1790,7 @@ github: https://tinyurl.com/umqff3v
 
                 Post = PTTBot.getPost(
                     Board,
-                    PostIndex=Index - i,
+                    post_index=Index - i,
                 )
 
                 if ID in Post.getAuthor() and '使用文章ID測試回應到板上' in Post.getContent():
@@ -1799,12 +1799,12 @@ github: https://tinyurl.com/umqff3v
                     print(Content)
                     PTTBot.push(
                         Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
                     break
             if not TestPass:
                 Content = '使用文章ID測試回應到板上失敗'
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
                 PTTBot.logout()
                 sys.exit(1)
 
@@ -1855,7 +1855,7 @@ github: https://tinyurl.com/umqff3v
                 Content = '水球測試基準測試失敗'
                 print(Content)
                 PTTBot.push(Board, PTT.PushType.Arrow,
-                            Content, PostAID=BasicPostAID)
+                            Content, post_aid=BasicPostAID)
                 PTTBot.logout()
                 PTTBot2.logout()
                 sys.exit(1)
@@ -1863,19 +1863,19 @@ github: https://tinyurl.com/umqff3v
             Content = '水球測試基準測試成功'
             print(Content)
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
             PTTBot2.logout()
 
             Content = '自動化測試全部完成'
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
 
         except Exception as e:
             traceback.print_tb(e.__traceback__)
             print(e)
             Content = str(e)
             PTTBot.push(Board, PTT.PushType.Arrow,
-                        Content, PostAID=BasicPostAID)
+                        Content, post_aid=BasicPostAID)
         except KeyboardInterrupt:
             pass
 

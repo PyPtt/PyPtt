@@ -70,7 +70,7 @@ if __name__ == '__main__':
             PTTBot.login(
                 ID,
                 Password,
-                KickOtherLogin=True
+                kick_other_login=True
             )
         except PTTLibrary.Exceptions.LoginError:
             PTTBot.log('登入失敗')

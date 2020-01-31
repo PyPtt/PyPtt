@@ -52,30 +52,31 @@ MarkType = DataType.MarkType
 
 class Library:
     def __init__(
-        self,
-        Language: int = 0,
-        ConnectMode: int = 0,
-        LogLevel: int = 0,
-        ScreenTimeOut: int = 0,
-        ScreenLongTimeOut: int = 0,
-        LogHandler=None,
-        Host: int = 0,
+            self,
+            language: int = 0,
+            connect_mode: int = 0,
+            log_level: int = 0,
+            screen_time_out: int = 0,
+            screen_long_time_out: int = 0,
+            log_handler=None,
+            host: int = 0,
     ):
 
-        if LogHandler is not None and not callable(LogHandler):
+        self._ID = None
+        if log_handler is not None and not callable(log_handler):
             raise TypeError('[PTT Library] LogHandler is must callable!!')
 
-        if LogHandler is not None:
-            hasLogHandler = True
-            setLogHandlerResult = True
+        if log_handler is not None:
+            has_log_handler = True
+            set_log_handler_result = True
             try:
-                LogHandler(f'PTT Library v {Version}')
-                LogHandler('Developed by PTT CodingMan')
+                log_handler(f'PTT Library v {Version}')
+                log_handler('Developed by PTT CodingMan')
             except Exception:
-                LogHandler = None
-                setLogHandlerResult = False
+                log_handler = None
+                set_log_handler_result = False
         else:
-            hasLogHandler = False
+            has_log_handler = False
 
         print(f'PTT Library v {Version}')
         print('Developed by PTT CodingMan')
@@ -84,49 +85,49 @@ class Library:
 
         self.Config = Config.Config()
 
-        if not isinstance(Language, int):
+        if not isinstance(language, int):
             raise TypeError('[PTT Library] Language must be integer')
-        if not isinstance(ConnectMode, int):
+        if not isinstance(connect_mode, int):
             raise TypeError('[PTT Library] ConnectMode must be integer')
-        if not isinstance(LogLevel, int):
+        if not isinstance(log_level, int):
             raise TypeError('[PTT Library] LogLevel must be integer')
-        if not isinstance(ScreenTimeOut, int):
+        if not isinstance(screen_time_out, int):
             raise TypeError('[PTT Library] ScreenTimeOut must be integer')
-        if not isinstance(ScreenLongTimeOut, int):
+        if not isinstance(screen_long_time_out, int):
             raise TypeError('[PTT Library] ScreenLongTimeOut must be integer')
-        if not isinstance(Host, int):
+        if not isinstance(host, int):
             raise TypeError('[PTT Library] Host must be integer')
 
-        if ScreenTimeOut != 0:
-            self.Config.ScreenTimeOut = ScreenTimeOut
-        if ScreenLongTimeOut != 0:
-            self.Config.ScreenLongTimeOut = ScreenLongTimeOut
+        if screen_time_out != 0:
+            self.Config.ScreenTimeOut = screen_time_out
+        if screen_long_time_out != 0:
+            self.Config.ScreenLongTimeOut = screen_long_time_out
 
-        if LogLevel == 0:
-            LogLevel = self.Config.LogLevel
-        elif not Util.checkRange(Log.Level, LogLevel):
-            raise ValueError('[PTT Library] Unknow LogLevel', LogLevel)
+        if log_level == 0:
+            log_level = self.Config.LogLevel
+        elif not Util.checkRange(Log.Level, log_level):
+            raise ValueError('[PTT Library] Unknown LogLevel', log_level)
         else:
-            self.Config.LogLevel = LogLevel
+            self.Config.LogLevel = log_level
 
-        if Language == 0:
-            Language = self.Config.Language
-        elif not Util.checkRange(i18n.Language, Language):
-            raise ValueError('[PTT Library] Unknow language', Language)
+        if language == 0:
+            language = self.Config.Language
+        elif not Util.checkRange(i18n.Language, language):
+            raise ValueError('[PTT Library] Unknown language', language)
         else:
-            self.Config.Language = Language
-        i18n.load(Language)
+            self.Config.Language = language
+        i18n.load(language)
 
-        if LogHandler is not None:
+        if log_handler is not None:
             # Log.Handler = LogHandler
-            self.Config.LogHandler = LogHandler
+            self.Config.LogHandler = log_handler
             Log.showValue(
                 self.Config,
                 Log.Level.INFO,
                 i18n.LogHandler,
                 i18n.Init
             )
-        elif hasLogHandler and not setLogHandlerResult:
+        elif has_log_handler and not set_log_handler_result:
             Log.showValue(
                 self.Config,
                 Log.Level.INFO,
@@ -137,35 +138,37 @@ class Library:
                 ]
             )
 
-        if Language == i18n.Language.Chinese:
-            Log.showValue(self.Config, Log.Level.INFO, [
-                i18n.ChineseTranditional,
-                i18n.LanguageModule
-            ],
+        if language == i18n.Language.Chinese:
+            Log.showValue(
+                self.Config, Log.Level.INFO, [
+                    i18n.ChineseTranditional,
+                    i18n.LanguageModule
+                ],
                 i18n.Init
             )
-        elif Language == i18n.Language.English:
-            Log.showValue(self.Config, Log.Level.INFO, [
-                i18n.English,
-                i18n.LanguageModule
-            ],
+        elif language == i18n.Language.English:
+            Log.showValue(
+                self.Config, Log.Level.INFO, [
+                    i18n.English,
+                    i18n.LanguageModule
+                ],
                 i18n.Init
             )
 
-        if ConnectMode == 0:
-            ConnectMode = self.Config.ConnectMode
-        elif not Util.checkRange(ConnectCore.ConnectMode, ConnectMode):
-            raise ValueError('[PTT Library] Unknow ConnectMode', ConnectMode)
+        if connect_mode == 0:
+            connect_mode = self.Config.ConnectMode
+        elif not Util.checkRange(ConnectCore.ConnectMode, connect_mode):
+            raise ValueError('[PTT Library] Unknown ConnectMode', connect_mode)
         else:
-            self.Config.ConnectMode = ConnectMode
+            self.Config.ConnectMode = connect_mode
 
-        if Host == 0:
-            Host = self.Config.Host
-        elif not Util.checkRange(DataType.Host, Host):
-            raise ValueError('[PTT Library] Unknow Host', Host)
-        self.Config.Host = Host
+        if host == 0:
+            host = self.Config.Host
+        elif not Util.checkRange(DataType.Host, host):
+            raise ValueError('[PTT Library] Unknown Host', host)
+        self.Config.Host = host
 
-        if Host == DataType.Host.PTT1:
+        if host == DataType.Host.PTT1:
             Log.showValue(
                 self.Config,
                 Log.Level.INFO,
@@ -175,7 +178,7 @@ class Library:
                 ],
                 i18n.PTT
             )
-        if Host == DataType.Host.PTT2:
+        if host == DataType.Host.PTT2:
             Log.showValue(
                 self.Config,
                 Log.Level.INFO,
@@ -186,10 +189,10 @@ class Library:
                 i18n.PTT2
             )
 
-        self._ConnectCore = ConnectCore.API(self.Config, Host)
+        self._ConnectCore = ConnectCore.API(self.Config, host)
         self._ExistBoardList = []
         self._ModeratorList = dict()
-        self._LastThroWaterBallTime = 0
+        self._LastThrowWaterBallTime = 0
         self._ThreadID = threading.get_ident()
 
         Log.showValue(
@@ -210,8 +213,8 @@ class Library:
         )
 
     def _OneThread(self):
-        CurrentThreadID = threading.get_ident()
-        if CurrentThreadID == self._ThreadID:
+        current_thread_id = threading.get_ident()
+        if current_thread_id == self._ThreadID:
             return
         Log.showValue(
             self.Config,
@@ -223,7 +226,7 @@ class Library:
             self.Config,
             Log.Level.DEBUG,
             'Current thread id',
-            CurrentThreadID
+            current_thread_id
         )
         raise Exceptions.MultiThreadOperated()
 
@@ -232,10 +235,10 @@ class Library:
         return self.Config.Version
 
     def _login(
-        self,
-        ID: str,
-        Password: str,
-        KickOtherLogin: bool = False
+            self,
+            id: str,
+            password: str,
+            kick_other_login: bool = False
     ):
 
         try:
@@ -245,33 +248,33 @@ class Library:
 
         return api_loginout.login(
             self,
-            ID,
-            Password,
-            KickOtherLogin)
+            id,
+            password,
+            kick_other_login)
 
     def login(
-        self,
-        ID: str,
-        Password: str,
-        KickOtherLogin: bool = False
+            self,
+            id: str,
+            password: str,
+            kick_other_login: bool = False
     ):
         self._OneThread()
 
-        CheckValue.check(self.Config, str, 'ID', ID)
-        CheckValue.check(self.Config, str, 'Password', Password)
-        CheckValue.check(self.Config, bool, 'KickOtherLogin', KickOtherLogin)
+        CheckValue.check(self.Config, str, 'ID', id)
+        CheckValue.check(self.Config, str, 'Password', password)
+        CheckValue.check(self.Config, bool, 'KickOtherLogin', kick_other_login)
 
         try:
             return self._login(
-                ID,
-                Password,
-                KickOtherLogin=KickOtherLogin
+                id,
+                password,
+                kick_other_login=kick_other_login
             )
         except Exceptions.LoginError:
             return self._login(
-                ID,
-                Password,
-                KickOtherLogin=KickOtherLogin
+                id,
+                password,
+                kick_other_login=kick_other_login
             )
 
     def logout(self):
@@ -287,9 +290,9 @@ class Library:
 
         return api_loginout.logout(self)
 
-    def log(self, Msg):
+    def log(self, msg):
         self._OneThread()
-        Log.log(self.Config, Log.Level.INFO, Msg)
+        Log.log(self.Config, Log.Level.INFO, msg)
 
     def getTime(self) -> str:
         self._OneThread()
@@ -304,39 +307,39 @@ class Library:
         return api_getTime.getTime(self)
 
     def getPost(
-        self,
-        Board: str,
-        PostAID: str = None,
-        PostIndex: int = 0,
-        SearchType: int = 0,
-        SearchCondition: str = None,
-        Query: bool = False
+            self,
+            board: str,
+            post_aid: str = None,
+            post_index: int = 0,
+            search_type: int = 0,
+            search_condition: str = None,
+            query: bool = False
     ):
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', Board)
-        if PostAID is not None:
-            CheckValue.check(self.Config, str, 'PostAID', PostAID)
-        CheckValue.check(self.Config, int, 'PostIndex', PostIndex)
-        CheckValue.check(self.Config, int, 'SearchType', SearchType,
+        CheckValue.check(self.Config, str, 'Board', board)
+        if post_aid is not None:
+            CheckValue.check(self.Config, str, 'PostAID', post_aid)
+        CheckValue.check(self.Config, int, 'PostIndex', post_index)
+        CheckValue.check(self.Config, int, 'SearchType', search_type,
                          Class=DataType.PostSearchType)
-        if SearchCondition is not None:
+        if search_condition is not None:
             CheckValue.check(self.Config, str,
-                             'SearchCondition', SearchCondition)
+                             'SearchCondition', search_condition)
 
-        if len(Board) == 0:
+        if len(board) == 0:
             raise ValueError(Log.merge(
                 self.Config,
                 [
                     i18n.Board,
                     i18n.ErrorParameter,
-                    Board
+                    board
                 ]))
 
-        if PostIndex != 0 and isinstance(PostAID, str):
+        if post_index != 0 and isinstance(post_aid, str):
             raise ValueError(Log.merge(
                 self.Config,
                 [
@@ -346,7 +349,7 @@ class Library:
                     i18n.BothInput
                 ]))
 
-        if PostIndex == 0 and PostAID is None:
+        if post_index == 0 and post_aid is None:
             raise ValueError(Log.merge(
                 self.Config,
                 [
@@ -355,7 +358,7 @@ class Library:
                     i18n.ErrorParameter
                 ]))
 
-        if SearchCondition is not None and SearchType == 0:
+        if search_condition is not None and search_type == 0:
             raise ValueError(Log.merge(
                 self.Config,
                 [
@@ -363,9 +366,9 @@ class Library:
                     i18n.ErrorParameter,
                 ]))
 
-        if SearchType == DataType.PostSearchType.Push:
+        if search_type == DataType.PostSearchType.Push:
             try:
-                S = int(SearchCondition)
+                S = int(search_condition)
             except ValueError:
                 raise ValueError(Log.merge(
                     self.Config,
@@ -382,7 +385,7 @@ class Library:
                         i18n.ErrorParameter,
                     ]))
 
-        if PostAID is not None and SearchCondition is not None:
+        if post_aid is not None and search_condition is not None:
             raise ValueError(Log.merge(
                 self.Config,
                 [
@@ -392,15 +395,15 @@ class Library:
                     i18n.BothInput,
                 ]))
 
-        if PostIndex != 0:
-            NewestIndex = self._getNewestIndex(
+        if post_index != 0:
+            newest_index = self._getNewestIndex(
                 DataType.IndexType.BBS,
-                Board=Board,
-                SearchType=SearchType,
-                SearchCondition=SearchCondition
+                board=board,
+                search_type=search_type,
+                search_condition=search_condition
             )
 
-            if PostIndex < 1 or NewestIndex < PostIndex:
+            if post_index < 1 or newest_index < post_index:
                 raise ValueError(Log.merge(
                     self.Config,
                     [
@@ -409,44 +412,44 @@ class Library:
                         i18n.OutOfRange,
                     ]))
 
-        self._checkBoard(Board)
+        self._checkBoard(board)
 
         for i in range(2):
 
-            NeedContinue = False
-            Post = None
+            need_continue = False
+            post = None
             try:
-                Post = self._getPost(
-                    Board,
-                    PostAID,
-                    PostIndex,
-                    SearchType,
-                    SearchCondition,
-                    Query
+                post = self._getPost(
+                    board,
+                    post_aid,
+                    post_index,
+                    search_type,
+                    search_condition,
+                    query
                 )
             except Exceptions.ParseError as e:
                 if i == 1:
                     raise e
-                NeedContinue = True
-            except Exceptions.UnknowError as e:
+                need_continue = True
+            except Exceptions.UnknownError as e:
                 if i == 1:
                     raise e
-                NeedContinue = True
+                need_continue = True
             except Exceptions.NoSuchBoard as e:
                 if i == 1:
                     raise e
-                NeedContinue = True
+                need_continue = True
             except Exceptions.NoMatchTargetError as e:
                 if i == 1:
                     raise e
-                NeedContinue = True
+                need_continue = True
 
-            if Post is None:
-                NeedContinue = True
-            elif not Post.isFormatCheck():
-                NeedContinue = True
+            if post is None:
+                need_continue = True
+            elif not post.isFormatCheck():
+                need_continue = True
 
-            if NeedContinue:
+            if need_continue:
                 Log.log(
                     self.Config,
                     Log.Level.DEBUG,
@@ -456,33 +459,33 @@ class Library:
                 continue
 
             break
-        return Post
+        return post
 
     def _checkBoard(
-        self,
-        Board,
-        CheckModerator: bool = False
+            self,
+            board,
+            check_moderator: bool = False
     ):
-        if Board.lower() not in self._ExistBoardList:
-            boardinfo = self._getBoardInfo(Board)
-            self._ExistBoardList.append(Board.lower())
+        if board.lower() not in self._ExistBoardList:
+            boardinfo = self._getBoardInfo(board)
+            self._ExistBoardList.append(board.lower())
 
-            Moderators = boardinfo.getModerators()
-            Moderators = [x.lower() for x in Moderators]
-            self._ModeratorList[Board.lower()] = Moderators
+            moderators = boardinfo.getModerators()
+            moderators = [x.lower() for x in moderators]
+            self._ModeratorList[board.lower()] = moderators
 
-        if CheckModerator:
-            if self._ID.lower() not in self._ModeratorList[Board.lower()]:
-                raise Exceptions.NeedModeratorPermission(Board)
+        if check_moderator:
+            if self._ID.lower() not in self._ModeratorList[board.lower()]:
+                raise Exceptions.NeedModeratorPermission(board)
 
     def _getPost(
             self,
-            Board: str,
-            PostAID: str = None,
-            PostIndex: int = 0,
-            SearchType: int = 0,
-            SearchCondition: str = None,
-            Query: bool = False):
+            board: str,
+            post_aid: str = None,
+            post_index: int = 0,
+            search_type: int = 0,
+            search_condition: str = None,
+            query: bool = False):
 
         try:
             from . import api_getPost
@@ -491,25 +494,25 @@ class Library:
 
         return api_getPost.getPost(
             self,
-            Board,
-            PostAID,
-            PostIndex,
-            SearchType,
-            SearchCondition,
-            Query)
+            board,
+            post_aid,
+            post_index,
+            search_type,
+            search_condition,
+            query)
 
     def _getNewestIndex(
             self,
-            IndexType: int,
-            Board: str = None,
+            index_type: int,
+            board: object = None,
             # BBS
-            SearchType: int = 0,
-            SearchCondition: str = None):
+            search_type: object = 0,
+            search_condition: object = None) -> object:
 
         CheckValue.check(
             self.Config, int, 'IndexType',
-            IndexType, Class=DataType.IndexType)
-        CheckValue.check(self.Config, str, 'Board', Board)
+            index_type, Class=DataType.IndexType)
+        CheckValue.check(self.Config, str, 'Board', board)
 
         try:
             from . import api_getNewestIndex
@@ -518,42 +521,42 @@ class Library:
 
         return api_getNewestIndex.getNewestIndex(
             self,
-            IndexType,
-            Board,
-            SearchType,
-            SearchCondition)
+            index_type,
+            board,
+            search_type,
+            search_condition)
 
     def getNewestIndex(
             self,
-            IndexType: int,
-            Board: str = None,
-            SearchType: int = 0,
-            SearchCondition: str = None):
+            index_type: int,
+            board: str = None,
+            search_type: int = 0,
+            search_condition: str = None):
         self._OneThread()
 
-        if IndexType == DataType.IndexType.BBS:
+        if index_type == DataType.IndexType.BBS:
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
         try:
             return self._getNewestIndex(
-                IndexType,
-                Board,
-                SearchType,
-                SearchCondition
+                index_type,
+                board,
+                search_type,
+                search_condition
             )
         except Exception:
             return self._getNewestIndex(
-                IndexType,
-                Board,
-                SearchType,
-                SearchCondition
+                index_type,
+                board,
+                search_type,
+                search_condition
             )
 
     def _getPostIndex(
             self,
-            Board,
-            AID):
+            board,
+            aid):
 
         try:
             from . import api_getPostIndex
@@ -562,57 +565,57 @@ class Library:
 
         return api_getPostIndex.getPostIndex(
             self,
-            Board,
-            AID)
+            board,
+            aid)
 
     def crawlBoard(
             self,
-            PostHandler,
-            CrawlType: int,
-            Board: str,
+            crawl_type: int,
+            post_handler,
+            board: str,
             # BBS版本
-            StartIndex: int = 0,
-            EndIndex: int = 0,
-            StartAID: str = None,
-            EndAID: str = None,
-            SearchType: int = 0,
-            SearchCondition: str = None,
-            Query: bool = False,
+            start_index: int = 0,
+            end_index: int = 0,
+            start_aid: str = None,
+            end_aid: str = None,
+            search_type: int = 0,
+            search_condition: str = None,
+            query: bool = False,
             # 網頁版本
-            StartPage: int = 0,
-            EndPage: int = 0):
+            start_page: int = 0,
+            end_page: int = 0):
 
         self._OneThread()
 
         CheckValue.check(
             self.Config, int, 'CrawlType',
-            CrawlType, Class=DataType.CrawlType)
-        CheckValue.check(self.Config, str, 'Board', Board)
+            crawl_type, Class=DataType.CrawlType)
+        CheckValue.check(self.Config, str, 'Board', board)
 
-        if len(Board) == 0:
+        if len(board) == 0:
             raise ValueError(Log.merge(
                 self.Config,
                 [
                     i18n.Board,
                     i18n.ErrorParameter,
-                    Board
+                    board
                 ]))
 
-        if CrawlType == DataType.CrawlType.BBS:
+        if crawl_type == DataType.CrawlType.BBS:
             if not self._LoginStatus:
                 raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-            CheckValue.check(self.Config, int, 'SearchType', SearchType)
-            if SearchCondition is not None:
+            CheckValue.check(self.Config, int, 'SearchType', search_type)
+            if search_condition is not None:
                 CheckValue.check(self.Config, str,
-                                 'SearchCondition', SearchCondition)
-            if StartAID is not None:
-                CheckValue.check(self.Config, str, 'StartAID', StartAID)
-            if EndAID is not None:
-                CheckValue.check(self.Config, str, 'EndAID', EndAID)
+                                 'SearchCondition', search_condition)
+            if start_aid is not None:
+                CheckValue.check(self.Config, str, 'StartAID', start_aid)
+            if end_aid is not None:
+                CheckValue.check(self.Config, str, 'EndAID', end_aid)
 
-            if (StartAID is not None or EndAID is not None) and \
-               (StartIndex != 0 or EndIndex != 0):
+            if (start_aid is not None or end_aid is not None) and \
+                    (start_index != 0 or end_index != 0):
                 raise ValueError(Log.merge(
                     self.Config,
                     [
@@ -622,8 +625,8 @@ class Library:
                         i18n.BothInput
                     ]))
 
-            if (StartAID is not None or EndAID is not None) and \
-               (SearchCondition is not None):
+            if (start_aid is not None or end_aid is not None) and \
+                    (search_condition is not None):
                 raise ValueError(Log.merge(
                     self.Config,
                     [
@@ -633,9 +636,9 @@ class Library:
                         i18n.BothInput
                     ]))
 
-            if SearchType == DataType.PostSearchType.Push:
+            if search_type == DataType.PostSearchType.Push:
                 try:
-                    S = int(SearchCondition)
+                    S = int(search_condition)
                 except ValueError:
                     raise ValueError(Log.merge(
                         self.Config,
@@ -652,36 +655,36 @@ class Library:
                             i18n.ErrorParameter,
                         ]))
 
-            if StartIndex != 0:
-                NewestIndex = self._getNewestIndex(
+            if start_index != 0:
+                newest_index = self._getNewestIndex(
                     DataType.IndexType.BBS,
-                    Board=Board,
-                    SearchType=SearchType,
-                    SearchCondition=SearchCondition
+                    board=board,
+                    search_type=search_type,
+                    search_condition=search_condition
                 )
                 CheckValue.checkIndexRange(
                     self.Config,
                     'StartIndex',
-                    StartIndex,
+                    start_index,
                     'EndIndex',
-                    EndIndex,
-                    MaxValue=NewestIndex
+                    end_index,
+                    MaxValue=newest_index
                 )
-            elif StartAID is not None and EndAID is not None:
-                StartIndex = self._getPostIndex(
-                    Board,
-                    StartAID,
+            elif start_aid is not None and end_aid is not None:
+                start_index = self._getPostIndex(
+                    board,
+                    start_aid,
                 )
-                EndIndex = self._getPostIndex(
-                    Board,
-                    EndAID,
+                end_index = self._getPostIndex(
+                    board,
+                    end_aid,
                 )
                 CheckValue.checkIndexRange(
                     self.Config,
                     'StartAID',
-                    StartIndex,
+                    start_index,
                     'EndAID',
-                    EndIndex
+                    end_index
                 )
             else:
                 raise ValueError(Log.merge(
@@ -695,52 +698,52 @@ class Library:
                 self.Config,
                 Log.Level.DEBUG,
                 'StartIndex',
-                StartIndex
+                start_index
             )
 
             Log.showValue(
                 self.Config,
                 Log.Level.DEBUG,
                 'EndIndex',
-                EndIndex
+                end_index
             )
 
-            ErrorPostList = []
-            DelPostList = []
+            error_post_list = []
+            del_post_list = []
             if self.Config.LogLevel == Log.Level.INFO:
                 PB = progressbar.ProgressBar(
-                    max_value=EndIndex - StartIndex + 1,
+                    max_value=end_index - start_index + 1,
                     redirect_stdout=True
                 )
-            for index in range(StartIndex, EndIndex + 1):
+            for index in range(start_index, end_index + 1):
 
                 for i in range(2):
-                    NeedContinue = False
-                    Post = None
+                    need_continue = False
+                    post = None
                     try:
-                        Post = self._getPost(
-                            Board,
-                            PostIndex=index,
-                            SearchType=SearchType,
-                            SearchCondition=SearchCondition,
-                            Query=Query
+                        post = self._getPost(
+                            board,
+                            post_index=index,
+                            search_type=search_type,
+                            search_condition=search_condition,
+                            query=query
                         )
                     except Exceptions.ParseError as e:
                         if i == 1:
                             raise e
-                        NeedContinue = True
-                    except Exceptions.UnknowError as e:
+                        need_continue = True
+                    except Exceptions.UnknownError as e:
                         if i == 1:
                             raise e
-                        NeedContinue = True
+                        need_continue = True
                     except Exceptions.NoSuchBoard as e:
                         if i == 1:
                             raise e
-                        NeedContinue = True
+                        need_continue = True
                     except Exceptions.NoMatchTargetError as e:
                         if i == 1:
                             raise e
-                        NeedContinue = True
+                        need_continue = True
                     except Exceptions.ConnectionClosed as e:
                         if i == 1:
                             raise e
@@ -754,7 +757,7 @@ class Library:
                             self._Password,
                             self.Config.KickOtherLogin
                         )
-                        NeedContinue = True
+                        need_continue = True
                     except Exceptions.UseTooManyResources as e:
                         if i == 1:
                             raise e
@@ -768,14 +771,14 @@ class Library:
                             self._Password,
                             self.Config.KickOtherLogin
                         )
-                        NeedContinue = True
+                        need_continue = True
 
-                    if Post is None:
-                        NeedContinue = True
-                    elif not Post.isFormatCheck():
-                        NeedContinue = True
+                    if post is None:
+                        need_continue = True
+                    elif not post.isFormatCheck():
+                        need_continue = True
 
-                    if NeedContinue:
+                    if need_continue:
                         Log.log(
                             self.Config,
                             Log.Level.DEBUG,
@@ -787,23 +790,23 @@ class Library:
                     break
 
                 if self.Config.LogLevel == Log.Level.INFO:
-                    PB.update(index - StartIndex)
-                if Post is None:
-                    ErrorPostList.append(index)
+                    PB.update(index - start_index)
+                if post is None:
+                    error_post_list.append(index)
                     continue
-                if not Post.isFormatCheck():
-                    if Post.getAID() is not None:
-                        ErrorPostList.append(Post.getAID())
+                if not post.isFormatCheck():
+                    if post.getAID() is not None:
+                        error_post_list.append(post.getAID())
                     else:
-                        ErrorPostList.append(index)
+                        error_post_list.append(index)
                     continue
-                if Post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
-                    DelPostList.append(index)
-                PostHandler(Post)
+                if post.getDeleteStatus() != DataType.PostDeleteStatus.NotDeleted:
+                    del_post_list.append(index)
+                post_handler(post)
             if self.Config.LogLevel == Log.Level.INFO:
                 PB.finish()
 
-            return ErrorPostList, DelPostList
+            return error_post_list, del_post_list
 
         else:
             if self.Config.Host == DataType.Host.PTT2:
@@ -813,30 +816,30 @@ class Library:
             # https://www.ptt.cc/bbs/index.html
 
             # 1. 取得總共有幾頁 MaxPage
-            NewestIndex = self._getNewestIndex(
+            newest_index = self._getNewestIndex(
                 DataType.IndexType.Web,
-                Board=Board
+                board=board
             )
             # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
 
             CheckValue.checkIndexRange(
                 self.Config,
                 'StartPage',
-                StartPage,
+                start_page,
                 'EndPage',
-                EndPage,
-                MaxValue=NewestIndex
+                end_page,
+                MaxValue=newest_index
             )
 
             # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 DataType.PostInfo
-            ErrorPostList = []
-            DelPostList = []
+            error_post_list = []
+            del_post_list = []
             # PostAID = ""
             _url = 'https://www.ptt.cc/bbs/'
-            index = str(NewestIndex)
+            index = str(newest_index)
             if self.Config.LogLevel == Log.Level.INFO:
                 PB = progressbar.ProgressBar(
-                    max_value=EndPage - StartPage + 1,
+                    max_value=end_page - start_page + 1,
                     redirect_stdout=True
                 )
 
@@ -851,7 +854,7 @@ class Library:
                 else:
                     return DataType.PostDeleteStatus.NotDeleted
 
-            for index in range(StartPage, NewestIndex + 1):
+            for index in range(start_page, newest_index + 1):
                 Log.showValue(
                     self.Config,
                     Log.Level.DEBUG,
@@ -859,10 +862,10 @@ class Library:
                     index
                 )
 
-                url = _url + Board + '/index' + str(index) + '.html'
+                url = _url + board + '/index' + str(index) + '.html'
                 r = requests.get(url, cookies={'over18': '1'})
                 if r.status_code != requests.codes.ok:
-                    raise Exceptions.NoSuchBoard(self.Config, Board)
+                    raise Exceptions.NoSuchBoard(self.Config, board)
                 soup = BeautifulSoup(r.text, 'html.parser')
 
                 for div in soup.select('div.r-ent'):
@@ -873,7 +876,7 @@ class Library:
                         'web': web[0].get('href') if web else ''
                     }
                     if post['title'].startswith('('):
-                        DelPostList.append(post['title'])
+                        del_post_list.append(post['title'])
                         if post['title'].startswith('(本文'):
                             if '[' in post['title']:
                                 post['author'] = post['title'].split(
@@ -885,23 +888,23 @@ class Library:
                             post['author'] = post['title'].split('<')[
                                 1].split('>')[0]
 
-                    Post = DataType.PostInfo(
-                        Board=Board,
+                    post = DataType.PostInfo(
+                        Board=board,
                         Author=post['author'],
                         Title=post['title'],
                         WebUrl='https://www.ptt.cc' + post['web'],
                         DeleteStatus=deleted_post(post['title'])
                     )
-                    PostHandler(Post)
+                    post_handler(post)
 
                 if self.Config.LogLevel == Log.Level.INFO:
-                    PB.update(index - StartPage)
+                    PB.update(index - start_page)
 
             Log.showValue(
                 self.Config,
                 Log.Level.DEBUG,
                 'DelPostList',
-                DelPostList
+                del_post_list
             )
 
             # 4. 把組合出來的 Post 塞給 handler
@@ -910,44 +913,44 @@ class Library:
             if self.Config.LogLevel == Log.Level.INFO:
                 PB.finish()
 
-            return ErrorPostList, DelPostList
+            return error_post_list, del_post_list
 
     def post(
-        self,
-        Board: str,
-        Title: str,
-        Content: str,
-        PostType: int,
-        SignFile
+            self,
+            board: str,
+            title: str,
+            content: str,
+            post_type: int,
+            sign_file
     ):
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', Board)
-        CheckValue.check(self.Config, str, 'Title', Title)
-        CheckValue.check(self.Config, str, 'Content', Content)
-        CheckValue.check(self.Config, int, 'PostType', PostType)
+        CheckValue.check(self.Config, str, 'Board', board)
+        CheckValue.check(self.Config, str, 'Title', title)
+        CheckValue.check(self.Config, str, 'Content', content)
+        CheckValue.check(self.Config, int, 'PostType', post_type)
 
-        CheckSignFile = False
+        check_sign_file = False
         for i in range(0, 10):
-            if str(i) == SignFile or i == SignFile:
-                CheckSignFile = True
+            if str(i) == sign_file or i == sign_file:
+                check_sign_file = True
                 break
 
-        if not CheckSignFile:
-            SignFile = SignFile.lower()
-            if SignFile != 'x':
+        if not check_sign_file:
+            sign_file = sign_file.lower()
+            if sign_file != 'x':
                 raise ValueError(Log.merge(
                     self.Config,
                     [
                         'SignFile',
                         i18n.ErrorParameter,
-                        SignFile
+                        sign_file
                     ]))
 
-        self._checkBoard(Board)
+        self._checkBoard(board)
 
         try:
             from . import api_post
@@ -956,42 +959,42 @@ class Library:
 
         return api_post.post(
             self,
-            Board,
-            Title,
-            Content,
-            PostType,
-            SignFile)
+            board,
+            title,
+            content,
+            post_type,
+            sign_file)
 
     def push(
             self,
-            Board: str,
-            PushType: int,
-            PushContent: str,
-            PostAID: str = None,
-            PostIndex: int = 0):
+            board: str,
+            push_type: int,
+            push_content: str,
+            post_aid: str = None,
+            post_index: int = 0):
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', Board)
+        CheckValue.check(self.Config, str, 'Board', board)
         CheckValue.check(self.Config, int, 'PushType',
-                         PushType, Class=DataType.PushType)
-        CheckValue.check(self.Config, str, 'PushContent', PushContent)
-        if PostAID is not None:
-            CheckValue.check(self.Config, str, 'PostAID', PostAID)
-        CheckValue.check(self.Config, int, 'PostIndex', PostIndex)
+                         push_type, Class=DataType.PushType)
+        CheckValue.check(self.Config, str, 'PushContent', push_content)
+        if post_aid is not None:
+            CheckValue.check(self.Config, str, 'PostAID', post_aid)
+        CheckValue.check(self.Config, int, 'PostIndex', post_index)
 
-        if len(Board) == 0:
+        if len(board) == 0:
             raise ValueError(Log.merge(
                 self.Config,
                 [
                     i18n.Board,
                     i18n.ErrorParameter,
-                    Board
+                    board
                 ]))
 
-        if PostIndex != 0 and isinstance(PostAID, str):
+        if post_index != 0 and isinstance(post_aid, str):
             raise ValueError(Log.merge(
                 self.Config,
                 [
@@ -1001,7 +1004,7 @@ class Library:
                     i18n.BothInput
                 ]))
 
-        if PostIndex == 0 and PostAID is None:
+        if post_index == 0 and post_aid is None:
             raise ValueError(Log.merge(
                 self.Config,
                 [
@@ -1011,48 +1014,48 @@ class Library:
                     i18n.NoInput
                 ]))
 
-        if PostIndex != 0:
-            NewestIndex = self._getNewestIndex(
+        if post_index != 0:
+            newest_index = self._getNewestIndex(
                 DataType.IndexType.BBS,
-                Board=Board
+                board=board
             )
             CheckValue.checkIndex(self.Config, 'PostIndex',
-                                  PostIndex, NewestIndex)
+                                  post_index, newest_index)
 
-        self._checkBoard(Board)
+        self._checkBoard(board)
 
-        MaxPushLength = 33
-        PushList = []
+        max_push_length = 33
+        push_list = []
 
-        TempStartIndex = 0
-        TempEndIndex = TempStartIndex + 1
+        temp_start_index = 0
+        temp_end_index = temp_start_index + 1
 
-        while TempEndIndex <= len(PushContent):
+        while temp_end_index <= len(push_content):
 
-            Temp = ''
-            LastTemp = None
-            while len(Temp.encode('big5-uao', 'replace')) < MaxPushLength:
-                Temp = PushContent[TempStartIndex:TempEndIndex]
+            temp = ''
+            last_temp = None
+            while len(temp.encode('big5-uao', 'replace')) < max_push_length:
+                temp = push_content[temp_start_index:temp_end_index]
 
-                if not len(Temp.encode('big5-uao', 'replace')) < MaxPushLength:
+                if not len(temp.encode('big5-uao', 'replace')) < max_push_length:
                     break
-                elif PushContent.endswith(Temp):
+                elif push_content.endswith(temp):
                     break
-                elif Temp.endswith('\n'):
+                elif temp.endswith('\n'):
                     break
-                elif LastTemp == Temp:
+                elif last_temp == temp:
                     break
 
-                TempEndIndex += 1
-                LastTemp = Temp
+                temp_end_index += 1
+                last_temp = temp
 
-            PushList.append(Temp.strip())
+            push_list.append(temp.strip())
 
-            TempStartIndex = TempEndIndex
-            TempEndIndex = TempStartIndex + 1
-        PushList = filter(None, PushList)
+            temp_start_index = temp_end_index
+            temp_end_index = temp_start_index + 1
+        push_list = filter(None, push_list)
 
-        for push in PushList:
+        for push in push_list:
             Log.showValue(
                 self.Config,
                 Log.Level.INFO,
@@ -1063,11 +1066,11 @@ class Library:
             for _ in range(2):
                 try:
                     self._push(
-                        Board,
-                        PushType,
+                        board,
+                        push_type,
                         push,
-                        PostAID=PostAID,
-                        PostIndex=PostIndex
+                        post_aid=post_aid,
+                        post_index=post_index
                     )
                     break
                 except Exceptions.NoFastPush:
@@ -1081,11 +1084,11 @@ class Library:
 
     def _push(
             self,
-            Board: str,
-            PushType: int,
-            PushContent: str,
-            PostAID: str = None,
-            PostIndex: int = 0):
+            board: str,
+            push_type: int,
+            push_content: str,
+            post_aid: str = None,
+            post_index: int = 0):
 
         try:
             from . import api_push
@@ -1094,22 +1097,22 @@ class Library:
 
         return api_push.push(
             self,
-            Board,
-            PushType,
-            PushContent,
-            PostAID,
-            PostIndex)
+            board,
+            push_type,
+            push_content,
+            post_aid,
+            post_index)
 
-    def _getUser(self, UserID):
+    def _getUser(self, user_id):
 
-        CheckValue.check(self.Config, str, 'UserID', UserID)
-        if len(UserID) < 3:
+        CheckValue.check(self.Config, str, 'UserID', user_id)
+        if len(user_id) < 3:
             raise ValueError(Log.merge(
                 self.Config,
                 [
                     'UserID',
                     i18n.ErrorParameter,
-                    UserID
+                    user_id
                 ]))
 
         try:
@@ -1117,9 +1120,9 @@ class Library:
         except ModuleNotFoundError:
             import api_getUser
 
-        return api_getUser.getUser(self, UserID)
+        return api_getUser.getUser(self, user_id)
 
-    def getUser(self, UserID):
+    def getUser(self, user_id):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1128,9 +1131,9 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        return self._getUser(UserID)
+        return self._getUser(user_id)
 
-    def throwWaterBall(self, TargetID, Content):
+    def throwWaterBall(self, pttid, content):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1139,30 +1142,30 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        CheckValue.check(self.Config, str, 'TargetID', TargetID)
-        CheckValue.check(self.Config, str, 'Content', Content)
+        CheckValue.check(self.Config, str, 'TargetID', pttid)
+        CheckValue.check(self.Config, str, 'Content', content)
 
-        if len(TargetID) <= 2:
+        if len(pttid) <= 2:
             raise ValueError(Log.merge(
                 self.Config,
                 [
                     'TargetID',
                     i18n.ErrorParameter,
-                    TargetID
+                    pttid
                 ]))
 
-        User = self._getUser(TargetID)
+        User = self._getUser(pttid)
         if '不在站上' in User.getState():
-            raise Exceptions.UserOffline(TargetID)
+            raise Exceptions.UserOffline(pttid)
 
         try:
             from . import api_WaterBall
         except ModuleNotFoundError:
             import api_WaterBall
 
-        return api_WaterBall.throwWaterBall(self, TargetID, Content)
+        return api_WaterBall.throwWaterBall(self, pttid, content)
 
-    def getWaterBall(self, OperateType):
+    def getWaterBall(self, operate_type):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1172,7 +1175,7 @@ class Library:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
         CheckValue.check(
-            self.Config, int, 'OperateType', OperateType,
+            self.Config, int, 'OperateType', operate_type,
             Class=DataType.WaterBallOperateType)
 
         try:
@@ -1180,7 +1183,7 @@ class Library:
         except ModuleNotFoundError:
             import api_WaterBall
 
-        return api_WaterBall.getWaterBall(self, OperateType)
+        return api_WaterBall.get_waterball(self, operate_type)
 
     def getCallStatus(self):
         self._OneThread()
@@ -1201,13 +1204,13 @@ class Library:
 
     def setCallStatus(
             self,
-            inputCallStatus):
+            call_status):
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, int, 'CallStatus', inputCallStatus,
+        CheckValue.check(self.Config, int, 'CallStatus', call_status,
                          Class=DataType.CallStatus)
 
         try:
@@ -1215,9 +1218,9 @@ class Library:
         except ModuleNotFoundError:
             import api_CallStatus
 
-        return api_CallStatus.setCallStatus(self, inputCallStatus)
+        return api_CallStatus.setCallStatus(self, call_status)
 
-    def giveMoney(self, ID, Money):
+    def giveMoney(self, pttid, money):
         self._OneThread()
 
         if not self._LoginStatus:
@@ -1226,48 +1229,48 @@ class Library:
         if self._UnregisteredUser:
             raise Exceptions.UnregisteredUser(Util.getCurrentFuncName())
 
-        CheckValue.check(self.Config, str, 'ID', ID)
-        CheckValue.check(self.Config, int, 'Money', Money)
+        CheckValue.check(self.Config, str, 'ID', pttid)
+        CheckValue.check(self.Config, int, 'Money', money)
         # Check user
-        self.getUser(ID)
+        self.getUser(pttid)
 
         try:
             from . import api_giveMoney
         except ModuleNotFoundError:
             import api_giveMoney
 
-        return api_giveMoney.giveMoney(self, ID, Money)
+        return api_giveMoney.giveMoney(self, pttid, money)
 
     def mail(
             self,
-            ID: str,
-            Title: str,
-            Content: str,
-            SignFile):
+            pttid: str,
+            title: str,
+            content: str,
+            sign_file):
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'ID', ID)
-        CheckValue.check(self.Config, str, 'Title', Title)
-        CheckValue.check(self.Config, str, 'Content', Content)
+        CheckValue.check(self.Config, str, 'ID', pttid)
+        CheckValue.check(self.Config, str, 'Title', title)
+        CheckValue.check(self.Config, str, 'Content', content)
 
-        CheckSignFile = False
+        check_sign_file = False
         for i in range(0, 10):
-            if str(i) == SignFile or i == SignFile:
-                CheckSignFile = True
+            if str(i) == sign_file or i == sign_file:
+                check_sign_file = True
                 break
 
-        if not CheckSignFile:
-            SignFile = SignFile.lower()
-            if SignFile != 'x':
+        if not check_sign_file:
+            sign_file = sign_file.lower()
+            if sign_file != 'x':
                 raise ValueError(Log.merge(
                     self.Config,
                     [
                         'SignFile',
                         i18n.ErrorParameter,
-                        SignFile
+                        sign_file
                     ]))
 
         try:
@@ -1277,10 +1280,10 @@ class Library:
 
         return api_mail.mail(
             self,
-            ID,
-            Title,
-            Content,
-            SignFile)
+            pttid,
+            title,
+            content,
+            sign_file)
 
     def hasNewMail(self):
         self._OneThread()
@@ -1310,36 +1313,36 @@ class Library:
 
     def replyPost(
             self,
-            inputReplyType: int,
-            Board: str,
-            Content: str,
-            SignFile=0,
-            PostAID: str = None,
-            PostIndex: int = 0):
+            reply_type: int,
+            board: str,
+            content: str,
+            sign_file=0,
+            post_aid: str = None,
+            post_index: int = 0):
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, int, 'ReplyType', inputReplyType,
+        CheckValue.check(self.Config, int, 'ReplyType', reply_type,
                          Class=DataType.ReplyType)
-        CheckValue.check(self.Config, str, 'Board', Board)
-        CheckValue.check(self.Config, str, 'Content', Content)
-        if PostAID is not None:
-            CheckValue.check(self.Config, str, 'PostAID', PostAID)
+        CheckValue.check(self.Config, str, 'Board', board)
+        CheckValue.check(self.Config, str, 'Content', content)
+        if post_aid is not None:
+            CheckValue.check(self.Config, str, 'PostAID', post_aid)
 
-        if PostIndex != 0:
-            NewestIndex = self._getNewestIndex(
+        if post_index != 0:
+            newest_index = self._getNewestIndex(
                 DataType.IndexType.BBS,
-                Board=Board)
+                board=board)
             CheckValue.checkIndex(
                 self.Config, 'PostIndex',
-                PostIndex, MaxValue=NewestIndex)
+                post_index, MaxValue=newest_index)
 
-        SignFileList = [str(x) for x in range(0, 10)]
-        SignFileList.append('x')
+        sign_file_list = [str(x) for x in range(0, 10)]
+        sign_file_list.append('x')
 
-        if str(SignFile) not in SignFileList:
+        if str(sign_file) not in sign_file_list:
             raise ValueError(Log.merge(
                 self.Config,
                 [
@@ -1347,7 +1350,7 @@ class Library:
                     i18n.ErrorParameter
                 ]))
 
-        if PostAID is not None and PostIndex != 0:
+        if post_aid is not None and post_index != 0:
             raise ValueError(Log.merge(
                 self.Config,
                 [
@@ -1357,7 +1360,7 @@ class Library:
                     i18n.BothInput
                 ]))
 
-        self._checkBoard(Board)
+        self._checkBoard(board)
 
         try:
             from . import api_replyPost
@@ -1366,29 +1369,29 @@ class Library:
 
         api_replyPost.replyPost(
             self,
-            inputReplyType,
-            Board,
-            Content,
-            SignFile,
-            PostAID,
-            PostIndex)
+            reply_type,
+            board,
+            content,
+            sign_file,
+            post_aid,
+            post_index)
 
     def setBoardTitle(
             self,
-            Board: str,
-            NewTitle: str):
+            board: str,
+            new_title: str):
         # 第一支板主專用 API
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', Board)
-        CheckValue.check(self.Config, str, 'NewTitle', NewTitle)
+        CheckValue.check(self.Config, str, 'Board', board)
+        CheckValue.check(self.Config, str, 'NewTitle', new_title)
 
         self._checkBoard(
-            Board,
-            CheckModerator=True
+            board,
+            check_moderator=True
         )
 
         try:
@@ -1396,16 +1399,16 @@ class Library:
         except ModuleNotFoundError:
             import api_setBoardTitle
 
-        api_setBoardTitle.setBoardTitle(self, Board, NewTitle)
+        api_setBoardTitle.setBoardTitle(self, board, new_title)
 
     def markPost(
-        self,
-        inputMarkType: int,
-        Board: str,
-        PostAID: str = None,
-        PostIndex: int = 0,
-        SearchType: int = 0,
-        SearchCondition: str = None,
+            self,
+            mark_type: int,
+            board: str,
+            post_aid: str = None,
+            post_index: int = 0,
+            search_type: int = 0,
+            search_condition: str = None,
     ):
         # 標記文章
         self._OneThread()
@@ -1420,12 +1423,12 @@ class Library:
 
         api_markPost.markPost(
             self,
-            inputMarkType,
-            Board,
-            PostAID,
-            PostIndex,
-            SearchType,
-            SearchCondition
+            mark_type,
+            board,
+            post_aid,
+            post_index,
+            search_type,
+            search_condition
         )
 
     def getFavouriteBoard(self):
@@ -1441,23 +1444,23 @@ class Library:
 
         return api_getFavouriteBoard.getFavouriteBoard(self)
 
-    def bucket(self, Board, BucketDays, Reason, TargetID):
+    def bucket(self, board: str, bucket_days: int, reason: str, pttid: str):
 
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', Board)
-        CheckValue.check(self.Config, int, 'BucketDays', BucketDays)
-        CheckValue.check(self.Config, str, 'Reason', Reason)
-        CheckValue.check(self.Config, str, 'TargetID', TargetID)
+        CheckValue.check(self.Config, str, 'Board', board)
+        CheckValue.check(self.Config, int, 'BucketDays', bucket_days)
+        CheckValue.check(self.Config, str, 'Reason', reason)
+        CheckValue.check(self.Config, str, 'TargetID', pttid)
 
-        self._getUser(TargetID)
+        self._getUser(pttid)
 
         self._checkBoard(
-            Board,
-            CheckModerator=True
+            board,
+            check_moderator=True
         )
 
         try:
@@ -1465,8 +1468,8 @@ class Library:
         except ModuleNotFoundError:
             import api_bucket
 
-        resultlist = api_bucket.bucket(
-            self, Board, BucketDays, Reason, TargetID)
+        api_bucket.bucket(
+            self, board, bucket_days, reason, pttid)
 
     def searchUser(
             self,
@@ -1508,28 +1511,27 @@ class Library:
 
         return api_searchuser.searchuser(self, target, minpage, maxpage)
 
-    def getBoardInfo(self, Board):
+    def getBoardInfo(self, board):
 
         self._OneThread()
 
         if not self._LoginStatus:
             raise Exceptions.RequireLogin(i18n.RequireLogin)
 
-        CheckValue.check(self.Config, str, 'Board', Board)
+        CheckValue.check(self.Config, str, 'Board', board)
 
-        return self._getBoardInfo(Board)
+        return self._getBoardInfo(board)
 
-    def _getBoardInfo(self, Board):
+    def _getBoardInfo(self, board):
 
         try:
             from . import api_getBoardInfo
         except ModuleNotFoundError:
             import api_getBoardInfo
 
-        return api_getBoardInfo.getBoardInfo(self, Board)
+        return api_getBoardInfo.getBoardInfo(self, board)
 
 
 if __name__ == '__main__':
-
     print('PTT Library v ' + Version)
     print('Developed by PTT CodingMan')

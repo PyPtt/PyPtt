@@ -88,7 +88,7 @@ def getCallStatus(api):
             if i == 0:
                 continue
             OriScreen = api._ConnectCore.getScreenQueue()[-1]
-            raise Exceptions.UnknowError(OriScreen)
+            raise Exceptions.UnknownError(OriScreen)
 
     if index == 0:
         return DataType.CallStatus.On
@@ -102,7 +102,7 @@ def getCallStatus(api):
         return DataType.CallStatus.Off
 
     OriScreen = api._ConnectCore.getScreenQueue()[-1]
-    raise Exceptions.UnknowError(OriScreen)
+    raise Exceptions.UnknownError(OriScreen)
 
 
 def setCallStatus(api, inputCallStatus):

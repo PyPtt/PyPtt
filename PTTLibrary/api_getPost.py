@@ -108,7 +108,7 @@ def getPost(
             '\n') if line.startswith(api._Cursor)]
 
         if len(CursorLine) != 1:
-            raise Exceptions.UnknowError(OriScreen)
+            raise Exceptions.UnknownError(OriScreen)
 
         CursorLine = CursorLine[0]
         Log.showValue(
