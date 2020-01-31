@@ -80,7 +80,7 @@ def get_waterball(api, operate_type):
             index
         )
         if index == 0:
-            return water_ball_list
+            return []
 
         ori_screen = api._ConnectCore.getScreenQueue()[-1]
         lines = ori_screen.split('\n')
@@ -324,7 +324,7 @@ def throwWaterBall(api, TargetID, Content):
 
     for waterball in WaterBallList:
 
-        if api._LastThroWaterBallTime != 0:
+        if api._LastThrowWaterBallTime != 0:
             CurrentTime = time.time()
             while (CurrentTime - api._LastThrowWaterBallTime) < 3.2:
                 time.sleep(0.1)
