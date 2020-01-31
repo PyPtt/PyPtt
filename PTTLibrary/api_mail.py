@@ -14,10 +14,10 @@ except ModuleNotFoundError:
 
 def mail(
         api,
-        ID,
-        Title,
-        Content,
-        SignFile):
+        pttid: str,
+        title: str,
+        content: str,
+        sign_file) -> object:
 
     # Log.showValue(
     #     api.Config,
@@ -35,7 +35,7 @@ def mail(
     CmdList.append(Command.Enter)
     CmdList.append('S')
     CmdList.append(Command.Enter)
-    CmdList.append(ID)
+    CmdList.append(pttid)
     CmdList.append(Command.Enter)
 
     Cmd = ''.join(CmdList)
@@ -47,71 +47,71 @@ def mail(
                 i18n.SendMail
             ],
             '主題：',
-            BreakDetect=True
+            break_detect=True
         ),
         ConnectCore.TargetUnit(
             i18n.NoSuchUser,
             '【電子郵件】',
-            Exceptions=Exceptions.NoSuchUser(ID)
+            exceptions=Exceptions.NoSuchUser(pttid)
         ),
     ]
 
     api._ConnectCore.send(
         Cmd,
         TargetList,
-        ScreenTimeout=api.Config.ScreenLongTimeOut
+        screen_timeout=api.Config.ScreenLongTimeOut
     )
 
     CmdList = []
-    CmdList.append(Title)
+    CmdList.append(title)
     CmdList.append(Command.Enter)
-    CmdList.append(Content)
+    CmdList.append(content)
     CmdList.append(Command.Ctrl_X)
 
     Cmd = ''.join(CmdList)
 
-    if SignFile == 0:
+    if sign_file == 0:
         SingFileSelection = i18n.NoSignatureFile
     else:
         SingFileSelection = i18n.Select + ' ' + \
-            str(SignFile) + 'th ' + i18n.SignatureFile
+                            str(sign_file) + 'th ' + i18n.SignatureFile
 
     TargetList = [
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
-            BreakDetect=True
+            break_detect=True
         ),
         ConnectCore.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            Response='s' + Command.Enter,
+            response='s' + Command.Enter,
             # Refresh=False,
         ),
         ConnectCore.TargetUnit(
             i18n.SelfSaveDraft,
             '是否自存底稿',
-            Response='y' + Command.Enter
+            response='y' + Command.Enter
         ),
         ConnectCore.TargetUnit(
             SingFileSelection,
             '選擇簽名檔',
-            Response=str(SignFile) + Command.Enter
+            response=str(sign_file) + Command.Enter
         ),
         ConnectCore.TargetUnit(
             SingFileSelection,
             'x=隨機',
-            Response=str(SignFile) + Command.Enter
+            response=str(sign_file) + Command.Enter
         ),
     ]
 
     api._ConnectCore.send(
         Cmd,
         TargetList,
-        ScreenTimeout=api.Config.ScreenPostTimeOut
+        screen_timeout=api.Config.ScreenPostTimeOut
     )
 
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.INFO,
         i18n.SendMail,

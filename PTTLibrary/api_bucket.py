@@ -12,7 +12,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def bucket(api, board, bucket_days, reason, pttid):
+def bucket(api: object, board: str, bucket_days: int, reason: str, pttid: str) -> None:
 
     cmd_list = []
     cmd_list.append(Command.GoMainMenu)
@@ -47,12 +47,12 @@ def bucket(api, board, bucket_days, reason, pttid):
                 i18n.Fail,
             ],
             '◆ 使用者之前已被禁言',
-            Exceptions=Exceptions.UserHasPreviouslyBeenBanned()
+            exceptions=Exceptions.UserHasPreviouslyBeenBanned()
         ),
         ConnectCore.TargetUnit(
             i18n.InputBucketDays_Reason,
             '請以數字跟單位(預設為天)輸入期限',
-            Response=cmd_part2,
+            response=cmd_part2,
         ),
         ConnectCore.TargetUnit(
             [
@@ -60,7 +60,7 @@ def bucket(api, board, bucket_days, reason, pttid):
                 i18n.Success,
             ],
             '其它鍵結束',
-            Response=Command.Enter,
+            response=Command.Enter,
         ),
         ConnectCore.TargetUnit(
             [
@@ -68,7 +68,7 @@ def bucket(api, board, bucket_days, reason, pttid):
                 i18n.Success,
             ],
             '權限設定系統',
-            Response=Command.Enter,
+            response=Command.Enter,
         ),
         ConnectCore.TargetUnit(
             [
@@ -76,7 +76,7 @@ def bucket(api, board, bucket_days, reason, pttid):
                 i18n.Success,
             ],
             '任意鍵',
-            Response=Command.Space,
+            response=Command.Space,
         ),
         ConnectCore.TargetUnit(
             [
@@ -84,7 +84,7 @@ def bucket(api, board, bucket_days, reason, pttid):
                 i18n.Success,
             ],
             Screens.Target.InBoard,
-            BreakDetect=True
+            break_detect=True
         ),
     ]
 

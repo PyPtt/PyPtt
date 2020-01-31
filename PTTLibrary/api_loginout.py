@@ -16,7 +16,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def logout(api):
+def logout(api) -> None:
 
     CmdList = []
     CmdList.append(Command.GoMainMenu)
@@ -34,7 +34,7 @@ def logout(api):
                 i18n.Success,
             ],
             '任意鍵',
-            BreakDetect=True,
+            break_detect=True,
         ),
     ]
 
@@ -57,7 +57,7 @@ def logout(api):
 
     api._LoginStatus = False
 
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.INFO,
         i18n.Logout,
@@ -95,7 +95,7 @@ def login(
     api._ID = ID
     api._Password = Password
 
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.INFO,
         [
@@ -113,54 +113,54 @@ def login(
         ConnectCore.TargetUnit(
             i18n.HasNewMailGotoMainMenu,
             '你有新信件',
-            Response=Command.GoMainMenu,
+            response=Command.GoMainMenu,
         ),
         ConnectCore.TargetUnit(
             i18n.LoginSuccess,
             Screens.Target.MainMenu,
-            BreakDetect=True
+            break_detect=True
         ),
         ConnectCore.TargetUnit(
             i18n.GoMainMenu,
             '【看板列表】',
-            Response=Command.GoMainMenu,
+            response=Command.GoMainMenu,
         ),
         ConnectCore.TargetUnit(
             i18n.ErrorIDPW,
             '密碼不對或無此帳號',
-            BreakDetect=True,
-            Exceptions=Exceptions.WrongIDorPassword()
+            break_detect=True,
+            exceptions=Exceptions.WrongIDorPassword()
         ),
         ConnectCore.TargetUnit(
             i18n.LoginTooOften,
             '登入太頻繁',
-            BreakDetect=True,
-            Exceptions=Exceptions.LoginTooOften()
+            break_detect=True,
+            exceptions=Exceptions.LoginTooOften()
         ),
         ConnectCore.TargetUnit(
             i18n.SystemBusyTryLater,
             '系統過載',
-            BreakDetect=True,
+            break_detect=True,
         ),
         ConnectCore.TargetUnit(
             i18n.DelWrongPWRecord,
             '您要刪除以上錯誤嘗試的記錄嗎',
-            Response='y' + Command.Enter,
+            response='y' + Command.Enter,
         ),
         ConnectCore.TargetUnit(
             i18n.MailBoxFull,
             '您保存信件數目',
-            Response=Command.GoMainMenu,
+            response=Command.GoMainMenu,
         ),
         ConnectCore.TargetUnit(
             i18n.PostNotFinish,
             '請選擇暫存檔 (0-9)[0]',
-            Response=Command.Enter,
+            response=Command.Enter,
         ),
         ConnectCore.TargetUnit(
             i18n.PostNotFinish,
             '有一篇文章尚未完成',
-            Response='Q' + Command.Enter,
+            response='Q' + Command.Enter,
         ),
         ConnectCore.TargetUnit(
             i18n.SigningUnPleaseWait,
@@ -169,12 +169,12 @@ def login(
         ConnectCore.TargetUnit(
             KickOtherLoginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
-            Response=KickOtherLoginResponse,
+            response=KickOtherLoginResponse,
         ),
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
-            Response=Command.Enter
+            response=Command.Enter
         ),
         ConnectCore.TargetUnit(
             i18n.SigningUpdate,
@@ -193,17 +193,17 @@ def login(
     index = api._ConnectCore.send(
         Cmd,
         TargetList,
-        ScreenTimeout=api.Config.ScreenLongTimeOut,
-        Refresh=False,
-        Secret=True
+        screen_timeout=api.Config.ScreenLongTimeOut,
+        refresh=False,
+        secret=True
     )
 
-    if TargetList[index].getDisplayMsg() != i18n.LoginSuccess:
-        OriScreen = api._ConnectCore.getScreenQueue()[-1]
+    if TargetList[index].get_display_msg() != i18n.LoginSuccess:
+        OriScreen = api._ConnectCore.get_screen_queue()[-1]
         print(OriScreen)
         raise Exceptions.LoginError()
 
-    OriScreen = api._ConnectCore.getScreenQueue()[-1]
+    OriScreen = api._ConnectCore.get_screen_queue()[-1]
     if '> (' in OriScreen:
         api._Cursor = DataType.Cursor.New
         Log.log(

@@ -8,10 +8,10 @@ except ModuleNotFoundError:
     import Command
 
 
-def setBoardTitle(
+def set_board_title(
         api,
-        Board: str,
-        NewTitle: str):
+        board: str,
+        new_title: str) ->None:
 
     # Log.showValue(
     #     api.Config,
@@ -23,37 +23,37 @@ def setBoardTitle(
     #     i18n.MarkPost
     # )
 
-    CmdList = []
-    CmdList.append(Command.GoMainMenu)
-    CmdList.append('qs')
-    CmdList.append(Board)
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Ctrl_C * 2)
-    CmdList.append(Command.Space)
-    CmdList.append('I')
-    CmdList.append(Command.Ctrl_P)
-    CmdList.append('b')
-    CmdList.append(Command.Enter)
-    CmdList.append(Command.Backspace * 31)
-    CmdList.append(NewTitle)
-    CmdList.append(Command.Enter * 2)
-    Cmd = ''.join(CmdList)
+    cmd_list = []
+    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Ctrl_C * 2)
+    cmd_list.append(Command.Space)
+    cmd_list.append('I')
+    cmd_list.append(Command.Ctrl_P)
+    cmd_list.append('b')
+    cmd_list.append(Command.Enter)
+    cmd_list.append(Command.Backspace * 31)
+    cmd_list.append(new_title)
+    cmd_list.append(Command.Enter * 2)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         ConnectCore.TargetUnit(
             i18n.NewSettingsHaveBeenSaved,
             '◆ 已儲存新設定',
-            BreakDetect=True,
+            break_detect=True,
         ),
         ConnectCore.TargetUnit(
             i18n.NoChanges,
             '◆ 未改變任何設定',
-            BreakDetect=True,
+            break_detect=True,
         ),
     ]
 
     api._ConnectCore.send(
-        Cmd,
-        TargetList,
-        ScreenTimeout=api.Config.ScreenLongTimeOut
+        cmd,
+        target_list,
+        screen_timeout=api.Config.ScreenLongTimeOut
     )

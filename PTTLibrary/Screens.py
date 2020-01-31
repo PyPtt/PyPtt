@@ -1,5 +1,6 @@
-import sys
 import re
+import sys
+
 try:
     from . import Util
     from . import Log
@@ -131,17 +132,17 @@ class Target(object):
     ]
 
 
-def show(Config, ScreenQueue, FunctionName=None):
-    if Config.LogLevel != Log.Level.TRACE:
+def show(config, screen_queue, function_name=None):
+    if config.LogLevel != Log.Level.TRACE:
         return
 
-    if isinstance(ScreenQueue, list):
-        for Screen in ScreenQueue:
+    if isinstance(screen_queue, list):
+        for Screen in screen_queue:
             print('-' * 50)
             try:
                 print(Screen.encode(
                     sys.stdin.encoding, "replace").decode(
-                        sys.stdin.encoding
+                    sys.stdin.encoding
                 )
                 )
             except Exception:
@@ -149,34 +150,32 @@ def show(Config, ScreenQueue, FunctionName=None):
     else:
         print('-' * 50)
         try:
-            print(ScreenQueue.encode(
+            print(screen_queue.encode(
                 sys.stdin.encoding, "replace").decode(
-                    sys.stdin.encoding))
+                sys.stdin.encoding))
         except Exception:
-            print(ScreenQueue.encode('utf-8', "replace").decode('utf-8'))
+            print(screen_queue.encode('utf-8', "replace").decode('utf-8'))
 
-        print('len:' + str(len(ScreenQueue)))
-    if FunctionName is not None:
-        print('錯誤在 ' + FunctionName + ' 函式發生')
+        print('len:' + str(len(screen_queue)))
+    if function_name is not None:
+        print('錯誤在 ' + function_name + ' 函式發生')
     print('-' * 50)
 
 
-def isMatch(Screen: str, Target):
-
-    if isinstance(Target, str):
-        return Target in Screen
-    if isinstance(Target, list):
-        for T in Target:
-            if T not in Screen:
+def is_match(screen: str, target):
+    if isinstance(target, str):
+        return target in screen
+    if isinstance(target, list):
+        for T in target:
+            if T not in screen:
                 return False
         return True
 
 
-def VT100(OriScreen: str, NoColor: bool = True):
+def vt100(ori_screen: str, no_color: bool = True):
+    result = ori_screen
 
-    result = OriScreen
-
-    if NoColor:
+    if no_color:
         result = re.sub('\x1B\[[\d+;]*m', '', result)
 
     result = re.sub(r'[\x1B]', '=PTT=', result)
@@ -201,11 +200,11 @@ def VT100(OriScreen: str, NoColor: bool = True):
     while '=PTT=[2J' in result:
         result = result[result.find('=PTT=[2J') + len('=PTT=[2J'):]
 
-    PatternResult = re.compile('=PTT=\[(\d+);(\d+)H$').search(result)
-    LastPosition = None
-    if PatternResult is not None:
-        # print(f'Before [{PatternResult.group(0)}]')
-        LastPosition = PatternResult.group(0)
+    pattern_result = re.compile('=PTT=\[(\d+);(\d+)H$').search(result)
+    last_position = None
+    if pattern_result is not None:
+        # print(f'Before [{pattern_result.group(0)}]')
+        last_position = pattern_result.group(0)
 
     # 進入 PTT 時，有時候會連分類看版一起傳過來然後再用主功能表畫面直接繪製畫面
     # 沒有[H 或者 [2J 導致後面的繪製行數錯誤
@@ -214,134 +213,134 @@ def VT100(OriScreen: str, NoColor: bool = True):
         result = result[result.find('=PTT=[1;3H主功能表') + len('=PTT=[1;3H主功能表'):]
 
     # if '=PTT=[1;' in result:
-    #     if LastPosition is None:
+    #     if last_position is None:
     #         result = result[result.rfind('=PTT=[1;'):]
-    #     elif not LastPosition.startswith('=PTT=[1;'):
+    #     elif not last_position.startswith('=PTT=[1;'):
     #         result = result[result.rfind('=PTT=[1;'):]
 
     # print('-'*50)
     # print(result)
-    ResultList = re.findall('=PTT=\[(\d+);(\d+)H', result)
-    for (Line, Space) in ResultList:
+    result_list = re.findall('=PTT=\[(\d+);(\d+)H', result)
+    for (line_count, space_count) in result_list:
         # if show:
-        #     print(f'>{Line}={Space}<')
-        Line = int(Line)
-        Space = int(Space)
-        CurrentLine = result[
-            :result.find(
-                f'[{Line};{Space}H'
-            )
-        ].count('\n') + 1
+        #     print(f'>{line_count}={space_count}<')
+        line_count = int(line_count)
+        space_count = int(space_count)
+        current_line = result[
+                      :result.find(
+                          f'[{line_count};{space_count}H'
+                      )
+                      ].count('\n') + 1
 
-        if CurrentLine > Line:
+        if current_line > line_count:
             # if LastPosition is None:
             #     pass
-            # elif LastPosition != f'=PTT=[{Line};{Space}H':
-            #     print(f'CurrentLine [{CurrentLine}]')
-            #     print(f'Line [{Line}]')
+            # elif LastPosition != f'=PTT=[{line_count};{space_count}H':
+            #     print(f'current_line [{current_line}]')
+            #     print(f'line_count [{line_count}]')
             #     print('Clear !!!')
-            # print(f'!!!!!!!!=PTT=[{Line};{Space}H')
+            # print(f'!!!!!!!!=PTT=[{line_count};{space_count}H')
 
-            ResultLines = result.split('\n')
-            TargetLine = ResultLines[Line - 1]
-            if f'=PTT=[{Line};{Space}H=PTT=[K' in result:
+            result_lines = result.split('\n')
+            target_line = result_lines[line_count - 1]
+            if f'=PTT=[{line_count};{space_count}H=PTT=[K' in result:
                 # 如果有 K 則把該行座標之後，全部抹除
-                TargetLine = TargetLine[:Space - 1]
+                target_line = target_line[:space_count - 1]
 
                 # OriginIndex = -1
-                OriginLine = None
-                # for i, line in enumerate(ResultLines):
-                for line in ResultLines:
-                    if f'=PTT=[{Line};{Space}H=PTT=[K' in line:
+                origin_line = None
+                # for i, line in enumerate(result_lines):
+                for line in result_lines:
+                    if f'=PTT=[{line_count};{space_count}H=PTT=[K' in line:
                         # OriginIndex = i
-                        OriginLine = line
+                        origin_line = line
                         break
 
-                if OriginLine.count('=PTT=') > 2:
-                    OriginLine = OriginLine[
-                        :Util.findnth(OriginLine, '=PTT=', 3)
-                    ]
+                if origin_line.count('=PTT=') > 2:
+                    origin_line = origin_line[
+                                 :Util.findnth(origin_line, '=PTT=', 3)
+                                 ]
 
-                # ResultLines[OriginIndex] = ResultLines[OriginIndex].replace(
-                #     OriginLine,
+                # result_lines[OriginIndex] = result_lines[OriginIndex].replace(
+                #     origin_line,
                 #     ''
                 # )
 
-                OriginLine = OriginLine[
-                    len(f'=PTT=[{Line};{Space}H=PTT=[K'):
-                ]
+                origin_line = origin_line[
+                             len(f'=PTT=[{line_count};{space_count}H=PTT=[K'):
+                             ]
 
                 # Log.showValue(
                 #     Log.Level.INFO,
-                #     'OriginLine',
-                #     OriginLine
+                #     'origin_line',
+                #     origin_line
                 # )
 
-                NewTargetLine = f'{TargetLine}{OriginLine}'
-                ResultLines[Line - 1] = NewTargetLine
-            result = '\n'.join(ResultLines)
-        elif CurrentLine == Line:
-            # print(f'!!!!!=PTT=[{Line};{Space}H')
-            CurrentSpace = result[
-                :result.find(
-                    f'=PTT=[{Line};{Space}H'
-                )
-            ]
-            CurrentSpace = CurrentSpace[
-                CurrentSpace.rfind('\n') + 1:
-            ]
+                new_target_line = f'{target_line}{origin_line}'
+                result_lines[line_count - 1] = new_target_line
+            result = '\n'.join(result_lines)
+        elif current_line == line_count:
+            # print(f'!!!!!=PTT=[{line_count};{space_count}H')
+            current_space = result[
+                           :result.find(
+                               f'=PTT=[{line_count};{space_count}H'
+                           )
+                           ]
+            current_space = current_space[
+                           current_space.rfind('\n') + 1:
+                           ]
             # Log.showValue(
             #     Log.Level.INFO,
-            #     'CurrentSpace',
-            #     CurrentSpace
+            #     'current_space',
+            #     current_space
             # )
-            CurrentSpace = len(CurrentSpace.encode('big5', 'replace'))
-            # print(f'!!!!!{CurrentSpace}')
-            if CurrentSpace > Space:
+            current_space = len(current_space.encode('big5', 'replace'))
+            # print(f'!!!!!{current_space}')
+            if current_space > space_count:
                 result = result.replace(
-                    f'=PTT=[{Line};{Space}H',
-                    (Line - CurrentLine) * '\n' + Space * ' '
+                    f'=PTT=[{line_count};{space_count}H',
+                    (line_count - current_line) * '\n' + space_count * ' '
                 )
             else:
                 result = result.replace(
-                    f'=PTT=[{Line};{Space}H',
-                    (Line - CurrentLine) * '\n' + (Space - CurrentSpace) * ' '
+                    f'=PTT=[{line_count};{space_count}H',
+                    (line_count - current_line) * '\n' + (space_count - current_space) * ' '
                 )
         else:
             result = result.replace(
-                f'=PTT=[{Line};{Space}H',
-                (Line - CurrentLine) * '\n' + Space * ' '
+                f'=PTT=[{line_count};{space_count}H',
+                (line_count - current_line) * '\n' + space_count * ' '
             )
 
-    # while '=PTT=[K' in result:
-    #     Target = result[result.find('=PTT=[K'):]
+        # while '=PTT=[K' in result:
+        #     Target = result[result.find('=PTT=[K'):]
 
-    #     print(f'Target[{Target}]')
+        #     print(f'Target[{Target}]')
 
-    #     index1 = Target.find('\n')
-    #     index2 = Target.find('=PTT=')
-    #     if index2 == 0:
-    #         index = index1
-    #     else:
-    #         index = min(index1, index2)
+        #     index1 = Target.find('\n')
+        #     index2 = Target.find('=PTT=')
+        #     if index2 == 0:
+        #         index = index1
+        #     else:
+        #         index = min(index1, index2)
 
-    #     break
-    #     Target = Target[:index]
-    #     print('===' * 20)
-    #     print(result)
-    #     print('-=-' * 20)
-    #     print(Target)
-    #     print('===' * 20)
-    #     result = result.replace(Target, '')
+        #     break
+        #     Target = Target[:index]
+        #     print('===' * 20)
+        #     print(result)
+        #     print('-=-' * 20)
+        #     print(Target)
+        #     print('===' * 20)
+        #     result = result.replace(Target, '')
 
-    # print(Target)
-    # print('===' * 20)
+        # print(Target)
+        # print('===' * 20)
 
-    if LastPosition is not None:
-        result = result.replace(LastPosition, '')
+    if last_position is not None:
+        result = result.replace(last_position, '')
 
-    # if show:
-    #     print('-Final-' * 20)
-    #     print(result)
-    #     print('-Final-' * 20)
+        # if show:
+        #     print('-Final-' * 20)
+        #     print(result)
+        #     print('-Final-' * 20)
     return result

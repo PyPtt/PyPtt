@@ -18,7 +18,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def get_waterball(api, operate_type):
+def get_waterball(api, operate_type:int) ->list:
 
     if operate_type == DataType.WaterBallOperateType.DoNothing:
         water_ball_operate_type = 'R'
@@ -31,8 +31,8 @@ def get_waterball(api, operate_type):
         ConnectCore.TargetUnit(
             i18n.NoWaterball,
             '◆ 暫無訊息記錄',
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
@@ -40,18 +40,18 @@ def get_waterball(api, operate_type):
                 i18n.Done,
             ],
             Screens.Target.WaterBallListEnd,
-            Response=Command.Left + water_ball_operate_type +
-            Command.Enter + Command.GoMainMenu,
-            BreakDetectAfterSend=True,
-            LogLevel=Log.Level.DEBUG
+            response=Command.Left + water_ball_operate_type +
+                     Command.Enter + Command.GoMainMenu,
+            break_detect_after_send=True,
+            log_level=Log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
                 i18n.BrowseWaterball,
             ],
             Screens.Target.InWaterBallList,
-            BreakDetect=True,
-            LogLevel=Log.Level.DEBUG
+            break_detect=True,
+            log_level=Log.Level.DEBUG
         ),
     ]
 
@@ -71,9 +71,9 @@ def get_waterball(api, operate_type):
         index = api._ConnectCore.send(
             cmd,
             target_list,
-            ScreenTimeout=1
+            screen_timeout=1
         )
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.DEBUG,
             'index',
@@ -82,7 +82,7 @@ def get_waterball(api, operate_type):
         if index == 0:
             return []
 
-        ori_screen = api._ConnectCore.getScreenQueue()[-1]
+        ori_screen = api._ConnectCore.get_screen_queue()[-1]
         lines = ori_screen.split('\n')
         last_line = lines[-1]
         lines.pop()
@@ -93,14 +93,14 @@ def get_waterball(api, operate_type):
         # print(OriScreen)
         # print('=' * 50)
         # ScreenTemp = OriScreen
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.DEBUG,
             'OriScreen',
             ori_screen
         )
 
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.DEBUG,
             'LastLine',
@@ -121,51 +121,51 @@ def get_waterball(api, operate_type):
         # print(LastLine)
         # print('=' * 50)
 
-        PatternResult = line_from_pattern.search(last_line)
-        LastReadLineList = PatternResult.group(0).split('~')
-        LastReadLineATemp = int(LastReadLineList[0])
-        LastReadLineBTemp = int(LastReadLineList[1])
-        # LastReadLineA = LastReadLineATemp - 1
-        # LastReadLineB = LastReadLineBTemp - 1
+        pattern_result = line_from_pattern.search(last_line)
+        last_read_line_list = pattern_result.group(0).split('~')
+        last_read_line_a_temp = int(last_read_line_list[0])
+        last_read_line_b_temp = int(last_read_line_list[1])
+        # last_read_line_a = last_read_line_a_temp - 1
+        # last_read_line_b = last_read_line_b_temp - 1
 
         if first_page:
             first_page = False
             all_waterball.append(ori_screen)
-            LastReadLineA = LastReadLineATemp - 1
-            LastReadLineB = LastReadLineBTemp - 1
+            last_read_line_a = last_read_line_a_temp - 1
+            last_read_line_b = last_read_line_b_temp - 1
         else:
-            GetLineA = LastReadLineATemp - LastReadLineA
-            GetLineB = LastReadLineBTemp - LastReadLineB
+            get_line_a = last_read_line_a_temp - last_read_line_a
+            get_line_b = last_read_line_b_temp - last_read_line_b
 
-            # print(f'LastReadLineA [{LastReadLineA}]')
-            # print(f'LastReadLineB [{LastReadLineB}]')
-            # print(f'LastReadLineATemp [{LastReadLineATemp}]')
-            # print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
-            # print(f'GetLineA [{GetLineA}]')
-            # print(f'GetLineB [{GetLineB}]')
-            if GetLineB > 0:
+            # print(f'last_read_line_a [{last_read_line_a}]')
+            # print(f'last_read_line_b [{last_read_line_b}]')
+            # print(f'last_read_line_a_temp [{last_read_line_a_temp}]')
+            # print(f'last_read_line_b_temp [{last_read_line_b_temp}]')
+            # print(f'get_line_a [{get_line_a}]')
+            # print(f'get_line_b [{get_line_b}]')
+            if get_line_b > 0:
                 # print('Type 1')
 
                 if not all_waterball[-1].endswith(']'):
-                    GetLineB += 1
+                    get_line_b += 1
 
-                new_content_part = '\n'.join(lines[-GetLineB:])
+                new_content_part = '\n'.join(lines[-get_line_b:])
             else:
                 # print('Type 2')
-                if GetLineA > 0:
+                if get_line_a > 0:
                     # print('Type 2 - 1')
 
-                    if len(lines[-GetLineA]) == 0:
+                    if len(lines[-get_line_a]) == 0:
                         # print('!!!!!!!!!')
-                        GetLineA += 1
+                        get_line_a += 1
 
-                    new_content_part = '\n'.join(lines[-GetLineA:])
+                    new_content_part = '\n'.join(lines[-get_line_a:])
                 else:
                     # print('Type 2 - 2')
                     new_content_part = '\n'.join(lines)
 
             all_waterball.append(new_content_part)
-            Log.showValue(
+            Log.show_value(
                 api.Config,
                 Log.Level.DEBUG,
                 'NewContentPart',
@@ -175,8 +175,8 @@ def get_waterball(api, operate_type):
         if index == 1:
             break
 
-        LastReadLineA = LastReadLineATemp
-        LastReadLineB = LastReadLineBTemp
+        last_read_line_a = last_read_line_a_temp
+        last_read_line_b = last_read_line_b_temp
 
         cmd = Command.Down
 
@@ -190,7 +190,7 @@ def get_waterball(api, operate_type):
             ']==PTTWaterBallNewLine==', ']\n')
     else:
         all_waterball = all_waterball.replace('\\\n', '')
-    Log.showValue(
+    Log.show_value(
         api.Config,
         Log.Level.DEBUG,
         'AllWaterball',
@@ -204,14 +204,14 @@ def get_waterball(api, operate_type):
     for line in all_waterball.split('\n'):
 
         if (not line.startswith('To')) and (not line.startswith('★')):
-            Log.showValue(
+            Log.show_value(
                 api.Config,
                 Log.Level.DEBUG,
                 'Discard waterball',
                 line
             )
             continue
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.DEBUG,
             'Ready to parse waterball',
@@ -219,145 +219,145 @@ def get_waterball(api, operate_type):
         )
 
         if line.startswith('To'):
-            Log.showValue(
+            Log.show_value(
                 api.Config,
                 Log.Level.DEBUG,
                 'Waterball Type',
                 'Send'
             )
-            Type = DataType.WaterBallType.Send
+            waterball_type = DataType.WaterBallType.Send
 
-            PatternResult = to_water_ball_target_pattern.search(line)
-            Target = PatternResult.group(0)[3:-1]
+            pattern_result = to_water_ball_target_pattern.search(line)
+            target = pattern_result.group(0)[3:-1]
 
-            PatternResult = water_ball_date_pattern.search(line)
-            Date = PatternResult.group(0)[1:-1]
+            pattern_result = water_ball_date_pattern.search(line)
+            date = pattern_result.group(0)[1:-1]
 
-            Content = line
-            Content = Content[Content.find(
-                Target + ':') + len(Target + ':'):]
-            Content = Content[:Content.rfind(Date) - 1]
-            Content = Content.strip()
+            content = line
+            content = content[content.find(
+                target + ':') + len(target + ':'):]
+            content = content[:content.rfind(date) - 1]
+            content = content.strip()
 
         elif line.startswith('★'):
-            Log.showValue(
+            Log.show_value(
                 api.Config,
                 Log.Level.DEBUG,
                 'Waterball Type',
                 'Catch'
             )
-            Type = DataType.WaterBallType.Catch
+            waterball_type = DataType.WaterBallType.Catch
 
-            PatternResult = from_water_ball_target_pattern.search(line)
-            Target = PatternResult.group(0)[1:-1]
+            pattern_result = from_water_ball_target_pattern.search(line)
+            target = pattern_result.group(0)[1:-1]
 
-            PatternResult = water_ball_date_pattern.search(line)
-            Date = PatternResult.group(0)[1:-1]
+            pattern_result = water_ball_date_pattern.search(line)
+            date = pattern_result.group(0)[1:-1]
 
-            Content = line
-            Content = Content[Content.find(
-                Target + ' ') + len(Target + ' '):]
-            Content = Content[:Content.rfind(Date) - 1]
-            Content = Content.strip()
+            content = line
+            content = content[content.find(
+                target + ' ') + len(target + ' '):]
+            content = content[:content.rfind(date) - 1]
+            content = content.strip()
 
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.DEBUG,
-            'Waterball Target',
-            Target
+            'Waterball target',
+            target
         )
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.DEBUG,
-            'Waterball Content',
-            Content
+            'Waterball content',
+            content
         )
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.DEBUG,
-            'Waterball Date',
-            Date
+            'Waterball date',
+            date
         )
 
-        CurrentWaterBall = DataType.WaterBallInfo(
-            Type,
-            Target,
-            Content,
-            Date
+        current_waterball = DataType.WaterBallInfo(
+            waterball_type,
+            target,
+            content,
+            date
         )
 
-        water_ball_list.append(CurrentWaterBall)
+        water_ball_list.append(current_waterball)
 
     return water_ball_list
 
 
-def throwWaterBall(api, TargetID, Content):
-    MaxLength = 50
+def throw_waterball(api: object, target_id: str, content: str) -> None:
+    max_length = 50
 
-    WaterBallList = []
-    TempStartIndex = 0
-    TempEndIndex = TempStartIndex + 1
+    water_ball_list = []
+    temp_start_index = 0
+    temp_end_index = temp_start_index + 1
 
-    while TempEndIndex <= len(Content):
-        Temp = ''
-        LastTemp = None
-        while len(Temp.encode('big5-uao', 'ignore')) < MaxLength:
-            Temp = Content[TempStartIndex:TempEndIndex]
+    while temp_end_index <= len(content):
+        temp = ''
+        last_temp = None
+        while len(temp.encode('big5-uao', 'ignore')) < max_length:
+            temp = content[temp_start_index:temp_end_index]
 
-            if not len(Temp.encode('big5-uao', 'ignore')) < MaxLength:
+            if not len(temp.encode('big5-uao', 'ignore')) < max_length:
                 break
-            elif Content.endswith(Temp) and TempStartIndex != 0:
+            elif content.endswith(temp) and temp_start_index != 0:
                 break
-            elif Temp.endswith('\n'):
+            elif temp.endswith('\n'):
                 break
-            elif LastTemp == Temp:
+            elif last_temp == temp:
                 break
 
-            TempEndIndex += 1
-            LastTemp = Temp
+            temp_end_index += 1
+            last_temp = temp
 
-        WaterBallList.append(Temp.strip())
+        water_ball_list.append(temp.strip())
 
-        TempStartIndex = TempEndIndex
-        TempEndIndex = TempStartIndex + 1
-    WaterBallList = filter(None, WaterBallList)
+        temp_start_index = temp_end_index
+        temp_end_index = temp_start_index + 1
+    water_ball_list = filter(None, water_ball_list)
 
-    for waterball in WaterBallList:
+    for waterball in water_ball_list:
 
         if api._LastThrowWaterBallTime != 0:
-            CurrentTime = time.time()
-            while (CurrentTime - api._LastThrowWaterBallTime) < 3.2:
+            current_time = time.time()
+            while (current_time - api._LastThrowWaterBallTime) < 3.2:
                 time.sleep(0.1)
-                CurrentTime = time.time()
+                current_time = time.time()
 
-        Log.showValue(
+        Log.show_value(
             api.Config,
             Log.Level.INFO,
             i18n.WaterBall,
             waterball
         )
 
-        TargetList = [
+        target_list = [
             ConnectCore.TargetUnit(
                 i18n.SetCallStatus,
                 '您的呼叫器目前設定為關閉',
-                Response='y' + Command.Enter,
+                response='y' + Command.Enter,
             ),
             # 對方已落跑了
             ConnectCore.TargetUnit(
                 i18n.SetCallStatus,
                 '◆ 糟糕! 對方已落跑了',
-                Exceptions=Exceptions.UserOffline(TargetID)
+                exceptions=Exceptions.UserOffline(target_id)
             ),
             ConnectCore.TargetUnit(
                 [
                     i18n.Throw,
-                    TargetID,
+                    target_id,
                     i18n.WaterBall
                 ],
-                '丟 ' + TargetID + ' 水球:',
-                Response=waterball + Command.Enter * 2 +
-                Command.GoMainMenu,
+                '丟 ' + target_id + ' 水球:',
+                response=waterball + Command.Enter * 2 +
+                         Command.GoMainMenu,
             ),
             ConnectCore.TargetUnit(
                 [
@@ -366,28 +366,28 @@ def throwWaterBall(api, TargetID, Content):
                     i18n.Success
                 ],
                 Screens.Target.MainMenu,
-                BreakDetect=True
+                break_detect=True
             )
         ]
 
-        CmdList = []
-        CmdList.append(Command.GoMainMenu)
-        CmdList.append('T')
-        CmdList.append(Command.Enter)
-        CmdList.append('U')
-        CmdList.append(Command.Enter)
-        if '【好友列表】' in api._ConnectCore.getScreenQueue()[-1]:
-            CmdList.append('f')
-        CmdList.append('s')
-        CmdList.append(TargetID)
-        CmdList.append(Command.Enter)
-        CmdList.append('w')
+        cmd_list = []
+        cmd_list.append(Command.GoMainMenu)
+        cmd_list.append('T')
+        cmd_list.append(Command.Enter)
+        cmd_list.append('U')
+        cmd_list.append(Command.Enter)
+        if '【好友列表】' in api._ConnectCore.get_screen_queue()[-1]:
+            cmd_list.append('f')
+        cmd_list.append('s')
+        cmd_list.append(target_id)
+        cmd_list.append(Command.Enter)
+        cmd_list.append('w')
 
-        Cmd = ''.join(CmdList)
+        cmd = ''.join(cmd_list)
 
         api._ConnectCore.send(
-            Cmd,
-            TargetList,
-            ScreenTimeout=api.Config.ScreenLongTimeOut
+            cmd,
+            target_list,
+            screen_timeout=api.Config.ScreenLongTimeOut
         )
         api._LastThrowWaterBallTime = time.time()
