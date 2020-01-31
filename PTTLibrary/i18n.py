@@ -79,7 +79,7 @@ Date = None
 Content = None
 Author = None
 Title = None
-UnknowError = None
+UnknownError = None
 RequireLogin = None
 HasPushPermission = None
 HasPostPermission = None
@@ -552,8 +552,8 @@ def load(inputLanguage):
         'Title',
     ])
 
-    global UnknowError
-    UnknowError = SpecificLoad(inputLanguage, [
+    global UnknownError
+    UnknownError = SpecificLoad(inputLanguage, [
         '未知錯誤',
         'Unknow Error',
     ])

@@ -101,9 +101,9 @@ def markPost(
     if PostIndex != 0:
         NewestIndex = api._getNewestIndex(
             DataType.IndexType.BBS,
-            Board=Board,
-            SearchType=SearchType,
-            SearchCondition=SearchCondition
+            board=Board,
+            search_type=SearchType,
+            search_condition=SearchCondition
         )
         CheckValue.checkIndex(api.Config, 'PostIndex',
                               PostIndex, MaxValue=NewestIndex)
@@ -115,7 +115,7 @@ def markPost(
 
     api._checkBoard(
         Board,
-        CheckModerator=True
+        check_moderator=True
     )
 
     CmdList = []

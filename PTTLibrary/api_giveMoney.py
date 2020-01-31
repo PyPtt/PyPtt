@@ -51,7 +51,7 @@ def giveMoney(
             i18n.NoMoney,
             '交易取消!',
             BreakDetect=True,
-            Exceptions=Exceptions.UnknowError
+            Exceptions=Exceptions.UnknownError
         ),
         ConnectCore.TargetUnit(
             [

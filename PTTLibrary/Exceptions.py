@@ -15,7 +15,7 @@ class Error(Exception):
         return self.message
 
 
-class UnknowError(Exception):
+class UnknownError(Exception):
     def __init__(self, message):
 
         self.message = message
