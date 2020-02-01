@@ -69,20 +69,20 @@ def login(
         api,
         ID,
         Password,
-        KickOtherLogin):
+        kick_other_login):
 
     if api._LoginStatus:
         api.logout()
 
-    api.config.KickOtherLogin = KickOtherLogin
+    api.config.kick_other_login = kick_other_login
 
-    def KickOtherLoginDisplayMsg():
-        if api.config.KickOtherLogin:
-            return i18n.KickOtherLogin
-        return i18n.NotKickOtherLogin
+    def kick_other_loginDisplayMsg():
+        if api.config.kick_other_login:
+            return i18n.kick_other_login
+        return i18n.Notkick_other_login
 
-    def KickOtherLoginResponse(Screen):
-        if api.config.KickOtherLogin:
+    def kick_other_loginResponse(Screen):
+        if api.config.kick_other_login:
             return 'y' + Command.Enter
         return 'n' + Command.Enter
 
@@ -105,7 +105,7 @@ def login(
         ID
     )
 
-    api.config.KickOtherLogin = KickOtherLogin
+    api.config.kick_other_login = kick_other_login
 
     api.connect_core.connect()
 
@@ -167,9 +167,9 @@ def login(
             '登入中，請稍候',
         ),
         ConnectCore.TargetUnit(
-            KickOtherLoginDisplayMsg,
+            kick_other_loginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
-            response=KickOtherLoginResponse,
+            response=kick_other_loginResponse,
         ),
         ConnectCore.TargetUnit(
             i18n.AnyKeyContinue,
@@ -193,7 +193,7 @@ def login(
     index = api.connect_core.send(
         Cmd,
         TargetList,
-        screen_timeout=api.config.ScreenLongTimeOut,
+        screen_timeout=api.config.screen_long_timeout,
         refresh=False,
         secret=True
     )
@@ -205,22 +205,22 @@ def login(
 
     OriScreen = api.connect_core.get_screen_queue()[-1]
     if '> (' in OriScreen:
-        api._Cursor = DataType.Cursor.New
+        api.cursor = DataType.Cursor.New
         Log.log(
             api.config,
             Log.Level.DEBUG,
             i18n.NewCursor
         )
     else:
-        api._Cursor = DataType.Cursor.Old
+        api.cursor = DataType.Cursor.Old
         Log.log(
             api.config,
             Log.Level.DEBUG,
             i18n.OldCursor
         )
 
-    if api._Cursor not in Screens.Target.InBoardWithCursor:
-        Screens.Target.InBoardWithCursor.append('\n' + api._Cursor)
+    if api.cursor not in Screens.Target.InBoardWithCursor:
+        Screens.Target.InBoardWithCursor.append('\n' + api.cursor)
 
     api._UnregisteredUser = False
     if '(T)alk' not in OriScreen:

@@ -101,13 +101,13 @@ def search_user(
                 i18n.QuitUserProfile,
                 '《ＩＤ暱稱》',
                 response=Command.Enter,
-                # LogLevel=Log.Level.DEBUG
+                # log_level=Log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.Done,
                 '查詢網友',
                 break_detect=True,
-                # LogLevel=Log.Level.DEBUG
+                # log_level=Log.Level.DEBUG
             )
         ]
     )

@@ -133,7 +133,7 @@ class Target(object):
 
 
 def show(config, screen_queue, function_name=None):
-    if config.LogLevel != Log.Level.TRACE:
+    if config.log_level != Log.Level.TRACE:
         return
 
     if isinstance(screen_queue, list):

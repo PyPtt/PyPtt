@@ -182,7 +182,7 @@ def get_waterball(api, operate_type:int) ->list:
 
     all_waterball = '\n'.join(all_waterball)
 
-    if api.config.Host == DataType.Host.PTT1:
+    if api.config.host == DataType.host.PTT1:
         all_waterball = all_waterball.replace(
             ']\n', ']==PTTWaterBallNewLine==')
         all_waterball = all_waterball.replace('\n', '')
@@ -388,6 +388,6 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
         api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=api.config.ScreenLongTimeOut
+            screen_timeout=api.config.screen_long_timeout
         )
         api._LastThrowWaterBallTime = time.time()

@@ -132,7 +132,7 @@ def set_callstatus(api, callstatus) -> None:
         api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=api.config.ScreenLongTimeOut
+            screen_timeout=api.config.screen_long_timeout
         )
 
         current_call_status = api._get_callstatus()

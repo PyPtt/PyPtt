@@ -84,7 +84,7 @@ if __name__ == '__main__':
     try:
 
         PTTBot = PTT.Library(
-            # LogLevel=PTT.LogLevel.TRACE,
+            # log_level=PTT.log_level.TRACE,
         )
         try:
             PTTBot.login(

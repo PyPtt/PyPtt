@@ -52,9 +52,9 @@ class TargetUnit(object):
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
         if log_level == 0:
-            self._LogLevel = Log.Level.INFO
+            self._log_level = Log.Level.INFO
         else:
-            self._LogLevel = log_level
+            self._log_level = log_level
         self._Response = response
         self._BreakDetect = break_detect
         self._Exception = exceptions
@@ -83,7 +83,7 @@ class TargetUnit(object):
         return self._DetectTarget
 
     def get_log_level(self):
-        return self._LogLevel
+        return self._log_level
 
     def get_response(self, Screen: str):
         if callable(self._Response):
@@ -141,7 +141,7 @@ class API(object):
     def __init__(self, config, host: int):
 
         self.Config = config
-        self._Host = host
+        self._host = host
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
             [
@@ -159,14 +159,14 @@ class API(object):
 
     def connect(self):
         def _wait():
-            for i in range(self.Config.RetryWaitTime):
+            for i in range(self.Config.retry_wait_time):
                 Log.show_value(self.Config, Log.Level.INFO, [
                     i18n.Prepare,
                     i18n.Again,
                     i18n.Connect,
                     i18n.PTT,
                 ],
-                               str(self.Config.RetryWaitTime - i)
+                               str(self.Config.retry_wait_time - i)
                                )
                 time.sleep(1)
 
@@ -193,7 +193,7 @@ class API(object):
                     except Exception as e:
                         pass
 
-                if self._Host == DataType.Host.PTT1:
+                if self._host == DataType.host.PTT1:
                     self._Core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             'wss://ws.ptt.cc/bbs/',
@@ -212,7 +212,7 @@ class API(object):
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                if self._Host == DataType.Host.PTT1:
+                if self._host == DataType.host.PTT1:
                     Log.show_value(self.Config, Log.Level.INFO, [
                         i18n.Connect,
                         i18n.PTT,
@@ -273,7 +273,7 @@ class API(object):
             target_list.append(self._UseTooManyResources)
 
         if screen_timeout == 0:
-            current_screen_timeout = self.Config.ScreenTimeOut
+            current_screen_timeout = self.Config.screen_timeout
         else:
             current_screen_timeout = screen_timeout
 

@@ -92,7 +92,7 @@ def get_post_index(
     # print(OriScreen)
     screen_list = ori_screen.split('\n')
 
-    line = [x for x in screen_list if x.startswith(api._Cursor)]
+    line = [x for x in screen_list if x.startswith(api.cursor)]
     line = line[0]
     last_line = screen_list[screen_list.index(line) - 1]
     # print(LastLine)
