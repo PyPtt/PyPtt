@@ -31,13 +31,13 @@ def Init():
     PTT.Library(language=PTT.language.Chinese)
     print('===英文顯示===')
     PTT.Library(language=PTT.language.English)
-    print('===Log DEBUG===')
+    print('===log DEBUG===')
     PTT.Library(log_level=PTT.log_level.DEBUG)
-    print('===Log INFO===')
+    print('===log INFO===')
     PTT.Library(log_level=PTT.log_level.INFO)
-    print('===Log SLIENT===')
+    print('===log SLIENT===')
     PTT.Library(log_level=PTT.log_level.SILENT)
-    print('===Log SLIENT======')
+    print('===log SLIENT======')
 
     print('===負向===')
     try:
@@ -60,13 +60,13 @@ def Init():
     # PTT.Library(ConnectMode=PTT.ConnectMode.Telnet)
     # print('===WebSocket===')
     # PTT.Library(ConnectMode=PTT.ConnectMode.WebSocket)
-    # print('===Log DEBUG===')
+    # print('===log DEBUG===')
     # PTT.Library(log_level=PTT.log_level.DEBUG)
-    # print('===Log INFO===')
+    # print('===log INFO===')
     # PTT.Library(log_level=PTT.log_level.INFO)
-    # print('===Log SLIENT===')
+    # print('===log SLIENT===')
     # PTT.Library(log_level=PTT.log_level.SLIENT)
-    # print('===Log SLIENT======')
+    # print('===log SLIENT======')
 
 
 def performance_test():
@@ -96,7 +96,7 @@ def performance_test():
     # )
     # try:
     #     PTTBot.login(ID, Password, kick_other_login=True)
-    # except PTT.Exceptions.LoginError:
+    # except PTT.exceptions.loginError:
     #     PTTBot.log('登入失敗')
     #     sys.exit()
     # PTTBot.log('登入成功')
@@ -120,9 +120,9 @@ def performance_test():
 
 def get_post():
     test_post_list = [
-        # ('Python', 1),
-        # ('NotExitBoard', 1),
-        # ('Python', '1TJH_XY0'),
+        ('Python', 1),
+        ('NotExitBoard', 1),
+        ('Python', '1TJH_XY0'),
         # 文章格式錯誤
         # ('Steam', 4444),
         # ('Stock', 92324),
@@ -168,7 +168,7 @@ def get_post():
                 post = ptt_bot.get_post(
                     board,
                     post_index=index,
-                    # SearchType=PTT.PostSearchType.Keyword,
+                    # SearchType=PTT.data_type.PostSearchType.Keyword,
                     # SearchCondition='公告',
                     query=query,
                 )
@@ -176,7 +176,7 @@ def get_post():
                 post = ptt_bot.get_post(
                     board,
                     post_aid=index,
-                    # SearchType=PTT.PostSearchType.Keyword,
+                    # SearchType=PTT.data_type.PostSearchType.Keyword,
                     # SearchCondition='公告',
                     query=query,
                 )
@@ -226,13 +226,13 @@ def get_post():
                     #     print(Push.getIP())
                     #     print(Push.get_time())
 
-                    if push.get_type() == PTT.PushType.Push:
+                    if push.get_type() == PTT.data_type.PushType.Push:
                         push_count += 1
                         push_type = '推'
-                    if push.get_type() == PTT.PushType.Boo:
+                    if push.get_type() == PTT.data_type.PushType.Boo:
                         boo_count += 1
                         push_type = '噓'
-                    if push.get_type() == PTT.PushType.Arrow:
+                    if push.get_type() == PTT.data_type.PushType.Arrow:
                         arrow_count += 1
                         push_type = '→'
 
@@ -259,33 +259,33 @@ def get_post():
             print(e)
 
 
-TestList = [
-    ('Wanted', PTT.PostSearchType.Keyword, '[公告]'),
-    ('Wanted', PTT.PostSearchType.Author, 'gogin'),
-    ('Wanted', PTT.PostSearchType.Push, '10'),
-    ('Wanted', PTT.PostSearchType.Mark, 'm'),
-    ('Wanted', PTT.PostSearchType.Money, '5'),
-    ('Gossiping', PTT.PostSearchType.Keyword, '[公告]'),
-    ('Gossiping', PTT.PostSearchType.Author, 'ReDmango'),
-    ('Gossiping', PTT.PostSearchType.Push, '10'),
-    ('Gossiping', PTT.PostSearchType.Mark, 'm'),
-    ('Gossiping', PTT.PostSearchType.Money, '5'),
+TestList = {
+    ('Wanted', PTT.data_type.PostSearchType.Keyword, '[公告]'),
+    ('Wanted', PTT.data_type.PostSearchType.Author, 'gogin'),
+    ('Wanted', PTT.data_type.PostSearchType.Push, '10'),
+    ('Wanted', PTT.data_type.PostSearchType.Mark, 'm'),
+    ('Wanted', PTT.data_type.PostSearchType.Money, '5'),
+    ('Gossiping', PTT.data_type.PostSearchType.Keyword, '[公告]'),
+    ('Gossiping', PTT.data_type.PostSearchType.Author, 'ReDmango'),
+    ('Gossiping', PTT.data_type.PostSearchType.Push, '10'),
+    ('Gossiping', PTT.data_type.PostSearchType.Mark, 'm'),
+    ('Gossiping', PTT.data_type.PostSearchType.Money, '5'),
 
-    ('Gossiping', PTT.PostSearchType.Push, '-100'),
-    ('Gossiping', PTT.PostSearchType.Push, '150'),
-]
+    ('Gossiping', PTT.data_type.PostSearchType.Push, '-100'),
+    ('Gossiping', PTT.data_type.PostSearchType.Push, '150'),
+}
 
 
 def showCondition(Board, SearchType, Condition):
-    if SearchType == PTT.PostSearchType.Keyword:
+    if SearchType == PTT.data_type.PostSearchType.Keyword:
         Type = '關鍵字'
-    if SearchType == PTT.PostSearchType.Author:
+    if SearchType == PTT.data_type.PostSearchType.Author:
         Type = '作者'
-    if SearchType == PTT.PostSearchType.Push:
+    if SearchType == PTT.data_type.PostSearchType.Push:
         Type = '推文數'
-    if SearchType == PTT.PostSearchType.Mark:
+    if SearchType == PTT.data_type.PostSearchType.Mark:
         Type = '標記'
-    if SearchType == PTT.PostSearchType.Money:
+    if SearchType == PTT.data_type.PostSearchType.Money:
         Type = '稿酬'
 
     print(f'{Board} 使用 {Type} 搜尋 {Condition}')
@@ -294,14 +294,14 @@ def showCondition(Board, SearchType, Condition):
 def get_post_with_condition():
     # PTT1
     test_list = [
-        # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
-        # ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
-        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
-        # ('Gossiping', PTT.PostSearchType.Keyword, '普悠瑪'),
+        # ('Python', PTT.data_type.PostSearchType.Keyword, '[公告]'),
+        # ('ALLPOST', PTT.data_type.PostSearchType.Keyword, '(Wanted)'),
+        # ('Wanted', PTT.data_type.PostSearchType.Keyword, '(本文已被刪除)'),
+        # ('ALLPOST', PTT.data_type.PostSearchType.Keyword, '(Gossiping)'),
+        # ('Gossiping', PTT.data_type.PostSearchType.Keyword, '普悠瑪'),
         # PTT2
-        # ('PttSuggest', PTT.PostSearchType.Keyword, '[問題]'),
-        # ('PttSuggest', PTT.PostSearchType.Push, '10'),
+        # ('PttSuggest', PTT.data_type.PostSearchType.Keyword, '[問題]'),
+        # ('PttSuggest', PTT.data_type.PostSearchType.Push, '10'),
     ]
 
     test_range = 1
@@ -345,7 +345,7 @@ def get_post_with_condition():
             print('=' * 50)
 
     # TestList = [
-    #     ('Python', PTT.PostSearchType.Keyword, '[公告]')
+    #     ('Python', PTT.data_type.PostSearchType.Keyword, '[公告]')
     # ]
 
     # for (Board, SearchType, Condition) in TestList:
@@ -605,12 +605,12 @@ def crawl_board_with_condition():
 
     test_list = [
         # ptt1
-        # ('Stock', PTT.PostSearchType.Keyword, '盤中閒聊'),
-        # ('Baseball', PTT.PostSearchType.Push, '20')
+        # ('Stock', PTT.data_type.PostSearchType.Keyword, '盤中閒聊'),
+        # ('Baseball', PTT.data_type.PostSearchType.Push, '20')
 
         # ptt2
-        ('WhoAmI', PTT.PostSearchType.Keyword, '[閒聊]'),
-        ('WhoAmI', PTT.PostSearchType.Push, '10')
+        ('WhoAmI', PTT.data_type.PostSearchType.Keyword, '[閒聊]'),
+        ('WhoAmI', PTT.data_type.PostSearchType.Push, '10')
     ]
 
     test_range = 100
@@ -660,12 +660,12 @@ def get_user():
         ptt_bot.log('象棋戰績:' + user.get_chess())
         ptt_bot.log('簽名檔:' + user.get_signature_file())
 
-    except PTT.Exceptions.NoSuchUser:
+    except PTT.exceptions.NoSuchUser:
         print('無此使用者')
 
     try:
         user = ptt_bot.get_user('sdjfklsdj')
-    except PTT.Exceptions.NoSuchUser:
+    except PTT.exceptions.NoSuchUser:
         print('無此使用者')
 
 
@@ -682,15 +682,15 @@ def push():
     for (board, index) in test_post_list:
         for i in range(testround):
             if isinstance(index, int):
-                ptt_bot.push(board, PTT.PushType.Push, content + str(i), post_index=index)
+                ptt_bot.push(board, PTT.data_type.PushType.Push, content + str(i), post_index=index)
             else:
-                ptt_bot.push(board, PTT.PushType.Push, content + str(i), post_aid=index)
+                ptt_bot.push(board, PTT.data_type.PushType.Push, content + str(i), post_aid=index)
 
     # Index = PTTBot.getNewestIndex(
     #     PTT.IndexType.BBS,
     #     Board='Test'
     # )
-    # PTTBot.push('Test', PTT.PushType.Push, Content, PostIndex=Index + 1)
+    # PTTBot.push('Test', PTT.data_type.PushType.Push, Content, PostIndex=Index + 1)
 
 
 def throw_waterball():
@@ -827,7 +827,7 @@ def mail():
             content,
             0
         )
-    except PTT.Exceptions.NoSuchUser:
+    except PTT.exceptions.NoSuchUser:
         pass
 
     ptt_bot.mail(
@@ -858,7 +858,7 @@ def threading_test():
                 password1,
                 #  kick_other_login=True
             )
-        except PTT.Exceptions.LoginError:
+        except PTT.exceptions.loginError:
             thread_bot1.log('登入失敗')
             return
 
@@ -873,7 +873,7 @@ def threading_test():
                 password2,
                 #  kick_other_login=True
             )
-        except PTT.Exceptions.LoginError:
+        except PTT.exceptions.loginError:
             thread_bot2.log('登入失敗')
             return
 
@@ -939,7 +939,7 @@ def set_board_title():
                 'give',
                 f'現在時間 {time_format}'
             )
-        except PTT.Exceptions.ConnectionClosed:
+        except PTT.exceptions.ConnectionClosed:
             while True:
                 try:
                     ptt_bot.login(
@@ -947,10 +947,10 @@ def set_board_title():
                         Password
                     )
                     break
-                except PTT.Exceptions.LoginError:
+                except PTT.exceptions.loginError:
                     ptt_bot.log('登入失敗')
                     time.sleep(1)
-                except PTT.Exceptions.ConnectError:
+                except PTT.exceptions.ConnectError:
                     ptt_bot.log('登入失敗')
                     time.sleep(1)
         print('已經更新時間 ' + time_format, end='\r')
@@ -1126,7 +1126,7 @@ def search_user():
 
 
 if __name__ == '__main__':
-    print('Welcome to PTT Library v ' + PTT.Version + ' test case')
+    print('Welcome to PTT Library v ' + PTT.version.V + ' test case')
 
     RunCI = False
     TravisCI = False
@@ -1156,7 +1156,7 @@ if __name__ == '__main__':
                 # kick_other_login=True
             )
             pass
-        except PTT.Exceptions.LoginError:
+        except PTT.exceptions.loginError:
             ptt_bot.log('登入失敗')
             sys.exit(1)
 
@@ -1222,7 +1222,7 @@ if __name__ == '__main__':
 
             TestPostList = [
                 ('Python', 1, None, False, '總算可以來想想板的走向了..XD'),
-                ('NotExitBoard', 1, PTT.Exceptions.NoSuchBoard, False, None),
+                ('NotExitBoard', 1, PTT.exceptions.NoSuchBoard, False, None),
                 ('Python', '1TJH_XY0', None, False, '大家嗨，我是 CodingMan'),
                 # 文章格式錯誤
                 ('Steam', 4444, None, True, None),
@@ -1332,12 +1332,12 @@ PTT Library 程式貼文基準測試內文
 
             try:
                 Content1 = '編號推文基準文字123'
-                ptt_bot.push(Board, PTT.PushType.Push,
+                ptt_bot.push(Board, PTT.data_type.PushType.Push,
                              Content1, post_aid='QQQQQQQ')
                 print('推文反向測試失敗')
                 ptt_bot.logout()
                 sys.exit(1)
-            except PTT.Exceptions.NoSuchPost:
+            except PTT.exceptions.NoSuchPost:
                 print('推文反向測試通過')
 
             try:
@@ -1346,7 +1346,7 @@ PTT Library 程式貼文基準測試內文
                     board=Board
                 )
                 Content1 = '編號推文基準文字123'
-                ptt_bot.push(Board, PTT.PushType.Push,
+                ptt_bot.push(Board, PTT.data_type.PushType.Push,
                              Content1, post_index=Index + 1)
                 print('推文反向測試失敗')
                 ptt_bot.logout()
@@ -1355,11 +1355,11 @@ PTT Library 程式貼文基準測試內文
                 print('推文反向測試通過')
 
             Content1 = '編號推文基準文字123'
-            ptt_bot.push(Board, PTT.PushType.Push,
+            ptt_bot.push(Board, PTT.data_type.PushType.Push,
                          Content1, post_index=BasicPostIndex)
 
             Content2 = '代碼推文基準文字123'
-            ptt_bot.push(Board, PTT.PushType.Push,
+            ptt_bot.push(Board, PTT.data_type.PushType.Push,
                          Content2, post_aid=BasicPostAID)
 
             Post = ptt_bot.get_post(
@@ -1387,15 +1387,15 @@ PTT Library 程式貼文基準測試內文
             print('代碼推文基準測試成功')
 
             Content = '推文基準測試全部通過'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             TestList = [
-                ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-                ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
-                ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
-                ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
-                ('Gossiping', PTT.PostSearchType.Keyword, '普悠瑪'),
+                ('Python', PTT.data_type.PostSearchType.Keyword, '[公告]'),
+                ('ALLPOST', PTT.data_type.PostSearchType.Keyword, '(Wanted)'),
+                ('Wanted', PTT.data_type.PostSearchType.Keyword, '(本文已被刪除)'),
+                ('ALLPOST', PTT.data_type.PostSearchType.Keyword, '(Gossiping)'),
+                ('Gossiping', PTT.data_type.PostSearchType.Keyword, '普悠瑪'),
             ]
 
             TestRange = 1
@@ -1437,17 +1437,17 @@ PTT Library 程式貼文基準測試內文
                     print('=' * 50)
 
                 Content = f'{Board} 取得文章測試完成'
-                ptt_bot.push('Test', PTT.PushType.Arrow,
+                ptt_bot.push('Test', PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
 
             Board = 'Test'
 
             Content = '取得文章測試全部通過'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             Content = '貼文測試全部通過'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             TestBoardList = [
@@ -1516,18 +1516,18 @@ PTT Library 程式貼文基準測試內文
                     end_aid=EndPost.get_aid()
                 )
                 Content = f'{testboard} 爬板測試完成'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
 
             Content = '爬板測試全部完成'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             User = ptt_bot.get_user(ID)
             if User is None:
                 print('取得使用者測試失敗')
                 Content = '取得使用者測試失敗'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
                 ptt_bot.logout()
                 sys.exit(1)
@@ -1549,18 +1549,18 @@ PTT Library 程式貼文基準測試內文
                 User = ptt_bot.get_user('sdjfklsdj')
                 print('取得使用者反向測試失敗')
                 Content = '取得使用者反向測試失敗'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
 
                 ptt_bot.logout()
                 sys.exit(1)
-            except PTT.Exceptions.NoSuchUser:
+            except PTT.exceptions.NoSuchUser:
                 print('取得使用者反向測試通過')
 
             NewMail1 = ptt_bot.has_new_mail()
             print(f'有 {NewMail1} 封新信')
             Content = '取得幾封新信測試通過'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             try:
@@ -1573,15 +1573,15 @@ PTT Library 程式貼文基準測試內文
 
                 Content = '寄信反向測試失敗'
                 print(Content)
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
                 ptt_bot.logout()
                 sys.exit(1)
 
-            except PTT.Exceptions.NoSuchUser:
+            except PTT.exceptions.NoSuchUser:
                 Content = '寄信反向測試成功'
                 print(Content)
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
 
             Content = '''如有誤寄，對..對不起
@@ -1601,19 +1601,19 @@ github: https://tinyurl.com/umqff3v
             print(f'有 {NewMail2} 封新信')
             if NewMail2 > NewMail1:
                 Content = '寄信測試通過'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
             else:
                 Content = '寄信測試失敗'
                 print(Content)
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
                 ptt_bot.logout()
                 sys.exit(1)
 
             Content = '寄信測試成功'
             print(Content)
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             BoardList = ptt_bot.get_board_list()
@@ -1621,10 +1621,10 @@ github: https://tinyurl.com/umqff3v
             print(f'總共有 {len(set(BoardList))} 個不重複板名')
 
             Content = '取得全站看板測試通過'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
             Content = f'總共有 {len(set(BoardList))} 個不重複板名'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             try:
@@ -1632,15 +1632,15 @@ github: https://tinyurl.com/umqff3v
 
                 print('取得看板資訊反向測試失敗')
                 Content = '取得看板資訊反向測試失敗'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
 
                 ptt_bot.logout()
                 sys.exit(1)
-            except PTT.Exceptions.NoSuchBoard:
+            except PTT.exceptions.NoSuchBoard:
                 print('取得看板資訊反向測試成功')
                 Content = '取得看板資訊反向測試成功'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
 
             BoardInfo = ptt_bot.get_board_info('Gossiping')
@@ -1669,20 +1669,20 @@ github: https://tinyurl.com/umqff3v
             print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.get_require_illegal_post())
 
             Content = '取得看板資訊測試成功'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             FBlist = ptt_bot.get_favourite_board()
             for testboard in FBlist:
                 if testboard.get_board() is None or testboard.get_type() is None or testboard.get_board_title() is None:
                     Content = '取得我的最愛測試失敗'
-                    ptt_bot.push(Board, PTT.PushType.Arrow,
+                    ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                                  Content, post_aid=BasicPostAID)
                     ptt_bot.logout()
                     sys.exit(1)
 
             Content = '取得我的最愛測試成功'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             userlist = ptt_bot.search_user(
@@ -1690,12 +1690,12 @@ github: https://tinyurl.com/umqff3v
             )
             if len(userlist) != 14:
                 Content = '查詢網友測試失敗'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
                 ptt_bot.logout()
                 sys.exit(1)
             Content = '查詢網友測試成功'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
             ptt_bot.reply_post(
@@ -1723,12 +1723,12 @@ github: https://tinyurl.com/umqff3v
                     Content = '使用文章編號測試回應到板上成功'
                     print(Content)
                     ptt_bot.push(
-                        Board, PTT.PushType.Arrow,
+                        Board, PTT.data_type.PushType.Arrow,
                         Content, post_aid=BasicPostAID)
                     break
             if not TestPass:
                 Content = '使用文章編號測試回應到板上失敗'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
                 ptt_bot.logout()
                 sys.exit(1)
@@ -1758,12 +1758,12 @@ github: https://tinyurl.com/umqff3v
                     Content = '使用文章ID測試回應到板上成功'
                     print(Content)
                     ptt_bot.push(
-                        Board, PTT.PushType.Arrow,
+                        Board, PTT.data_type.PushType.Arrow,
                         Content, post_aid=BasicPostAID)
                     break
             if not TestPass:
                 Content = '使用文章ID測試回應到板上失敗'
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
                 ptt_bot.logout()
                 sys.exit(1)
@@ -1784,7 +1784,7 @@ github: https://tinyurl.com/umqff3v
                     # kick_other_login=True
                 )
                 pass
-            except PTT.Exceptions.LoginError:
+            except PTT.exceptions.loginError:
                 PTTBot2.log('PTTBot2登入失敗')
                 sys.exit(1)
 
@@ -1814,7 +1814,7 @@ github: https://tinyurl.com/umqff3v
             if not TestPass:
                 Content = '水球測試基準測試失敗'
                 print(Content)
-                ptt_bot.push(Board, PTT.PushType.Arrow,
+                ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                              Content, post_aid=BasicPostAID)
                 ptt_bot.logout()
                 PTTBot2.logout()
@@ -1822,19 +1822,19 @@ github: https://tinyurl.com/umqff3v
 
             Content = '水球測試基準測試成功'
             print(Content)
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
             PTTBot2.logout()
 
             Content = '自動化測試全部完成'
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
 
         except Exception as e:
             traceback.print_tb(e.__traceback__)
             print(e)
             Content = str(e)
-            ptt_bot.push(Board, PTT.PushType.Arrow,
+            ptt_bot.push(Board, PTT.data_type.PushType.Arrow,
                          Content, post_aid=BasicPostAID)
         except KeyboardInterrupt:
             pass
@@ -1847,7 +1847,7 @@ github: https://tinyurl.com/umqff3v
             ptt_bot = PTT.Library(
                 # log_level=PTT.log_level.TRACE,
                 # log_level=PTT.log_level.DEBUG,
-                host=PTT.host.PTT2
+                # host=PTT.data_type.host.PTT2
             )
             try:
                 ptt_bot.login(
@@ -1856,13 +1856,13 @@ github: https://tinyurl.com/umqff3v
                     # kick_other_login=True
                 )
                 pass
-            except PTT.Exceptions.LoginError:
+            except PTT.exceptions.loginError:
                 ptt_bot.log('登入失敗')
                 sys.exit()
 
             # performance_test()
 
-            # get_post()
+            get_post()
             # get_post_with_condition()
             # post()
             # get_newest_index()

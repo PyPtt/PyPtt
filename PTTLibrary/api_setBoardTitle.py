@@ -13,9 +13,9 @@ def set_board_title(
         board: str,
         new_title: str) ->None:
 
-    # Log.showValue(
+    # log.showValue(
     #     api.config,
-    #     Log.Level.INFO,
+    #     log.Level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg

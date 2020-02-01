@@ -1,11 +1,11 @@
-from PTTLibrary import Ver
+from PTTLibrary import version
 
 # A setuptools based setup module.
 # See:
 # https://packaging.python.org/en/latest/distributing.html
 # https://github.com/pypa/sampleproject
 
-# Always prefer setuptools over distutils
+# Always prefer setuptools over distlib_utils
 from setuptools import setup
 # from setuptools import find_packages
 # To use a consistent encoding
@@ -17,7 +17,7 @@ from setuptools import setup
 # Get the long description from the README file
 # with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 #     long_description = f.read()
-Version = Ver.V
+Version = version.V
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
@@ -160,7 +160,7 @@ setup(
 
     # Although 'package_data' is the preferred approach, in some case you may
     # need to place data files outside of your packages. See:
-    # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files
+    # http://docs.python.org/3.4/distlib_utils/setupscript.html#installing-additional-files
     #
     # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
     # data_files=[('my_data', ['data/data_file'])],  # Optional

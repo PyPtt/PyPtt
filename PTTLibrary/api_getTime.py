@@ -2,12 +2,12 @@ import re
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Screens
+    from . import screens
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Screens
+    import screens
     import Command
 
 
@@ -27,7 +27,7 @@ def get_time(api) -> str:
                 i18n.GetPTTTime,
                 i18n.Success,
             ],
-            Screens.Target.MainMenu,
+            screens.Target.MainMenu,
             break_detect=True
         ),
     ]

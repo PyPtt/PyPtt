@@ -1,11 +1,11 @@
 try:
     from . import i18n
-    from . import Log
-    from . import Util
+    from . import log
+    from . import lib_util
 except ModuleNotFoundError:
     import i18n
-    import Log
-    import Util
+    import log
+    import lib_util
 
 
 def check(
@@ -17,7 +17,7 @@ def check(
     if not isinstance(value, value_type):
         if value_type is str:
             raise TypeError(
-                Log.merge(
+                log.merge(
                     config,
                     [
                         name,
@@ -26,7 +26,7 @@ def check(
                     ]))
         elif value_type is int:
             raise TypeError(
-                Log.merge(
+                log.merge(
                     config,
                     [
                         name,
@@ -35,7 +35,7 @@ def check(
                     ]))
         elif value_type is bool:
             raise TypeError(
-                Log.merge(
+                log.merge(
                     config,
                     [
                         name,
@@ -44,7 +44,7 @@ def check(
                     ]))
 
     if value_class is not None:
-        if not Util.check_range(value_class, value):
+        if not lib_util.check_range(value_class, value):
             raise ValueError(f'Unknown {name}', value)
 
 
@@ -56,7 +56,7 @@ def check_index(
     check(config, int, index_name, index)
     if index < 1:
         raise ValueError(
-            Log.merge(
+            log.merge(
                 config,
                 [
                     index_name,
@@ -66,20 +66,20 @@ def check_index(
 
     if max_value is not None:
         if index > max_value:
-            Log.show_value(
+            log.show_value(
                 config,
-                Log.Level.INFO,
+                log.Level.INFO,
                 'Index',
                 index
             )
-            Log.show_value(
+            log.show_value(
                 config,
-                Log.Level.INFO,
+                log.Level.INFO,
                 'MaxValue',
                 max_value
             )
             raise ValueError(
-                Log.merge(
+                log.merge(
                     config,
                     [
                         index_name,
@@ -100,7 +100,7 @@ def check_index_range(
 
     if start_index < 1:
         raise ValueError(
-            Log.merge(
+            log.merge(
                 config,
                 [
                     start_name,
@@ -110,7 +110,7 @@ def check_index_range(
 
     if start_index < 1:
         raise ValueError(
-            Log.merge(
+            log.merge(
                 config,
                 [
                     start_name,
@@ -120,7 +120,7 @@ def check_index_range(
 
     if start_index > end_index:
         raise ValueError(
-            Log.merge(
+            log.merge(
                 config,
                 [
                     start_name,
@@ -131,7 +131,7 @@ def check_index_range(
     if max_value is not None:
         if start_index > max_value:
             raise ValueError(
-                Log.merge(
+                log.merge(
                     config,
                     [
                         start_name,
@@ -141,7 +141,7 @@ def check_index_range(
 
         if end_index > max_value:
             raise ValueError(
-                Log.merge(
+                log.merge(
                     config,
                     [
                         end_name,

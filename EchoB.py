@@ -50,7 +50,7 @@ def Echo():
             while True:
                 try:
                     PTTBot.throw_waterball(Target, 'I heard')
-                except PTT.Exceptions.UserOffline:
+                except PTT.exceptions.UserOffline:
                     time.sleep(1)
                     continue
                 break
@@ -92,7 +92,7 @@ if __name__ == '__main__':
                 Password,
                 kick_other_login=True
             )
-        except PTTLibrary.Exceptions.LoginError:
+        except PTTLibrary.exceptions.loginError:
             PTTBot.log('登入失敗')
             sys.exit()
 

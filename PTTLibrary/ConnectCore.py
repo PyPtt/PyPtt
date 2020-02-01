@@ -9,19 +9,19 @@ from uao import register_uao
 register_uao()
 
 try:
-    from . import DataType
+    from . import data_type
     from . import i18n
-    from . import Log
-    from . import Screens
+    from . import log
+    from . import screens
     from . import Command
-    from . import Exceptions
+    from . import exceptions
 except ModuleNotFoundError:
-    import DataType
+    import data_type
     import i18n
-    import Log
-    import Screens
+    import log
+    import screens
     import Command
-    import Exceptions
+    import exceptions
 
 new_event_loop = []
 
@@ -52,7 +52,7 @@ class TargetUnit(object):
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
         if log_level == 0:
-            self._log_level = Log.Level.INFO
+            self._log_level = log.Level.INFO
         else:
             self._log_level = log_level
         self._Response = response
@@ -147,11 +147,11 @@ class API(object):
             [
                 i18n.UseTooManyResources,
             ],
-            Screens.Target.UseTooManyResources,
-            exceptions=Exceptions.UseTooManyResources
+            screens.Target.UseTooManyResources,
+            exceptions=exceptions.UseTooManyResources
         )
 
-        Log.show_value(self.Config, Log.Level.INFO, [
+        log.show_value(self.Config, log.Level.INFO, [
             i18n.ConnectCore,
         ],
                        i18n.Init
@@ -160,7 +160,7 @@ class API(object):
     def connect(self):
         def _wait():
             for i in range(self.Config.retry_wait_time):
-                Log.show_value(self.Config, Log.Level.INFO, [
+                log.show_value(self.Config, log.Level.INFO, [
                     i18n.Prepare,
                     i18n.Again,
                     i18n.Connect,
@@ -170,7 +170,7 @@ class API(object):
                                )
                 time.sleep(1)
 
-        Log.show_value(self.Config, Log.Level.INFO, [
+        log.show_value(self.Config, log.Level.INFO, [
             i18n.ConnectCore,
         ],
                        i18n.Active
@@ -193,7 +193,7 @@ class API(object):
                     except Exception as e:
                         pass
 
-                if self._host == DataType.host.PTT1:
+                if self._host == data_type.host.PTT1:
                     self._Core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             'wss://ws.ptt.cc/bbs/',
@@ -212,15 +212,15 @@ class API(object):
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                if self._host == DataType.host.PTT1:
-                    Log.show_value(self.Config, Log.Level.INFO, [
+                if self._host == data_type.host.PTT1:
+                    log.show_value(self.Config, log.Level.INFO, [
                         i18n.Connect,
                         i18n.PTT,
                     ],
                                    i18n.Fail
                                    )
                 else:
-                    Log.show_value(self.Config, Log.Level.INFO, [
+                    log.show_value(self.Config, log.Level.INFO, [
                         i18n.Connect,
                         i18n.PTT2,
                     ],
@@ -232,7 +232,7 @@ class API(object):
             break
 
         if not connect_success:
-            raise Exceptions.ConnectError(self.Config)
+            raise exceptions.ConnectError(self.Config)
 
     def send(
         self,
@@ -247,7 +247,7 @@ class API(object):
 
             if not recv_screen:
                 return recv_screen
-            # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
+            # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__lib_utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
 
                 # screen = re.sub('\[[\d+;]*m', '', screen)
 
@@ -262,7 +262,7 @@ class API(object):
             recv_screen = re.sub(r'[\x1C-\x1F]', '', recv_screen)
             recv_screen = re.sub(r'[\x7f-\xff]', '', recv_screen)
 
-            recv_screen = Screens.vt100(recv_screen)
+            recv_screen = screens.vt100(recv_screen)
 
             return recv_screen
 
@@ -297,17 +297,17 @@ class API(object):
                 msg = msg.encode('big5', 'replace')
 
             if is_secret:
-                Log.show_value(
+                log.show_value(
                     self.Config,
-                    Log.Level.DEBUG, [
+                    log.Level.DEBUG, [
                         i18n.SendMsg
                     ],
                     i18n.HideSensitiveInfor
                 )
             else:
-                Log.show_value(
+                log.show_value(
                     self.Config,
-                    Log.Level.DEBUG, [
+                    log.Level.DEBUG, [
                         i18n.SendMsg
                     ],
                     msg
@@ -318,11 +318,11 @@ class API(object):
                     self._Core.send(msg)
                 )
             except websockets.exceptions.ConnectionClosedError:
-                raise Exceptions.ConnectionClosed()
+                raise exceptions.ConnectionClosed()
             except RuntimeError:
-                raise Exceptions.ConnectionClosed()
+                raise exceptions.ConnectionClosed()
             except websockets.exceptions.ConnectionClosedOK:
-                raise Exceptions.ConnectionClosed()
+                raise exceptions.ConnectionClosed()
 
             if break_detect_after_send:
                 return break_index
@@ -345,11 +345,11 @@ class API(object):
                     # print(f'0.1 {use_too_many_res}')
                     if use_too_many_res:
                         # print(f'0.2 {use_too_many_res}')
-                        raise Exceptions.UseTooManyResources()
+                        raise exceptions.UseTooManyResources()
                     # print(f'0.3 {use_too_many_res}')
-                    raise Exceptions.ConnectionClosed()
+                    raise exceptions.ConnectionClosed()
                 except websockets.exceptions.ConnectionClosedOK:
-                    raise Exceptions.ConnectionClosed()
+                    raise exceptions.ConnectionClosed()
                 except asyncio.TimeoutError:
                     return -1
 
@@ -367,7 +367,7 @@ class API(object):
                         if Target._Handler is not None:
                             Target._Handler()
                         if len(screen) > 0:
-                            Screens.show(self.Config, screen)
+                            screens.show(self.Config, screen)
                             self._RDQ.add(screen)
                             # self._ReceiveDataQueue.append(screen)
                             if Target == self._UseTooManyResources:
@@ -379,7 +379,7 @@ class API(object):
 
                         find_target = True
 
-                        Log.show_value(
+                        log.show_value(
                             self.Config,
                             Target.get_log_level(), [
                                 i18n.PTT,
@@ -389,9 +389,9 @@ class API(object):
                         )
 
                         end_time = time.time()
-                        Log.show_value(
+                        log.show_value(
                             self.Config,
-                            Log.Level.DEBUG, [
+                            log.Level.DEBUG, [
                                 i18n.SpendTime,
                             ],
                             round(end_time - start_time, 2)
@@ -428,15 +428,15 @@ class API(object):
                 if find_target:
                     break
                 if len(screen) > 0:
-                    Screens.show(self.Config, screen)
+                    screens.show(self.Config, screen)
                     self._RDQ.add(screen)
                     # self._ReceiveDataQueue.append(screen)
 
                 mid_time = time.time()
 
             if not find_target:
-                raise Exceptions.NoMatchTargetError(self._RDQ)
-        raise Exceptions.NoMatchTargetError(self._RDQ)
+                raise exceptions.NoMatchTargetError(self._RDQ)
+        raise exceptions.NoMatchTargetError(self._RDQ)
 
     def close(self):
         asyncio.get_event_loop().run_until_complete(self._Core.close())

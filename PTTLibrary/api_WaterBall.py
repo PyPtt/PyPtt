@@ -1,30 +1,30 @@
 import re
 import time
 try:
-    from . import DataType
+    from . import data_type
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Screens
-    from . import Exceptions
+    from . import log
+    from . import screens
+    from . import exceptions
     from . import Command
 except ModuleNotFoundError:
-    import DataType
+    import data_type
     import i18n
     import ConnectCore
-    import Log
-    import Screens
-    import Exceptions
+    import log
+    import screens
+    import exceptions
     import Command
 
 
 def get_waterball(api, operate_type:int) ->list:
 
-    if operate_type == DataType.WaterBallOperateType.DoNothing:
+    if operate_type == data_type.WaterBallOperateType.DoNothing:
         water_ball_operate_type = 'R'
-    elif operate_type == DataType.WaterBallOperateType.Clear:
+    elif operate_type == data_type.WaterBallOperateType.Clear:
         water_ball_operate_type = 'C' + Command.Enter + 'Y'
-    elif operate_type == DataType.WaterBallOperateType.Mail:
+    elif operate_type == data_type.WaterBallOperateType.Mail:
         water_ball_operate_type = 'M'
 
     target_list = [
@@ -32,26 +32,26 @@ def get_waterball(api, operate_type:int) ->list:
             i18n.NoWaterball,
             '◆ 暫無訊息記錄',
             break_detect=True,
-            log_level=Log.Level.DEBUG
+            log_level=log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
                 i18n.BrowseWaterball,
                 i18n.Done,
             ],
-            Screens.Target.WaterBallListEnd,
+            screens.Target.WaterBallListEnd,
             response=Command.Left + water_ball_operate_type +
                      Command.Enter + Command.GoMainMenu,
             break_detect_after_send=True,
-            log_level=Log.Level.DEBUG
+            log_level=log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             [
                 i18n.BrowseWaterball,
             ],
-            Screens.Target.InWaterBallList,
+            screens.Target.InWaterBallList,
             break_detect=True,
-            log_level=Log.Level.DEBUG
+            log_level=log.Level.DEBUG
         ),
     ]
 
@@ -73,9 +73,9 @@ def get_waterball(api, operate_type:int) ->list:
             target_list,
             screen_timeout=1
         )
-        Log.show_value(
+        log.show_value(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             'index',
             index
         )
@@ -93,16 +93,16 @@ def get_waterball(api, operate_type:int) ->list:
         # print(OriScreen)
         # print('=' * 50)
         # ScreenTemp = OriScreen
-        Log.show_value(
+        log.show_value(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             'OriScreen',
             ori_screen
         )
 
-        Log.show_value(
+        log.show_value(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             'LastLine',
             last_line
         )
@@ -165,9 +165,9 @@ def get_waterball(api, operate_type:int) ->list:
                     new_content_part = '\n'.join(lines)
 
             all_waterball.append(new_content_part)
-            Log.show_value(
+            log.show_value(
                 api.config,
-                Log.Level.DEBUG,
+                log.Level.DEBUG,
                 'NewContentPart',
                 new_content_part
             )
@@ -182,7 +182,7 @@ def get_waterball(api, operate_type:int) ->list:
 
     all_waterball = '\n'.join(all_waterball)
 
-    if api.config.host == DataType.host.PTT1:
+    if api.config.host == data_type.host.PTT1:
         all_waterball = all_waterball.replace(
             ']\n', ']==PTTWaterBallNewLine==')
         all_waterball = all_waterball.replace('\n', '')
@@ -190,9 +190,9 @@ def get_waterball(api, operate_type:int) ->list:
             ']==PTTWaterBallNewLine==', ']\n')
     else:
         all_waterball = all_waterball.replace('\\\n', '')
-    Log.show_value(
+    log.show_value(
         api.config,
-        Log.Level.DEBUG,
+        log.Level.DEBUG,
         'AllWaterball',
         all_waterball
     )
@@ -204,28 +204,28 @@ def get_waterball(api, operate_type:int) ->list:
     for line in all_waterball.split('\n'):
 
         if (not line.startswith('To')) and (not line.startswith('★')):
-            Log.show_value(
+            log.show_value(
                 api.config,
-                Log.Level.DEBUG,
+                log.Level.DEBUG,
                 'Discard waterball',
                 line
             )
             continue
-        Log.show_value(
+        log.show_value(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             'Ready to parse waterball',
             line
         )
 
         if line.startswith('To'):
-            Log.show_value(
+            log.show_value(
                 api.config,
-                Log.Level.DEBUG,
+                log.Level.DEBUG,
                 'Waterball Type',
                 'Send'
             )
-            waterball_type = DataType.WaterBallType.Send
+            waterball_type = data_type.WaterBallType.Send
 
             pattern_result = to_water_ball_target_pattern.search(line)
             target = pattern_result.group(0)[3:-1]
@@ -240,13 +240,13 @@ def get_waterball(api, operate_type:int) ->list:
             content = content.strip()
 
         elif line.startswith('★'):
-            Log.show_value(
+            log.show_value(
                 api.config,
-                Log.Level.DEBUG,
+                log.Level.DEBUG,
                 'Waterball Type',
                 'Catch'
             )
-            waterball_type = DataType.WaterBallType.Catch
+            waterball_type = data_type.WaterBallType.Catch
 
             pattern_result = from_water_ball_target_pattern.search(line)
             target = pattern_result.group(0)[1:-1]
@@ -260,26 +260,26 @@ def get_waterball(api, operate_type:int) ->list:
             content = content[:content.rfind(date) - 1]
             content = content.strip()
 
-        Log.show_value(
+        log.show_value(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             'Waterball target',
             target
         )
-        Log.show_value(
+        log.show_value(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             'Waterball content',
             content
         )
-        Log.show_value(
+        log.show_value(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             'Waterball date',
             date
         )
 
-        current_waterball = DataType.WaterBallInfo(
+        current_waterball = data_type.WaterBallInfo(
             waterball_type,
             target,
             content,
@@ -330,9 +330,9 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
                 time.sleep(0.1)
                 current_time = time.time()
 
-        Log.show_value(
+        log.show_value(
             api.config,
-            Log.Level.INFO,
+            log.Level.INFO,
             i18n.WaterBall,
             waterball
         )
@@ -347,7 +347,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
             ConnectCore.TargetUnit(
                 i18n.SetCallStatus,
                 '◆ 糟糕! 對方已落跑了',
-                exceptions=Exceptions.UserOffline(target_id)
+                exceptions=exceptions.UserOffline(target_id)
             ),
             ConnectCore.TargetUnit(
                 [
@@ -365,7 +365,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
                     i18n.WaterBall,
                     i18n.Success
                 ],
-                Screens.Target.MainMenu,
+                screens.Target.MainMenu,
                 break_detect=True
             )
         ]
