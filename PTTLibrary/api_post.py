@@ -43,14 +43,14 @@ def post(
             break_detect=True,
         )
     ]
-    index = api._ConnectCore.send(cmd, target_list)
+    index = api.connect_core.send(cmd, target_list)
     if index < 0:
-        Screens.show(api.Config, api._ConnectCore.get_screen_queue())
+        Screens.show(api.config, api.connect_core.get_screen_queue())
         raise Exceptions.UnknownError(i18n.UnknownError)
     if index == 1:
         raise Exceptions.NoPermission(i18n.NoPermission)
 
-    Screens.show(api.Config, api._ConnectCore.get_screen_queue())
+    Screens.show(api.config, api.connect_core.get_screen_queue())
 
     cmd_list = []
     cmd_list.append(str(post_type))
@@ -79,8 +79,8 @@ def post(
             response=str(sign_file) + Command.Enter,
         ),
     ]
-    index = api._ConnectCore.send(
+    index = api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.Config.ScreenPostTimeOut
+        screen_timeout=api.config.ScreenPostTimeOut
     )

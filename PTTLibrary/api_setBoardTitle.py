@@ -14,7 +14,7 @@ def set_board_title(
         new_title: str) ->None:
 
     # Log.showValue(
-    #     api.Config,
+    #     api.config,
     #     Log.Level.INFO,
     #     [
     #         i18n.PTT,
@@ -52,8 +52,8 @@ def set_board_title(
         ),
     ]
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.Config.ScreenLongTimeOut
+        screen_timeout=api.config.ScreenLongTimeOut
     )

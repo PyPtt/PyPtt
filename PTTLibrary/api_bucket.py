@@ -88,9 +88,9 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, pttid: str) -
         ),
     ]
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         cmd,
         target_list
     )
 
-    # OriScreen = api._ConnectCore.getScreenQueue()[-1]
+    # OriScreen = api.connect_core.getScreenQueue()[-1]

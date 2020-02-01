@@ -70,23 +70,23 @@ def get_post_index(
         ConnectCore.TargetUnit(
             i18n.NoSuchBoard,
             Screens.Target.MainMenu_Exiting,
-            exceptions=Exceptions.NoSuchBoard(api.Config, board)
+            exceptions=Exceptions.NoSuchBoard(api.config, board)
             # BreakDetect=True,
         )
     ]
 
-    index = api._ConnectCore.send(
+    index = api.connect_core.send(
         cmd,
         target_list
     )
-    ori_screen = api._ConnectCore.get_screen_queue()[-1]
+    ori_screen = api.connect_core.get_screen_queue()[-1]
     if index < 0:
         # print(OriScreen)
-        raise Exceptions.NoSuchBoard(api.Config, board)
+        raise Exceptions.NoSuchBoard(api.config, board)
 
     # if index == 5:
     #     print(OriScreen)
-    #     raise Exceptions.NoSuchBoard(api.Config, Board)
+    #     raise Exceptions.NoSuchBoard(api.config, Board)
 
     # print(index)
     # print(OriScreen)

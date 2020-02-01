@@ -51,13 +51,13 @@ def get_user(api, pttid) -> DataType.UserInfo:
         ),
     ]
 
-    index = api._ConnectCore.send(
+    index = api.connect_core.send(
         cmd,
         target_list
     )
-    ori_screen = api._ConnectCore.get_screen_queue()[-1]
+    ori_screen = api.connect_core.get_screen_queue()[-1]
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.DEBUG,
         'OriScreen',
         ori_screen
@@ -103,7 +103,7 @@ def get_user(api, pttid) -> DataType.UserInfo:
     legal_post = int(temp[0])
 
     # PTT2 沒有退文
-    if api.Config.Host == DataType.Host.PTT1:
+    if api.config.Host == DataType.Host.PTT1:
         illegal_post = int(temp[1])
     else:
         illegal_post = -1
@@ -117,18 +117,18 @@ def get_user(api, pttid) -> DataType.UserInfo:
 
     signature_file = '\n'.join(ori_screen.split('\n')[6:-1]).strip()
 
-    Log.show_value(api.Config, Log.Level.DEBUG, 'pttid', pttid)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'money', money)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'login_time', login_time)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'legal_post', legal_post)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'illegal_post', illegal_post)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'state', state)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'mail', mail)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'last_login', last_login)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'last_ip', last_ip)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'five_chess', five_chess)
-    Log.show_value(api.Config, Log.Level.DEBUG, 'chess', chess)
-    Log.show_value(api.Config, Log.Level.DEBUG,
+    Log.show_value(api.config, Log.Level.DEBUG, 'pttid', pttid)
+    Log.show_value(api.config, Log.Level.DEBUG, 'money', money)
+    Log.show_value(api.config, Log.Level.DEBUG, 'login_time', login_time)
+    Log.show_value(api.config, Log.Level.DEBUG, 'legal_post', legal_post)
+    Log.show_value(api.config, Log.Level.DEBUG, 'illegal_post', illegal_post)
+    Log.show_value(api.config, Log.Level.DEBUG, 'state', state)
+    Log.show_value(api.config, Log.Level.DEBUG, 'mail', mail)
+    Log.show_value(api.config, Log.Level.DEBUG, 'last_login', last_login)
+    Log.show_value(api.config, Log.Level.DEBUG, 'last_ip', last_ip)
+    Log.show_value(api.config, Log.Level.DEBUG, 'five_chess', five_chess)
+    Log.show_value(api.config, Log.Level.DEBUG, 'chess', chess)
+    Log.show_value(api.config, Log.Level.DEBUG,
                   'signature_file', signature_file)
 
     user = DataType.UserInfo(

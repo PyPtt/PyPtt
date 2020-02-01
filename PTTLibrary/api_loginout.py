@@ -39,7 +39,7 @@ def logout(api) -> None:
     ]
 
     Log.log(
-        api.Config,
+        api.config,
         Log.Level.INFO,
         [
             i18n.Start,
@@ -48,8 +48,8 @@ def logout(api) -> None:
     )
 
     try:
-        api._ConnectCore.send(Cmd, TargetList)
-        api._ConnectCore.close()
+        api.connect_core.send(Cmd, TargetList)
+        api.connect_core.close()
     except Exceptions.ConnectionClosed:
         pass
     except RuntimeError:
@@ -58,7 +58,7 @@ def logout(api) -> None:
     api._LoginStatus = False
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.INFO,
         i18n.Logout,
         i18n.Done
@@ -74,15 +74,15 @@ def login(
     if api._LoginStatus:
         api.logout()
 
-    api.Config.KickOtherLogin = KickOtherLogin
+    api.config.KickOtherLogin = KickOtherLogin
 
     def KickOtherLoginDisplayMsg():
-        if api.Config.KickOtherLogin:
+        if api.config.KickOtherLogin:
             return i18n.KickOtherLogin
         return i18n.NotKickOtherLogin
 
     def KickOtherLoginResponse(Screen):
-        if api.Config.KickOtherLogin:
+        if api.config.KickOtherLogin:
             return 'y' + Command.Enter
         return 'n' + Command.Enter
 
@@ -96,7 +96,7 @@ def login(
     api._Password = Password
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.INFO,
         [
             i18n.Login,
@@ -105,9 +105,9 @@ def login(
         ID
     )
 
-    api.Config.KickOtherLogin = KickOtherLogin
+    api.config.KickOtherLogin = KickOtherLogin
 
-    api._ConnectCore.connect()
+    api.connect_core.connect()
 
     TargetList = [
         ConnectCore.TargetUnit(
@@ -190,31 +190,31 @@ def login(
 
     Cmd = ''.join(CmdList)
 
-    index = api._ConnectCore.send(
+    index = api.connect_core.send(
         Cmd,
         TargetList,
-        screen_timeout=api.Config.ScreenLongTimeOut,
+        screen_timeout=api.config.ScreenLongTimeOut,
         refresh=False,
         secret=True
     )
 
     if TargetList[index].get_display_msg() != i18n.LoginSuccess:
-        OriScreen = api._ConnectCore.get_screen_queue()[-1]
+        OriScreen = api.connect_core.get_screen_queue()[-1]
         print(OriScreen)
         raise Exceptions.LoginError()
 
-    OriScreen = api._ConnectCore.get_screen_queue()[-1]
+    OriScreen = api.connect_core.get_screen_queue()[-1]
     if '> (' in OriScreen:
         api._Cursor = DataType.Cursor.New
         Log.log(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             i18n.NewCursor
         )
     else:
         api._Cursor = DataType.Cursor.Old
         Log.log(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             i18n.OldCursor
         )
@@ -233,7 +233,7 @@ def login(
     if api._UnregisteredUser:
         print(OriScreen)
         Log.log(
-            api.Config,
+            api.config,
             Log.Level.INFO,
             i18n.UnregisteredUserCantUseAllAPI
         )

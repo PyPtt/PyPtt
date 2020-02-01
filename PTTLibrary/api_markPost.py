@@ -26,7 +26,7 @@ def markPost(
         search_condition: str) -> None:
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.INFO,
         [
             i18n.PTT,
@@ -35,16 +35,16 @@ def markPost(
         i18n.MarkPost
     )
 
-    CheckValue.check(api.Config, int, 'MarkType', mark_type,
+    CheckValue.check(api.config, int, 'MarkType', mark_type,
                      value_class=DataType.MarkType)
-    CheckValue.check(api.Config, str, 'Board', board)
+    CheckValue.check(api.config, str, 'Board', board)
     if post_aid is not None:
-        CheckValue.check(api.Config, str, 'PostAID', post_aid)
-    CheckValue.check(api.Config, int, 'PostIndex', post_index)
-    CheckValue.check(api.Config, int, 'SearchType', search_type,
+        CheckValue.check(api.config, str, 'PostAID', post_aid)
+    CheckValue.check(api.config, int, 'PostIndex', post_index)
+    CheckValue.check(api.config, int, 'SearchType', search_type,
                      value_class=DataType.PostSearchType)
     if search_condition is not None:
-        CheckValue.check(api.Config, str,
+        CheckValue.check(api.config, str,
                          'SearchCondition', search_condition)
 
     if len(board) == 0:
@@ -105,12 +105,12 @@ def markPost(
             search_type=search_type,
             search_condition=search_condition
         )
-        CheckValue.check_index(api.Config, 'PostIndex',
+        CheckValue.check_index(api.config, 'PostIndex',
                                post_index, max_value=NewestIndex)
 
     if mark_type == DataType.MarkType.Unconfirmed:
         # 批踢踢兔沒有待證文章功能 QQ
-        if api.Config.Host == DataType.Host.PTT2:
+        if api.config.Host == DataType.Host.PTT2:
             raise Exceptions.HostNotSupport(Util.get_current_func_name())
 
     api._check_board(
@@ -150,7 +150,7 @@ def markPost(
         ),
     ]
 
-    index = api._ConnectCore.send(cmd, target_list)
+    index = api.connect_core.send(cmd, target_list)
 
     cmd_list = []
     if post_aid is not None:
@@ -207,4 +207,4 @@ def markPost(
         ),
     ]
 
-    index = api._ConnectCore.send(cmd, target_list)
+    index = api.connect_core.send(cmd, target_list)

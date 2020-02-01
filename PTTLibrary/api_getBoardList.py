@@ -16,7 +16,7 @@ except ModuleNotFoundError:
 def get_board_list(api) -> None:
 
     # Log.showValue(
-    #     api.Config,
+    #     api.config,
     #     Log.Level.INFO,
     #     [
     #         i18n.PTT,
@@ -41,12 +41,12 @@ def get_board_list(api) -> None:
         )
     ]
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.Config.ScreenLongTimeOut
+        screen_timeout=api.config.ScreenLongTimeOut
     )
-    ori_screen = api._ConnectCore.get_screen_queue()[-1]
+    ori_screen = api.connect_core.get_screen_queue()[-1]
 
     max_no = 0
 
@@ -66,13 +66,13 @@ def get_board_list(api) -> None:
         max_no = int(front_part_list[0])
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.DEBUG,
         'MaxNo',
         max_no
     )
 
-    if api.Config.LogLevel == Log.Level.INFO:
+    if api.config.LogLevel == Log.Level.INFO:
         PB = progressbar.ProgressBar(
             max_value=max_no,
             redirect_stdout=True
@@ -89,13 +89,13 @@ def get_board_list(api) -> None:
     board_list = []
     while True:
 
-        api._ConnectCore.send(
+        api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=api.Config.ScreenLongTimeOut
+            screen_timeout=api.config.ScreenLongTimeOut
         )
 
-        ori_screen = api._ConnectCore.get_screen_queue()[-1]
+        ori_screen = api.connect_core.get_screen_queue()[-1]
         # print(OriScreen)
         for line in ori_screen.split('\n'):
             if '◎' not in line and '●' not in line:
@@ -118,7 +118,7 @@ def get_board_list(api) -> None:
             # print(f'LastNo =>{LastNo}<=')
 
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 'Board NO',
                 no
@@ -129,7 +129,7 @@ def get_board_list(api) -> None:
                 board_name = board_name[1:]
 
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 'Board Name',
                 board_name
@@ -137,14 +137,14 @@ def get_board_list(api) -> None:
 
             board_list.append(board_name)
 
-            if api.Config.LogLevel == Log.Level.INFO:
+            if api.config.LogLevel == Log.Level.INFO:
                 PB.update(no)
 
         if no == max_no:
             break
         cmd = Command.Ctrl_F
 
-    if api.Config.LogLevel == Log.Level.INFO:
+    if api.config.LogLevel == Log.Level.INFO:
         PB.finish()
 
     return board_list

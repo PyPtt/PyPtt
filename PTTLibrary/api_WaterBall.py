@@ -68,13 +68,13 @@ def get_waterball(api, operate_type:int) ->list:
     all_waterball = []
     first_page = True
     while True:
-        index = api._ConnectCore.send(
+        index = api.connect_core.send(
             cmd,
             target_list,
             screen_timeout=1
         )
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'index',
             index
@@ -82,7 +82,7 @@ def get_waterball(api, operate_type:int) ->list:
         if index == 0:
             return []
 
-        ori_screen = api._ConnectCore.get_screen_queue()[-1]
+        ori_screen = api.connect_core.get_screen_queue()[-1]
         lines = ori_screen.split('\n')
         last_line = lines[-1]
         lines.pop()
@@ -94,14 +94,14 @@ def get_waterball(api, operate_type:int) ->list:
         # print('=' * 50)
         # ScreenTemp = OriScreen
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'OriScreen',
             ori_screen
         )
 
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'LastLine',
             last_line
@@ -166,7 +166,7 @@ def get_waterball(api, operate_type:int) ->list:
 
             all_waterball.append(new_content_part)
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 'NewContentPart',
                 new_content_part
@@ -182,7 +182,7 @@ def get_waterball(api, operate_type:int) ->list:
 
     all_waterball = '\n'.join(all_waterball)
 
-    if api.Config.Host == DataType.Host.PTT1:
+    if api.config.Host == DataType.Host.PTT1:
         all_waterball = all_waterball.replace(
             ']\n', ']==PTTWaterBallNewLine==')
         all_waterball = all_waterball.replace('\n', '')
@@ -191,7 +191,7 @@ def get_waterball(api, operate_type:int) ->list:
     else:
         all_waterball = all_waterball.replace('\\\n', '')
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.DEBUG,
         'AllWaterball',
         all_waterball
@@ -205,14 +205,14 @@ def get_waterball(api, operate_type:int) ->list:
 
         if (not line.startswith('To')) and (not line.startswith('★')):
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 'Discard waterball',
                 line
             )
             continue
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'Ready to parse waterball',
             line
@@ -220,7 +220,7 @@ def get_waterball(api, operate_type:int) ->list:
 
         if line.startswith('To'):
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 'Waterball Type',
                 'Send'
@@ -241,7 +241,7 @@ def get_waterball(api, operate_type:int) ->list:
 
         elif line.startswith('★'):
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 'Waterball Type',
                 'Catch'
@@ -261,19 +261,19 @@ def get_waterball(api, operate_type:int) ->list:
             content = content.strip()
 
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'Waterball target',
             target
         )
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'Waterball content',
             content
         )
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'Waterball date',
             date
@@ -331,7 +331,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
                 current_time = time.time()
 
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.INFO,
             i18n.WaterBall,
             waterball
@@ -376,7 +376,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
         cmd_list.append(Command.Enter)
         cmd_list.append('U')
         cmd_list.append(Command.Enter)
-        if '【好友列表】' in api._ConnectCore.get_screen_queue()[-1]:
+        if '【好友列表】' in api.connect_core.get_screen_queue()[-1]:
             cmd_list.append('f')
         cmd_list.append('s')
         cmd_list.append(target_id)
@@ -385,9 +385,9 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
 
         cmd = ''.join(cmd_list)
 
-        api._ConnectCore.send(
+        api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=api.Config.ScreenLongTimeOut
+            screen_timeout=api.config.ScreenLongTimeOut
         )
         api._LastThrowWaterBallTime = time.time()

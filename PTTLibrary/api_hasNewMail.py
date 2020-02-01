@@ -16,7 +16,7 @@ except ModuleNotFoundError:
 def has_new_mail(api) -> int:
 
     # Log.showValue(
-    #     api.Config,
+    #     api.config,
     #     Log.Level.INFO,
     #     [
     #         i18n.PTT,
@@ -45,13 +45,13 @@ def has_new_mail(api) -> int:
         )
     ]
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.Config.ScreenLongTimeOut
+        screen_timeout=api.config.ScreenLongTimeOut
     )
 
-    ori_screen = api._ConnectCore.get_screen_queue()[-1]
+    ori_screen = api.connect_core.get_screen_queue()[-1]
 
     pattern = re.findall('[\s]+[\d]+ (\+)[\s]+', ori_screen)
     return len(pattern)

@@ -20,7 +20,7 @@ def mail(
         sign_file) -> object:
 
     # Log.showValue(
-    #     api.Config,
+    #     api.config,
     #     Log.Level.INFO,
     #     [
     #         i18n.PTT,
@@ -56,10 +56,10 @@ def mail(
         ),
     ]
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         Cmd,
         TargetList,
-        screen_timeout=api.Config.ScreenLongTimeOut
+        screen_timeout=api.config.ScreenLongTimeOut
     )
 
     CmdList = []
@@ -105,14 +105,14 @@ def mail(
         ),
     ]
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         Cmd,
         TargetList,
-        screen_timeout=api.Config.ScreenPostTimeOut
+        screen_timeout=api.config.ScreenPostTimeOut
     )
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.INFO,
         i18n.SendMail,
         i18n.Success

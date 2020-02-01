@@ -32,11 +32,11 @@ def get_time(api) -> str:
         ),
     ]
 
-    index = api._ConnectCore.send(cmd, target_list)
+    index = api.connect_core.send(cmd, target_list)
     if index != 0:
         return None
 
-    ori_screen = api._ConnectCore.get_screen_queue()[-1]
+    ori_screen = api.connect_core.get_screen_queue()[-1]
     line_list = ori_screen.split('\n')
     pattern = re.compile('[\d]+:[\d][\d]')
 
