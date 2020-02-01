@@ -28,9 +28,9 @@ def Init():
     print('===預設值===')
     PTT.Library()
     print('===中文顯示===')
-    PTT.Library(language=PTT.language.Chinese)
+    PTT.Library(language=PTT.i18n.Language.Chinese)
     print('===英文顯示===')
-    PTT.Library(language=PTT.language.English)
+    PTT.Library(language=PTT.i18n.Language.English)
     print('===log DEBUG===')
     PTT.Library(log_level=PTT.log_level.DEBUG)
     print('===log INFO===')
@@ -50,23 +50,12 @@ def Init():
         sys.exit(-1)
     print('===語言放字串===')
     try:
-        PTT.Library(language='PTT.language.English')
+        PTT.Library(language='PTT.i18n.Language.English')
     except TypeError:
         print('通過')
     except:
         print('沒通過')
         sys.exit(-1)
-    # print('===Telnet===')
-    # PTT.Library(ConnectMode=PTT.ConnectMode.Telnet)
-    # print('===WebSocket===')
-    # PTT.Library(ConnectMode=PTT.ConnectMode.WebSocket)
-    # print('===log DEBUG===')
-    # PTT.Library(log_level=PTT.log_level.DEBUG)
-    # print('===log INFO===')
-    # PTT.Library(log_level=PTT.log_level.INFO)
-    # print('===log SLIENT===')
-    # PTT.Library(log_level=PTT.log_level.SLIENT)
-    # print('===log SLIENT======')
 
 
 def performance_test():
@@ -86,45 +75,17 @@ def performance_test():
     print('Performance Test WebSocket ' + str(
         round(end_time - start_time, 2)) + ' s')
 
-    # PTTBot.log('等待五秒')
-    # time.sleep(5)
-
-    # PTTBot = PTT.Library(
-    #     ConnectMode=PTT.ConnectMode.Telnet,
-    #     log_level=PTT.log_level.SLIENT,
-    #     # log_level=PTT.log_level.DEBUG,
-    # )
-    # try:
-    #     PTTBot.login(ID, Password, kick_other_login=True)
-    # except PTT.exceptions.loginError:
-    #     PTTBot.log('登入失敗')
-    #     sys.exit()
-    # PTTBot.log('登入成功')
-
-    # StartTime = time.time()
-    # for _ in range(TestTime):
-    #     PTT_TIME = PTTBot.get_time()
-
-    #     if PTT_TIME is None:
-    #         print('PTT_TIME is None')
-    #         break
-    #     # print(PTT_TIME)
-    # end_time = time.time()
-
-    # PTTBot.log('Performance Test Telnet ' +
-    #            str(round(end_time - StartTime, 2)) + ' s')
-
     print('Performance Test finish')
     sys.exit()
 
 
 def get_post():
     test_post_list = [
-        ('Python', 1),
-        ('NotExitBoard', 1),
-        ('Python', '1TJH_XY0'),
+        # ('Python', 1),
+        # ('NotExitBoard', 1),
+        # ('Python', '1TJH_XY0'),
         # 文章格式錯誤
-        # ('Steam', 4444),
+        ('Steam', 4444),
         # ('Stock', 92324),
         # ('Stock', '1TVnEivO'),
         # 文章格式錯誤
@@ -310,7 +271,7 @@ def get_post_with_condition():
     for (board, search_type, condition) in test_list:
         showCondition(board, search_type, condition)
         index = ptt_bot.get_newest_index(
-            PTT.IndexType.BBS,
+            PTT.data_type.IndexType.BBS,
             board,
             search_type=search_type,
             search_condition=condition,
@@ -350,7 +311,7 @@ def get_post_with_condition():
 
     # for (Board, SearchType, Condition) in TestList:
     #     index = PTTBot.getNewestIndex(
-    #         PTT.IndexType.BBS,
+    #         PTT.data_type.IndexType.BBS,
     #         Board,
     #         SearchType=SearchType,
     #         SearchCondition=Condition,
@@ -403,7 +364,7 @@ def get_newest_index():
 
     for board in test_board_list:
         for _ in range(100):
-            index = ptt_bot.get_newest_index(PTT.IndexType.BBS, board=board)
+            index = ptt_bot.get_newest_index(PTT.data_type.IndexType.BBS, board=board)
             print(f'{board} 最新文章編號 {index}')
 
 
@@ -489,8 +450,8 @@ def crawl_board():
         'PttSuggest'
     ]
 
-    # CrawlType = PTT.IndexType.Web
-    crawl_type = PTT.IndexType.BBS
+    # CrawlType = PTT.data_type.IndexType.Web
+    crawl_type = PTT.data_type.IndexType.BBS
 
     index_type = 'Index'
 
@@ -501,11 +462,11 @@ def crawl_board():
 
         for TestBoard in test_board_list:
 
-            if crawl_type == PTT.IndexType.BBS:
+            if crawl_type == PTT.data_type.IndexType.BBS:
 
                 if index_type == 'Index':
                     newest_index = ptt_bot.get_newest_index(
-                        PTT.IndexType.BBS,
+                        PTT.data_type.IndexType.BBS,
                         board=TestBoard
                     )
                     start_index = newest_index - test_range + 1
@@ -543,10 +504,10 @@ def crawl_board():
                 if len(del_post_list) > 0:
                     print(f'共有 {len(del_post_list)} 篇文章被刪除')
 
-            elif crawl_type == PTT.IndexType.Web:
+            elif crawl_type == PTT.data_type.IndexType.Web:
 
                 newest_index = ptt_bot.get_newest_index(
-                    PTT.IndexType.Web,
+                    PTT.data_type.IndexType.Web,
                     board=TestBoard
                 )
                 end_page = newest_index
@@ -577,7 +538,7 @@ def crawl_board_with_condition():
     #     try:
     #         showCondition(Board, SearchType, Condition)
     #         NewestIndex = PTTBot.getNewestIndex(
-    #             PTT.IndexType.BBS,
+    #             PTT.data_type.IndexType.BBS,
     #             Board,
     #             SearchType=SearchType,
     #             SearchCondition=Condition,
@@ -618,7 +579,7 @@ def crawl_board_with_condition():
     for (board, search_type, search_condition) in test_list:
         showCondition(board, search_type, search_condition)
         newest_index = ptt_bot.get_newest_index(
-            PTT.IndexType.BBS,
+            PTT.data_type.IndexType.BBS,
             board,
             search_type=search_type,
             search_condition=search_condition,
@@ -687,7 +648,7 @@ def push():
                 ptt_bot.push(board, PTT.data_type.PushType.Push, content + str(i), post_aid=index)
 
     # Index = PTTBot.getNewestIndex(
-    #     PTT.IndexType.BBS,
+    #     PTT.data_type.IndexType.BBS,
     #     Board='Test'
     # )
     # PTTBot.push('Test', PTT.data_type.PushType.Push, Content, PostIndex=Index + 1)
@@ -706,8 +667,8 @@ def throw_waterball():
 
 
 def get_waterball():
-    operate_type = PTT.WaterBallOperateType.DoNothing
-    # OperateType = PTT.WaterBallOperateType.Mail
+    operate_type = PTT.data_type.WaterBallOperateType.DoNothing
+    # OperateType = PTT.data_type.WaterBallOperateType.Mail
     # OperateType = PT4T.WaterBallOperateType.Clear
 
     waterball_list = ptt_bot.get_waterball(operate_type)
@@ -726,7 +687,7 @@ def get_waterball():
 
 
 def WaterBall():
-    OperateType = PTT.WaterBallOperateType.Clear
+    OperateType = PTT.data_type.WaterBallOperateType.Clear
 
     TestWaterBall = [str(x % 10) for x in range(10)]
     TagetID = 'DeepLearning'
@@ -751,15 +712,15 @@ def WaterBall():
 
 def callstatus():
     def show_callstatus(CallStatus):
-        if CallStatus == PTT.CallStatus.On:
+        if CallStatus == PTT.data_type.CallStatus.On:
             print('呼叫器狀態[打開]')
-        elif CallStatus == PTT.CallStatus.Off:
+        elif CallStatus == PTT.data_type.CallStatus.Off:
             print('呼叫器狀態[關閉]')
-        elif CallStatus == PTT.CallStatus.Unplug:
+        elif CallStatus == PTT.data_type.CallStatus.Unplug:
             print('呼叫器狀態[拔掉]')
-        elif CallStatus == PTT.CallStatus.Waterproof:
+        elif CallStatus == PTT.data_type.CallStatus.Waterproof:
             print('呼叫器狀態[防水]')
-        elif CallStatus == PTT.CallStatus.Friend:
+        elif CallStatus == PTT.data_type.CallStatus.Friend:
             print('呼叫器狀態[朋友]')
         else:
             print(f'Unknow CallStatus: {CallStatus}')
@@ -771,11 +732,11 @@ def callstatus():
     print('連續測試通過')
 
     InitCallStatus = random.randint(
-        PTT.CallStatus.MinValue, PTT.CallStatus.MaxValue
+        PTT.data_type.CallStatus.MinValue, PTT.data_type.CallStatus.MaxValue
     )
 
     TestQueue = [x for x in range(
-        PTT.CallStatus.MinValue, PTT.CallStatus.MaxValue + 1
+        PTT.data_type.CallStatus.MinValue, PTT.data_type.CallStatus.MaxValue + 1
     )]
     random.shuffle(TestQueue)
 
@@ -1017,7 +978,7 @@ def getPostIndexTest():
     for Board in BoardList:
 
         Index = ptt_bot.get_newest_index(
-            PTT.IndexType.BBS,
+            PTT.data_type.IndexType.BBS,
             Board,
         )
 
@@ -1251,7 +1212,7 @@ if __name__ == '__main__':
                 BasicIndex = 0
                 for _ in range(50):
                     Index = ptt_bot.get_newest_index(
-                        PTT.IndexType.BBS,
+                        PTT.data_type.IndexType.BBS,
                         board=Board
                     )
 
@@ -1296,7 +1257,7 @@ PTT Library 程式貼文基準測試內文
             )
 
             Index = ptt_bot.get_newest_index(
-                PTT.IndexType.BBS,
+                PTT.data_type.IndexType.BBS,
                 board=Board
             )
 
@@ -1342,7 +1303,7 @@ PTT Library 程式貼文基準測試內文
 
             try:
                 Index = ptt_bot.get_newest_index(
-                    PTT.IndexType.BBS,
+                    PTT.data_type.IndexType.BBS,
                     board=Board
                 )
                 Content1 = '編號推文基準文字123'
@@ -1403,7 +1364,7 @@ PTT Library 程式貼文基準測試內文
             for (Board, SearchType, Condition) in TestList:
                 showCondition(Board, SearchType, Condition)
                 Index = ptt_bot.get_newest_index(
-                    PTT.IndexType.BBS,
+                    PTT.data_type.IndexType.BBS,
                     Board,
                     search_type=SearchType,
                     search_condition=Condition,
@@ -1462,7 +1423,7 @@ PTT Library 程式貼文基準測試內文
             for testboard in TestBoardList:
 
                 NewestIndex = ptt_bot.get_newest_index(
-                    PTT.IndexType.BBS,
+                    PTT.data_type.IndexType.BBS,
                     board=testboard
                 ) - 10000
                 # 到很久之前的文章去才不會撞到被刪掉的文章
@@ -1706,7 +1667,7 @@ github: https://tinyurl.com/umqff3v
             )
 
             Index = ptt_bot.get_newest_index(
-                PTT.IndexType.BBS,
+                PTT.data_type.IndexType.BBS,
                 board=Board
             )
 
@@ -1741,7 +1702,7 @@ github: https://tinyurl.com/umqff3v
             )
 
             Index = ptt_bot.get_newest_index(
-                PTT.IndexType.BBS,
+                PTT.data_type.IndexType.BBS,
                 board=Board
             )
 
@@ -1788,12 +1749,12 @@ github: https://tinyurl.com/umqff3v
                 PTTBot2.log('PTTBot2登入失敗')
                 sys.exit(1)
 
-            OperateType = PTT.WaterBallOperateType.Clear
+            OperateType = PTT.data_type.WaterBallOperateType.Clear
             ptt_bot.get_waterball(OperateType)
             PTTBot2.get_waterball(OperateType)
 
-            ptt_bot.set_callstatus(PTT.CallStatus.Off)
-            PTTBot2.set_callstatus(PTT.CallStatus.Off)
+            ptt_bot.set_callstatus(PTT.data_type.CallStatus.Off)
+            PTTBot2.set_callstatus(PTT.data_type.CallStatus.Off)
 
             TestPass = False
             PTTBot2.throw_waterball(ID, '水球測試基準訊息')
@@ -1862,7 +1823,7 @@ github: https://tinyurl.com/umqff3v
 
             # performance_test()
 
-            get_post()
+            # get_post()
             # get_post_with_condition()
             # post()
             # get_newest_index()
