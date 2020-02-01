@@ -288,7 +288,7 @@ class Library:
 
         return api_loginout.logout(self)
 
-    def log(self, msg):
+    def log(self, msg: str) -> None:
         self._one_thread()
         Log.log(self.Config, Log.Level.INFO, msg)
 

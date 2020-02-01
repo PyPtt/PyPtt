@@ -85,6 +85,9 @@ def show_value(config, log_level, msg, value):
         return
     global LastValue
 
+    if isinstance(value, list):
+        value = ''.join(value)
+
     check_ptt_msg = merge(config, [i18n.PTT, i18n.Msg])
     msg = merge(config, msg)
     value = merge(config, value)
