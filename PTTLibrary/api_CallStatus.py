@@ -83,11 +83,11 @@ def get_callstatus(api) -> None:
     ]
 
     for i in range(2):
-        index = api._ConnectCore.send(cmd, target_list)
+        index = api.connect_core.send(cmd, target_list)
         if index < 0:
             if i == 0:
                 continue
-            ori_screen = api._ConnectCore.get_screen_queue()[-1]
+            ori_screen = api.connect_core.get_screen_queue()[-1]
             raise Exceptions.UnknownError(ori_screen)
 
     if index == 0:
@@ -101,7 +101,7 @@ def get_callstatus(api) -> None:
     if index == 4:
         return DataType.CallStatus.Off
 
-    ori_screen = api._ConnectCore.get_screen_queue()[-1]
+    ori_screen = api.connect_core.get_screen_queue()[-1]
     raise Exceptions.UnknownError(ori_screen)
 
 
@@ -129,10 +129,10 @@ def set_callstatus(api, callstatus) -> None:
     ]
 
     while current_call_status != callstatus:
-        api._ConnectCore.send(
+        api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=api.Config.ScreenLongTimeOut
+            screen_timeout=api.config.ScreenLongTimeOut
         )
 
         current_call_status = api._get_callstatus()

@@ -151,9 +151,7 @@ def get_post():
         # 瞎改
         # ('Test', '1Sp1W7Fi'),
         # ('Test', '1TXRkuDW'),
-        # 1T4yyKuE
-        # 1TXRkuDW
-        # 1TYTfSZW
+        # ('WhoAmI', '1TqJhzQH')
     ]
 
     def show(name, value):
@@ -200,6 +198,7 @@ def get_post():
             show('Board', post.get_board())
             show('AID', post.get_aid())
             show('Author', post.get_author())
+            show('push_number', post.get_push_number())
             show('List Date', post.get_list_date())
             show('Title', post.get_title())
             show('Money', post.get_money())
@@ -295,11 +294,11 @@ def showCondition(Board, SearchType, Condition):
 def get_post_with_condition():
     # PTT1
     test_list = [
-        ('Python', PTT.PostSearchType.Keyword, '[公告]'),
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
-        ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
-        ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
-        ('Gossiping', PTT.PostSearchType.Keyword, '普悠瑪'),
+        # ('Python', PTT.PostSearchType.Keyword, '[公告]'),
+        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Wanted)'),
+        # ('Wanted', PTT.PostSearchType.Keyword, '(本文已被刪除)'),
+        # ('ALLPOST', PTT.PostSearchType.Keyword, '(Gossiping)'),
+        # ('Gossiping', PTT.PostSearchType.Keyword, '普悠瑪'),
         # PTT2
         # ('PttSuggest', PTT.PostSearchType.Keyword, '[問題]'),
         # ('PttSuggest', PTT.PostSearchType.Push, '10'),
@@ -389,17 +388,17 @@ def post():
 
 def get_newest_index():
     test_board_list = [
-        'Wanted',
-        'Gossiping',
-        'Test',
-        'Stock',
-        'movie'
+        # 'Wanted',
+        # 'Gossiping',
+        # 'Test',
+        # 'Stock',
+        # 'movie'
 
         # PTT2
-        # 'PttSuggest',
-        # 'Test',
-        # 'WhoAmI',
-        # 'CodingMan'
+        'PttSuggest',
+        'Test',
+        'WhoAmI',
+        'CodingMan'
     ]
 
     for board in test_board_list:
@@ -459,7 +458,8 @@ def crawlHandler(Post):
     # detectNone('AID', Post.get_aid())
     detectNone('Author', Post.get_author())
     # detectNone('Money', Post.getMoney())
-    detectNone('WebUrl', Post.get_web_url())
+
+    # detectNone('WebUrl', Post.get_web_url())
     # detectNone('ListDate', Post.getListDate())
 
     # if not Query:
@@ -474,19 +474,19 @@ def crawl_board():
     global Query
     test_board_list = [
         # 'Test',
-        'Wanted',
-        'Gossiping',
-        'Stock',
-        'movie',
-        'C_Chat',
-        'Baseball',
-        'NBA',
-        'HatePolitics',
+        # 'Wanted',
+        # 'Gossiping',
+        # 'Stock',
+        # 'movie',
+        # 'C_Chat',
+        # 'Baseball',
+        # 'NBA',
+        # 'HatePolitics',
 
         # PTT2
-        # 'Test',
-        # 'WhoAmI',
-        # 'PttSuggest'
+        'Test',
+        'WhoAmI',
+        'PttSuggest'
     ]
 
     # CrawlType = PTT.IndexType.Web
@@ -1838,13 +1838,13 @@ github: https://tinyurl.com/umqff3v
 
         PTTBot.logout()
     else:
-        ID, Password = getPW('Account3.txt')
+        ID, Password = getPW('Account.txt')
         try:
             # threading_test()
             PTTBot = PTT.Library(
                 # log_level=PTT.LogLevel.TRACE,
                 # log_level=PTT.LogLevel.DEBUG,
-                # host=PTT.Host.PTT2
+                host=PTT.Host.PTT2
             )
             try:
                 PTTBot.login(
@@ -1859,7 +1859,7 @@ github: https://tinyurl.com/umqff3v
 
             # performance_test()
 
-            # get_post()
+            get_post()
             # get_post_with_condition()
             # post()
             # get_newest_index()

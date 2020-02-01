@@ -83,21 +83,21 @@ def get_post(
         ConnectCore.TargetUnit(
             i18n.NoSuchBoard,
             Screens.Target.MainMenu_Exiting,
-            exceptions=Exceptions.NoSuchBoard(api.Config, board)
+            exceptions=Exceptions.NoSuchBoard(api.config, board)
         ),
     ]
 
-    index = api._ConnectCore.send(cmd, target_list)
-    ori_screen = api._ConnectCore.get_screen_queue()[-1]
+    index = api.connect_core.send(cmd, target_list)
+    ori_screen = api.connect_core.get_screen_queue()[-1]
 
     post_author = None
     post_title = None
     if index < 0 or index == 1:
         # 文章被刪除
-        Log.log(api.Config, Log.Level.DEBUG, i18n.PostDeleted)
+        Log.log(api.config, Log.Level.DEBUG, i18n.PostDeleted)
 
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'OriScreen',
             ori_screen
@@ -111,7 +111,7 @@ def get_post(
 
         cursor_line = cursor_line[0]
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'CursorLine',
             cursor_line
@@ -143,10 +143,10 @@ def get_post(
             post_author = None
             post_del_status = DataType.PostDeleteStatus.ByUnknown
 
-        Log.show_value(api.Config, Log.Level.DEBUG, 'ListDate', list_date)
-        Log.show_value(api.Config, Log.Level.DEBUG,
+        Log.show_value(api.config, Log.Level.DEBUG, 'ListDate', list_date)
+        Log.show_value(api.config, Log.Level.DEBUG,
                       'PostAuthor', post_author)
-        Log.show_value(api.Config, Log.Level.DEBUG,
+        Log.show_value(api.config, Log.Level.DEBUG,
                       'post_del_status', post_del_status)
 
         return DataType.PostInfo(
@@ -225,6 +225,7 @@ def get_post(
         else:
             list_date = pattern_result.group(0)
             list_date = list_date[-5:]
+        # print(list_date)
 
         # >  7485   9 8/09 CodingMan    □ [閒聊] PTT Library 更新
         # > 79189 M 1 9/17 LittleCalf   □ [公告] 禁言退文公告
@@ -232,10 +233,8 @@ def get_post(
         # >781406 +X1 9/17 kingofage111 R: [申請] ReDmango 請辭Gossiping板主職務
 
         push_number = cursor_line
-        # print(PushNumber)
-        push_number = push_number[:push_number.find(list_date)]
-        # print(PushNumber)
-        push_number = push_number[7:]
+        # print(f'2>{push_number}<')
+        push_number = push_number[7:11]
         # print(PushNumber)
         push_number = push_number.split(' ')
         # print(PushNumber)
@@ -267,14 +266,14 @@ def get_post(
                 push_number = None
 
         # print(PushNumber)
-        Log.show_value(api.Config, Log.Level.DEBUG,
+        Log.show_value(api.config, Log.Level.DEBUG,
                       'PostAuthor', post_author)
-        Log.show_value(api.Config, Log.Level.DEBUG, 'PostTitle', post_title)
-        Log.show_value(api.Config, Log.Level.DEBUG, 'PostAID', post_aid)
-        Log.show_value(api.Config, Log.Level.DEBUG, 'PostWeb', post_web)
-        Log.show_value(api.Config, Log.Level.DEBUG, 'PostMoney', post_money)
-        Log.show_value(api.Config, Log.Level.DEBUG, 'ListDate', list_date)
-        Log.show_value(api.Config, Log.Level.DEBUG,
+        Log.show_value(api.config, Log.Level.DEBUG, 'PostTitle', post_title)
+        Log.show_value(api.config, Log.Level.DEBUG, 'PostAID', post_aid)
+        Log.show_value(api.config, Log.Level.DEBUG, 'PostWeb', post_web)
+        Log.show_value(api.config, Log.Level.DEBUG, 'PostMoney', post_money)
+        Log.show_value(api.config, Log.Level.DEBUG, 'ListDate', list_date)
+        Log.show_value(api.config, Log.Level.DEBUG,
                       'PushNumber', push_number)
 
         if lock_post:
@@ -378,7 +377,7 @@ def get_post(
     stop_dict = dict()
 
     while True:
-        index = api._ConnectCore.send(cmd, target_list)
+        index = api.connect_core.send(cmd, target_list)
 
         if index == 3 or index == 4:
             post = DataType.PostInfo(
@@ -399,7 +398,7 @@ def get_post(
             )
             return post
 
-        last_screen = api._ConnectCore.get_screen_queue()[-1]
+        last_screen = api.connect_core.get_screen_queue()[-1]
         lines = last_screen.split('\n')
         last_line = lines[-1]
         lines.pop()
@@ -469,7 +468,7 @@ def get_post(
 
             origin_post.append(new_content_part)
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 'NewContentPart',
                 new_content_part
@@ -505,7 +504,7 @@ def get_post(
     # OriginPost = '\n'.join(OriginPost)
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.DEBUG,
         'OriginPost',
         origin_post
@@ -539,7 +538,7 @@ def get_post(
             if len(board_temp) > 0:
                 board = board_temp
                 Log.show_value(
-                    api.Config,
+                    api.config,
                     Log.Level.DEBUG,
                     i18n.Board,
                     board
@@ -552,7 +551,7 @@ def get_post(
         pattern_result = post_author_pattern_old.search(author_line)
         if pattern_result is None:
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 i18n.SubstandardPost,
                 i18n.Author
@@ -582,7 +581,7 @@ def get_post(
     post_author = post_author[4:].strip()
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.DEBUG,
         i18n.Author,
         post_author
@@ -594,7 +593,7 @@ def get_post(
     pattern_result = post_title_pattern.search(title_line)
     if pattern_result is None:
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             i18n.SubstandardPost,
             i18n.Title
@@ -623,7 +622,7 @@ def get_post(
     post_title = post_title[4:].strip()
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.DEBUG,
         i18n.Title,
         post_title
@@ -634,7 +633,7 @@ def get_post(
     pattern_result = post_date_pattern.search(date_line)
     if pattern_result is None:
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             i18n.SubstandardPost,
             i18n.Date
@@ -663,7 +662,7 @@ def get_post(
     post_date = post_date[4:].strip()
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.DEBUG,
         i18n.Date,
         post_date
@@ -697,7 +696,7 @@ def get_post(
 
     if content_fail:
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             i18n.SubstandardPost,
             i18n.Content
@@ -724,7 +723,7 @@ def get_post(
         return post
 
     Log.show_value(
-        api.Config,
+        api.config,
         Log.Level.DEBUG,
         i18n.Content,
         post_content
@@ -739,7 +738,7 @@ def get_post(
     pattern_p2 = re.compile('[\d]+-[\d]+-[\d]+-[\d]+')
     for line in reversed(info_lines):
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG,
             'IP Line',
             line
@@ -769,7 +768,7 @@ def get_post(
             # print(f'=>[{LocationTemp}]')
             if ' ' not in location_temp and len(location_temp) > 0:
                 location = location_temp
-                Log.show_value(api.Config, Log.Level.DEBUG,
+                Log.show_value(api.config, Log.Level.DEBUG,
                               'Location', location)
             break
 
@@ -779,10 +778,10 @@ def get_post(
             ip = ip.replace('-', '.')
             # print(f'IP -> [{IP}]')
             break
-    if api.Config.Host == DataType.Host.PTT1:
+    if api.config.Host == DataType.Host.PTT1:
         if ip is None:
             Log.show_value(
-                api.Config,
+                api.config,
                 Log.Level.DEBUG,
                 i18n.SubstandardPost,
                 'IP'
@@ -807,7 +806,7 @@ def get_post(
                 unconfirmed=api.Unconfirmed,
             )
             return post
-    Log.show_value(api.Config, Log.Level.DEBUG, 'IP', ip)
+    Log.show_value(api.config, Log.Level.DEBUG, 'IP', ip)
 
     push_author_pattern = re.compile('[推|噓|→] [\w| ]+:')
     push_date_pattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
@@ -830,7 +829,7 @@ def get_post(
             # 不符合推文格式
             continue
         push_author = result.group(0)[2:-1].strip()
-        Log.show_value(api.Config, Log.Level.DEBUG, [
+        Log.show_value(api.config, Log.Level.DEBUG, [
             i18n.Push,
             i18n.ID,
         ],
@@ -841,7 +840,7 @@ def get_post(
         if result is None:
             continue
         push_date = result.group(0)
-        Log.show_value(api.Config, Log.Level.DEBUG, [
+        Log.show_value(api.config, Log.Level.DEBUG, [
             i18n.Push,
             i18n.Date,
         ],
@@ -852,7 +851,7 @@ def get_post(
         result = push_ip_pattern.search(line)
         if result is not None:
             push_ip = result.group(0)
-            Log.show_value(api.Config, Log.Level.DEBUG, [
+            Log.show_value(api.config, Log.Level.DEBUG, [
                 i18n.Push,
                 'IP',
             ],
@@ -864,7 +863,7 @@ def get_post(
                        ]
         # PushContent = PushContent.replace(PushDate, '')
 
-        if api.Config.Host == DataType.Host.PTT1:
+        if api.config.Host == DataType.Host.PTT1:
             push_content = push_content[
                            :push_content.rfind(push_date)
                            ]
@@ -879,7 +878,7 @@ def get_post(
                        push_content.find(':') + 1:
                        ].strip()
         Log.show_value(
-            api.Config,
+            api.config,
             Log.Level.DEBUG, [
                 i18n.Push,
                 i18n.Content,

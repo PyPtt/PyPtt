@@ -34,13 +34,13 @@ def get_newest_index(
         api._check_board(board)
 
         CheckValue.check(
-            api.Config, int, 'SearchType', search_type,
+            api.config, int, 'SearchType', search_type,
             value_class=DataType.PostSearchType)
         if search_condition is not None:
             CheckValue.check(
-                api.Config, str,
+                api.config, str,
                 'SearchCondition', search_condition)
-        CheckValue.check(api.Config, int, 'SearchType', search_type)
+        CheckValue.check(api.config, int, 'SearchType', search_type)
 
         cmd_list = []
         cmd_list.append(Command.GoMainMenu)
@@ -93,19 +93,19 @@ def get_newest_index(
             ConnectCore.TargetUnit(
                 i18n.NoSuchBoard,
                 Screens.Target.MainMenu_Exiting,
-                exceptions=Exceptions.NoSuchBoard(api.Config, board)
+                exceptions=Exceptions.NoSuchBoard(api.config, board)
             ),
         ]
-        index = api._ConnectCore.send(cmd, target_list)
+        index = api.connect_core.send(cmd, target_list)
         if index < 0:
-            # OriScreen = api._ConnectCore.getScreenQueue()[-1]
+            # OriScreen = api.connect_core.getScreenQueue()[-1]
             # print(OriScreen)
-            raise Exceptions.NoSuchBoard(api.Config, board)
+            raise Exceptions.NoSuchBoard(api.config, board)
 
         if index == 0:
             return 0
 
-        last_screen = api._ConnectCore.get_screen_queue()[-1]
+        last_screen = api.connect_core.get_screen_queue()[-1]
         all_index = re.findall(r'\d+ ', last_screen)
 
         if len(all_index) == 0:
@@ -129,7 +129,7 @@ def get_newest_index(
                     break
             if need_continue:
                 Log.show_value(
-                    api.Config,
+                    api.config,
                     Log.Level.DEBUG,
                     i18n.FindNewestIndex,
                     IndexTemp
@@ -138,7 +138,7 @@ def get_newest_index(
                 break
 
         if newest_index == 0:
-            Screens.show(api.Config, api._ConnectCore.get_screen_queue())
+            Screens.show(api.config, api.connect_core.get_screen_queue())
             raise Exceptions.UnknownError(i18n.UnknownError)
 
     elif DataType.IndexType.Web:
@@ -150,7 +150,7 @@ def get_newest_index(
         r = requests.get(url, cookies={'over18': '1'})
 
         if r.status_code != requests.codes.ok:
-            raise Exceptions.NoSuchBoard(api.Config, board)
+            raise Exceptions.NoSuchBoard(api.config, board)
         soup = BeautifulSoup(r.text, 'html.parser')
 
         for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):

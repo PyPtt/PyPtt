@@ -84,7 +84,7 @@ def push(
         ),
     ]
 
-    index = api._ConnectCore.send(
+    index = api.connect_core.send(
         cmd,
         target_list
     )
@@ -98,18 +98,18 @@ def push(
     cmd_list = []
 
     if index == 0:
-        push_option_line = api._ConnectCore.get_screen_queue()[-1]
+        push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
-        Log.show_value(api.Config, Log.Level.DEBUG,
+        Log.show_value(api.config, Log.Level.DEBUG,
                       'Push option line', push_option_line)
 
         enable_push = '值得推薦' in push_option_line
         enable_boo = '給它噓聲' in push_option_line
         enable_arrow = '只加→註解' in push_option_line
 
-        Log.show_value(api.Config, Log.Level.DEBUG, 'Push', enable_push)
-        Log.show_value(api.Config, Log.Level.DEBUG, 'Boo', enable_boo)
-        Log.show_value(api.Config, Log.Level.DEBUG, 'Arrow', enable_arrow)
+        Log.show_value(api.config, Log.Level.DEBUG, 'Push', enable_push)
+        Log.show_value(api.config, Log.Level.DEBUG, 'Boo', enable_boo)
+        Log.show_value(api.config, Log.Level.DEBUG, 'Arrow', enable_arrow)
 
         if push_type == DataType.PushType.Push and not enable_push:
             push_type = DataType.PushType.Arrow
@@ -141,7 +141,7 @@ def push(
         ),
     ]
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         cmd,
         target_list
     )

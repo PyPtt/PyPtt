@@ -24,7 +24,7 @@ def reply_post(
         post_index: int) ->None:
 
     # Log.showValue(
-    #     api.Config,
+    #     api.config,
     #     Log.Level.INFO,
     #     [
     #         i18n.PTT,
@@ -126,14 +126,14 @@ def reply_post(
         ),
     ]
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.Config.ScreenLongTimeOut
+        screen_timeout=api.config.ScreenLongTimeOut
     )
 
     Log.log(
-        api.Config,
+        api.config,
         Log.Level.INFO,
         i18n.RespondSuccess
     )

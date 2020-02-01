@@ -41,13 +41,13 @@ def search_user(
 
     while True:
 
-        api._ConnectCore.send(
+        api.connect_core.send(
             cmdtemp,
             target_list
         )
-        ori_screen = api._ConnectCore.get_screen_queue()[-1]
+        ori_screen = api.connect_core.get_screen_queue()[-1]
         Log.log(
-            api.Config,
+            api.config,
             Log.Level.INFO,
             i18n.Reading
         )
@@ -88,12 +88,12 @@ def search_user(
             cmdtemp = ' '
 
     Log.log(
-        api.Config,
+        api.config,
         Log.Level.INFO,
         i18n.ReadComplete
     )
 
-    api._ConnectCore.send(
+    api.connect_core.send(
         Command.Enter,
         [
             # 《ＩＤ暱稱》
