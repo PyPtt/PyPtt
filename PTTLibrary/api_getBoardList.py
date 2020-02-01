@@ -13,7 +13,7 @@ except ModuleNotFoundError:
     import Command
 
 
-def get_board_list(api) -> None:
+def get_board_list(api) -> list:
 
     # Log.showValue(
     #     api.config,
@@ -49,17 +49,18 @@ def get_board_list(api) -> None:
     ori_screen = api.connect_core.get_screen_queue()[-1]
 
     max_no = 0
-
     for line in ori_screen.split('\n'):
-        if '◎' not in line:
+        if '◎' not in line and '●' not in line:
             continue
 
-        if line.startswith(api._Cursor):
-            line = line[len(api._Cursor):]
+        if line.startswith(api.cursor):
+            line = line[len(api.cursor):]
 
         # print(f'->{line}<')
-
-        front_part = line[:line.find('◎')]
+        if '◎' in line:
+            front_part = line[:line.find('◎')]
+        else:
+            front_part = line[:line.find('●')]
         front_part_list = [x for x in front_part.split(' ')]
         front_part_list = list(filter(None, front_part_list))
         # print(f'FrontPartList =>{FrontPartList}<=')
@@ -73,7 +74,7 @@ def get_board_list(api) -> None:
     )
 
     if api.config.LogLevel == Log.Level.INFO:
-        PB = progressbar.ProgressBar(
+        pb = progressbar.ProgressBar(
             max_value=max_no,
             redirect_stdout=True
         )
@@ -101,8 +102,8 @@ def get_board_list(api) -> None:
             if '◎' not in line and '●' not in line:
                 continue
 
-            if line.startswith(api._Cursor):
-                line = line[len(api._Cursor):]
+            if line.startswith(api.cursor):
+                line = line[len(api.cursor):]
 
             # print(f'->{line}<')
 
@@ -138,13 +139,13 @@ def get_board_list(api) -> None:
             board_list.append(board_name)
 
             if api.config.LogLevel == Log.Level.INFO:
-                PB.update(no)
+                pb.update(no)
 
-        if no == max_no:
+        if no >= max_no:
             break
         cmd = Command.Ctrl_F
 
     if api.config.LogLevel == Log.Level.INFO:
-        PB.finish()
+        pb.finish()
 
     return board_list
