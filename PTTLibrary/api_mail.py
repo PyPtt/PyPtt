@@ -59,7 +59,7 @@ def mail(
     api.connect_core.send(
         Cmd,
         TargetList,
-        screen_timeout=api.config.ScreenLongTimeOut
+        screen_timeout=api.config.screen_long_timeout
     )
 
     CmdList = []
@@ -108,7 +108,7 @@ def mail(
     api.connect_core.send(
         Cmd,
         TargetList,
-        screen_timeout=api.config.ScreenPostTimeOut
+        screen_timeout=api.config.screen_post_timeout
     )
 
     Log.show_value(

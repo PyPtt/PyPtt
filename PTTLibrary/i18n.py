@@ -5,7 +5,7 @@ except ModuleNotFoundError:
     import Util
 
 
-class Language(object):
+class language(object):
 
     Chinese = 1
     English = 2
@@ -14,9 +14,9 @@ class Language(object):
     MaxValue = English
 
 
-LanguageList = [
-    Language.Chinese,
-    Language.English,
+languageList = [
+    language.Chinese,
+    language.English,
 ]
 
 Connect = None
@@ -45,8 +45,8 @@ SigningUnPleaseWait = None
 Msg = None
 SigningUpdate = None
 SendMsg = None
-KickOtherLogin = None
-NotKickOtherLogin = None
+kick_other_login = None
+Notkick_other_login = None
 AnyKeyContinue = None
 Login = None
 LoginSuccess = None
@@ -102,7 +102,7 @@ SetCallStatus = None
 Throw = None
 NoWaterball = None
 BrowseWaterball = None
-LanguageModule = None
+languageModule = None
 English = None
 ChineseTranditional = None
 GetCallStatus = None
@@ -124,7 +124,7 @@ MailBox = None
 NoSuchBoard = None
 HideSensitiveInfor = None
 PostFormatError = None
-LogHandler = None
+log_handler = None
 NewCursor = None
 OldCursor = None
 PostNoContent = None
@@ -135,7 +135,7 @@ UnregisteredUserCantUseThisAPI = None
 MultiThreadOperate = None
 HasNewMailGotoMainMenu = None
 UseTooManyResources = None
-Host = None
+host = None
 PTT2NotSupport = None
 AnimationPost = None
 RestoreConnection = None
@@ -170,14 +170,14 @@ QuitUserProfile = None
 
 
 def specific_load(language, lang_list):
-    global LanguageList
+    global languageList
 
-    if len(LanguageList) != len(lang_list):
+    if len(languageList) != len(lang_list):
         raise ValueError('SpecificLoad LangList legnth error')
 
-    if language not in LanguageList:
+    if language not in languageList:
         raise ValueError('SpecificLoad Unknow language', language)
-    return lang_list[LanguageList.index(language)]
+    return lang_list[languageList.index(language)]
 
 
 def replace(string, *args):
@@ -189,8 +189,8 @@ def replace(string, *args):
 
 
 def load(language):
-    if not Util.check_range(Language, language):
-        raise ValueError('Language', language)
+    if not Util.check_range(language, language):
+        raise ValueError('language', language)
 
     global Connect
     Connect = specific_load(language, [
@@ -348,14 +348,14 @@ def load(language):
         'Send Msg',
     ])
 
-    global KickOtherLogin
-    KickOtherLogin = specific_load(language, [
+    global kick_other_login
+    kick_other_login = specific_load(language, [
         '剔除其他登入',
         'Kick other login',
     ])
 
-    global NotKickOtherLogin
-    NotKickOtherLogin = specific_load(language, [
+    global Notkick_other_login
+    Notkick_other_login = specific_load(language, [
         '不剔除其他登入',
         'Not kick other login',
     ])
@@ -690,10 +690,10 @@ def load(language):
         'Browse Waterball',
     ])
 
-    global LanguageModule
-    LanguageModule = specific_load(language, [
+    global languageModule
+    languageModule = specific_load(language, [
         '語言模組',
-        'Language Module',
+        'language Module',
     ])
 
     global English
@@ -822,8 +822,8 @@ def load(language):
         'Post Format Error',
     ])
 
-    global LogHandler
-    LogHandler = specific_load(language, [
+    global log_handler
+    log_handler = specific_load(language, [
         '紀錄額取器',
         'Log Handler',
     ])
@@ -888,10 +888,10 @@ def load(language):
         'Use too many resources of PTT',
     ])
 
-    global Host
-    Host = specific_load(language, [
+    global host
+    host = specific_load(language, [
         '主機',
-        'Host',
+        'host',
     ])
 
     global PTT2NotSupport
@@ -1115,5 +1115,5 @@ def _createlist():
 
 
 if __name__ == '__main__':
-    load(Language.Chinese)
+    load(language.Chinese)
     _createlist()

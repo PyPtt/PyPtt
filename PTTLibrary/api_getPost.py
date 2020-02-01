@@ -104,7 +104,7 @@ def get_post(
         )
 
         cursor_line = [line for line in ori_screen.split(
-            '\n') if line.startswith(api._Cursor)]
+            '\n') if line.startswith(api.cursor)]
 
         if len(cursor_line) != 1:
             raise Exceptions.UnknownError(ori_screen)
@@ -161,7 +161,7 @@ def get_post(
 
         lock_post = False
         cursor_line = [line for line in ori_screen.split(
-            '\n') if line.startswith(api._Cursor)][0]
+            '\n') if line.startswith(api.cursor)][0]
         post_author = cursor_line
         if '□' in post_author:
             post_author = post_author[:post_author.find('□')].strip()
@@ -778,7 +778,7 @@ def get_post(
             ip = ip.replace('-', '.')
             # print(f'IP -> [{IP}]')
             break
-    if api.config.Host == DataType.Host.PTT1:
+    if api.config.host == DataType.host.PTT1:
         if ip is None:
             Log.show_value(
                 api.config,
@@ -863,7 +863,7 @@ def get_post(
                        ]
         # PushContent = PushContent.replace(PushDate, '')
 
-        if api.config.Host == DataType.Host.PTT1:
+        if api.config.host == DataType.host.PTT1:
             push_content = push_content[
                            :push_content.rfind(push_date)
                            ]

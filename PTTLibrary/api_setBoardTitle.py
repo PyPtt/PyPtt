@@ -55,5 +55,5 @@ def set_board_title(
     api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.config.ScreenLongTimeOut
+        screen_timeout=api.config.screen_long_timeout
     )

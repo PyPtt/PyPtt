@@ -31,25 +31,6 @@ except ModuleNotFoundError:
     import Ver
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-Version = Ver.V
-
-Language = i18n.Language
-ConnectMode = ConnectCore.ConnectMode
-LogLevel = Log.Level
-Command = Command
-PushType = DataType.PushType
-PostSearchType = DataType.PostSearchType
-IndexType = DataType.IndexType
-WaterBallOperateType = DataType.WaterBallOperateType
-WaterBallType = DataType.WaterBallType
-CallStatus = DataType.CallStatus
-PostDeleteStatus = DataType.PostDeleteStatus
-CrawlType = DataType.CrawlType
-Host = DataType.Host
-ReplyType = DataType.ReplyType
-MarkType = DataType.MarkType
-
-
 class Library:
     def __init__(
             self,
@@ -64,13 +45,13 @@ class Library:
 
         self._ID = None
         if log_handler is not None and not callable(log_handler):
-            raise TypeError('[PTT Library] LogHandler is must callable!!')
+            raise TypeError('[PTT Library] log_handler is must callable!!')
 
         if log_handler is not None:
             has_log_handler = True
             set_log_handler_result = True
             try:
-                log_handler(f'PTT Library v {Version}')
+                log_handler(f'PTT Library v {Ver.V}')
                 log_handler('Developed by PTT CodingMan')
             except Exception:
                 log_handler = None
@@ -78,7 +59,7 @@ class Library:
         else:
             has_log_handler = False
 
-        print(f'PTT Library v {Version}')
+        print(f'PTT Library v {Ver.V}')
         print('Developed by PTT CodingMan')
 
         self._LoginStatus = False
@@ -86,105 +67,105 @@ class Library:
         self.config = Config.Config()
 
         if not isinstance(language, int):
-            raise TypeError('[PTT Library] Language must be integer')
+            raise TypeError('[PTT Library] language must be integer')
         if not isinstance(connect_mode, int):
             raise TypeError('[PTT Library] ConnectMode must be integer')
         if not isinstance(log_level, int):
-            raise TypeError('[PTT Library] LogLevel must be integer')
+            raise TypeError('[PTT Library] log_level must be integer')
         if not isinstance(screen_time_out, int):
-            raise TypeError('[PTT Library] ScreenTimeOut must be integer')
+            raise TypeError('[PTT Library] screen_timeout must be integer')
         if not isinstance(screen_long_time_out, int):
-            raise TypeError('[PTT Library] ScreenLongTimeOut must be integer')
+            raise TypeError('[PTT Library] screen_long_timeout must be integer')
         if not isinstance(host, int):
-            raise TypeError('[PTT Library] Host must be integer')
+            raise TypeError('[PTT Library] host must be integer')
 
         if screen_time_out != 0:
-            self.config.ScreenTimeOut = screen_time_out
+            self.config.screen_timeout = screen_time_out
         if screen_long_time_out != 0:
-            self.config.ScreenLongTimeOut = screen_long_time_out
+            self.config.screen_long_timeout = screen_long_time_out
 
         if log_level == 0:
-            log_level = self.config.LogLevel
+            log_level = self.config.log_level
         elif not Util.check_range(Log.Level, log_level):
-            raise ValueError('[PTT Library] Unknown LogLevel', log_level)
+            raise ValueError('[PTT Library] Unknown log_level', log_level)
         else:
-            self.config.LogLevel = log_level
+            self.config.log_level = log_level
 
         if language == 0:
-            language = self.config.Language
-        elif not Util.check_range(i18n.Language, language):
+            language = self.config.language
+        elif not Util.check_range(i18n.language, language):
             raise ValueError('[PTT Library] Unknown language', language)
         else:
-            self.config.Language = language
+            self.config.language = language
         i18n.load(language)
 
         if log_handler is not None:
-            # Log.Handler = LogHandler
-            self.config.LogHandler = log_handler
+            # Log.Handler = log_handler
+            self.config.log_handler = log_handler
             Log.show_value(
                 self.config,
                 Log.Level.INFO,
-                i18n.LogHandler,
+                i18n.log_handler,
                 i18n.Init
             )
         elif has_log_handler and not set_log_handler_result:
             Log.show_value(
                 self.config,
                 Log.Level.INFO,
-                i18n.LogHandler,
+                i18n.log_handler,
                 [
                     i18n.Init,
                     i18n.Fail
                 ]
             )
 
-        if language == i18n.Language.Chinese:
+        if language == i18n.language.Chinese:
             Log.show_value(
                 self.config, Log.Level.INFO, [
                     i18n.ChineseTranditional,
-                    i18n.LanguageModule
+                    i18n.languageModule
                 ],
                 i18n.Init
             )
-        elif language == i18n.Language.English:
+        elif language == i18n.language.English:
             Log.show_value(
                 self.config, Log.Level.INFO, [
                     i18n.English,
-                    i18n.LanguageModule
+                    i18n.languageModule
                 ],
                 i18n.Init
             )
 
-        if connect_mode == 0:
-            connect_mode = self.config.ConnectMode
-        elif not Util.check_range(ConnectCore.ConnectMode, connect_mode):
-            raise ValueError('[PTT Library] Unknown ConnectMode', connect_mode)
-        else:
-            self.config.ConnectMode = connect_mode
+        # if connect_mode == 0:
+        #     connect_mode = self.config.ConnectMode
+        # elif not Util.check_range(ConnectCore.ConnectMode, connect_mode):
+        #     raise ValueError('[PTT Library] Unknown ConnectMode', connect_mode)
+        # else:
+        #     self.config.ConnectMode = connect_mode
 
         if host == 0:
-            host = self.config.Host
-        elif not Util.check_range(DataType.Host, host):
-            raise ValueError('[PTT Library] Unknown Host', host)
-        self.config.Host = host
+            host = self.config.host
+        elif not Util.check_range(DataType.host, host):
+            raise ValueError('[PTT Library] Unknown host', host)
+        self.config.host = host
 
-        if host == DataType.Host.PTT1:
+        if host == DataType.host.PTT1:
             Log.show_value(
                 self.config,
                 Log.Level.INFO,
                 [
                     i18n.Connect,
-                    i18n.Host
+                    i18n.host
                 ],
                 i18n.PTT
             )
-        if host == DataType.Host.PTT2:
+        if host == DataType.host.PTT2:
             Log.show_value(
                 self.config,
                 Log.Level.INFO,
                 [
                     i18n.Connect,
-                    i18n.Host
+                    i18n.host
                 ],
                 i18n.PTT2
             )
@@ -207,7 +188,7 @@ class Library:
             Log.Level.INFO, [
                 i18n.PTT,
                 i18n.Library,
-                ' v ' + Version,
+                ' v ' + Ver.V,
             ],
             i18n.Init
         )
@@ -260,7 +241,7 @@ class Library:
 
         CheckValue.check(self.config, str, 'ID', pttid)
         CheckValue.check(self.config, str, 'Password', password)
-        CheckValue.check(self.config, bool, 'KickOtherLogin', kick_other_login)
+        CheckValue.check(self.config, bool, 'kick_other_login', kick_other_login)
 
         try:
             return self._login(
@@ -706,7 +687,7 @@ class Library:
 
             error_post_list = []
             del_post_list = []
-            if self.config.LogLevel == Log.Level.INFO:
+            if self.config.log_level == Log.Level.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=end_index - start_index + 1,
                     redirect_stdout=True
@@ -751,7 +732,7 @@ class Library:
                         self._login(
                             self._ID,
                             self._Password,
-                            self.config.KickOtherLogin
+                            self.config.kick_other_login
                         )
                         need_continue = True
                     except Exceptions.UseTooManyResources as e:
@@ -765,7 +746,7 @@ class Library:
                         self._login(
                             self._ID,
                             self._Password,
-                            self.config.KickOtherLogin
+                            self.config.kick_other_login
                         )
                         need_continue = True
 
@@ -785,7 +766,7 @@ class Library:
 
                     break
 
-                if self.config.LogLevel == Log.Level.INFO:
+                if self.config.log_level == Log.Level.INFO:
                     PB.update(index - start_index)
                 if post is None:
                     error_post_list.append(index)
@@ -799,14 +780,14 @@ class Library:
                 if post.get_delete_status() != DataType.PostDeleteStatus.NotDeleted:
                     del_post_list.append(index)
                 post_handler(post)
-            if self.config.LogLevel == Log.Level.INFO:
+            if self.config.log_level == Log.Level.INFO:
                 PB.finish()
 
             return error_post_list, del_post_list
 
         else:
-            if self.config.Host == DataType.Host.PTT2:
-                raise Exceptions.HostNotSupport(Util.get_current_func_name())
+            if self.config.host == DataType.host.PTT2:
+                raise Exceptions.hostNotSupport(Util.get_current_func_name())
 
             # 網頁版本爬蟲
             # https://www.ptt.cc/bbs/index.html
@@ -833,7 +814,7 @@ class Library:
             # PostAID = ""
             _url = 'https://www.ptt.cc/bbs/'
             index = str(newest_index)
-            if self.config.LogLevel == Log.Level.INFO:
+            if self.config.log_level == Log.Level.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=end_page - start_page + 1,
                     redirect_stdout=True
@@ -893,7 +874,7 @@ class Library:
                     )
                     post_handler(post)
 
-                if self.config.LogLevel == Log.Level.INFO:
+                if self.config.log_level == Log.Level.INFO:
                     PB.update(index - start_page)
 
             Log.show_value(
@@ -906,7 +887,7 @@ class Library:
             # 4. 把組合出來的 Post 塞給 handler
 
             # 5. 顯示 progress bar
-            if self.config.LogLevel == Log.Level.INFO:
+            if self.config.log_level == Log.Level.INFO:
                 PB.finish()
 
             return error_post_list, del_post_list
@@ -1525,5 +1506,5 @@ class Library:
 
 
 if __name__ == '__main__':
-    print('PTT Library v ' + Version)
+    print('PTT Library v ' + Ver.V)
     print('Developed by PTT CodingMan')

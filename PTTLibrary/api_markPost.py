@@ -110,8 +110,8 @@ def markPost(
 
     if mark_type == DataType.MarkType.Unconfirmed:
         # 批踢踢兔沒有待證文章功能 QQ
-        if api.config.Host == DataType.Host.PTT2:
-            raise Exceptions.HostNotSupport(Util.get_current_func_name())
+        if api.config.host == DataType.host.PTT2:
+            raise Exceptions.hostNotSupport(Util.get_current_func_name())
 
     api._check_board(
         board,

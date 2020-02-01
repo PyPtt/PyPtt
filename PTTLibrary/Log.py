@@ -22,7 +22,7 @@ class Level(object):
 
 def merge(config, msg) -> str:
     if isinstance(msg, list):
-        if config.Language == i18n.Language.Chinese:
+        if config.language == i18n.language.Chinese:
 
             for i, element in enumerate(msg):
                 if len(element) == 0:
@@ -45,9 +45,9 @@ def merge(config, msg) -> str:
 def log(config, log_level, msg):
 
     if not Util.check_range(Level, log_level):
-        raise ValueError('LogLevel', log_level)
+        raise ValueError('log_level', log_level)
 
-    if config.LogLevel > log_level:
+    if config.log_level > log_level:
         return
     if len(msg) == 0:
         return
@@ -69,8 +69,8 @@ def log(config, log_level, msg):
     except Exception:
         print(total_message.encode('utf-8', "replace").decode('utf-8'))
 
-    if config.LogHandler is not None:
-        config.LogHandler(total_message)
+    if config.log_handler is not None:
+        config.log_handler(total_message)
 
 
 LastValue = None
@@ -79,9 +79,9 @@ LastValue = None
 def show_value(config, log_level, msg, value):
 
     if not Util.check_range(Level, log_level):
-        raise ValueError('LogLevel', log_level)
+        raise ValueError('log_level', log_level)
 
-    if config.LogLevel > log_level:
+    if config.log_level > log_level:
         return
     global LastValue
 

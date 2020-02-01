@@ -44,7 +44,7 @@ def get_board_list(api) -> list:
     api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.config.ScreenLongTimeOut
+        screen_timeout=api.config.screen_long_timeout
     )
     ori_screen = api.connect_core.get_screen_queue()[-1]
 
@@ -73,7 +73,7 @@ def get_board_list(api) -> list:
         max_no
     )
 
-    if api.config.LogLevel == Log.Level.INFO:
+    if api.config.log_level == Log.Level.INFO:
         pb = progressbar.ProgressBar(
             max_value=max_no,
             redirect_stdout=True
@@ -93,7 +93,7 @@ def get_board_list(api) -> list:
         api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=api.config.ScreenLongTimeOut
+            screen_timeout=api.config.screen_long_timeout
         )
 
         ori_screen = api.connect_core.get_screen_queue()[-1]
@@ -138,14 +138,14 @@ def get_board_list(api) -> list:
 
             board_list.append(board_name)
 
-            if api.config.LogLevel == Log.Level.INFO:
+            if api.config.log_level == Log.Level.INFO:
                 pb.update(no)
 
         if no >= max_no:
             break
         cmd = Command.Ctrl_F
 
-    if api.config.LogLevel == Log.Level.INFO:
+    if api.config.log_level == Log.Level.INFO:
         pb.finish()
 
     return board_list

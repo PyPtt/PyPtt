@@ -4,10 +4,10 @@ from uao import register_uao
 register_uao()
 
 
-def ParseParameter(ptype, parameter):
+def parse_para(value_type, parameter):
     if parameter is None:
         return None
-    result = ptype(parameter)
+    result = value_type(parameter)
     if isinstance(result, str):
         result = result.rstrip()
     return result
@@ -119,11 +119,11 @@ class PushType:
 
 class MailInformation:
     def __init__(self, author, title, date, content, ip):
-        self._Author = ParseParameter(str, author)
-        self._Title = ParseParameter(str, title)
-        self._Date = ParseParameter(str, date)
-        self._Content = ParseParameter(str, content)
-        self._IP = ParseParameter(str, ip)
+        self._Author = parse_para(str, author)
+        self._Title = parse_para(str, title)
+        self._Date = parse_para(str, date)
+        self._Content = parse_para(str, content)
+        self._IP = parse_para(str, ip)
 
     def get_author(self):
         return self._Author
@@ -157,18 +157,18 @@ class UserInfo:
         chess,
         signature_file
     ):
-        self._ID = ParseParameter(str, pttid)
-        self._Money = ParseParameter(str, money)
-        self._LoginTime = ParseParameter(int, login_time)
-        self._LegalPost = ParseParameter(int, legal_post)
-        self._IllegalPost = ParseParameter(int, illegal_post)
-        self._State = ParseParameter(str, state)
-        self._Mail = ParseParameter(str, mail)
-        self._LastLogin = ParseParameter(str, last_login)
-        self._LastIP = ParseParameter(str, last_ip)
-        self._FiveChess = ParseParameter(str, five_chess)
-        self._Chess = ParseParameter(str, chess)
-        self._SignatureFile = ParseParameter(str, signature_file)
+        self._ID = parse_para(str, pttid)
+        self._Money = parse_para(str, money)
+        self._LoginTime = parse_para(int, login_time)
+        self._LegalPost = parse_para(int, legal_post)
+        self._IllegalPost = parse_para(int, illegal_post)
+        self._State = parse_para(str, state)
+        self._Mail = parse_para(str, mail)
+        self._LastLogin = parse_para(str, last_login)
+        self._LastIP = parse_para(str, last_ip)
+        self._FiveChess = parse_para(str, five_chess)
+        self._Chess = parse_para(str, chess)
+        self._SignatureFile = parse_para(str, signature_file)
 
     def get_id(self):
         return self._ID
@@ -209,11 +209,11 @@ class UserInfo:
 
 class PushInfo:
     def __init__(self, push_type, author, push_content, push_ip, push_time):
-        self._Type = ParseParameter(int, push_type)
-        self._Author = ParseParameter(str, author)
-        self._Content = ParseParameter(str, push_content)
-        self._IP = ParseParameter(str, push_ip)
-        self._Time = ParseParameter(str, push_time)
+        self._Type = parse_para(int, push_type)
+        self._Author = parse_para(str, author)
+        self._Content = parse_para(str, push_content)
+        self._IP = parse_para(str, push_ip)
+        self._Time = parse_para(str, push_time)
 
     def get_type(self):
         return self._Type
@@ -264,25 +264,25 @@ class PostInfo:
         origin_post=None,
         unconfirmed=False
     ):
-        self._Board = ParseParameter(str, board)
-        self._AID = ParseParameter(str, aid)
-        self._Author = ParseParameter(str, author)
-        self._Date = ParseParameter(str, date)
-        self._Title = ParseParameter(str, title)
-        self._Content = ParseParameter(str, content)
-        self._Money = ParseParameter(int, money)
-        self._WebUrl = ParseParameter(str, web_url)
-        self._IP = ParseParameter(str, ip)
+        self._Board = parse_para(str, board)
+        self._AID = parse_para(str, aid)
+        self._Author = parse_para(str, author)
+        self._Date = parse_para(str, date)
+        self._Title = parse_para(str, title)
+        self._Content = parse_para(str, content)
+        self._Money = parse_para(int, money)
+        self._WebUrl = parse_para(str, web_url)
+        self._IP = parse_para(str, ip)
         self._PushList = push_list
         self._DeleteStatus = delete_status
-        self._ListDate = ParseParameter(str, list_date)
+        self._ListDate = parse_para(str, list_date)
         self._ControlCode = control_code
         self._FormatCheck = format_check
-        self._Location = ParseParameter(str, location)
-        self._PushNumber = ParseParameter(str, push_number)
+        self._Location = parse_para(str, location)
+        self._PushNumber = parse_para(str, push_number)
         self._Lock = lock
-        self._OriginPost = ParseParameter(str, origin_post)
-        self._Unconfirmed = ParseParameter(bool, unconfirmed)
+        self._OriginPost = parse_para(str, origin_post)
+        self._Unconfirmed = parse_para(bool, unconfirmed)
 
     def get_board(self):
         return self._Board
@@ -344,10 +344,10 @@ class PostInfo:
 
 class WaterBallInfo:
     def __init__(self, waterball_type, target, content, date):
-        self._Type = ParseParameter(int, waterball_type)
-        self._Target = ParseParameter(str, target)
-        self._Content = ParseParameter(str, content)
-        self._Date = ParseParameter(str, date)
+        self._Type = parse_para(int, waterball_type)
+        self._Target = parse_para(str, target)
+        self._Content = parse_para(str, content)
+        self._Date = parse_para(str, date)
 
     def get_target(self):
         return self._Target
@@ -391,7 +391,7 @@ class CrawlType:
     MaxValue = Web
 
 
-class Host:
+class host:
     # 批踢踢萬
     PTT1 = 1
     # 批踢踢兔
@@ -419,9 +419,9 @@ class MarkType:
 
 class FavouriteBoard:
     def __init__(self, board, board_type, board_title):
-        self.Board = ParseParameter(str, board)
-        self.Type = ParseParameter(str, board_type)
-        self.BoardTitle = ParseParameter(str, board_title)
+        self.Board = parse_para(str, board)
+        self.Type = parse_para(str, board_type)
+        self.BoardTitle = parse_para(str, board_title)
 
     def get_board(self):
         return self.Board
@@ -458,29 +458,29 @@ class BoardInfo:
         require_login_time=None,
         require_illegal_post=None,
     ):
-        self.Board = ParseParameter(str, board)
-        self.OnlineUser = ParseParameter(int, online_user)
-        self.ChineseDes = ParseParameter(str, chinese_des)
-        self.Moderators = ParseParameter(list, moderators)
-        self.OpenState = ParseParameter(bool, open_state)
-        self.IntoTopTenWhenHide = ParseParameter(bool, into_top_ten_when_hide)
-        self.NonBoardMembersPost = ParseParameter(bool, non_board_members_post)
-        self.ReplyPost = ParseParameter(bool, reply_post)
-        self.SelfDelPost = ParseParameter(bool, self_del_post)
-        self.PushPost = ParseParameter(bool, push_post)
-        self.BooPost = ParseParameter(bool, boo_post)
-        self.FastPush = ParseParameter(bool, fast_push)
-        self.MinInterval = ParseParameter(int, min_interval)
-        self.PushRecordIP = ParseParameter(bool, push_record_ip)
-        self.PushAligned = ParseParameter(bool, push_aligned)
-        self.ModeratorCanDelIllegalContent = ParseParameter(
+        self.Board = parse_para(str, board)
+        self.OnlineUser = parse_para(int, online_user)
+        self.ChineseDes = parse_para(str, chinese_des)
+        self.Moderators = parse_para(list, moderators)
+        self.OpenState = parse_para(bool, open_state)
+        self.IntoTopTenWhenHide = parse_para(bool, into_top_ten_when_hide)
+        self.NonBoardMembersPost = parse_para(bool, non_board_members_post)
+        self.ReplyPost = parse_para(bool, reply_post)
+        self.SelfDelPost = parse_para(bool, self_del_post)
+        self.PushPost = parse_para(bool, push_post)
+        self.BooPost = parse_para(bool, boo_post)
+        self.FastPush = parse_para(bool, fast_push)
+        self.MinInterval = parse_para(int, min_interval)
+        self.PushRecordIP = parse_para(bool, push_record_ip)
+        self.PushAligned = parse_para(bool, push_aligned)
+        self.ModeratorCanDelIllegalContent = parse_para(
             bool, moderator_can_del_illegal_content)
-        self.TranPostAutoRecordedAndRequirePostPermissions = ParseParameter(
+        self.TranPostAutoRecordedAndRequirePostPermissions = parse_para(
             bool, tran_post_auto_recorded_and_require_post_permissions)
-        self.CoolMode = ParseParameter(bool, cool_mode)
-        self.Require18 = ParseParameter(bool, require18)
-        self.RequireLoginTime = ParseParameter(int, require_login_time)
-        self.RequireIllegalPost = ParseParameter(int, require_illegal_post)
+        self.CoolMode = parse_para(bool, cool_mode)
+        self.Require18 = parse_para(bool, require18)
+        self.RequireLoginTime = parse_para(int, require_login_time)
+        self.RequireIllegalPost = parse_para(int, require_illegal_post)
 
     def get_board(self):
         return self.Board
