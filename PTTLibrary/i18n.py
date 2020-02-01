@@ -1,11 +1,11 @@
 
 try:
-    from . import Util
+    from . import lib_util
 except ModuleNotFoundError:
-    import Util
+    import lib_util
 
 
-class language(object):
+class Language(object):
 
     Chinese = 1
     English = 2
@@ -15,8 +15,8 @@ class language(object):
 
 
 languageList = [
-    language.Chinese,
-    language.English,
+    Language.Chinese,
+    Language.English,
 ]
 
 Connect = None
@@ -48,17 +48,17 @@ SendMsg = None
 kick_other_login = None
 Notkick_other_login = None
 AnyKeyContinue = None
-Login = None
-LoginSuccess = None
-LoginFail = None
+login = None
+loginSuccess = None
+loginFail = None
 MailBoxFull = None
 PostNotFinish = None
 SystemBusyTryLater = None
 DelWrongPWRecord = None
-Logout = None
+logout = None
 SpendTime = None
 GetPTTTime = None
-LoginTooOften = None
+loginTooOften = None
 MustBe = None
 String = None
 Integer = None
@@ -80,7 +80,7 @@ Content = None
 Author = None
 Title = None
 UnknownError = None
-RequireLogin = None
+Requirelogin = None
 HasPushPermission = None
 HasPostPermission = None
 NoPermission = None
@@ -189,8 +189,8 @@ def replace(string, *args):
 
 
 def load(language):
-    if not Util.check_range(language, language):
-        raise ValueError('language', language)
+    if not lib_util.check_range(Language, language):
+        raise ValueError('Language', language)
 
     global Connect
     Connect = specific_load(language, [
@@ -366,22 +366,22 @@ def load(language):
         'Any key to continue',
     ])
 
-    global Login
-    Login = specific_load(language, [
+    global login
+    login = specific_load(language, [
         '登入',
-        'Login',
+        'login',
     ])
 
-    global LoginSuccess
-    LoginSuccess = specific_load(language, [
-        Login + Success,
-        Login + ' ' + Success,
+    global loginSuccess
+    loginSuccess = specific_load(language, [
+        login + Success,
+        login + ' ' + Success,
     ])
 
-    global LoginFail
-    LoginFail = specific_load(language, [
-        Login + Fail,
-        Login + ' ' + Fail,
+    global loginFail
+    loginFail = specific_load(language, [
+        login + Fail,
+        login + ' ' + Fail,
     ])
 
     global MailBoxFull
@@ -408,10 +408,10 @@ def load(language):
         'Delete the record of the wrong password',
     ])
 
-    global Logout
-    Logout = specific_load(language, [
+    global logout
+    logout = specific_load(language, [
         '登出',
-        'Logout',
+        'logout',
     ])
 
     global SpendTime
@@ -426,10 +426,10 @@ def load(language):
         'Get PTT time',
     ])
 
-    global LoginTooOften
-    LoginTooOften = specific_load(language, [
+    global loginTooOften
+    loginTooOften = specific_load(language, [
         '登入太頻繁',
-        'Login too often',
+        'login too often',
     ])
 
     global MustBe
@@ -558,10 +558,10 @@ def load(language):
         'Unknow Error',
     ])
 
-    global RequireLogin
-    RequireLogin = specific_load(language, [
-        '請先' + Login,
-        'Please ' + Login + ' first',
+    global Requirelogin
+    Requirelogin = specific_load(language, [
+        '請先' + login,
+        'Please ' + login + ' first',
     ])
 
     global HasPushPermission
@@ -825,7 +825,7 @@ def load(language):
     global log_handler
     log_handler = specific_load(language, [
         '紀錄額取器',
-        'Log Handler',
+        'log Handler',
     ])
 
     global NewCursor

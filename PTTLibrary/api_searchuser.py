@@ -1,12 +1,12 @@
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Log
+    from . import log
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Log
+    import log
     import Command
 
 
@@ -46,9 +46,9 @@ def search_user(
             target_list
         )
         ori_screen = api.connect_core.get_screen_queue()[-1]
-        Log.log(
+        log.log(
             api.config,
-            Log.Level.INFO,
+            log.Level.INFO,
             i18n.Reading
         )
         # print(OriScreen)
@@ -87,9 +87,9 @@ def search_user(
 
             cmdtemp = ' '
 
-    Log.log(
+    log.log(
         api.config,
-        Log.Level.INFO,
+        log.Level.INFO,
         i18n.ReadComplete
     )
 
@@ -101,13 +101,13 @@ def search_user(
                 i18n.QuitUserProfile,
                 '《ＩＤ暱稱》',
                 response=Command.Enter,
-                # log_level=Log.Level.DEBUG
+                # log_level=log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.Done,
                 '查詢網友',
                 break_detect=True,
-                # log_level=Log.Level.DEBUG
+                # log_level=log.Level.DEBUG
             )
         ]
     )

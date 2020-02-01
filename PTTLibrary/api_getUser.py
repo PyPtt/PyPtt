@@ -1,25 +1,25 @@
 import re
 try:
-    from . import DataType
-    from . import Util
+    from . import data_type
+    from . import lib_util
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Screens
-    from . import Exceptions
+    from . import log
+    from . import screens
+    from . import exceptions
     from . import Command
 except ModuleNotFoundError:
-    import DataType
-    import Util
+    import data_type
+    import lib_util
     import i18n
     import ConnectCore
-    import Log
-    import Screens
-    import Exceptions
+    import log
+    import screens
+    import exceptions
     import Command
 
 
-def get_user(api, pttid) -> DataType.UserInfo:
+def get_user(api, pttid) -> data_type.UserInfo:
 
     cmd_list = []
     cmd_list.append(Command.GoMainMenu)
@@ -38,7 +38,7 @@ def get_user(api, pttid) -> DataType.UserInfo:
                 i18n.GetUser,
                 i18n.Success,
             ],
-            Screens.Target.AnyKey,
+            screens.Target.AnyKey,
             break_detect=True,
         ),
         ConnectCore.TargetUnit(
@@ -46,7 +46,7 @@ def get_user(api, pttid) -> DataType.UserInfo:
                 i18n.GetUser,
                 i18n.Fail,
             ],
-            Screens.Target.InTalk,
+            screens.Target.InTalk,
             break_detect=True,
         ),
     ]
@@ -56,14 +56,14 @@ def get_user(api, pttid) -> DataType.UserInfo:
         target_list
     )
     ori_screen = api.connect_core.get_screen_queue()[-1]
-    Log.show_value(
+    log.show_value(
         api.config,
-        Log.Level.DEBUG,
+        log.Level.DEBUG,
         'OriScreen',
         ori_screen
     )
     if index == 1:
-        raise Exceptions.NoSuchUser(pttid)
+        raise exceptions.NoSuchUser(pttid)
     # PTT1
     # 《ＩＤ暱稱》CodingMan (專業程式 BUG 製造機)《經濟狀況》小康 ($73866)
     # 《登入次數》1118 次 (同天內只計一次) 《有效文章》15 篇 (退:0)
@@ -87,11 +87,11 @@ def get_user(api, pttid) -> DataType.UserInfo:
 
     # 《個人名片》CodingMan 目前沒有名片
 
-    data = Util.get_sub_string_list(ori_screen, '》', ['《', '\n'])
+    data = lib_util.get_sub_string_list(ori_screen, '》', ['《', '\n'])
     if len(data) < 10:
         print('\n'.join(data))
         print(len(data))
-        raise Exceptions.ParseError(ori_screen)
+        raise exceptions.ParseError(ori_screen)
 
     pttid = data[0]
     money = data[1]
@@ -103,7 +103,7 @@ def get_user(api, pttid) -> DataType.UserInfo:
     legal_post = int(temp[0])
 
     # PTT2 沒有退文
-    if api.config.host == DataType.host.PTT1:
+    if api.config.host == data_type.host.PTT1:
         illegal_post = int(temp[1])
     else:
         illegal_post = -1
@@ -117,21 +117,21 @@ def get_user(api, pttid) -> DataType.UserInfo:
 
     signature_file = '\n'.join(ori_screen.split('\n')[6:-1]).strip()
 
-    Log.show_value(api.config, Log.Level.DEBUG, 'pttid', pttid)
-    Log.show_value(api.config, Log.Level.DEBUG, 'money', money)
-    Log.show_value(api.config, Log.Level.DEBUG, 'login_time', login_time)
-    Log.show_value(api.config, Log.Level.DEBUG, 'legal_post', legal_post)
-    Log.show_value(api.config, Log.Level.DEBUG, 'illegal_post', illegal_post)
-    Log.show_value(api.config, Log.Level.DEBUG, 'state', state)
-    Log.show_value(api.config, Log.Level.DEBUG, 'mail', mail)
-    Log.show_value(api.config, Log.Level.DEBUG, 'last_login', last_login)
-    Log.show_value(api.config, Log.Level.DEBUG, 'last_ip', last_ip)
-    Log.show_value(api.config, Log.Level.DEBUG, 'five_chess', five_chess)
-    Log.show_value(api.config, Log.Level.DEBUG, 'chess', chess)
-    Log.show_value(api.config, Log.Level.DEBUG,
+    log.show_value(api.config, log.Level.DEBUG, 'pttid', pttid)
+    log.show_value(api.config, log.Level.DEBUG, 'money', money)
+    log.show_value(api.config, log.Level.DEBUG, 'login_time', login_time)
+    log.show_value(api.config, log.Level.DEBUG, 'legal_post', legal_post)
+    log.show_value(api.config, log.Level.DEBUG, 'illegal_post', illegal_post)
+    log.show_value(api.config, log.Level.DEBUG, 'state', state)
+    log.show_value(api.config, log.Level.DEBUG, 'mail', mail)
+    log.show_value(api.config, log.Level.DEBUG, 'last_login', last_login)
+    log.show_value(api.config, log.Level.DEBUG, 'last_ip', last_ip)
+    log.show_value(api.config, log.Level.DEBUG, 'five_chess', five_chess)
+    log.show_value(api.config, log.Level.DEBUG, 'chess', chess)
+    log.show_value(api.config, log.Level.DEBUG,
                   'signature_file', signature_file)
 
-    user = DataType.UserInfo(
+    user = data_type.UserInfo(
         pttid,
         money,
         login_time,

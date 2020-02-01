@@ -2,22 +2,22 @@ import progressbar
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Screens
+    from . import log
+    from . import screens
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Log
-    import Screens
+    import log
+    import screens
     import Command
 
 
 def get_board_list(api) -> list:
 
-    # Log.showValue(
+    # log.showValue(
     #     api.config,
-    #     Log.Level.INFO,
+    #     log.Level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -36,7 +36,7 @@ def get_board_list(api) -> list:
     target_list = [
         ConnectCore.TargetUnit(
             i18n.BoardList,
-            Screens.Target.InBoardList,
+            screens.Target.InBoardList,
             break_detect=True
         )
     ]
@@ -66,14 +66,14 @@ def get_board_list(api) -> list:
         # print(f'FrontPartList =>{FrontPartList}<=')
         max_no = int(front_part_list[0])
 
-    Log.show_value(
+    log.show_value(
         api.config,
-        Log.Level.DEBUG,
+        log.Level.DEBUG,
         'MaxNo',
         max_no
     )
 
-    if api.config.log_level == Log.Level.INFO:
+    if api.config.log_level == log.Level.INFO:
         pb = progressbar.ProgressBar(
             max_value=max_no,
             redirect_stdout=True
@@ -118,9 +118,9 @@ def get_board_list(api) -> list:
             # print(f'No  =>{No}<=')
             # print(f'LastNo =>{LastNo}<=')
 
-            Log.show_value(
+            log.show_value(
                 api.config,
-                Log.Level.DEBUG,
+                log.Level.DEBUG,
                 'Board NO',
                 no
             )
@@ -129,23 +129,23 @@ def get_board_list(api) -> list:
             if board_name.startswith('ˇ'):
                 board_name = board_name[1:]
 
-            Log.show_value(
+            log.show_value(
                 api.config,
-                Log.Level.DEBUG,
+                log.Level.DEBUG,
                 'Board Name',
                 board_name
             )
 
             board_list.append(board_name)
 
-            if api.config.log_level == Log.Level.INFO:
+            if api.config.log_level == log.Level.INFO:
                 pb.update(no)
 
         if no >= max_no:
             break
         cmd = Command.Ctrl_F
 
-    if api.config.log_level == Log.Level.INFO:
+    if api.config.log_level == log.Level.INFO:
         pb.finish()
 
     return board_list

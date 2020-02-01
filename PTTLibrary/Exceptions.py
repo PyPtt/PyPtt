@@ -1,9 +1,9 @@
 
 try:
-    from . import DataType
+    from . import data_type
     from . import i18n
 except ModuleNotFoundError:
-    import DataType
+    import data_type
     import i18n
 
 
@@ -24,7 +24,7 @@ class UnknownError(Exception):
         return self.message
 
 
-class RequireLogin(Exception):
+class Requirelogin(Exception):
     def __init__(self, message):
 
         self.message = message
@@ -42,9 +42,9 @@ class NoPermission(Exception):
         return self.message
 
 
-class LoginError(Exception):
+class loginError(Exception):
     def __init__(self):
-        self.message = i18n.LoginFail
+        self.message = i18n.loginFail
 
     def __str__(self):
         return self.message
@@ -100,7 +100,7 @@ class MoneyTooFew(Exception):
 
 class NoSuchBoard(Exception):
     def __init__(self, Config, Board):
-        if Config.host == DataType.host.PTT1:
+        if Config.host == data_type.host.PTT1:
             self.message = [
                 i18n.PTT,
                 i18n.NoSuchBoard
@@ -111,7 +111,7 @@ class NoSuchBoard(Exception):
                 i18n.NoSuchBoard
             ]
 
-        if Config.language == i18n.language.Chinese:
+        if Config.language == i18n.Language.Chinese:
             self.message = ''.join(self.message) + ': ' + Board
         else:
             self.message = ' '.join(self.message) + ': ' + Board
@@ -152,9 +152,9 @@ class WrongIDorPassword(Exception):
         return self.message
 
 
-class LoginTooOften(Exception):
+class loginTooOften(Exception):
     def __init__(self):
-        self.message = i18n.LoginTooOften
+        self.message = i18n.loginTooOften
 
     def __str__(self):
         return self.message
@@ -204,7 +204,7 @@ class ConnectError(Exception):
     def __init__(self, config):
         self.message = [i18n.Connect, i18n.Fail]
 
-        if config.language == i18n.language.Chinese:
+        if config.language == i18n.Language.Chinese:
             self.message = ''.join(self.message)
         else:
             self.message = ' '.join(self.message)

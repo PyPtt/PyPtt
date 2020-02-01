@@ -2,10 +2,10 @@ import sys
 from time import strftime
 
 try:
-    from . import Util
+    from . import lib_util
     from . import i18n
 except ModuleNotFoundError:
-    import Util
+    import lib_util
     import i18n
 
 
@@ -22,7 +22,7 @@ class Level(object):
 
 def merge(config, msg) -> str:
     if isinstance(msg, list):
-        if config.language == i18n.language.Chinese:
+        if config.language == i18n.Language.Chinese:
 
             for i, element in enumerate(msg):
                 if len(element) == 0:
@@ -44,7 +44,7 @@ def merge(config, msg) -> str:
 
 def log(config, log_level, msg):
 
-    if not Util.check_range(Level, log_level):
+    if not lib_util.check_range(Level, log_level):
         raise ValueError('log_level', log_level)
 
     if config.log_level > log_level:
@@ -78,7 +78,7 @@ LastValue = None
 
 def show_value(config, log_level, msg, value):
 
-    if not Util.check_range(Level, log_level):
+    if not lib_util.check_range(Level, log_level):
         raise ValueError('log_level', log_level)
 
     if config.log_level > log_level:

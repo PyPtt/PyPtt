@@ -1,18 +1,18 @@
 try:
-    from . import DataType
+    from . import data_type
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Screens
-    from . import Exceptions
+    from . import log
+    from . import screens
+    from . import exceptions
     from . import Command
 except ModuleNotFoundError:
-    import DataType
+    import data_type
     import i18n
     import ConnectCore
-    import Log
-    import Screens
-    import Exceptions
+    import log
+    import screens
+    import exceptions
     import Command
 
 
@@ -30,7 +30,7 @@ def logout(api) -> None:
     TargetList = [
         ConnectCore.TargetUnit(
             [
-                i18n.Logout,
+                i18n.logout,
                 i18n.Success,
             ],
             '任意鍵',
@@ -38,29 +38,29 @@ def logout(api) -> None:
         ),
     ]
 
-    Log.log(
+    log.log(
         api.config,
-        Log.Level.INFO,
+        log.Level.INFO,
         [
             i18n.Start,
-            i18n.Logout
+            i18n.logout
         ]
     )
 
     try:
         api.connect_core.send(Cmd, TargetList)
         api.connect_core.close()
-    except Exceptions.ConnectionClosed:
+    except exceptions.ConnectionClosed:
         pass
     except RuntimeError:
         pass
 
-    api._LoginStatus = False
+    api._loginStatus = False
 
-    Log.show_value(
+    log.show_value(
         api.config,
-        Log.Level.INFO,
-        i18n.Logout,
+        log.Level.INFO,
+        i18n.logout,
         i18n.Done
     )
 
@@ -71,7 +71,7 @@ def login(
         Password,
         kick_other_login):
 
-    if api._LoginStatus:
+    if api._loginStatus:
         api.logout()
 
     api.config.kick_other_login = kick_other_login
@@ -95,11 +95,11 @@ def login(
     api._ID = ID
     api._Password = Password
 
-    Log.show_value(
+    log.show_value(
         api.config,
-        Log.Level.INFO,
+        log.Level.INFO,
         [
-            i18n.Login,
+            i18n.login,
             i18n.ID
         ],
         ID
@@ -116,8 +116,8 @@ def login(
             response=Command.GoMainMenu,
         ),
         ConnectCore.TargetUnit(
-            i18n.LoginSuccess,
-            Screens.Target.MainMenu,
+            i18n.loginSuccess,
+            screens.Target.MainMenu,
             break_detect=True
         ),
         ConnectCore.TargetUnit(
@@ -129,13 +129,13 @@ def login(
             i18n.ErrorIDPW,
             '密碼不對或無此帳號',
             break_detect=True,
-            exceptions=Exceptions.WrongIDorPassword()
+            exceptions=exceptions.WrongIDorPassword()
         ),
         ConnectCore.TargetUnit(
-            i18n.LoginTooOften,
+            i18n.loginTooOften,
             '登入太頻繁',
             break_detect=True,
-            exceptions=Exceptions.LoginTooOften()
+            exceptions=exceptions.loginTooOften()
         ),
         ConnectCore.TargetUnit(
             i18n.SystemBusyTryLater,
@@ -198,29 +198,29 @@ def login(
         secret=True
     )
 
-    if TargetList[index].get_display_msg() != i18n.LoginSuccess:
+    if TargetList[index].get_display_msg() != i18n.loginSuccess:
         OriScreen = api.connect_core.get_screen_queue()[-1]
         print(OriScreen)
-        raise Exceptions.LoginError()
+        raise exceptions.loginError()
 
     OriScreen = api.connect_core.get_screen_queue()[-1]
     if '> (' in OriScreen:
-        api.cursor = DataType.Cursor.New
-        Log.log(
+        api.cursor = data_type.Cursor.New
+        log.log(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             i18n.NewCursor
         )
     else:
-        api.cursor = DataType.Cursor.Old
-        Log.log(
+        api.cursor = data_type.Cursor.Old
+        log.log(
             api.config,
-            Log.Level.DEBUG,
+            log.Level.DEBUG,
             i18n.OldCursor
         )
 
-    if api.cursor not in Screens.Target.InBoardWithCursor:
-        Screens.Target.InBoardWithCursor.append('\n' + api.cursor)
+    if api.cursor not in screens.Target.InBoardWithCursor:
+        screens.Target.InBoardWithCursor.append('\n' + api.cursor)
 
     api._UnregisteredUser = False
     if '(T)alk' not in OriScreen:
@@ -232,10 +232,10 @@ def login(
 
     if api._UnregisteredUser:
         print(OriScreen)
-        Log.log(
+        log.log(
             api.config,
-            Log.Level.INFO,
+            log.Level.INFO,
             i18n.UnregisteredUserCantUseAllAPI
         )
 
-    api._LoginStatus = True
+    api._loginStatus = True

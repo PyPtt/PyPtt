@@ -2,11 +2,11 @@ import re
 import sys
 
 try:
-    from . import Util
-    from . import Log
+    from . import lib_util
+    from . import log
 except ModuleNotFoundError:
-    import Util
-    import Log
+    import lib_util
+    import log
 
 
 class Target(object):
@@ -133,7 +133,7 @@ class Target(object):
 
 
 def show(config, screen_queue, function_name=None):
-    if config.log_level != Log.Level.TRACE:
+    if config.log_level != log.Level.TRACE:
         return
 
     if isinstance(screen_queue, list):
@@ -266,7 +266,7 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
 
                 if origin_line.count('=PTT=') > 2:
                     origin_line = origin_line[
-                                 :Util.findnth(origin_line, '=PTT=', 3)
+                                 :lib_util.findnth(origin_line, '=PTT=', 3)
                                  ]
 
                 # result_lines[OriginIndex] = result_lines[OriginIndex].replace(
@@ -278,8 +278,8 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
                              len(f'=PTT=[{line_count};{space_count}H=PTT=[K'):
                              ]
 
-                # Log.showValue(
-                #     Log.Level.INFO,
+                # log.showValue(
+                #     log.Level.INFO,
                 #     'origin_line',
                 #     origin_line
                 # )

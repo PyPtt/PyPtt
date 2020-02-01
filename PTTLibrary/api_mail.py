@@ -1,14 +1,14 @@
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Exceptions
+    from . import log
+    from . import exceptions
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Log
-    import Exceptions
+    import log
+    import exceptions
     import Command
 
 
@@ -19,9 +19,9 @@ def mail(
         content: str,
         sign_file) -> object:
 
-    # Log.showValue(
+    # log.showValue(
     #     api.config,
-    #     Log.Level.INFO,
+    #     log.Level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -52,7 +52,7 @@ def mail(
         ConnectCore.TargetUnit(
             i18n.NoSuchUser,
             '【電子郵件】',
-            exceptions=Exceptions.NoSuchUser(pttid)
+            exceptions=exceptions.NoSuchUser(pttid)
         ),
     ]
 
@@ -111,9 +111,9 @@ def mail(
         screen_timeout=api.config.screen_post_timeout
     )
 
-    Log.show_value(
+    log.show_value(
         api.config,
-        Log.Level.INFO,
+        log.Level.INFO,
         i18n.SendMail,
         i18n.Success
     )

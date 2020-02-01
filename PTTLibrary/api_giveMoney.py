@@ -1,21 +1,21 @@
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Exceptions
+    from . import exceptions
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Exceptions
+    import exceptions
     import Command
 
 
 def give_money(
         api, pttid: str, money: int) -> None:
 
-    # Log.showValue(
+    # log.showValue(
     #     api.config,
-    #     Log.Level.INFO,
+    #     log.Level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -39,19 +39,19 @@ def give_money(
             i18n.NoMoney,
             '你沒有那麼多Ptt幣喔!',
             break_detect=True,
-            exceptions=Exceptions.NoMoney
+            exceptions=exceptions.NoMoney
         ),
         ConnectCore.TargetUnit(
             i18n.NoMoney,
             '金額過少，交易取消!',
             break_detect=True,
-            exceptions=Exceptions.MoneyTooFew
+            exceptions=exceptions.MoneyTooFew
         ),
         ConnectCore.TargetUnit(
             i18n.NoMoney,
             '交易取消!',
             break_detect=True,
-            exceptions=Exceptions.UnknownError
+            exceptions=exceptions.UnknownError
         ),
         ConnectCore.TargetUnit(
             [

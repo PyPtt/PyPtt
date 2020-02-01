@@ -2,16 +2,16 @@
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Screens
-    from . import Exceptions
+    from . import log
+    from . import screens
+    from . import exceptions
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Log
-    import Screens
-    import Exceptions
+    import log
+    import screens
+    import exceptions
     import Command
 
 
@@ -41,36 +41,36 @@ def get_post_index(
         ConnectCore.TargetUnit(
             no_such_post,
             '找不到這個文章代碼',
-            log_level=Log.Level.DEBUG,
-            exceptions=Exceptions.NoSuchPost(board, aid)
+            log_level=log.Level.DEBUG,
+            exceptions=exceptions.NoSuchPost(board, aid)
         ),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
         ConnectCore.TargetUnit(
             i18n.CanNotUseSearchPostCodeF,
             '此狀態下無法使用搜尋文章代碼(AID)功能',
-            exceptions=Exceptions.CanNotUseSearchPostCode()
+            exceptions=exceptions.CanNotUseSearchPostCode()
         ),
         ConnectCore.TargetUnit(
             i18n.NoPost,
             '沒有文章...',
-            exceptions=Exceptions.NoSuchPost(board, aid)
+            exceptions=exceptions.NoSuchPost(board, aid)
         ),
         ConnectCore.TargetUnit(
             i18n.Success,
-            Screens.Target.InBoard,
+            screens.Target.InBoard,
             break_detect=True,
-            log_level=Log.Level.DEBUG
+            log_level=log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             i18n.Success,
-            Screens.Target.InBoardWithCursor,
+            screens.Target.InBoardWithCursor,
             break_detect=True,
-            log_level=Log.Level.DEBUG
+            log_level=log.Level.DEBUG
         ),
         ConnectCore.TargetUnit(
             i18n.NoSuchBoard,
-            Screens.Target.MainMenu_Exiting,
-            exceptions=Exceptions.NoSuchBoard(api.config, board)
+            screens.Target.MainMenu_Exiting,
+            exceptions=exceptions.NoSuchBoard(api.config, board)
             # BreakDetect=True,
         )
     ]
@@ -82,11 +82,11 @@ def get_post_index(
     ori_screen = api.connect_core.get_screen_queue()[-1]
     if index < 0:
         # print(OriScreen)
-        raise Exceptions.NoSuchBoard(api.config, board)
+        raise exceptions.NoSuchBoard(api.config, board)
 
     # if index == 5:
     #     print(OriScreen)
-    #     raise Exceptions.NoSuchBoard(api.config, Board)
+    #     raise exceptions.NoSuchBoard(api.config, Board)
 
     # print(index)
     # print(OriScreen)

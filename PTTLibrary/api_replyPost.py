@@ -1,16 +1,16 @@
 try:
-    from . import DataType
+    from . import data_type
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Exceptions
+    from . import log
+    from . import exceptions
     from . import Command
 except ModuleNotFoundError:
-    import DataType
+    import data_type
     import i18n
     import ConnectCore
-    import Log
-    import Exceptions
+    import log
+    import exceptions
     import Command
 
 
@@ -23,9 +23,9 @@ def reply_post(
         post_aid: str,
         post_index: int) ->None:
 
-    # Log.showValue(
+    # log.showValue(
     #     api.config,
-    #     Log.Level.INFO,
+    #     log.Level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -48,25 +48,25 @@ def reply_post(
     cmd_list.append(Command.Enter * 2)
     cmd_list.append('r')
 
-    if reply_type == DataType.ReplyType.Board:
+    if reply_type == data_type.ReplyType.Board:
         reply_target_unit = ConnectCore.TargetUnit(
             i18n.ReplyBoard,
             '▲ 回應至',
-            log_level=Log.Level.INFO,
+            log_level=log.Level.INFO,
             response='F' + Command.Enter
         )
-    elif reply_type == DataType.ReplyType.Mail:
+    elif reply_type == data_type.ReplyType.Mail:
         reply_target_unit = ConnectCore.TargetUnit(
             i18n.ReplyMail,
             '▲ 回應至',
-            log_level=Log.Level.INFO,
+            log_level=log.Level.INFO,
             response='M' + Command.Enter
         )
-    elif reply_type == DataType.ReplyType.Board_Mail:
+    elif reply_type == data_type.ReplyType.Board_Mail:
         reply_target_unit = ConnectCore.TargetUnit(
             i18n.ReplyBoard_Mail,
             '▲ 回應至',
-            log_level=Log.Level.INFO,
+            log_level=log.Level.INFO,
             response='B' + Command.Enter
         )
 
@@ -80,13 +80,13 @@ def reply_post(
         ConnectCore.TargetUnit(
             i18n.NoResponse,
             '◆ 很抱歉, 此文章已結案並標記, 不得回應',
-            log_level=Log.Level.INFO,
-            exceptions=Exceptions.NoResponse()
+            log_level=log.Level.INFO,
+            exceptions=exceptions.NoResponse()
         ),
         ConnectCore.TargetUnit(
             i18n.ForcedWrite,
             '(E)繼續編輯 (W)強制寫入',
-            log_level=Log.Level.INFO,
+            log_level=log.Level.INFO,
             response='W' + Command.Enter
         ),
         ConnectCore.TargetUnit(
@@ -102,26 +102,26 @@ def reply_post(
         ConnectCore.TargetUnit(
             i18n.EditPost,
             '編輯文章',
-            log_level=Log.Level.INFO,
+            log_level=log.Level.INFO,
             response=str(content) + Command.Enter + Command.Ctrl_X
         ),
         ConnectCore.TargetUnit(
             i18n.QuoteOriginal,
             '請問要引用原文嗎',
-            log_level=Log.Level.DEBUG,
+            log_level=log.Level.DEBUG,
             response='Y' + Command.Enter
         ),
         ConnectCore.TargetUnit(
             i18n.UseTheOriginalTitle,
             '採用原標題[Y/n]?',
-            log_level=Log.Level.DEBUG,
+            log_level=log.Level.DEBUG,
             response='Y' + Command.Enter
         ),
         reply_target_unit,
         ConnectCore.TargetUnit(
             i18n.SelfSaveDraft,
             '已順利寄出，是否自存底稿',
-            log_level=Log.Level.DEBUG,
+            log_level=log.Level.DEBUG,
             response='Y' + Command.Enter
         ),
     ]
@@ -132,8 +132,8 @@ def reply_post(
         screen_timeout=api.config.screen_long_timeout
     )
 
-    Log.log(
+    log.log(
         api.config,
-        Log.Level.INFO,
+        log.Level.INFO,
         i18n.RespondSuccess
     )

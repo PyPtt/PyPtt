@@ -1,14 +1,14 @@
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Screens
-    from . import Exceptions
+    from . import screens
+    from . import exceptions
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Screens
-    import Exceptions
+    import screens
+    import exceptions
     import Command
 
 
@@ -47,7 +47,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, pttid: str) -
                 i18n.Fail,
             ],
             '◆ 使用者之前已被禁言',
-            exceptions=Exceptions.UserHasPreviouslyBeenBanned()
+            exceptions=exceptions.UserHasPreviouslyBeenBanned()
         ),
         ConnectCore.TargetUnit(
             i18n.InputBucketDays_Reason,
@@ -83,7 +83,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, pttid: str) -
                 i18n.bucket,
                 i18n.Success,
             ],
-            Screens.Target.InBoard,
+            screens.Target.InBoard,
             break_detect=True
         ),
     ]

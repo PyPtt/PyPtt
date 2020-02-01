@@ -2,22 +2,22 @@ import re
 try:
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Screens
+    from . import log
+    from . import screens
     from . import Command
 except ModuleNotFoundError:
     import i18n
     import ConnectCore
-    import Log
-    import Screens
+    import log
+    import screens
     import Command
 
 
 def has_new_mail(api) -> int:
 
-    # Log.showValue(
+    # log.showValue(
     #     api.config,
-    #     Log.Level.INFO,
+    #     log.Level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -39,9 +39,9 @@ def has_new_mail(api) -> int:
     target_list = [
         ConnectCore.TargetUnit(
             i18n.MailBox,
-            Screens.Target.InMailBox,
+            screens.Target.InMailBox,
             break_detect=True,
-            log_level=Log.Level.DEBUG
+            log_level=log.Level.DEBUG
         )
     ]
 

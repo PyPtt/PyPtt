@@ -1,10 +1,10 @@
 try:
-    from . import DataType
+    from . import data_type
     from . import i18n
     from . import ConnectCore
     from . import Command
 except ModuleNotFoundError:
-    import DataType
+    import data_type
     import i18n
     import ConnectCore
     import Command
@@ -71,7 +71,7 @@ def get_favourite_board(api) -> list:
             # print('\t' + Board)
             # print('\t' + BoardTitle)
 
-            f_board = DataType.FavouriteBoard(
+            f_board = data_type.FavouriteBoard(
                 board,
                 board_type,
                 board_title

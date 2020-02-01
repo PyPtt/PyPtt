@@ -2,21 +2,21 @@ import re
 import requests
 from bs4 import BeautifulSoup
 try:
-    from . import DataType
+    from . import data_type
     from . import i18n
     from . import ConnectCore
-    from . import Log
-    from . import Screens
-    from . import Exceptions
+    from . import log
+    from . import screens
+    from . import exceptions
     from . import Command
     from . import CheckValue
 except ModuleNotFoundError:
-    import DataType
+    import data_type
     import i18n
     import ConnectCore
-    import Log
-    import Screens
-    import Exceptions
+    import log
+    import screens
+    import exceptions
     import Command
     import CheckValue
 
@@ -29,13 +29,13 @@ def get_newest_index(
         search_type: int = 0,
         search_condition: str = None) -> int:
 
-    if index_type == DataType.IndexType.BBS:
+    if index_type == data_type.IndexType.BBS:
 
         api._check_board(board)
 
         CheckValue.check(
             api.config, int, 'SearchType', search_type,
-            value_class=DataType.PostSearchType)
+            value_class=data_type.PostSearchType)
         if search_condition is not None:
             CheckValue.check(
                 api.config, str,
@@ -51,15 +51,15 @@ def get_newest_index(
         cmd_list.append(Command.Space)
 
         if search_condition is not None:
-            if search_type == DataType.PostSearchType.Keyword:
+            if search_type == data_type.PostSearchType.Keyword:
                 cmd_list.append('/')
-            elif search_type == DataType.PostSearchType.Author:
+            elif search_type == data_type.PostSearchType.Author:
                 cmd_list.append('a')
-            elif search_type == DataType.PostSearchType.Push:
+            elif search_type == data_type.PostSearchType.Push:
                 cmd_list.append('Z')
-            elif search_type == DataType.PostSearchType.Mark:
+            elif search_type == data_type.PostSearchType.Mark:
                 cmd_list.append('G')
-            elif search_type == DataType.PostSearchType.Money:
+            elif search_type == data_type.PostSearchType.Money:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
@@ -76,31 +76,31 @@ def get_newest_index(
                 i18n.NoPost,
                 '沒有文章...',
                 break_detect=True,
-                log_level=Log.Level.DEBUG
+                log_level=log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.Success,
-                Screens.Target.InBoard,
+                screens.Target.InBoard,
                 break_detect=True,
-                log_level=Log.Level.DEBUG
+                log_level=log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.Success,
-                Screens.Target.InBoardWithCursor,
+                screens.Target.InBoardWithCursor,
                 break_detect=True,
-                log_level=Log.Level.DEBUG
+                log_level=log.Level.DEBUG
             ),
             ConnectCore.TargetUnit(
                 i18n.NoSuchBoard,
-                Screens.Target.MainMenu_Exiting,
-                exceptions=Exceptions.NoSuchBoard(api.config, board)
+                screens.Target.MainMenu_Exiting,
+                exceptions=exceptions.NoSuchBoard(api.config, board)
             ),
         ]
         index = api.connect_core.send(cmd, target_list)
         if index < 0:
             # OriScreen = api.connect_core.getScreenQueue()[-1]
             # print(OriScreen)
-            raise Exceptions.NoSuchBoard(api.config, board)
+            raise exceptions.NoSuchBoard(api.config, board)
 
         if index == 0:
             return 0
@@ -110,7 +110,7 @@ def get_newest_index(
 
         if len(all_index) == 0:
             print(last_screen)
-            raise Exceptions.UnknownError(i18n.UnknownError)
+            raise exceptions.UnknownError(i18n.UnknownError)
 
         all_index = list(map(int, all_index))
         all_index.sort(reverse=True)
@@ -128,9 +128,9 @@ def get_newest_index(
                     need_continue = False
                     break
             if need_continue:
-                Log.show_value(
+                log.show_value(
                     api.config,
-                    Log.Level.DEBUG,
+                    log.Level.DEBUG,
                     i18n.FindNewestIndex,
                     IndexTemp
                 )
@@ -138,10 +138,10 @@ def get_newest_index(
                 break
 
         if newest_index == 0:
-            Screens.show(api.config, api.connect_core.get_screen_queue())
-            raise Exceptions.UnknownError(i18n.UnknownError)
+            screens.show(api.config, api.connect_core.get_screen_queue())
+            raise exceptions.UnknownError(i18n.UnknownError)
 
-    elif DataType.IndexType.Web:
+    elif data_type.IndexType.Web:
         # web
         _NewestIndex = None
         newest_index = 0
@@ -150,7 +150,7 @@ def get_newest_index(
         r = requests.get(url, cookies={'over18': '1'})
 
         if r.status_code != requests.codes.ok:
-            raise Exceptions.NoSuchBoard(api.config, board)
+            raise exceptions.NoSuchBoard(api.config, board)
         soup = BeautifulSoup(r.text, 'html.parser')
 
         for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
@@ -162,6 +162,6 @@ def get_newest_index(
                 _NewestIndex = int(_NewestIndex)
 
         if _NewestIndex is None:
-            raise Exceptions.UnknownError('')
+            raise exceptions.UnknownError('')
         newest_index = (_NewestIndex) + 1
     return newest_index
