@@ -171,8 +171,10 @@ def is_match(screen: str, target):
                 return False
         return True
 
+displayed = False
 
-def vt100(ori_screen: str, no_color: bool = True):
+
+def vt100(ori_screen: str, no_color: bool = True) -> str:
     result = ori_screen
 
     if no_color:
@@ -180,11 +182,18 @@ def vt100(ori_screen: str, no_color: bool = True):
 
     result = re.sub(r'[\x1B]', '=PTT=', result)
 
-    # show = True
-    # if show:
-    #     print('=Start=' * 20)
+    # global displayed
+    # if not displayed:
+    #     display = ('★' in result)
+    #     if display:
+    #         displayed = True
+    # else:
+    #     display = False
+    #
+    # if display:
+    #     print('=1=' * 10)
     #     print(result)
-    #     print('=End=' * 20)
+    #     print('=2=' * 10)
 
     # result = '\n'.join(
     #     [x.rstrip() for x in result.split('\n')]
@@ -222,16 +231,15 @@ def vt100(ori_screen: str, no_color: bool = True):
     # print(result)
     result_list = re.findall('=PTT=\[(\d+);(\d+)H', result)
     for (line_count, space_count) in result_list:
-        # if show:
-        #     print(f'>{line_count}={space_count}<')
         line_count = int(line_count)
         space_count = int(space_count)
         current_line = result[
                       :result.find(
                           f'[{line_count};{space_count}H'
-                      )
-                      ].count('\n') + 1
-
+                      )].count('\n') + 1
+        # if display:
+        #     print(f'>{line_count}={space_count}<')
+        #     print(f'>{current_line}<')
         if current_line > line_count:
             # if LastPosition is None:
             #     pass
@@ -284,24 +292,30 @@ def vt100(ori_screen: str, no_color: bool = True):
             current_space = result[
                            :result.find(
                                f'=PTT=[{line_count};{space_count}H'
-                           )
-                           ]
+                           )]
             current_space = current_space[
                            current_space.rfind('\n') + 1:
                            ]
-            # Log.showValue(
-            #     Log.Level.INFO,
-            #     'current_space',
-            #     current_space
-            # )
-            current_space = len(current_space.encode('big5', 'replace'))
-            # print(f'!!!!!{current_space}')
+            # if display:
+            #     print(f'>>{current_space}<<')
+            #     print(f'ori length>>{len(current_space)}<<')
+            #     newversion_length = len(current_space.encode('big5uao', 'ignore'))
+            #     print(f'newversion_length >>{newversion_length}<<')
+
+            # current_space = len(current_space.encode('big5', 'replace'))
+            current_space = len(current_space)
+            # if display:
+            #     print(f'!!!!!{current_space}')
             if current_space > space_count:
+                # if display:
+                #     print('1')
                 result = result.replace(
                     f'=PTT=[{line_count};{space_count}H',
                     (line_count - current_line) * '\n' + space_count * ' '
                 )
             else:
+                # if display:
+                #     print('2')
                 result = result.replace(
                     f'=PTT=[{line_count};{space_count}H',
                     (line_count - current_line) * '\n' + (space_count - current_space) * ' '
@@ -339,8 +353,8 @@ def vt100(ori_screen: str, no_color: bool = True):
     if last_position is not None:
         result = result.replace(last_position, '')
 
-        # if show:
-        #     print('-Final-' * 20)
-        #     print(result)
-        #     print('-Final-' * 20)
+    # if display:
+    #     print('-Final-' * 10)
+    #     print(result)
+    #     print('-Final-' * 10)
     return result

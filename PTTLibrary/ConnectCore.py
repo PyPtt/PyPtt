@@ -243,27 +243,28 @@ class API(object):
         secret: bool = False
     ) -> int:
 
-        def clean_screen(screen: str, NoColor: bool = True) -> str:
+        def clean_screen(recv_screen: str, NoColor: bool = True) -> str:
 
-            if not screen:
-                return screen
+            if not recv_screen:
+                return recv_screen
             # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
 
                 # screen = re.sub('\[[\d+;]*m', '', screen)
 
-            screen = re.sub(r'[\r]', '', screen)
-            screen = re.sub(r'[\x00-\x08]', '', screen)
-            screen = re.sub(r'[\x0b\x0c]', '', screen)
+            recv_screen = re.sub(r'[\r]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x00-\x08]', '', recv_screen)
+            recv_screen = re.sub(r'[\x00-\x07]', '', recv_screen)
+            # print(recv_screen)
+            recv_screen = re.sub(r'[\x0b\x0c]', '', recv_screen)
             # screen = re.sub(r'[\x0e-\x1f]', '', screen)
 
-            screen = re.sub(r'[\x0e-\x1A]', '', screen)
+            recv_screen = re.sub(r'[\x0e-\x1A]', '', recv_screen)
+            recv_screen = re.sub(r'[\x1C-\x1F]', '', recv_screen)
+            recv_screen = re.sub(r'[\x7f-\xff]', '', recv_screen)
 
-            screen = re.sub(r'[\x1C-\x1F]', '', screen)
-            screen = re.sub(r'[\x7f-\xff]', '', screen)
+            recv_screen = Screens.vt100(recv_screen)
 
-            screen = Screens.vt100(screen)
-
-            return screen
+            return recv_screen
 
         if not all(isinstance(T, TargetUnit) for T in target_list):
             raise ValueError('Item of TargetList must be TargetUnit')
