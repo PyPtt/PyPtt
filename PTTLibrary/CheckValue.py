@@ -52,7 +52,7 @@ def check_index(
         config,
         index_name,
         index,
-        max_value=None):
+        max_value=None) -> None:
     check(config, int, index_name, index)
     if index < 1:
         raise ValueError(
@@ -94,8 +94,7 @@ def check_index_range(
         start_index,
         end_name,
         end_index,
-        max_value=None
-):
+        max_value=None) -> None:
     check(config, int, start_name, start_index)
     check(config, int, end_name, end_index)
 

@@ -69,47 +69,8 @@ def Init():
     # print('===Log SLIENT======')
 
 
-def Loginout():
-    print('WebSocket 登入登出測試')
-
-    PTTBot = PTT.Library(
-        log_level=PTT.LogLevel.DEBUG
-    )
-    try:
-        PTTBot.login(
-            ID,
-            Password,
-            kick_other_login=True
-        )
-    except PTT.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
-        sys.exit(-1)
-    PTTBot.log('登入成功')
-    PTTBot.logout()
-    PTTBot.log('登出成功')
-    sys.exit()
-
-    print('等待五秒')
-    time.sleep(5)
-    sys.exit()
-
-    print('Telnet 登入登出測試')
-    PTTBot = PTT.Library(
-        connect_mode=PTT.ConnectMode.Telnet,
-        # LogLevel=PTT.LogLevel.DEBUG
-    )
-    try:
-        PTTBot.login(ID, Password, kick_other_login=True)
-    except PTT.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
-        sys.exit()
-    PTTBot.log('登入成功')
-    PTTBot.logout()
-    PTTBot.log('登出成功')
-
-
 def performance_test():
-    test_time = 1000
+    test_time = 100
     print(f'效能測試 get_time {test_time} 次')
 
     start_time = time.time()
@@ -119,7 +80,7 @@ def performance_test():
         if ptt_time is None:
             print('PTT_TIME is None')
             break
-        # print(ptt_time)
+        print(ptt_time)
     end_time = time.time()
     PTTBot.logout()
     print('Performance Test WebSocket ' + str(
@@ -164,7 +125,6 @@ def get_post():
         # ('Python', '1TJH_XY0'),
         # 文章格式錯誤
         # ('Steam', 4444),
-        # ('Baseball', 199787),
         # ('Stock', 92324),
         # ('Stock', '1TVnEivO'),
         # 文章格式錯誤
@@ -234,8 +194,9 @@ def get_post():
                 print('鎖文狀態')
                 continue
 
-            show('Origin Post\n', post.get_origin_post())
-            print('=' * 30)
+            # show('Origin Post\n', post.get_origin_post())
+            print('Origin Post\n' + post.get_origin_post())
+            print('=' * 30 + ' Origin Post Finish')
             show('Board', post.get_board())
             show('AID', post.get_aid())
             show('Author', post.get_author())
@@ -705,9 +666,9 @@ def get_user():
 
 def push():
     test_post_list = [
-        # ('Gossiping', 95693),
+        ('Gossiping', 95692),
         # ('Test', 'QQQQQQ'),
-        ('Test', 564),
+        # ('Test', 624),
         # ('Wanted', '1Teyovc3')
     ]
 
@@ -785,8 +746,8 @@ def WaterBall():
             print(Temp)
 
 
-def CallStatus():
-    def showCallStatus(CallStatus):
+def callstatus():
+    def show_callstatus(CallStatus):
         if CallStatus == PTT.CallStatus.On:
             print('呼叫器狀態[打開]')
         elif CallStatus == PTT.CallStatus.Off:
@@ -801,8 +762,8 @@ def CallStatus():
             print(f'Unknow CallStatus: {CallStatus}')
 
     for _ in range(5):
-        CallStatus = PTTBot.get_callstatus()
-        showCallStatus(CallStatus)
+        call_status = PTTBot.get_callstatus()
+        show_callstatus(call_status)
 
     print('連續測試通過')
 
@@ -816,26 +777,26 @@ def CallStatus():
     random.shuffle(TestQueue)
 
     print('初始呼叫器狀態')
-    showCallStatus(InitCallStatus)
+    show_callstatus(InitCallStatus)
     print('測試切換呼叫器狀態順序')
     for CurrentTestStatus in TestQueue:
-        showCallStatus(CurrentTestStatus)
+        show_callstatus(CurrentTestStatus)
 
     PTTBot.set_callstatus(InitCallStatus)
-    CallStatus = PTTBot.get_callstatus()
-    if CallStatus != InitCallStatus:
+    call_status = PTTBot.get_callstatus()
+    if call_status != InitCallStatus:
         print('設定初始呼叫器狀態: 不通過')
         return
     print('設定初始呼叫器狀態: 通過')
 
     for CurrentTestStatus in TestQueue:
         print('準備設定呼叫器狀態')
-        showCallStatus(CurrentTestStatus)
+        show_callstatus(CurrentTestStatus)
 
         PTTBot.set_callstatus(CurrentTestStatus)
-        CallStatus = PTTBot.get_callstatus()
-        showCallStatus(CallStatus)
-        if CallStatus != CurrentTestStatus:
+        call_status = PTTBot.get_callstatus()
+        show_callstatus(call_status)
+        if call_status != CurrentTestStatus:
             print('設定呼叫器狀態: 不通過')
             return
         print('設定呼叫器狀態: 通過')
@@ -843,12 +804,12 @@ def CallStatus():
     print('呼叫器測試全數通過')
 
 
-def GiveMoney():
+def give_money():
     PTTBot.give_money('DeepLearning', 1)
 
 
-def Mail():
-    Content = '\r\n\r\n'.join(
+def mail():
+    content = '\r\n\r\n'.join(
         [
             '如有誤寄，對..對不起',
             'PTT Library 程式寄信測試內容',
@@ -860,7 +821,7 @@ def Mail():
         PTTBot.mail(
             'sdjfkdsjfls',
             '程式寄信標題',
-            Content,
+            content,
             0
         )
     except PTT.Exceptions.NoSuchUser:
@@ -869,12 +830,12 @@ def Mail():
     PTTBot.mail(
         ID,
         '程式寄信標題',
-        Content,
+        content,
         0
     )
 
 
-def HasNewMail():
+def has_new_mail():
     result = PTTBot.has_new_mail()
     print(result)
 
@@ -882,48 +843,45 @@ def HasNewMail():
 ThreadBot = None
 
 
-def ThreadingTest():
-    ID1 = 'QQ1'
-    Password1 = 'xxxxx'
+def threading_test():
+    id1, password1 = getPW('Account3.txt')
+    id2, password2 = getPW('Account.txt')
 
-    ID2 = 'QQ2'
-    Password2 = 'xxxxx'
-
-    def ThreadFunc1():
-        ThreadBot1 = PTT.Library()
+    def thread_func1():
+        thread_bot1 = PTT.Library()
         try:
-            ThreadBot1.login(
-                ID1,
-                Password1,
+            thread_bot1.login(
+                id1,
+                password1,
                 #  KickOtherLogin=True
             )
         except PTT.Exceptions.LoginError:
-            ThreadBot1.log('登入失敗')
+            thread_bot1.log('登入失敗')
             return
 
-        ThreadBot1.logout()
+        thread_bot1.logout()
         print('1 多線程測試完成')
 
-    def ThreadFunc2():
-        ThreadBot2 = PTT.Library()
+    def thread_func2():
+        thread_bot2 = PTT.Library()
         try:
-            ThreadBot2.login(
-                ID2,
-                Password2,
+            thread_bot2.login(
+                id2,
+                password2,
                 #  KickOtherLogin=True
             )
         except PTT.Exceptions.LoginError:
-            ThreadBot2.log('登入失敗')
+            thread_bot2.log('登入失敗')
             return
 
-        ThreadBot2.logout()
+        thread_bot2.logout()
         print('2 多線程測試完成')
 
     t1 = threading.Thread(
-        target=ThreadFunc1
+        target=thread_func1
     )
     t2 = threading.Thread(
-        target=ThreadFunc2
+        target=thread_func2
     )
 
     t1.start()
@@ -936,47 +894,47 @@ def ThreadingTest():
     sys.exit()
 
 
-def GetBoardList():
-    BoardList = PTTBot.get_board_list()
+def get_board_list():
+    board_list = PTTBot.get_board_list()
     # print(' '.join(BoardList))
-    print(f'總共有 {len(BoardList)} 個板名')
-    print(f'總共有 {len(set(BoardList))} 個不重複板名')
+    print(f'總共有 {len(board_list)} 個板名')
+    print(f'總共有 {len(set(board_list))} 個不重複板名')
 
 
-def ReplyPost():
-    ReplyPostIndex = 420
+def reply_post():
+    reply_post_index = 612
 
     PTTBot.reply_post(
         PTT.ReplyType.Board,
         'Test',
         '測試回應到板上，如有打擾抱歉',
-        post_index=ReplyPostIndex
+        post_index=reply_post_index
     )
 
     PTTBot.reply_post(
         PTT.ReplyType.Mail,
         'Test',
         '測試回應到信箱，如有打擾抱歉',
-        post_index=ReplyPostIndex
+        post_index=reply_post_index
     )
 
     PTTBot.reply_post(
         PTT.ReplyType.Board_Mail,
         'Test',
         '測試回應到板上還有信箱，如有打擾抱歉',
-        post_index=ReplyPostIndex
+        post_index=reply_post_index
     )
 
 
-def SetBoardTitle():
+def set_board_title():
     from time import gmtime, strftime
 
     while True:
-        Time = strftime('%H:%M:%S')
+        time_format = strftime('%H:%M:%S')
         try:
             PTTBot.set_board_title(
                 'give',
-                f'現在時間 {Time}'
+                f'現在時間 {time_format}'
             )
         except PTT.Exceptions.ConnectionClosed:
             while True:
@@ -992,11 +950,11 @@ def SetBoardTitle():
                 except PTT.Exceptions.ConnectError:
                     PTTBot.log('登入失敗')
                     time.sleep(1)
-        print('已經更新時間 ' + Time, end='\r')
+        print('已經更新時間 ' + time_format, end='\r')
         try:
             time.sleep(1)
         except KeyboardInterrupt:
-            print('已經更新時間 ' + Time)
+            print('已經更新時間 ' + time_format)
             PTTBot.set_board_title(
                 'give',
                 '[贈送] 注意標題  不合砍文'
@@ -1005,8 +963,8 @@ def SetBoardTitle():
             break
 
 
-def MarkPost():
-    MarkType = PTT.MarkType.S
+def mark_post():
+    mark_type = PTT.MarkType.S
 
     # PTTBot.markPost(
     #     MarkType,
@@ -1034,16 +992,16 @@ def MarkPost():
     #     )
 
     PTTBot.mark_post(
-        MarkType,
+        mark_type,
         'give',
         post_index=2000
     )
 
-    PTTBot.mark_post(
-        MarkType,
-        'give',
-        post_index=2000
-    )
+    # PTTBot.mark_post(
+    #     mark_type,
+    #     'give',
+    #     post_index=2000
+    # )
 
 
 def getPostIndexTest():
@@ -1087,15 +1045,15 @@ def getPostIndexTest():
         print('=' * 50)
 
 
-def GetFavouriteBoard():
-    List = PTTBot.get_favourite_board()
+def get_favourite_board():
+    favourite_board_list = PTTBot.get_favourite_board()
 
-    for board in List:
-        Buff = f'[{board.get_board()}][{board.get_type()}][{board.get_board_title()}]'
-        print(Buff)
+    for board in favourite_board_list:
+        buff = f'[{board.get_board()}][{board.get_type()}][{board.get_board_title()}]'
+        print(buff)
 
 
-def GetBoardInfo():
+def get_board_info():
     #  《Gossiping》看板設定
 
     # b - 中文敘述: 綜合 ◎【八卦】沒有開放政問 珍惜帳號
@@ -1115,32 +1073,32 @@ def GetBoardInfo():
     # j - 未 設為冷靜模式                            p)進板畫面
     # 8 - 禁止 未滿十八歲進入
 
-    BoardInfo = PTTBot.get_board_info('Gossiping')
-    print('板名: ', BoardInfo.get_board())
-    print('線上人數: ', BoardInfo.get_online_user())
-    print('中文敘述: ', BoardInfo.get_chinese_des())
-    print('板主: ', BoardInfo.get_moderators())
-    print('公開狀態(是否隱形): ', BoardInfo.is_open())
-    print('隱板時是否可進入十大排行榜: ', BoardInfo.can_into_top_ten_when_hide())
-    print('是否開放非看板會員發文: ', BoardInfo.can_non_board_members_post())
-    print('是否開放回應文章: ', BoardInfo.can_reply_post())
-    print('是否開放自刪文章: ', BoardInfo.can_self_del_post())
-    print('是否開放推薦文章: ', BoardInfo.can_push_post())
-    print('是否開放噓文: ', BoardInfo.can_boo_post())
-    print('是否可以快速連推文章: ', BoardInfo.can_fast_push())
-    print('推文最低間隔時間: ', BoardInfo.get_min_interval())
-    print('推文時是否記錄來源 IP: ', BoardInfo.is_push_record_ip())
-    print('推文時是否對齊開頭: ', BoardInfo.is_push_aligned())
-    print('板主是否可刪除部份違規文字: ', BoardInfo.can_moderator_can_del_illegal_content())
+    board_info = PTTBot.get_board_info('Gossiping')
+    print('板名: ', board_info.get_board())
+    print('線上人數: ', board_info.get_online_user())
+    print('中文敘述: ', board_info.get_chinese_des())
+    print('板主: ', board_info.get_moderators())
+    print('公開狀態(是否隱形): ', board_info.is_open())
+    print('隱板時是否可進入十大排行榜: ', board_info.can_into_top_ten_when_hide())
+    print('是否開放非看板會員發文: ', board_info.can_non_board_members_post())
+    print('是否開放回應文章: ', board_info.can_reply_post())
+    print('是否開放自刪文章: ', board_info.can_self_del_post())
+    print('是否開放推薦文章: ', board_info.can_push_post())
+    print('是否開放噓文: ', board_info.can_boo_post())
+    print('是否可以快速連推文章: ', board_info.can_fast_push())
+    print('推文最低間隔時間: ', board_info.get_min_interval())
+    print('推文時是否記錄來源 IP: ', board_info.is_push_record_ip())
+    print('推文時是否對齊開頭: ', board_info.is_push_aligned())
+    print('板主是否可刪除部份違規文字: ', board_info.can_moderator_can_del_illegal_content())
     print('轉錄文章是否自動記錄，且是否需要發文權限: ',
-          BoardInfo.is_tran_post_auto_recorded_and_require_post_permissions())
-    print('是否為冷靜模式: ', BoardInfo.is_cool_mode())
-    print('是否需要滿十八歲才可進入: ', BoardInfo.is_require18())
-    print('發文與推文限制登入次數需多少次以上: ', BoardInfo.get_require_login_time())
-    print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.get_require_illegal_post())
+          board_info.is_tran_post_auto_recorded_and_require_post_permissions())
+    print('是否為冷靜模式: ', board_info.is_cool_mode())
+    print('是否需要滿十八歲才可進入: ', board_info.is_require18())
+    print('發文與推文限制登入次數需多少次以上: ', board_info.get_require_login_time())
+    print('發文與推文限制退文篇數多少篇以下: ', board_info.get_require_illegal_post())
 
 
-def Bucket():
+def bucket():
     PTTBot.bucket(
         'give',
         7,
@@ -1149,14 +1107,14 @@ def Bucket():
     )
 
 
-def SearchUser():
-    userlist = PTTBot.search_user(
+def search_user():
+    user_list = PTTBot.search_user(
         'abcd',
-        # minpage=1,
-        # maxpage=10
+        min_page=1,
+        max_page=2
     )
-    print(userlist)
-    print(len(userlist))
+    print(user_list)
+    print(len(user_list))
 
     # if 'abcd0800' in userlist:
     #     print('exist')
@@ -1880,14 +1838,13 @@ github: https://tinyurl.com/umqff3v
 
         PTTBot.logout()
     else:
-        ID, Password = getPW('Account.txt')
+        ID, Password = getPW('Account3.txt')
         try:
-            # Loginout()
-            # ThreadingTest()
+            # threading_test()
             PTTBot = PTT.Library(
-                # LogLevel=PTT.LogLevel.TRACE,
-                # LogLevel=PTT.LogLevel.DEBUG,
-                # Host=PTT.Host.PTT2
+                # log_level=PTT.LogLevel.TRACE,
+                # log_level=PTT.LogLevel.DEBUG,
+                # host=PTT.Host.PTT2
             )
             try:
                 PTTBot.login(
@@ -1913,19 +1870,19 @@ github: https://tinyurl.com/umqff3v
             # throw_waterball()
             # get_waterball()
             # WaterBall()
-            # CallStatus()
-            # GiveMoney()
-            # Mail()
-            # HasNewMail()
-            # GetBoardList()
-            # GetBoardInfo()
-            # ReplyPost()
-            # GetFavouriteBoard()
-            # SearchUser()
+            # callstatus()
+            # give_money()
+            # mail()
+            # has_new_mail()
+            # get_board_list()
+            # get_board_info()
+            # reply_post()
+            # get_favourite_board()
+            # search_user()
 
-            # Bucket()
-            # SetBoardTitle()
-            # MarkPost()
+            # bucket()
+            # set_board_title()
+            # mark_post()
 
             # private test
             # getPostIndexTest()
