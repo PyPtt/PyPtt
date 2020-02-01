@@ -90,7 +90,7 @@ class FriendListType:
     GoodFriend = 1
     BadGuy = 2
     SuperFriend = 3
-    LoginNotification = 4
+    loginNotification = 4
     OtherSpecial = 5
 
     MinValue = GoodFriend
@@ -159,12 +159,12 @@ class UserInfo:
     ):
         self._ID = parse_para(str, pttid)
         self._Money = parse_para(str, money)
-        self._LoginTime = parse_para(int, login_time)
+        self._loginTime = parse_para(int, login_time)
         self._LegalPost = parse_para(int, legal_post)
         self._IllegalPost = parse_para(int, illegal_post)
         self._State = parse_para(str, state)
         self._Mail = parse_para(str, mail)
-        self._LastLogin = parse_para(str, last_login)
+        self._Lastlogin = parse_para(str, last_login)
         self._LastIP = parse_para(str, last_ip)
         self._FiveChess = parse_para(str, five_chess)
         self._Chess = parse_para(str, chess)
@@ -177,7 +177,7 @@ class UserInfo:
         return self._Money
 
     def get_login_time(self):
-        return self._LoginTime
+        return self._loginTime
 
     def get_legal_post(self):
         return self._LegalPost
@@ -192,7 +192,7 @@ class UserInfo:
         return self._Mail
 
     def get_last_login(self):
-        return self._LastLogin
+        return self._Lastlogin
 
     def get_last_ip(self):
         return self._LastIP
@@ -479,7 +479,7 @@ class BoardInfo:
             bool, tran_post_auto_recorded_and_require_post_permissions)
         self.CoolMode = parse_para(bool, cool_mode)
         self.Require18 = parse_para(bool, require18)
-        self.RequireLoginTime = parse_para(int, require_login_time)
+        self.RequireloginTime = parse_para(int, require_login_time)
         self.RequireIllegalPost = parse_para(int, require_illegal_post)
 
     def get_board(self):
@@ -540,7 +540,7 @@ class BoardInfo:
         return self.Require18
 
     def get_require_login_time(self):
-        return self.RequireLoginTime
+        return self.RequireloginTime
 
     def get_require_illegal_post(self):
         return self.RequireIllegalPost
