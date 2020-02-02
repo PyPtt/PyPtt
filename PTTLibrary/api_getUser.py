@@ -115,7 +115,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
     five_chess = data[8]
     chess = data[9]
 
-    signature_file = '\n'.join(ori_screen.split('\n')[6:-1]).strip()
+    signature_file = '\n'.join(ori_screen.split('\n')[6:-1])
 
     log.show_value(api.config, log.Level.DEBUG, 'pttid', pttid)
     log.show_value(api.config, log.Level.DEBUG, 'money', money)
