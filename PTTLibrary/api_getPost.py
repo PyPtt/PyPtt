@@ -676,7 +676,7 @@ def get_post(
         post_content = origin_post
         post_content = post_content[
                        post_content.find(content_start) +
-                       len(content_start):
+                       len(content_start) + 1:
                        ]
         # print('Type 2')
         # print(f'PostContent [{PostContent}]')
@@ -690,7 +690,7 @@ def get_post(
                                :post_content.rfind(EC) + 3
                                ]
                 origin_post_lines = origin_post[origin_post.find(EC):]
-                post_content = post_content.strip()
+                # post_content = post_content.strip()
                 origin_post_lines = origin_post_lines.split('\n')
                 break
 
