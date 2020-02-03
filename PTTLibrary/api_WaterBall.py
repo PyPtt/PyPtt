@@ -20,11 +20,11 @@ except ModuleNotFoundError:
 
 def get_waterball(api, operate_type:int) ->list:
 
-    if operate_type == data_type.WaterBallOperateType.DoNothing:
+    if operate_type == data_type.WaterBallOperateType.NOTHING:
         water_ball_operate_type = 'R'
-    elif operate_type == data_type.WaterBallOperateType.Clear:
+    elif operate_type == data_type.WaterBallOperateType.CLEAR:
         water_ball_operate_type = 'C' + command.Enter + 'Y'
-    elif operate_type == data_type.WaterBallOperateType.Mail:
+    elif operate_type == data_type.WaterBallOperateType.MAIL:
         water_ball_operate_type = 'M'
 
     target_list = [
@@ -225,7 +225,7 @@ def get_waterball(api, operate_type:int) ->list:
                 'Waterball Type',
                 'Send'
             )
-            waterball_type = data_type.WaterBallType.Send
+            waterball_type = data_type.WaterBallType.SEND
 
             pattern_result = to_water_ball_target_pattern.search(line)
             target = pattern_result.group(0)[3:-1]
@@ -246,7 +246,7 @@ def get_waterball(api, operate_type:int) ->list:
                 'Waterball Type',
                 'Catch'
             )
-            waterball_type = data_type.WaterBallType.Catch
+            waterball_type = data_type.WaterBallType.CATCH
 
             pattern_result = from_water_ball_target_pattern.search(line)
             target = pattern_result.group(0)[1:-1]

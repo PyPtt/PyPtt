@@ -48,21 +48,21 @@ def reply_post(
     cmd_list.append(command.Enter * 2)
     cmd_list.append('r')
 
-    if reply_type == data_type.ReplyType.Board:
+    if reply_type == data_type.ReplyType.BOARD:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyBoard,
             '▲ 回應至',
             log_level=log.Level.INFO,
             response='F' + command.Enter
         )
-    elif reply_type == data_type.ReplyType.Mail:
+    elif reply_type == data_type.ReplyType.MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyMail,
             '▲ 回應至',
             log_level=log.Level.INFO,
             response='M' + command.Enter
         )
-    elif reply_type == data_type.ReplyType.Board_Mail:
+    elif reply_type == data_type.ReplyType.BOARD_MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyBoard_Mail,
             '▲ 回應至',

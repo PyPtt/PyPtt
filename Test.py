@@ -197,13 +197,13 @@ def get_post():
                     #     print(Push.getIP())
                     #     print(Push.get_time())
 
-                    if push_obj.get_type() == PTT.data_type.PushType.Push:
+                    if push_obj.get_type() == PTT.data_type.PushType.PUSH:
                         push_count += 1
                         push_type = '推'
-                    if push_obj.get_type() == PTT.data_type.PushType.Boo:
+                    if push_obj.get_type() == PTT.data_type.PushType.BOO:
                         boo_count += 1
                         push_type = '噓'
-                    if push_obj.get_type() == PTT.data_type.PushType.Arrow:
+                    if push_obj.get_type() == PTT.data_type.PushType.ARROW:
                         arrow_count += 1
                         push_type = '→'
 
@@ -666,15 +666,15 @@ def push():
     for (board, index) in test_post_list:
         for i in range(testround):
             if isinstance(index, int):
-                ptt_bot.push(board, PTT.data_type.PushType.Push, content + str(i), post_index=index)
+                ptt_bot.push(board, PTT.data_type.PushType.PUSH, content + str(i), post_index=index)
             else:
-                ptt_bot.push(board, PTT.data_type.PushType.Push, content + str(i), post_aid=index)
+                ptt_bot.push(board, PTT.data_type.PushType.PUSH, content + str(i), post_aid=index)
 
     # Index = PTTBot.getNewestIndex(
     #     PTT.data_type.IndexType.BBS,
     #     Board='Test'
     # )
-    # PTTBot.push('Test', PTT.data_type.PushType.Push, Content, PostIndex=Index + 1)
+    # PTTBot.push('Test', PTT.data_type.PushType.PUSH, Content, PostIndex=Index + 1)
 
 
 def throw_waterball():
@@ -690,9 +690,9 @@ def throw_waterball():
 
 
 def get_waterball():
-    operate_type = PTT.data_type.WaterBallOperateType.DoNothing
-    # OperateType = PTT.data_type.WaterBallOperateType.Mail
-    # OperateType = PT4T.WaterBallOperateType.Clear
+    operate_type = PTT.data_type.WaterBallOperateType.NOTHING
+    # OperateType = PTT.data_type.WaterBallOperateType.MAIL
+    # OperateType = PT4T.WaterBallOperateType.CLEAR
 
     waterball_list = ptt_bot.get_waterball(operate_type)
 
@@ -701,16 +701,16 @@ def get_waterball():
 
     print('Result:')
     for waterball in waterball_list:
-        if waterball.get_type() == PTT.data_type.WaterBallType.Catch:
+        if waterball.get_type() == PTT.data_type.WaterBallType.CATCH:
             temp = '★' + waterball.get_target() + ' '
-        elif waterball.get_type() == PTT.data_type.WaterBallType.Send:
+        elif waterball.get_type() == PTT.data_type.WaterBallType.SEND:
             temp = 'To ' + waterball.get_target() + ': '
         temp += waterball.get_content() + ' [' + waterball.get_date() + ']'
         print(temp)
 
 
 def WaterBall():
-    OperateType = PTT.data_type.WaterBallOperateType.Clear
+    OperateType = PTT.data_type.WaterBallOperateType.CLEAR
 
     TestWaterBall = [str(x % 10) for x in range(10)]
     TagetID = 'DeepLearning'
@@ -725,9 +725,9 @@ def WaterBall():
 
         print('Result:')
         for WaterBall in WaterBallList:
-            if WaterBall.get_type() == PTT.data_type.WaterBallType.Catch:
+            if WaterBall.get_type() == PTT.data_type.WaterBallType.CATCH:
                 Temp = '★' + WaterBall.get_target() + ' '
-            elif WaterBall.get_type() == PTT.data_type.WaterBallType.Send:
+            elif WaterBall.get_type() == PTT.data_type.WaterBallType.SEND:
                 Temp = 'To ' + WaterBall.get_target() + ': '
             Temp += WaterBall.get_content() + ' [' + WaterBall.get_date() + ']'
             print(Temp)
@@ -739,7 +739,7 @@ def call_status():
             print('呼叫器狀態[打開]')
         elif CallStatus == PTT.data_type.CallStatus.OFF:
             print('呼叫器狀態[關閉]')
-        elif CallStatus == PTT.data_type.CallStatus.CallStatus.UNPLUG:
+        elif CallStatus == PTT.data_type.CallStatus.UNPLUG:
             print('呼叫器狀態[拔掉]')
         elif CallStatus == PTT.data_type.CallStatus.WATERPROOF:
             print('呼叫器狀態[防水]')
@@ -892,21 +892,21 @@ def reply_post():
     reply_post_index = 313
 
     ptt_bot.reply_post(
-        PTT.data_type.ReplyType.Board,
+        PTT.data_type.ReplyType.BOARD,
         'Test',
         '測試回應到板上，如有打擾抱歉',
         post_index=reply_post_index
     )
 
     ptt_bot.reply_post(
-        PTT.data_type.ReplyType.Mail,
+        PTT.data_type.ReplyType.MAIL,
         'Test',
         '測試回應到信箱，如有打擾抱歉',
         post_index=reply_post_index
     )
 
     ptt_bot.reply_post(
-        PTT.data_type.ReplyType.Board_Mail,
+        PTT.data_type.ReplyType.BOARD_MAIL,
         'Test',
         '測試回應到板上還有信箱，如有打擾抱歉',
         post_index=reply_post_index
@@ -1324,7 +1324,7 @@ PTT Library 程式貼文基準測試內文
 
             try:
                 Content1 = '編號推文基準文字123'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Push,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.PUSH,
                              Content1, post_aid='QQQQQQQ')
                 print('推文反向測試失敗')
                 ptt_bot.logout()
@@ -1338,7 +1338,7 @@ PTT Library 程式貼文基準測試內文
                     board=basic_board
                 )
                 Content1 = '編號推文基準文字123'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Push,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.PUSH,
                              Content1, post_index=index + 1)
                 print('推文反向測試失敗')
                 ptt_bot.logout()
@@ -1347,11 +1347,11 @@ PTT Library 程式貼文基準測試內文
                 print('推文反向測試通過')
 
             Content1 = '編號推文基準文字123'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Push,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.PUSH,
                          Content1, post_index=basic_post_index)
 
             Content2 = '代碼推文基準文字123'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Push,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.PUSH,
                          Content2, post_aid=basic_post_aid)
 
             post_info = ptt_bot.get_post(
@@ -1379,7 +1379,7 @@ PTT Library 程式貼文基準測試內文
             print('代碼推文基準測試成功')
 
             content = '推文基準測試全部通過'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             test_list = [
@@ -1429,15 +1429,15 @@ PTT Library 程式貼文基準測試內文
                     print('=' * 50)
 
                 content = f'{test_board} 取得文章測試完成'
-                ptt_bot.push('Test', PTT.data_type.PushType.Arrow,
+                ptt_bot.push('Test', PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
 
             content = '取得文章測試全部通過'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             content = '貼文測試全部通過'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             test_board_list = [
@@ -1506,18 +1506,18 @@ PTT Library 程式貼文基準測試內文
                     end_aid=EndPost.get_aid()
                 )
                 content = f'{test_board} 爬板測試完成'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
 
             content = '爬板測試全部完成'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             user = ptt_bot.get_user(pttid)
             if user is None:
                 print('取得使用者測試失敗')
                 content = '取得使用者測試失敗'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
                 ptt_bot.logout()
                 sys.exit(1)
@@ -1539,7 +1539,7 @@ PTT Library 程式貼文基準測試內文
                 user = ptt_bot.get_user('sdjfklsdj')
                 print('取得使用者反向測試失敗')
                 content = '取得使用者反向測試失敗'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
 
                 ptt_bot.logout()
@@ -1550,7 +1550,7 @@ PTT Library 程式貼文基準測試內文
             NewMail1 = ptt_bot.has_new_mail()
             print(f'有 {NewMail1} 封新信')
             content = '取得幾封新信測試通過'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             try:
@@ -1563,7 +1563,7 @@ PTT Library 程式貼文基準測試內文
 
                 content = '寄信反向測試失敗'
                 print(content)
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
                 ptt_bot.logout()
                 sys.exit(1)
@@ -1571,7 +1571,7 @@ PTT Library 程式貼文基準測試內文
             except PTT.exceptions.NoSuchUser:
                 content = '寄信反向測試成功'
                 print(content)
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
 
             content = '''如有誤寄，對..對不起
@@ -1591,19 +1591,19 @@ github: https://tinyurl.com/umqff3v
             print(f'有 {NewMail2} 封新信')
             if NewMail2 > NewMail1:
                 content = '寄信測試通過'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
             else:
                 content = '寄信測試失敗'
                 print(content)
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
                 ptt_bot.logout()
                 sys.exit(1)
 
             content = '寄信測試成功'
             print(content)
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             board_list = ptt_bot.get_board_list()
@@ -1611,10 +1611,10 @@ github: https://tinyurl.com/umqff3v
             print(f'總共有 {len(set(board_list))} 個不重複板名')
 
             content = '取得全站看板測試通過'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
             content = f'總共有 {len(set(board_list))} 個不重複板名'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             try:
@@ -1622,7 +1622,7 @@ github: https://tinyurl.com/umqff3v
 
                 print('取得看板資訊反向測試失敗')
                 content = '取得看板資訊反向測試失敗'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
 
                 ptt_bot.logout()
@@ -1630,7 +1630,7 @@ github: https://tinyurl.com/umqff3v
             except PTT.exceptions.NoSuchBoard:
                 print('取得看板資訊反向測試成功')
                 content = '取得看板資訊反向測試成功'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
 
             BoardInfo = ptt_bot.get_board_info('Gossiping')
@@ -1659,20 +1659,20 @@ github: https://tinyurl.com/umqff3v
             print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.get_require_illegal_post())
 
             content = '取得看板資訊測試成功'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             FBlist = ptt_bot.get_favourite_board()
             for test_board in FBlist:
                 if test_board.get_board() is None or test_board.get_type() is None or test_board.get_board_title() is None:
                     content = '取得我的最愛測試失敗'
-                    ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                    ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                                  content, post_aid=basic_post_aid)
                     ptt_bot.logout()
                     sys.exit(1)
 
             content = '取得我的最愛測試成功'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             user_list = ptt_bot.search_user(
@@ -1680,16 +1680,16 @@ github: https://tinyurl.com/umqff3v
             )
             if len(user_list) != 14:
                 content = '查詢網友測試失敗'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
                 ptt_bot.logout()
                 sys.exit(1)
             content = '查詢網友測試成功'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
             ptt_bot.reply_post(
-                PTT.data_type.ReplyType.Board,
+                PTT.data_type.ReplyType.BOARD,
                 basic_board,
                 '使用文章編號測試回應到板上',
                 post_index=basic_post_index
@@ -1713,18 +1713,18 @@ github: https://tinyurl.com/umqff3v
                     content = '使用文章編號測試回應到板上成功'
                     print(content)
                     ptt_bot.push(
-                        basic_board, PTT.data_type.PushType.Arrow,
+                        basic_board, PTT.data_type.PushType.ARROW,
                         content, post_aid=basic_post_aid)
                     break
             if not TestPass:
                 content = '使用文章編號測試回應到板上失敗'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
                 ptt_bot.logout()
                 sys.exit(1)
 
             ptt_bot.reply_post(
-                PTT.data_type.ReplyType.Board,
+                PTT.data_type.ReplyType.BOARD,
                 basic_board,
                 '使用文章ID測試回應到板上',
                 post_aid=basic_post_aid
@@ -1748,12 +1748,12 @@ github: https://tinyurl.com/umqff3v
                     content = '使用文章ID測試回應到板上成功'
                     print(content)
                     ptt_bot.push(
-                        basic_board, PTT.data_type.PushType.Arrow,
+                        basic_board, PTT.data_type.PushType.ARROW,
                         content, post_aid=basic_post_aid)
                     break
             if not TestPass:
                 content = '使用文章ID測試回應到板上失敗'
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
                 ptt_bot.logout()
                 sys.exit(1)
@@ -1778,7 +1778,7 @@ github: https://tinyurl.com/umqff3v
                 PTTBot2.log('PTTBot2登入失敗')
                 sys.exit(1)
 
-            operate_type = PTT.data_type.WaterBallOperateType.Clear
+            operate_type = PTT.data_type.WaterBallOperateType.CLEAR
             ptt_bot.get_waterball(operate_type)
             PTTBot2.get_waterball(operate_type)
 
@@ -1789,7 +1789,7 @@ github: https://tinyurl.com/umqff3v
             PTTBot2.throw_waterball(pttid, '水球測試基準訊息')
             waterball_list = ptt_bot.get_waterball(operate_type)
             for waterball_info in waterball_list:
-                if not waterball_info.get_type() == PTT.data_type.WaterBallType.Catch:
+                if not waterball_info.get_type() == PTT.data_type.WaterBallType.CATCH:
                     continue
 
                 Target = waterball_info.get_target()
@@ -1804,7 +1804,7 @@ github: https://tinyurl.com/umqff3v
             if not TestPass:
                 content = '水球測試基準測試失敗'
                 print(content)
-                ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+                ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
                 ptt_bot.logout()
                 PTTBot2.logout()
@@ -1812,19 +1812,19 @@ github: https://tinyurl.com/umqff3v
 
             content = '水球測試基準測試成功'
             print(content)
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
             PTTBot2.logout()
 
             content = '自動化測試全部完成'
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
 
         except Exception as e:
             traceback.print_tb(e.__traceback__)
             print(e)
             content = str(e)
-            ptt_bot.push(basic_board, PTT.data_type.PushType.Arrow,
+            ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                          content, post_aid=basic_post_aid)
         except KeyboardInterrupt:
             pass
@@ -1857,21 +1857,6 @@ github: https://tinyurl.com/umqff3v
                 sys.exit()
 
             ###################################
-
-            content = [
-                PTT.command.Ctrl_C + PTT.command.Left + '5' + PTT.command.Right + '這是閃爍字' + PTT.command.Ctrl_C,
-                PTT.command.Ctrl_C + PTT.command.Left + '31' + PTT.command.Right + '前景紅色' + PTT.command.Ctrl_C,
-                PTT.command.Ctrl_C + PTT.command.Left + '44' + PTT.command.Right + '背景藍色' + PTT.command.Ctrl_C,
-            ]
-            content = '\r\n'.join(content)
-
-            ptt_bot.post(
-                'Test',
-                'PTT Library 程式色碼貼文測試',
-                content,
-                1,
-                0
-            )
 
             # performance_test()
 

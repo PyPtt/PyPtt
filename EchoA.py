@@ -22,7 +22,7 @@ def getPW():
 
 def SendEcho():
 
-    OperateType = PTT.WaterBallOperateType.Clear
+    OperateType = PTT.WaterBallOperateType.CLEAR
     WaterBallList = PTTBot.get_waterball(OperateType)
 
     while True:
@@ -41,7 +41,7 @@ def SendEcho():
             continue
 
         for WaterBall in WaterBallList:
-            if not WaterBall.get_type() == PTT.WaterBallType.Catch:
+            if not WaterBall.get_type() == PTT.WaterBallType.CATCH:
                 continue
 
             Target = WaterBall.get_target()

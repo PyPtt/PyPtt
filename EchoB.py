@@ -22,7 +22,7 @@ def getPW():
 
 def Echo():
 
-    OperateType = PTT.WaterBallOperateType.Clear
+    OperateType = PTT.WaterBallOperateType.CLEAR
     WaterBallList = PTTBot.get_waterball(OperateType)
 
     while True:
@@ -39,7 +39,7 @@ def Echo():
 
             # print('=' * 30)
 
-            if not WaterBall.get_type() == PTT.WaterBallType.Catch:
+            if not WaterBall.get_type() == PTT.WaterBallType.CATCH:
                 continue
 
             Target = WaterBall.get_target()
@@ -57,9 +57,9 @@ def Echo():
 
 
 def listWaterBall():
-    OperateType = PTT.WaterBallOperateType.Clear
+    OperateType = PTT.WaterBallOperateType.CLEAR
     WaterBallList = PTTBot.get_waterball(OperateType)
-    OperateType = PTT.WaterBallOperateType.DoNothing
+    OperateType = PTT.WaterBallOperateType.NOTHING
     while True:
         PTTBot.set_call_status(PTT.data_type.CallStatus.OFF)
         time.sleep(1)

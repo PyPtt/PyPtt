@@ -816,11 +816,11 @@ def get_post(
 
     for line in origin_post_lines:
         if line.startswith('推'):
-            push_type = data_type.PushType.Push
+            push_type = data_type.PushType.PUSH
         elif line.startswith('噓 '):
-            push_type = data_type.PushType.Boo
+            push_type = data_type.PushType.BOO
         elif line.startswith('→ '):
-            push_type = data_type.PushType.Arrow
+            push_type = data_type.PushType.ARROW
         else:
             continue
 
