@@ -91,15 +91,15 @@ def get_callstatus(api) -> None:
             raise exceptions.UnknownError(ori_screen)
 
     if index == 0:
-        return data_type.CallStatus.On
+        return data_type.CallStatus.ON
     if index == 1:
-        return data_type.CallStatus.Unplug
+        return data_type.CallStatus.CallStatus.UNPLUG
     if index == 2:
-        return data_type.CallStatus.Waterproof
+        return data_type.CallStatus.WATERPROOF
     if index == 3:
-        return data_type.CallStatus.Friend
+        return data_type.CallStatus.FRIEND
     if index == 4:
-        return data_type.CallStatus.Off
+        return data_type.CallStatus.OFF
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     raise exceptions.UnknownError(ori_screen)

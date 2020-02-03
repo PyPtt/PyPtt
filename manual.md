@@ -324,7 +324,7 @@ print(f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow')
 
 ```python=
 test_list = [
-    ('Python', PTT.data_type.PostSearchType.Keyword, '[公告]')
+    ('Python', PTT.data_type.PostSearchType.KEYWORD, '[公告]')
 ]
 
 for (test_board, search_type, condition) in test_list:
@@ -397,8 +397,8 @@ for test_board in test_board_list:
 
 ```python=
 test_list = [
-    ('Stock', PTT.data_type.PostSearchType.Keyword, '盤中閒聊'),
-    ('Baseball', PTT.data_type.PostSearchType.Push, '20')
+    ('Stock', PTT.data_type.PostSearchType.KEYWORD, '盤中閒聊'),
+    ('Baseball', PTT.data_type.PostSearchType.PUSH, '20')
 ]
 
 for (test_board, search_type, condition) in test_list:
@@ -487,15 +487,15 @@ if len(del_post_list) > 0:
 
 ```python=
 def show_condition(board, search_type, condition):
-    if search_type == PTT.data_type.PostSearchType.Keyword:
+    if search_type == PTT.data_type.PostSearchType.KEYWORD:
         condition_type = '關鍵字'
-    if search_type == PTT.data_type.PostSearchType.Author:
+    if search_type == PTT.data_type.PostSearchType.AUTHOR:
         condition_type = '作者'
-    if search_type == PTT.data_type.PostSearchType.Push:
+    if search_type == PTT.data_type.PostSearchType.PUSH:
         condition_type = '推文數'
-    if search_type == PTT.data_type.PostSearchType.Mark:
+    if search_type == PTT.data_type.PostSearchType.MARK:
         condition_type = '標記'
-    if search_type == PTT.data_type.PostSearchType.Money:
+    if search_type == PTT.data_type.PostSearchType.MONEY:
         condition_type = '稿酬'
 
     print(f'{board} 使用 {condition_type} 搜尋 {condition}')
@@ -504,17 +504,17 @@ def show_condition(board, search_type, condition):
 test_range = 10
 
 test_list = [
-    ('Wanted', PTT.data_type.PostSearchType.Keyword, '[公告]'),
-    ('Wanted', PTT.data_type.PostSearchType.Author, 'gogin'),
-    ('Wanted', PTT.data_type.PostSearchType.Push, '10'),
-    ('Wanted', PTT.data_type.PostSearchType.Mark, 'm'),
-    ('Wanted', PTT.data_type.PostSearchType.Money, '5'),
-    ('Gossiping', PTT.data_type.PostSearchType.Keyword, '[公告]'),
-    ('Gossiping', PTT.data_type.PostSearchType.Author, 'ReDmango'),
-    ('Gossiping', PTT.data_type.PostSearchType.Push, '10'),
-    ('Gossiping', PTT.data_type.PostSearchType.Mark, 'm'),
-    ('Gossiping', PTT.data_type.PostSearchType.Money, '5'),
-    ('Gossiping', PTT.data_type.PostSearchType.Push, '-100'),
+    ('Wanted', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
+    ('Wanted', PTT.data_type.PostSearchType.AUTHOR, 'gogin'),
+    ('Wanted', PTT.data_type.PostSearchType.PUSH, '10'),
+    ('Wanted', PTT.data_type.PostSearchType.MARK, 'm'),
+    ('Wanted', PTT.data_type.PostSearchType.MONEY, '5'),
+    ('Gossiping', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
+    ('Gossiping', PTT.data_type.PostSearchType.AUTHOR, 'ReDmango'),
+    ('Gossiping', PTT.data_type.PostSearchType.PUSH, '10'),
+    ('Gossiping', PTT.data_type.PostSearchType.MARK, 'm'),
+    ('Gossiping', PTT.data_type.PostSearchType.MONEY, '5'),
+    ('Gossiping', PTT.data_type.PostSearchType.PUSH, '-100'),
 ]
 
 for (test_board, search_type, condition) in test_list:

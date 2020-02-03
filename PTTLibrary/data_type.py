@@ -1,7 +1,3 @@
-import array
-from uao import register_uao
-
-register_uao()
 
 
 def parse_para(value_type, parameter):
@@ -17,37 +13,37 @@ class CallStatus:
     # 呼叫器狀態
 
     # 打開
-    On = 0
+    ON: int = 0
     # 拔掉
-    Unplug = 1
+    CallStatus.UNPLUG: int = 1
     # 防水
-    Waterproof = 2
+    WATERPROOF: int = 2
     # 好友
-    Friend = 3
+    FRIEND: int = 3
     # 關掉
-    Off = 4
+    OFF: int = 4
 
-    MinValue = On
-    MaxValue = Off
+    MinValue = ON
+    MaxValue = OFF
 
 
 class PostSearchType:
     # 文章搜尋類型
 
-    Nope = 0
+    NOPE: int = 0
     # 搜尋關鍵字    / ?
-    Keyword = 1
+    KEYWORD: int = 1
     # 搜尋作者      a
-    Author = 2
+    AUTHOR: int = 2
     # 搜尋推文數    Z
-    Push = 3
+    PUSH: int = 3
     # 搜尋標記      G
-    Mark = 4
+    MARK: int = 4
     # 搜尋稿酬      A
-    Money = 5
+    MONEY: int = 5
 
-    MinValue = Nope
-    MaxValue = Money
+    MinValue = NOPE
+    MaxValue = MONEY
 
 
 class WaterBallType:
@@ -119,26 +115,11 @@ class PushType:
 
 class MailInformation:
     def __init__(self, author, title, date, content, ip):
-        self._Author = parse_para(str, author)
-        self._Title = parse_para(str, title)
-        self._Date = parse_para(str, date)
-        self._Content = parse_para(str, content)
-        self._IP = parse_para(str, ip)
-
-    def get_author(self):
-        return self._Author
-
-    def get_title(self):
-        return self._Title
-
-    def get_date(self):
-        return self._Date
-
-    def get_content(self):
-        return self._Content
-
-    def get_ip(self):
-        return self._IP
+        self.author = parse_para(str, author)
+        self.title = parse_para(str, title)
+        self.date = parse_para(str, date)
+        self.content = parse_para(str, content)
+        self.ip = parse_para(str, ip)
 
 
 class UserInfo:
@@ -156,78 +137,42 @@ class UserInfo:
             five_chess,
             chess,
             signature_file):
-        self._ID = parse_para(str, pttid)
-        self._Money = parse_para(str, money)
-        self._loginTime = parse_para(int, login_time)
-        self._LegalPost = parse_para(int, legal_post)
-        self._IllegalPost = parse_para(int, illegal_post)
-        self._State = parse_para(str, state)
-        self._Mail = parse_para(str, mail)
-        self._Lastlogin = parse_para(str, last_login)
-        self._LastIP = parse_para(str, last_ip)
-        self._FiveChess = parse_para(str, five_chess)
-        self._Chess = parse_para(str, chess)
-        self._SignatureFile = parse_para(str, signature_file)
-
-    def get_id(self):
-        return self._ID
-
-    def get_money(self):
-        return self._Money
-
-    def get_login_time(self):
-        return self._loginTime
-
-    def get_legal_post(self):
-        return self._LegalPost
-
-    def get_illegal_post(self):
-        return self._IllegalPost
-
-    def get_state(self):
-        return self._State
-
-    def get_mail(self):
-        return self._Mail
-
-    def get_last_login(self):
-        return self._Lastlogin
-
-    def get_last_ip(self):
-        return self._LastIP
-
-    def get_five_chess(self):
-        return self._FiveChess
-
-    def get_chess(self):
-        return self._Chess
-
-    def get_signature_file(self):
-        return self._SignatureFile
+        self.ID = parse_para(str, pttid)
+        self.Money = parse_para(str, money)
+        self.loginTime = parse_para(int, login_time)
+        self.LegalPost = parse_para(int, legal_post)
+        self.IllegalPost = parse_para(int, illegal_post)
+        self.State = parse_para(str, state)
+        self.Mail = parse_para(str, mail)
+        self.Lastlogin = parse_para(str, last_login)
+        self.LastIP = parse_para(str, last_ip)
+        self.FiveChess = parse_para(str, five_chess)
+        self.Chess = parse_para(str, chess)
+        self.SignatureFile = parse_para(str, signature_file)
 
 
 class PushInfo:
     def __init__(self, push_type, author, push_content, push_ip, push_time):
-        self._Type = parse_para(int, push_type)
-        self._Author = parse_para(str, author)
-        self._Content = parse_para(str, push_content)
-        self._IP = parse_para(str, push_ip)
-        self._Time = parse_para(str, push_time)
+        self.Type = parse_para(int, push_type)
+        self.Author = parse_para(str, author)
+        self.Content = parse_para(str, push_content)
+        self.IP = parse_para(str, push_ip)
+        self.Time = parse_para(str, push_time)
 
     def get_type(self):
-        return self._Type
+        return self.Type
 
     def get_author(self):
-        return self._Author
+        return self.Author
 
     def get_content(self):
-        return self._Content
+        return self.Content
 
     def get_ip(self):
-        return self._IP
+        return self.IP
 
     def get_time(self):
-        return self._Time
+        return self.Time
 
 
 class PostDeleteStatus:
@@ -262,102 +207,102 @@ class PostInfo:
             lock=False,
             origin_post=None,
             unconfirmed=False):
-        self._Board = parse_para(str, board)
-        self._AID = parse_para(str, aid)
-        self._Author = parse_para(str, author)
-        self._Date = parse_para(str, date)
-        self._Title = parse_para(str, title)
-        self._Content = parse_para(str, content)
-        self._Money = parse_para(int, money)
-        self._WebUrl = parse_para(str, web_url)
-        self._IP = parse_para(str, ip)
-        self._PushList = push_list
-        self._DeleteStatus = delete_status
-        self._ListDate = parse_para(str, list_date)
-        self._ControlCode = control_code
-        self._FormatCheck = format_check
-        self._Location = parse_para(str, location)
-        self._PushNumber = parse_para(str, push_number)
-        self._Lock = lock
-        self._OriginPost = parse_para(str, origin_post)
-        self._Unconfirmed = parse_para(bool, unconfirmed)
+        self.Board = parse_para(str, board)
+        self.AID = parse_para(str, aid)
+        self.Author = parse_para(str, author)
+        self.Date = parse_para(str, date)
+        self.Title = parse_para(str, title)
+        self.Content = parse_para(str, content)
+        self.Money = parse_para(int, money)
+        self.WebUrl = parse_para(str, web_url)
+        self.IP = parse_para(str, ip)
+        self.PushList = push_list
+        self.DeleteStatus = delete_status
+        self.ListDate = parse_para(str, list_date)
+        self.ControlCode = control_code
+        self.FormatCheck = format_check
+        self.Location = parse_para(str, location)
+        self.PushNumber = parse_para(str, push_number)
+        self.Lock = lock
+        self.OriginPost = parse_para(str, origin_post)
+        self.Unconfirmed = parse_para(bool, unconfirmed)
 
     def get_board(self):
-        return self._Board
+        return self.Board
 
     def get_aid(self):
-        return self._AID
+        return self.AID
 
     def get_author(self):
-        return self._Author
+        return self.Author
 
     def get_date(self):
-        return self._Date
+        return self.Date
 
     def get_title(self):
-        return self._Title
+        return self.Title
 
     def get_content(self):
-        return self._Content
+        return self.Content
 
     def get_money(self):
-        return self._Money
+        return self.Money
 
     def get_web_url(self):
-        return self._WebUrl
+        return self.WebUrl
 
     def get_ip(self):
-        return self._IP
+        return self.IP
 
     def get_push_list(self):
-        return self._PushList
+        return self.PushList
 
     def get_delete_status(self):
-        return self._DeleteStatus
+        return self.DeleteStatus
 
     def get_list_date(self):
-        return self._ListDate
+        return self.ListDate
 
     def has_control_code(self):
-        return self._ControlCode
+        return self.ControlCode
 
     def is_format_check(self):
-        return self._FormatCheck
+        return self.FormatCheck
 
     def get_location(self):
-        return self._Location
+        return self.Location
 
     def get_push_number(self):
-        return self._PushNumber
+        return self.PushNumber
 
     def is_lock(self):
-        return self._Lock
+        return self.Lock
 
     def get_origin_post(self):
-        return self._OriginPost
+        return self.OriginPost
 
     def is_unconfirmed(self):
-        return self._Unconfirmed
+        return self.Unconfirmed
 
 
 class WaterBallInfo:
     def __init__(self, waterball_type, target, content, date):
-        self._Type = parse_para(int, waterball_type)
-        self._Target = parse_para(str, target)
-        self._Content = parse_para(str, content)
-        self._Date = parse_para(str, date)
+        self.Type = parse_para(int, waterball_type)
+        self.Target = parse_para(str, target)
+        self.Content = parse_para(str, content)
+        self.Date = parse_para(str, date)
 
     def get_target(self):
-        return self._Target
+        return self.Target
 
     def get_content(self):
-        return self._Content
+        return self.Content
 
     def get_date(self):
-        return self._Date
+        return self.Date
 
     def get_type(self):
-        return self._Type
+        return self.Type
 
 
 class Cursor:
