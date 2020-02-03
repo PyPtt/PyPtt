@@ -3,19 +3,19 @@ import time
 try:
     from . import data_type
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
     import exceptions
-    import Command
+    import command
 
 
 def get_waterball(api, operate_type:int) ->list:
@@ -23,29 +23,29 @@ def get_waterball(api, operate_type:int) ->list:
     if operate_type == data_type.WaterBallOperateType.DoNothing:
         water_ball_operate_type = 'R'
     elif operate_type == data_type.WaterBallOperateType.Clear:
-        water_ball_operate_type = 'C' + Command.Enter + 'Y'
+        water_ball_operate_type = 'C' + command.Enter + 'Y'
     elif operate_type == data_type.WaterBallOperateType.Mail:
         water_ball_operate_type = 'M'
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoWaterball,
             '◆ 暫無訊息記錄',
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.BrowseWaterball,
                 i18n.Done,
             ],
             screens.Target.WaterBallListEnd,
-            response=Command.Left + water_ball_operate_type +
-                     Command.Enter + Command.GoMainMenu,
+            response=command.Left + water_ball_operate_type +
+                     command.Enter + command.GoMainMenu,
             break_detect_after_send=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.BrowseWaterball,
             ],
@@ -55,7 +55,7 @@ def get_waterball(api, operate_type:int) ->list:
         ),
     ]
 
-    cmd_list = [Command.GoMainMenu, 'T', Command.Enter, 'D', Command.Enter]
+    cmd_list = [command.GoMainMenu, 'T', command.Enter, 'D', command.Enter]
 
     cmd = ''.join(cmd_list)
 
@@ -178,7 +178,7 @@ def get_waterball(api, operate_type:int) ->list:
         last_read_line_a = last_read_line_a_temp
         last_read_line_b = last_read_line_b_temp
 
-        cmd = Command.Down
+        cmd = command.Down
 
     all_waterball = '\n'.join(all_waterball)
 
@@ -338,28 +338,28 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
         )
 
         target_list = [
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 i18n.SetCallStatus,
                 '您的呼叫器目前設定為關閉',
-                response='y' + Command.Enter,
+                response='y' + command.Enter,
             ),
             # 對方已落跑了
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 i18n.SetCallStatus,
                 '◆ 糟糕! 對方已落跑了',
                 exceptions=exceptions.UserOffline(target_id)
             ),
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 [
                     i18n.Throw,
                     target_id,
                     i18n.WaterBall
                 ],
                 '丟 ' + target_id + ' 水球:',
-                response=waterball + Command.Enter * 2 +
-                         Command.GoMainMenu,
+                response=waterball + command.Enter * 2 +
+                         command.GoMainMenu,
             ),
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 [
                     i18n.Throw,
                     i18n.WaterBall,
@@ -371,16 +371,16 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
         ]
 
         cmd_list = []
-        cmd_list.append(Command.GoMainMenu)
+        cmd_list.append(command.GoMainMenu)
         cmd_list.append('T')
-        cmd_list.append(Command.Enter)
+        cmd_list.append(command.Enter)
         cmd_list.append('U')
-        cmd_list.append(Command.Enter)
+        cmd_list.append(command.Enter)
         if '【好友列表】' in api.connect_core.get_screen_queue()[-1]:
             cmd_list.append('f')
         cmd_list.append('s')
         cmd_list.append(target_id)
-        cmd_list.append(Command.Enter)
+        cmd_list.append(command.Enter)
         cmd_list.append('w')
 
         cmd = ''.join(cmd_list)

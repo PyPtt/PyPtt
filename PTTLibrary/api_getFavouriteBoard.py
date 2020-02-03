@@ -1,26 +1,26 @@
 try:
     from . import data_type
     from . import i18n
-    from . import ConnectCore
-    from . import Command
+    from . import connect_core
+    from . import command
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import ConnectCore
-    import Command
+    import connect_core
+    import command
 
 
 def get_favourite_board(api) -> list:
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('F')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('0')
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.FavouriteBoardList,
             '選擇看板',
             break_detect=True
@@ -84,7 +84,7 @@ def get_favourite_board(api) -> list:
         if len(screen_buf) < 20:
             break
 
-        cmd = Command.Ctrl_F
+        cmd = command.Ctrl_F
 
     # ScreenBuf = '\n'.join(ScreenBuf)
     # print(ScreenBuf)

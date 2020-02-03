@@ -152,7 +152,7 @@ class API(object):
         )
 
         log.show_value(self.Config, log.Level.INFO, [
-            i18n.ConnectCore,
+            i18n.connect_core,
         ],
                        i18n.Init
                        )
@@ -171,7 +171,7 @@ class API(object):
                 time.sleep(1)
 
         log.show_value(self.Config, log.Level.INFO, [
-            i18n.ConnectCore,
+            i18n.connect_core,
         ],
                        i18n.Active
                        )
@@ -284,8 +284,8 @@ class API(object):
         use_too_many_res = False
         while True:
 
-            if refresh and not msg.endswith(Command.Refresh):
-                msg = msg + Command.Refresh
+            if refresh and not msg.endswith(command.Refresh):
+                msg = msg + command.Refresh
             try:
                 msg = msg.encode('big5-uao', 'replace')
 
@@ -409,8 +409,8 @@ class API(object):
                             add_refresh = True
 
                         if add_refresh:
-                            if not msg.endswith(Command.Refresh):
-                                msg = msg + Command.Refresh
+                            if not msg.endswith(command.Refresh):
+                                msg = msg + command.Refresh
 
                         is_secret = Target.is_secret()
 

@@ -1,23 +1,23 @@
 try:
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
+    import connect_core
     import log
-    import Command
+    import command
 
 
 def search_user(
         api: object, pttid: str, min_page: int, max_page: int) -> list:
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('T')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('Q')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append(pttid)
     cmd = ''.join(cmd_list)
 
@@ -30,7 +30,7 @@ def search_user(
     cmdtemp = cmd + appendstr
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
             break_detect=True,
@@ -94,16 +94,16 @@ def search_user(
     )
 
     api.connect_core.send(
-        Command.Enter,
+        command.Enter,
         [
             # 《ＩＤ暱稱》
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 i18n.QuitUserProfile,
                 '《ＩＤ暱稱》',
-                response=Command.Enter,
+                response=command.Enter,
                 # log_level=log.Level.DEBUG
             ),
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 i18n.Done,
                 '查詢網友',
                 break_detect=True,

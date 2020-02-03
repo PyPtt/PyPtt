@@ -1,18 +1,18 @@
 
 try:
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
     import exceptions
-    import Command
+    import command
 
 
 def get_post_index(
@@ -21,16 +21,16 @@ def get_post_index(
         aid: str) -> int:
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.Ctrl_C * 2)
-    cmd_list.append(Command.Space)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Ctrl_C * 2)
+    cmd_list.append(command.Space)
 
     cmd_list.append('#')
     cmd_list.append(aid)
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
 
     cmd = ''.join(cmd_list)
 
@@ -38,36 +38,36 @@ def get_post_index(
     no_such_post = i18n.replace(no_such_post, board, aid)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             no_such_post,
             '找不到這個文章代碼',
             log_level=log.Level.DEBUG,
             exceptions=exceptions.NoSuchPost(board, aid)
         ),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.CanNotUseSearchPostCodeF,
             '此狀態下無法使用搜尋文章代碼(AID)功能',
             exceptions=exceptions.CanNotUseSearchPostCode()
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoPost,
             '沒有文章...',
             exceptions=exceptions.NoSuchPost(board, aid)
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.Success,
             screens.Target.InBoard,
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.Success,
             screens.Target.InBoardWithCursor,
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoSuchBoard,
             screens.Target.MainMenu_Exiting,
             exceptions=exceptions.NoSuchBoard(api.config, board)

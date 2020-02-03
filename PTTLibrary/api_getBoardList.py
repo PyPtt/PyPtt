@@ -1,16 +1,16 @@
 import progressbar
 try:
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
-    import Command
+    import command
 
 
 def get_board_list(api) -> list:
@@ -26,15 +26,15 @@ def get_board_list(api) -> list:
     # )
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('F')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('y')
     cmd_list.append('$')
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.BoardList,
             screens.Target.InBoardList,
             break_detect=True
@@ -80,9 +80,9 @@ def get_board_list(api) -> list:
         )
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('F')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('y')
     cmd_list.append('0')
     cmd = ''.join(cmd_list)
@@ -143,7 +143,7 @@ def get_board_list(api) -> list:
 
         if no >= max_no:
             break
-        cmd = Command.Ctrl_F
+        cmd = command.Ctrl_F
 
     if api.config.log_level == log.Level.INFO:
         pb.finish()

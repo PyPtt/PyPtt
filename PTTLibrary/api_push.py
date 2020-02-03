@@ -1,19 +1,19 @@
 try:
     from . import data_type
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
     import exceptions
-    import Command
+    import command
 
 
 def push(
@@ -25,57 +25,57 @@ def push(
         post_index: int) -> None:
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.Ctrl_C * 2)
-    cmd_list.append(Command.Space)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Ctrl_C * 2)
+    cmd_list.append(command.Space)
 
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
     elif post_index != 0:
         cmd_list.append(str(post_index))
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.Push)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Push)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.HasPushPermission,
             '您覺得這篇',
             log_level=log.Level.DEBUG,
             break_detect=True
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.OnlyArrow,
             '加註方式',
             log_level=log.Level.DEBUG,
             break_detect=True
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoFastPush,
             '禁止快速連續推文',
             log_level=log.Level.INFO,
             break_detect=True,
             exceptions=exceptions.NoFastPush()
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoFastPush,
             '禁止短時間內大量推文',
             log_level=log.Level.INFO,
             break_detect=True,
             exceptions=exceptions.NoFastPush()
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoPermission,
             '使用者不可發言',
             log_level=log.Level.INFO,
             break_detect=True,
             exceptions=exceptions.NoPermission(i18n.NoPermission)
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoPush,
             '◆ 抱歉, 禁止推薦',
             log_level=log.Level.INFO,
@@ -123,14 +123,14 @@ def push(
     #     push_type = data_type.PushType.Arrow
 
     cmd_list.append(push_content)
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('y')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.Push,
                 i18n.Success,

@@ -3,37 +3,37 @@ try:
     from . import data_type
     from . import lib_util
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import data_type
     import lib_util
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
     import exceptions
-    import Command
+    import command
 
 
 def get_user(api, pttid) -> data_type.UserInfo:
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('T')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('Q')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append(pttid)
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetUser,
                 i18n.Success,
@@ -41,7 +41,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
             screens.Target.AnyKey,
             break_detect=True,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetUser,
                 i18n.Fail,

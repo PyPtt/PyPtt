@@ -1,15 +1,15 @@
 try:
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import screens
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
+    import connect_core
     import screens
     import exceptions
-    import Command
+    import command
 
 
 def post(
@@ -21,23 +21,23 @@ def post(
         sign_file) -> None:
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.Ctrl_C * 2)
-    cmd_list.append(Command.Space)
-    cmd_list.append(Command.Ctrl_P)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Ctrl_C * 2)
+    cmd_list.append(command.Space)
+    cmd_list.append(command.Ctrl_P)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.HasPostPermission,
             '發表文章於【',
             break_detect=True,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoPermission,
             '使用者不可發言',
             break_detect=True,
@@ -54,29 +54,29 @@ def post(
 
     cmd_list = []
     cmd_list.append(str(post_type))
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append(str(title))
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.Ctrl_Y * 30)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Ctrl_Y * 30)
     cmd_list.append(str(content))
-    cmd_list.append(Command.Ctrl_X)
+    cmd_list.append(command.Ctrl_X)
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵繼續',
             break_detect=True,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            response='s' + Command.Enter,
+            response='s' + command.Enter,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.SelectSignature,
             'x=隨機',
-            response=str(sign_file) + Command.Enter,
+            response=str(sign_file) + command.Enter,
         ),
     ]
     index = api.connect_core.send(
