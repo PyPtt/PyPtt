@@ -13,14 +13,14 @@ try:
     from . import i18n
     from . import log
     from . import screens
-    from . import Command
+    from . import command
     from . import exceptions
 except ModuleNotFoundError:
     import data_type
     import i18n
     import log
     import screens
-    import Command
+    import command
     import exceptions
 
 new_event_loop = []
