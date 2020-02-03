@@ -58,7 +58,7 @@ DelWrongPWRecord = None
 logout = None
 SpendTime = None
 GetPTTTime = None
-loginTooOften = None
+LoginTooOften = None
 MustBe = None
 String = None
 Integer = None
@@ -426,8 +426,8 @@ def load(language):
         'Get PTT time',
     ])
 
-    global loginTooOften
-    loginTooOften = specific_load(language, [
+    global LoginTooOften
+    LoginTooOften = specific_load(language, [
         '登入太頻繁',
         'login too often',
     ])

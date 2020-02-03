@@ -1,6 +1,6 @@
-
 import array
 from uao import register_uao
+
 register_uao()
 
 
@@ -143,20 +143,19 @@ class MailInformation:
 
 class UserInfo:
     def __init__(
-        self,
-        pttid,
-        money,
-        login_time,
-        legal_post,
-        illegal_post,
-        state,
-        mail,
-        last_login,
-        last_ip,
-        five_chess,
-        chess,
-        signature_file
-    ):
+            self,
+            pttid,
+            money,
+            login_time,
+            legal_post,
+            illegal_post,
+            state,
+            mail,
+            last_login,
+            last_ip,
+            five_chess,
+            chess,
+            signature_file):
         self._ID = parse_para(str, pttid)
         self._Money = parse_para(str, money)
         self._loginTime = parse_para(int, login_time)
@@ -243,27 +242,26 @@ class PostDeleteStatus:
 
 class PostInfo:
     def __init__(
-        self,
-        board=None,
-        aid=None,
-        author=None,
-        date=None,
-        title=None,
-        web_url=None,
-        money=None,
-        content=None,
-        ip=None,
-        push_list=None,
-        list_date=None,
-        delete_status=0,
-        control_code=False,
-        format_check=False,
-        location=None,
-        push_number=None,
-        lock=False,
-        origin_post=None,
-        unconfirmed=False
-    ):
+            self,
+            board=None,
+            aid=None,
+            author=None,
+            date=None,
+            title=None,
+            web_url=None,
+            money=None,
+            content=None,
+            ip=None,
+            push_list=None,
+            list_date=None,
+            delete_status=0,
+            control_code=False,
+            format_check=False,
+            location=None,
+            push_number=None,
+            lock=False,
+            origin_post=None,
+            unconfirmed=False):
         self._Board = parse_para(str, board)
         self._AID = parse_para(str, aid)
         self._Author = parse_para(str, author)
@@ -435,29 +433,28 @@ class FavouriteBoard:
 
 class BoardInfo:
     def __init__(
-        self,
-        board,
-        online_user,
-        chinese_des=None,
-        moderators=None,
-        open_state=None,
-        into_top_ten_when_hide=None,
-        non_board_members_post=None,
-        reply_post=None,
-        self_del_post=None,
-        push_post=None,
-        boo_post=None,
-        fast_push=None,
-        min_interval=None,
-        push_record_ip=None,
-        push_aligned=None,
-        moderator_can_del_illegal_content=None,
-        tran_post_auto_recorded_and_require_post_permissions=None,
-        cool_mode=None,
-        require18=None,
-        require_login_time=None,
-        require_illegal_post=None,
-    ):
+            self,
+            board,
+            online_user,
+            chinese_des=None,
+            moderators=None,
+            open_state=None,
+            into_top_ten_when_hide=None,
+            non_board_members_post=None,
+            reply_post=None,
+            self_del_post=None,
+            push_post=None,
+            boo_post=None,
+            fast_push=None,
+            min_interval=None,
+            push_record_ip=None,
+            push_aligned=None,
+            moderator_can_del_illegal_content=None,
+            tran_post_auto_recorded_and_require_post_permissions=None,
+            cool_mode=None,
+            require18=None,
+            require_login_time=None,
+            require_illegal_post=None):
         self.Board = parse_para(str, board)
         self.OnlineUser = parse_para(int, online_user)
         self.ChineseDes = parse_para(str, chinese_des)
