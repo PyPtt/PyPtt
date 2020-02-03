@@ -251,10 +251,10 @@ if post_info is None:
     print('post_info is None')
     sys.exit()
 
-if post_info.get_delete_status() != PTT.data_type.PostDeleteStatus.NotDeleted:
-    if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByModerator:
+if post_info.get_delete_status() != PTT.data_type.PostDeleteStatus.NOTDELETED:
+    if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
         print(f'[板主刪除][{post_info.get_author()}]')
-    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByAuthor:
+    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
         print(f'[作者刪除][{post_info.get_author()}]')
     elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByUnknow:
         print(f'[不明刪除]')
@@ -422,10 +422,10 @@ for (test_board, search_type, condition) in test_list:
 ```python=
 def crawl_handler(post_info):
 
-    if post_info.get_delete_status() != PTT.data_type.PostDeleteStatus.NotDeleted:
-        if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByModerator:
+    if post_info.get_delete_status() != PTT.data_type.PostDeleteStatus.NOTDELETED:
+        if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
             print(f'[板主刪除][{post_info.get_author()}]')
-        elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByAuthor:
+        elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
             print(f'[作者刪除][{post_info.get_author()}]')
         elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByUnknow:
             print(f'[不明刪除]')
