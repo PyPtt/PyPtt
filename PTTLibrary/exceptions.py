@@ -42,7 +42,7 @@ class NoPermission(Exception):
         return self.message
 
 
-class loginError(Exception):
+class LoginError(Exception):
     def __init__(self):
         self.message = i18n.loginFail
 
@@ -59,24 +59,24 @@ class NoFastPush(Exception):
 
 
 class NoSuchUser(Exception):
-    def __init__(self, User):
-        self.message = i18n.NoSuchUser + ': ' + User
+    def __init__(self, user):
+        self.message = i18n.NoSuchUser + ': ' + user
 
     def __str__(self):
         return self.message
 
 
 class UserOffline(Exception):
-    def __init__(self, User):
-        self.message = i18n.UserOffline + ': ' + User
+    def __init__(self, user):
+        self.message = i18n.UserOffline + ': ' + user
 
     def __str__(self):
         return self.message
 
 
 class ParseError(Exception):
-    def __init__(self, Screen):
-        self.message = Screen
+    def __init__(self, screen):
+        self.message = screen
 
     def __str__(self):
         return self.message
@@ -99,8 +99,8 @@ class MoneyTooFew(Exception):
 
 
 class NoSuchBoard(Exception):
-    def __init__(self, Config, Board):
-        if Config.host == data_type.host.PTT1:
+    def __init__(self, config, board):
+        if config.host == data_type.host.PTT1:
             self.message = [
                 i18n.PTT,
                 i18n.NoSuchBoard
@@ -111,10 +111,10 @@ class NoSuchBoard(Exception):
                 i18n.NoSuchBoard
             ]
 
-        if Config.language == i18n.Language.Chinese:
-            self.message = ''.join(self.message) + ': ' + Board
+        if config.language == i18n.Language.Chinese:
+            self.message = ''.join(self.message) + ': ' + board
         else:
-            self.message = ' '.join(self.message) + ': ' + Board
+            self.message = ' '.join(self.message) + ': ' + board
 
     def __str__(self):
         return self.message
@@ -152,9 +152,9 @@ class WrongIDorPassword(Exception):
         return self.message
 
 
-class loginTooOften(Exception):
+class LoginTooOften(Exception):
     def __init__(self):
-        self.message = i18n.loginTooOften
+        self.message = i18n.LoginTooOften
 
     def __str__(self):
         return self.message
@@ -168,7 +168,7 @@ class UseTooManyResources(Exception):
         return self.message
 
 
-class hostNotSupport(Exception):
+class HostNotSupport(Exception):
     def __init__(self, api):
         self.message = f'{i18n.PTT2NotSupport}: {api}'
 

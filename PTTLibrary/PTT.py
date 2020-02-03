@@ -246,7 +246,7 @@ class Library:
                 password,
                 kick_other_login=kick_other_login
             )
-        except exceptions.loginError:
+        except exceptions.LoginError:
             return self._login(
                 pttid,
                 password,
@@ -527,7 +527,7 @@ class Library:
                 search_condition
             )
 
-    def _get_post_index(
+    def get_post_index(
             self,
             board: str,
             aid) -> int:
@@ -645,11 +645,11 @@ class Library:
                     max_value=newest_index
                 )
             elif start_aid is not None and end_aid is not None:
-                start_index = self._get_post_index(
+                start_index = self.get_post_index(
                     board,
                     start_aid,
                 )
-                end_index = self._get_post_index(
+                end_index = self.get_post_index(
                     board,
                     end_aid,
                 )
@@ -784,7 +784,7 @@ class Library:
 
         else:
             if self.config.host == data_type.host.PTT2:
-                raise exceptions.hostNotSupport(lib_util.get_current_func_name())
+                raise exceptions.HostNotSupport(lib_util.get_current_func_name())
 
             # 網頁版本爬蟲
             # https://www.ptt.cc/bbs/index.html
@@ -1158,15 +1158,15 @@ class Library:
 
         return api_WaterBall.get_waterball(self, operate_type)
 
-    def get_callstatus(self) -> int:
+    def get_call_status(self) -> int:
         self._one_thread()
 
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        return self._get_callstatus()
+        return self._get_call_status()
 
-    def _get_callstatus(self) -> int:
+    def _get_call_status(self) -> int:
 
         try:
             from . import api_CallStatus
@@ -1175,7 +1175,7 @@ class Library:
 
         return api_CallStatus.get_callstatus(self)
 
-    def set_callstatus(
+    def set_call_status(
             self,
             call_status):
         self._one_thread()

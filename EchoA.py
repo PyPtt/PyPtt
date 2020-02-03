@@ -34,7 +34,7 @@ def SendEcho():
         break
 
     while True:
-        PTTBot.set_callstatus(PTT.CallStatus.Off)
+        PTTBot.set_call_status(PTT.CallStatus.Off)
         time.sleep(1)
         WaterBallList = PTTBot.get_waterball(OperateType)
         if WaterBallList is None:
@@ -72,7 +72,7 @@ if __name__ == '__main__':
                 Password,
                 kick_other_login=True
             )
-        except PTTLibrary.exceptions.loginError:
+        except PTTLibrary.exceptions.LoginError:
             PTTBot.log('登入失敗')
             sys.exit()
 

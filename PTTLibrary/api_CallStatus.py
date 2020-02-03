@@ -108,7 +108,7 @@ def get_callstatus(api) -> None:
 def set_callstatus(api, callstatus) -> None:
     # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
 
-    current_call_status = api._get_callstatus()
+    current_call_status = api._get_call_status()
 
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
@@ -135,4 +135,4 @@ def set_callstatus(api, callstatus) -> None:
             screen_timeout=api.config.screen_long_timeout
         )
 
-        current_call_status = api._get_callstatus()
+        current_call_status = api._get_call_status()

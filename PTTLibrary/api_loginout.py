@@ -132,10 +132,10 @@ def login(
             exceptions=exceptions.WrongIDorPassword()
         ),
         connect_core.TargetUnit(
-            i18n.loginTooOften,
+            i18n.LoginTooOften,
             '登入太頻繁',
             break_detect=True,
-            exceptions=exceptions.loginTooOften()
+            exceptions=exceptions.LoginTooOften()
         ),
         connect_core.TargetUnit(
             i18n.SystemBusyTryLater,
@@ -201,7 +201,7 @@ def login(
     if TargetList[index].get_display_msg() != i18n.loginSuccess:
         OriScreen = api.connect_core.get_screen_queue()[-1]
         print(OriScreen)
-        raise exceptions.loginError()
+        raise exceptions.LoginError()
 
     OriScreen = api.connect_core.get_screen_queue()[-1]
     if '> (' in OriScreen:
