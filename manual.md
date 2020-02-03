@@ -288,13 +288,13 @@ boo_count = 0
 arrow_count = 0
 
 for push_info in post_info.get_push_list():
-    if push_info.get_type() == PTT.data_type.PushType.Push:
+    if push_info.get_type() == PTT.data_type.PushType.PUSH:
         push_type = '推'
         push_count += 1
-    if push_info.get_type() == PTT.data_type.PushType.Boo:
+    if push_info.get_type() == PTT.data_type.PushType.BOO:
         push_type = '噓'
         boo_count += 1
-    if push_info.get_type() == PTT.data_type.PushType.Arrow:
+    if push_info.get_type() == PTT.data_type.PushType.ARROW:
         push_type = '箭頭'
         arrow_count += 1
 
@@ -604,7 +604,7 @@ What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-ptt_bot.push(test_board, PTT.data_type.PushType.Push, content, post_index=test_index)
+ptt_bot.push(test_board, PTT.data_type.PushType.PUSH, content, post_index=test_index)
 ```
 執行結果
 
@@ -718,11 +718,11 @@ import time
 
 # 存取歷史水球可以有三個後續動作可以選
 # 不做任何事
-# OperateType = PTT.data_type.WaterBallOperateType.DoNothing
+# OperateType = PTT.data_type.WaterBallOperateType.NOTHING
 # 存入信箱
-# OperateType = PTT.data_type.WaterBallOperateType.Mail
+# OperateType = PTT.data_type.WaterBallOperateType.MAIL
 # 清除
-operate_type = PTT.data_type.WaterBallOperateType.Clear
+operate_type = PTT.data_type.WaterBallOperateType.CLEAR
 
 while True:
     waterball_list = ptt_bot.get_waterball(operate_type)
@@ -731,10 +731,10 @@ while True:
         continue
 
     for waterball_info in waterball_list:
-        if waterball_info.get_type() == PTT.data_type.WaterBallType.Catch:
+        if waterball_info.get_type() == PTT.data_type.WaterBallType.CATCH:
             # 收到水球
             temp = '★' + waterball_info.get_target() + ' '
-        elif waterball_info.get_type() == PTT.data_type.WaterBallType.Send:
+        elif waterball_info.get_type() == PTT.data_type.WaterBallType.SEND:
             # 你丟出去的水球紀錄
             temp = 'To ' + waterball_info.get_target() + ': '
         temp += waterball_info.get_content() + ' [' + waterball_info.get_date() + ']'
@@ -914,21 +914,21 @@ Since 0.8.26
 reply_post_index = 313
 
 ptt_bot.reply_post(
-    PTT.data_type.ReplyType.Board,
+    PTT.data_type.ReplyType.BOARD,
     'Test',
     '測試回應到板上，如有打擾抱歉',
     post_index=reply_post_index
 )
 
 ptt_bot.reply_post(
-    PTT.data_type.ReplyType.Mail,
+    PTT.data_type.ReplyType.MAIL,
     'Test',
     '測試回應到信箱，如有打擾抱歉',
     post_index=reply_post_index
 )
 
 ptt_bot.reply_post(
-    PTT.data_type.ReplyType.Board_Mail,
+    PTT.data_type.ReplyType.BOARD_MAIL,
     'Test',
     '測試回應到板上還有信箱，如有打擾抱歉',
     post_index=reply_post_index

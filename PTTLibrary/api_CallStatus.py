@@ -93,7 +93,7 @@ def get_callstatus(api) -> None:
     if index == 0:
         return data_type.CallStatus.ON
     if index == 1:
-        return data_type.CallStatus.CallStatus.UNPLUG
+        return data_type.CallStatus.UNPLUG
     if index == 2:
         return data_type.CallStatus.WATERPROOF
     if index == 3:

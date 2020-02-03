@@ -15,7 +15,7 @@ class CallStatus:
     # 打開
     ON: int = 0
     # 拔掉
-    CallStatus.UNPLUG: int = 1
+    UNPLUG: int = 1
     # 防水
     WATERPROOF: int = 2
     # 好友
@@ -50,34 +50,23 @@ class WaterBallType:
     # 水球接收狀態
 
     # 收到水球
-    Catch = 1
+    CATCH: int = 1
     # 收到水球
-    Send = 2
+    SEND: int = 2
 
-    MinValue = Catch
-    MaxValue = Send
+    MinValue = CATCH
+    MaxValue = SEND
 
 
 class WaterBallOperateType:
     # 清除水球類型
 
-    Clear = 1
-    Mail = 2
-    DoNothing = 3
+    CLEAR: int = 1
+    MAIL: int = 2
+    NOTHING: int = 3
 
-    MinValue = Clear
-    MaxValue = DoNothing
-
-
-class OperateType:
-    # 操作類型
-
-    Add = 1
-    Del = 2
-    Query = 3
-
-    MinValue = Add
-    MaxValue = Query
+    MinValue = CLEAR
+    MaxValue = NOTHING
 
 
 class FriendListType:
@@ -96,21 +85,21 @@ class FriendListType:
 class ReplyType:
     # 回文類型
 
-    Board = 1
-    Mail = 2
-    Board_Mail = 3
+    BOARD: int = 1
+    MAIL: int = 2
+    BOARD_MAIL: int = 3
 
-    MinValue = Board
-    MaxValue = Board_Mail
+    MinValue = BOARD
+    MaxValue = BOARD_MAIL
 
 
 class PushType:
-    Push = 1
-    Boo = 2
-    Arrow = 3
+    PUSH: int = 1
+    BOO: int = 2
+    ARROW: int = 3
 
-    MinValue = Push
-    MaxValue = Arrow
+    MinValue = PUSH
+    MaxValue = ARROW
 
 
 class MailInformation:
