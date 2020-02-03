@@ -128,11 +128,11 @@ def get_post(
         pattern = re.compile('\[[\w]+\]')
         pattern_result = pattern.search(cursor_line)
         if pattern_result is not None:
-            post_del_status = data_type.PostDeleteStatus.ByAuthor
+            post_del_status = data_type.PostDeleteStatus.AUTHOR
         else:
             pattern = re.compile('<[\w]+>')
             pattern_result = pattern.search(cursor_line)
-            post_del_status = data_type.PostDeleteStatus.ByModerator
+            post_del_status = data_type.PostDeleteStatus.MODERATOR
 
         # > 79843     9/11 -             □ (本文已被吃掉)<
         # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
@@ -141,7 +141,7 @@ def get_post(
             post_author = pattern_result.group(0)[1:-1]
         else:
             post_author = None
-            post_del_status = data_type.PostDeleteStatus.ByUnknown
+            post_del_status = data_type.PostDeleteStatus.UNKNOWN
 
         log.show_value(api.config, log.Level.DEBUG, 'ListDate', list_date)
         log.show_value(api.config, log.Level.DEBUG,

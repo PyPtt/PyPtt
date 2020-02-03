@@ -774,7 +774,7 @@ class Library:
                     else:
                         error_post_list.append(index)
                     continue
-                if post.get_delete_status() != data_type.PostDeleteStatus.NotDeleted:
+                if post.get_delete_status() != data_type.PostDeleteStatus.NOTDELETED:
                     del_post_list.append(index)
                 post_handler(post)
             if self.config.log_level == log.Level.INFO:
@@ -820,13 +820,13 @@ class Library:
             def deleted_post(post_title):
                 if post_title.startswith('('):
                     if '本文' in post_title:
-                        return data_type.PostDeleteStatus.ByAuthor
+                        return data_type.PostDeleteStatus.AUTHOR
                     elif post_title.startswith('(已被'):
-                        return data_type.PostDeleteStatus.ByModerator
+                        return data_type.PostDeleteStatus.MODERATOR
                     else:
-                        return data_type.PostDeleteStatus.ByUnknown
+                        return data_type.PostDeleteStatus.UNKNOWN
                 else:
-                    return data_type.PostDeleteStatus.NotDeleted
+                    return data_type.PostDeleteStatus.NOTDELETED
 
             for index in range(start_page, newest_index + 1):
                 log.show_value(

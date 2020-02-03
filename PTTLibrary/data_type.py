@@ -102,7 +102,7 @@ class PushType:
     MaxValue = ARROW
 
 
-class MailInformation:
+class MailInfo:
     def __init__(self, author, title, date, content, ip):
         self.author = parse_para(str, author)
         self.title = parse_para(str, title)
@@ -126,52 +126,37 @@ class UserInfo:
             five_chess,
             chess,
             signature_file):
-        self.ID = parse_para(str, pttid)
-        self.Money = parse_para(str, money)
-        self.loginTime = parse_para(int, login_time)
-        self.LegalPost = parse_para(int, legal_post)
-        self.IllegalPost = parse_para(int, illegal_post)
-        self.State = parse_para(str, state)
-        self.Mail = parse_para(str, mail)
-        self.Lastlogin = parse_para(str, last_login)
-        self.LastIP = parse_para(str, last_ip)
-        self.FiveChess = parse_para(str, five_chess)
-        self.Chess = parse_para(str, chess)
-        self.SignatureFile = parse_para(str, signature_file)
+        self.pttid = parse_para(str, pttid)
+        self.money = parse_para(str, money)
+        self.login_time = parse_para(int, login_time)
+        self.legal_post = parse_para(int, legal_post)
+        self.illegal_post = parse_para(int, illegal_post)
+        self.state = parse_para(str, state)
+        self.mail = parse_para(str, mail)
+        self.last_login = parse_para(str, last_login)
+        self.last_ip = parse_para(str, last_ip)
+        self.five_chess = parse_para(str, five_chess)
+        self.chess = parse_para(str, chess)
+        self.signature_file = parse_para(str, signature_file)
 
 
 class PushInfo:
     def __init__(self, push_type, author, push_content, push_ip, push_time):
-        self.Type = parse_para(int, push_type)
-        self.Author = parse_para(str, author)
-        self.Content = parse_para(str, push_content)
-        self.IP = parse_para(str, push_ip)
-        self.Time = parse_para(str, push_time)
-
-    def get_type(self):
-        return self.Type
-
-    def get_author(self):
-        return self.Author
-
-    def get_content(self):
-        return self.Content
-
-    def get_ip(self):
-        return self.IP
-
-    def get_time(self):
-        return self.Time
+        self.type = parse_para(int, push_type)
+        self.author = parse_para(str, author)
+        self.content = parse_para(str, push_content)
+        self.ip = parse_para(str, push_ip)
+        self.time = parse_para(str, push_time)
 
 
 class PostDeleteStatus:
-    NotDeleted = 0
-    ByAuthor = 1
-    ByModerator = 2
-    ByUnknown = 3
+    NOT_DELETED: int = 0
+    AUTHOR: int = 1
+    MODERATOR: int = 2
+    UNKNOWN: int = 3
 
-    MinValue = NotDeleted
-    MaxValue = ByUnknown
+    MinValue = NOT_DELETED
+    MaxValue = UNKNOWN
 
 
 class PostInfo:
@@ -196,82 +181,25 @@ class PostInfo:
             lock=False,
             origin_post=None,
             unconfirmed=False):
-        self.Board = parse_para(str, board)
-        self.AID = parse_para(str, aid)
-        self.Author = parse_para(str, author)
-        self.Date = parse_para(str, date)
-        self.Title = parse_para(str, title)
-        self.Content = parse_para(str, content)
-        self.Money = parse_para(int, money)
-        self.WebUrl = parse_para(str, web_url)
-        self.IP = parse_para(str, ip)
-        self.PushList = push_list
-        self.DeleteStatus = delete_status
-        self.ListDate = parse_para(str, list_date)
-        self.ControlCode = control_code
-        self.FormatCheck = format_check
-        self.Location = parse_para(str, location)
-        self.PushNumber = parse_para(str, push_number)
-        self.Lock = lock
-        self.OriginPost = parse_para(str, origin_post)
-        self.Unconfirmed = parse_para(bool, unconfirmed)
-
-    def get_board(self):
-        return self.Board
-
-    def get_aid(self):
-        return self.AID
-
-    def get_author(self):
-        return self.Author
-
-    def get_date(self):
-        return self.Date
-
-    def get_title(self):
-        return self.Title
-
-    def get_content(self):
-        return self.Content
-
-    def get_money(self):
-        return self.Money
-
-    def get_web_url(self):
-        return self.WebUrl
-
-    def get_ip(self):
-        return self.IP
-
-    def get_push_list(self):
-        return self.PushList
-
-    def get_delete_status(self):
-        return self.DeleteStatus
-
-    def get_list_date(self):
-        return self.ListDate
-
-    def has_control_code(self):
-        return self.ControlCode
-
-    def is_format_check(self):
-        return self.FormatCheck
-
-    def get_location(self):
-        return self.Location
-
-    def get_push_number(self):
-        return self.PushNumber
-
-    def is_lock(self):
-        return self.Lock
-
-    def get_origin_post(self):
-        return self.OriginPost
-
-    def is_unconfirmed(self):
-        return self.Unconfirmed
+        self.board = parse_para(str, board)
+        self.aid = parse_para(str, aid)
+        self.author = parse_para(str, author)
+        self.date = parse_para(str, date)
+        self.title = parse_para(str, title)
+        self.content = parse_para(str, content)
+        self.money = parse_para(int, money)
+        self.web_url = parse_para(str, web_url)
+        self.ip = parse_para(str, ip)
+        self.push_list = push_list
+        self.delete_status = delete_status
+        self.list_date = parse_para(str, list_date)
+        self.control_code = control_code
+        self.format_check = format_check
+        self.location = parse_para(str, location)
+        self.push_number = parse_para(str, push_number)
+        self.lock = lock
+        self.origin_post = parse_para(str, origin_post)
+        self.unconfirmed = parse_para(bool, unconfirmed)
 
 
 class WaterBallInfo:

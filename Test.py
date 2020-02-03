@@ -305,13 +305,13 @@ def get_post_with_condition():
             print('標題:')
             print(post.get_title())
 
-            if post.get_delete_status() == PTT.data_type.PostDeleteStatus.NotDeleted:
+            if post.get_delete_status() == PTT.data_type.PostDeleteStatus.NOTDELETED:
                 if not query:
                     print('內文:')
                     print(post.get_content())
-            elif post.get_delete_status() == PTT.data_type.PostDeleteStatus.ByAuthor:
+            elif post.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
                 print('文章被作者刪除')
-            elif post.get_delete_status() == PTT.data_type.PostDeleteStatus.ByModerator:
+            elif post.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
                 print('文章被版主刪除')
             print('=' * 50)
 
@@ -401,14 +401,14 @@ query = False
 def crawlHandler(Post):
     global query
 
-    if Post.get_delete_status() != PTT.data_type.PostDeleteStatus.NotDeleted:
-        if Post.get_delete_status() == PTT.data_type.PostDeleteStatus.ByModerator:
+    if Post.get_delete_status() != PTT.data_type.PostDeleteStatus.NOTDELETED:
+        if Post.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
             # print(f'[版主刪除][{Post.getAuthor()}]')
             pass
-        elif Post.get_delete_status() == PTT.data_type.PostDeleteStatus.ByAuthor:
+        elif Post.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
             # print(f'[作者刪除][{Post.getAuthor()}]')
             pass
-        elif Post.get_delete_status() == PTT.data_type.PostDeleteStatus.ByUnknown:
+        elif Post.get_delete_status() == PTT.data_type.PostDeleteStatus.UNKNOWN:
             # print(f'[不明刪除]')
             pass
         return
@@ -1019,7 +1019,7 @@ def getPostIndexTest():
                 print('Empty')
                 continue
 
-            if Post.get_delete_status() != PTT.data_type.PostDeleteStatus.NotDeleted:
+            if Post.get_delete_status() != PTT.data_type.PostDeleteStatus.NOTDELETED:
                 print('被刪除文章')
                 continue
 
@@ -1418,13 +1418,13 @@ PTT Library 程式貼文基準測試內文
                     print('標題:')
                     print(post_info.get_title())
 
-                    if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.NotDeleted:
+                    if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.NOTDELETED:
                         if not query:
                             print('內文:')
                             print(post_info.get_content())
-                    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByAuthor:
+                    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
                         print('文章被作者刪除')
-                    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByModerator:
+                    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
                         print('文章被版主刪除')
                     print('=' * 50)
 
