@@ -34,7 +34,7 @@ def SendEcho():
         break
 
     while True:
-        PTTBot.set_call_status(PTT.CallStatus.Off)
+        PTTBot.set_call_status(PTT.data_type.CallStatus.OFF)
         time.sleep(1)
         WaterBallList = PTTBot.get_waterball(OperateType)
         if WaterBallList is None:

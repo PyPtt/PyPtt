@@ -341,7 +341,7 @@ class Library:
                     i18n.ErrorParameter,
                 ]))
 
-        if search_type == data_type.PostSearchType.Push:
+        if search_type == data_type.PostSearchType.PUSH:
             try:
                 S = int(search_condition)
             except ValueError:
@@ -610,7 +610,7 @@ class Library:
                         i18n.BothInput
                     ]))
 
-            if search_type == data_type.PostSearchType.Push:
+            if search_type == data_type.PostSearchType.PUSH:
                 try:
                     S = int(search_condition)
                 except ValueError:

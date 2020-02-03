@@ -139,7 +139,7 @@ def get_post():
                 post_info = ptt_bot.get_post(
                     board,
                     post_index=index,
-                    # SearchType=PTT.data_type.PostSearchType.Keyword,
+                    # SearchType=PTT.data_type.PostSearchType.KEYWORD,
                     # SearchCondition='公告',
                     query=query,
                 )
@@ -147,7 +147,7 @@ def get_post():
                 post_info = ptt_bot.get_post(
                     board,
                     post_aid=index,
-                    # SearchType=PTT.data_type.PostSearchType.Keyword,
+                    # SearchType=PTT.data_type.PostSearchType.KEYWORD,
                     # SearchCondition='公告',
                     query=query,
                 )
@@ -231,32 +231,32 @@ def get_post():
 
 
 test_list = {
-    ('Wanted', PTT.data_type.PostSearchType.Keyword, '[公告]'),
-    ('Wanted', PTT.data_type.PostSearchType.Author, 'gogin'),
-    ('Wanted', PTT.data_type.PostSearchType.Push, '10'),
-    ('Wanted', PTT.data_type.PostSearchType.Mark, 'm'),
-    ('Wanted', PTT.data_type.PostSearchType.Money, '5'),
-    ('Gossiping', PTT.data_type.PostSearchType.Keyword, '[公告]'),
-    ('Gossiping', PTT.data_type.PostSearchType.Author, 'ReDmango'),
-    ('Gossiping', PTT.data_type.PostSearchType.Push, '10'),
-    ('Gossiping', PTT.data_type.PostSearchType.Mark, 'm'),
-    ('Gossiping', PTT.data_type.PostSearchType.Money, '5'),
+    ('Wanted', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
+    ('Wanted', PTT.data_type.PostSearchType.AUTHOR, 'gogin'),
+    ('Wanted', PTT.data_type.PostSearchType.PUSH, '10'),
+    ('Wanted', PTT.data_type.PostSearchType.MARK, 'm'),
+    ('Wanted', PTT.data_type.PostSearchType.MONEY, '5'),
+    ('Gossiping', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
+    ('Gossiping', PTT.data_type.PostSearchType.AUTHOR, 'ReDmango'),
+    ('Gossiping', PTT.data_type.PostSearchType.PUSH, '10'),
+    ('Gossiping', PTT.data_type.PostSearchType.MARK, 'm'),
+    ('Gossiping', PTT.data_type.PostSearchType.MONEY, '5'),
 
-    ('Gossiping', PTT.data_type.PostSearchType.Push, '-100'),
-    ('Gossiping', PTT.data_type.PostSearchType.Push, '150'),
+    ('Gossiping', PTT.data_type.PostSearchType.PUSH, '-100'),
+    ('Gossiping', PTT.data_type.PostSearchType.PUSH, '150'),
 }
 
 
 def showCondition(Board, SearchType, Condition):
-    if SearchType == PTT.data_type.PostSearchType.Keyword:
+    if SearchType == PTT.data_type.PostSearchType.KEYWORD:
         Type = '關鍵字'
-    if SearchType == PTT.data_type.PostSearchType.Author:
+    if SearchType == PTT.data_type.PostSearchType.AUTHOR:
         Type = '作者'
-    if SearchType == PTT.data_type.PostSearchType.Push:
+    if SearchType == PTT.data_type.PostSearchType.PUSH:
         Type = '推文數'
-    if SearchType == PTT.data_type.PostSearchType.Mark:
+    if SearchType == PTT.data_type.PostSearchType.MARK:
         Type = '標記'
-    if SearchType == PTT.data_type.PostSearchType.Money:
+    if SearchType == PTT.data_type.PostSearchType.MONEY:
         Type = '稿酬'
 
     print(f'{Board} 使用 {Type} 搜尋 {Condition}')
@@ -265,14 +265,14 @@ def showCondition(Board, SearchType, Condition):
 def get_post_with_condition():
     # PTT1
     test_list = [
-        ('Python', PTT.data_type.PostSearchType.Keyword, '[公告]'),
-        ('ALLPOST', PTT.data_type.PostSearchType.Keyword, '(Wanted)'),
-        ('Wanted', PTT.data_type.PostSearchType.Keyword, '(本文已被刪除)'),
-        ('ALLPOST', PTT.data_type.PostSearchType.Keyword, '(Gossiping)'),
-        ('Gossiping', PTT.data_type.PostSearchType.Keyword, '普悠瑪'),
+        ('Python', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
+        ('ALLPOST', PTT.data_type.PostSearchType.KEYWORD, '(Wanted)'),
+        ('Wanted', PTT.data_type.PostSearchType.KEYWORD, '(本文已被刪除)'),
+        ('ALLPOST', PTT.data_type.PostSearchType.KEYWORD, '(Gossiping)'),
+        ('Gossiping', PTT.data_type.PostSearchType.KEYWORD, '普悠瑪'),
         # PTT2
-        # ('PttSuggest', PTT.data_type.PostSearchType.Keyword, '[問題]'),
-        # ('PttSuggest', PTT.data_type.PostSearchType.Push, '10'),
+        # ('PttSuggest', PTT.data_type.PostSearchType.KEYWORD, '[問題]'),
+        # ('PttSuggest', PTT.data_type.PostSearchType.PUSH, '10'),
     ]
 
     test_range = 1
@@ -316,7 +316,7 @@ def get_post_with_condition():
             print('=' * 50)
 
     # TestList = [
-    #     ('Python', PTT.data_type.PostSearchType.Keyword, '[公告]')
+    #     ('Python', PTT.data_type.PostSearchType.KEYWORD, '[公告]')
     # ]
 
     # for (Board, SearchType, Condition) in TestList:
@@ -588,13 +588,13 @@ def crawl_board_with_condition():
     if ptt_bot.config.host == PTT.data_type.host.PTT1:
         test_list = [
             # ptt1
-            ('Stock', PTT.data_type.PostSearchType.Keyword, '盤中閒聊'),
-            ('Baseball', PTT.data_type.PostSearchType.Push, '20')
+            ('Stock', PTT.data_type.PostSearchType.KEYWORD, '盤中閒聊'),
+            ('Baseball', PTT.data_type.PostSearchType.PUSH, '20')
         ]
     else:
         test_list = [
-            ('WhoAmI', PTT.data_type.PostSearchType.Keyword, '[閒聊]'),
-            ('WhoAmI', PTT.data_type.PostSearchType.Push, '10')
+            ('WhoAmI', PTT.data_type.PostSearchType.KEYWORD, '[閒聊]'),
+            ('WhoAmI', PTT.data_type.PostSearchType.PUSH, '10')
         ]
 
     test_range = 100
@@ -735,15 +735,15 @@ def WaterBall():
 
 def call_status():
     def show_call_status(CallStatus):
-        if CallStatus == PTT.data_type.CallStatus.On:
+        if CallStatus == PTT.data_type.CallStatus.ON:
             print('呼叫器狀態[打開]')
-        elif CallStatus == PTT.data_type.CallStatus.Off:
+        elif CallStatus == PTT.data_type.CallStatus.OFF:
             print('呼叫器狀態[關閉]')
-        elif CallStatus == PTT.data_type.CallStatus.Unplug:
+        elif CallStatus == PTT.data_type.CallStatus.CallStatus.UNPLUG:
             print('呼叫器狀態[拔掉]')
-        elif CallStatus == PTT.data_type.CallStatus.Waterproof:
+        elif CallStatus == PTT.data_type.CallStatus.WATERPROOF:
             print('呼叫器狀態[防水]')
-        elif CallStatus == PTT.data_type.CallStatus.Friend:
+        elif CallStatus == PTT.data_type.CallStatus.FRIEND:
             print('呼叫器狀態[朋友]')
         else:
             print(f'Unknow CallStatus: {CallStatus}')
@@ -1383,11 +1383,11 @@ PTT Library 程式貼文基準測試內文
                          content, post_aid=basic_post_aid)
 
             test_list = [
-                ('Python', PTT.data_type.PostSearchType.Keyword, '[公告]'),
-                ('ALLPOST', PTT.data_type.PostSearchType.Keyword, '(Wanted)'),
-                ('Wanted', PTT.data_type.PostSearchType.Keyword, '(本文已被刪除)'),
-                ('ALLPOST', PTT.data_type.PostSearchType.Keyword, '(Gossiping)'),
-                ('Gossiping', PTT.data_type.PostSearchType.Keyword, '普悠瑪'),
+                ('Python', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
+                ('ALLPOST', PTT.data_type.PostSearchType.KEYWORD, '(Wanted)'),
+                ('Wanted', PTT.data_type.PostSearchType.KEYWORD, '(本文已被刪除)'),
+                ('ALLPOST', PTT.data_type.PostSearchType.KEYWORD, '(Gossiping)'),
+                ('Gossiping', PTT.data_type.PostSearchType.KEYWORD, '普悠瑪'),
             ]
 
             test_range = 1
@@ -1782,8 +1782,8 @@ github: https://tinyurl.com/umqff3v
             ptt_bot.get_waterball(operate_type)
             PTTBot2.get_waterball(operate_type)
 
-            ptt_bot.set_call_status(PTT.data_type.CallStatus.Off)
-            PTTBot2.set_call_status(PTT.data_type.CallStatus.Off)
+            ptt_bot.set_call_status(PTT.data_type.CallStatus.OFF)
+            PTTBot2.set_call_status(PTT.data_type.CallStatus.OFF)
 
             TestPass = False
             PTTBot2.throw_waterball(pttid, '水球測試基準訊息')

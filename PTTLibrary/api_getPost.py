@@ -39,15 +39,15 @@ def get_post(
 
     elif post_index != 0:
         if search_condition is not None:
-            if search_type == data_type.PostSearchType.Keyword:
+            if search_type == data_type.PostSearchType.KEYWORD:
                 cmd_list.append('/')
-            elif search_type == data_type.PostSearchType.Author:
+            elif search_type == data_type.PostSearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.PostSearchType.Push:
+            elif search_type == data_type.PostSearchType.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.PostSearchType.Mark:
+            elif search_type == data_type.PostSearchType.MARK:
                 cmd_list.append('G')
-            elif search_type == data_type.PostSearchType.Money:
+            elif search_type == data_type.PostSearchType.MONEY:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
