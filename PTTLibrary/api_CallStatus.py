@@ -1,33 +1,33 @@
 try:
     from . import data_type
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
     import exceptions
-    import Command
+    import command
 
 
 def get_callstatus(api) -> None:
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('A')
-    cmd_list.append(Command.Right)
-    cmd_list.append(Command.Left)
+    cmd_list.append(command.Right)
+    cmd_list.append(command.Left)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
                 i18n.Success,
@@ -36,7 +36,7 @@ def get_callstatus(api) -> None:
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
                 i18n.Success,
@@ -45,7 +45,7 @@ def get_callstatus(api) -> None:
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
                 i18n.Success,
@@ -54,7 +54,7 @@ def get_callstatus(api) -> None:
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
                 i18n.Success,
@@ -63,7 +63,7 @@ def get_callstatus(api) -> None:
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
                 i18n.Success,
@@ -72,7 +72,7 @@ def get_callstatus(api) -> None:
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
             ],
@@ -111,14 +111,14 @@ def set_callstatus(api, callstatus) -> None:
     current_call_status = api._get_callstatus()
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
-    cmd_list.append(Command.Ctrl_U)
+    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.Ctrl_U)
     cmd_list.append('p')
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.SetCallStatus,
                 i18n.Success

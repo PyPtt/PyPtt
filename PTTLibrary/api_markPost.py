@@ -1,19 +1,19 @@
 try:
     from . import data_type
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
-    from . import Command
-    from . import CheckValue
+    from . import command
+    from . import check_value
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
-    import Command
-    import CheckValue
+    import command
+    import check_value
 
 
 def markPost(
@@ -35,16 +35,16 @@ def markPost(
         i18n.MarkPost
     )
 
-    CheckValue.check(api.config, int, 'MarkType', mark_type,
+    check_value.check(api.config, int, 'MarkType', mark_type,
                      value_class=data_type.MarkType)
-    CheckValue.check(api.config, str, 'Board', board)
+    check_value.check(api.config, str, 'Board', board)
     if post_aid is not None:
-        CheckValue.check(api.config, str, 'PostAID', post_aid)
-    CheckValue.check(api.config, int, 'PostIndex', post_index)
-    CheckValue.check(api.config, int, 'SearchType', search_type,
+        check_value.check(api.config, str, 'PostAID', post_aid)
+    check_value.check(api.config, int, 'PostIndex', post_index)
+    check_value.check(api.config, int, 'SearchType', search_type,
                      value_class=data_type.PostSearchType)
     if search_condition is not None:
-        CheckValue.check(api.config, str,
+        check_value.check(api.config, str,
                          'SearchCondition', search_condition)
 
     if len(board) == 0:
@@ -105,7 +105,7 @@ def markPost(
             search_type=search_type,
             search_condition=search_condition
         )
-        CheckValue.check_index(api.config, 'PostIndex',
+        check_value.check_index(api.config, 'PostIndex',
                                post_index, max_value=NewestIndex)
 
     if mark_type == data_type.MarkType.Unconfirmed:
@@ -119,28 +119,28 @@ def markPost(
     )
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
             response=' ',
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 '動畫播放中',
             ],
             '互動式動畫播放中',
-            response=Command.Ctrl_C,
+            response=command.Ctrl_C,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 '進板成功',
             ],
@@ -170,33 +170,33 @@ def markPost(
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
-            cmd_list.append(Command.Enter)
+            cmd_list.append(command.Enter)
 
         cmd_list.append(str(post_index))
 
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
 
     if mark_type == data_type.MarkType.S:
         cmd_list.append('L')
     elif mark_type == data_type.MarkType.D:
         cmd_list.append('t')
     elif mark_type == data_type.MarkType.DeleteD:
-        cmd_list.append(Command.Ctrl_D)
+        cmd_list.append(command.Ctrl_D)
     elif mark_type == data_type.MarkType.M:
         cmd_list.append('m')
     elif mark_type == data_type.MarkType.Unconfirmed:
-        cmd_list.append(Command.Ctrl_E + 'S')
+        cmd_list.append(command.Ctrl_E + 'S')
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [i18n.DelAllMarkPost],
             '刪除所有標記',
-            response='y' + Command.Enter,
+            response='y' + command.Enter,
             log_level=log.Level.INFO
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.Mark,
                 i18n.Success,

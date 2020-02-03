@@ -7,41 +7,40 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 try:
     from . import data_type
-    from . import Config
+    from . import config
     from . import lib_util
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     # from . import screens
     from . import exceptions
-    from . import Command
-    from . import CheckValue
+    from . import command
+    from . import check_value
     from . import version
 except ModuleNotFoundError:
     import data_type
-    import Config
+    import config
     import lib_util
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     # import screens
     import exceptions
-    import Command
-    import CheckValue
+    import command
+    import check_value
     import version
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 
 class Library:
     def __init__(
             self,
             language: int = 0,
-            connect_mode: int = 0,
             log_level: int = 0,
             screen_time_out: int = 0,
             screen_long_time_out: int = 0,
             log_handler=None,
-            host: int = 0,
-    ):
+            host: int = 0):
 
         self._ID = None
         if log_handler is not None and not callable(log_handler):
@@ -64,12 +63,10 @@ class Library:
 
         self._loginStatus = False
 
-        self.config = Config.Config()
+        self.config = config.Config()
 
         if not isinstance(language, int):
             raise TypeError('[PTT Library] language must be integer')
-        if not isinstance(connect_mode, int):
-            raise TypeError('[PTT Library] ConnectMode must be integer')
         if not isinstance(log_level, int):
             raise TypeError('[PTT Library] log_level must be integer')
         if not isinstance(screen_time_out, int):
@@ -138,7 +135,7 @@ class Library:
 
         # if connect_mode == 0:
         #     connect_mode = self.config.ConnectMode
-        # elif not lib_util.check_range(ConnectCore.ConnectMode, connect_mode):
+        # elif not lib_util.check_range(connect_core.ConnectMode, connect_mode):
         #     raise ValueError('[PTT Library] Unknown ConnectMode', connect_mode)
         # else:
         #     self.config.ConnectMode = connect_mode
@@ -170,7 +167,7 @@ class Library:
                 i18n.PTT2
             )
 
-        self.connect_core = ConnectCore.API(self.config, host)
+        self.connect_core = connect_core.API(self.config, host)
         self._ExistBoardList = []
         self._ModeratorList = dict()
         self._LastThrowWaterBallTime = 0
@@ -239,9 +236,9 @@ class Library:
             kick_other_login: bool = False):
         self._one_thread()
 
-        CheckValue.check(self.config, str, 'ID', pttid)
-        CheckValue.check(self.config, str, 'Password', password)
-        CheckValue.check(self.config, bool, 'kick_other_login', kick_other_login)
+        check_value.check(self.config, str, 'ID', pttid)
+        check_value.check(self.config, str, 'Password', password)
+        check_value.check(self.config, bool, 'kick_other_login', kick_other_login)
 
         try:
             return self._login(
@@ -298,14 +295,14 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'Board', board)
         if post_aid is not None:
-            CheckValue.check(self.config, str, 'PostAID', post_aid)
-        CheckValue.check(self.config, int, 'PostIndex', post_index)
-        CheckValue.check(self.config, int, 'SearchType', search_type,
+            check_value.check(self.config, str, 'PostAID', post_aid)
+        check_value.check(self.config, int, 'PostIndex', post_index)
+        check_value.check(self.config, int, 'SearchType', search_type,
                          value_class=data_type.PostSearchType)
         if search_condition is not None:
-            CheckValue.check(self.config, str,
+            check_value.check(self.config, str,
                              'SearchCondition', search_condition)
 
         if len(board) == 0:
@@ -486,10 +483,10 @@ class Library:
             search_type: int = 0,
             search_condition: str = None) -> int:
 
-        CheckValue.check(
+        check_value.check(
             self.config, int, 'IndexType',
             index_type, value_class=data_type.IndexType)
-        CheckValue.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'Board', board)
 
         try:
             from . import api_getNewestIndex
@@ -564,10 +561,10 @@ class Library:
 
         self._one_thread()
 
-        CheckValue.check(
+        check_value.check(
             self.config, int, 'CrawlType',
             crawl_type, value_class=data_type.CrawlType)
-        CheckValue.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'Board', board)
 
         if len(board) == 0:
             raise ValueError(log.merge(
@@ -582,14 +579,14 @@ class Library:
             if not self._loginStatus:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
-            CheckValue.check(self.config, int, 'SearchType', search_type)
+            check_value.check(self.config, int, 'SearchType', search_type)
             if search_condition is not None:
-                CheckValue.check(self.config, str,
+                check_value.check(self.config, str,
                                  'SearchCondition', search_condition)
             if start_aid is not None:
-                CheckValue.check(self.config, str, 'StartAID', start_aid)
+                check_value.check(self.config, str, 'StartAID', start_aid)
             if end_aid is not None:
-                CheckValue.check(self.config, str, 'EndAID', end_aid)
+                check_value.check(self.config, str, 'EndAID', end_aid)
 
             if (start_aid is not None or end_aid is not None) and \
                     (start_index != 0 or end_index != 0):
@@ -639,7 +636,7 @@ class Library:
                     search_type=search_type,
                     search_condition=search_condition
                 )
-                CheckValue.check_index_range(
+                check_value.check_index_range(
                     self.config,
                     'StartIndex',
                     start_index,
@@ -656,7 +653,7 @@ class Library:
                     board,
                     end_aid,
                 )
-                CheckValue.check_index_range(
+                check_value.check_index_range(
                     self.config,
                     'StartAID',
                     start_index,
@@ -799,7 +796,7 @@ class Library:
             )
             # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
 
-            CheckValue.check_index_range(
+            check_value.check_index_range(
                 self.config,
                 'StartPage',
                 start_page,
@@ -904,10 +901,10 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, str, 'Board', board)
-        CheckValue.check(self.config, str, 'Title', title)
-        CheckValue.check(self.config, str, 'Content', content)
-        CheckValue.check(self.config, int, 'PostType', post_type)
+        check_value.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'Title', title)
+        check_value.check(self.config, str, 'Content', content)
+        check_value.check(self.config, int, 'PostType', post_type)
 
         check_sign_file = False
         for i in range(0, 10):
@@ -953,13 +950,13 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, str, 'Board', board)
-        CheckValue.check(self.config, int, 'PushType',
+        check_value.check(self.config, str, 'Board', board)
+        check_value.check(self.config, int, 'PushType',
                          push_type, value_class=data_type.PushType)
-        CheckValue.check(self.config, str, 'PushContent', push_content)
+        check_value.check(self.config, str, 'PushContent', push_content)
         if post_aid is not None:
-            CheckValue.check(self.config, str, 'PostAID', post_aid)
-        CheckValue.check(self.config, int, 'PostIndex', post_index)
+            check_value.check(self.config, str, 'PostAID', post_aid)
+        check_value.check(self.config, int, 'PostIndex', post_index)
 
         if len(board) == 0:
             raise ValueError(log.merge(
@@ -995,7 +992,7 @@ class Library:
                 data_type.IndexType.BBS,
                 board=board
             )
-            CheckValue.check_index(self.config, 'PostIndex',
+            check_value.check_index(self.config, 'PostIndex',
                                    post_index, newest_index)
 
         self._check_board(board)
@@ -1081,7 +1078,7 @@ class Library:
 
     def _get_user(self, user_id) -> data_type.UserInfo:
 
-        CheckValue.check(self.config, str, 'UserID', user_id)
+        check_value.check(self.config, str, 'UserID', user_id)
         if len(user_id) < 3:
             raise ValueError(log.merge(
                 self.config,
@@ -1118,8 +1115,8 @@ class Library:
         if self._UnregisteredUser:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        CheckValue.check(self.config, str, 'pttid', pttid)
-        CheckValue.check(self.config, str, 'content', content)
+        check_value.check(self.config, str, 'pttid', pttid)
+        check_value.check(self.config, str, 'content', content)
 
         if len(pttid) <= 2:
             raise ValueError(log.merge(
@@ -1150,7 +1147,7 @@ class Library:
         if self._UnregisteredUser:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        CheckValue.check(
+        check_value.check(
             self.config, int, 'OperateType', operate_type,
             value_class=data_type.WaterBallOperateType)
 
@@ -1186,7 +1183,7 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, int, 'CallStatus', call_status,
+        check_value.check(self.config, int, 'CallStatus', call_status,
                          value_class=data_type.CallStatus)
 
         try:
@@ -1205,8 +1202,8 @@ class Library:
         if self._UnregisteredUser:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        CheckValue.check(self.config, str, 'ID', pttid)
-        CheckValue.check(self.config, int, 'Money', money)
+        check_value.check(self.config, str, 'ID', pttid)
+        check_value.check(self.config, int, 'Money', money)
         # Check user
         self.get_user(pttid)
 
@@ -1228,9 +1225,9 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, str, 'pttid', pttid)
-        CheckValue.check(self.config, str, 'title', title)
-        CheckValue.check(self.config, str, 'content', content)
+        check_value.check(self.config, str, 'pttid', pttid)
+        check_value.check(self.config, str, 'title', title)
+        check_value.check(self.config, str, 'content', content)
 
         check_sign_file = False
         for i in range(0, 10):
@@ -1300,18 +1297,18 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, int, 'ReplyType', reply_type,
+        check_value.check(self.config, int, 'ReplyType', reply_type,
                          value_class=data_type.ReplyType)
-        CheckValue.check(self.config, str, 'Board', board)
-        CheckValue.check(self.config, str, 'Content', content)
+        check_value.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'Content', content)
         if post_aid is not None:
-            CheckValue.check(self.config, str, 'PostAID', post_aid)
+            check_value.check(self.config, str, 'PostAID', post_aid)
 
         if post_index != 0:
             newest_index = self._get_newest_index(
                 data_type.IndexType.BBS,
                 board=board)
-            CheckValue.check_index(
+            check_value.check_index(
                 self.config, 'PostIndex',
                 post_index, max_value=newest_index)
 
@@ -1362,8 +1359,8 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, str, 'board', board)
-        CheckValue.check(self.config, str, 'new_title', new_title)
+        check_value.check(self.config, str, 'board', board)
+        check_value.check(self.config, str, 'new_title', new_title)
 
         self._check_board(
             board,
@@ -1425,10 +1422,10 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, str, 'board', board)
-        CheckValue.check(self.config, int, 'bucket_days', bucket_days)
-        CheckValue.check(self.config, str, 'reason', reason)
-        CheckValue.check(self.config, str, 'pttid', pttid)
+        check_value.check(self.config, str, 'board', board)
+        check_value.check(self.config, int, 'bucket_days', bucket_days)
+        check_value.check(self.config, str, 'reason', reason)
+        check_value.check(self.config, str, 'pttid', pttid)
 
         self._get_user(pttid)
 
@@ -1455,21 +1452,21 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, str, 'pttid', pttid)
+        check_value.check(self.config, str, 'pttid', pttid)
         if min_page is not None:
-            CheckValue.check_index(
+            check_value.check_index(
                 self.config,
                 'min_page',
                 min_page
             )
         if max_page is not None:
-            CheckValue.check_index(
+            check_value.check_index(
                 self.config,
                 'max_page',
                 max_page
             )
         if min_page is not None and max_page is not None:
-            CheckValue.check_index_range(
+            check_value.check_index_range(
                 self.config,
                 'min_page',
                 min_page,
@@ -1491,7 +1488,7 @@ class Library:
         if not self._loginStatus:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        CheckValue.check(self.config, str, 'board', board)
+        check_value.check(self.config, str, 'board', board)
 
         return self._get_board_info(board)
 

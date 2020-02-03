@@ -1,11 +1,11 @@
 try:
     from . import i18n
-    from . import ConnectCore
-    from . import Command
+    from . import connect_core
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
-    import Command
+    import connect_core
+    import command
 
 
 def set_board_title(
@@ -24,28 +24,28 @@ def set_board_title(
     # )
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.Ctrl_C * 2)
-    cmd_list.append(Command.Space)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Ctrl_C * 2)
+    cmd_list.append(command.Space)
     cmd_list.append('I')
-    cmd_list.append(Command.Ctrl_P)
+    cmd_list.append(command.Ctrl_P)
     cmd_list.append('b')
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.Backspace * 31)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Backspace * 31)
     cmd_list.append(new_title)
-    cmd_list.append(Command.Enter * 2)
+    cmd_list.append(command.Enter * 2)
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NewSettingsHaveBeenSaved,
             '◆ 已儲存新設定',
             break_detect=True,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoChanges,
             '◆ 未改變任何設定',
             break_detect=True,

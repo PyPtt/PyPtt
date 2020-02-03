@@ -1,28 +1,28 @@
 import re
 try:
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import screens
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
+    import connect_core
     import screens
-    import Command
+    import command
 
 
 def get_time(api) -> str:
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('A')
-    cmd_list.append(Command.Right)
-    cmd_list.append(Command.Left)
+    cmd_list.append(command.Right)
+    cmd_list.append(command.Left)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.GetPTTTime,
                 i18n.Success,

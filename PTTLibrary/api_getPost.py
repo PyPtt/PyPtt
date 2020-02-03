@@ -3,19 +3,19 @@ import re
 try:
     from . import data_type
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
     import exceptions
-    import Command
+    import command
 
 
 def get_post(
@@ -27,12 +27,12 @@ def get_post(
         search_condition: str = None,
         query: bool = False) -> data_type.PostInfo:
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.Ctrl_C * 2)
-    cmd_list.append(Command.Space)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Ctrl_C * 2)
+    cmd_list.append(command.Space)
 
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
@@ -51,17 +51,17 @@ def get_post(
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
-            cmd_list.append(Command.Enter)
+            cmd_list.append(command.Enter)
 
         cmd_list.append(str(post_index))
 
-    cmd_list.append(Command.Enter)
-    cmd_list.append(Command.QueryPost)
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.QueryPost)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.CatchPost,
                 i18n.Success,
@@ -71,7 +71,7 @@ def get_post(
             refresh=False,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.PostDeleted,
                 i18n.Success,
@@ -80,7 +80,7 @@ def get_post(
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoSuchBoard,
             screens.Target.MainMenu_Exiting,
             exceptions=exceptions.NoSuchBoard(api.config, board)
@@ -310,16 +310,16 @@ def get_post(
     def is_unconfirmed_handler():
         api.Unconfirmed = True
 
-    cmd = Command.Enter * 2
+    cmd = command.Enter * 2
     target_list = [
         # 待證實文章
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.UnconfirmedPost,
             '本篇文章內容經站方授權之板務管理人員判斷有尚待證實之處',
             response=' ',
             handler=is_unconfirmed_handler
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.BrowsePost,
                 i18n.Done,
@@ -328,7 +328,7 @@ def get_post(
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.BrowsePost,
             ],
@@ -336,7 +336,7 @@ def get_post(
             break_detect=True,
             log_level=log.Level.DEBUG
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.PostNoContent,
             ],
@@ -345,12 +345,12 @@ def get_post(
             log_level=log.Level.DEBUG
         ),
         # 動畫文章
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.AnimationPost,
             ],
             screens.Target.Animation,
-            response=Command.GoMainMenu_TypeQ,
+            response=command.GoMainMenu_TypeQ,
             break_detect_after_send=True
         ),
     ]
@@ -494,9 +494,9 @@ def get_post(
                 break
 
         if not push_start:
-            cmd = Command.Down
+            cmd = command.Down
         else:
-            cmd = Command.Right
+            cmd = command.Right
 
     # print(api.Unconfirmed)
     origin_post = '\n'.join(origin_post)

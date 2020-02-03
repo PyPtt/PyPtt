@@ -1,15 +1,15 @@
 try:
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import exceptions
-    import Command
+    import command
 
 
 def mail(
@@ -30,18 +30,18 @@ def mail(
     # )
 
     CmdList = []
-    CmdList.append(Command.GoMainMenu)
+    CmdList.append(command.GoMainMenu)
     CmdList.append('M')
-    CmdList.append(Command.Enter)
+    CmdList.append(command.Enter)
     CmdList.append('S')
-    CmdList.append(Command.Enter)
+    CmdList.append(command.Enter)
     CmdList.append(pttid)
-    CmdList.append(Command.Enter)
+    CmdList.append(command.Enter)
 
     Cmd = ''.join(CmdList)
 
     TargetList = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.Start,
                 i18n.SendMail
@@ -49,7 +49,7 @@ def mail(
             '主題：',
             break_detect=True
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoSuchUser,
             '【電子郵件】',
             exceptions=exceptions.NoSuchUser(pttid)
@@ -64,9 +64,9 @@ def mail(
 
     CmdList = []
     CmdList.append(title)
-    CmdList.append(Command.Enter)
+    CmdList.append(command.Enter)
     CmdList.append(content)
-    CmdList.append(Command.Ctrl_X)
+    CmdList.append(command.Ctrl_X)
 
     Cmd = ''.join(CmdList)
 
@@ -77,31 +77,31 @@ def mail(
                             str(sign_file) + 'th ' + i18n.SignatureFile
 
     TargetList = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
             break_detect=True
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            response='s' + Command.Enter,
+            response='s' + command.Enter,
             # Refresh=False,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.SelfSaveDraft,
             '是否自存底稿',
-            response='y' + Command.Enter
+            response='y' + command.Enter
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             SingFileSelection,
             '選擇簽名檔',
-            response=str(sign_file) + Command.Enter
+            response=str(sign_file) + command.Enter
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             SingFileSelection,
             'x=隨機',
-            response=str(sign_file) + Command.Enter
+            response=str(sign_file) + command.Enter
         ),
     ]
 

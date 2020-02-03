@@ -1,13 +1,13 @@
 try:
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
+    import connect_core
     import exceptions
-    import Command
+    import command
 
 
 def give_money(
@@ -24,36 +24,36 @@ def give_money(
     # )
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('P')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('P')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('O')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoMoney,
             '你沒有那麼多Ptt幣喔!',
             break_detect=True,
             exceptions=exceptions.NoMoney
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoMoney,
             '金額過少，交易取消!',
             break_detect=True,
             exceptions=exceptions.MoneyTooFew
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.NoMoney,
             '交易取消!',
             break_detect=True,
             exceptions=exceptions.UnknownError
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.Transaction,
                 i18n.Success
@@ -61,35 +61,35 @@ def give_money(
             '按任意鍵繼續',
             break_detect=True
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.ConstantRedBag,
             '要修改紅包袋嗎',
-            response=Command.Enter
+            response=command.Enter
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.VerifyID,
             '完成交易前要重新確認您的身份',
-            response=api._Password + Command.Enter
+            response=api._Password + command.Enter
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.InputMoney,
             '要給他多少Ptt幣呢?',
-            response=Command.Tab + str(money) + Command.Enter
+            response=command.Tab + str(money) + command.Enter
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.InputID,
             '這位幸運兒的id',
-            response=pttid + Command.Enter
+            response=pttid + command.Enter
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.AuthenticationHasNotExpired,
             '認證尚未過期',
-            response='y' + Command.Enter
+            response='y' + command.Enter
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.TradingInProgress,
             '交易正在進行中',
-            response=Command.Space
+            response=command.Space
         )
     ]
 

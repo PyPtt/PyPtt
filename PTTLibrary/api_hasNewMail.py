@@ -1,16 +1,16 @@
 import re
 try:
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
-    import Command
+    import command
 
 
 def has_new_mail(api) -> int:
@@ -26,18 +26,18 @@ def has_new_mail(api) -> int:
     # )
 
     cmd_list = []
-    cmd_list.append(Command.GoMainMenu)
+    cmd_list.append(command.GoMainMenu)
     cmd_list.append('M')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('R')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('1')
-    cmd_list.append(Command.Enter)
+    cmd_list.append(command.Enter)
     cmd_list.append('$')
     cmd = ''.join(cmd_list)
 
     target_list = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.MailBox,
             screens.Target.InMailBox,
             break_detect=True,

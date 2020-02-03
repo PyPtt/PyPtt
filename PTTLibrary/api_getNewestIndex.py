@@ -4,21 +4,21 @@ from bs4 import BeautifulSoup
 try:
     from . import data_type
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
     from . import exceptions
-    from . import Command
-    from . import CheckValue
+    from . import command
+    from . import check_value
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
     import exceptions
-    import Command
-    import CheckValue
+    import command
+    import check_value
 
 
 def get_newest_index(
@@ -33,22 +33,22 @@ def get_newest_index(
 
         api._check_board(board)
 
-        CheckValue.check(
+        check_value.check(
             api.config, int, 'SearchType', search_type,
             value_class=data_type.PostSearchType)
         if search_condition is not None:
-            CheckValue.check(
+            check_value.check(
                 api.config, str,
                 'SearchCondition', search_condition)
-        CheckValue.check(api.config, int, 'SearchType', search_type)
+        check_value.check(api.config, int, 'SearchType', search_type)
 
         cmd_list = []
-        cmd_list.append(Command.GoMainMenu)
+        cmd_list.append(command.GoMainMenu)
         cmd_list.append('qs')
         cmd_list.append(board)
-        cmd_list.append(Command.Enter)
-        cmd_list.append(Command.Ctrl_C * 2)
-        cmd_list.append(Command.Space)
+        cmd_list.append(command.Enter)
+        cmd_list.append(command.Ctrl_C * 2)
+        cmd_list.append(command.Space)
 
         if search_condition is not None:
             if search_type == data_type.PostSearchType.Keyword:
@@ -63,34 +63,34 @@ def get_newest_index(
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
-            cmd_list.append(Command.Enter)
+            cmd_list.append(command.Enter)
 
         cmd_list.append('1')
-        cmd_list.append(Command.Enter)
+        cmd_list.append(command.Enter)
         cmd_list.append('$')
 
         cmd = ''.join(cmd_list)
 
         target_list = [
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 i18n.NoPost,
                 '沒有文章...',
                 break_detect=True,
                 log_level=log.Level.DEBUG
             ),
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 i18n.Success,
                 screens.Target.InBoard,
                 break_detect=True,
                 log_level=log.Level.DEBUG
             ),
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 i18n.Success,
                 screens.Target.InBoardWithCursor,
                 break_detect=True,
                 log_level=log.Level.DEBUG
             ),
-            ConnectCore.TargetUnit(
+            connect_core.TargetUnit(
                 i18n.NoSuchBoard,
                 screens.Target.MainMenu_Exiting,
                 exceptions=exceptions.NoSuchBoard(api.config, board)

@@ -26,7 +26,7 @@ ConnectMode_Telnet = None
 ConnectMode_WebSocket = None
 Active = None
 ErrorParameter = None
-ConnectCore = None
+connect_core = None
 PTT = None
 PTT2 = None
 Init = None
@@ -234,8 +234,8 @@ def load(language):
         'Wrong parameter',
     ])
 
-    global ConnectCore
-    ConnectCore = specific_load(language, [
+    global connect_core
+    connect_core = specific_load(language, [
         '連線核心',
         'Connect Core',
     ])

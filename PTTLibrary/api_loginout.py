@@ -1,34 +1,34 @@
 try:
     from . import data_type
     from . import i18n
-    from . import ConnectCore
+    from . import connect_core
     from . import log
     from . import screens
     from . import exceptions
-    from . import Command
+    from . import command
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import ConnectCore
+    import connect_core
     import log
     import screens
     import exceptions
-    import Command
+    import command
 
 
 def logout(api) -> None:
 
     CmdList = []
-    CmdList.append(Command.GoMainMenu)
+    CmdList.append(command.GoMainMenu)
     CmdList.append('g')
-    CmdList.append(Command.Enter)
+    CmdList.append(command.Enter)
     CmdList.append('y')
-    CmdList.append(Command.Enter)
+    CmdList.append(command.Enter)
 
     Cmd = ''.join(CmdList)
 
     TargetList = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             [
                 i18n.logout,
                 i18n.Success,
@@ -83,8 +83,8 @@ def login(
 
     def kick_other_loginResponse(Screen):
         if api.config.kick_other_login:
-            return 'y' + Command.Enter
-        return 'n' + Command.Enter
+            return 'y' + command.Enter
+        return 'n' + command.Enter
 
     if len(Password) > 8:
         Password = Password[:8]
@@ -110,73 +110,73 @@ def login(
     api.connect_core.connect()
 
     TargetList = [
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.HasNewMailGotoMainMenu,
             '你有新信件',
-            response=Command.GoMainMenu,
+            response=command.GoMainMenu,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.loginSuccess,
             screens.Target.MainMenu,
             break_detect=True
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.GoMainMenu,
             '【看板列表】',
-            response=Command.GoMainMenu,
+            response=command.GoMainMenu,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.ErrorIDPW,
             '密碼不對或無此帳號',
             break_detect=True,
             exceptions=exceptions.WrongIDorPassword()
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.loginTooOften,
             '登入太頻繁',
             break_detect=True,
             exceptions=exceptions.loginTooOften()
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.SystemBusyTryLater,
             '系統過載',
             break_detect=True,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.DelWrongPWRecord,
             '您要刪除以上錯誤嘗試的記錄嗎',
-            response='y' + Command.Enter,
+            response='y' + command.Enter,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.MailBoxFull,
             '您保存信件數目',
-            response=Command.GoMainMenu,
+            response=command.GoMainMenu,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.PostNotFinish,
             '請選擇暫存檔 (0-9)[0]',
-            response=Command.Enter,
+            response=command.Enter,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.PostNotFinish,
             '有一篇文章尚未完成',
-            response='Q' + Command.Enter,
+            response='Q' + command.Enter,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.SigningUnPleaseWait,
             '登入中，請稍候',
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             kick_other_loginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
             response=kick_other_loginResponse,
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
-            response=Command.Enter
+            response=command.Enter
         ),
-        ConnectCore.TargetUnit(
+        connect_core.TargetUnit(
             i18n.SigningUpdate,
             '正在更新與同步線上使用者及好友名單',
         ),
@@ -184,9 +184,9 @@ def login(
 
     CmdList = []
     CmdList.append(ID)
-    CmdList.append(Command.Enter)
+    CmdList.append(command.Enter)
     CmdList.append(Password)
-    CmdList.append(Command.Enter)
+    CmdList.append(command.Enter)
 
     Cmd = ''.join(CmdList)
 
