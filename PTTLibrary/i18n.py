@@ -7,16 +7,16 @@ except ModuleNotFoundError:
 
 class Language(object):
 
-    Chinese = 1
-    English = 2
+    CHINESE: int = 1
+    ENGLISH: int = 2
 
-    MinValue = Chinese
-    MaxValue = English
+    MinValue = CHINESE
+    MaxValue = ENGLISH
 
 
 languageList = [
-    Language.Chinese,
-    Language.English,
+    Language.CHINESE,
+    Language.ENGLISH,
 ]
 
 Connect = None
@@ -1115,5 +1115,5 @@ def _createlist():
 
 
 if __name__ == '__main__':
-    load(language.Chinese)
+    load(Language.CHINESE)
     _createlist()

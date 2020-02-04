@@ -28,9 +28,9 @@ def init():
     print('===預設值===')
     PTT.Library()
     print('===中文顯示===')
-    PTT.Library(language=PTT.i18n.Language.Chinese)
+    PTT.Library(language=PTT.i18n.Language.CHINESE)
     print('===英文顯示===')
-    PTT.Library(language=PTT.i18n.Language.English)
+    PTT.Library(language=PTT.i18n.Language.ENGLISH)
     print('===log DEBUG===')
     PTT.Library(log_level=PTT.log.Level.DEBUG)
     print('===log INFO===')
@@ -50,7 +50,7 @@ def init():
         sys.exit(-1)
     print('===語言放字串===')
     try:
-        PTT.Library(language='PTT.i18n.Language.English')
+        PTT.Library(language='PTT.i18n.Language.ENGLISH')
     except TypeError:
         print('通過')
     except:
