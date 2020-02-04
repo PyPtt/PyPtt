@@ -41,11 +41,11 @@ def SendEcho():
             continue
 
         for WaterBall in WaterBallList:
-            if not WaterBall.get_type() == PTT.WaterBallType.CATCH:
+            if not WaterBall.type == PTT.WaterBallType.CATCH:
                 continue
 
-            Target = WaterBall.get_target()
-            Content = WaterBall.get_content()
+            Target = WaterBall.target
+            Content = WaterBall.content
 
             print(f'收到來自 {Target} 的水球 [{Content}]')
 

@@ -251,35 +251,35 @@ if post_info is None:
     print('post_info is None')
     sys.exit()
 
-if post_info.get_delete_status() != PTT.data_type.PostDeleteStatus.NOTDELETED:
-    if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
-        print(f'[板主刪除][{post_info.get_author()}]')
-    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
-        print(f'[作者刪除][{post_info.get_author()}]')
-    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByUnknow:
+if post_info.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
+    if post_info.delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
+        print(f'[板主刪除][{post_info.author}]')
+    elif post_info.delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
+        print(f'[作者刪除][{post_info.author}]')
+    elif post_info.delete_status == PTT.data_type.PostDeleteStatus.ByUnknow:
         print(f'[不明刪除]')
     return
 
-if not post_info.is_format_check():
+if not post_info.format_check:
     print('[不合格式]')
     sys.exit()
 
-print('Board: ' + post_info.get_board())
-print('AID: ' + post_info.get_aid())
-print('Author: ' + post_info.get_author())
-print('Date: ' + post_info.get_date())
-print('Title: ' + post_info.get_title())
-print('content: ' + post_info.get_content())
-print('Money: ' + str(post_info.get_money()))
-print('URL: ' + post_info.get_web_url())
-print('IP: ' + post_info.get_ip())
+print('Board: ' + post_info.board)
+print('AID: ' + post_info.aid)
+print('Author: ' + post_info.author)
+print('Date: ' + post_info.date)
+print('Title: ' + post_info.title)
+print('content: ' + post_info.content)
+print('Money: ' + str(post_info.money))
+print('URL: ' + post_info.web_url)
+print('IP: ' + post_info.ip)
 # 在文章列表上的日期
-print('List Date: ' + post_info.get_list_date())
-print('地區: ' + post_info.get_location())
+print('List Date: ' + post_info.list_date)
+print('地區: ' + post_info.location)
 # Since 0.8.19
-print('文章推文數: ' + post_info.get_push_number())
+print('文章推文數: ' + post_info.push_number)
 
-if post_info.is_unconfirmed():
+if post_info.unconfirmed:
     # Since 0.8.30
     print('待證實文章')
 
@@ -287,24 +287,24 @@ push_count = 0
 boo_count = 0
 arrow_count = 0
 
-for push_info in post_info.get_push_list():
-    if push_info.get_type() == PTT.data_type.PushType.PUSH:
+for push_info in post_info.push_list:
+    if push_info.type == PTT.data_type.PushType.PUSH:
         push_type = '推'
         push_count += 1
-    if push_info.get_type() == PTT.data_type.PushType.BOO:
+    if push_info.type == PTT.data_type.PushType.BOO:
         push_type = '噓'
         boo_count += 1
-    if push_info.get_type() == PTT.data_type.PushType.ARROW:
+    if push_info.type == PTT.data_type.PushType.ARROW:
         push_type = '箭頭'
         arrow_count += 1
 
-    author = push_info.get_author()
-    content = push_info.get_content()
+    author = push_info.author
+    content = push_info.content
 
     buffer = f'{author} 給了一個{push_type} 說 {content}'
-    if push_info.get_ip() is not None:
-        buffer += f'來自 {push_info.get_ip()}'
-    buffer += f'時間是 {push_info.get_time()}'
+    if push_info.ip is not None:
+        buffer += f'來自 {push_info.ip}'
+    buffer += f'時間是 {push_info.time}'
     print(buffer)
 
 print(f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow')
@@ -344,9 +344,9 @@ for (test_board, search_type, condition) in test_list:
     )
 
     print('標題:')
-    print(post.get_title())
+    print(post.title)
     print('內文:')
-    print(post.get_content())
+    print(post.content)
     print('=' * 50)
 ```
 
@@ -422,16 +422,16 @@ for (test_board, search_type, condition) in test_list:
 ```python=
 def crawl_handler(post_info):
 
-    if post_info.get_delete_status() != PTT.data_type.PostDeleteStatus.NOTDELETED:
-        if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
-            print(f'[板主刪除][{post_info.get_author()}]')
-        elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
-            print(f'[作者刪除][{post_info.get_author()}]')
-        elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.ByUnknow:
+    if post_info.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
+        if post_info.delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
+            print(f'[板主刪除][{post_info.author}]')
+        elif post_info.delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
+            print(f'[作者刪除][{post_info.author}]')
+        elif post_info.delete_status == PTT.data_type.PostDeleteStatus.ByUnknow:
             print(f'[不明刪除]')
         return
 
-    print(f'[{post_info.get_aid()}][{post_info.get_title()}]')
+    print(f'[{post_info.aid}][{post_info.title}]')
 
 
 test_board = 'Gossiping'
@@ -625,18 +625,18 @@ try:
     if user is None:
         sys.exit()
 
-    ptt_bot.log('使用者ID: ' + user.get_id())
-    ptt_bot.log('使用者經濟狀況: ' + str(user.get_money()))
-    ptt_bot.log('登入次數: ' + str(user.get_login_time()))
-    ptt_bot.log('有效文章數: ' + str(user.get_legal_post()))
-    ptt_bot.log('退文文章數: ' + str(user.get_illegal_post()))
-    ptt_bot.log('目前動態: ' + user.get_state())
-    ptt_bot.log('信箱狀態: ' + user.get_mail())
-    ptt_bot.log('最後登入時間: ' + user.get_last_login())
-    ptt_bot.log('上次故鄉: ' + user.get_last_ip())
-    ptt_bot.log('五子棋戰績: ' + user.get_five_chess())
-    ptt_bot.log('象棋戰績:' + user.get_chess())
-    ptt_bot.log('簽名檔:' + user.get_signature_file())
+    ptt_bot.log('使用者ID: ' + user.id)
+    ptt_bot.log('使用者經濟狀況: ' + str(user.money))
+    ptt_bot.log('登入次數: ' + str(user.login_time))
+    ptt_bot.log('有效文章數: ' + str(user.legal_post))
+    ptt_bot.log('退文文章數: ' + str(user.illegal_post))
+    ptt_bot.log('目前動態: ' + user.status)
+    ptt_bot.log('信箱狀態: ' + user.mail_status)
+    ptt_bot.log('最後登入時間: ' + user.last_login)
+    ptt_bot.log('上次故鄉: ' + user.last_ip)
+    ptt_bot.log('五子棋戰績: ' + user.five_chess)
+    ptt_bot.log('象棋戰績:' + user.chess)
+    ptt_bot.log('簽名檔:' + user.signature_file)
 
 except PTT.exceptions.NoSuchUser:
     print('無此使用者')
@@ -731,13 +731,13 @@ while True:
         continue
 
     for waterball_info in waterball_list:
-        if waterball_info.get_type() == PTT.data_type.WaterBallType.CATCH:
+        if waterball_info.type == PTT.data_type.WaterBallType.CATCH:
             # 收到水球
-            temp = '★' + waterball_info.get_target() + ' '
-        elif waterball_info.get_type() == PTT.data_type.WaterBallType.SEND:
+            temp = '★' + waterball_info.target + ' '
+        elif waterball_info.type == PTT.data_type.WaterBallType.SEND:
             # 你丟出去的水球紀錄
-            temp = 'To ' + waterball_info.get_target() + ': '
-        temp += waterball_info.get_content() + ' [' + waterball_info.get_date() + ']'
+            temp = 'To ' + waterball_info.target + ': '
+        temp += waterball_info.content + ' [' + waterball_info.date + ']'
         print(temp)
 ```
 
@@ -835,7 +835,7 @@ for board in favourite_board_list:
     # getBoard 板名
     # getType 類別
     # getBoardTitle 板標
-    buff = f'[{board.get_board()}][{board.get_type()}][{board.get_board_title()}]'
+    buff = f'[{board.board}][{board.type}][{board.title}]'
     print(buff)
 ```
 
@@ -875,28 +875,28 @@ if ptt_bot.config.host == PTT.data_type.Host.PTT1:
     board_info = ptt_bot.get_board_info('Gossiping')
 else:
     board_info = ptt_bot.get_board_info('WhoAmI')
-print('板名: ', board_info.get_board())
-print('線上人數: ', board_info.get_online_user())
-print('中文敘述: ', board_info.get_chinese_des())
-print('板主: ', board_info.get_moderators())
-print('公開狀態(是否隱形): ', board_info.is_open())
-print('隱板時是否可進入十大排行榜: ', board_info.can_into_top_ten_when_hide())
-print('是否開放非看板會員發文: ', board_info.can_non_board_members_post())
-print('是否開放回應文章: ', board_info.can_reply_post())
-print('是否開放自刪文章: ', board_info.can_self_del_post())
-print('是否開放推薦文章: ', board_info.can_push_post())
-print('是否開放噓文: ', board_info.can_boo_post())
-print('是否可以快速連推文章: ', board_info.can_fast_push())
-print('推文最低間隔時間: ', board_info.get_min_interval())
-print('推文時是否記錄來源 IP: ', board_info.is_push_record_ip())
-print('推文時是否對齊開頭: ', board_info.is_push_aligned())
-print('板主是否可刪除部份違規文字: ', board_info.can_moderator_can_del_illegal_content())
+print('板名: ', board_info.board)
+print('線上人數: ', board_info.online_user)
+print('中文敘述: ', board_info.chinese_des)
+print('板主: ', board_info.moderators)
+print('公開狀態(是否隱形): ', board_info.open_status)
+print('隱板時是否可進入十大排行榜: ', board_info.into_top_ten_when_hide)
+print('是否開放非看板會員發文: ', board_info.non_board_members_post)
+print('是否開放回應文章: ', board_info.reply_post)
+print('是否開放自刪文章: ', board_info.self_del_post)
+print('是否開放推薦文章: ', board_info.push_post)
+print('是否開放噓文: ', board_info.boo_post)
+print('是否可以快速連推文章: ', board_info.fast_push)
+print('推文最低間隔時間: ', board_info.min_interval)
+print('推文時是否記錄來源 IP: ', board_info.push_record_ip)
+print('推文時是否對齊開頭: ', board_info.push_aligned)
+print('板主是否可刪除部份違規文字: ', board_info.moderator_can_del_illegal_content)
 print('轉錄文章是否自動記錄，且是否需要發文權限: ',
-      board_info.is_tran_post_auto_recorded_and_require_post_permissions())
-print('是否為冷靜模式: ', board_info.is_cool_mode())
-print('是否需要滿十八歲才可進入: ', board_info.is_require18())
-print('發文與推文限制登入次數需多少次以上: ', board_info.get_require_login_time())
-print('發文與推文限制退文篇數多少篇以下: ', board_info.get_require_illegal_post())
+      board_info.tran_post_auto_recorded_and_require_post_permissions)
+print('是否為冷靜模式: ', board_info.cool_mode)
+print('是否需要滿十八歲才可進入: ', board_info.require18)
+print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
+print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
 ```
 
 ![](https://i.imgur.com/TIR71MY.png)

@@ -118,12 +118,12 @@ def get_board_info(api, board: str) -> None:
         moderators
     )
 
-    open_state = ('公開狀態(是否隱形): 公開' in ori_screen)
+    open_status = ('公開狀態(是否隱形): 公開' in ori_screen)
     log.show_value(
         api.config,
         log.Level.DEBUG,
         '公開狀態',
-        open_state
+        open_status
     )
 
     into_top_ten_when_hide = (
@@ -300,7 +300,7 @@ def get_board_info(api, board: str) -> None:
         online_user,
         chinese_des,
         moderators,
-        open_state,
+        open_status,
         into_top_ten_when_hide,
         non_board_members_post,
         reply_post,

@@ -61,7 +61,7 @@ class Library:
         print(f'PTT Library v {version.V}')
         print('Developed by PTT CodingMan')
 
-        self._loginStatus = False
+        self._login_status = False
 
         self.config = config.Config()
 
@@ -256,7 +256,7 @@ class Library:
     def logout(self):
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             return
 
         try:
@@ -272,7 +272,7 @@ class Library:
 
     def get_time(self) -> str:
         self._one_thread()
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
@@ -292,7 +292,7 @@ class Library:
             query: bool = False) -> data_type.PostInfo:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, str, 'Board', board)
@@ -421,7 +421,7 @@ class Library:
 
             if post is None:
                 need_continue = True
-            elif not post.is_format_check():
+            elif not post.format_check:
                 need_continue = True
 
             if need_continue:
@@ -444,7 +444,7 @@ class Library:
             boardinfo = self._get_board_info(board)
             self._ExistBoardList.append(board.lower())
 
-            moderators = boardinfo.get_moderators()
+            moderators = boardinfo.moderators
             moderators = [x.lower() for x in moderators]
             self._ModeratorList[board.lower()] = moderators
 
@@ -509,7 +509,7 @@ class Library:
         self._one_thread()
 
         if index_type == data_type.IndexType.BBS:
-            if not self._loginStatus:
+            if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
@@ -576,7 +576,7 @@ class Library:
                 ]))
 
         if crawl_type == data_type.CrawlType.BBS:
-            if not self._loginStatus:
+            if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
             check_value.check(self.config, int, 'SearchType', search_type)
@@ -749,7 +749,7 @@ class Library:
 
                     if post is None:
                         need_continue = True
-                    elif not post.is_format_check():
+                    elif not post.format_check:
                         need_continue = True
 
                     if need_continue:
@@ -768,13 +768,13 @@ class Library:
                 if post is None:
                     error_post_list.append(index)
                     continue
-                if not post.is_format_check():
-                    if post.get_aid() is not None:
-                        error_post_list.append(post.get_aid())
+                if not post.format_check:
+                    if post.aid is not None:
+                        error_post_list.append(post.aid)
                     else:
                         error_post_list.append(index)
                     continue
-                if post.get_delete_status() != data_type.PostDeleteStatus.NOTDELETED:
+                if post.delete_status != data_type.PostDeleteStatus.NOT_DELETED:
                     del_post_list.append(index)
                 post_handler(post)
             if self.config.log_level == log.Level.INFO:
@@ -826,7 +826,7 @@ class Library:
                     else:
                         return data_type.PostDeleteStatus.UNKNOWN
                 else:
-                    return data_type.PostDeleteStatus.NOTDELETED
+                    return data_type.PostDeleteStatus.NOT_DELETED
 
             for index in range(start_page, newest_index + 1):
                 log.show_value(
@@ -898,7 +898,7 @@ class Library:
             sign_file) -> None:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, str, 'Board', board)
@@ -947,7 +947,7 @@ class Library:
             post_index: int = 0) -> None:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, str, 'Board', board)
@@ -1098,7 +1098,7 @@ class Library:
     def get_user(self, user_id) -> data_type.UserInfo:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         if self._UnregisteredUser:
@@ -1109,7 +1109,7 @@ class Library:
     def throw_waterball(self, pttid, content) -> None:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         if self._UnregisteredUser:
@@ -1128,7 +1128,7 @@ class Library:
                 ]))
 
         user = self._get_user(pttid)
-        if '不在站上' in user.get_state():
+        if '不在站上' in user.status:
             raise exceptions.UserOffline(pttid)
 
         try:
@@ -1141,7 +1141,7 @@ class Library:
     def get_waterball(self, operate_type: int) -> list:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         if self._UnregisteredUser:
@@ -1161,7 +1161,7 @@ class Library:
     def get_call_status(self) -> int:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         return self._get_call_status()
@@ -1173,14 +1173,14 @@ class Library:
         except ModuleNotFoundError:
             import api_CallStatus
 
-        return api_CallStatus.get_callstatus(self)
+        return api_CallStatus.get_call_status(self)
 
     def set_call_status(
             self,
             call_status):
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, int, 'CallStatus', call_status,
@@ -1191,12 +1191,12 @@ class Library:
         except ModuleNotFoundError:
             import api_CallStatus
 
-        return api_CallStatus.set_callstatus(self, call_status)
+        return api_CallStatus.set_call_status(self, call_status)
 
     def give_money(self, pttid: str, money: int):
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         if self._UnregisteredUser:
@@ -1222,7 +1222,7 @@ class Library:
             sign_file) -> None:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, str, 'pttid', pttid)
@@ -1261,7 +1261,7 @@ class Library:
     def has_new_mail(self) -> int:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
@@ -1274,7 +1274,7 @@ class Library:
     def get_board_list(self) -> list:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
@@ -1294,7 +1294,7 @@ class Library:
             post_index: int = 0) -> None:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, int, 'ReplyType', reply_type,
@@ -1356,7 +1356,7 @@ class Library:
         # 第一支板主專用 API
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, str, 'board', board)
@@ -1384,7 +1384,7 @@ class Library:
         # 標記文章
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
@@ -1405,7 +1405,7 @@ class Library:
     def get_favourite_board(self) -> list:
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
@@ -1419,7 +1419,7 @@ class Library:
 
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, str, 'board', board)
@@ -1449,7 +1449,7 @@ class Library:
 
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, str, 'pttid', pttid)
@@ -1485,7 +1485,7 @@ class Library:
 
         self._one_thread()
 
-        if not self._loginStatus:
+        if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         check_value.check(self.config, str, 'board', board)

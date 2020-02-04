@@ -89,41 +89,45 @@ def performance_test():
 
 
 def get_post():
-    test_post_list = [
-        # ('Python', 1),
-        # ('NotExitBoard', 1),
-        # ('Python', '1TJH_XY0'),
-        # 文章格式錯誤
-        # ('Steam', 4444),
-        # ('Stock', 92324),
-        # ('Stock', '1TVnEivO'),
-        # 文章格式錯誤
-        # ('movie', 457),
-        # ('Gossiping', '1TU65Wi_'),
-        # ('Gossiping', '1TWadtnq'),
-        # ('Gossiping', '1TZBBkWP'),
-        ('Gossiping', '1UDnXefr'),
-        # ('joke', '1Tc6G9eQ'),
-        # 135193
-        # ('Test', 575),
-        # 待證文章
-        # ('Test', '1U3pLzi0'),
 
-        # PTT2
-        # ('PttSuggest', 1),
-        # ('PttSuggest', '0z7TVw00'),
-        # 文章格式錯誤
-        # 發信站:
-        # ('PttSuggest', '1EbQObff'),
-        # 文章起始消失跳躍，導致沒有結尾 (已經修正)
-        # ('WhoAmI', '1Tc0ooap'),
-        # Test
-        # 文章格式錯誤
-        # 瞎改
-        # ('Test', '1Sp1W7Fi'),
-        # ('Test', '1TXRkuDW'),
-        # ('WhoAmI', '1TqJhzQH')
-    ]
+    if ptt_bot.config.host == PTT.data_type.Host.PTT1:
+        test_post_list = [
+            ('Python', 1),
+            ('NotExitBoard', 1),
+            ('Python', '1TJH_XY0'),
+            # 文章格式錯誤
+            ('Steam', 4444),
+            ('Stock', 92324),
+            ('Stock', '1TVnEivO'),
+            # 文章格式錯誤
+            ('movie', 457),
+            ('Gossiping', '1TU65Wi_'),
+            ('Gossiping', '1TWadtnq'),
+            ('Gossiping', '1TZBBkWP'),
+            ('Gossiping', '1UDnXefr'),
+            ('joke', '1Tc6G9eQ'),
+            # 135193
+            ('Test', 575),
+            # 待證文章
+            ('Test', '1U3pLzi0'),
+        ]
+    else:
+        test_post_list = [
+            # PTT2
+            # ('PttSuggest', 1),
+            # ('PttSuggest', '0z7TVw00'),
+            # 文章格式錯誤
+            # 發信站:
+            # ('PttSuggest', '1EbQObff'),
+            # 文章起始消失跳躍，導致沒有結尾 (已經修正)
+            # ('WhoAmI', '1Tc0ooap'),
+            # Test
+            # 文章格式錯誤
+            # 瞎改
+            # ('Test', '1Sp1W7Fi'),
+            # ('Test', '1TXRkuDW'),
+            # ('WhoAmI', '1TqJhzQH')
+        ]
 
     def show(name, value):
         if value is not None:
@@ -155,34 +159,34 @@ def get_post():
                 print('Empty')
                 continue
 
-            if not post_info.is_format_check():
+            if not post_info.format_check:
                 print('文章格式錯誤')
                 continue
 
-            if post_info.is_lock():
+            if post_info.lock:
                 print('鎖文狀態')
                 continue
 
-            # show('Origin Post\n', post.get_origin_post())
-            print('Origin Post\n' + post_info.get_origin_post())
+            # show('Origin Post\n', post.origin_post)
+            print('Origin Post\n' + post_info.origin_post)
             print('=' * 30 + ' Origin Post Finish')
-            show('Board', post_info.get_board())
-            show('AID', post_info.get_aid())
-            show('Author', post_info.get_author())
-            show('push_number', post_info.get_push_number())
-            show('List Date', post_info.get_list_date())
-            show('Title', post_info.get_title())
-            show('Money', post_info.get_money())
-            show('URL', post_info.get_web_url())
+            show('Board', post_info.board)
+            show('AID', post_info.aid)
+            show('Author', post_info.author)
+            show('push_number', post_info.push_number)
+            show('List Date', post_info.list_date)
+            show('Title', post_info.title)
+            show('Money', post_info.money)
+            show('URL', post_info.web_url)
 
-            if post_info.is_unconfirmed():
+            if post_info.unconfirmed:
                 print('待證實文章')
 
             if not query:
-                show('Date', post_info.get_date())
-                show('Content', post_info.get_content())
-                show('IP', post_info.get_ip())
-                show('Location', post_info.get_location())
+                show('Date', post_info.date)
+                show('Content', post_info.content)
+                show('IP', post_info.ip)
+                show('Location', post_info.location)
 
                 # 在文章列表上的日期
 
@@ -190,35 +194,35 @@ def get_post():
                 boo_count = 0
                 arrow_count = 0
 
-                for push_obj in post_info.get_push_list():
+                for push_obj in post_info.push_list:
                     #     print(Push.getType())
                     #     print(Push.getAuthor())
                     #     print(Push.getContent())
                     #     print(Push.getIP())
-                    #     print(Push.get_time())
+                    #     print(Push.time)
 
-                    if push_obj.get_type() == PTT.data_type.PushType.PUSH:
+                    if push_obj.type == PTT.data_type.PushType.PUSH:
                         push_count += 1
                         push_type = '推'
-                    if push_obj.get_type() == PTT.data_type.PushType.BOO:
+                    if push_obj.type == PTT.data_type.PushType.BOO:
                         boo_count += 1
                         push_type = '噓'
-                    if push_obj.get_type() == PTT.data_type.PushType.ARROW:
+                    if push_obj.type == PTT.data_type.PushType.ARROW:
                         arrow_count += 1
                         push_type = '→'
 
-                    author = push_obj.get_author()
-                    content = push_obj.get_content()
+                    author = push_obj.author
+                    content = push_obj.content
 
                     # Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
                     # if Push.getIP() is not None:
                     #     Buffer += f' 來自 [{Push.getIP()}]'
-                    # Buffer += f' 時間是 [{Push.get_time()}]'
+                    # Buffer += f' 時間是 [{Push.time}]'
 
-                    if push_obj.get_ip() is not None:
-                        buffer = f'{push_type} {author}: {content} {push_obj.get_ip()} {push_obj.get_time()}'
+                    if push_obj.ip is not None:
+                        buffer = f'{push_type} {author}: {content} {push_obj.ip} {push_obj.time}'
                     else:
-                        buffer = f'{push_type} {author}: {content} {push_obj.get_time()}'
+                        buffer = f'{push_type} {author}: {content} {push_obj.time}'
                     print(buffer)
 
                 print(
@@ -247,33 +251,38 @@ test_list = {
 }
 
 
-def showCondition(Board, SearchType, Condition):
-    if SearchType == PTT.data_type.PostSearchType.KEYWORD:
-        Type = '關鍵字'
-    if SearchType == PTT.data_type.PostSearchType.AUTHOR:
-        Type = '作者'
-    if SearchType == PTT.data_type.PostSearchType.PUSH:
-        Type = '推文數'
-    if SearchType == PTT.data_type.PostSearchType.MARK:
-        Type = '標記'
-    if SearchType == PTT.data_type.PostSearchType.MONEY:
-        Type = '稿酬'
+def show_condition(test_board, search_type, condition):
+    if search_type == PTT.data_type.PostSearchType.KEYWORD:
+        type_str = '關鍵字'
+    if search_type == PTT.data_type.PostSearchType.AUTHOR:
+        type_str = '作者'
+    if search_type == PTT.data_type.PostSearchType.PUSH:
+        type_str = '推文數'
+    if search_type == PTT.data_type.PostSearchType.MARK:
+        type_str = '標記'
+    if search_type == PTT.data_type.PostSearchType.MONEY:
+        type_str = '稿酬'
 
-    print(f'{Board} 使用 {Type} 搜尋 {Condition}')
+    print(f'{test_board} 使用 {type_str} 搜尋 {condition}')
 
 
 def get_post_with_condition():
     # PTT1
-    test_list = [
-        ('Python', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
-        ('ALLPOST', PTT.data_type.PostSearchType.KEYWORD, '(Wanted)'),
-        ('Wanted', PTT.data_type.PostSearchType.KEYWORD, '(本文已被刪除)'),
-        ('ALLPOST', PTT.data_type.PostSearchType.KEYWORD, '(Gossiping)'),
-        ('Gossiping', PTT.data_type.PostSearchType.KEYWORD, '普悠瑪'),
-        # PTT2
-        # ('PttSuggest', PTT.data_type.PostSearchType.KEYWORD, '[問題]'),
-        # ('PttSuggest', PTT.data_type.PostSearchType.PUSH, '10'),
-    ]
+
+    if ptt_bot.config.host == PTT.data_type.Host.PTT1:
+        test_list = [
+            ('Python', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
+            ('ALLPOST', PTT.data_type.PostSearchType.KEYWORD, '(Wanted)'),
+            ('Wanted', PTT.data_type.PostSearchType.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PTT.data_type.PostSearchType.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PTT.data_type.PostSearchType.KEYWORD, '普悠瑪'),
+        ]
+    else:
+        test_list = [
+            ('PttSuggest', PTT.data_type.PostSearchType.KEYWORD, '[問題]'),
+            ('PttSuggest', PTT.data_type.PostSearchType.PUSH, '10'),
+        ]
+
 
     test_range = 1
     query = False
@@ -299,19 +308,19 @@ def get_post_with_condition():
             )
 
             print('列表日期:')
-            print(post.get_list_date())
+            print(post.list_date)
             print('作者:')
-            print(post.get_author())
+            print(post.author)
             print('標題:')
-            print(post.get_title())
+            print(post.title)
 
-            if post.get_delete_status() == PTT.data_type.PostDeleteStatus.NOTDELETED:
+            if post.delete_status == PTT.data_type.PostDeleteStatus.NOT_DELETED:
                 if not query:
                     print('內文:')
-                    print(post.get_content())
-            elif post.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
+                    print(post.content)
+            elif post.delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
                 print('文章被作者刪除')
-            elif post.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
+            elif post.delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
                 print('文章被版主刪除')
             print('=' * 50)
 
@@ -401,25 +410,25 @@ query = False
 def crawlHandler(Post):
     global query
 
-    if Post.get_delete_status() != PTT.data_type.PostDeleteStatus.NOTDELETED:
-        if Post.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
+    if Post.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
+        if Post.delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
             # print(f'[版主刪除][{Post.getAuthor()}]')
             pass
-        elif Post.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
+        elif Post.delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
             # print(f'[作者刪除][{Post.getAuthor()}]')
             pass
-        elif Post.get_delete_status() == PTT.data_type.PostDeleteStatus.UNKNOWN:
+        elif Post.delete_status == PTT.data_type.PostDeleteStatus.UNKNOWN:
             # print(f'[不明刪除]')
             pass
         return
 
     # if Post.getTitle().startswith('Fw:') or Post.getTitle().startswith('轉'):
-    # print(f'[{Post.get_aid()}][{Post.getAuthor()}][{Post.getTitle()}]')
+    # print(f'[{Post.aid}][{Post.getAuthor()}][{Post.getTitle()}]')
     # print(f'[{Post.getContent()}]')
 
     # print(f'[{Post.getAuthor()}][{Post.getTitle()}]')
 
-    PushNumber = Post.get_push_number()
+    PushNumber = Post.push_number
     if PushNumber is not None:
         if PushNumber == '爆':
             pass
@@ -428,18 +437,18 @@ def crawlHandler(Post):
         else:
             pass
             # if not PushNumber.isdigit():
-            #     print(f'[{Post.get_aid()}][{Post.get_push_number()}]')
-            #     print(f'[{Post.get_aid()}][{Post.get_push_number()}]')
-            #     print(f'[{Post.get_aid()}][{Post.get_push_number()}]')
+            #     print(f'[{Post.aid}][{Post.push_number}]')
+            #     print(f'[{Post.aid}][{Post.push_number}]')
+            #     print(f'[{Post.aid}][{Post.push_number}]')
             #     raise ValueError()
-        # print(f'[{Post.get_aid()}][{Post.getPushNumber()}]')
+        # print(f'[{Post.aid}][{Post.getPushNumber()}]')
 
-    detectNone('標題', Post.get_title())
-    # detectNone('AID', Post.get_aid())
-    detectNone('Author', Post.get_author())
+    detectNone('標題', Post.title)
+    # detectNone('AID', Post.aid)
+    detectNone('Author', Post.author)
     # detectNone('Money', Post.getMoney())
 
-    # detectNone('WebUrl', Post.get_web_url())
+    # detectNone('WebUrl', Post.web_url)
     # detectNone('ListDate', Post.getListDate())
 
     # if not Query:
@@ -631,18 +640,18 @@ def get_user():
         if user is None:
             return
 
-        ptt_bot.log('使用者ID: ' + user.get_id())
-        ptt_bot.log('使用者經濟狀況: ' + str(user.get_money()))
-        ptt_bot.log('登入次數: ' + str(user.get_login_time()))
-        ptt_bot.log('有效文章數: ' + str(user.get_legal_post()))
-        ptt_bot.log('退文文章數: ' + str(user.get_illegal_post()))
-        ptt_bot.log('目前動態: ' + user.get_state())
-        ptt_bot.log('信箱狀態: ' + user.get_mail())
-        ptt_bot.log('最後登入時間: ' + user.get_last_login())
-        ptt_bot.log('上次故鄉: ' + user.get_last_ip())
-        ptt_bot.log('五子棋戰績: ' + user.get_five_chess())
-        ptt_bot.log('象棋戰績:' + user.get_chess())
-        ptt_bot.log('簽名檔:' + user.get_signature_file())
+        ptt_bot.log('使用者ID: ' + user.id)
+        ptt_bot.log('使用者經濟狀況: ' + str(user.money))
+        ptt_bot.log('登入次數: ' + str(user.login_time))
+        ptt_bot.log('有效文章數: ' + str(user.legal_post))
+        ptt_bot.log('退文文章數: ' + str(user.illegal_post))
+        ptt_bot.log('目前動態: ' + user.status)
+        ptt_bot.log('信箱狀態: ' + user.mail_status)
+        ptt_bot.log('最後登入時間: ' + user.last_login)
+        ptt_bot.log('上次故鄉: ' + user.last_ip)
+        ptt_bot.log('五子棋戰績: ' + user.five_chess)
+        ptt_bot.log('象棋戰績:' + user.chess)
+        ptt_bot.log('簽名檔:' + user.signature_file)
 
     except PTT.exceptions.NoSuchUser:
         print('無此使用者')
@@ -701,11 +710,11 @@ def get_waterball():
 
     print('Result:')
     for waterball in waterball_list:
-        if waterball.get_type() == PTT.data_type.WaterBallType.CATCH:
-            temp = '★' + waterball.get_target() + ' '
-        elif waterball.get_type() == PTT.data_type.WaterBallType.SEND:
-            temp = 'To ' + waterball.get_target() + ': '
-        temp += waterball.get_content() + ' [' + waterball.get_date() + ']'
+        if waterball.type == PTT.data_type.WaterBallType.CATCH:
+            temp = '★' + waterball.target + ' '
+        elif waterball.type == PTT.data_type.WaterBallType.SEND:
+            temp = 'To ' + waterball.target + ': '
+        temp += waterball.content + ' [' + waterball.date + ']'
         print(temp)
 
 
@@ -725,11 +734,11 @@ def WaterBall():
 
         print('Result:')
         for WaterBall in WaterBallList:
-            if WaterBall.get_type() == PTT.data_type.WaterBallType.CATCH:
-                Temp = '★' + WaterBall.get_target() + ' '
-            elif WaterBall.get_type() == PTT.data_type.WaterBallType.SEND:
-                Temp = 'To ' + WaterBall.get_target() + ': '
-            Temp += WaterBall.get_content() + ' [' + WaterBall.get_date() + ']'
+            if WaterBall.type == PTT.data_type.WaterBallType.CATCH:
+                Temp = '★' + WaterBall.target + ' '
+            elif WaterBall.type == PTT.data_type.WaterBallType.SEND:
+                Temp = 'To ' + WaterBall.target + ': '
+            Temp += WaterBall.content + ' [' + WaterBall.date + ']'
             print(Temp)
 
 
@@ -766,8 +775,8 @@ def call_status():
     print('初始呼叫器狀態')
     show_call_status(init_call_status)
     print('測試切換呼叫器狀態順序')
-    for CurrentTestStatus in test_queue:
-        show_call_status(CurrentTestStatus)
+    for CurrentTeststatus in test_queue:
+        show_call_status(CurrentTeststatus)
 
     ptt_bot.set_call_status(init_call_status)
     current_call_status = ptt_bot.get_call_status()
@@ -776,14 +785,14 @@ def call_status():
         return
     print('設定初始呼叫器狀態: 通過')
 
-    for CurrentTestStatus in test_queue:
+    for CurrentTeststatus in test_queue:
         print('準備設定呼叫器狀態')
-        show_call_status(CurrentTestStatus)
+        show_call_status(CurrentTeststatus)
 
-        ptt_bot.set_call_status(CurrentTestStatus)
+        ptt_bot.set_call_status(CurrentTeststatus)
         current_call_status = ptt_bot.get_call_status()
         show_call_status(current_call_status)
-        if current_call_status != CurrentTestStatus:
+        if current_call_status != CurrentTeststatus:
             print('設定呼叫器狀態: 不通過')
             return
         print('設定呼叫器狀態: 通過')
@@ -889,7 +898,7 @@ def get_board_list():
 
 
 def reply_post():
-    reply_post_index = 313
+    reply_post_index = 461
 
     ptt_bot.reply_post(
         PTT.data_type.ReplyType.BOARD,
@@ -1019,13 +1028,13 @@ def getPostIndexTest():
                 print('Empty')
                 continue
 
-            if Post.get_delete_status() != PTT.data_type.PostDeleteStatus.NOTDELETED:
+            if Post.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
                 print('被刪除文章')
                 continue
 
-            print(Post.get_aid())
+            print(Post.aid)
 
-            PostIndex = ptt_bot.get_post_index(Board, Post.get_aid())
+            PostIndex = ptt_bot.get_post_index(Board, Post.aid)
             print(PostIndex)
             if Index - i != PostIndex:
                 print('!!!!!!!!!!!!!!!!!!!!!!!!!')
@@ -1038,7 +1047,7 @@ def get_favourite_board():
     favourite_board_list = ptt_bot.get_favourite_board()
 
     for board in favourite_board_list:
-        buff = f'[{board.get_board()}][{board.get_type()}][{board.get_board_title()}]'
+        buff = f'[{board.board}][{board.type}][{board.title}]'
         print(buff)
 
 
@@ -1066,33 +1075,33 @@ def get_board_info():
         board_info = ptt_bot.get_board_info('Gossiping')
     else:
         board_info = ptt_bot.get_board_info('WhoAmI')
-    print('板名: ', board_info.get_board())
-    print('線上人數: ', board_info.get_online_user())
-    print('中文敘述: ', board_info.get_chinese_des())
-    print('板主: ', board_info.get_moderators())
-    print('公開狀態(是否隱形): ', board_info.is_open())
-    print('隱板時是否可進入十大排行榜: ', board_info.can_into_top_ten_when_hide())
-    print('是否開放非看板會員發文: ', board_info.can_non_board_members_post())
-    print('是否開放回應文章: ', board_info.can_reply_post())
-    print('是否開放自刪文章: ', board_info.can_self_del_post())
-    print('是否開放推薦文章: ', board_info.can_push_post())
-    print('是否開放噓文: ', board_info.can_boo_post())
-    print('是否可以快速連推文章: ', board_info.can_fast_push())
-    print('推文最低間隔時間: ', board_info.get_min_interval())
-    print('推文時是否記錄來源 IP: ', board_info.is_push_record_ip())
-    print('推文時是否對齊開頭: ', board_info.is_push_aligned())
-    print('板主是否可刪除部份違規文字: ', board_info.can_moderator_can_del_illegal_content())
+    print('板名: ', board_info.board)
+    print('線上人數: ', board_info.online_user)
+    print('中文敘述: ', board_info.chinese_des)
+    print('板主: ', board_info.moderators)
+    print('公開狀態(是否隱形): ', board_info.open_status)
+    print('隱板時是否可進入十大排行榜: ', board_info.into_top_ten_when_hide)
+    print('是否開放非看板會員發文: ', board_info.non_board_members_post)
+    print('是否開放回應文章: ', board_info.reply_post)
+    print('是否開放自刪文章: ', board_info.self_del_post)
+    print('是否開放推薦文章: ', board_info.push_post)
+    print('是否開放噓文: ', board_info.boo_post)
+    print('是否可以快速連推文章: ', board_info.fast_push)
+    print('推文最低間隔時間: ', board_info.min_interval)
+    print('推文時是否記錄來源 IP: ', board_info.push_record_ip)
+    print('推文時是否對齊開頭: ', board_info.push_aligned)
+    print('板主是否可刪除部份違規文字: ', board_info.moderator_can_del_illegal_content)
     print('轉錄文章是否自動記錄，且是否需要發文權限: ',
-          board_info.is_tran_post_auto_recorded_and_require_post_permissions())
-    print('是否為冷靜模式: ', board_info.is_cool_mode())
-    print('是否需要滿十八歲才可進入: ', board_info.is_require18())
-    print('發文與推文限制登入次數需多少次以上: ', board_info.get_require_login_time())
-    print('發文與推文限制退文篇數多少篇以下: ', board_info.get_require_illegal_post())
+          board_info.tran_post_auto_recorded_and_require_post_permissions)
+    print('是否為冷靜模式: ', board_info.cool_mode)
+    print('是否需要滿十八歲才可進入: ', board_info.require18)
+    print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
+    print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
 
 
 def bucket():
     ptt_bot.bucket(
-        'give',
+        'QQBoard',
         7,
         'Bucket Reason',
         'CodingMan'
@@ -1191,13 +1200,13 @@ if __name__ == '__main__':
                 sys.exit(1)
 
             if checkStr is None and targetEx is None and not checkformat:
-                print(Post.get_content())
+                print(Post.content)
 
-            if checkformat and not Post.is_format_check():
+            if checkformat and not Post.format_check:
                 showTestResult(board, IndexAID, True)
                 return
 
-            if checkStr is not None and checkStr not in Post.get_content():
+            if checkStr is not None and checkStr not in Post.content:
                 ptt_bot.logout()
                 sys.exit(1)
 
@@ -1301,17 +1310,17 @@ PTT Library 程式貼文基準測試內文
                     post_index=index - i,
                 )
 
-                if pttid in post_info.get_author() and 'PTT Library 程式貼文基準測試內文' in post_info.get_content() and \
-                        Title in post_info.get_title():
+                if pttid in post_info.author and 'PTT Library 程式貼文基準測試內文' in post_info.content and \
+                        Title in post_info.title:
                     print('使用文章編號取得基準文章成功')
                     post_info = ptt_bot.get_post(
                         basic_board,
-                        post_aid=post_info.get_aid(),
+                        post_aid=post_info.aid,
                     )
-                    if pttid in post_info.get_author() and 'PTT Library 程式貼文基準測試內文' in post_info.get_content() and \
-                            Title in post_info.get_title():
+                    if pttid in post_info.author and 'PTT Library 程式貼文基準測試內文' in post_info.content and \
+                            Title in post_info.title:
                         print('使用文章代碼取得基準文章成功')
-                        basic_post_aid = post_info.get_aid()
+                        basic_post_aid = post_info.aid
                         basic_post_index = index - i
                         break
 
@@ -1361,10 +1370,10 @@ PTT Library 程式貼文基準測試內文
 
             Content1Check = False
             Content2Check = False
-            for push in post_info.get_push_list():
-                if Content1 in push.get_content():
+            for push in post_info.push_list:
+                if Content1 in push.content:
                     Content1Check = True
-                if Content2 in push.get_content():
+                if Content2 in push.content:
                     Content2Check = True
 
             if not Content1Check:
@@ -1412,19 +1421,19 @@ PTT Library 程式貼文基準測試內文
                     )
 
                     print('列表日期:')
-                    print(post_info.get_list_date())
+                    print(post_info.list_date)
                     print('作者:')
-                    print(post_info.get_author())
+                    print(post_info.author)
                     print('標題:')
-                    print(post_info.get_title())
+                    print(post_info.title)
 
-                    if post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.NOTDELETED:
+                    if post_info.delete_status == PTT.data_type.PostDeleteStatus.NOT_DELETED:
                         if not query:
                             print('內文:')
-                            print(post_info.get_content())
-                    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.AUTHOR:
+                            print(post_info.content)
+                    elif post_info.delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
                         print('文章被作者刪除')
-                    elif post_info.get_delete_status() == PTT.data_type.PostDeleteStatus.MODERATOR:
+                    elif post_info.delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
                         print('文章被版主刪除')
                     print('=' * 50)
 
@@ -1476,7 +1485,7 @@ PTT Library 程式貼文基準測試內文
                     offset += 1
                     if StartPost is None:
                         continue
-                    if StartPost.get_aid() is None:
+                    if StartPost.aid is None:
                         continue
                     break
 
@@ -1490,7 +1499,7 @@ PTT Library 程式貼文基準測試內文
                     offset += 1
                     if EndPost is None:
                         continue
-                    if EndPost.get_aid() is None:
+                    if EndPost.aid is None:
                         continue
                     break
 
@@ -1502,8 +1511,8 @@ PTT Library 程式貼文基準測試內文
                     PTT.data_type.CrawlType.BBS,
                     crawlHandler,
                     test_board,
-                    start_aid=StartPost.get_aid(),
-                    end_aid=EndPost.get_aid()
+                    start_aid=StartPost.aid,
+                    end_aid=EndPost.aid
                 )
                 content = f'{test_board} 爬板測試完成'
                 ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
@@ -1522,18 +1531,18 @@ PTT Library 程式貼文基準測試內文
                 ptt_bot.logout()
                 sys.exit(1)
 
-            ptt_bot.log('使用者ID: ' + user.get_id())
-            ptt_bot.log('使用者經濟狀況: ' + str(user.get_money()))
-            ptt_bot.log('登入次數: ' + str(user.get_login_time()))
-            ptt_bot.log('有效文章數: ' + str(user.get_legal_post()))
-            ptt_bot.log('退文文章數: ' + str(user.get_illegal_post()))
-            ptt_bot.log('目前動態: ' + user.get_state())
-            ptt_bot.log('信箱狀態: ' + user.get_mail())
-            ptt_bot.log('最後登入時間: ' + user.get_last_login())
-            ptt_bot.log('上次故鄉: ' + user.get_last_ip())
-            ptt_bot.log('五子棋戰績: ' + user.get_five_chess())
-            ptt_bot.log('象棋戰績:' + user.get_chess())
-            ptt_bot.log('簽名檔:' + user.get_signature_file())
+            ptt_bot.log('使用者ID: ' + user.id)
+            ptt_bot.log('使用者經濟狀況: ' + str(user.money))
+            ptt_bot.log('登入次數: ' + str(user.login_time))
+            ptt_bot.log('有效文章數: ' + str(user.legal_post))
+            ptt_bot.log('退文文章數: ' + str(user.illegal_post))
+            ptt_bot.log('目前動態: ' + user.status)
+            ptt_bot.log('信箱狀態: ' + user.mail_status)
+            ptt_bot.log('最後登入時間: ' + user.last_login)
+            ptt_bot.log('上次故鄉: ' + user.last_ip)
+            ptt_bot.log('五子棋戰績: ' + user.five_chess)
+            ptt_bot.log('象棋戰績:' + user.chess)
+            ptt_bot.log('簽名檔:' + user.signature_file)
 
             try:
                 user = ptt_bot.get_user('sdjfklsdj')
@@ -1634,29 +1643,29 @@ github: https://tinyurl.com/umqff3v
                              content, post_aid=basic_post_aid)
 
             BoardInfo = ptt_bot.get_board_info('Gossiping')
-            print('板名: ', BoardInfo.get_board())
-            print('線上人數: ', BoardInfo.get_online_user())
+            print('板名: ', BoardInfo.board)
+            print('線上人數: ', BoardInfo.online_user)
             # setting
-            print('中文敘述: ', BoardInfo.get_chinese_des())
-            print('板主: ', BoardInfo.get_moderators())
-            print('公開狀態(是否隱形): ', BoardInfo.is_open())
-            print('隱板時是否可進入十大排行榜: ', BoardInfo.can_into_top_ten_when_hide())
-            print('是否開放非看板會員發文: ', BoardInfo.can_non_board_members_post())
-            print('是否開放回應文章: ', BoardInfo.can_reply_post())
-            print('是否開放自刪文章: ', BoardInfo.can_self_del_post())
-            print('是否開放推薦文章: ', BoardInfo.can_push_post())
-            print('是否開放噓文: ', BoardInfo.can_boo_post())
-            print('是否可以快速連推文章: ', BoardInfo.can_fast_push())
-            print('推文最低間隔時間: ', BoardInfo.get_min_interval())
-            print('推文時是否記錄來源 IP: ', BoardInfo.is_push_record_ip())
-            print('推文時是否對齊開頭: ', BoardInfo.is_push_aligned())
-            print('板主是否可刪除部份違規文字: ', BoardInfo.can_moderator_can_del_illegal_content())
+            print('中文敘述: ', BoardInfo.chinese_des)
+            print('板主: ', BoardInfo.moderators)
+            print('公開狀態(是否隱形): ', BoardInfo.open)
+            print('隱板時是否可進入十大排行榜: ', BoardInfo.into_top_ten_when_hide)
+            print('是否開放非看板會員發文: ', BoardInfo.non_board_members_post)
+            print('是否開放回應文章: ', BoardInfo.reply_post)
+            print('是否開放自刪文章: ', BoardInfo.self_del_post)
+            print('是否開放推薦文章: ', BoardInfo.push_post)
+            print('是否開放噓文: ', BoardInfo.boo_post)
+            print('是否可以快速連推文章: ', BoardInfo.fast_push)
+            print('推文最低間隔時間: ', BoardInfo.min_interval)
+            print('推文時是否記錄來源 IP: ', BoardInfo.push_record_ip)
+            print('推文時是否對齊開頭: ', BoardInfo.push_aligned)
+            print('板主是否可刪除部份違規文字: ', BoardInfo.moderator_can_del_illegal_content)
             print('轉錄文章是否自動記錄，且是否需要發文權限: ',
-                  BoardInfo.is_tran_post_auto_recorded_and_require_post_permissions())
-            print('是否為冷靜模式: ', BoardInfo.is_cool_mode())
-            print('是否需要滿十八歲才可進入: ', BoardInfo.is_require18())
-            print('發文與推文限制登入次數需多少次以上: ', BoardInfo.get_require_login_time())
-            print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.get_require_illegal_post())
+                  BoardInfo.tran_post_auto_recorded_and_require_post_permissions)
+            print('是否為冷靜模式: ', BoardInfo.cool_mode)
+            print('是否需要滿十八歲才可進入: ', BoardInfo.require18)
+            print('發文與推文限制登入次數需多少次以上: ', BoardInfo.require_login_time)
+            print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.require_illegal_post)
 
             content = '取得看板資訊測試成功'
             ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
@@ -1664,7 +1673,7 @@ github: https://tinyurl.com/umqff3v
 
             FBlist = ptt_bot.get_favourite_board()
             for test_board in FBlist:
-                if test_board.get_board() is None or test_board.get_type() is None or test_board.get_board_title() is None:
+                if test_board.board is None or test_board.type is None or test_board.title is None:
                     content = '取得我的最愛測試失敗'
                     ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                                  content, post_aid=basic_post_aid)
@@ -1708,7 +1717,7 @@ github: https://tinyurl.com/umqff3v
                     post_index=index - i,
                 )
 
-                if pttid in post_info.get_author() and '使用文章編號測試回應到板上' in post_info.get_content():
+                if pttid in post_info.author and '使用文章編號測試回應到板上' in post_info.content:
                     TestPass = True
                     content = '使用文章編號測試回應到板上成功'
                     print(content)
@@ -1743,7 +1752,7 @@ github: https://tinyurl.com/umqff3v
                     post_index=index - i,
                 )
 
-                if pttid in post_info.get_author() and '使用文章ID測試回應到板上' in post_info.get_content():
+                if pttid in post_info.author and '使用文章ID測試回應到板上' in post_info.content:
                     TestPass = True
                     content = '使用文章ID測試回應到板上成功'
                     print(content)
@@ -1789,11 +1798,11 @@ github: https://tinyurl.com/umqff3v
             PTTBot2.throw_waterball(pttid, '水球測試基準訊息')
             waterball_list = ptt_bot.get_waterball(operate_type)
             for waterball_info in waterball_list:
-                if not waterball_info.get_type() == PTT.data_type.WaterBallType.CATCH:
+                if not waterball_info.type == PTT.data_type.WaterBallType.CATCH:
                     continue
 
-                Target = waterball_info.get_target()
-                content = waterball_info.get_content()
+                Target = waterball_info.target
+                content = waterball_info.content
 
                 print(f'收到來自 {Target} 的水球 [{content}]')
 
@@ -1831,7 +1840,7 @@ github: https://tinyurl.com/umqff3v
 
         ptt_bot.logout()
     else:
-        pttid, password = get_password('Account.txt')
+        pttid, password = get_password('Account3.txt')
         try:
             # init()
             # threading_test()
@@ -1880,13 +1889,13 @@ github: https://tinyurl.com/umqff3v
             # reply_post()
             # get_favourite_board()
             # search_user()
+            # getPostIndexTest()
 
             # bucket()
             # set_board_title()
             # mark_post()
 
-            # private test
-            # getPostIndexTest()
+
         except Exception as e:
             traceback.print_tb(e.__traceback__)
             print(e)

@@ -55,7 +55,7 @@ def logout(api) -> None:
     except RuntimeError:
         pass
 
-    api._loginStatus = False
+    api._login_status = False
 
     log.show_value(
         api.config,
@@ -71,7 +71,7 @@ def login(
         Password,
         kick_other_login):
 
-    if api._loginStatus:
+    if api._login_status:
         api.logout()
 
     api.config.kick_other_login = kick_other_login
@@ -238,4 +238,4 @@ def login(
             i18n.UnregisteredUserCantUseAllAPI
         )
 
-    api._loginStatus = True
+    api._login_status = True
