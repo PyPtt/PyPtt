@@ -718,30 +718,6 @@ def get_waterball():
         print(temp)
 
 
-def WaterBall():
-    OperateType = PTT.data_type.WaterBallOperateType.CLEAR
-
-    TestWaterBall = [str(x % 10) for x in range(10)]
-    TagetID = 'DeepLearning'
-
-    for Msg in TestWaterBall:
-        ptt_bot.throw_waterball(TagetID, Msg)
-
-        WaterBallList = ptt_bot.get_waterball(OperateType)
-
-        if WaterBallList is None:
-            return
-
-        print('Result:')
-        for WaterBall in WaterBallList:
-            if WaterBall.type == PTT.data_type.WaterBallType.CATCH:
-                Temp = '★' + WaterBall.target + ' '
-            elif WaterBall.type == PTT.data_type.WaterBallType.SEND:
-                Temp = 'To ' + WaterBall.target + ': '
-            Temp += WaterBall.content + ' [' + WaterBall.date + ']'
-            print(Temp)
-
-
 def call_status():
     def show_call_status(CallStatus):
         if CallStatus == PTT.data_type.CallStatus.ON:
@@ -1002,41 +978,41 @@ def mark_post():
     # )
 
 
-def getPostIndexTest():
-    BoardList = [
+def get_post_index_test():
+    board_list = [
         'Wanted',
         'Gossiping'
     ]
-    Range = 100
+    test_range = 100
 
-    for Board in BoardList:
+    for test_board in board_list:
 
-        Index = ptt_bot.get_newest_index(
+        index = ptt_bot.get_newest_index(
             PTT.data_type.IndexType.BBS,
-            Board,
+            test_board,
         )
 
-        for i in range(Range):
+        for i in range(test_range):
 
-            Post = ptt_bot.get_post(
-                Board,
-                post_index=Index - i,
+            post_info = ptt_bot.get_post(
+                test_board,
+                post_index=index - i,
                 query=True
             )
 
-            if Post is None:
+            if post_info is None:
                 print('Empty')
                 continue
 
-            if Post.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
+            if post_info.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
                 print('被刪除文章')
                 continue
 
-            print(Post.aid)
+            print(post_info.aid)
 
-            post_index = ptt_bot.get_post_index(Board, Post.aid)
+            post_index = ptt_bot.get_post_index(test_board, post_info.aid)
             print(post_index)
-            if Index - i != post_index:
+            if index - i != post_index:
                 print('!!!!!!!!!!!!!!!!!!!!!!!!!')
                 return
 
@@ -1840,7 +1816,7 @@ github: https://tinyurl.com/umqff3v
 
         ptt_bot.logout()
     else:
-        pttid, password = get_password('Account3.txt')
+        pttid, password = get_password('Account.txt')
         try:
             # init()
             # threading_test()
@@ -1879,7 +1855,6 @@ github: https://tinyurl.com/umqff3v
             # get_user()
             # throw_waterball()
             # get_waterball()
-            # WaterBall()
             # call_status()
             # give_money()
             # mail()
@@ -1889,7 +1864,7 @@ github: https://tinyurl.com/umqff3v
             # reply_post()
             # get_favourite_board()
             # search_user()
-            # getPostIndexTest()
+            get_post_index_test()
 
             # bucket()
             # set_board_title()
