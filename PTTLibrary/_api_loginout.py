@@ -18,16 +18,16 @@ except ModuleNotFoundError:
 
 def logout(api) -> None:
 
-    CmdList = []
-    CmdList.append(command.GoMainMenu)
-    CmdList.append('g')
-    CmdList.append(command.Enter)
-    CmdList.append('y')
-    CmdList.append(command.Enter)
+    cmd_list = []
+    cmd_list.append(command.GoMainMenu)
+    cmd_list.append('g')
+    cmd_list.append(command.Enter)
+    cmd_list.append('y')
+    cmd_list.append(command.Enter)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
-    TargetList = [
+    target_list = [
         connect_core.TargetUnit(
             [
                 i18n.logout,
@@ -48,7 +48,7 @@ def logout(api) -> None:
     )
 
     try:
-        api.connect_core.send(Cmd, TargetList)
+        api.connect_core.send(cmd, target_list)
         api.connect_core.close()
     except exceptions.ConnectionClosed:
         pass
@@ -67,8 +67,8 @@ def logout(api) -> None:
 
 def login(
         api,
-        ID,
-        Password,
+        pttid,
+        password,
         kick_other_login):
 
     if api._login_status:
@@ -86,14 +86,14 @@ def login(
             return 'y' + command.Enter
         return 'n' + command.Enter
 
-    if len(Password) > 8:
-        Password = Password[:8]
+    if len(password) > 8:
+        password = password[:8]
 
-    ID = ID.strip()
-    Password = Password.strip()
+    pttid = pttid.strip()
+    password = password.strip()
 
-    api._ID = ID
-    api._Password = Password
+    api._ID = pttid
+    api._Password = password
 
     log.show_value(
         api.config,
@@ -102,14 +102,14 @@ def login(
             i18n.login,
             i18n.ID
         ],
-        ID
+        pttid
     )
 
     api.config.kick_other_login = kick_other_login
 
     api.connect_core.connect()
 
-    TargetList = [
+    target_list = [
         connect_core.TargetUnit(
             i18n.HasNewMailGotoMainMenu,
             '你有新信件',
@@ -182,29 +182,29 @@ def login(
         ),
     ]
 
-    CmdList = []
-    CmdList.append(ID)
-    CmdList.append(command.Enter)
-    CmdList.append(Password)
-    CmdList.append(command.Enter)
+    cmd_list = []
+    cmd_list.append(pttid)
+    cmd_list.append(command.Enter)
+    cmd_list.append(password)
+    cmd_list.append(command.Enter)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
     index = api.connect_core.send(
-        Cmd,
-        TargetList,
+        cmd,
+        target_list,
         screen_timeout=api.config.screen_long_timeout,
         refresh=False,
         secret=True
     )
 
-    if TargetList[index].get_display_msg() != i18n.loginSuccess:
-        OriScreen = api.connect_core.get_screen_queue()[-1]
-        print(OriScreen)
+    if target_list[index].get_display_msg() != i18n.loginSuccess:
+        ori_screen = api.connect_core.get_screen_queue()[-1]
+        print(ori_screen)
         raise exceptions.LoginError()
 
-    OriScreen = api.connect_core.get_screen_queue()[-1]
-    if '> (' in OriScreen:
+    ori_screen = api.connect_core.get_screen_queue()[-1]
+    if '> (' in ori_screen:
         api.cursor = data_type.Cursor.NEW
         log.log(
             api.config,
@@ -222,16 +222,16 @@ def login(
     if api.cursor not in screens.Target.InBoardWithCursor:
         screens.Target.InBoardWithCursor.append('\n' + api.cursor)
 
-    api._UnregisteredUser = False
-    if '(T)alk' not in OriScreen:
-        api._UnregisteredUser = True
-    if '(P)lay' not in OriScreen:
-        api._UnregisteredUser = True
-    if '(N)amelist' not in OriScreen:
-        api._UnregisteredUser = True
+    api._UnregisteredUser = True
+    if '(T)alk' in ori_screen:
+        api._UnregisteredUser = False
+    if '(P)lay' in ori_screen:
+        api._UnregisteredUser = False
+    if '(N)amelist' in ori_screen:
+        api._UnregisteredUser = False
 
     if api._UnregisteredUser:
-        print(OriScreen)
+        print(ori_screen)
         log.log(
             api.config,
             log.Level.INFO,
