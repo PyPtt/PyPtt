@@ -197,9 +197,9 @@ class PostInfo:
         self.format_check = format_check
         self.location = parse_para(str, location)
         self.push_number = parse_para(str, push_number)
-        self.lock = parse_para(bool, lock)
+        self.is_lock = parse_para(bool, lock)
         self.origin_post = parse_para(str, origin_post)
-        self.unconfirmed = parse_para(bool, unconfirmed)
+        self.is_unconfirmed = parse_para(bool, unconfirmed)
 
 
 class WaterBallInfo:
@@ -300,22 +300,22 @@ class BoardInfo:
         self.online_user = parse_para(int, online_user)
         self.chinese_des = parse_para(str, chinese_des)
         self.moderators = parse_para(list, moderators)
-        self.open_status = parse_para(bool, open_status)
-        self.into_top_ten_when_hide = parse_para(bool, into_top_ten_when_hide)
-        self.non_board_members_post = parse_para(bool, non_board_members_post)
-        self.reply_post = parse_para(bool, reply_post)
-        self.self_del_post = parse_para(bool, self_del_post)
-        self.push_post = parse_para(bool, push_post)
-        self.boo_post = parse_para(bool, boo_post)
-        self.fast_push = parse_para(bool, fast_push)
+        self.is_open = parse_para(bool, open_status)
+        self.is_into_top_ten_when_hide = parse_para(bool, into_top_ten_when_hide)
+        self.can_non_board_members_post = parse_para(bool, non_board_members_post)
+        self.can_reply_post = parse_para(bool, reply_post)
+        self.can_self_del_post = parse_para(bool, self_del_post)
+        self.can_push_post = parse_para(bool, push_post)
+        self.can_boo_post = parse_para(bool, boo_post)
+        self.can_fast_push = parse_para(bool, fast_push)
         self.min_interval = parse_para(int, min_interval)
-        self.push_record_ip = parse_para(bool, push_record_ip)
-        self.push_aligned = parse_para(bool, push_aligned)
-        self.moderator_can_del_illegal_content = parse_para(
+        self.is_push_record_ip = parse_para(bool, push_record_ip)
+        self.is_push_aligned = parse_para(bool, push_aligned)
+        self.can_moderator_del_illegal_content = parse_para(
             bool, moderator_can_del_illegal_content)
-        self.tran_post_auto_recorded_and_require_post_permissions = parse_para(
+        self.is_tran_post_auto_recorded_and_require_post_permissions = parse_para(
             bool, tran_post_auto_recorded_and_require_post_permissions)
-        self.cool_mode = parse_para(bool, cool_mode)
-        self.require18 = parse_para(bool, require18)
+        self.is_cool_mode = parse_para(bool, cool_mode)
+        self.is_require18 = parse_para(bool, require18)
         self.require_login_time = parse_para(int, require_login_time)
         self.require_illegal_post = parse_para(int, require_illegal_post)
