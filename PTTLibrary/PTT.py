@@ -39,6 +39,7 @@ class Library:
             log_level: int = 0,
             screen_time_out: int = 0,
             screen_long_time_out: int = 0,
+            screen_post_timeout: int = 0,
             log_handler=None,
             host: int = 0):
 
@@ -80,6 +81,8 @@ class Library:
             self.config.screen_timeout = screen_time_out
         if screen_long_time_out != 0:
             self.config.screen_long_timeout = screen_long_time_out
+        if screen_post_timeout != 0:
+            self.config.screen_post_timeout = screen_post_timeout
 
         if log_level == 0:
             log_level = self.config.log_level
@@ -116,7 +119,7 @@ class Library:
                 ]
             )
 
-        if language == i18n.Language.Chinese:
+        if language == i18n.Language.CHINESE:
             log.show_value(
                 self.config, log.Level.INFO, [
                     i18n.ChineseTranditional,
@@ -124,7 +127,7 @@ class Library:
                 ],
                 i18n.Init
             )
-        elif language == i18n.Language.English:
+        elif language == i18n.Language.ENGLISH:
             log.show_value(
                 self.config, log.Level.INFO, [
                     i18n.English,

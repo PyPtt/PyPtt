@@ -111,7 +111,7 @@ class NoSuchBoard(Exception):
                 i18n.NoSuchBoard
             ]
 
-        if config.language == i18n.Language.Chinese:
+        if config.language == i18n.Language.CHINESE:
             self.message = ''.join(self.message) + ': ' + board
         else:
             self.message = ' '.join(self.message) + ': ' + board
@@ -204,7 +204,7 @@ class ConnectError(Exception):
     def __init__(self, config):
         self.message = [i18n.Connect, i18n.Fail]
 
-        if config.language == i18n.Language.Chinese:
+        if config.language == i18n.Language.CHINESE:
             self.message = ''.join(self.message)
         else:
             self.message = ' '.join(self.message)

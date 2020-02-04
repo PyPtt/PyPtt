@@ -117,8 +117,8 @@ ptt_bot = PTT.Library()
 ```python=
 ptt_bot = PTT.Library(
     # (預設值) Chinese
-    # language=PTT.i18n.Language.Chinese,
-    language=PTT.i18n.Language.English,
+    # language=PTT.i18n.Language.CHINESE,
+    language=PTT.i18n.Language.ENGLISH,
 )
 ```
 
@@ -133,14 +133,30 @@ ptt_bot = PTT.Library(
 )
 ```
 
+如果你的網路環境比較慢(例如海外)，常常不小心就 timeout，也有參數可以調整
+
+```python=
+ptt_bot = PTT.Library(
+    # 預設 3 秒後判定此畫面沒有可辨識的目標
+    screen_time_out=5,
+    # 預設 10 秒後判定此畫面沒有可辨識的目標
+    # 適用於需要特別等待的情況，例如: 剔除其他登入、發文等等
+    # 建議不要低於 10 秒，剔除其他登入最長可能會花費約 6 ~ 7 秒
+    screen_long_timeout=15,
+    # 預設 60 秒後判定此畫面沒有可辨識的目標
+    # 適用於貼文等待的情況，建議不要低於 60 秒
+    screen_post_timeout=120,
+)
+```
+
 當然如果你有需要將 log 輸出成檔案或者其他需要處理 log 的需求
 你可以加入 log handler 就可以捕捉到所有輸出
 Since 0.8.11
 
 ```python=
 def handler(msg):
-    with open('LogHandler.txt', 'a', encoding='utf-8') as F:
-        F.write(msg + '\n')
+    with open('log.txt', 'a', encoding='utf-8') as f:
+        f.write(msg + '\n')
 
 ptt_bot = PTT.Library(
     log_handler=handler
@@ -266,6 +282,7 @@ if not post_info.format_check:
 
 print('Board: ' + post_info.board)
 print('AID: ' + post_info.aid)
+print('index:' + str(post_info.index))
 print('Author: ' + post_info.author)
 print('Date: ' + post_info.date)
 print('Title: ' + post_info.title)
@@ -357,7 +374,8 @@ for (test_board, search_type, condition) in test_list:
 如果只需要對文章按 Q 的資訊
 Since 0.8.16
 
-![](https://i.imgur.com/TJ9xMO0.png)
+![](https://i.imgur.com/TdP5wL4.png)
+
 
 你可以啟用 Query 模式，這樣就不會點進去解析內文、推文跟 IP 等等
 可以加快一些速度，並減少出錯機率
