@@ -1,4 +1,5 @@
 import re
+
 try:
     from . import data_type
     from . import lib_util
@@ -20,7 +21,6 @@ except ModuleNotFoundError:
 
 
 def get_user(api, pttid) -> data_type.UserInfo:
-
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('T')
@@ -129,7 +129,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
     log.show_value(api.config, log.Level.DEBUG, 'five_chess', five_chess)
     log.show_value(api.config, log.Level.DEBUG, 'chess', chess)
     log.show_value(api.config, log.Level.DEBUG,
-                  'signature_file', signature_file)
+                   'signature_file', signature_file)
 
     user = data_type.UserInfo(
         pttid,
