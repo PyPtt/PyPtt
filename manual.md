@@ -153,9 +153,9 @@ Since 0.8.25
 ```python=
 PTT2Bot = PTT.Library(
     # (預設值) PTT1
-    # host=PTT.data_type.host.PTT1,
-    # host=PTT.data_type.host.PTT2,
-    host=PTT.data_type.host.PTT2
+    # host=PTT.data_type.Host.PTT1,
+    # host=PTT.data_type.Host.PTT2,
+    host=PTT.data_type.Host.PTT2
 )
 ```
 
@@ -871,7 +871,7 @@ Since 0.8.32
 以下是取得看板資訊 API
 
 ```python=
-if ptt_bot.config.host == PTT.data_type.host.PTT1:
+if ptt_bot.config.host == PTT.data_type.Host.PTT1:
     board_info = ptt_bot.get_board_info('Gossiping')
 else:
     board_info = ptt_bot.get_board_info('WhoAmI')
@@ -1001,7 +1001,7 @@ MarkType = PTT.data_type.MarkType.DeleteD
 MarkType = PTT.data_type.MarkType.M
 # 待證實文章
 # Since 0.8.30
-MarkType = PTT.data_type.MarkType.Unconfirmed
+MarkType = PTT.data_type.MarkType.UNCONFIRMED
 
 ptt_bot.mark_post(
     mark_type,

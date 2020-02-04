@@ -100,7 +100,7 @@ class MoneyTooFew(Exception):
 
 class NoSuchBoard(Exception):
     def __init__(self, config, board):
-        if config.host == data_type.host.PTT1:
+        if config.host == data_type.Host.PTT1:
             self.message = [
                 i18n.PTT,
                 i18n.NoSuchBoard

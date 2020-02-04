@@ -364,7 +364,7 @@ github: https://tinyurl.com/umqff3v
 
 
 def get_newest_index():
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.Host.PTT1:
         test_board_list = [
             'Wanted',
             'Gossiping',
@@ -452,7 +452,7 @@ def crawlHandler(Post):
 
 def crawl_board():
     global query
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.Host.PTT1:
         test_board_list = [
             'Test',
             'Wanted',
@@ -471,7 +471,7 @@ def crawl_board():
             'PttSuggest'
         ]
 
-    # CrawlType = PTT.data_type.IndexType.Web
+    # CrawlType = PTT.data_type.IndexType.WEB
     crawl_type = PTT.data_type.IndexType.BBS
 
     index_type = 'Index'
@@ -525,10 +525,10 @@ def crawl_board():
                 if len(del_post_list) > 0:
                     print(f'共有 {len(del_post_list)} 篇文章被刪除')
 
-            elif crawl_type == PTT.data_type.IndexType.Web:
+            elif crawl_type == PTT.data_type.IndexType.WEB:
 
                 newest_index = ptt_bot.get_newest_index(
-                    PTT.data_type.IndexType.Web,
+                    PTT.data_type.IndexType.WEB,
                     board=TestBoard
                 )
                 end_page = newest_index
@@ -539,7 +539,7 @@ def crawl_board():
                 print(f'預備爬行 {TestBoard} 編號 {start_page} ~ {end_page} 文章')
 
                 error_post_list, del_post_list = ptt_bot.crawl_board(
-                    PTT.data_type.CrawlType.Web,
+                    PTT.data_type.CrawlType.WEB,
                     crawlHandler,
                     TestBoard,
                     start_page=start_page,
@@ -585,7 +585,7 @@ def crawl_board_with_condition():
     #         traceback.print_tb(e.__traceback__)
     #         print(e)
 
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.Host.PTT1:
         test_list = [
             # ptt1
             ('Stock', PTT.data_type.PostSearchType.KEYWORD, '盤中閒聊'),
@@ -1062,7 +1062,7 @@ def get_board_info():
     # j - 未 設為冷靜模式                            p)進板畫面
     # 8 - 禁止 未滿十八歲進入
 
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.Host.PTT1:
         board_info = ptt_bot.get_board_info('Gossiping')
     else:
         board_info = ptt_bot.get_board_info('WhoAmI')
@@ -1838,7 +1838,7 @@ github: https://tinyurl.com/umqff3v
             ptt_bot = PTT.Library(
                 # log_level=PTT.log.Level.TRACE,
                 # log_level=PTT.log.Level.DEBUG,
-                # host=PTT.data_type.host.PTT2
+                # host=PTT.data_type.Host.PTT2
             )
             try:
                 ptt_bot.login(

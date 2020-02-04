@@ -142,11 +142,11 @@ class Library:
 
         if host == 0:
             host = self.config.host
-        elif not lib_util.check_range(data_type.host, host):
+        elif not lib_util.check_range(data_type.Host, host):
             raise ValueError('[PTT Library] Unknown host', host)
         self.config.host = host
 
-        if host == data_type.host.PTT1:
+        if host == data_type.Host.PTT1:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -156,7 +156,7 @@ class Library:
                 ],
                 i18n.PTT
             )
-        if host == data_type.host.PTT2:
+        if host == data_type.Host.PTT2:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -783,7 +783,7 @@ class Library:
             return error_post_list, del_post_list
 
         else:
-            if self.config.host == data_type.host.PTT2:
+            if self.config.host == data_type.Host.PTT2:
                 raise exceptions.HostNotSupport(lib_util.get_current_func_name())
 
             # 網頁版本爬蟲
@@ -791,7 +791,7 @@ class Library:
 
             # 1. 取得總共有幾頁 MaxPage
             newest_index = self._get_newest_index(
-                data_type.IndexType.Web,
+                data_type.IndexType.WEB,
                 board=board
             )
             # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
