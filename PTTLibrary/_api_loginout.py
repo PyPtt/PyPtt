@@ -113,7 +113,8 @@ def login(
         connect_core.TargetUnit(
             i18n.HasNewMailGotoMainMenu,
             '你有新信件',
-            response=command.GoMainMenu,
+            # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
+            response=command.GoMainMenu + 'A' + command.Right + command.Left,
         ),
         connect_core.TargetUnit(
             i18n.loginSuccess,
