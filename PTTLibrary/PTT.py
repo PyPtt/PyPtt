@@ -300,10 +300,10 @@ class Library:
             check_value.check(self.config, str, 'PostAID', post_aid)
         check_value.check(self.config, int, 'PostIndex', post_index)
         check_value.check(self.config, int, 'SearchType', search_type,
-                         value_class=data_type.PostSearchType)
+                          value_class=data_type.PostSearchType)
         if search_condition is not None:
             check_value.check(self.config, str,
-                             'SearchCondition', search_condition)
+                              'SearchCondition', search_condition)
 
         if len(board) == 0:
             raise ValueError(log.merge(
@@ -517,30 +517,13 @@ class Library:
                 index_type,
                 board,
                 search_type,
-                search_condition
-            )
+                search_condition)
         except Exception:
             return self._get_newest_index(
                 index_type,
                 board,
                 search_type,
-                search_condition
-            )
-
-    def get_post_index(
-            self,
-            board: str,
-            aid) -> int:
-
-        try:
-            from . import _api_get_post_index
-        except ModuleNotFoundError:
-            import _api_get_post_index
-
-        return _api_get_post_index.get_post_index(
-            self,
-            board,
-            aid)
+                search_condition)
 
     def crawl_board(
             self,
@@ -582,7 +565,7 @@ class Library:
             check_value.check(self.config, int, 'SearchType', search_type)
             if search_condition is not None:
                 check_value.check(self.config, str,
-                                 'SearchCondition', search_condition)
+                                  'SearchCondition', search_condition)
             if start_aid is not None:
                 check_value.check(self.config, str, 'StartAID', start_aid)
             if end_aid is not None:
@@ -636,28 +619,32 @@ class Library:
                     search_type=search_type,
                     search_condition=search_condition
                 )
+
                 check_value.check_index_range(
                     self.config,
-                    'StartIndex',
+                    'start_index',
                     start_index,
-                    'EndIndex',
+                    'end_index',
                     end_index,
                     max_value=newest_index
                 )
             elif start_aid is not None and end_aid is not None:
-                start_index = self.get_post_index(
+                start_index = self.get_post(
                     board,
-                    start_aid,
-                )
-                end_index = self.get_post_index(
+                    post_aid=start_aid,
+                    query=True
+                ).index
+                end_index = self.get_post(
                     board,
-                    end_aid,
-                )
+                    post_aid=end_aid,
+                    query=True
+                ).index
+
                 check_value.check_index_range(
                     self.config,
-                    'StartAID',
+                    'start_index',
                     start_index,
-                    'EndAID',
+                    'end_index',
                     end_index
                 )
             else:
@@ -952,7 +939,7 @@ class Library:
 
         check_value.check(self.config, str, 'Board', board)
         check_value.check(self.config, int, 'PushType',
-                         push_type, value_class=data_type.PushType)
+                          push_type, value_class=data_type.PushType)
         check_value.check(self.config, str, 'PushContent', push_content)
         if post_aid is not None:
             check_value.check(self.config, str, 'PostAID', post_aid)
@@ -993,7 +980,7 @@ class Library:
                 board=board
             )
             check_value.check_index(self.config, 'PostIndex',
-                                   post_index, newest_index)
+                                    post_index, newest_index)
 
         self._check_board(board)
 
@@ -1183,8 +1170,9 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        check_value.check(self.config, int, 'CallStatus', call_status,
-                         value_class=data_type.CallStatus)
+        check_value.check(
+            self.config, int, 'CallStatus', call_status,
+            value_class=data_type.CallStatus)
 
         try:
             from . import _api_call_status
@@ -1297,8 +1285,9 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        check_value.check(self.config, int, 'ReplyType', reply_type,
-                         value_class=data_type.ReplyType)
+        check_value.check(
+            self.config, int, 'ReplyType', reply_type,
+            value_class=data_type.ReplyType)
         check_value.check(self.config, str, 'Board', board)
         check_value.check(self.config, str, 'Content', content)
         if post_aid is not None:
