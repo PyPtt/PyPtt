@@ -164,6 +164,7 @@ class PostInfo:
             self,
             board=None,
             aid=None,
+            index=None,
             author=None,
             date=None,
             title=None,
@@ -183,6 +184,7 @@ class PostInfo:
             unconfirmed=False):
         self.board = parse_para(str, board)
         self.aid = parse_para(str, aid)
+        self.index = parse_para(int, index)
         self.author = parse_para(str, author)
         self.date = parse_para(str, date)
         self.title = parse_para(str, title)
