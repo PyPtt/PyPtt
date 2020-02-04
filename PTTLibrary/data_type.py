@@ -204,54 +204,42 @@ class PostInfo:
 
 class WaterBallInfo:
     def __init__(self, waterball_type, target, content, date):
-        self.Type = parse_para(int, waterball_type)
-        self.Target = parse_para(str, target)
-        self.Content = parse_para(str, content)
-        self.Date = parse_para(str, date)
-
-    def get_target(self):
-        return self.Target
-
-    def get_content(self):
-        return self.Content
-
-    def get_date(self):
-        return self.Date
-
-    def get_type(self):
-        return self.Type
+        self.type: int = parse_para(int, waterball_type)
+        self.target: str = parse_para(str, target)
+        self.content: str = parse_para(str, content)
+        self.date: str = parse_para(str, date)
 
 
 class Cursor:
     # 舊式游標
-    Old = '●'
+    OLD: str = '●'
     # 新式游標
-    New = '>'
+    NEW: str = '>'
 
 
 class IndexType:
     # 板
-    BBS = 1
+    BBS: int = 1
     # 信箱
-    Mail = 2
+    MAIL: int = 2
     #
-    Web = 3
+    WEB: int = 3
 
     MinValue = BBS
-    MaxValue = Web
+    MaxValue = WEB
 
 
 class CrawlType:
     # BBS版本
     BBS = 1
     # 網頁版本
-    Web = 2
+    WEB = 2
 
     MinValue = BBS
-    MaxValue = Web
+    MaxValue = WEB
 
 
-class host:
+class Host:
     # 批踢踢萬
     PTT1 = 1
     # 批踢踢兔
@@ -263,34 +251,25 @@ class host:
 
 class MarkType:
     # s 文章
-    S = 1
+    S: int = 1
     # 標記文章
-    D = 2
+    D: int = 2
     # 刪除標記文章
-    DeleteD = 3
+    DeleteD: int = 3
     # M 起來
-    M = 4
+    M: int = 4
     # 待證實文章
-    Unconfirmed = 5
+    UNCONFIRMED: int = 5
 
     MinValue = S
-    MaxValue = Unconfirmed
+    MaxValue = UNCONFIRMED
 
 
 class FavouriteBoard:
     def __init__(self, board, board_type, board_title):
-        self.Board = parse_para(str, board)
-        self.Type = parse_para(str, board_type)
-        self.BoardTitle = parse_para(str, board_title)
-
-    def get_board(self):
-        return self.Board
-
-    def get_type(self):
-        return self.Type
-
-    def get_board_title(self):
-        return self.BoardTitle
+        self.board: str = parse_para(str, board)
+        self.type: str = parse_para(str, board_type)
+        self.title: str = parse_para(str, board_title)
 
 
 class BoardInfo:
@@ -317,89 +296,26 @@ class BoardInfo:
             require18=None,
             require_login_time=None,
             require_illegal_post=None):
-        self.Board = parse_para(str, board)
-        self.OnlineUser = parse_para(int, online_user)
-        self.ChineseDes = parse_para(str, chinese_des)
-        self.Moderators = parse_para(list, moderators)
-        self.OpenState = parse_para(bool, open_state)
-        self.IntoTopTenWhenHide = parse_para(bool, into_top_ten_when_hide)
-        self.NonBoardMembersPost = parse_para(bool, non_board_members_post)
-        self.ReplyPost = parse_para(bool, reply_post)
-        self.SelfDelPost = parse_para(bool, self_del_post)
-        self.PushPost = parse_para(bool, push_post)
-        self.BooPost = parse_para(bool, boo_post)
-        self.FastPush = parse_para(bool, fast_push)
-        self.MinInterval = parse_para(int, min_interval)
-        self.PushRecordIP = parse_para(bool, push_record_ip)
-        self.PushAligned = parse_para(bool, push_aligned)
-        self.ModeratorCanDelIllegalContent = parse_para(
+        self.board = parse_para(str, board)
+        self.online_user = parse_para(int, online_user)
+        self.chinese_des = parse_para(str, chinese_des)
+        self.moderators = parse_para(list, moderators)
+        self.open_state = parse_para(bool, open_state)
+        self.into_top_ten_when_hide = parse_para(bool, into_top_ten_when_hide)
+        self.non_board_members_post = parse_para(bool, non_board_members_post)
+        self.reply_post = parse_para(bool, reply_post)
+        self.self_del_post = parse_para(bool, self_del_post)
+        self.push_post = parse_para(bool, push_post)
+        self.boo_post = parse_para(bool, boo_post)
+        self.fast_push = parse_para(bool, fast_push)
+        self.min_interval = parse_para(int, min_interval)
+        self.push_record_ip = parse_para(bool, push_record_ip)
+        self.push_aligned = parse_para(bool, push_aligned)
+        self.moderator_can_del_illegal_content = parse_para(
             bool, moderator_can_del_illegal_content)
-        self.TranPostAutoRecordedAndRequirePostPermissions = parse_para(
+        self.tran_post_auto_recorded_and_require_post_permissions = parse_para(
             bool, tran_post_auto_recorded_and_require_post_permissions)
-        self.CoolMode = parse_para(bool, cool_mode)
-        self.Require18 = parse_para(bool, require18)
-        self.RequireloginTime = parse_para(int, require_login_time)
-        self.RequireIllegalPost = parse_para(int, require_illegal_post)
-
-    def get_board(self):
-        return self.Board
-
-    def get_online_user(self):
-        return self.OnlineUser
-
-    def get_chinese_des(self):
-        return self.ChineseDes
-
-    def get_moderators(self):
-        return self.Moderators
-
-    def is_open(self):
-        return self.OpenState
-
-    def can_into_top_ten_when_hide(self):
-        return self.IntoTopTenWhenHide
-
-    def can_non_board_members_post(self):
-        return self.NonBoardMembersPost
-
-    def can_reply_post(self):
-        return self.ReplyPost
-
-    def can_self_del_post(self):
-        return self.SelfDelPost
-
-    def can_push_post(self):
-        return self.PushPost
-
-    def can_boo_post(self):
-        return self.BooPost
-
-    def can_fast_push(self):
-        return self.FastPush
-
-    def get_min_interval(self):
-        return self.MinInterval
-
-    def is_push_record_ip(self):
-        return self.PushRecordIP
-
-    def is_push_aligned(self):
-        return self.PushAligned
-
-    def can_moderator_can_del_illegal_content(self):
-        return self.ModeratorCanDelIllegalContent
-
-    def is_tran_post_auto_recorded_and_require_post_permissions(self):
-        return self.TranPostAutoRecordedAndRequirePostPermissions
-
-    def is_cool_mode(self):
-        return self.CoolMode
-
-    def is_require18(self):
-        return self.Require18
-
-    def get_require_login_time(self):
-        return self.RequireloginTime
-
-    def get_require_illegal_post(self):
-        return self.RequireIllegalPost
+        self.cool_mode = parse_para(bool, cool_mode)
+        self.require18 = parse_para(bool, require18)
+        self.require_login_time = parse_para(int, require_login_time)
+        self.require_illegal_post = parse_para(int, require_illegal_post)

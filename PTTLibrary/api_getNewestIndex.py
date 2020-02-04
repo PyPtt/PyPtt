@@ -141,7 +141,7 @@ def get_newest_index(
             screens.show(api.config, api.connect_core.get_screen_queue())
             raise exceptions.UnknownError(i18n.UnknownError)
 
-    elif data_type.IndexType.Web:
+    elif data_type.IndexType.WEB:
         # web
         _NewestIndex = None
         newest_index = 0

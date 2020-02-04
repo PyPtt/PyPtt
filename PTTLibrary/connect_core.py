@@ -193,7 +193,7 @@ class API(object):
                     except Exception as e:
                         pass
 
-                if self._host == data_type.host.PTT1:
+                if self._host == data_type.Host.PTT1:
                     self._Core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             'wss://ws.ptt.cc/bbs/',
@@ -212,7 +212,7 @@ class API(object):
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                if self._host == data_type.host.PTT1:
+                if self._host == data_type.Host.PTT1:
                     log.show_value(self.Config, log.Level.INFO, [
                         i18n.Connect,
                         i18n.PTT,

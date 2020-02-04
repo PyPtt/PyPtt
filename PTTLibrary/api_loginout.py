@@ -205,14 +205,14 @@ def login(
 
     OriScreen = api.connect_core.get_screen_queue()[-1]
     if '> (' in OriScreen:
-        api.cursor = data_type.Cursor.New
+        api.cursor = data_type.Cursor.NEW
         log.log(
             api.config,
             log.Level.DEBUG,
             i18n.NewCursor
         )
     else:
-        api.cursor = data_type.Cursor.Old
+        api.cursor = data_type.Cursor.OLD
         log.log(
             api.config,
             log.Level.DEBUG,

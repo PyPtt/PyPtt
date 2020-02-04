@@ -108,9 +108,9 @@ def markPost(
         check_value.check_index(api.config, 'PostIndex',
                                post_index, max_value=NewestIndex)
 
-    if mark_type == data_type.MarkType.Unconfirmed:
+    if mark_type == data_type.MarkType.UNCONFIRMED:
         # 批踢踢兔沒有待證文章功能 QQ
-        if api.config.host == data_type.host.PTT2:
+        if api.config.host == data_type.Host.PTT2:
             raise exceptions.HostNotSupport(lib_util.get_current_func_name())
 
     api._check_board(
@@ -184,7 +184,7 @@ def markPost(
         cmd_list.append(command.Ctrl_D)
     elif mark_type == data_type.MarkType.M:
         cmd_list.append('m')
-    elif mark_type == data_type.MarkType.Unconfirmed:
+    elif mark_type == data_type.MarkType.UNCONFIRMED:
         cmd_list.append(command.Ctrl_E + 'S')
 
     cmd = ''.join(cmd_list)

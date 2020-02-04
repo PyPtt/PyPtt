@@ -40,6 +40,6 @@ class Config:
     kick_other_login = False
 
     # 預設登入 PTT1
-    host = data_type.host.PTT1
+    host = data_type.Host.PTT1
 
     log_handler = None
