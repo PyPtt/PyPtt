@@ -219,11 +219,11 @@ class Library:
             kick_other_login: bool = False):
 
         try:
-            from . import api_loginout
+            from . import _api_loginout
         except ModuleNotFoundError:
-            import api_loginout
+            import _api_loginout
 
-        return api_loginout.login(
+        return _api_loginout.login(
             self,
             pttid,
             password,
@@ -260,11 +260,11 @@ class Library:
             return
 
         try:
-            from . import api_loginout
+            from . import _api_loginout
         except ModuleNotFoundError:
-            import api_loginout
+            import _api_loginout
 
-        return api_loginout.logout(self)
+        return _api_loginout.logout(self)
 
     def log(self, msg: str) -> None:
         self._one_thread()
@@ -276,11 +276,11 @@ class Library:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
-            from . import api_getTime
+            from . import _api_get_time
         except ModuleNotFoundError:
-            import api_getTime
+            import _api_get_time
 
-        return api_getTime.get_time(self)
+        return _api_get_time.get_time(self)
 
     def get_post(
             self,
@@ -462,11 +462,11 @@ class Library:
             query: bool = False):
 
         try:
-            from . import api_getPost
+            from . import _api_get_post
         except ModuleNotFoundError:
-            import api_getPost
+            import _api_get_post
 
-        return api_getPost.get_post(
+        return _api_get_post.get_post(
             self,
             board,
             post_aid,
@@ -489,11 +489,11 @@ class Library:
         check_value.check(self.config, str, 'Board', board)
 
         try:
-            from . import api_getNewestIndex
+            from . import _api_get_newest_index
         except ModuleNotFoundError:
-            import api_getNewestIndex
+            import _api_get_newest_index
 
-        return api_getNewestIndex.get_newest_index(
+        return _api_get_newest_index.get_newest_index(
             self,
             index_type,
             board,
@@ -533,11 +533,11 @@ class Library:
             aid) -> int:
 
         try:
-            from . import api_getPostIndex
+            from . import _api_get_post_index
         except ModuleNotFoundError:
-            import api_getPostIndex
+            import _api_get_post_index
 
-        return api_getPostIndex.get_post_index(
+        return _api_get_post_index.get_post_index(
             self,
             board,
             aid)
@@ -926,11 +926,11 @@ class Library:
         self._check_board(board)
 
         try:
-            from . import api_post
+            from . import _api_post
         except ModuleNotFoundError:
-            import api_post
+            import _api_post
 
-        return api_post.post(
+        return _api_post.post(
             self,
             board,
             title,
@@ -1064,11 +1064,11 @@ class Library:
             post_index: int = 0) -> None:
 
         try:
-            from . import api_push
+            from . import _api_push
         except ModuleNotFoundError:
-            import api_push
+            import _api_push
 
-        return api_push.push(
+        return _api_push.push(
             self,
             board,
             push_type,
@@ -1089,11 +1089,11 @@ class Library:
                 ]))
 
         try:
-            from . import api_getUser
+            from . import _api_get_user
         except ModuleNotFoundError:
-            import api_getUser
+            import _api_get_user
 
-        return api_getUser.get_user(self, user_id)
+        return _api_get_user.get_user(self, user_id)
 
     def get_user(self, user_id) -> data_type.UserInfo:
         self._one_thread()
@@ -1132,11 +1132,11 @@ class Library:
             raise exceptions.UserOffline(pttid)
 
         try:
-            from . import api_WaterBall
+            from . import _api_waterball
         except ModuleNotFoundError:
-            import api_WaterBall
+            import _api_waterball
 
-        return api_WaterBall.throw_waterball(self, pttid, content)
+        return _api_waterball.throw_waterball(self, pttid, content)
 
     def get_waterball(self, operate_type: int) -> list:
         self._one_thread()
@@ -1152,11 +1152,11 @@ class Library:
             value_class=data_type.WaterBallOperateType)
 
         try:
-            from . import api_WaterBall
+            from . import _api_waterball
         except ModuleNotFoundError:
-            import api_WaterBall
+            import _api_waterball
 
-        return api_WaterBall.get_waterball(self, operate_type)
+        return _api_waterball.get_waterball(self, operate_type)
 
     def get_call_status(self) -> int:
         self._one_thread()
@@ -1169,11 +1169,11 @@ class Library:
     def _get_call_status(self) -> int:
 
         try:
-            from . import api_CallStatus
+            from . import _api_call_status
         except ModuleNotFoundError:
-            import api_CallStatus
+            import _api_call_status
 
-        return api_CallStatus.get_call_status(self)
+        return _api_call_status.get_call_status(self)
 
     def set_call_status(
             self,
@@ -1187,11 +1187,11 @@ class Library:
                          value_class=data_type.CallStatus)
 
         try:
-            from . import api_CallStatus
+            from . import _api_call_status
         except ModuleNotFoundError:
-            import api_CallStatus
+            import _api_call_status
 
-        return api_CallStatus.set_call_status(self, call_status)
+        return _api_call_status.set_call_status(self, call_status)
 
     def give_money(self, pttid: str, money: int):
         self._one_thread()
@@ -1208,11 +1208,11 @@ class Library:
         self.get_user(pttid)
 
         try:
-            from . import api_giveMoney
+            from . import _api_give_money
         except ModuleNotFoundError:
-            import api_giveMoney
+            import _api_give_money
 
-        return api_giveMoney.give_money(self, pttid, money)
+        return _api_give_money.give_money(self, pttid, money)
 
     def mail(
             self,
@@ -1247,11 +1247,11 @@ class Library:
                     ]))
 
         try:
-            from . import api_mail
+            from . import _api_mail
         except ModuleNotFoundError:
-            import api_mail
+            import _api_mail
 
-        return api_mail.mail(
+        return _api_mail.mail(
             self,
             pttid,
             title,
@@ -1265,11 +1265,11 @@ class Library:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
-            from . import api_hasNewMail
+            from . import _api_has_new_mail
         except ModuleNotFoundError:
-            import api_hasNewMail
+            import _api_has_new_mail
 
-        return api_hasNewMail.has_new_mail(self)
+        return _api_has_new_mail.has_new_mail(self)
 
     def get_board_list(self) -> list:
         self._one_thread()
@@ -1278,11 +1278,11 @@ class Library:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
-            from . import api_getBoardList
+            from . import _api_get_board_list
         except ModuleNotFoundError:
-            import api_getBoardList
+            import _api_get_board_list
 
-        return api_getBoardList.get_board_list(self)
+        return _api_get_board_list.get_board_list(self)
 
     def reply_post(
             self,
@@ -1336,11 +1336,11 @@ class Library:
         self._check_board(board)
 
         try:
-            from . import api_replyPost
+            from . import _api_reply_post
         except ModuleNotFoundError:
-            import api_replyPost
+            import _api_reply_post
 
-        api_replyPost.reply_post(
+        _api_reply_post.reply_post(
             self,
             reply_type,
             board,
@@ -1367,11 +1367,11 @@ class Library:
             check_moderator=True)
 
         try:
-            from . import api_setBoardTitle
+            from . import _api_set_board_title
         except ModuleNotFoundError:
-            import api_setBoardTitle
+            import _api_set_board_title
 
-        api_setBoardTitle.set_board_title(self, board, new_title)
+        _api_set_board_title.set_board_title(self, board, new_title)
 
     def mark_post(
             self,
@@ -1388,11 +1388,11 @@ class Library:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
-            from . import api_markPost
+            from . import _api_mark_post
         except ModuleNotFoundError:
-            import api_markPost
+            import _api_mark_post
 
-        api_markPost.markPost(
+        _api_mark_post.markPost(
             self,
             mark_type,
             board,
@@ -1409,11 +1409,11 @@ class Library:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         try:
-            from . import api_getFavouriteBoard
+            from . import _api_get_favourite_board
         except ModuleNotFoundError:
-            import api_getFavouriteBoard
+            import _api_get_favourite_board
 
-        return api_getFavouriteBoard.get_favourite_board(self)
+        return _api_get_favourite_board.get_favourite_board(self)
 
     def bucket(self, board: str, bucket_days: int, reason: str, pttid: str) -> None:
 
@@ -1434,11 +1434,11 @@ class Library:
             check_moderator=True)
 
         try:
-            from . import api_bucket
+            from . import _api_bucket
         except ModuleNotFoundError:
-            import api_bucket
+            import _api_bucket
 
-        api_bucket.bucket(
+        _api_bucket.bucket(
             self, board, bucket_days, reason, pttid)
 
     def search_user(
@@ -1475,11 +1475,11 @@ class Library:
             )
 
         try:
-            from . import api_searchuser
+            from . import _api_search_user
         except ModuleNotFoundError:
-            import api_searchuser
+            import _api_search_user
 
-        return api_searchuser.search_user(self, pttid, min_page, max_page)
+        return _api_search_user.search_user(self, pttid, min_page, max_page)
 
     def get_board_info(self, board: str) -> data_type.BoardInfo:
 
@@ -1495,11 +1495,11 @@ class Library:
     def _get_board_info(self, board: str) -> data_type.BoardInfo:
 
         try:
-            from . import api_getBoardInfo
+            from . import _api_get_board_info
         except ModuleNotFoundError:
-            import api_getBoardInfo
+            import _api_get_board_info
 
-        return api_getBoardInfo.get_board_info(self, board)
+        return _api_get_board_info.get_board_info(self, board)
 
 
 if __name__ == '__main__':
