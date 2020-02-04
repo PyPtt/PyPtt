@@ -232,6 +232,12 @@ def get_post(
         # >781508 +爆 9/17 jodojeda     □ [新聞] 國人吃魚少 學者：應把吃魚當成輕鬆愉快
         # >781406 +X1 9/17 kingofage111 R: [申請] ReDmango 請辭Gossiping板主職務
 
+        if post_index == 0:
+            pattern = re.compile('[\d]+')
+            pattern_result = pattern.search(cursor_line)
+            if pattern_result is not None:
+                post_index = int(pattern_result.group(0))
+
         push_number = cursor_line
         # print(f'2>{push_number}<')
         push_number = push_number[7:11]
@@ -280,6 +286,7 @@ def get_post(
             post = data_type.PostInfo(
                 board=board,
                 aid=post_aid,
+                index=post_index,
                 author=post_author,
                 title=post_title,
                 web_url=post_web,
@@ -295,6 +302,7 @@ def get_post(
         post = data_type.PostInfo(
             board=board,
             aid=post_aid,
+            index=post_index,
             author=post_author,
             title=post_title,
             web_url=post_web,
@@ -383,13 +391,11 @@ def get_post(
             post = data_type.PostInfo(
                 board=board,
                 aid=post_aid,
+                index=post_index,
                 author=post_author,
-                # Date=PostDate,
                 title=post_title,
                 web_url=post_web,
                 money=post_money,
-                # Content=PostContent,
-                # PushList=PushList,
                 list_date=list_date,
                 control_code=has_control_code,
                 format_check=False,
@@ -559,6 +565,7 @@ def get_post(
             post = data_type.PostInfo(
                 board=board,
                 aid=post_aid,
+                index=post_index,
                 author=post_author,
                 date=post_date,
                 title=post_title,
@@ -601,6 +608,7 @@ def get_post(
         post = data_type.PostInfo(
             board=board,
             aid=post_aid,
+            index=post_index,
             author=post_author,
             date=post_date,
             title=post_title,
@@ -641,6 +649,7 @@ def get_post(
         post = data_type.PostInfo(
             board=board,
             aid=post_aid,
+            index=post_index,
             author=post_author,
             date=post_date,
             title=post_title,
@@ -704,6 +713,7 @@ def get_post(
         post = data_type.PostInfo(
             board=board,
             aid=post_aid,
+            index=post_index,
             author=post_author,
             date=post_date,
             title=post_title,
@@ -789,6 +799,7 @@ def get_post(
             post = data_type.PostInfo(
                 board=board,
                 aid=post_aid,
+                index=post_index,
                 author=post_author,
                 date=post_date,
                 title=post_title,
@@ -898,6 +909,7 @@ def get_post(
     post = data_type.PostInfo(
         board=board,
         aid=post_aid,
+        index=post_index,
         author=post_author,
         date=post_date,
         title=post_title,
