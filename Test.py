@@ -1402,7 +1402,7 @@ PTT Library 程式貼文基準測試內文
             test_range = 1
 
             for (test_board, search_type, condition) in test_list:
-                showCondition(test_board, search_type, condition)
+                show_condition(test_board, search_type, condition)
                 index = ptt_bot.get_newest_index(
                     PTT.data_type.IndexType.BBS,
                     test_board,
@@ -1642,30 +1642,30 @@ github: https://tinyurl.com/umqff3v
                 ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
                              content, post_aid=basic_post_aid)
 
-            BoardInfo = ptt_bot.get_board_info('Gossiping')
-            print('板名: ', BoardInfo.board)
-            print('線上人數: ', BoardInfo.online_user)
+            board_info = ptt_bot.get_board_info('Gossiping')
+            print('板名: ', board_info.board)
+            print('線上人數: ', board_info.online_user)
             # setting
-            print('中文敘述: ', BoardInfo.chinese_des)
-            print('板主: ', BoardInfo.moderators)
-            print('公開狀態(是否隱形): ', BoardInfo.open)
-            print('隱板時是否可進入十大排行榜: ', BoardInfo.into_top_ten_when_hide)
-            print('是否開放非看板會員發文: ', BoardInfo.non_board_members_post)
-            print('是否開放回應文章: ', BoardInfo.reply_post)
-            print('是否開放自刪文章: ', BoardInfo.self_del_post)
-            print('是否開放推薦文章: ', BoardInfo.push_post)
-            print('是否開放噓文: ', BoardInfo.boo_post)
-            print('是否可以快速連推文章: ', BoardInfo.fast_push)
-            print('推文最低間隔時間: ', BoardInfo.min_interval)
-            print('推文時是否記錄來源 IP: ', BoardInfo.push_record_ip)
-            print('推文時是否對齊開頭: ', BoardInfo.push_aligned)
-            print('板主是否可刪除部份違規文字: ', BoardInfo.moderator_can_del_illegal_content)
+            print('中文敘述: ', board_info.chinese_des)
+            print('板主: ', board_info.moderators)
+            print('公開狀態(是否隱形): ', board_info.open_status)
+            print('隱板時是否可進入十大排行榜: ', board_info.into_top_ten_when_hide)
+            print('是否開放非看板會員發文: ', board_info.non_board_members_post)
+            print('是否開放回應文章: ', board_info.reply_post)
+            print('是否開放自刪文章: ', board_info.self_del_post)
+            print('是否開放推薦文章: ', board_info.push_post)
+            print('是否開放噓文: ', board_info.boo_post)
+            print('是否可以快速連推文章: ', board_info.fast_push)
+            print('推文最低間隔時間: ', board_info.min_interval)
+            print('推文時是否記錄來源 IP: ', board_info.push_record_ip)
+            print('推文時是否對齊開頭: ', board_info.push_aligned)
+            print('板主是否可刪除部份違規文字: ', board_info.moderator_can_del_illegal_content)
             print('轉錄文章是否自動記錄，且是否需要發文權限: ',
-                  BoardInfo.tran_post_auto_recorded_and_require_post_permissions)
-            print('是否為冷靜模式: ', BoardInfo.cool_mode)
-            print('是否需要滿十八歲才可進入: ', BoardInfo.require18)
-            print('發文與推文限制登入次數需多少次以上: ', BoardInfo.require_login_time)
-            print('發文與推文限制退文篇數多少篇以下: ', BoardInfo.require_illegal_post)
+                  board_info.tran_post_auto_recorded_and_require_post_permissions)
+            print('是否為冷靜模式: ', board_info.cool_mode)
+            print('是否需要滿十八歲才可進入: ', board_info.require18)
+            print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
+            print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
 
             content = '取得看板資訊測試成功'
             ptt_bot.push(basic_board, PTT.data_type.PushType.ARROW,
