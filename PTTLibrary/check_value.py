@@ -21,6 +21,7 @@ def check(
                     config,
                     [
                         name,
+                        str(value),
                         i18n.MustBe,
                         i18n.String
                     ]))
@@ -30,6 +31,7 @@ def check(
                     config,
                     [
                         name,
+                        str(value),
                         i18n.MustBe,
                         i18n.Integer
                     ]))
@@ -39,6 +41,7 @@ def check(
                     config,
                     [
                         name,
+                        str(value),
                         i18n.MustBe,
                         i18n.Boolean
                     ]))
@@ -60,6 +63,7 @@ def check_index(
                 config,
                 [
                     index_name,
+                    str(index),
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
@@ -83,6 +87,7 @@ def check_index(
                     config,
                     [
                         index_name,
+                        str(index),
                         i18n.ErrorParameter,
                         i18n.OutOfRange,
                     ]))
@@ -104,16 +109,18 @@ def check_index_range(
                 config,
                 [
                     start_name,
+                    str(start_name),
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
 
-    if start_index < 1:
+    if end_index < 1:
         raise ValueError(
             log.merge(
                 config,
                 [
-                    start_name,
+                    end_name,
+                    str(end_index),
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
                 ]))
@@ -124,8 +131,10 @@ def check_index_range(
                 config,
                 [
                     start_name,
+                    str(start_index),
                     i18n.MustSmallOrEqual,
                     end_name,
+                    str(end_index),
                 ]))
 
     if max_value is not None:
@@ -135,8 +144,10 @@ def check_index_range(
                     config,
                     [
                         start_name,
+                        str(start_index),
                         i18n.ErrorParameter,
                         i18n.OutOfRange,
+                        str(max_value),
                     ]))
 
         if end_index > max_value:
@@ -147,6 +158,7 @@ def check_index_range(
                         end_name,
                         i18n.ErrorParameter,
                         i18n.OutOfRange,
+                        str(max_value),
                     ]))
 
 

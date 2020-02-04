@@ -172,6 +172,7 @@ def get_post():
             print('=' * 30 + ' Origin Post Finish')
             show('Board', post_info.board)
             show('AID', post_info.aid)
+            show('index', post_info.index)
             show('Author', post_info.author)
             show('push_number', post_info.push_number)
             show('List Date', post_info.list_date)
@@ -978,47 +979,6 @@ def mark_post():
     # )
 
 
-def get_post_index_test():
-    board_list = [
-        'Wanted',
-        'Gossiping'
-    ]
-    test_range = 100
-
-    for test_board in board_list:
-
-        index = ptt_bot.get_newest_index(
-            PTT.data_type.IndexType.BBS,
-            test_board,
-        )
-
-        for i in range(test_range):
-
-            post_info = ptt_bot.get_post(
-                test_board,
-                post_index=index - i,
-                query=True
-            )
-
-            if post_info is None:
-                print('Empty')
-                continue
-
-            if post_info.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
-                print('被刪除文章')
-                continue
-
-            print(post_info.aid)
-
-            post_index = ptt_bot.get_post_index(test_board, post_info.aid)
-            print(post_index)
-            if index - i != post_index:
-                print('!!!!!!!!!!!!!!!!!!!!!!!!!')
-                return
-
-        print('=' * 50)
-
-
 def get_favourite_board():
     favourite_board_list = ptt_bot.get_favourite_board()
 
@@ -1152,15 +1112,15 @@ if __name__ == '__main__':
                     sys.exit(1)
 
 
-        def GetPostTestFunc(board, IndexAID, targetEx, checkformat, checkStr):
+        def get_post_test_func(board, IndexAID, targetEx, checkformat, checkStr):
             try:
                 if isinstance(IndexAID, int):
-                    Post = ptt_bot.get_post(
+                    post_info = ptt_bot.get_post(
                         board,
                         post_index=IndexAID,
                     )
                 else:
-                    Post = ptt_bot.get_post(
+                    post_info = ptt_bot.get_post(
                         board,
                         post_aid=IndexAID,
                     )
@@ -1176,13 +1136,13 @@ if __name__ == '__main__':
                 sys.exit(1)
 
             if checkStr is None and targetEx is None and not checkformat:
-                print(Post.content)
+                print(post_info.content)
 
-            if checkformat and not Post.format_check:
+            if checkformat and not post_info.format_check:
                 showTestResult(board, IndexAID, True)
                 return
 
-            if checkStr is not None and checkStr not in Post.content:
+            if checkStr is not None and checkStr not in post_info.content:
                 ptt_bot.logout()
                 sys.exit(1)
 
@@ -1208,8 +1168,8 @@ if __name__ == '__main__':
                 ('Test', '1U3pLzi0', None, False, None),
             ]
 
-            for b, i, ex, checkformat, c in TestPostList:
-                GetPostTestFunc(b, i, ex, checkformat, c)
+            for b, i, ex, check_format, c in TestPostList:
+                get_post_test_func(b, i, ex, check_format, c)
 
             print('取得文章測試全部通過')
 
@@ -1864,7 +1824,7 @@ github: https://tinyurl.com/umqff3v
             # reply_post()
             # get_favourite_board()
             # search_user()
-            get_post_index_test()
+            # get_post_index_test()
 
             # bucket()
             # set_board_title()
