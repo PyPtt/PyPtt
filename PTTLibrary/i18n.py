@@ -1030,7 +1030,7 @@ def load(language):
     global CanNotUseSearchPostCodeF
     CanNotUseSearchPostCodeF = specific_load(language, [
         '此狀態下無法使用搜尋文章代碼(AID)功能',
-        'This state can not use the search Post code function',
+        'This status can not use the search Post code function',
     ])
 
     global FavouriteBoardList

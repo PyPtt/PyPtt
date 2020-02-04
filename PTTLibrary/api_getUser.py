@@ -108,7 +108,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
     else:
         illegal_post = -1
 
-    state = data[4]
+    status = data[4]
     mail = data[5]
     last_login = data[6]
     last_ip = data[7]
@@ -122,7 +122,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
     log.show_value(api.config, log.Level.DEBUG, 'login_time', login_time)
     log.show_value(api.config, log.Level.DEBUG, 'legal_post', legal_post)
     log.show_value(api.config, log.Level.DEBUG, 'illegal_post', illegal_post)
-    log.show_value(api.config, log.Level.DEBUG, 'state', state)
+    log.show_value(api.config, log.Level.DEBUG, 'status', status)
     log.show_value(api.config, log.Level.DEBUG, 'mail', mail)
     log.show_value(api.config, log.Level.DEBUG, 'last_login', last_login)
     log.show_value(api.config, log.Level.DEBUG, 'last_ip', last_ip)
@@ -137,7 +137,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
         login_time,
         legal_post,
         illegal_post,
-        state,
+        status,
         mail,
         last_login,
         last_ip,

@@ -119,20 +119,20 @@ class UserInfo:
             login_time,
             legal_post,
             illegal_post,
-            state,
+            status,
             mail,
             last_login,
             last_ip,
             five_chess,
             chess,
             signature_file):
-        self.pttid = parse_para(str, pttid)
+        self.id = parse_para(str, pttid)
         self.money = parse_para(str, money)
         self.login_time = parse_para(int, login_time)
         self.legal_post = parse_para(int, legal_post)
         self.illegal_post = parse_para(int, illegal_post)
-        self.state = parse_para(str, state)
-        self.mail = parse_para(str, mail)
+        self.status = parse_para(str, status)
+        self.mail_status = parse_para(str, mail)
         self.last_login = parse_para(str, last_login)
         self.last_ip = parse_para(str, last_ip)
         self.five_chess = parse_para(str, five_chess)
@@ -190,14 +190,14 @@ class PostInfo:
         self.money = parse_para(int, money)
         self.web_url = parse_para(str, web_url)
         self.ip = parse_para(str, ip)
-        self.push_list = push_list
-        self.delete_status = delete_status
+        self.push_list = parse_para(list, push_list)
+        self.delete_status = parse_para(int, delete_status)
         self.list_date = parse_para(str, list_date)
         self.control_code = control_code
         self.format_check = format_check
         self.location = parse_para(str, location)
         self.push_number = parse_para(str, push_number)
-        self.lock = lock
+        self.lock = parse_para(bool, lock)
         self.origin_post = parse_para(str, origin_post)
         self.unconfirmed = parse_para(bool, unconfirmed)
 
@@ -279,7 +279,7 @@ class BoardInfo:
             online_user,
             chinese_des=None,
             moderators=None,
-            open_state=None,
+            open_status=None,
             into_top_ten_when_hide=None,
             non_board_members_post=None,
             reply_post=None,
@@ -300,7 +300,7 @@ class BoardInfo:
         self.online_user = parse_para(int, online_user)
         self.chinese_des = parse_para(str, chinese_des)
         self.moderators = parse_para(list, moderators)
-        self.open_state = parse_para(bool, open_state)
+        self.open_status = parse_para(bool, open_status)
         self.into_top_ten_when_hide = parse_para(bool, into_top_ten_when_hide)
         self.non_board_members_post = parse_para(bool, non_board_members_post)
         self.reply_post = parse_para(bool, reply_post)

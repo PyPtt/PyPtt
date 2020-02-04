@@ -16,7 +16,7 @@ except ModuleNotFoundError:
     import command
 
 
-def get_callstatus(api) -> None:
+def get_call_status(api) -> None:
 
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
@@ -105,7 +105,7 @@ def get_callstatus(api) -> None:
     raise exceptions.UnknownError(ori_screen)
 
 
-def set_callstatus(api, callstatus) -> None:
+def set_call_status(api, callstatus) -> None:
     # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
 
     current_call_status = api._get_call_status()
