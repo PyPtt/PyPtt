@@ -14,3 +14,4 @@ Account*.txt
 /LogHandler.txt
 .vscode
 .idea/
+venv/

@@ -18,7 +18,7 @@ except ModuleNotFoundError:
     import command
 
 
-def get_waterball(api, operate_type:int) ->list:
+def get_waterball(api, operate_type:int) -> list:
 
     if operate_type == data_type.WaterBallOperateType.NOTHING:
         water_ball_operate_type = 'R'
