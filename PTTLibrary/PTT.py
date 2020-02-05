@@ -193,7 +193,7 @@ class Library:
             i18n.Init
         )
 
-    def _one_thread(self):
+    def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
         if current_thread_id == self._ThreadID:
             return
@@ -219,7 +219,7 @@ class Library:
             self,
             pttid: str,
             password: str,
-            kick_other_login: bool = False):
+            kick_other_login: bool = False) -> None:
 
         try:
             from . import _api_loginout
@@ -236,7 +236,7 @@ class Library:
             self,
             pttid: str,
             password: str,
-            kick_other_login: bool = False):
+            kick_other_login: bool = False) -> None:
         self._one_thread()
 
         check_value.check(self.config, str, 'ID', pttid)
@@ -256,7 +256,7 @@ class Library:
                 kick_other_login=kick_other_login
             )
 
-    def logout(self):
+    def logout(self) -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -442,12 +442,12 @@ class Library:
     def _check_board(
             self,
             board: str,
-            check_moderator: bool = False):
+            check_moderator: bool = False) -> None:
         if board.lower() not in self._ExistBoardList:
-            boardinfo = self._get_board_info(board)
+            board_info = self._get_board_info(board)
             self._ExistBoardList.append(board.lower())
 
-            moderators = boardinfo.moderators
+            moderators = board_info.moderators
             moderators = [x.lower() for x in moderators]
             self._ModeratorList[board.lower()] = moderators
 
@@ -462,7 +462,7 @@ class Library:
             post_index: int = 0,
             search_type: int = 0,
             search_condition: str = None,
-            query: bool = False):
+            query: bool = False) -> data_type.PostInfo:
 
         try:
             from . import _api_get_post
@@ -1167,7 +1167,7 @@ class Library:
 
     def set_call_status(
             self,
-            call_status):
+            call_status) -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -1184,7 +1184,7 @@ class Library:
 
         return _api_call_status.set_call_status(self, call_status)
 
-    def give_money(self, pttid: str, money: int):
+    def give_money(self, pttid: str, money: int) -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -1242,7 +1242,7 @@ class Library:
         except ModuleNotFoundError:
             import _api_mail
 
-        return _api_mail.mail(
+        _api_mail.mail(
             self,
             pttid,
             title,

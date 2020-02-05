@@ -17,7 +17,7 @@ def mail(
         pttid: str,
         title: str,
         content: str,
-        sign_file) -> object:
+        sign_file) -> None:
 
     # log.showValue(
     #     api.config,
