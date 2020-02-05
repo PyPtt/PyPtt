@@ -41,6 +41,7 @@ class Library:
             screen_long_time_out: int = 0,
             screen_post_timeout: int = 0,
             connect_mode: int = 0,
+            port: int = 0,
             log_handler=None,
             host: int = 0):
 
@@ -143,6 +144,13 @@ class Library:
             raise ValueError('[PTT Library] Unknown ConnectMode', connect_mode)
         else:
             self.config.connect_mode = connect_mode
+
+        if port == 0:
+            port = self.config.port
+        elif not 0 < port < 65535:
+            raise ValueError('[PTT Library] Unknown port', port)
+        else:
+            self.config.port = port
 
         if host == 0:
             host = self.config.host

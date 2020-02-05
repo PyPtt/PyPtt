@@ -45,4 +45,7 @@ class Config:
     # 預設採用 websocket
     connect_mode = connect_core.ConnectMode.WEBSOCKET
 
+    # 預設使用 23
+    port = 23
+
     log_handler = None

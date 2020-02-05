@@ -177,6 +177,21 @@ class API(object):
             i18n.Active
         )
 
+        if self.config.connect_mode == ConnectMode.TELNET:
+            log.show_value(
+                self.config,
+                log.Level.INFO,
+                i18n.ConnectMode,
+                i18n.ConnectMode_Telnet
+            )
+        elif self.config.connect_mode == ConnectMode.WEBSOCKET:
+            log.show_value(
+                self.config,
+                log.Level.INFO,
+                i18n.ConnectMode,
+                i18n.ConnectMode_WebSocket
+            )
+
         connect_success = False
 
         global new_event_loop
@@ -186,8 +201,13 @@ class API(object):
 
             try:
                 if self.config.connect_mode == ConnectMode.TELNET:
-                    # telnet 僅提供本機測試
-                    self._core = telnetlib.Telnet('localhost', '8888')
+
+                    if self.config.host == data_type.Host.PTT1:
+                        self._core = telnetlib.Telnet('ptt.cc', self.config.port)
+                    elif self.config.host == data_type.Host.PTT2:
+                        self._core = telnetlib.Telnet('ptt2.cc', self.config.port)
+                    else:
+                        self._core = telnetlib.Telnet('localhost', self.config.port)
                 else:
 
                     if thread_id not in new_event_loop:
@@ -205,11 +225,18 @@ class API(object):
                                 origin='https://term.ptt.cc'
                             )
                         )
-                    else:
+                    elif self.config.host == data_type.Host.PTT2:
                         self._core = asyncio.get_event_loop().run_until_complete(
                             websockets.connect(
                                 'wss://ws.ptt2.cc/bbs',
                                 origin='https://term.ptt2.cc'
+                            )
+                        )
+                    else:
+                        self._core = asyncio.get_event_loop().run_until_complete(
+                            websockets.connect(
+                                'wss://localhost',
+                                origin='https://term.ptt.cc'
                             )
                         )
 
@@ -457,7 +484,10 @@ class API(object):
         raise exceptions.NoMatchTargetError(self._RDQ)
 
     def close(self):
-        asyncio.get_event_loop().run_until_complete(self._core.close())
+        if self.config.connect_mode == ConnectMode.WEBSOCKET:
+            asyncio.get_event_loop().run_until_complete(self._core.close())
+        else:
+            self._core.close()
 
     def get_screen_queue(self) -> list:
         return self._RDQ.get(1)
