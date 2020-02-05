@@ -159,7 +159,7 @@ def get_post():
                 print('Empty')
                 continue
 
-            if not post_info.format_check:
+            if not post_info.pass_format_check:
                 print('文章格式錯誤')
                 continue
 
@@ -1138,7 +1138,7 @@ if __name__ == '__main__':
             if checkStr is None and targetEx is None and not checkformat:
                 print(post_info.content)
 
-            if checkformat and not post_info.format_check:
+            if checkformat and not post_info.pass_format_check:
                 showTestResult(board, IndexAID, True)
                 return
 

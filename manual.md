@@ -276,7 +276,7 @@ if post_info.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
         print(f'[不明刪除]')
     return
 
-if not post_info.format_check:
+if not post_info.pass_format_check:
     print('[不合格式]')
     sys.exit()
 

@@ -145,9 +145,9 @@ def get_post(
 
         log.show_value(api.config, log.Level.DEBUG, 'ListDate', list_date)
         log.show_value(api.config, log.Level.DEBUG,
-                      'PostAuthor', post_author)
+                       'PostAuthor', post_author)
         log.show_value(api.config, log.Level.DEBUG,
-                      'post_del_status', post_del_status)
+                       'post_del_status', post_del_status)
 
         return data_type.PostInfo(
             board=board,
@@ -273,14 +273,14 @@ def get_post(
 
         # print(PushNumber)
         log.show_value(api.config, log.Level.DEBUG,
-                      'PostAuthor', post_author)
+                       'PostAuthor', post_author)
         log.show_value(api.config, log.Level.DEBUG, 'PostTitle', post_title)
         log.show_value(api.config, log.Level.DEBUG, 'PostAID', post_aid)
         log.show_value(api.config, log.Level.DEBUG, 'PostWeb', post_web)
         log.show_value(api.config, log.Level.DEBUG, 'PostMoney', post_money)
         log.show_value(api.config, log.Level.DEBUG, 'ListDate', list_date)
         log.show_value(api.config, log.Level.DEBUG,
-                      'PushNumber', push_number)
+                       'PushNumber', push_number)
 
         if lock_post:
             post = data_type.PostInfo(
@@ -741,7 +741,7 @@ def get_post(
 
     info_lines = [
         line for line in origin_post_lines if line.startswith('※') or
-                                              line.startswith('◆')
+        line.startswith('◆')
     ]
 
     pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
@@ -779,7 +779,7 @@ def get_post(
             if ' ' not in location_temp and len(location_temp) > 0:
                 location = location_temp
                 log.show_value(api.config, log.Level.DEBUG,
-                              'Location', location)
+                               'Location', location)
             break
 
         pattern_result = pattern_p2.search(line)

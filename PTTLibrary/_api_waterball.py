@@ -357,7 +357,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
                 ],
                 '丟 ' + target_id + ' 水球:',
                 response=waterball + command.Enter * 2 +
-                         command.GoMainMenu,
+                command.GoMainMenu,
             ),
             connect_core.TargetUnit(
                 [

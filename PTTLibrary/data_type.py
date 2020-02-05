@@ -182,26 +182,26 @@ class PostInfo:
             lock=False,
             origin_post=None,
             unconfirmed=False):
-        self.board = parse_para(str, board)
-        self.aid = parse_para(str, aid)
-        self.index = parse_para(int, index)
-        self.author = parse_para(str, author)
-        self.date = parse_para(str, date)
-        self.title = parse_para(str, title)
-        self.content = parse_para(str, content)
-        self.money = parse_para(int, money)
-        self.web_url = parse_para(str, web_url)
-        self.ip = parse_para(str, ip)
-        self.push_list = parse_para(list, push_list)
-        self.delete_status = parse_para(int, delete_status)
-        self.list_date = parse_para(str, list_date)
-        self.control_code = control_code
-        self.format_check = format_check
-        self.location = parse_para(str, location)
-        self.push_number = parse_para(str, push_number)
-        self.is_lock = parse_para(bool, lock)
-        self.origin_post = parse_para(str, origin_post)
-        self.is_unconfirmed = parse_para(bool, unconfirmed)
+        self.board: str = parse_para(str, board)
+        self.aid: str = parse_para(str, aid)
+        self.index: int = parse_para(int, index)
+        self.author: str = parse_para(str, author)
+        self.date: str = parse_para(str, date)
+        self.title: str = parse_para(str, title)
+        self.content: str = parse_para(str, content)
+        self.money: int = parse_para(int, money)
+        self.web_url: str = parse_para(str, web_url)
+        self.ip: str = parse_para(str, ip)
+        self.push_list: list = parse_para(list, push_list)
+        self.delete_status: int = parse_para(int, delete_status)
+        self.list_date: str = parse_para(str, list_date)
+        self.is_control_code: bool = parse_para(bool, control_code)
+        self.pass_format_check: bool = parse_para(bool, format_check)
+        self.location: str = parse_para(str, location)
+        self.push_number: str = parse_para(str, push_number)
+        self.is_lock: bool = parse_para(bool, lock)
+        self.origin_post: str = parse_para(str, origin_post)
+        self.is_unconfirmed: bool = parse_para(bool, unconfirmed)
 
 
 class WaterBallInfo:
@@ -233,9 +233,9 @@ class IndexType:
 
 class CrawlType:
     # BBS版本
-    BBS = 1
+    BBS: int = 1
     # 網頁版本
-    WEB = 2
+    WEB: int = 2
 
     MinValue = BBS
     MaxValue = WEB
@@ -243,9 +243,9 @@ class CrawlType:
 
 class Host:
     # 批踢踢萬
-    PTT1 = 1
+    PTT1: int = 1
     # 批踢踢兔
-    PTT2 = 2
+    PTT2: int = 2
 
     MinValue = PTT1
     MaxValue = PTT2
@@ -298,26 +298,26 @@ class BoardInfo:
             require18=None,
             require_login_time=None,
             require_illegal_post=None):
-        self.board = parse_para(str, board)
-        self.online_user = parse_para(int, online_user)
-        self.chinese_des = parse_para(str, chinese_des)
-        self.moderators = parse_para(list, moderators)
-        self.is_open = parse_para(bool, open_status)
-        self.is_into_top_ten_when_hide = parse_para(bool, into_top_ten_when_hide)
-        self.can_non_board_members_post = parse_para(bool, non_board_members_post)
-        self.can_reply_post = parse_para(bool, reply_post)
-        self.can_self_del_post = parse_para(bool, self_del_post)
-        self.can_push_post = parse_para(bool, push_post)
-        self.can_boo_post = parse_para(bool, boo_post)
-        self.can_fast_push = parse_para(bool, fast_push)
-        self.min_interval = parse_para(int, min_interval)
-        self.is_push_record_ip = parse_para(bool, push_record_ip)
-        self.is_push_aligned = parse_para(bool, push_aligned)
-        self.can_moderator_del_illegal_content = parse_para(
+        self.board: str = parse_para(str, board)
+        self.online_user: int = parse_para(int, online_user)
+        self.chinese_des: str = parse_para(str, chinese_des)
+        self.moderators: list = parse_para(list, moderators)
+        self.is_open: bool = parse_para(bool, open_status)
+        self.is_into_top_ten_when_hide: bool = parse_para(bool, into_top_ten_when_hide)
+        self.can_non_board_members_post: bool = parse_para(bool, non_board_members_post)
+        self.can_reply_post: bool = parse_para(bool, reply_post)
+        self.can_self_del_post: bool = parse_para(bool, self_del_post)
+        self.can_push_post: bool = parse_para(bool, push_post)
+        self.can_boo_post: bool = parse_para(bool, boo_post)
+        self.can_fast_push: bool = parse_para(bool, fast_push)
+        self.min_interval: int = parse_para(int, min_interval)
+        self.is_push_record_ip: bool = parse_para(bool, push_record_ip)
+        self.is_push_aligned: bool = parse_para(bool, push_aligned)
+        self.can_moderator_del_illegal_content: bool = parse_para(
             bool, moderator_can_del_illegal_content)
-        self.is_tran_post_auto_recorded_and_require_post_permissions = parse_para(
+        self.is_tran_post_auto_recorded_and_require_post_permissions: bool = parse_para(
             bool, tran_post_auto_recorded_and_require_post_permissions)
-        self.is_cool_mode = parse_para(bool, cool_mode)
-        self.is_require18 = parse_para(bool, require18)
-        self.require_login_time = parse_para(int, require_login_time)
-        self.require_illegal_post = parse_para(int, require_illegal_post)
+        self.is_cool_mode: bool = parse_para(bool, cool_mode)
+        self.is_require18: bool = parse_para(bool, require18)
+        self.require_login_time: int = parse_para(int, require_login_time)
+        self.require_illegal_post: int = parse_para(int, require_illegal_post)
