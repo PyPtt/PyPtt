@@ -19,7 +19,6 @@ def post(
         content: str,
         post_type: int,
         sign_file) -> None:
-
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')

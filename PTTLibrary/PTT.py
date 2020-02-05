@@ -424,7 +424,7 @@ class Library:
 
             if post is None:
                 need_continue = True
-            elif not post.format_check:
+            elif not post.pass_format_check:
                 need_continue = True
 
             if need_continue:
@@ -739,7 +739,7 @@ class Library:
 
                     if post is None:
                         need_continue = True
-                    elif not post.format_check:
+                    elif not post.pass_format_check:
                         need_continue = True
 
                     if need_continue:
@@ -758,7 +758,7 @@ class Library:
                 if post is None:
                     error_post_list.append(index)
                     continue
-                if not post.format_check:
+                if not post.pass_format_check:
                     if post.aid is not None:
                         error_post_list.append(post.aid)
                     else:
