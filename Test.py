@@ -1785,8 +1785,8 @@ github: https://tinyurl.com/umqff3v
                 # log_level=PTT.log.Level.DEBUG,
                 # host=PTT.data_type.Host.PTT2
 
-                connect_mode=PTT.connect_core.ConnectMode.TELNET,
-                host=PTT.data_type.Host.LOCALHOST
+                # connect_mode=PTT.connect_core.ConnectMode.TELNET,
+                # host=PTT.data_type.Host.LOCALHOST
             )
             try:
                 ptt_bot.login(
