@@ -741,11 +741,11 @@ def call_status():
     print('連續測試通過')
 
     init_call_status = random.randint(
-        PTT.data_type.CallStatus.MinValue, PTT.data_type.CallStatus.MaxValue
+        PTT.data_type.CallStatus.min_value, PTT.data_type.CallStatus.max_value
     )
 
     test_queue = [x for x in range(
-        PTT.data_type.CallStatus.MinValue, PTT.data_type.CallStatus.MaxValue + 1
+        PTT.data_type.CallStatus.min_value, PTT.data_type.CallStatus.max_value + 1
     )]
     random.shuffle(test_queue)
 
@@ -1784,6 +1784,9 @@ github: https://tinyurl.com/umqff3v
                 # log_level=PTT.log.Level.TRACE,
                 # log_level=PTT.log.Level.DEBUG,
                 # host=PTT.data_type.Host.PTT2
+
+                connect_mode=PTT.connect_core.ConnectMode.TELNET,
+                host=PTT.data_type.Host.LOCALHOST
             )
             try:
                 ptt_bot.login(

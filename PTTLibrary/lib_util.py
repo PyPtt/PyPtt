@@ -3,7 +3,7 @@ import traceback
 
 
 def check_range(define_obj, value):
-    if value < define_obj.MinValue or define_obj.MaxValue < value:
+    if value < define_obj.min_value or define_obj.max_value < value:
         return False
     return True
 

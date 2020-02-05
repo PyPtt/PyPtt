@@ -698,7 +698,7 @@ call_status = ptt_bot.get_call_status()
 show_call_status(call_status)
 
 TestQueue = [x for x in range(
-    PTT.data_type.CallStatus.MinValue, PTT.data_type.CallStatus.MaxValue + 1
+    PTT.data_type.CallStatus.min_value, PTT.data_type.CallStatus.max_value + 1
 )]
 random.shuffle(TestQueue)
 TestQueue.remove(call_status)

@@ -79,7 +79,7 @@ def check_index(
             log.show_value(
                 config,
                 log.Level.INFO,
-                'MaxValue',
+                'max_value',
                 max_value
             )
             raise ValueError(

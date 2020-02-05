@@ -128,7 +128,7 @@ def login(
         ),
         connect_core.TargetUnit(
             i18n.ErrorIDPW,
-            '密碼不對或無此帳號',
+            '密碼不對',
             break_detect=True,
             exceptions_=exceptions.WrongIDorPassword()
         ),
