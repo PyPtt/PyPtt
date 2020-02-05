@@ -59,28 +59,28 @@ def push(
             '禁止快速連續推文',
             log_level=log.Level.INFO,
             break_detect=True,
-            exceptions=exceptions.NoFastPush()
+            exceptions_=exceptions.NoFastPush()
         ),
         connect_core.TargetUnit(
             i18n.NoFastPush,
             '禁止短時間內大量推文',
             log_level=log.Level.INFO,
             break_detect=True,
-            exceptions=exceptions.NoFastPush()
+            exceptions_=exceptions.NoFastPush()
         ),
         connect_core.TargetUnit(
             i18n.NoPermission,
             '使用者不可發言',
             log_level=log.Level.INFO,
             break_detect=True,
-            exceptions=exceptions.NoPermission(i18n.NoPermission)
+            exceptions_=exceptions.NoPermission(i18n.NoPermission)
         ),
         connect_core.TargetUnit(
             i18n.NoPush,
             '◆ 抱歉, 禁止推薦',
             log_level=log.Level.INFO,
             break_detect=True,
-            exceptions=exceptions.NoPush()
+            exceptions_=exceptions.NoPush()
         ),
     ]
 

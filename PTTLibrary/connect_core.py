@@ -1,4 +1,3 @@
-
 import time
 import asyncio
 import websockets
@@ -6,6 +5,7 @@ import re
 import traceback
 import threading
 from uao import register_uao
+
 register_uao()
 
 try:
@@ -27,7 +27,6 @@ new_event_loop = []
 
 
 class ConnectMode(object):
-
     Telnet = 1
     WebSocket = 2
 
@@ -37,17 +36,17 @@ class ConnectMode(object):
 
 class TargetUnit(object):
     def __init__(
-        self,
-        display_msg,
-        detect_target,
-        log_level: int = 0,
-        response: str = '',
-        break_detect=False,
-        break_detect_after_send=False,
-        exceptions=None,
-        refresh=True,
-        secret=False,
-        handler=None):
+            self,
+            display_msg,
+            detect_target,
+            log_level: int = 0,
+            response: str = '',
+            break_detect=False,
+            break_detect_after_send=False,
+            exceptions_=None,
+            refresh=True,
+            secret=False,
+            handler=None):
 
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
@@ -57,13 +56,13 @@ class TargetUnit(object):
             self._log_level = log_level
         self._Response = response
         self._BreakDetect = break_detect
-        self._Exception = exceptions
+        self._Exception = exceptions_
         self._Refresh = refresh
         self._BreakAfterSend = break_detect_after_send
         self._Secret = secret
         self._Handler = handler
 
-    def is_match(self, screen: str):
+    def is_match(self, screen: str) -> bool:
         if isinstance(self._DetectTarget, str):
             if self._DetectTarget in screen:
                 return True
@@ -74,7 +73,7 @@ class TargetUnit(object):
                     return False
             return True
 
-    def get_display_msg(self):
+    def get_display_msg(self) -> str:
         if callable(self._DisplayMsg):
             return self._DisplayMsg()
         return self._DisplayMsg
@@ -82,28 +81,28 @@ class TargetUnit(object):
     def get_detect_target(self):
         return self._DetectTarget
 
-    def get_log_level(self):
+    def get_log_level(self) -> int:
         return self._log_level
 
-    def get_response(self, Screen: str):
+    def get_response(self, screen: str) -> str:
         if callable(self._Response):
-            return self._Response(Screen)
+            return self._Response(screen)
         return self._Response
 
-    def is_break(self):
+    def is_break(self) -> bool:
         return self._BreakDetect
 
     def raise_exception(self):
         if isinstance(self._Exception, Exception):
             raise self._Exception
 
-    def is_refresh(self):
+    def is_refresh(self) -> bool:
         return self._Refresh
 
-    def is_break_after_send(self):
+    def is_break_after_send(self) -> bool:
         return self._BreakAfterSend
 
-    def is_secret(self):
+    def is_secret(self) -> bool:
         return self._Secret
 
 
@@ -113,7 +112,6 @@ class RecvData:
 
 
 async def websocket_recv_func(core, recv_data_obj):
-
     recv_data_obj.data = await core.recv()
 
 
@@ -148,7 +146,7 @@ class API(object):
                 i18n.UseTooManyResources,
             ],
             screens.Target.UseTooManyResources,
-            exceptions=exceptions.UseTooManyResources
+            exceptions_=exceptions.UseTooManyResources
         )
 
         log.show_value(self.Config, log.Level.INFO, [
@@ -157,36 +155,38 @@ class API(object):
                        i18n.Init
                        )
 
-    def connect(self):
+    def connect(self) -> None:
         def _wait():
             for i in range(self.Config.retry_wait_time):
-                log.show_value(self.Config, log.Level.INFO, [
-                    i18n.Prepare,
-                    i18n.Again,
-                    i18n.Connect,
-                    i18n.PTT,
-                ],
-                               str(self.Config.retry_wait_time - i)
-                               )
+                log.show_value(
+                    self.Config, log.Level.INFO, [
+                        i18n.Prepare,
+                        i18n.Again,
+                        i18n.Connect,
+                        i18n.PTT,
+                    ],
+                    str(self.Config.retry_wait_time - i)
+                )
                 time.sleep(1)
 
-        log.show_value(self.Config, log.Level.INFO, [
-            i18n.connect_core,
-        ],
-                       i18n.Active
-                       )
+        log.show_value(
+            self.Config, log.Level.INFO, [
+                i18n.connect_core,
+            ],
+            i18n.Active
+        )
 
         connect_success = False
 
         global new_event_loop
-        threadid = threading.get_ident()
+        thread_id = threading.get_ident()
 
         for _ in range(2):
 
             try:
 
-                if threadid not in new_event_loop:
-                    new_event_loop.append(threadid)
+                if thread_id not in new_event_loop:
+                    new_event_loop.append(thread_id)
                     try:
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
@@ -235,13 +235,12 @@ class API(object):
             raise exceptions.ConnectError(self.Config)
 
     def send(
-        self,
-        msg: str,
-        target_list: list,
-        screen_timeout: int = 0,
-        refresh: bool = True,
-        secret: bool = False
-    ) -> int:
+            self,
+            msg: str,
+            target_list: list,
+            screen_timeout: int = 0,
+            refresh: bool = True,
+            secret: bool = False) -> int:
 
         def clean_screen(recv_screen: str, NoColor: bool = True) -> str:
 
@@ -249,7 +248,7 @@ class API(object):
                 return recv_screen
             # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__lib_utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
 
-                # screen = re.sub('\[[\d+;]*m', '', screen)
+            # screen = re.sub('\[[\d+;]*m', '', screen)
 
             recv_screen = re.sub(r'[\r]', '', recv_screen)
             # recv_screen = re.sub(r'[\x00-\x08]', '', recv_screen)

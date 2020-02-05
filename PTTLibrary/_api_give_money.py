@@ -39,19 +39,19 @@ def give_money(
             i18n.NoMoney,
             '你沒有那麼多Ptt幣喔!',
             break_detect=True,
-            exceptions=exceptions.NoMoney
+            exceptions_=exceptions.NoMoney
         ),
         connect_core.TargetUnit(
             i18n.NoMoney,
             '金額過少，交易取消!',
             break_detect=True,
-            exceptions=exceptions.MoneyTooFew
+            exceptions_=exceptions.MoneyTooFew
         ),
         connect_core.TargetUnit(
             i18n.NoMoney,
             '交易取消!',
             break_detect=True,
-            exceptions=exceptions.UnknownError
+            exceptions_=exceptions.UnknownError
         ),
         connect_core.TargetUnit(
             [

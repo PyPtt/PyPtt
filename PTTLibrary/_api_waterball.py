@@ -347,7 +347,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
             connect_core.TargetUnit(
                 i18n.SetCallStatus,
                 '◆ 糟糕! 對方已落跑了',
-                exceptions=exceptions.UserOffline(target_id)
+                exceptions_=exceptions.UserOffline(target_id)
             ),
             connect_core.TargetUnit(
                 [

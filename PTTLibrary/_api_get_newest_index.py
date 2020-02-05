@@ -93,7 +93,7 @@ def get_newest_index(
             connect_core.TargetUnit(
                 i18n.NoSuchBoard,
                 screens.Target.MainMenu_Exiting,
-                exceptions=exceptions.NoSuchBoard(api.config, board)
+                exceptions_=exceptions.NoSuchBoard(api.config, board)
             ),
         ]
         index = api.connect_core.send(cmd, target_list)

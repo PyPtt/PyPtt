@@ -47,7 +47,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, pttid: str) -
                 i18n.Fail,
             ],
             '◆ 使用者之前已被禁言',
-            exceptions=exceptions.UserHasPreviouslyBeenBanned()
+            exceptions_=exceptions.UserHasPreviouslyBeenBanned()
         ),
         connect_core.TargetUnit(
             i18n.InputBucketDays_Reason,

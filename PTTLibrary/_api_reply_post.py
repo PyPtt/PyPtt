@@ -81,7 +81,7 @@ def reply_post(
             i18n.NoResponse,
             '◆ 很抱歉, 此文章已結案並標記, 不得回應',
             log_level=log.Level.INFO,
-            exceptions=exceptions.NoResponse()
+            exceptions_=exceptions.NoResponse()
         ),
         connect_core.TargetUnit(
             i18n.ForcedWrite,
