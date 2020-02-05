@@ -52,7 +52,7 @@ def mail(
         connect_core.TargetUnit(
             i18n.NoSuchUser,
             '【電子郵件】',
-            exceptions=exceptions.NoSuchUser(pttid)
+            exceptions_=exceptions.NoSuchUser(pttid)
         ),
     ]
 

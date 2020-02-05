@@ -276,6 +276,10 @@ if post_info.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
         print(f'[不明刪除]')
     return
 
+if post_info.is_lock:
+    print('[鎖文]')
+    sys.exit()
+
 if not post_info.pass_format_check:
     print('[不合格式]')
     sys.exit()
@@ -436,6 +440,8 @@ for (test_board, search_type, condition) in test_list:
 以下是大範圍爬文範例
 
 [效能比較表](https://hackmd.io/@CodingMan/crawlerbenchmark)
+
+文章資料結構(post_info)可參考，[取得特定文章](#取得特定文章)
 
 ```python=
 def crawl_handler(post_info):

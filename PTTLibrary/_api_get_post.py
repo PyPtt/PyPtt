@@ -83,7 +83,7 @@ def get_post(
         connect_core.TargetUnit(
             i18n.NoSuchBoard,
             screens.Target.MainMenu_Exiting,
-            exceptions=exceptions.NoSuchBoard(api.config, board)
+            exceptions_=exceptions.NoSuchBoard(api.config, board)
         ),
     ]
 

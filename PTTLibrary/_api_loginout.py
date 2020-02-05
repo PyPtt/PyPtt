@@ -95,6 +95,10 @@ def login(
     api._ID = pttid
     api._Password = password
 
+    api.config.kick_other_login = kick_other_login
+
+    api.connect_core.connect()
+
     log.show_value(
         api.config,
         log.Level.INFO,
@@ -104,10 +108,6 @@ def login(
         ],
         pttid
     )
-
-    api.config.kick_other_login = kick_other_login
-
-    api.connect_core.connect()
 
     target_list = [
         connect_core.TargetUnit(
@@ -130,13 +130,13 @@ def login(
             i18n.ErrorIDPW,
             '密碼不對或無此帳號',
             break_detect=True,
-            exceptions=exceptions.WrongIDorPassword()
+            exceptions_=exceptions.WrongIDorPassword()
         ),
         connect_core.TargetUnit(
             i18n.LoginTooOften,
             '登入太頻繁',
             break_detect=True,
-            exceptions=exceptions.LoginTooOften()
+            exceptions_=exceptions.LoginTooOften()
         ),
         connect_core.TargetUnit(
             i18n.SystemBusyTryLater,
@@ -232,7 +232,7 @@ def login(
         api._UnregisteredUser = False
 
     if api._UnregisteredUser:
-        print(ori_screen)
+        # print(ori_screen)
         log.log(
             api.config,
             log.Level.INFO,
