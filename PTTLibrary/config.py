@@ -42,4 +42,7 @@ class Config:
     # 預設登入 PTT1
     host = data_type.Host.PTT1
 
+    # 預設採用 websocket
+    connect_mode = connect_core.ConnectMode.WEBSOCKET
+
     log_handler = None

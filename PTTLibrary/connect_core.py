@@ -1,6 +1,7 @@
 import time
 import asyncio
 import websockets
+import telnetlib
 import re
 import traceback
 import threading
@@ -27,11 +28,11 @@ new_event_loop = []
 
 
 class ConnectMode(object):
-    Telnet = 1
-    WebSocket = 2
+    TELNET = 1
+    WEBSOCKET = 2
 
-    MinValue = WebSocket
-    MaxValue = WebSocket
+    min_value = TELNET
+    max_value = WEBSOCKET
 
 
 class TargetUnit(object):
@@ -136,10 +137,9 @@ class ReceiveDataQueue(object):
 
 
 class API(object):
-    def __init__(self, config, host: int):
+    def __init__(self, config):
 
-        self.Config = config
-        self._host = host
+        self.config = config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
             [
@@ -149,28 +149,29 @@ class API(object):
             exceptions_=exceptions.UseTooManyResources
         )
 
-        log.show_value(self.Config, log.Level.INFO, [
-            i18n.connect_core,
-        ],
-                       i18n.Init
-                       )
+        log.show_value(
+            self.config, log.Level.INFO, [
+                i18n.connect_core,
+            ],
+            i18n.Init
+        )
 
     def connect(self) -> None:
         def _wait():
-            for i in range(self.Config.retry_wait_time):
+            for i in range(self.config.retry_wait_time):
                 log.show_value(
-                    self.Config, log.Level.INFO, [
+                    self.config, log.Level.INFO, [
                         i18n.Prepare,
                         i18n.Again,
                         i18n.Connect,
                         i18n.PTT,
                     ],
-                    str(self.Config.retry_wait_time - i)
+                    str(self.config.retry_wait_time - i)
                 )
                 time.sleep(1)
 
         log.show_value(
-            self.Config, log.Level.INFO, [
+            self.config, log.Level.INFO, [
                 i18n.connect_core,
             ],
             i18n.Active
@@ -184,55 +185,61 @@ class API(object):
         for _ in range(2):
 
             try:
-
-                if thread_id not in new_event_loop:
-                    new_event_loop.append(thread_id)
-                    try:
-                        loop = asyncio.new_event_loop()
-                        asyncio.set_event_loop(loop)
-                    except Exception as e:
-                        pass
-
-                if self._host == data_type.Host.PTT1:
-                    self._Core = asyncio.get_event_loop().run_until_complete(
-                        websockets.connect(
-                            'wss://ws.ptt.cc/bbs/',
-                            origin='https://term.ptt.cc'
-                        )
-                    )
+                if self.config.connect_mode == ConnectMode.TELNET:
+                    # telnet 僅提供本機測試
+                    self._core = telnetlib.Telnet('localhost', '8888')
                 else:
-                    self._Core = asyncio.get_event_loop().run_until_complete(
-                        websockets.connect(
-                            'wss://ws.ptt2.cc/bbs',
-                            origin='https://term.ptt2.cc'
+
+                    if thread_id not in new_event_loop:
+                        new_event_loop.append(thread_id)
+                        try:
+                            loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(loop)
+                        except Exception as e:
+                            pass
+
+                    if self.config.host == data_type.Host.PTT1:
+                        self._core = asyncio.get_event_loop().run_until_complete(
+                            websockets.connect(
+                                'wss://ws.ptt.cc/bbs/',
+                                origin='https://term.ptt.cc'
+                            )
                         )
-                    )
+                    else:
+                        self._core = asyncio.get_event_loop().run_until_complete(
+                            websockets.connect(
+                                'wss://ws.ptt2.cc/bbs',
+                                origin='https://term.ptt2.cc'
+                            )
+                        )
 
                 connect_success = True
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                if self._host == data_type.Host.PTT1:
-                    log.show_value(self.Config, log.Level.INFO, [
-                        i18n.Connect,
-                        i18n.PTT,
-                    ],
-                                   i18n.Fail
-                                   )
+                if self.config.host == data_type.Host.PTT1:
+                    log.show_value(
+                        self.config, log.Level.INFO, [
+                            i18n.Connect,
+                            i18n.PTT,
+                        ],
+                        i18n.Fail
+                    )
                 else:
-                    log.show_value(self.Config, log.Level.INFO, [
-                        i18n.Connect,
-                        i18n.PTT2,
-                    ],
-                                   i18n.Fail
-                                   )
+                    log.show_value(
+                        self.config, log.Level.INFO, [
+                            i18n.Connect,
+                            i18n.PTT2,
+                        ],
+                        i18n.Fail
+                    )
                 _wait()
                 continue
 
             break
 
         if not connect_success:
-            raise exceptions.ConnectError(self.Config)
+            raise exceptions.ConnectError(self.config)
 
     def send(
             self,
@@ -272,7 +279,7 @@ class API(object):
             target_list.append(self._UseTooManyResources)
 
         if screen_timeout == 0:
-            current_screen_timeout = self.Config.screen_timeout
+            current_screen_timeout = self.config.screen_timeout
         else:
             current_screen_timeout = screen_timeout
 
@@ -297,7 +304,7 @@ class API(object):
 
             if is_secret:
                 log.show_value(
-                    self.Config,
+                    self.config,
                     log.Level.DEBUG, [
                         i18n.SendMsg
                     ],
@@ -305,26 +312,29 @@ class API(object):
                 )
             else:
                 log.show_value(
-                    self.Config,
+                    self.config,
                     log.Level.DEBUG, [
                         i18n.SendMsg
                     ],
                     msg
                 )
+            if self.config.connect_mode == ConnectMode.TELNET:
+                self._core.read_very_eager()
+                self._core.write(msg)
+            else:
+                try:
+                    asyncio.get_event_loop().run_until_complete(
+                        self._core.send(msg)
+                    )
+                except websockets.exceptions.ConnectionClosedError:
+                    raise exceptions.ConnectionClosed()
+                except RuntimeError:
+                    raise exceptions.ConnectionClosed()
+                except websockets.exceptions.ConnectionClosedOK:
+                    raise exceptions.ConnectionClosed()
 
-            try:
-                asyncio.get_event_loop().run_until_complete(
-                    self._Core.send(msg)
-                )
-            except websockets.exceptions.ConnectionClosedError:
-                raise exceptions.ConnectionClosed()
-            except RuntimeError:
-                raise exceptions.ConnectionClosed()
-            except websockets.exceptions.ConnectionClosedOK:
-                raise exceptions.ConnectionClosed()
-
-            if break_detect_after_send:
-                return break_index
+                if break_detect_after_send:
+                    return break_index
 
             msg = ''
             receive_data_buffer = bytes()
@@ -333,24 +343,33 @@ class API(object):
             start_time = time.time()
             mid_time = time.time()
             while mid_time - start_time < current_screen_timeout:
-                try:
-                    recv_data_obj = RecvData()
-                    asyncio.get_event_loop().run_until_complete(
-                        websocket_receiver(
-                            self._Core, current_screen_timeout, recv_data_obj)
-                    )
 
-                except websockets.exceptions.ConnectionClosed:
-                    # print(f'0.1 {use_too_many_res}')
-                    if use_too_many_res:
-                        # print(f'0.2 {use_too_many_res}')
-                        raise exceptions.UseTooManyResources()
-                    # print(f'0.3 {use_too_many_res}')
-                    raise exceptions.ConnectionClosed()
-                except websockets.exceptions.ConnectionClosedOK:
-                    raise exceptions.ConnectionClosed()
-                except asyncio.TimeoutError:
-                    return -1
+                recv_data_obj = RecvData()
+
+                if self.config.connect_mode == ConnectMode.TELNET:
+                    try:
+                        recv_data_obj.data = self._core.read_very_eager()
+                    except EOFError:
+                        return -1
+                else:
+                    try:
+
+                        asyncio.get_event_loop().run_until_complete(
+                            websocket_receiver(
+                                self._core, current_screen_timeout, recv_data_obj)
+                        )
+
+                    except websockets.exceptions.ConnectionClosed:
+                        # print(f'0.1 {use_too_many_res}')
+                        if use_too_many_res:
+                            # print(f'0.2 {use_too_many_res}')
+                            raise exceptions.UseTooManyResources()
+                        # print(f'0.3 {use_too_many_res}')
+                        raise exceptions.ConnectionClosed()
+                    except websockets.exceptions.ConnectionClosedOK:
+                        raise exceptions.ConnectionClosed()
+                    except asyncio.TimeoutError:
+                        return -1
 
                 receive_data_buffer += recv_data_obj.data
                 receive_data_temp = receive_data_buffer.decode(
@@ -366,7 +385,7 @@ class API(object):
                         if Target._Handler is not None:
                             Target._Handler()
                         if len(screen) > 0:
-                            screens.show(self.Config, screen)
+                            screens.show(self.config, screen)
                             self._RDQ.add(screen)
                             # self._ReceiveDataQueue.append(screen)
                             if Target == self._UseTooManyResources:
@@ -379,7 +398,7 @@ class API(object):
                         find_target = True
 
                         log.show_value(
-                            self.Config,
+                            self.config,
                             Target.get_log_level(), [
                                 i18n.PTT,
                                 i18n.Msg
@@ -389,7 +408,7 @@ class API(object):
 
                         end_time = time.time()
                         log.show_value(
-                            self.Config,
+                            self.config,
                             log.Level.DEBUG, [
                                 i18n.SpendTime,
                             ],
@@ -427,7 +446,7 @@ class API(object):
                 if find_target:
                     break
                 if len(screen) > 0:
-                    screens.show(self.Config, screen)
+                    screens.show(self.config, screen)
                     self._RDQ.add(screen)
                     # self._ReceiveDataQueue.append(screen)
 
@@ -438,7 +457,7 @@ class API(object):
         raise exceptions.NoMatchTargetError(self._RDQ)
 
     def close(self):
-        asyncio.get_event_loop().run_until_complete(self._Core.close())
+        asyncio.get_event_loop().run_until_complete(self._core.close())
 
     def get_screen_queue(self) -> list:
         return self._RDQ.get(1)

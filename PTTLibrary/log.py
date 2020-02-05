@@ -16,8 +16,8 @@ class Level(object):
     INFO = 3
     SILENT = 4
 
-    MinValue = TRACE
-    MaxValue = SILENT
+    min_value = TRACE
+    max_value = SILENT
 
 
 def merge(config, msg) -> str:

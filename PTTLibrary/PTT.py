@@ -40,6 +40,7 @@ class Library:
             screen_time_out: int = 0,
             screen_long_time_out: int = 0,
             screen_post_timeout: int = 0,
+            connect_mode: int = 0,
             log_handler=None,
             host: int = 0):
 
@@ -97,7 +98,7 @@ class Library:
             raise ValueError('[PTT Library] Unknown language', language)
         else:
             self.config.language = language
-        i18n.load(language)
+        i18n.load(self.config.language)
 
         if log_handler is not None:
             # log.Handler = log_handler
@@ -119,7 +120,7 @@ class Library:
                 ]
             )
 
-        if language == i18n.Language.CHINESE:
+        if self.config.language == i18n.Language.CHINESE:
             log.show_value(
                 self.config, log.Level.INFO, [
                     i18n.ChineseTranditional,
@@ -127,7 +128,7 @@ class Library:
                 ],
                 i18n.Init
             )
-        elif language == i18n.Language.ENGLISH:
+        elif self.config.language == i18n.Language.ENGLISH:
             log.show_value(
                 self.config, log.Level.INFO, [
                     i18n.English,
@@ -136,12 +137,12 @@ class Library:
                 i18n.Init
             )
 
-        # if connect_mode == 0:
-        #     connect_mode = self.config.ConnectMode
-        # elif not lib_util.check_range(connect_core.ConnectMode, connect_mode):
-        #     raise ValueError('[PTT Library] Unknown ConnectMode', connect_mode)
-        # else:
-        #     self.config.ConnectMode = connect_mode
+        if connect_mode == 0:
+            connect_mode = self.config.connect_mode
+        elif not lib_util.check_range(connect_core.ConnectMode, connect_mode):
+            raise ValueError('[PTT Library] Unknown ConnectMode', connect_mode)
+        else:
+            self.config.connect_mode = connect_mode
 
         if host == 0:
             host = self.config.host
@@ -149,7 +150,7 @@ class Library:
             raise ValueError('[PTT Library] Unknown host', host)
         self.config.host = host
 
-        if host == data_type.Host.PTT1:
+        if self.config.host == data_type.Host.PTT1:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -159,7 +160,7 @@ class Library:
                 ],
                 i18n.PTT
             )
-        if host == data_type.Host.PTT2:
+        elif self.config.host == data_type.Host.PTT2:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -169,8 +170,18 @@ class Library:
                 ],
                 i18n.PTT2
             )
+        elif self.config.host == data_type.Host.LOCALHOST:
+            log.show_value(
+                self.config,
+                log.Level.INFO,
+                [
+                    i18n.Connect,
+                    i18n.host
+                ],
+                i18n.Localhost
+            )
 
-        self.connect_core = connect_core.API(self.config, host)
+        self.connect_core = connect_core.API(self.config)
         self._ExistBoardList = []
         self._ModeratorList = dict()
         self._LastThrowWaterBallTime = 0

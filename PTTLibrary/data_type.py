@@ -23,8 +23,8 @@ class CallStatus:
     # 關掉
     OFF: int = 4
 
-    MinValue = ON
-    MaxValue = OFF
+    min_value = ON
+    max_value = OFF
 
 
 class PostSearchType:
@@ -42,8 +42,8 @@ class PostSearchType:
     # 搜尋稿酬      A
     MONEY: int = 5
 
-    MinValue = NOPE
-    MaxValue = MONEY
+    min_value = NOPE
+    max_value = MONEY
 
 
 class WaterBallType:
@@ -54,8 +54,8 @@ class WaterBallType:
     # 收到水球
     SEND: int = 2
 
-    MinValue = CATCH
-    MaxValue = SEND
+    min_value = CATCH
+    max_value = SEND
 
 
 class WaterBallOperateType:
@@ -65,8 +65,8 @@ class WaterBallOperateType:
     MAIL: int = 2
     NOTHING: int = 3
 
-    MinValue = CLEAR
-    MaxValue = NOTHING
+    min_value = CLEAR
+    max_value = NOTHING
 
 
 class FriendListType:
@@ -78,8 +78,8 @@ class FriendListType:
     loginNotification = 4
     OtherSpecial = 5
 
-    MinValue = GoodFriend
-    MaxValue = OtherSpecial
+    min_value = GoodFriend
+    max_value = OtherSpecial
 
 
 class ReplyType:
@@ -89,8 +89,8 @@ class ReplyType:
     MAIL: int = 2
     BOARD_MAIL: int = 3
 
-    MinValue = BOARD
-    MaxValue = BOARD_MAIL
+    min_value = BOARD
+    max_value = BOARD_MAIL
 
 
 class PushType:
@@ -98,8 +98,8 @@ class PushType:
     BOO: int = 2
     ARROW: int = 3
 
-    MinValue = PUSH
-    MaxValue = ARROW
+    min_value = PUSH
+    max_value = ARROW
 
 
 class MailInfo:
@@ -155,8 +155,8 @@ class PostDeleteStatus:
     MODERATOR: int = 2
     UNKNOWN: int = 3
 
-    MinValue = NOT_DELETED
-    MaxValue = UNKNOWN
+    min_value = NOT_DELETED
+    max_value = UNKNOWN
 
 
 class PostInfo:
@@ -227,8 +227,8 @@ class IndexType:
     #
     WEB: int = 3
 
-    MinValue = BBS
-    MaxValue = WEB
+    min_value = BBS
+    max_value = WEB
 
 
 class CrawlType:
@@ -237,8 +237,8 @@ class CrawlType:
     # 網頁版本
     WEB: int = 2
 
-    MinValue = BBS
-    MaxValue = WEB
+    min_value = BBS
+    max_value = WEB
 
 
 class Host:
@@ -246,9 +246,11 @@ class Host:
     PTT1: int = 1
     # 批踢踢兔
     PTT2: int = 2
+    # 本機測試用
+    LOCALHOST: int = 3
 
-    MinValue = PTT1
-    MaxValue = PTT2
+    min_value = PTT1
+    max_value = LOCALHOST
 
 
 class MarkType:
@@ -263,8 +265,8 @@ class MarkType:
     # 待證實文章
     UNCONFIRMED: int = 5
 
-    MinValue = S
-    MaxValue = UNCONFIRMED
+    min_value = S
+    max_value = UNCONFIRMED
 
 
 class FavouriteBoard:

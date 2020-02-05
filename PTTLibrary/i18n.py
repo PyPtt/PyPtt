@@ -10,8 +10,8 @@ class Language(object):
     CHINESE: int = 1
     ENGLISH: int = 2
 
-    MinValue = CHINESE
-    MaxValue = ENGLISH
+    min_value = CHINESE
+    max_value = ENGLISH
 
 
 languageList = [
@@ -29,6 +29,7 @@ ErrorParameter = None
 connect_core = None
 PTT = None
 PTT2 = None
+Localhost = None
 Init = None
 Done = None
 i18n = None
@@ -250,6 +251,12 @@ def load(language):
     PTT2 = specific_load(language, [
         '批踢踢兔',
         'PTT2',
+    ])
+
+    global Localhost
+    Localhost = specific_load(language, [
+        '本機',
+        'localhost',
     ])
 
     global Init
