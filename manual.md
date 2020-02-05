@@ -107,7 +107,8 @@ PTT Library 並不支援兩個以上的 thread 同時操作一個物件
 如果有需求，請啟動新 thread 後，所有操作都在同一個 thread
 :::
 
-以下是初始化物件的方式
+以下是初始化物件的方式，如果沒有特別需求，這樣就可以取得物件了
+
 ```python=
 ptt_bot = PTT.Library()
 ```
@@ -163,15 +164,31 @@ ptt_bot = PTT.Library(
 )
 ```
 
-當然 PTT Library 也支援批踢踢兔。
-Since 0.8.25
+當然 PTT Library 也支援批踢踢兔與本機。
+批踢踢兔 Since 0.8.25
+本機 Since 0.9.1
 
 ```python=
 PTT2Bot = PTT.Library(
     # (預設值) PTT1
     # host=PTT.data_type.Host.PTT1,
     # host=PTT.data_type.Host.PTT2,
+    # host=PTT.data_type.Host.LOCALHOST,
     host=PTT.data_type.Host.PTT2
+)
+```
+
+如果有 telnet 的需求，可以切換連線模式
+如果需要更換 port 也是支援的
+Since 0.9.1
+
+```python=
+PTT2Bot = PTT.Library(
+    # (預設值) WEBSOCKET
+    # connect_mode=PTT.connect_core.ConnectMode.WEBSOCKET,
+    connect_mode=PTT.connect_core.ConnectMode.TELNET,
+    # (預設值) 23
+    port=8888
 )
 ```
 
