@@ -111,15 +111,15 @@ def login(
 
     target_list = [
         connect_core.TargetUnit(
+            i18n.loginSuccess,
+            screens.Target.MainMenu,
+            break_detect=True
+        ),
+        connect_core.TargetUnit(
             i18n.HasNewMailGotoMainMenu,
             '你有新信件',
             # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
             response=command.GoMainMenu + 'A' + command.Right + command.Left,
-        ),
-        connect_core.TargetUnit(
-            i18n.loginSuccess,
-            screens.Target.MainMenu,
-            break_detect=True
         ),
         connect_core.TargetUnit(
             i18n.GoMainMenu,

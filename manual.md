@@ -12,7 +12,7 @@ tags: PTTLibrary
 :::info
 0.9.1 正在積極測試中，近期釋出
 :::
-有任何使用上的問題都可以直接問我 [![Join the chat at https://gitter.im/PTTLibrary/Lobby](https://badges.gitter.im/PTTLibrary/Lobby.svg)](https://gitter.im/PTTLibrary/Lobby?utm_source=badge&utm_medium=badge&utm_content=badge)
+有任何使用上的問題都可以直接問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/pttlibrary)
 Github: [PTT Library](https://github.com/Truth0906/PTTLibrary)
 
 ---
