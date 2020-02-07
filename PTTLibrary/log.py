@@ -114,4 +114,4 @@ def show_value(config, log_level, msg, value):
 
 def clear_ptt_msg():
     global last_value
-    last_value = None
+    # last_value = None

@@ -223,15 +223,15 @@ def login(
     if api.cursor not in screens.Target.InBoardWithCursor:
         screens.Target.InBoardWithCursor.append('\n' + api.cursor)
 
-    api._UnregisteredUser = True
+    api._unregistered_user = True
     if '(T)alk' in ori_screen:
-        api._UnregisteredUser = False
+        api._unregistered_user = False
     if '(P)lay' in ori_screen:
-        api._UnregisteredUser = False
+        api._unregistered_user = False
     if '(N)amelist' in ori_screen:
-        api._UnregisteredUser = False
+        api._unregistered_user = False
 
-    if api._UnregisteredUser:
+    if api._unregistered_user:
         # print(ori_screen)
         log.log(
             api.config,
