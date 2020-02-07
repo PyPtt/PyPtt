@@ -1,4 +1,5 @@
 import re
+
 try:
     from . import data_type
     from . import i18n
@@ -15,7 +16,9 @@ except ModuleNotFoundError:
     import command
 
 
-def get_board_info(api, board: str) -> None:
+def get_board_info(
+        api, board: str,
+        call_by_others: bool) -> None:
 
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
@@ -26,14 +29,20 @@ def get_board_info(api, board: str) -> None:
     cmd_list.append(command.Space)
     cmd = ''.join(cmd_list)
 
+    if call_by_others:
+        log_level = log.Level.DEBUG
+    else:
+        log_level = log.Level.INFO
+
     target_list = [
         connect_core.TargetUnit(
-            i18n.loginSuccess,
+            i18n.IntoBoard,
             [
                 '文章選讀',
                 '進板畫面'
             ],
-            break_detect=True
+            break_detect=True,
+            log_level=log_level
         ),
     ]
 
@@ -66,10 +75,10 @@ def get_board_info(api, board: str) -> None:
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.ReadingBoardInfo,
             '任意鍵繼續',
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log_level
         ),
     ]
 
@@ -127,7 +136,7 @@ def get_board_info(api, board: str) -> None:
     )
 
     into_top_ten_when_hide = (
-        '隱板時 可以 進入十大排行榜' in ori_screen
+            '隱板時 可以 進入十大排行榜' in ori_screen
     )
     log.show_value(
         api.config,
@@ -226,7 +235,7 @@ def get_board_info(api, board: str) -> None:
 
     # 板主 可 刪除部份違規文字
     moderator_can_del_illegal_content = (
-        '板主 可 刪除部份違規文字' in ori_screen
+            '板主 可 刪除部份違規文字' in ori_screen
     )
     log.show_value(
         api.config,
@@ -237,7 +246,7 @@ def get_board_info(api, board: str) -> None:
 
     # 轉錄文章 會 自動記錄，且 需要 發文權限
     tran_post_auto_recorded_and_require_post_permissions = (
-        '轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen
+            '轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen
     )
     log.show_value(
         api.config,
@@ -247,7 +256,7 @@ def get_board_info(api, board: str) -> None:
     )
 
     cool_mode = (
-        '未 設為冷靜模式' not in ori_screen
+            '未 設為冷靜模式' not in ori_screen
     )
     log.show_value(
         api.config,
@@ -257,7 +266,7 @@ def get_board_info(api, board: str) -> None:
     )
 
     require18 = (
-        '禁止 未滿十八歲進入' in ori_screen
+            '禁止 未滿十八歲進入' in ori_screen
     )
 
     log.show_value(

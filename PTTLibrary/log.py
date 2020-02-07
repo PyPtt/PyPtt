@@ -73,10 +73,7 @@ def log(config, log_level, msg):
         config.log_handler(total_message)
 
 
-last_value = None
-
-
-def show_value(config, log_level, msg, value):
+def show_value(config, log_level, msg, log_value):
 
     if config.log_level > log_level:
         return
@@ -84,34 +81,27 @@ def show_value(config, log_level, msg, value):
     if not lib_util.check_range(Level, log_level):
         raise ValueError('log_level', log_level)
 
-    global last_value
-
-    if isinstance(value, list):
-        value = ''.join(value)
+    if isinstance(log_value, list):
+        log_value = ''.join(log_value)
 
     check_ptt_msg = merge(config, [i18n.PTT, i18n.Msg])
     msg = merge(config, msg)
-    value = merge(config, value)
+    log_value = merge(config, log_value)
 
     if len(msg) == 0:
         return
     # if len(Value) == 0:
     #     return
 
-    if check_ptt_msg == msg and value == last_value:
+    if check_ptt_msg == msg and log_value == config.log_last_value:
         return
 
     total_message = []
     total_message.append(msg)
     total_message.append(' [')
-    total_message.append(value)
+    total_message.append(log_value)
     total_message.append(']')
 
     log(config, log_level, ''.join(total_message))
 
-    last_value = value
-
-
-def clear_ptt_msg():
-    global last_value
-    # last_value = None
+    config.log_last_value = log_value
