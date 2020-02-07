@@ -49,3 +49,5 @@ class Config:
     port = 23
 
     log_handler = None
+
+    log_last_value = None

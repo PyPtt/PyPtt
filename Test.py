@@ -667,7 +667,7 @@ def push():
     test_post_list = [
         # ('Gossiping', 95692),
         # ('Test', 'QQQQQQ'),
-        ('Test', 311),
+        ('Test', 793),
         # ('Wanted', '1Teyovc3')
     ]
 
@@ -1395,7 +1395,6 @@ PTT Library 程式貼文基準測試內文
             # 改成 10 篇，不然 100 篇太耗時間了
             Range = 10
             for test_board in test_board_list:
-
                 newest_index = ptt_bot.get_newest_index(
                     PTT.data_type.IndexType.BBS,
                     board=test_board

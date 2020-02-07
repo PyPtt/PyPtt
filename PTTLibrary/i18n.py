@@ -67,6 +67,7 @@ Boolean = None
 ID = None
 Password = None
 Board = None
+IntoBoard = None
 BothInput = None
 NoInput = None
 CatchPost = None
@@ -381,8 +382,8 @@ def load(language):
 
     global loginSuccess
     loginSuccess = specific_load(language, [
-        login + Success,
-        login + ' ' + Success,
+        '登入成功',
+        'login Success',
     ])
 
     global loginFail
@@ -479,6 +480,18 @@ def load(language):
     Board = specific_load(language, [
         '看板',
         'Board',
+    ])
+
+    global IntoBoard
+    IntoBoard = specific_load(language, [
+        '進入看板',
+        'Into Board',
+    ])
+
+    global ReadingBoardInfo
+    ReadingBoardInfo = specific_load(language, [
+        '讀取看板資訊',
+        'Reading Board Info',
     ])
 
     global BothInput

@@ -426,7 +426,8 @@ class API(object):
 
                         log.show_value(
                             self.config,
-                            Target.get_log_level(), [
+                            Target.get_log_level(),
+                            [
                                 i18n.PTT,
                                 i18n.Msg
                             ],

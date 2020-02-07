@@ -258,7 +258,7 @@ class Library:
             kick_other_login: bool = False) -> None:
         self._one_thread()
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'ID', pttid)
         check_value.check(self.config, str, 'Password', password)
@@ -283,7 +283,7 @@ class Library:
         if not self._login_status:
             return
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         try:
             from . import _api_loginout
@@ -301,7 +301,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         try:
             from . import _api_get_time
@@ -323,7 +323,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'Board', board)
         if post_aid is not None:
@@ -542,7 +542,7 @@ class Library:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         try:
             return self._get_newest_index(
@@ -576,7 +576,7 @@ class Library:
 
         self._one_thread()
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(
             self.config, int, 'CrawlType',
@@ -922,7 +922,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'Board', board)
         check_value.check(self.config, str, 'Title', title)
@@ -973,7 +973,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'Board', board)
         check_value.check(self.config, int, 'PushType',
@@ -1126,7 +1126,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1142,7 +1142,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'pttid', pttid)
         check_value.check(self.config, str, 'content', content)
@@ -1176,7 +1176,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(
             self.config, int, 'OperateType', operate_type,
@@ -1198,7 +1198,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         return self._get_call_status()
 
@@ -1222,7 +1222,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(
             self.config, int, 'CallStatus', call_status,
@@ -1244,7 +1244,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'ID', pttid)
         check_value.check(self.config, int, 'Money', money)
@@ -1272,7 +1272,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'pttid', pttid)
         check_value.check(self.config, str, 'title', title)
@@ -1313,7 +1313,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         try:
             from . import _api_has_new_mail
@@ -1328,7 +1328,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         try:
             from . import _api_get_board_list
@@ -1350,7 +1350,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(
             self.config, int, 'ReplyType', reply_type,
@@ -1418,7 +1418,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'board', board)
         check_value.check(self.config, str, 'new_title', new_title)
@@ -1451,7 +1451,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         try:
             from . import _api_mark_post
@@ -1474,7 +1474,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         try:
             from . import _api_get_favourite_board
@@ -1493,7 +1493,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'board', board)
         check_value.check(self.config, int, 'bucket_days', bucket_days)
@@ -1528,7 +1528,7 @@ class Library:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'pttid', pttid)
         if min_page is not None:
@@ -1566,20 +1566,20 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        log.clear_ptt_msg()
+        config.log_last_value = None
 
         check_value.check(self.config, str, 'board', board)
 
-        return self._get_board_info(board)
+        return self._get_board_info(board, call_by_others=False)
 
-    def _get_board_info(self, board: str) -> data_type.BoardInfo:
+    def _get_board_info(self, board: str, call_by_others: bool = True) -> data_type.BoardInfo:
 
         try:
             from . import _api_get_board_info
         except ModuleNotFoundError:
             import _api_get_board_info
 
-        return _api_get_board_info.get_board_info(self, board)
+        return _api_get_board_info.get_board_info(self, board, call_by_others)
 
 
 if __name__ == '__main__':
