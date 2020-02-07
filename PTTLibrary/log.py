@@ -73,17 +73,18 @@ def log(config, log_level, msg):
         config.log_handler(total_message)
 
 
-LastValue = None
+last_value = None
 
 
 def show_value(config, log_level, msg, value):
 
+    if config.log_level > log_level:
+        return
+
     if not lib_util.check_range(Level, log_level):
         raise ValueError('log_level', log_level)
 
-    if config.log_level > log_level:
-        return
-    global LastValue
+    global last_value
 
     if isinstance(value, list):
         value = ''.join(value)
@@ -97,7 +98,7 @@ def show_value(config, log_level, msg, value):
     # if len(Value) == 0:
     #     return
 
-    if check_ptt_msg == msg and value == LastValue:
+    if check_ptt_msg == msg and value == last_value:
         return
 
     total_message = []
@@ -108,4 +109,9 @@ def show_value(config, log_level, msg, value):
 
     log(config, log_level, ''.join(total_message))
 
-    LastValue = value
+    last_value = value
+
+
+def clear_ptt_msg():
+    global last_value
+    last_value = None

@@ -1786,9 +1786,9 @@ github: https://tinyurl.com/umqff3v
                 # host=PTT.data_type.Host.PTT2
 
                 # for 本機測試
-                connect_mode=PTT.connect_core.ConnectMode.TELNET,
-                host=PTT.data_type.Host.LOCALHOST,
-                port=8888,
+                # connect_mode=PTT.connect_core.ConnectMode.TELNET,
+                # host=PTT.data_type.Host.LOCALHOST,
+                # port=8888,
             )
             try:
                 ptt_bot.login(
@@ -1810,7 +1810,7 @@ github: https://tinyurl.com/umqff3v
 
             # performance_test()
 
-            get_post()
+            # get_post()
             # get_post_with_condition()
             # post()
             # get_newest_index()
