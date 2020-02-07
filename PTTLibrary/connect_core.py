@@ -310,8 +310,6 @@ class API(object):
         else:
             current_screen_timeout = screen_timeout
 
-        log.clear_ptt_msg()
-
         break_detect_after_send = False
         break_index = -1
         is_secret = secret
