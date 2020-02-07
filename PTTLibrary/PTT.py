@@ -1110,7 +1110,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        if self._UnregisteredUser:
+        if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         return self._get_user(user_id)
@@ -1121,7 +1121,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        if self._UnregisteredUser:
+        if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         check_value.check(self.config, str, 'pttid', pttid)
@@ -1153,7 +1153,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        if self._UnregisteredUser:
+        if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         check_value.check(
@@ -1172,6 +1172,9 @@ class Library:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        if self._unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         return self._get_call_status()
 
@@ -1192,6 +1195,9 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        if self._unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
         check_value.check(
             self.config, int, 'CallStatus', call_status,
             value_class=data_type.CallStatus)
@@ -1209,7 +1215,7 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
-        if self._UnregisteredUser:
+        if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         check_value.check(self.config, str, 'ID', pttid)
@@ -1234,6 +1240,9 @@ class Library:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        if self._unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         check_value.check(self.config, str, 'pttid', pttid)
         check_value.check(self.config, str, 'title', title)
@@ -1370,6 +1379,9 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        if self._unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
         check_value.check(self.config, str, 'board', board)
         check_value.check(self.config, str, 'new_title', new_title)
 
@@ -1397,6 +1409,9 @@ class Library:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        if self._unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         try:
             from . import _api_mark_post
@@ -1433,6 +1448,9 @@ class Library:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        if self._unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
         check_value.check(self.config, str, 'board', board)
         check_value.check(self.config, int, 'bucket_days', bucket_days)
         check_value.check(self.config, str, 'reason', reason)
@@ -1462,6 +1480,9 @@ class Library:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        if self._unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         check_value.check(self.config, str, 'pttid', pttid)
         if min_page is not None:

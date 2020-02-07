@@ -146,7 +146,7 @@ class API(object):
                 i18n.UseTooManyResources,
             ],
             screens.Target.UseTooManyResources,
-            exceptions_=exceptions.UseTooManyResources
+            exceptions_=exceptions.UseTooManyResources()
         )
 
         log.show_value(

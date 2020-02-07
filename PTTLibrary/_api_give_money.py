@@ -13,16 +13,6 @@ except ModuleNotFoundError:
 def give_money(
         api, pttid: str, money: int) -> None:
 
-    # log.showValue(
-    #     api.config,
-    #     log.Level.INFO,
-    #     [
-    #         i18n.PTT,
-    #         i18n.Msg
-    #     ],
-    #     i18n.MarkPost
-    # )
-
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('P')
@@ -39,19 +29,19 @@ def give_money(
             i18n.NoMoney,
             '你沒有那麼多Ptt幣喔!',
             break_detect=True,
-            exceptions_=exceptions.NoMoney
+            exceptions_=exceptions.NoMoney()
         ),
         connect_core.TargetUnit(
             i18n.NoMoney,
             '金額過少，交易取消!',
             break_detect=True,
-            exceptions_=exceptions.MoneyTooFew
+            exceptions_=exceptions.MoneyTooFew()
         ),
         connect_core.TargetUnit(
             i18n.NoMoney,
             '交易取消!',
             break_detect=True,
-            exceptions_=exceptions.UnknownError
+            exceptions_=exceptions.UnknownError()
         ),
         connect_core.TargetUnit(
             [
