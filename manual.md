@@ -135,7 +135,7 @@ ptt_bot = PTT.Library(
 ```
 
 如果你的網路環境比較慢(例如海外)，常常不小心就 timeout，也有參數可以調整
-
+Since 0.9.1
 ```python=
 ptt_bot = PTT.Library(
     # 預設 3 秒後判定此畫面沒有可辨識的目標
