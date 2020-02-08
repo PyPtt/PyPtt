@@ -29,13 +29,13 @@ def get_newest_index(
         search_type: int = 0,
         search_condition: str = None) -> int:
 
-    if index_type == data_type.IndexType.BBS:
+    if index_type == data_type.index_type.BBS:
 
         api._check_board(board)
 
         check_value.check(
             api.config, int, 'SearchType', search_type,
-            value_class=data_type.PostSearchType)
+            value_class=data_type.post_search_type)
         if search_condition is not None:
             check_value.check(
                 api.config, str,
@@ -51,15 +51,15 @@ def get_newest_index(
         cmd_list.append(command.Space)
 
         if search_condition is not None:
-            if search_type == data_type.PostSearchType.KEYWORD:
+            if search_type == data_type.post_search_type.KEYWORD:
                 cmd_list.append('/')
-            elif search_type == data_type.PostSearchType.AUTHOR:
+            elif search_type == data_type.post_search_type.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.PostSearchType.PUSH:
+            elif search_type == data_type.post_search_type.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.PostSearchType.MARK:
+            elif search_type == data_type.post_search_type.MARK:
                 cmd_list.append('G')
-            elif search_type == data_type.PostSearchType.MONEY:
+            elif search_type == data_type.post_search_type.MONEY:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
@@ -141,7 +141,7 @@ def get_newest_index(
             screens.show(api.config, api.connect_core.get_screen_queue())
             raise exceptions.UnknownError(i18n.UnknownError)
 
-    elif data_type.IndexType.WEB:
+    elif data_type.index_type.WEB:
         # web
         _NewestIndex = None
         newest_index = 0

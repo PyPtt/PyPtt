@@ -9,7 +9,7 @@ def parse_para(value_type, parameter):
     return result
 
 
-class CallStatus:
+class call_status:
     # 呼叫器狀態
 
     # 打開
@@ -27,7 +27,7 @@ class CallStatus:
     max_value = OFF
 
 
-class PostSearchType:
+class post_search_type:
     # 文章搜尋類型
 
     NOPE: int = 0
@@ -46,7 +46,7 @@ class PostSearchType:
     max_value = MONEY
 
 
-class WaterBallType:
+class waterball_type:
     # 水球接收狀態
 
     # 收到水球
@@ -58,7 +58,7 @@ class WaterBallType:
     max_value = SEND
 
 
-class WaterBallOperateType:
+class waterball_operate_type:
     # 清除水球類型
 
     CLEAR: int = 1
@@ -69,20 +69,20 @@ class WaterBallOperateType:
     max_value = NOTHING
 
 
-class FriendListType:
-    # 名單類型
+# class FriendListType:
+#     # 名單類型
+#
+#     GoodFriend = 1
+#     BadGuy = 2
+#     SuperFriend = 3
+#     loginNotification = 4
+#     OtherSpecial = 5
+#
+#     min_value = GoodFriend
+#     max_value = OtherSpecial
 
-    GoodFriend = 1
-    BadGuy = 2
-    SuperFriend = 3
-    loginNotification = 4
-    OtherSpecial = 5
 
-    min_value = GoodFriend
-    max_value = OtherSpecial
-
-
-class ReplyType:
+class reply_type:
     # 回文類型
 
     BOARD: int = 1
@@ -93,7 +93,7 @@ class ReplyType:
     max_value = BOARD_MAIL
 
 
-class PushType:
+class push_type:
     PUSH: int = 1
     BOO: int = 2
     ARROW: int = 3
@@ -102,19 +102,19 @@ class PushType:
     max_value = ARROW
 
 
-class MailInfo:
-    def __init__(self, author, title, date, content, ip):
-        self.author = parse_para(str, author)
-        self.title = parse_para(str, title)
-        self.date = parse_para(str, date)
-        self.content = parse_para(str, content)
-        self.ip = parse_para(str, ip)
+# class MailInfo:
+#     def __init__(self, author, title, date, content, ip):
+#         self.author = parse_para(str, author)
+#         self.title = parse_para(str, title)
+#         self.date = parse_para(str, date)
+#         self.content = parse_para(str, content)
+#         self.ip = parse_para(str, ip)
 
 
 class UserInfo:
     def __init__(
             self,
-            pttid,
+            ptt_id,
             money,
             login_time,
             legal_post,
@@ -126,7 +126,7 @@ class UserInfo:
             five_chess,
             chess,
             signature_file):
-        self.id = parse_para(str, pttid)
+        self.id = parse_para(str, ptt_id)
         self.money = parse_para(str, money)
         self.login_time = parse_para(int, login_time)
         self.legal_post = parse_para(int, legal_post)
@@ -149,7 +149,7 @@ class PushInfo:
         self.time = parse_para(str, push_time)
 
 
-class PostDeleteStatus:
+class post_delete_status:
     NOT_DELETED: int = 0
     AUTHOR: int = 1
     MODERATOR: int = 2
@@ -219,7 +219,7 @@ class Cursor:
     NEW: str = '>'
 
 
-class IndexType:
+class index_type:
     # 板
     BBS: int = 1
     # 信箱
@@ -231,7 +231,7 @@ class IndexType:
     max_value = WEB
 
 
-class CrawlType:
+class crawl_type:
     # BBS版本
     BBS: int = 1
     # 網頁版本
@@ -241,7 +241,7 @@ class CrawlType:
     max_value = WEB
 
 
-class Host:
+class host:
     # 批踢踢萬
     PTT1: int = 1
     # 批踢踢兔
@@ -253,7 +253,7 @@ class Host:
     max_value = LOCALHOST
 
 
-class MarkType:
+class mark_type:
     # s 文章
     S: int = 1
     # 標記文章

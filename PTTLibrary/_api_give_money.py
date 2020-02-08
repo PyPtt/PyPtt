@@ -11,7 +11,7 @@ except ModuleNotFoundError:
 
 
 def give_money(
-        api, pttid: str, money: int) -> None:
+        api, ptt_id: str, money: int) -> None:
 
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
@@ -69,7 +69,7 @@ def give_money(
         connect_core.TargetUnit(
             i18n.InputID,
             '這位幸運兒的id',
-            response=pttid + command.Enter
+            response=ptt_id + command.Enter
         ),
         connect_core.TargetUnit(
             i18n.AuthenticationHasNotExpired,

@@ -27,7 +27,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
     cmd_list.append(command.Enter)
     cmd_list.append('Q')
     cmd_list.append(command.Enter)
-    cmd_list.append(pttid)
+    cmd_list.append(ptt_id)
     cmd_list.append(command.Enter)
 
     cmd = ''.join(cmd_list)
@@ -63,7 +63,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
         ori_screen
     )
     if index == 1:
-        raise exceptions.NoSuchUser(pttid)
+        raise exceptions.NoSuchUser(ptt_id)
     # PTT1
     # 《ＩＤ暱稱》CodingMan (專業程式 BUG 製造機)《經濟狀況》小康 ($73866)
     # 《登入次數》1118 次 (同天內只計一次) 《有效文章》15 篇 (退:0)
@@ -93,7 +93,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
         print(len(data))
         raise exceptions.ParseError(ori_screen)
 
-    pttid = data[0]
+    ptt_id = data[0]
     money = data[1]
     login_time = data[2]
     login_time = login_time[:login_time.find(' ')]
@@ -103,7 +103,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
     legal_post = int(temp[0])
 
     # PTT2 沒有退文
-    if api.config.host == data_type.Host.PTT1:
+    if api.config.host == data_type.host.PTT1:
         illegal_post = int(temp[1])
     else:
         illegal_post = -1
@@ -117,7 +117,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
 
     signature_file = '\n'.join(ori_screen.split('\n')[6:-1])
 
-    log.show_value(api.config, log.Level.DEBUG, 'pttid', pttid)
+    log.show_value(api.config, log.Level.DEBUG, 'ptt_id', ptt_id)
     log.show_value(api.config, log.Level.DEBUG, 'money', money)
     log.show_value(api.config, log.Level.DEBUG, 'login_time', login_time)
     log.show_value(api.config, log.Level.DEBUG, 'legal_post', legal_post)
@@ -132,7 +132,7 @@ def get_user(api, pttid) -> data_type.UserInfo:
                    'signature_file', signature_file)
 
     user = data_type.UserInfo(
-        pttid,
+        ptt_id,
         money,
         login_time,
         legal_post,

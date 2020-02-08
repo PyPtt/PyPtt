@@ -91,21 +91,21 @@ def get_call_status(api) -> None:
             raise exceptions.UnknownError(ori_screen)
 
     if index == 0:
-        return data_type.CallStatus.ON
+        return data_type.call_status.ON
     if index == 1:
-        return data_type.CallStatus.UNPLUG
+        return data_type.call_status.UNPLUG
     if index == 2:
-        return data_type.CallStatus.WATERPROOF
+        return data_type.call_status.WATERPROOF
     if index == 3:
-        return data_type.CallStatus.FRIEND
+        return data_type.call_status.FRIEND
     if index == 4:
-        return data_type.CallStatus.OFF
+        return data_type.call_status.OFF
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     raise exceptions.UnknownError(ori_screen)
 
 
-def set_call_status(api, callstatus) -> None:
+def set_call_status(api, call_status) -> None:
     # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
 
     current_call_status = api._get_call_status()
@@ -128,7 +128,7 @@ def set_call_status(api, callstatus) -> None:
         )
     ]
 
-    while current_call_status != callstatus:
+    while current_call_status != call_status:
         api.connect_core.send(
             cmd,
             target_list,

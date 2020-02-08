@@ -39,15 +39,15 @@ def get_post(
 
     elif post_index != 0:
         if search_condition is not None:
-            if search_type == data_type.PostSearchType.KEYWORD:
+            if search_type == data_type.post_search_type.KEYWORD:
                 cmd_list.append('/')
-            elif search_type == data_type.PostSearchType.AUTHOR:
+            elif search_type == data_type.post_search_type.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.PostSearchType.PUSH:
+            elif search_type == data_type.post_search_type.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.PostSearchType.MARK:
+            elif search_type == data_type.post_search_type.MARK:
                 cmd_list.append('G')
-            elif search_type == data_type.PostSearchType.MONEY:
+            elif search_type == data_type.post_search_type.MONEY:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
@@ -128,11 +128,11 @@ def get_post(
         pattern = re.compile('\[[\w]+\]')
         pattern_result = pattern.search(cursor_line)
         if pattern_result is not None:
-            post_del_status = data_type.PostDeleteStatus.AUTHOR
+            post_del_status = data_type.post_delete_status.AUTHOR
         else:
             pattern = re.compile('<[\w]+>')
             pattern_result = pattern.search(cursor_line)
-            post_del_status = data_type.PostDeleteStatus.MODERATOR
+            post_del_status = data_type.post_delete_status.MODERATOR
 
         # > 79843     9/11 -             □ (本文已被吃掉)<
         # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
@@ -141,7 +141,7 @@ def get_post(
             post_author = pattern_result.group(0)[1:-1]
         else:
             post_author = None
-            post_del_status = data_type.PostDeleteStatus.UNKNOWN
+            post_del_status = data_type.post_delete_status.UNKNOWN
 
         log.show_value(api.config, log.Level.DEBUG, 'ListDate', list_date)
         log.show_value(api.config, log.Level.DEBUG,
@@ -788,7 +788,7 @@ def get_post(
             ip = ip.replace('-', '.')
             # print(f'IP -> [{IP}]')
             break
-    if api.config.host == data_type.Host.PTT1:
+    if api.config.host == data_type.host.PTT1:
         if ip is None:
             log.show_value(
                 api.config,
@@ -827,11 +827,11 @@ def get_post(
 
     for line in origin_post_lines:
         if line.startswith('推'):
-            push_type = data_type.PushType.PUSH
+            push_type = data_type.push_type.PUSH
         elif line.startswith('噓 '):
-            push_type = data_type.PushType.BOO
+            push_type = data_type.push_type.BOO
         elif line.startswith('→ '):
-            push_type = data_type.PushType.ARROW
+            push_type = data_type.push_type.ARROW
         else:
             continue
 
@@ -874,7 +874,7 @@ def get_post(
                        ]
         # PushContent = PushContent.replace(PushDate, '')
 
-        if api.config.host == data_type.Host.PTT1:
+        if api.config.host == data_type.host.PTT1:
             push_content = push_content[
                            :push_content.rfind(push_date)
                            ]

@@ -11,14 +11,14 @@ except ModuleNotFoundError:
 
 
 def search_user(
-        api: object, pttid: str, min_page: int, max_page: int) -> list:
+        api: object, ptt_id: str, min_page: int, max_page: int) -> list:
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('T')
     cmd_list.append(command.Enter)
     cmd_list.append('Q')
     cmd_list.append(command.Enter)
-    cmd_list.append(pttid)
+    cmd_list.append(ptt_id)
     cmd = ''.join(cmd_list)
 
     if min_page is not None:

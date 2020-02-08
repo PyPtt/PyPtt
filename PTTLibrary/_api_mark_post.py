@@ -35,14 +35,14 @@ def markPost(
         i18n.MarkPost
     )
 
-    check_value.check(api.config, int, 'MarkType', mark_type,
-                     value_class=data_type.MarkType)
+    check_value.check(api.config, int, 'mark_type', mark_type,
+                     value_class=data_type.mark_type)
     check_value.check(api.config, str, 'Board', board)
     if post_aid is not None:
         check_value.check(api.config, str, 'PostAID', post_aid)
     check_value.check(api.config, int, 'PostIndex', post_index)
     check_value.check(api.config, int, 'SearchType', search_type,
-                     value_class=data_type.PostSearchType)
+                     value_class=data_type.post_search_type)
     if search_condition is not None:
         check_value.check(api.config, str,
                          'SearchCondition', search_condition)
@@ -75,7 +75,7 @@ def markPost(
             i18n.ErrorParameter,
         ]))
 
-    if search_type == data_type.PostSearchType.PUSH:
+    if search_type == data_type.post_search_type.PUSH:
         try:
             S = int(search_condition)
         except ValueError:
@@ -100,7 +100,7 @@ def markPost(
 
     if post_index != 0:
         NewestIndex = api._get_newest_index(
-            data_type.IndexType.BBS,
+            data_type.index_type.BBS,
             board=board,
             search_type=search_type,
             search_condition=search_condition
@@ -108,10 +108,10 @@ def markPost(
         check_value.check_index(api.config, 'PostIndex',
                                post_index, max_value=NewestIndex)
 
-    if mark_type == data_type.MarkType.UNCONFIRMED:
+    if mark_type == data_type.mark_type.UNCONFIRMED:
         # 批踢踢兔沒有待證文章功能 QQ
-        if api.config.host == data_type.Host.PTT2:
-            raise exceptions.HostNotSupport(lib_util.get_current_func_name())
+        if api.config.host == data_type.host.PTT2:
+            raise exceptions.hostNotSupport(lib_util.get_current_func_name())
 
     api._check_board(
         board,
@@ -158,15 +158,15 @@ def markPost(
 
     elif post_index != 0:
         if search_condition is not None:
-            if search_type == data_type.PostSearchType.KEYWORD:
+            if search_type == data_type.post_search_type.KEYWORD:
                 cmd_list.append('/')
-            elif search_type == data_type.PostSearchType.AUTHOR:
+            elif search_type == data_type.post_search_type.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.PostSearchType.PUSH:
+            elif search_type == data_type.post_search_type.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.PostSearchType.MARK:
+            elif search_type == data_type.post_search_type.MARK:
                 cmd_list.append('G')
-            elif search_type == data_type.PostSearchType.MONEY:
+            elif search_type == data_type.post_search_type.MONEY:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
@@ -176,15 +176,15 @@ def markPost(
 
     cmd_list.append(command.Enter)
 
-    if mark_type == data_type.MarkType.S:
+    if mark_type == data_type.mark_type.S:
         cmd_list.append('L')
-    elif mark_type == data_type.MarkType.D:
+    elif mark_type == data_type.mark_type.D:
         cmd_list.append('t')
-    elif mark_type == data_type.MarkType.DeleteD:
+    elif mark_type == data_type.mark_type.DeleteD:
         cmd_list.append(command.Ctrl_D)
-    elif mark_type == data_type.MarkType.M:
+    elif mark_type == data_type.mark_type.M:
         cmd_list.append('m')
-    elif mark_type == data_type.MarkType.UNCONFIRMED:
+    elif mark_type == data_type.mark_type.UNCONFIRMED:
         cmd_list.append(command.Ctrl_E + 'S')
 
     cmd = ''.join(cmd_list)
