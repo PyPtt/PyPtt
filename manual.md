@@ -81,7 +81,7 @@ pip install PTTLibrary==VERSION
 ###### PTT.exceptions.UseTooManyResources
     Since 0.8.15
     使用過多 PTT 資源，請稍等一段時間並增加操作之間的時間間隔
-###### PTT.exceptions.HostNotSupport
+###### PTT.exceptions.hostNotSupport
     Since 0.8.25
     批踢踢萬或批踢踢兔不支援這個操作
 ###### PTT.exceptions.NoPush
@@ -171,10 +171,10 @@ ptt_bot = PTT.Library(
 ```python=
 PTT2Bot = PTT.Library(
     # (預設值) PTT1
-    # host=PTT.data_type.Host.PTT1,
-    # host=PTT.data_type.Host.PTT2,
-    # host=PTT.data_type.Host.LOCALHOST,
-    host=PTT.data_type.Host.PTT2
+    # host=PTT.data_type.host.PTT1,
+    # host=PTT.data_type.host.PTT2,
+    # host=PTT.data_type.host.LOCALHOST,
+    host=PTT.data_type.host.PTT2
 )
 ```
 
@@ -205,7 +205,7 @@ from PTTLibrary import PTT
 
 ptt_bot = PTT.Library()
 try:
-    ptt_bot.login(pttid, password)
+    ptt_bot.login(ptt_id, password)
 except PTT.exceptions.LoginError:
     ptt_bot.log('登入失敗')
     sys.exit()
@@ -232,7 +232,7 @@ from PTTLibrary import PTT
 ptt_bot = PTT.Library()
 try:
     ptt_bot.login(
-        pttid,
+        ptt_id,
         password,
         kick_other_login=True
     )
@@ -284,12 +284,12 @@ if post_info is None:
     print('post_info is None')
     sys.exit()
 
-if post_info.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
-    if post_info.delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
+if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
+    if post_info.delete_status == PTT.data_type.post_delete_status.MODERATOR:
         print(f'[板主刪除][{post_info.author}]')
-    elif post_info.delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
+    elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
         print(f'[作者刪除][{post_info.author}]')
-    elif post_info.delete_status == PTT.data_type.PostDeleteStatus.ByUnknow:
+    elif post_info.delete_status == PTT.data_type.post_delete_status.ByUnknow:
         print(f'[不明刪除]')
     return
 
@@ -326,13 +326,13 @@ boo_count = 0
 arrow_count = 0
 
 for push_info in post_info.push_list:
-    if push_info.type == PTT.data_type.PushType.PUSH:
+    if push_info.type == PTT.data_type.push_type.PUSH:
         push_type = '推'
         push_count += 1
-    if push_info.type == PTT.data_type.PushType.BOO:
+    if push_info.type == PTT.data_type.push_type.BOO:
         push_type = '噓'
         boo_count += 1
-    if push_info.type == PTT.data_type.PushType.ARROW:
+    if push_info.type == PTT.data_type.push_type.ARROW:
         push_type = '箭頭'
         arrow_count += 1
 
@@ -362,12 +362,12 @@ print(f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow')
 
 ```python=
 test_list = [
-    ('Python', PTT.data_type.PostSearchType.KEYWORD, '[公告]')
+    ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]')
 ]
 
 for (test_board, search_type, condition) in test_list:
     index = ptt_bot.get_newest_index(
-        PTT.data_type.IndexType.BBS,
+        PTT.data_type.index_type.BBS,
         test_board,
         search_type=search_type,
         search_condition=condition,
@@ -427,7 +427,7 @@ test_board_list = [
 
 for test_board in test_board_list:
     index = ptt_bot.get_newest_index(
-        PTT.data_type.IndexType.BBS,
+        PTT.data_type.index_type.BBS,
         board=test_board
     )
     print(f'{test_board} 最新文章編號 {index}')
@@ -436,13 +436,13 @@ for test_board in test_board_list:
 
 ```python=
 test_list = [
-    ('Stock', PTT.data_type.PostSearchType.KEYWORD, '盤中閒聊'),
-    ('Baseball', PTT.data_type.PostSearchType.PUSH, '20')
+    ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
+    ('Baseball', PTT.data_type.post_search_type.PUSH, '20')
 ]
 
 for (test_board, search_type, condition) in test_list:
     newest_index = ptt_bot.get_newest_index(
-        PTT.data_type.IndexType.BBS,
+        PTT.data_type.index_type.BBS,
         test_board,
         search_type=search_type,
         search_condition=condition,
@@ -463,12 +463,12 @@ for (test_board, search_type, condition) in test_list:
 ```python=
 def crawl_handler(post_info):
 
-    if post_info.delete_status != PTT.data_type.PostDeleteStatus.NOT_DELETED:
-        if post_info.delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
+    if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
+        if post_info.delete_status == PTT.data_type.post_delete_status.MODERATOR:
             print(f'[板主刪除][{post_info.author}]')
-        elif post_info.delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
+        elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
             print(f'[作者刪除][{post_info.author}]')
-        elif post_info.delete_status == PTT.data_type.PostDeleteStatus.ByUnknow:
+        elif post_info.delete_status == PTT.data_type.post_delete_status.ByUnknow:
             print(f'[不明刪除]')
         return
 
@@ -479,7 +479,7 @@ test_board = 'Gossiping'
 test_range = 1000
 
 newest_index = ptt_bot.get_newest_index(
-    PTT.data_type.IndexType.BBS,
+    PTT.data_type.index_type.BBS,
     board=test_board
 )
 start_index = newest_index - test_range + 1
@@ -490,7 +490,7 @@ print(f'預備爬行 {test_board} 編號 {start_index} ~ {newest_index} 文章')
 # end_aid = ptt_bot.get_post_index(test_board, newest_index)
 
 error_post_list, del_post_list = ptt_bot.crawl_board(
-    PTT.data_type.CrawlType.BBS,
+    PTT.data_type.crawl_type.BBS,
     crawl_handler,
     test_board,
     # 使用 index 來標示文章範圍
@@ -528,15 +528,15 @@ if len(del_post_list) > 0:
 
 ```python=
 def show_condition(board, search_type, condition):
-    if search_type == PTT.data_type.PostSearchType.KEYWORD:
+    if search_type == PTT.data_type.post_search_type.KEYWORD:
         condition_type = '關鍵字'
-    if search_type == PTT.data_type.PostSearchType.AUTHOR:
+    if search_type == PTT.data_type.post_search_type.AUTHOR:
         condition_type = '作者'
-    if search_type == PTT.data_type.PostSearchType.PUSH:
+    if search_type == PTT.data_type.post_search_type.PUSH:
         condition_type = '推文數'
-    if search_type == PTT.data_type.PostSearchType.MARK:
+    if search_type == PTT.data_type.post_search_type.MARK:
         condition_type = '標記'
-    if search_type == PTT.data_type.PostSearchType.MONEY:
+    if search_type == PTT.data_type.post_search_type.MONEY:
         condition_type = '稿酬'
 
     print(f'{board} 使用 {condition_type} 搜尋 {condition}')
@@ -545,23 +545,23 @@ def show_condition(board, search_type, condition):
 test_range = 10
 
 test_list = [
-    ('Wanted', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
-    ('Wanted', PTT.data_type.PostSearchType.AUTHOR, 'gogin'),
-    ('Wanted', PTT.data_type.PostSearchType.PUSH, '10'),
-    ('Wanted', PTT.data_type.PostSearchType.MARK, 'm'),
-    ('Wanted', PTT.data_type.PostSearchType.MONEY, '5'),
-    ('Gossiping', PTT.data_type.PostSearchType.KEYWORD, '[公告]'),
-    ('Gossiping', PTT.data_type.PostSearchType.AUTHOR, 'ReDmango'),
-    ('Gossiping', PTT.data_type.PostSearchType.PUSH, '10'),
-    ('Gossiping', PTT.data_type.PostSearchType.MARK, 'm'),
-    ('Gossiping', PTT.data_type.PostSearchType.MONEY, '5'),
-    ('Gossiping', PTT.data_type.PostSearchType.PUSH, '-100'),
+    ('Wanted', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
+    ('Wanted', PTT.data_type.post_search_type.AUTHOR, 'gogin'),
+    ('Wanted', PTT.data_type.post_search_type.PUSH, '10'),
+    ('Wanted', PTT.data_type.post_search_type.MARK, 'm'),
+    ('Wanted', PTT.data_type.post_search_type.MONEY, '5'),
+    ('Gossiping', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
+    ('Gossiping', PTT.data_type.post_search_type.AUTHOR, 'ReDmango'),
+    ('Gossiping', PTT.data_type.post_search_type.PUSH, '10'),
+    ('Gossiping', PTT.data_type.post_search_type.MARK, 'm'),
+    ('Gossiping', PTT.data_type.post_search_type.MONEY, '5'),
+    ('Gossiping', PTT.data_type.post_search_type.PUSH, '-100'),
 ]
 
 for (test_board, search_type, condition) in test_list:
     show_condition(test_board, search_type, condition)
     newest_index = ptt_bot.get_newest_index(
-        PTT.data_type.IndexType.BBS,
+        PTT.data_type.index_type.BBS,
         test_board,
         search_type=search_type,
         search_condition=condition,
@@ -571,7 +571,7 @@ for (test_board, search_type, condition) in test_list:
     start_index = newest_index - test_range + 1
     # 有下條件的情況下，無法使用 aid 來標記範圍
     error_post_list, del_post_list = ptt_bot.crawl_board(
-        PTT.data_type.CrawlType.BBS,
+        PTT.data_type.crawl_type.BBS,
         crawlHandler,
         test_board,
         start_index=start_index,
@@ -594,7 +594,7 @@ Since 0.8.16
 
 ```python=
 error_post_list, del_post_list = ptt_bot.crawl_board(
-    PTT.data_type.CrawlType.BBS,
+    PTT.data_type.crawl_type.BBS,
     crawlHandler,
     'Gossiping',
     start_index=1,
@@ -637,7 +637,7 @@ for _ in range(3):
 ```python+=20
 test_board = 'Test'
 test_index = 398
-index = ptt_bot.get_newest_index(PTT.data_type.IndexType.BBS, board=test_board)
+index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
 print(f'{test_board} 最新文章編號 {index}')
 
 content = '''
@@ -645,7 +645,7 @@ What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-ptt_bot.push(test_board, PTT.data_type.PushType.PUSH, content, post_index=test_index)
+ptt_bot.push(test_board, PTT.data_type.push_type.PUSH, content, post_index=test_index)
 ```
 執行結果
 
@@ -697,25 +697,25 @@ except PTT.exceptions.NoSuchUser:
 
 ```python=
 def show_call_status(call_status):
-    if call_status == PTT.data_type.CallStatus.ON:
+    if call_status == PTT.data_type.call_status.ON:
         print('呼叫器狀態[打開]')
-    elif call_status == PTT.data_type.CallStatus.OFF:
+    elif call_status == PTT.data_type.call_status.OFF:
         print('呼叫器狀態[關閉]')
-    elif call_status == PTT.data_type.CallStatus.UNPLUG:
+    elif call_status == PTT.data_type.call_status.UNPLUG:
         print('呼叫器狀態[拔掉]')
-    elif call_status == PTT.data_type.CallStatus.WATERPROOF:
+    elif call_status == PTT.data_type.call_status.WATERPROOF:
         print('呼叫器狀態[防水]')
-    elif call_status == PTT.data_type.CallStatus.FRIEND:
+    elif call_status == PTT.data_type.call_status.FRIEND:
         print('呼叫器狀態[朋友]')
     else:
-        print(f'Unknown CallStatus: {call_status}')
+        print(f'Unknown call_status: {call_status}')
 
 
 call_status = ptt_bot.get_call_status()
 show_call_status(call_status)
 
 TestQueue = [x for x in range(
-    PTT.data_type.CallStatus.min_value, PTT.data_type.CallStatus.max_value + 1
+    PTT.data_type.call_status.min_value, PTT.data_type.call_status.max_value + 1
 )]
 random.shuffle(TestQueue)
 TestQueue.remove(call_status)
@@ -740,10 +740,10 @@ show_call_status(call_status)
 使用者離線 PTT.exceptions.UserOffline
 
 ```python=
-pttid = 'SampleUser'
+ptt_id = 'SampleUser'
 content = '水球測試 :D'
 try:
-    ptt_bot.throw_waterball(pttid, content)
+    ptt_bot.throw_waterball(ptt_id, content)
 except PTT.exceptions.NoSuchUser:
     print('無此使用者')
 except PTT.exceptions.UserOffline:
@@ -759,11 +759,11 @@ import time
 
 # 存取歷史水球可以有三個後續動作可以選
 # 不做任何事
-# OperateType = PTT.data_type.WaterBallOperateType.NOTHING
+# OperateType = PTT.data_type.waterball_operate_type.NOTHING
 # 存入信箱
-# OperateType = PTT.data_type.WaterBallOperateType.MAIL
+# OperateType = PTT.data_type.waterball_operate_type.MAIL
 # 清除
-operate_type = PTT.data_type.WaterBallOperateType.CLEAR
+operate_type = PTT.data_type.waterball_operate_type.CLEAR
 
 while True:
     waterball_list = ptt_bot.get_waterball(operate_type)
@@ -772,10 +772,10 @@ while True:
         continue
 
     for waterball_info in waterball_list:
-        if waterball_info.type == PTT.data_type.WaterBallType.CATCH:
+        if waterball_info.type == PTT.data_type.waterball_type.CATCH:
             # 收到水球
             temp = '★' + waterball_info.target + ' '
-        elif waterball_info.type == PTT.data_type.WaterBallType.SEND:
+        elif waterball_info.type == PTT.data_type.waterball_type.SEND:
             # 你丟出去的水球紀錄
             temp = 'To ' + waterball_info.target + ': '
         temp += waterball_info.content + ' [' + waterball_info.date + ']'
@@ -800,7 +800,7 @@ ptt_bot.give_money('CodingMan', 100)
 如果對象不存在則會丟出 PTT.exceptions.NoSuchUser 例外
 
 ```python=
-pttid = 'CodingMan'
+ptt_id = 'CodingMan'
 content = '''如有誤寄，對..對不起
 PTT Library 程式寄信測試內容
 
@@ -811,7 +811,7 @@ content = content.replace('\n', '\r\n')
 try:
     ptt_bot.mail(
         # 寄信對象
-        pttid,
+        ptt_id,
         # 標題
         '程式寄信標題',
         # 內文
@@ -912,7 +912,7 @@ Since 0.8.32
 以下是取得看板資訊 API
 
 ```python=
-if ptt_bot.config.host == PTT.data_type.Host.PTT1:
+if ptt_bot.config.host == PTT.data_type.host.PTT1:
     board_info = ptt_bot.get_board_info('Gossiping')
 else:
     board_info = ptt_bot.get_board_info('WhoAmI')
@@ -955,21 +955,21 @@ Since 0.8.26
 reply_post_index = 313
 
 ptt_bot.reply_post(
-    PTT.data_type.ReplyType.BOARD,
+    PTT.data_type.reply_type.BOARD,
     'Test',
     '測試回應到板上，如有打擾抱歉',
     post_index=reply_post_index
 )
 
 ptt_bot.reply_post(
-    PTT.data_type.ReplyType.MAIL,
+    PTT.data_type.reply_type.MAIL,
     'Test',
     '測試回應到信箱，如有打擾抱歉',
     post_index=reply_post_index
 )
 
 ptt_bot.reply_post(
-    PTT.data_type.ReplyType.BOARD_MAIL,
+    PTT.data_type.reply_type.BOARD_MAIL,
     'Test',
     '測試回應到板上還有信箱，如有打擾抱歉',
     post_index=reply_post_index
@@ -1000,7 +1000,7 @@ while True:
         while True:
             try:
                 ptt_bot.login(
-                    pttid,
+                    ptt_id,
                     password
                 )
                 break
@@ -1032,17 +1032,17 @@ Since 0.8.26
 
 ```python=
 # s 文章
-MarkType = PTT.data_type.MarkType.S
+mark_type = PTT.data_type.mark_type.S
 # 標記文章
-MarkType = PTT.data_type.MarkType.D
+mark_type = PTT.data_type.mark_type.D
 # 刪除標記文章
-MarkType = PTT.data_type.MarkType.DeleteD
+mark_type = PTT.data_type.mark_type.DeleteD
 # M 起來
 # Since 0.8.27
-MarkType = PTT.data_type.MarkType.M
+mark_type = PTT.data_type.mark_type.M
 # 待證實文章
 # Since 0.8.30
-MarkType = PTT.data_type.MarkType.UNCONFIRMED
+mark_type = PTT.data_type.mark_type.UNCONFIRMED
 
 ptt_bot.mark_post(
     mark_type,

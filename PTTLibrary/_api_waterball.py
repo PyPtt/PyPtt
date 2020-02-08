@@ -20,11 +20,11 @@ except ModuleNotFoundError:
 
 def get_waterball(api, operate_type:int) -> list:
 
-    if operate_type == data_type.WaterBallOperateType.NOTHING:
+    if operate_type == data_type.waterball_operate_type.NOTHING:
         water_ball_operate_type = 'R'
-    elif operate_type == data_type.WaterBallOperateType.CLEAR:
+    elif operate_type == data_type.waterball_operate_type.CLEAR:
         water_ball_operate_type = 'C' + command.Enter + 'Y'
-    elif operate_type == data_type.WaterBallOperateType.MAIL:
+    elif operate_type == data_type.waterball_operate_type.MAIL:
         water_ball_operate_type = 'M'
 
     target_list = [
@@ -182,7 +182,7 @@ def get_waterball(api, operate_type:int) -> list:
 
     all_waterball = '\n'.join(all_waterball)
 
-    if api.config.host == data_type.Host.PTT1:
+    if api.config.host == data_type.host.PTT1:
         all_waterball = all_waterball.replace(
             ']\n', ']==PTTWaterBallNewLine==')
         all_waterball = all_waterball.replace('\n', '')
@@ -225,7 +225,7 @@ def get_waterball(api, operate_type:int) -> list:
                 'Waterball Type',
                 'Send'
             )
-            waterball_type = data_type.WaterBallType.SEND
+            waterball_type = data_type.waterball_type.SEND
 
             pattern_result = to_water_ball_target_pattern.search(line)
             target = pattern_result.group(0)[3:-1]
@@ -246,7 +246,7 @@ def get_waterball(api, operate_type:int) -> list:
                 'Waterball Type',
                 'Catch'
             )
-            waterball_type = data_type.WaterBallType.CATCH
+            waterball_type = data_type.waterball_type.CATCH
 
             pattern_result = from_water_ball_target_pattern.search(line)
             target = pattern_result.group(0)[1:-1]
@@ -339,13 +339,13 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
 
         target_list = [
             connect_core.TargetUnit(
-                i18n.SetCallStatus,
+                i18n.Setcall_status,
                 '您的呼叫器目前設定為關閉',
                 response='y' + command.Enter,
             ),
             # 對方已落跑了
             connect_core.TargetUnit(
-                i18n.SetCallStatus,
+                i18n.Setcall_status,
                 '◆ 糟糕! 對方已落跑了',
                 exceptions_=exceptions.UserOffline(target_id)
             ),

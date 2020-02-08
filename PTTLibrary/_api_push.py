@@ -111,16 +111,16 @@ def push(
         log.show_value(api.config, log.Level.DEBUG, 'Boo', enable_boo)
         log.show_value(api.config, log.Level.DEBUG, 'Arrow', enable_arrow)
 
-        if push_type == data_type.PushType.PUSH and not enable_push:
-            push_type = data_type.PushType.ARROW
-        elif push_type == data_type.PushType.BOO and not enable_boo:
-            push_type = data_type.PushType.ARROW
-        elif push_type == data_type.PushType.ARROW and not enable_arrow:
-            push_type = data_type.PushType.PUSH
+        if push_type == data_type.push_type.PUSH and not enable_push:
+            push_type = data_type.push_type.ARROW
+        elif push_type == data_type.push_type.BOO and not enable_boo:
+            push_type = data_type.push_type.ARROW
+        elif push_type == data_type.push_type.ARROW and not enable_arrow:
+            push_type = data_type.push_type.PUSH
 
         cmd_list.append(str(push_type))
     # elif index == 1:
-    #     push_type = data_type.PushType.ARROW
+    #     push_type = data_type.push_type.ARROW
 
     cmd_list.append(push_content)
     cmd_list.append(command.Enter)

@@ -67,7 +67,7 @@ def logout(api) -> None:
 
 def login(
         api,
-        pttid,
+        ptt_id,
         password,
         kick_other_login):
 
@@ -89,10 +89,10 @@ def login(
     if len(password) > 8:
         password = password[:8]
 
-    pttid = pttid.strip()
+    ptt_id = ptt_id.strip()
     password = password.strip()
 
-    api._ID = pttid
+    api._ID = ptt_id
     api._Password = password
 
     api.config.kick_other_login = kick_other_login
@@ -106,7 +106,7 @@ def login(
             i18n.login,
             i18n.ID
         ],
-        pttid
+        ptt_id
     )
 
     target_list = [
@@ -184,7 +184,7 @@ def login(
     ]
 
     cmd_list = []
-    cmd_list.append(pttid)
+    cmd_list.append(ptt_id)
     cmd_list.append(command.Enter)
     cmd_list.append(password)
     cmd_list.append(command.Enter)

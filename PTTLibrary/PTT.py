@@ -154,11 +154,11 @@ class Library:
 
         if host == 0:
             host = self.config.host
-        elif not lib_util.check_range(data_type.Host, host):
+        elif not lib_util.check_range(data_type.host, host):
             raise ValueError('[PTT Library] Unknown host', host)
         self.config.host = host
 
-        if self.config.host == data_type.Host.PTT1:
+        if self.config.host == data_type.host.PTT1:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -168,7 +168,7 @@ class Library:
                 ],
                 i18n.PTT
             )
-        elif self.config.host == data_type.Host.PTT2:
+        elif self.config.host == data_type.host.PTT2:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -178,7 +178,7 @@ class Library:
                 ],
                 i18n.PTT2
             )
-        elif self.config.host == data_type.Host.LOCALHOST:
+        elif self.config.host == data_type.host.LOCALHOST:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -236,7 +236,7 @@ class Library:
 
     def _login(
             self,
-            pttid: str,
+            ptt_id: str,
             password: str,
             kick_other_login: bool = False) -> None:
 
@@ -247,32 +247,32 @@ class Library:
 
         return _api_loginout.login(
             self,
-            pttid,
+            ptt_id,
             password,
             kick_other_login)
 
     def login(
             self,
-            pttid: str,
+            ptt_id: str,
             password: str,
             kick_other_login: bool = False) -> None:
         self._one_thread()
 
         config.log_last_value = None
 
-        check_value.check(self.config, str, 'ID', pttid)
+        check_value.check(self.config, str, 'ID', ptt_id)
         check_value.check(self.config, str, 'Password', password)
         check_value.check(self.config, bool, 'kick_other_login', kick_other_login)
 
         try:
             return self._login(
-                pttid,
+                ptt_id,
                 password,
                 kick_other_login=kick_other_login
             )
         except exceptions.LoginError:
             return self._login(
-                pttid,
+                ptt_id,
                 password,
                 kick_other_login=kick_other_login
             )
@@ -330,7 +330,7 @@ class Library:
             check_value.check(self.config, str, 'PostAID', post_aid)
         check_value.check(self.config, int, 'PostIndex', post_index)
         check_value.check(self.config, int, 'SearchType', search_type,
-                          value_class=data_type.PostSearchType)
+                          value_class=data_type.post_search_type)
         if search_condition is not None:
             check_value.check(self.config, str,
                               'SearchCondition', search_condition)
@@ -371,7 +371,7 @@ class Library:
                     i18n.ErrorParameter,
                 ]))
 
-        if search_type == data_type.PostSearchType.PUSH:
+        if search_type == data_type.post_search_type.PUSH:
             try:
                 S = int(search_condition)
             except ValueError:
@@ -402,7 +402,7 @@ class Library:
 
         if post_index != 0:
             newest_index = self._get_newest_index(
-                data_type.IndexType.BBS,
+                data_type.index_type.BBS,
                 board=board,
                 search_type=search_type,
                 search_condition=search_condition
@@ -514,8 +514,8 @@ class Library:
             search_condition: str = None) -> int:
 
         check_value.check(
-            self.config, int, 'IndexType',
-            index_type, value_class=data_type.IndexType)
+            self.config, int, 'index_type',
+            index_type, value_class=data_type.index_type)
         check_value.check(self.config, str, 'Board', board)
 
         try:
@@ -538,7 +538,7 @@ class Library:
             search_condition: str = None) -> int:
         self._one_thread()
 
-        if index_type == data_type.IndexType.BBS:
+        if index_type == data_type.index_type.BBS:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
@@ -579,8 +579,8 @@ class Library:
         config.log_last_value = None
 
         check_value.check(
-            self.config, int, 'CrawlType',
-            crawl_type, value_class=data_type.CrawlType)
+            self.config, int, 'crawl_type',
+            crawl_type, value_class=data_type.crawl_type)
         check_value.check(self.config, str, 'Board', board)
 
         if len(board) == 0:
@@ -592,7 +592,7 @@ class Library:
                     board
                 ]))
 
-        if crawl_type == data_type.CrawlType.BBS:
+        if crawl_type == data_type.crawl_type.BBS:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
@@ -627,7 +627,7 @@ class Library:
                         i18n.BothInput
                     ]))
 
-            if search_type == data_type.PostSearchType.PUSH:
+            if search_type == data_type.post_search_type.PUSH:
                 try:
                     S = int(search_condition)
                 except ValueError:
@@ -648,7 +648,7 @@ class Library:
 
             if start_index != 0:
                 newest_index = self._get_newest_index(
-                    data_type.IndexType.BBS,
+                    data_type.index_type.BBS,
                     board=board,
                     search_type=search_type,
                     search_condition=search_condition
@@ -795,7 +795,7 @@ class Library:
                     else:
                         error_post_list.append(index)
                     continue
-                if post.delete_status != data_type.PostDeleteStatus.NOT_DELETED:
+                if post.delete_status != data_type.post_delete_status.NOT_DELETED:
                     del_post_list.append(index)
                 post_handler(post)
             if self.config.log_level == log.Level.INFO:
@@ -804,15 +804,15 @@ class Library:
             return error_post_list, del_post_list
 
         else:
-            if self.config.host == data_type.Host.PTT2:
-                raise exceptions.HostNotSupport(lib_util.get_current_func_name())
+            if self.config.host == data_type.host.PTT2:
+                raise exceptions.hostNotSupport(lib_util.get_current_func_name())
 
             # 網頁版本爬蟲
             # https://www.ptt.cc/bbs/index.html
 
             # 1. 取得總共有幾頁 MaxPage
             newest_index = self._get_newest_index(
-                data_type.IndexType.WEB,
+                data_type.index_type.WEB,
                 board=board
             )
             # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
@@ -841,13 +841,13 @@ class Library:
             def deleted_post(post_title):
                 if post_title.startswith('('):
                     if '本文' in post_title:
-                        return data_type.PostDeleteStatus.AUTHOR
+                        return data_type.post_delete_status.AUTHOR
                     elif post_title.startswith('(已被'):
-                        return data_type.PostDeleteStatus.MODERATOR
+                        return data_type.post_delete_status.MODERATOR
                     else:
-                        return data_type.PostDeleteStatus.UNKNOWN
+                        return data_type.post_delete_status.UNKNOWN
                 else:
-                    return data_type.PostDeleteStatus.NOT_DELETED
+                    return data_type.post_delete_status.NOT_DELETED
 
             for index in range(start_page, newest_index + 1):
                 log.show_value(
@@ -976,8 +976,8 @@ class Library:
         config.log_last_value = None
 
         check_value.check(self.config, str, 'Board', board)
-        check_value.check(self.config, int, 'PushType',
-                          push_type, value_class=data_type.PushType)
+        check_value.check(self.config, int, 'push_type',
+                          push_type, value_class=data_type.push_type)
         check_value.check(self.config, str, 'PushContent', push_content)
         if post_aid is not None:
             check_value.check(self.config, str, 'PostAID', post_aid)
@@ -1014,7 +1014,7 @@ class Library:
 
         if post_index != 0:
             newest_index = self._get_newest_index(
-                data_type.IndexType.BBS,
+                data_type.index_type.BBS,
                 board=board
             )
             check_value.check_index(self.config, 'PostIndex',
@@ -1133,7 +1133,7 @@ class Library:
 
         return self._get_user(user_id)
 
-    def throw_waterball(self, pttid, content) -> None:
+    def throw_waterball(self, ptt_id, content) -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -1144,28 +1144,28 @@ class Library:
 
         config.log_last_value = None
 
-        check_value.check(self.config, str, 'pttid', pttid)
+        check_value.check(self.config, str, 'ptt_id', ptt_id)
         check_value.check(self.config, str, 'content', content)
 
-        if len(pttid) <= 2:
+        if len(ptt_id) <= 2:
             raise ValueError(log.merge(
                 self.config,
                 [
-                    'pttid',
+                    'ptt_id',
                     i18n.ErrorParameter,
-                    pttid
+                    ptt_id
                 ]))
 
-        user = self._get_user(pttid)
+        user = self._get_user(ptt_id)
         if '不在站上' in user.status:
-            raise exceptions.UserOffline(pttid)
+            raise exceptions.UserOffline(ptt_id)
 
         try:
             from . import _api_waterball
         except ModuleNotFoundError:
             import _api_waterball
 
-        return _api_waterball.throw_waterball(self, pttid, content)
+        return _api_waterball.throw_waterball(self, ptt_id, content)
 
     def get_waterball(self, operate_type: int) -> list:
         self._one_thread()
@@ -1180,7 +1180,7 @@ class Library:
 
         check_value.check(
             self.config, int, 'OperateType', operate_type,
-            value_class=data_type.WaterBallOperateType)
+            value_class=data_type.waterball_operate_type)
 
         try:
             from . import _api_waterball
@@ -1225,8 +1225,8 @@ class Library:
         config.log_last_value = None
 
         check_value.check(
-            self.config, int, 'CallStatus', call_status,
-            value_class=data_type.CallStatus)
+            self.config, int, 'call_status', call_status,
+            value_class=data_type.call_status)
 
         try:
             from . import _api_call_status
@@ -1235,7 +1235,7 @@ class Library:
 
         return _api_call_status.set_call_status(self, call_status)
 
-    def give_money(self, pttid: str, money: int) -> None:
+    def give_money(self, ptt_id: str, money: int) -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -1246,21 +1246,21 @@ class Library:
 
         config.log_last_value = None
 
-        check_value.check(self.config, str, 'ID', pttid)
+        check_value.check(self.config, str, 'ID', ptt_id)
         check_value.check(self.config, int, 'Money', money)
         # Check user
-        self.get_user(pttid)
+        self.get_user(ptt_id)
 
         try:
             from . import _api_give_money
         except ModuleNotFoundError:
             import _api_give_money
 
-        return _api_give_money.give_money(self, pttid, money)
+        return _api_give_money.give_money(self, ptt_id, money)
 
     def mail(
             self,
-            pttid: str,
+            ptt_id: str,
             title: str,
             content: str,
             sign_file) -> None:
@@ -1274,7 +1274,7 @@ class Library:
 
         config.log_last_value = None
 
-        check_value.check(self.config, str, 'pttid', pttid)
+        check_value.check(self.config, str, 'ptt_id', ptt_id)
         check_value.check(self.config, str, 'title', title)
         check_value.check(self.config, str, 'content', content)
 
@@ -1302,7 +1302,7 @@ class Library:
 
         _api_mail.mail(
             self,
-            pttid,
+            ptt_id,
             title,
             content,
             sign_file)
@@ -1353,8 +1353,8 @@ class Library:
         config.log_last_value = None
 
         check_value.check(
-            self.config, int, 'ReplyType', reply_type,
-            value_class=data_type.ReplyType)
+            self.config, int, 'reply_type', reply_type,
+            value_class=data_type.reply_type)
         check_value.check(self.config, str, 'Board', board)
         check_value.check(self.config, str, 'Content', content)
         if post_aid is not None:
@@ -1362,7 +1362,7 @@ class Library:
 
         if post_index != 0:
             newest_index = self._get_newest_index(
-                data_type.IndexType.BBS,
+                data_type.index_type.BBS,
                 board=board)
             check_value.check_index(
                 self.config, 'PostIndex',
@@ -1483,7 +1483,7 @@ class Library:
 
         return _api_get_favourite_board.get_favourite_board(self)
 
-    def bucket(self, board: str, bucket_days: int, reason: str, pttid: str) -> None:
+    def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
 
         self._one_thread()
 
@@ -1498,9 +1498,9 @@ class Library:
         check_value.check(self.config, str, 'board', board)
         check_value.check(self.config, int, 'bucket_days', bucket_days)
         check_value.check(self.config, str, 'reason', reason)
-        check_value.check(self.config, str, 'pttid', pttid)
+        check_value.check(self.config, str, 'ptt_id', ptt_id)
 
-        self._get_user(pttid)
+        self._get_user(ptt_id)
 
         self._check_board(
             board,
@@ -1512,11 +1512,11 @@ class Library:
             import _api_bucket
 
         _api_bucket.bucket(
-            self, board, bucket_days, reason, pttid)
+            self, board, bucket_days, reason, ptt_id)
 
     def search_user(
             self,
-            pttid: str,
+            ptt_id: str,
             min_page: int = None,
             max_page: int = None) -> list:
 
@@ -1530,7 +1530,7 @@ class Library:
 
         config.log_last_value = None
 
-        check_value.check(self.config, str, 'pttid', pttid)
+        check_value.check(self.config, str, 'ptt_id', ptt_id)
         if min_page is not None:
             check_value.check_index(
                 self.config,
@@ -1557,7 +1557,7 @@ class Library:
         except ModuleNotFoundError:
             import _api_search_user
 
-        return _api_search_user.search_user(self, pttid, min_page, max_page)
+        return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
     def get_board_info(self, board: str) -> data_type.BoardInfo:
 

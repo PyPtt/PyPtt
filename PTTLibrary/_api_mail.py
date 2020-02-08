@@ -14,7 +14,7 @@ except ModuleNotFoundError:
 
 def mail(
         api,
-        pttid: str,
+        ptt_id: str,
         title: str,
         content: str,
         sign_file) -> None:
@@ -35,7 +35,7 @@ def mail(
     CmdList.append(command.Enter)
     CmdList.append('S')
     CmdList.append(command.Enter)
-    CmdList.append(pttid)
+    CmdList.append(ptt_id)
     CmdList.append(command.Enter)
 
     Cmd = ''.join(CmdList)
@@ -52,7 +52,7 @@ def mail(
         connect_core.TargetUnit(
             i18n.NoSuchUser,
             '【電子郵件】',
-            exceptions_=exceptions.NoSuchUser(pttid)
+            exceptions_=exceptions.NoSuchUser(ptt_id)
         ),
     ]
 

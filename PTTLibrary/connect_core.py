@@ -202,9 +202,9 @@ class API(object):
             try:
                 if self.config.connect_mode == ConnectMode.TELNET:
 
-                    if self.config.host == data_type.Host.PTT1:
+                    if self.config.host == data_type.host.PTT1:
                         self._core = telnetlib.Telnet('ptt.cc', self.config.port)
-                    elif self.config.host == data_type.Host.PTT2:
+                    elif self.config.host == data_type.host.PTT2:
                         self._core = telnetlib.Telnet('ptt2.cc', self.config.port)
                     else:
                         self._core = telnetlib.Telnet('localhost', self.config.port)
@@ -218,14 +218,14 @@ class API(object):
                         except Exception as e:
                             pass
 
-                    if self.config.host == data_type.Host.PTT1:
+                    if self.config.host == data_type.host.PTT1:
                         self._core = asyncio.get_event_loop().run_until_complete(
                             websockets.connect(
                                 'wss://ws.ptt.cc/bbs/',
                                 origin='https://term.ptt.cc'
                             )
                         )
-                    elif self.config.host == data_type.Host.PTT2:
+                    elif self.config.host == data_type.host.PTT2:
                         self._core = asyncio.get_event_loop().run_until_complete(
                             websockets.connect(
                                 'wss://ws.ptt2.cc/bbs',
@@ -244,7 +244,7 @@ class API(object):
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                if self.config.host == data_type.Host.PTT1:
+                if self.config.host == data_type.host.PTT1:
                     log.show_value(
                         self.config, log.Level.INFO, [
                             i18n.Connect,
