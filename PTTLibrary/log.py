@@ -90,8 +90,6 @@ def show_value(config, log_level, msg, log_value):
 
     if len(msg) == 0:
         return
-    # if len(Value) == 0:
-    #     return
 
     if check_ptt_msg == msg and log_value == config.log_last_value:
         return
