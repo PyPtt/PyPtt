@@ -217,6 +217,9 @@ except PTT.exceptions.LoginTooOften:
     ptt_bot.log('請稍等一下再登入')
     sys.exit()
 ptt_bot.log('登入成功')
+
+# call ptt_bot other api
+
 ptt_bot.logout()
 ```
 執行結果
@@ -247,6 +250,9 @@ except PTT.exceptions.LoginTooOften:
     ptt_bot.log('請稍等一下再登入')
     sys.exit()
 ptt_bot.log('登入成功')
+
+# call ptt_bot other api
+
 ptt_bot.logout()
 ```
 
@@ -257,10 +263,9 @@ ptt_bot.logout()
 以下便是最簡單的取得特定文章的範例
 註: Python 板第 7486 篇文章
 ```python=
-import sys
 from PTTLibrary import PTT
 
-post_info = ptt_bot.getPost(
+post_info = ptt_bot.get_post(
     'Python',
     post_index=7486
 )
@@ -277,7 +282,7 @@ post_info = ptt_bot.get_post(
     post_aid='1TJH_XY0'
 )
 
-# 從以上兩個範例可以看到 getPost 回傳了 post_info
+# 從以上兩個範例可以看到 get_post 回傳了 post_info
 # 這裡面包含了文章所有屬性
 # 這可以從以下範例明白怎麼取出每個屬性
 
@@ -353,7 +358,7 @@ print(f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow')
 ![](https://i.imgur.com/M6XGFzD.png)
 
 :::info
-備註: 因為 PTT 推文計數有三分鐘的時間間隔，所以在使用推文條件搜尋的情況下
+備註: 因為 PTT 推文計數至少有三分鐘的時間間隔，所以在使用推文條件搜尋的情況下
 可能導致結果不夠即時
 :::
 
@@ -399,8 +404,8 @@ Since 0.8.16
 ![](https://i.imgur.com/TdP5wL4.png)
 
 
-你可以啟用 Query 模式，這樣就不會點進去解析內文、推文跟 IP 等等
-可以加快一些速度，並減少出錯機率
+你可以啟用 query 模式，這樣就不會點進去解析內文、推文跟 IP 等等
+可以提升效能
 
 ```python=
 post_info = ptt_bot.get_post(
