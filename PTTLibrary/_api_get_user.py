@@ -20,7 +20,7 @@ except ModuleNotFoundError:
     import command
 
 
-def get_user(api, pttid) -> data_type.UserInfo:
+def get_user(api, ptt_id: str) -> data_type.UserInfo:
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('T')
