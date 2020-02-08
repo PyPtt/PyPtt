@@ -788,7 +788,7 @@ def get_post(
             ip = ip.replace('-', '.')
             # print(f'IP -> [{IP}]')
             break
-    if api.config.host == data_type.host.PTT1:
+    if api.config.host == data_type.host_type.PTT1:
         if ip is None:
             log.show_value(
                 api.config,
@@ -874,7 +874,7 @@ def get_post(
                        ]
         # PushContent = PushContent.replace(PushDate, '')
 
-        if api.config.host == data_type.host.PTT1:
+        if api.config.host == data_type.host_type.PTT1:
             push_content = push_content[
                            :push_content.rfind(push_date)
                            ]

@@ -126,18 +126,18 @@ class UserInfo:
             five_chess,
             chess,
             signature_file):
-        self.id = parse_para(str, ptt_id)
-        self.money = parse_para(str, money)
-        self.login_time = parse_para(int, login_time)
-        self.legal_post = parse_para(int, legal_post)
-        self.illegal_post = parse_para(int, illegal_post)
-        self.status = parse_para(str, status)
-        self.mail_status = parse_para(str, mail)
-        self.last_login = parse_para(str, last_login)
-        self.last_ip = parse_para(str, last_ip)
-        self.five_chess = parse_para(str, five_chess)
-        self.chess = parse_para(str, chess)
-        self.signature_file = parse_para(str, signature_file)
+        self.id: str = parse_para(str, ptt_id)
+        self.money: str = parse_para(str, money)
+        self.login_time: int = parse_para(int, login_time)
+        self.legal_post: int = parse_para(int, legal_post)
+        self.illegal_post: int = parse_para(int, illegal_post)
+        self.status: str = parse_para(str, status)
+        self.mail_status: str = parse_para(str, mail)
+        self.last_login: str = parse_para(str, last_login)
+        self.last_ip: str = parse_para(str, last_ip)
+        self.five_chess: str = parse_para(str, five_chess)
+        self.chess: str = parse_para(str, chess)
+        self.signature_file: str = parse_para(str, signature_file)
 
 
 class PushInfo:
@@ -204,7 +204,7 @@ class PostInfo:
         self.is_unconfirmed: bool = parse_para(bool, unconfirmed)
 
 
-class WaterBallInfo:
+class WaterballInfo:
     def __init__(self, waterball_type, target, content, date):
         self.type: int = parse_para(int, waterball_type)
         self.target: str = parse_para(str, target)
@@ -241,7 +241,7 @@ class crawl_type:
     max_value = WEB
 
 
-class host:
+class host_type:
     # 批踢踢萬
     PTT1: int = 1
     # 批踢踢兔
