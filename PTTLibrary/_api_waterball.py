@@ -339,13 +339,13 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
 
         target_list = [
             connect_core.TargetUnit(
-                i18n.Setcall_status,
+                i18n.SetCallStatus,
                 '您的呼叫器目前設定為關閉',
                 response='y' + command.Enter,
             ),
             # 對方已落跑了
             connect_core.TargetUnit(
-                i18n.Setcall_status,
+                i18n.SetCallStatus,
                 '◆ 糟糕! 對方已落跑了',
                 exceptions_=exceptions.UserOffline(target_id)
             ),
