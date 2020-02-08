@@ -103,7 +103,7 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
     legal_post = int(temp[0])
 
     # PTT2 沒有退文
-    if api.config.host == data_type.host.PTT1:
+    if api.config.host == data_type.host_type.PTT1:
         illegal_post = int(temp[1])
     else:
         illegal_post = -1

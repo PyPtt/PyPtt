@@ -100,7 +100,7 @@ class MoneyTooFew(Exception):
 
 class NoSuchBoard(Exception):
     def __init__(self, config, board):
-        if config.host == data_type.host.PTT1:
+        if config.host == data_type.host_type.PTT1:
             self.message = [
                 i18n.PTT,
                 i18n.NoSuchBoard
@@ -111,7 +111,7 @@ class NoSuchBoard(Exception):
                 i18n.NoSuchBoard
             ]
 
-        if config.language == i18n.Language.CHINESE:
+        if config.language == i18n.language.CHINESE:
             self.message = ''.join(self.message) + ': ' + board
         else:
             self.message = ' '.join(self.message) + ': ' + board
@@ -168,7 +168,7 @@ class UseTooManyResources(Exception):
         return self.message
 
 
-class hostNotSupport(Exception):
+class HostNotSupport(Exception):
     def __init__(self, api):
         self.message = f'{i18n.PTT2NotSupport}: {api}'
 
@@ -204,7 +204,7 @@ class ConnectError(Exception):
     def __init__(self, config):
         self.message = [i18n.Connect, i18n.Fail]
 
-        if config.language == i18n.Language.CHINESE:
+        if config.language == i18n.language.CHINESE:
             self.message = ''.join(self.message)
         else:
             self.message = ' '.join(self.message)

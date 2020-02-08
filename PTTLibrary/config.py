@@ -31,7 +31,7 @@ class Config:
     screen_post_timeout = 60.0
 
     # 預設語言
-    language = i18n.Language.CHINESE
+    language = i18n.language.CHINESE
 
     # 預設 log 等級
     log_level = log.Level.INFO
@@ -40,10 +40,10 @@ class Config:
     kick_other_login = False
 
     # 預設登入 PTT1
-    host = data_type.host.PTT1
+    host = data_type.host_type.PTT1
 
     # 預設採用 websocket
-    connect_mode = connect_core.ConnectMode.WEBSOCKET
+    connect_mode = connect_core.connect_mode.WEBSOCKET
 
     # 預設使用 23
     port = 23

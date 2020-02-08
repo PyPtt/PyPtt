@@ -22,7 +22,7 @@ class Level(object):
 
 def merge(config, msg) -> str:
     if isinstance(msg, list):
-        if config.language == i18n.Language.CHINESE:
+        if config.language == i18n.language.CHINESE:
 
             for i, element in enumerate(msg):
                 if len(element) == 0:

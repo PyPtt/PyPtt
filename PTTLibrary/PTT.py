@@ -96,7 +96,7 @@ class Library:
 
         if language == 0:
             language = self.config.language
-        elif not lib_util.check_range(i18n.Language, language):
+        elif not lib_util.check_range(i18n.language, language):
             raise ValueError('[PTT Library] Unknown language', language)
         else:
             self.config.language = language
@@ -121,7 +121,7 @@ class Library:
                 ]
             )
 
-        if self.config.language == i18n.Language.CHINESE:
+        if self.config.language == i18n.language.CHINESE:
             log.show_value(
                 self.config, log.Level.INFO, [
                     i18n.ChineseTranditional,
@@ -129,7 +129,7 @@ class Library:
                 ],
                 i18n.Init
             )
-        elif self.config.language == i18n.Language.ENGLISH:
+        elif self.config.language == i18n.language.ENGLISH:
             log.show_value(
                 self.config, log.Level.INFO, [
                     i18n.English,
@@ -140,8 +140,8 @@ class Library:
 
         if connect_mode == 0:
             connect_mode = self.config.connect_mode
-        elif not lib_util.check_range(connect_core.ConnectMode, connect_mode):
-            raise ValueError('[PTT Library] Unknown ConnectMode', connect_mode)
+        elif not lib_util.check_range(connect_core.connect_mode, connect_mode):
+            raise ValueError('[PTT Library] Unknown connect_mode', connect_mode)
         else:
             self.config.connect_mode = connect_mode
 
@@ -154,11 +154,11 @@ class Library:
 
         if host == 0:
             host = self.config.host
-        elif not lib_util.check_range(data_type.host, host):
+        elif not lib_util.check_range(data_type.host_type, host):
             raise ValueError('[PTT Library] Unknown host', host)
         self.config.host = host
 
-        if self.config.host == data_type.host.PTT1:
+        if self.config.host == data_type.host_type.PTT1:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -168,7 +168,7 @@ class Library:
                 ],
                 i18n.PTT
             )
-        elif self.config.host == data_type.host.PTT2:
+        elif self.config.host == data_type.host_type.PTT2:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -178,7 +178,7 @@ class Library:
                 ],
                 i18n.PTT2
             )
-        elif self.config.host == data_type.host.LOCALHOST:
+        elif self.config.host == data_type.host_type.LOCALHOST:
             log.show_value(
                 self.config,
                 log.Level.INFO,
@@ -804,8 +804,8 @@ class Library:
             return error_post_list, del_post_list
 
         else:
-            if self.config.host == data_type.host.PTT2:
-                raise exceptions.hostNotSupport(lib_util.get_current_func_name())
+            if self.config.host == data_type.host_type.PTT2:
+                raise exceptions.HostNotSupport(lib_util.get_current_func_name())
 
             # 網頁版本爬蟲
             # https://www.ptt.cc/bbs/index.html

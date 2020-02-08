@@ -28,9 +28,9 @@ def init():
     print('===預設值===')
     PTT.Library()
     print('===中文顯示===')
-    PTT.Library(language=PTT.i18n.Language.CHINESE)
+    PTT.Library(language=PTT.i18n.language.CHINESE)
     print('===英文顯示===')
-    PTT.Library(language=PTT.i18n.Language.ENGLISH)
+    PTT.Library(language=PTT.i18n.language.ENGLISH)
     print('===log DEBUG===')
     PTT.Library(log_level=PTT.log.Level.DEBUG)
     print('===log INFO===')
@@ -50,7 +50,7 @@ def init():
         sys.exit(-1)
     print('===語言放字串===')
     try:
-        PTT.Library(language='PTT.i18n.Language.ENGLISH')
+        PTT.Library(language='PTT.i18n.language.ENGLISH')
     except TypeError:
         print('通過')
     except:
@@ -90,7 +90,7 @@ def performance_test():
 
 def get_post():
 
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_post_list = [
             ('Python', 1),
             ('NotExitBoard', 1),
@@ -270,7 +270,7 @@ def show_condition(test_board, search_type, condition):
 def get_post_with_condition():
     # PTT1
 
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_list = [
             ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
             ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Wanted)'),
@@ -374,7 +374,7 @@ github: https://tinyurl.com/umqff3v
 
 
 def get_newest_index():
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_board_list = [
             'Wanted',
             'Gossiping',
@@ -462,7 +462,7 @@ def crawlHandler(Post):
 
 def crawl_board():
     global query
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_board_list = [
             'Test',
             'Wanted',
@@ -595,7 +595,7 @@ def crawl_board_with_condition():
     #         traceback.print_tb(e.__traceback__)
     #         print(e)
 
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_list = [
             # ptt1
             ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
@@ -1007,7 +1007,7 @@ def get_board_info():
     # j - 未 設為冷靜模式                            p)進板畫面
     # 8 - 禁止 未滿十八歲進入
 
-    if ptt_bot.config.host == PTT.data_type.host.PTT1:
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         board_info = ptt_bot.get_board_info('Gossiping')
     else:
         board_info = ptt_bot.get_board_info('WhoAmI')
@@ -1782,11 +1782,11 @@ github: https://tinyurl.com/umqff3v
             ptt_bot = PTT.Library(
                 # log_level=PTT.log.Level.TRACE,
                 # log_level=PTT.log.Level.DEBUG,
-                # host=PTT.data_type.host.PTT2
+                # host=PTT.data_type.host_type.PTT2
 
                 # for 本機測試
-                # connect_mode=PTT.connect_core.ConnectMode.TELNET,
-                # host=PTT.data_type.host.LOCALhost,
+                # connect_mode=PTT.connect_core.connect_mode.TELNET,
+                # host=PTT.data_type.host_type.LOCALhost,
                 # port=8888,
             )
             try:

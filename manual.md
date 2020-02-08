@@ -81,7 +81,7 @@ pip install PTTLibrary==VERSION
 ###### PTT.exceptions.UseTooManyResources
     Since 0.8.15
     使用過多 PTT 資源，請稍等一段時間並增加操作之間的時間間隔
-###### PTT.exceptions.hostNotSupport
+###### PTT.exceptions.HostNotSupport
     Since 0.8.25
     批踢踢萬或批踢踢兔不支援這個操作
 ###### PTT.exceptions.NoPush
@@ -118,8 +118,8 @@ ptt_bot = PTT.Library()
 ```python=
 ptt_bot = PTT.Library(
     # (預設值) Chinese
-    # language=PTT.i18n.Language.CHINESE,
-    language=PTT.i18n.Language.ENGLISH,
+    # language=PTT.i18n.language.CHINESE,
+    language=PTT.i18n.language.ENGLISH,
 )
 ```
 
@@ -171,22 +171,23 @@ ptt_bot = PTT.Library(
 ```python=
 PTT2Bot = PTT.Library(
     # (預設值) PTT1
-    # host=PTT.data_type.host.PTT1,
-    # host=PTT.data_type.host.PTT2,
-    # host=PTT.data_type.host.LOCALHOST,
-    host=PTT.data_type.host.PTT2
+    # host=PTT.data_type.host_type.PTT1,
+    # host=PTT.data_type.host_type.PTT2,
+    # host=PTT.data_type.host_type.LOCALHOST,
+    host=PTT.data_type.host_type.PTT2
 )
 ```
 
 如果有 telnet 的需求，可以切換連線模式
 如果需要更換 port 也是支援的
+值得注意的是，根據測試結果無加密的 telnet 比 websocket 慢
 Since 0.9.1
 
 ```python=
 PTT2Bot = PTT.Library(
     # (預設值) WEBSOCKET
-    # connect_mode=PTT.connect_core.ConnectMode.WEBSOCKET,
-    connect_mode=PTT.connect_core.ConnectMode.TELNET,
+    # connect_mode=PTT.connect_core.connect_mode.WEBSOCKET,
+    connect_mode=PTT.connect_core.connect_mode.TELNET,
     # (預設值) 23
     port=8888
 )
@@ -912,7 +913,7 @@ Since 0.8.32
 以下是取得看板資訊 API
 
 ```python=
-if ptt_bot.config.host == PTT.data_type.host.PTT1:
+if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
     board_info = ptt_bot.get_board_info('Gossiping')
 else:
     board_info = ptt_bot.get_board_info('WhoAmI')
