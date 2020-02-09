@@ -4,14 +4,10 @@ tags: PTTLibrary
 # PTT Library 完全使用手冊
 
 :::info
-註1:此手冊僅支援 0.9 最新的版本，如果你使用的版本並非 0.9.x，請確認版本後再參考手冊
+註1:此手冊僅支援 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)，如果你使用的版本為 0.8.x，請參考 [[使用手冊 0.8]](https://hackmd.io/@CodingMan/PTTLibraryManual_0_8)
 註2:有出現在本手冊中的使用者或文章，如果不想出現，很抱歉請馬上告知我
-註3:如果是使用 0.8 版本請參考 [[使用手冊 0.8]](https://hackmd.io/@CodingMan/PTTLibraryManual_0_8)
 :::
 
-:::info
-0.9.1 正在積極測試中，近期釋出
-:::
 有任何使用上的問題都可以直接問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/pttlibrary)
 Github: [PTT Library](https://github.com/Truth0906/PTTLibrary)
 
@@ -404,7 +400,7 @@ Since 0.8.16
 ![](https://i.imgur.com/TdP5wL4.png)
 
 
-你可以啟用 query 模式，這樣就不會點進去解析內文、推文跟 IP 等等
+你可以啟用 query 模式，這樣就不會進入文章解析內文、推文、IP與地點等等
 可以提升效能
 
 ```python=
