@@ -54,7 +54,7 @@ class Library:
             set_log_handler_result = True
             try:
                 log_handler(f'PTT Library v {version.V}')
-                log_handler('Developed by PTT CodingMan')
+                log_handler('Developed by CodingMan')
             except Exception:
                 log_handler = None
                 set_log_handler_result = False
@@ -62,7 +62,7 @@ class Library:
             has_log_handler = False
 
         print(f'PTT Library v {version.V}')
-        print('Developed by PTT CodingMan')
+        print('Developed by CodingMan')
 
         self._login_status = False
         self._unregistered_user = True
@@ -1584,4 +1584,4 @@ class Library:
 
 if __name__ == '__main__':
     print('PTT Library v ' + version.V)
-    print('Developed by PTT CodingMan')
+    print('Developed by CodingMan')

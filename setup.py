@@ -96,11 +96,11 @@ setup(
         # Pick your license as you wish
         'License :: OSI Approved :: MIT License',
 
-        'Programming language :: Python :: 3.6',
-        'Programming language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
 
-        'Natural language :: Chinese (Traditional)',
-        'Natural language :: English',
+        'Natural Language :: Chinese (Traditional)',
+        'Natural Language :: English',
     ],
 
     # This field adds keywords for your project which will appear on the
