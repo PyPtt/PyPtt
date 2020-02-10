@@ -58,7 +58,7 @@ def init():
         sys.exit(-1)
 
     def handler(msg):
-        with open('LogHandler.txt', 'a', encoding='utf-8') as F:
+        with open('log.txt', 'a', encoding='utf-8') as F:
             F.write(msg + '\n')
 
     ptt_bot = PTT.Library(
