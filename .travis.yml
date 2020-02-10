@@ -11,4 +11,4 @@ install:
   - pip3 install PTTLibrary --upgrade
 
 script:
-  - python3 Test.py -ci
+  - python3 test.py -ci
