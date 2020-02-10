@@ -3,7 +3,7 @@ tags: PTTLibrary
 ---
 # PTT Library 完全使用手冊
 
-:::info
+:::danger
 註1:此手冊僅支援 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)，如果你使用的版本為 0.8.x，請參考 [[使用手冊 0.8]](https://hackmd.io/@CodingMan/PTTLibraryManual_0_8)
 註2:有出現在本手冊中的使用者或文章，如果不想出現，很抱歉請馬上告知我
 :::
@@ -92,6 +92,14 @@ pip install PTTLibrary==VERSION
 ###### PTT.exceptions.NoSuchPost
     Since 0.8.27
     沒有該文章
+###### PTT.exceptions.CanNotUseSearchPostCode
+    Since 0.9.1
+    此狀態下無法使用搜尋文章代碼(AID)功能
+###### PTT.exceptions.UserHasPreviouslyBeenBanned
+    Since 0.9.1
+    使用者之前已被禁言
+
+
 
 ---
 
@@ -165,7 +173,7 @@ ptt_bot = PTT.Library(
 本機 Since 0.9.1
 
 ```python=
-PTT2Bot = PTT.Library(
+ptt2_bot = PTT.Library(
     # (預設值) PTT1
     # host=PTT.data_type.host_type.PTT1,
     # host=PTT.data_type.host_type.PTT2,
@@ -180,7 +188,7 @@ PTT2Bot = PTT.Library(
 Since 0.9.1
 
 ```python=
-PTT2Bot = PTT.Library(
+ptt_bot = PTT.Library(
     # (預設值) WEBSOCKET
     # connect_mode=PTT.connect_core.connect_mode.WEBSOCKET,
     connect_mode=PTT.connect_core.connect_mode.TELNET,
@@ -1055,6 +1063,26 @@ ptt_bot.mark_post(
     post_index=10,
     search_type=search_type, # Optional
     search_condition=search_condition # Optional
+)
+```
+
+---
+
+### 水桶
+Since 0.8.29
+
+如果板主想要自動化水桶，當然也是可以的喔!!
+
+```python=
+ptt_bot.bucket(
+    # 看板
+    'QQBoard',
+    # 幾天，請自行轉換成天數
+    7,
+    # 水桶原因
+    'Bucket Reason',
+    # 水桶對象
+    'CodingMan'
 )
 ```
 
