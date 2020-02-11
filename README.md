@@ -1,4 +1,4 @@
-![PTTLibrary: A PTT Library in Python](https://raw.githubusercontent.com/Truth0906/PTTLibrary/master/logo/facebook_cover_photo_1.png)
+![](https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/logo/facebook_cover_photo_2.png)
 # PyPtt
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)
