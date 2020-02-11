@@ -15,3 +15,5 @@ Account*.txt
 .vscode
 .idea/
 venv/
+/log.txt
+PyPtt.egg-info/

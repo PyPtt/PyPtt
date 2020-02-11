@@ -3,7 +3,7 @@ import time
 import json
 import traceback
 import PTTLibrary
-from PTTLibrary import PTT
+from pyptt import PTT
 
 
 def get_pw():
@@ -68,13 +68,13 @@ def echo():
 
 
 if __name__ == '__main__':
-    print('Welcome to PTT Library v ' + PTT.version.V + ' Echo Server')
+    print('Welcome to PyPtt v ' + PTT.version.V + ' Echo Server')
 
     ptt_id, password = get_pw()
 
     try:
 
-        ptt_bot = PTT.Library(
+        ptt_bot = PTT.API(
             # log_level=PTT.log_level.TRACE,
         )
         try:

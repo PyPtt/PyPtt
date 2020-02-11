@@ -6,7 +6,7 @@ import random
 import traceback
 import threading
 
-from PTTLibrary import PTT
+from pyptt import PTT
 
 
 def get_password(password_file):
@@ -26,23 +26,23 @@ def get_password(password_file):
 def init():
     print('===正向===')
     print('===預設值===')
-    PTT.Library()
+    PTT.API()
     print('===中文顯示===')
-    PTT.Library(language=PTT.i18n.language.CHINESE)
+    PTT.API(language=PTT.i18n.language.CHINESE)
     print('===英文顯示===')
-    PTT.Library(language=PTT.i18n.language.ENGLISH)
+    PTT.API(language=PTT.i18n.language.ENGLISH)
     print('===log DEBUG===')
-    PTT.Library(log_level=PTT.log.Level.DEBUG)
+    PTT.API(log_level=PTT.log.Level.DEBUG)
     print('===log INFO===')
-    PTT.Library(log_level=PTT.log.Level.INFO)
+    PTT.API(log_level=PTT.log.Level.INFO)
     print('===log SLIENT===')
-    PTT.Library(log_level=PTT.log.Level.SILENT)
+    PTT.API(log_level=PTT.log.Level.SILENT)
     print('===log SLIENT======')
 
     print('===負向===')
     try:
         print('===語言 99===')
-        PTT.Library(language=99)
+        PTT.API(language=99)
     except ValueError:
         print('通過')
     except:
@@ -50,7 +50,7 @@ def init():
         sys.exit(-1)
     print('===語言放字串===')
     try:
-        PTT.Library(language='PTT.i18n.language.ENGLISH')
+        PTT.API(language='PTT.i18n.language.ENGLISH')
     except TypeError:
         print('通過')
     except:
@@ -61,7 +61,7 @@ def init():
         with open('log.txt', 'a', encoding='utf-8') as F:
             F.write(msg + '\n')
 
-    ptt_bot = PTT.Library(
+    ptt_bot = PTT.API(
         log_handler=handler
     )
     ptt_bot.log('Test log')
@@ -351,7 +351,7 @@ def get_post_with_condition():
 
 def post():
     content = '''
-此為 PTT Library 貼文測試內容，如有打擾請告知。
+此為 PyPtt 貼文測試內容，如有打擾請告知。
 github: https://tinyurl.com/umqff3v
 
 開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual
@@ -363,7 +363,7 @@ github: https://tinyurl.com/umqff3v
             # 看板
             'Test',
             # 標題
-            'PTT Library 程式貼文測試',
+            'PyPtt 程式貼文測試',
             # 內文
             content,
             # 標題分類
@@ -785,7 +785,7 @@ def mail():
     content = '\r\n\r\n'.join(
         [
             '如有誤寄，對..對不起',
-            'PTT Library 程式寄信測試內容',
+            'PyPtt 程式寄信測試內容',
             'github: https://tinyurl.com/umqff3v'
         ]
     )
@@ -821,7 +821,7 @@ def threading_test():
     id2, password2 = get_password('Account.txt')
 
     def thread_func1():
-        thread_bot1 = PTT.Library()
+        thread_bot1 = PTT.API()
         try:
             thread_bot1.login(
                 id1,
@@ -836,7 +836,7 @@ def threading_test():
         print('1 多線程測試完成')
 
     def thread_func2():
-        thread_bot2 = PTT.Library()
+        thread_bot2 = PTT.API()
         try:
             thread_bot2.login(
                 id2,
@@ -1060,7 +1060,7 @@ def search_user():
 
 
 if __name__ == '__main__':
-    print('Welcome to PTT Library v ' + PTT.version.V + ' test case')
+    print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
 
     RunCI = False
     TravisCI = False
@@ -1080,7 +1080,7 @@ if __name__ == '__main__':
             TravisCI = True
 
         init()
-        ptt_bot = PTT.Library(
+        ptt_bot = PTT.API(
             # log_level=PTT.log.Level.TRACE,
         )
         try:
@@ -1202,11 +1202,11 @@ if __name__ == '__main__':
                         sys.exit(1)
             print('取得看板最新文章編號測試全部通過')
 
-            Title = 'PTT Library 程式貼文基準測試標題'
+            Title = 'PyPtt 程式貼文基準測試標題'
             content = f'''
-PTT Library v {ptt_bot.get_version()}
+PyPtt v {ptt_bot.get_version()}
 
-PTT Library 程式貼文基準測試內文
+PyPtt 程式貼文基準測試內文
 
 この日本のベンチマーク
 '''
@@ -1246,14 +1246,14 @@ PTT Library 程式貼文基準測試內文
                     post_index=index - i,
                 )
 
-                if ptt_id in post_info.author and 'PTT Library 程式貼文基準測試內文' in post_info.content and \
+                if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                         Title in post_info.title:
                     print('使用文章編號取得基準文章成功')
                     post_info = ptt_bot.get_post(
                         basic_board,
                         post_aid=post_info.aid,
                     )
-                    if ptt_id in post_info.author and 'PTT Library 程式貼文基準測試內文' in post_info.content and \
+                    if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                             Title in post_info.title:
                         print('使用文章代碼取得基準文章成功')
                         basic_post_aid = post_info.aid
@@ -1519,7 +1519,7 @@ PTT Library 程式貼文基準測試內文
                              content, post_aid=basic_post_aid)
 
             content = '''如有誤寄，對..對不起
-PTT Library 程式寄信測試內容
+PyPtt 程式寄信測試內容
 
 github: https://tinyurl.com/umqff3v
 '''
@@ -1708,7 +1708,7 @@ github: https://tinyurl.com/umqff3v
             else:
                 ID2, Password2 = get_password('Account2.txt')
 
-            PTTBot2 = PTT.Library(
+            PTTBot2 = PTT.API(
                 # log_level=PTT.log.Level.TRACE,
             )
             try:
@@ -1779,7 +1779,7 @@ github: https://tinyurl.com/umqff3v
         try:
             # init()
             # threading_test()
-            ptt_bot = PTT.Library(
+            ptt_bot = PTT.API(
                 # log_level=PTT.log.Level.TRACE,
                 # log_level=PTT.log.Level.DEBUG,
                 # host=PTT.data_type.host_type.PTT2
