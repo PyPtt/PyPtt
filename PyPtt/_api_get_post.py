@@ -160,8 +160,14 @@ def get_post(
     elif index == 0:
 
         lock_post = False
-        cursor_line = [line for line in ori_screen.split(
-            '\n') if line.startswith(api.cursor)][0]
+        try:
+            cursor_line = [line for line in ori_screen.split(
+                '\n') if line.strip().startswith(api.cursor)][0]
+        except Exception as e:
+            print(api.cursor)
+            print(ori_screen)
+            raise e
+
         post_author = cursor_line
         if '□' in post_author:
             post_author = post_author[:post_author.find('□')].strip()

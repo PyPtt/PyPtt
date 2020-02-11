@@ -9,7 +9,7 @@ tags: PyPtt
 :::
 
 有任何使用上的問題都可以直接問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
-Github: [PyPtt](https://github.com/Truth0906/PyPtt)
+Github: [PyPtt](https://github.com/PttCodingMan/PyPtt)
 
 ---
 
@@ -98,8 +98,6 @@ pip install PyPtt==VERSION
 ###### PTT.exceptions.UserHasPreviouslyBeenBanned
     Since 0.9.1
     使用者之前已被禁言
-
-
 
 ---
 
