@@ -304,7 +304,7 @@ if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
         print(f'[板主刪除][{post_info.author}]')
     elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
         print(f'[作者刪除][{post_info.author}]')
-    elif post_info.delete_status == PTT.data_type.post_delete_status.ByUnknow:
+    elif post_info.delete_status == PTT.data_type.post_delete_status.UNKNOWN:
         print(f'[不明刪除]')
     return
 
@@ -483,7 +483,7 @@ def crawl_handler(post_info):
             print(f'[板主刪除][{post_info.author}]')
         elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
             print(f'[作者刪除][{post_info.author}]')
-        elif post_info.delete_status == PTT.data_type.post_delete_status.ByUnknow:
+        elif post_info.delete_status == PTT.data_type.post_delete_status.UNKNOWN:
             print(f'[不明刪除]')
         return
 
