@@ -3,7 +3,7 @@ import time
 import json
 import traceback
 import PTTLibrary
-from pyptt import PTT
+from PyPtt import PTT
 
 
 def get_pw():
