@@ -1087,7 +1087,7 @@ if __name__ == '__main__':
             ptt_bot.login(
                 ptt_id,
                 password,
-                # kick_other_login=True
+                kick_other_login=True
             )
             pass
         except PTT.exceptions.LoginError:
