@@ -47,13 +47,13 @@ class Library:
 
         self._ID = None
         if log_handler is not None and not callable(log_handler):
-            raise TypeError('[PTT Library] log_handler is must callable!!')
+            raise TypeError('[PyPtt] log_handler is must callable!!')
 
         if log_handler is not None:
             has_log_handler = True
             set_log_handler_result = True
             try:
-                log_handler(f'PTT Library v {version.V}')
+                log_handler(f'PyPtt v {version.V}')
                 log_handler('Developed by CodingMan')
             except Exception:
                 log_handler = None
@@ -61,7 +61,7 @@ class Library:
         else:
             has_log_handler = False
 
-        print(f'PTT Library v {version.V}')
+        print(f'PyPtt v {version.V}')
         print('Developed by CodingMan')
 
         self._login_status = False
@@ -70,15 +70,15 @@ class Library:
         self.config = config.Config()
 
         if not isinstance(language, int):
-            raise TypeError('[PTT Library] language must be integer')
+            raise TypeError('[PyPtt] language must be integer')
         if not isinstance(log_level, int):
-            raise TypeError('[PTT Library] log_level must be integer')
+            raise TypeError('[PyPtt] log_level must be integer')
         if not isinstance(screen_time_out, int):
-            raise TypeError('[PTT Library] screen_timeout must be integer')
+            raise TypeError('[PyPtt] screen_timeout must be integer')
         if not isinstance(screen_long_time_out, int):
-            raise TypeError('[PTT Library] screen_long_timeout must be integer')
+            raise TypeError('[PyPtt] screen_long_timeout must be integer')
         if not isinstance(host, int):
-            raise TypeError('[PTT Library] host must be integer')
+            raise TypeError('[PyPtt] host must be integer')
 
         if screen_time_out != 0:
             self.config.screen_timeout = screen_time_out
@@ -90,14 +90,14 @@ class Library:
         if log_level == 0:
             log_level = self.config.log_level
         elif not lib_util.check_range(log.Level, log_level):
-            raise ValueError('[PTT Library] Unknown log_level', log_level)
+            raise ValueError('[PyPtt] Unknown log_level', log_level)
         else:
             self.config.log_level = log_level
 
         if language == 0:
             language = self.config.language
         elif not lib_util.check_range(i18n.language, language):
-            raise ValueError('[PTT Library] Unknown language', language)
+            raise ValueError('[PyPtt] Unknown language', language)
         else:
             self.config.language = language
         i18n.load(self.config.language)
@@ -141,21 +141,21 @@ class Library:
         if connect_mode == 0:
             connect_mode = self.config.connect_mode
         elif not lib_util.check_range(connect_core.connect_mode, connect_mode):
-            raise ValueError('[PTT Library] Unknown connect_mode', connect_mode)
+            raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
         else:
             self.config.connect_mode = connect_mode
 
         if port == 0:
             port = self.config.port
         elif not 0 < port < 65535:
-            raise ValueError('[PTT Library] Unknown port', port)
+            raise ValueError('[PyPtt] Unknown port', port)
         else:
             self.config.port = port
 
         if host == 0:
             host = self.config.host
         elif not lib_util.check_range(data_type.host_type, host):
-            raise ValueError('[PTT Library] Unknown host', host)
+            raise ValueError('[PyPtt] Unknown host', host)
         self.config.host = host
 
         if self.config.host == data_type.host_type.PTT1:
@@ -204,8 +204,8 @@ class Library:
 
         log.show_value(
             self.config,
-            log.Level.INFO, [
-                i18n.PTT,
+            log.Level.INFO,
+            [
                 i18n.Library,
                 ' v ' + version.V,
             ],
@@ -1583,5 +1583,5 @@ class Library:
 
 
 if __name__ == '__main__':
-    print('PTT Library v ' + version.V)
+    print('PyPtt v ' + version.V)
     print('Developed by CodingMan')
