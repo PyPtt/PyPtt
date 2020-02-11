@@ -1,5 +1,5 @@
 import os
-from pyptt import version
+from PyPtt import version
 
 # A setuptools based setup module.
 # See:
@@ -106,7 +106,7 @@ setup(
     # project page. What does your project relate to?
     #
     # Note that this is a string of words separated by whitespace, not a list.
-    keywords=['PTT', 'crawler', 'bot', 'library'],  # Optional
+    keywords=['PTT', 'crawler', 'bot', 'library', 'telnet', 'websocket'],  # Optional
 
     python_requires='>=3.6',
     # You can just specify package directories manually here if your project is
