@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/logo/facebook_cover_photo_1.png)
+![](https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/logo/facebook_cover_photo_2.png)
 # PyPtt
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)
@@ -28,7 +28,7 @@
 #### 安裝
 #### Windows 使用 pip, Linux and Mac 使用 pip3
 ```bash
-pip install PTTLibrary
+pip install PyPtt
 ```
 
 ## 回報問題
