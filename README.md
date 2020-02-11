@@ -18,7 +18,7 @@
 #### 完整的支援: PyPtt 是目前支援最完整的 PTT API，除了 PTT 也相容於 PTT2，詳細範例請參考 [PyPtt 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
 #### 高效能爬蟲: 首創登入式爬蟲，除了可以取得即時的推文，也比網頁式爬蟲擁有更好的效能 [效能比較表](https://hackmd.io/@CodingMan/crawlerbenchmark)
 #### 快速的客服: 如果有任何問題你可以在 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt) 找到我
-#### 完整的測試: 每一次有新的 push，CI 都會自動開始測試，你可以在 [![Build Status](https://travis-ci.org/PttCodingMan/PTTLibrary.svg?branch=master)](https://travis-ci.org/PttCodingMan/PTTLibrary) 找到測試結果
+#### 完整的測試: 每一次有新的 push，CI 都會自動開始測試，你可以在 [![Build Status](https://travis-ci.org/PttCodingMan/PTTLibrary.svg?branch=master)](https://travis-ci.org/PttCodingMan/PyPtt) 找到測試結果
 #### 良好程式碼品質: 你可以在 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c52adb27e96f49d4841df3fb6fbe1d5e)](https://www.codacy.com/manual/PttCodingMan/PTTLibrary?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PTTLibrary&amp;utm_campaign=Badge_Grade) 找到程式碼品質報告與等級
 
 ## 版本
