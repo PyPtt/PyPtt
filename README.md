@@ -3,7 +3,7 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)
 [![Build Status](https://travis-ci.org/PttCodingMan/PyPtt.svg?branch=master)](https://travis-ci.org/PttCodingMan/PyPtt)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c52adb27e96f49d4841df3fb6fbe1d5e)](https://www.codacy.com/manual/PttCodingMan/PTTLibrary?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PTTLibrary&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/940fe61df0a0443ba883307e11e7b22d)](https://www.codacy.com/manual/PttCodingMan/PyPtt?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PyPtt&amp;utm_campaign=Badge_Grade)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
@@ -19,7 +19,7 @@
 #### 高效能爬蟲: 首創登入式爬蟲，除了可以取得即時的推文，也比網頁式爬蟲擁有更好的效能 [效能比較表](https://hackmd.io/@CodingMan/crawlerbenchmark)
 #### 快速的客服: 如果有任何問題你可以在 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt) 找到我
 #### 完整的測試: 每一次有新的 push，CI 都會自動開始測試，你可以在 [![Build Status](https://travis-ci.org/PttCodingMan/PyPtt.svg?branch=master)](https://travis-ci.org/PttCodingMan/PyPtt) 找到測試結果
-#### 良好程式碼品質: 你可以在 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c52adb27e96f49d4841df3fb6fbe1d5e)](https://www.codacy.com/manual/PttCodingMan/PTTLibrary?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PTTLibrary&amp;utm_campaign=Badge_Grade) 找到程式碼品質報告與等級
+#### 良好程式碼品質: 你可以在 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/940fe61df0a0443ba883307e11e7b22d)](https://www.codacy.com/manual/PttCodingMan/PyPtt?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PyPtt&amp;utm_campaign=Badge_Grade) 找到程式碼品質報告與等級
 
 ## 版本
 #### [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)
