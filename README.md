@@ -2,7 +2,7 @@
 # PyPtt
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)
-[![Build Status](https://travis-ci.org/PttCodingMan/PTTLibrary.svg?branch=master)](https://travis-ci.org/PttCodingMan/PTTLibrary)
+[![Build Status](https://travis-ci.org/PttCodingMan/PyPtt.svg?branch=master)](https://travis-ci.org/PttCodingMan/PyPtt)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c52adb27e96f49d4841df3fb6fbe1d5e)](https://www.codacy.com/manual/PttCodingMan/PTTLibrary?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PTTLibrary&amp;utm_campaign=Badge_Grade)
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
