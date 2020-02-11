@@ -1,15 +1,15 @@
 ---
-tags: PTTLibrary
+tags: PyPtt
 ---
-# PTT Library 完全使用手冊
+# PyPtt 完全使用手冊
 
 :::danger
-註1:此手冊僅支援 [![Package Version](https://img.shields.io/pypi/v/PTTLibrary.svg)](https://pypi.python.org/pypi/PTTLibrary)，如果你使用的版本為 0.8.x，請參考 [[使用手冊 0.8]](https://hackmd.io/@CodingMan/PTTLibraryManual_0_8)
+註1:此手冊僅支援 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)，如果你使用的版本為 0.8.x，請參考 [[使用手冊 0.8]](https://hackmd.io/@CodingMan/PTTLibraryManual_0_8)
 註2:有出現在本手冊中的使用者或文章，如果不想出現，很抱歉請馬上告知我
 :::
 
-有任何使用上的問題都可以直接問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/pttlibrary)
-Github: [PTT Library](https://github.com/Truth0906/PTTLibrary)
+有任何使用上的問題都可以直接問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
+Github: [PyPtt](https://github.com/Truth0906/PyPtt)
 
 ---
 
@@ -18,19 +18,19 @@ Github: [PTT Library](https://github.com/Truth0906/PTTLibrary)
 ###### 安裝
 
 ```batch=
-pip install PTTLibrary
+pip install PyPtt
 ```
 
 ###### 更新
 
 ```batch=
-pip install PTTLibrary --upgrade
+pip install PyPtt --upgrade
 ```
 
 ###### 安裝特定版本
 
 ```batch=
-pip install PTTLibrary==VERSION
+pip install PyPtt==VERSION
 ```
 ---
 
@@ -66,7 +66,7 @@ pip install PTTLibrary==VERSION
     尚未註冊使用者或被退註使用者，因權限受限將無法使用全部功能
 ###### PTT.exceptions.MultiThreadOperated
     Since 0.8.13
-    一個 PTT Library 物件只能被同一個 thread 操作
+    一個 PyPtt 物件只能被同一個 thread 操作
     如果有第二個 thread 使用就會跳出此例外
 ###### PTT.exceptions.WrongIDorPassword
     Since 0.8.14
@@ -107,20 +107,20 @@ pip install PTTLibrary==VERSION
 
 ### 初始設定
 :::info
-PTT Library 並不支援兩個以上的 thread 同時操作一個物件
+PyPtt 並不支援兩個以上的 thread 同時操作一個物件
 如果有需求，請啟動新 thread 後，所有操作都在同一個 thread
 :::
 
 以下是初始化物件的方式，如果沒有特別需求，這樣就可以取得物件了
 
 ```python=
-ptt_bot = PTT.Library()
+ptt_bot = PTT.API()
 ```
 
 如果有改變語言顯示的需求，目前有支援英文與繁體中文
 
 ```python=
-ptt_bot = PTT.Library(
+ptt_bot = PTT.API(
     # (預設值) Chinese
     # language=PTT.i18n.language.CHINESE,
     language=PTT.i18n.language.ENGLISH,
@@ -130,7 +130,7 @@ ptt_bot = PTT.Library(
 也可以修改 Log 等級方便回報錯誤
 
 ```python=
-ptt_bot = PTT.Library(
+ptt_bot = PTT.API(
     # (預設值) INFO
     # log_level=PTT.log.Level.INFO,
     # log_level=PTT.log.Level.DEBUG,
@@ -141,7 +141,7 @@ ptt_bot = PTT.Library(
 如果你的網路環境比較慢(例如海外)，常常不小心就 timeout，也有參數可以調整
 Since 0.9.1
 ```python=
-ptt_bot = PTT.Library(
+ptt_bot = PTT.API(
     # 預設 3 秒後判定此畫面沒有可辨識的目標
     screen_time_out=5,
     # 預設 10 秒後判定此畫面沒有可辨識的目標
@@ -163,17 +163,17 @@ def handler(msg):
     with open('log.txt', 'a', encoding='utf-8') as f:
         f.write(msg + '\n')
 
-ptt_bot = PTT.Library(
+ptt_bot = PTT.API(
     log_handler=handler
 )
 ```
 
-當然 PTT Library 也支援批踢踢兔與本機。
+當然 PyPtt 也支援批踢踢兔與本機。
 批踢踢兔 Since 0.8.25
 本機 Since 0.9.1
 
 ```python=
-ptt2_bot = PTT.Library(
+ptt2_bot = PTT.API(
     # (預設值) PTT1
     # host=PTT.data_type.host_type.PTT1,
     # host=PTT.data_type.host_type.PTT2,
@@ -188,7 +188,7 @@ ptt2_bot = PTT.Library(
 Since 0.9.1
 
 ```python=
-ptt_bot = PTT.Library(
+ptt_bot = PTT.API(
     # (預設值) WEBSOCKET
     # connect_mode=PTT.connect_core.connect_mode.WEBSOCKET,
     connect_mode=PTT.connect_core.connect_mode.TELNET,
@@ -208,7 +208,7 @@ ptt_bot = PTT.Library(
 import sys
 from PTTLibrary import PTT
 
-ptt_bot = PTT.Library()
+ptt_bot = PTT.API()
 try:
     ptt_bot.login(ptt_id, password)
 except PTT.exceptions.LoginError:
@@ -237,7 +237,7 @@ ptt_bot.logout()
 import sys
 from PTTLibrary import PTT
 
-ptt_bot = PTT.Library()
+ptt_bot = PTT.API()
 try:
     ptt_bot.login(
         ptt_id,
@@ -620,7 +620,7 @@ error_post_list, del_post_list = ptt_bot.crawl_board(
 
 ```python=
 content = '''
-此為 PTT Library 貼文測試內容，如有打擾請告知。
+此為 PyPtt 貼文測試內容，如有打擾請告知。
 github: https://tinyurl.com/umqff3v
 
 開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual
@@ -632,7 +632,7 @@ for _ in range(3):
         # 看板
         'Test',
         # 標題
-        'PTT Library 程式貼文測試',
+        'PyPtt 程式貼文測試',
         # 內文
         content,
         # 標題分類
@@ -812,7 +812,7 @@ ptt_bot.give_money('CodingMan', 100)
 ```python=
 ptt_id = 'CodingMan'
 content = '''如有誤寄，對..對不起
-PTT Library 程式寄信測試內容
+PyPtt 程式寄信測試內容
 
 程式碼: https://github.com/PttCodingMan/PTTLibrary
 '''
@@ -1093,7 +1093,7 @@ ptt_bot.bucket(
 ### 在 jupyter 使用
 
 因為 jupyter 內部也使用了 asyncio 作為協程管理工具
-會跟 PTT Library 內部的 asyncio 衝突
+會跟 PyPtt 內部的 asyncio 衝突
 所以如果想要在 jypyter 內使用，請在你的程式碼中加入以下程式碼
 
 安裝
@@ -1125,7 +1125,7 @@ content = '\r\n'.join(content)
 
 ptt_bot.post(
     'Test',
-    'PTT Library 程式色碼貼文測試',
+    'PyPtt 程式色碼貼文測試',
     content,
     1,
     0

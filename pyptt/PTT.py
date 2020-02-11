@@ -32,7 +32,7 @@ except ModuleNotFoundError:
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
-class Library:
+class API:
     def __init__(
             self,
             language: int = 0,

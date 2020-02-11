@@ -1,3 +1,4 @@
+import os
 from PTTLibrary import version
 
 # A setuptools based setup module.
@@ -10,14 +11,14 @@ from setuptools import setup
 # from setuptools import find_packages
 # To use a consistent encoding
 # from codecs import open
-# from os import path
+from os import path
 
-# here = path.abspath(path.dirname(__file__))
+here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-# with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-#     long_description = f.read()
-Version = version.V
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
@@ -33,7 +34,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name='PTTLibrary',  # Required
+    name='PyPtt',  # Required
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -41,7 +42,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version=Version,  # Required
+    version=version.V,  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -56,7 +57,7 @@ setup(
     #
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
-    # long_description=long_description,  # Optional
+    long_description=long_description,  # Optional
 
     # This should be a valid link to your project's main homepage.
     #
@@ -83,9 +84,7 @@ setup(
         #   5 - Production/Stable
         'Development Status :: 4 - Beta',
 
-        'Operating System :: POSIX :: Linux',
-        'Operating System :: MacOS :: MacOS X',
-        'Operating System :: Microsoft :: Windows :: Windows 10',
+        'Operating System :: OS Independent',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',

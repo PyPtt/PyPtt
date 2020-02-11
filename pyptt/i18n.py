@@ -280,8 +280,8 @@ def load(input_lang):
 
     global Library
     Library = specific_load(input_lang, [
-        '函式庫',
-        'Library',
+        'PyPtt',
+        'PyPtt',
     ])
 
     global Fail
