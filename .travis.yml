@@ -8,7 +8,7 @@ os:
   - linux
 
 install:
-  - pip3 install PTTLibrary --upgrade
+  - pip3 install PyPtt --upgrade
 
 script:
   - python3 test.py -ci
