@@ -10,7 +10,7 @@
 
 #### PyPtt (PTT Library) 是一套 Pure Python PTT API。具備大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，你都可以在這裡找到完整的使用範例
 #### 可自由選擇最新的 WebSocket 協定或者經典的 Telnet 協定，並支援繁體中文與英文顯示
-#### API 的詳細範例與參數說明 [PyPtt 手冊](https://hackmd.io/@CodingMan/PTTLibraryManual)
+#### API 的詳細範例與參數說明 [PyPtt 手冊](https://hackmd.io/@CodingMan/PyPttManual)
 #### Pypi: https://pypi.org/project/PyPtt/
 <img src="https://i.imgur.com/wfaf8Bk.gif" width="480">
 
@@ -33,7 +33,7 @@ pip install PyPtt
 
 ## 回報問題
 #### 1. 請閱讀 [PyPtt 手冊](https://hackmd.io/@CodingMan/PyPttManual) 確認使用方法無誤並確認你所使用的版本為 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt) 如果是舊版本請更新後複測
-#### 2. 如果問題還是存在，請參考手冊中的 [初始設定](https://hackmd.io/@CodingMan/PTTLibraryManual) 將 Log level 調整成 TRACE 後截圖並附上 PTT Library 的相關程式碼
+#### 2. 如果問題還是存在，請參考手冊中的 [初始設定](https://hackmd.io/@CodingMan/PyPttManual#%E5%88%9D%E5%A7%8B%E8%A8%AD%E5%AE%9A) 將 log_level 調整成 PTT.log.Level.TRACE 後截圖並附上使用 PyPtt 的相關程式碼
 #### 3. 開個 [issue](https://github.com/PttCodingMan/PyPtt/issues/new) 追蹤問題也可以直接問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
 
 ## 需求
