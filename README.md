@@ -28,7 +28,7 @@
 #### 安裝
 #### Windows 使用 pip, Linux and Mac 使用 pip3
 ```bash
-pip install PTTLibrary
+pip install PyPtt
 ```
 
 ## 回報問題
