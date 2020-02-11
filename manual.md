@@ -206,7 +206,7 @@ ptt_bot = PTT.API(
 
 ```python=
 import sys
-from PTTLibrary import PTT
+from pyptt import PTT
 
 ptt_bot = PTT.API()
 try:
@@ -235,7 +235,7 @@ ptt_bot.logout()
 
 ```python=
 import sys
-from PTTLibrary import PTT
+from pyptt import PTT
 
 ptt_bot = PTT.API()
 try:
@@ -267,7 +267,7 @@ ptt_bot.logout()
 以下便是最簡單的取得特定文章的範例
 註: Python 板第 7486 篇文章
 ```python=
-from PTTLibrary import PTT
+from pyptt import PTT
 
 post_info = ptt_bot.get_post(
     'Python',
@@ -279,7 +279,7 @@ post_info = ptt_bot.get_post(
 
 ```python=
 import sys
-from PTTLibrary import PTT
+from pyptt import PTT
 
 post_info = ptt_bot.get_post(
     'Python',
