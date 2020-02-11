@@ -114,12 +114,14 @@ PyPtt 並不支援兩個以上的 thread 同時操作一個物件
 以下是初始化物件的方式，如果沒有特別需求，這樣就可以取得物件了
 
 ```python=
+from PyPtt import PTT
 ptt_bot = PTT.API()
 ```
 
 如果有改變語言顯示的需求，目前有支援英文與繁體中文
 
 ```python=
+from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) Chinese
     # language=PTT.i18n.language.CHINESE,
@@ -130,6 +132,7 @@ ptt_bot = PTT.API(
 也可以修改 Log 等級方便回報錯誤
 
 ```python=
+from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) INFO
     # log_level=PTT.log.Level.INFO,
@@ -141,6 +144,7 @@ ptt_bot = PTT.API(
 如果你的網路環境比較慢(例如海外)，常常不小心就 timeout，也有參數可以調整
 Since 0.9.1
 ```python=
+from PyPtt import PTT
 ptt_bot = PTT.API(
     # 預設 3 秒後判定此畫面沒有可辨識的目標
     screen_time_out=5,
@@ -159,6 +163,7 @@ ptt_bot = PTT.API(
 Since 0.8.11
 
 ```python=
+from PyPtt import PTT
 def handler(msg):
     with open('log.txt', 'a', encoding='utf-8') as f:
         f.write(msg + '\n')
@@ -173,6 +178,7 @@ ptt_bot = PTT.API(
 本機 Since 0.9.1
 
 ```python=
+from PyPtt import PTT
 ptt2_bot = PTT.API(
     # (預設值) PTT1
     # host=PTT.data_type.host_type.PTT1,
@@ -188,6 +194,7 @@ ptt2_bot = PTT.API(
 Since 0.9.1
 
 ```python=
+from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) WEBSOCKET
     # connect_mode=PTT.connect_core.connect_mode.WEBSOCKET,
@@ -206,7 +213,7 @@ ptt_bot = PTT.API(
 
 ```python=
 import sys
-from pyptt import PTT
+from PyPtt import PTT
 
 ptt_bot = PTT.API()
 try:
@@ -235,7 +242,7 @@ ptt_bot.logout()
 
 ```python=
 import sys
-from pyptt import PTT
+from PyPtt import PTT
 
 ptt_bot = PTT.API()
 try:
@@ -267,7 +274,7 @@ ptt_bot.logout()
 以下便是最簡單的取得特定文章的範例
 註: Python 板第 7486 篇文章
 ```python=
-from pyptt import PTT
+from PyPtt import PTT
 
 post_info = ptt_bot.get_post(
     'Python',
@@ -279,7 +286,7 @@ post_info = ptt_bot.get_post(
 
 ```python=
 import sys
-from pyptt import PTT
+from PyPtt import PTT
 
 post_info = ptt_bot.get_post(
     'Python',

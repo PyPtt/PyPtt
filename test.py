@@ -6,7 +6,7 @@ import random
 import traceback
 import threading
 
-from pyptt import PTT
+from PyPtt import PTT
 
 
 def get_password(password_file):
