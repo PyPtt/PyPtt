@@ -15,7 +15,7 @@ def set_board_title(
 
     # log.showValue(
     #     api.config,
-    #     log.Level.INFO,
+    #     log.level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg

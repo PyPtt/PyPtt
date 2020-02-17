@@ -133,9 +133,9 @@ ptt_bot = PTT.API(
 from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) INFO
-    # log_level=PTT.log.Level.INFO,
-    # log_level=PTT.log.Level.DEBUG,
-    log_level=PTT.log.Level.TRACE,
+    # log_level=PTT.log.level.INFO,
+    # log_level=PTT.log.level.DEBUG,
+    log_level=PTT.log.level.TRACE,
 )
 ```
 

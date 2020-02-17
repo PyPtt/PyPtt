@@ -34,7 +34,7 @@ class Config:
     language = i18n.language.CHINESE
 
     # 預設 log 等級
-    log_level = log.Level.INFO
+    log_level = log.level.INFO
 
     # 預設不剔除其他登入
     kick_other_login = False

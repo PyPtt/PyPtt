@@ -34,7 +34,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]打開',
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -43,7 +43,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]拔掉',
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -52,7 +52,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]防水',
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -61,7 +61,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]好友',
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -70,7 +70,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]關閉',
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -78,7 +78,7 @@ def get_call_status(api) -> None:
             ],
             '★',
             response=cmd,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
     ]
 

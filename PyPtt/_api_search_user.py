@@ -48,7 +48,7 @@ def search_user(
         ori_screen = api.connect_core.get_screen_queue()[-1]
         log.log(
             api.config,
-            log.Level.INFO,
+            log.level.INFO,
             i18n.Reading
         )
         # print(OriScreen)
@@ -89,7 +89,7 @@ def search_user(
 
     log.log(
         api.config,
-        log.Level.INFO,
+        log.level.INFO,
         i18n.ReadComplete
     )
 
@@ -101,13 +101,13 @@ def search_user(
                 i18n.QuitUserProfile,
                 '《ＩＤ暱稱》',
                 response=command.Enter,
-                # log_level=log.Level.DEBUG
+                # log_level=log.level.DEBUG
             ),
             connect_core.TargetUnit(
                 i18n.Done,
                 '查詢網友',
                 break_detect=True,
-                # log_level=log.Level.DEBUG
+                # log_level=log.level.DEBUG
             )
         ]
     )

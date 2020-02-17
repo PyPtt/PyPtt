@@ -17,7 +17,7 @@ def has_new_mail(api) -> int:
 
     # log.showValue(
     #     api.config,
-    #     log.Level.INFO,
+    #     log.level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -41,7 +41,7 @@ def has_new_mail(api) -> int:
             i18n.MailBox,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         )
     ]
 

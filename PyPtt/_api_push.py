@@ -45,40 +45,40 @@ def push(
         connect_core.TargetUnit(
             i18n.HasPushPermission,
             '您覺得這篇',
-            log_level=log.Level.DEBUG,
+            log_level=log.level.DEBUG,
             break_detect=True
         ),
         connect_core.TargetUnit(
             i18n.OnlyArrow,
             '加註方式',
-            log_level=log.Level.DEBUG,
+            log_level=log.level.DEBUG,
             break_detect=True
         ),
         connect_core.TargetUnit(
             i18n.NoFastPush,
             '禁止快速連續推文',
-            log_level=log.Level.INFO,
+            log_level=log.level.INFO,
             break_detect=True,
             exceptions_=exceptions.NoFastPush()
         ),
         connect_core.TargetUnit(
             i18n.NoFastPush,
             '禁止短時間內大量推文',
-            log_level=log.Level.INFO,
+            log_level=log.level.INFO,
             break_detect=True,
             exceptions_=exceptions.NoFastPush()
         ),
         connect_core.TargetUnit(
             i18n.NoPermission,
             '使用者不可發言',
-            log_level=log.Level.INFO,
+            log_level=log.level.INFO,
             break_detect=True,
             exceptions_=exceptions.NoPermission(i18n.NoPermission)
         ),
         connect_core.TargetUnit(
             i18n.NoPush,
             '◆ 抱歉, 禁止推薦',
-            log_level=log.Level.INFO,
+            log_level=log.level.INFO,
             break_detect=True,
             exceptions_=exceptions.NoPush()
         ),
@@ -100,16 +100,16 @@ def push(
     if index == 0:
         push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
-        log.show_value(api.config, log.Level.DEBUG,
+        log.show_value(api.config, log.level.DEBUG,
                       'Push option line', push_option_line)
 
         enable_push = '值得推薦' in push_option_line
         enable_boo = '給它噓聲' in push_option_line
         enable_arrow = '只加→註解' in push_option_line
 
-        log.show_value(api.config, log.Level.DEBUG, 'Push', enable_push)
-        log.show_value(api.config, log.Level.DEBUG, 'Boo', enable_boo)
-        log.show_value(api.config, log.Level.DEBUG, 'Arrow', enable_arrow)
+        log.show_value(api.config, log.level.DEBUG, 'Push', enable_push)
+        log.show_value(api.config, log.level.DEBUG, 'Boo', enable_boo)
+        log.show_value(api.config, log.level.DEBUG, 'Arrow', enable_arrow)
 
         if push_type == data_type.push_type.PUSH and not enable_push:
             push_type = data_type.push_type.ARROW
@@ -137,7 +137,7 @@ def push(
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
     ]
 

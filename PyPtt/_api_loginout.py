@@ -40,7 +40,7 @@ def logout(api) -> None:
 
     log.log(
         api.config,
-        log.Level.INFO,
+        log.level.INFO,
         [
             i18n.Start,
             i18n.logout
@@ -59,7 +59,7 @@ def logout(api) -> None:
 
     log.show_value(
         api.config,
-        log.Level.INFO,
+        log.level.INFO,
         i18n.logout,
         i18n.Done
     )
@@ -101,7 +101,7 @@ def login(
 
     log.show_value(
         api.config,
-        log.Level.INFO,
+        log.level.INFO,
         [
             i18n.login,
             i18n.ID
@@ -209,14 +209,14 @@ def login(
         api.cursor = data_type.Cursor.NEW
         log.log(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             i18n.NewCursor
         )
     else:
         api.cursor = data_type.Cursor.OLD
         log.log(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             i18n.OldCursor
         )
 
@@ -235,7 +235,7 @@ def login(
         # print(ori_screen)
         log.log(
             api.config,
-            log.Level.INFO,
+            log.level.INFO,
             i18n.UnregisteredUserCantUseAllAPI
         )
 

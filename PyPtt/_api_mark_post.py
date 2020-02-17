@@ -27,7 +27,7 @@ def markPost(
 
     log.show_value(
         api.config,
-        log.Level.INFO,
+        log.level.INFO,
         [
             i18n.PTT,
             i18n.Msg
@@ -138,7 +138,7 @@ def markPost(
             ],
             '互動式動畫播放中',
             response=command.Ctrl_C,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -146,7 +146,7 @@ def markPost(
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
     ]
 
@@ -194,7 +194,7 @@ def markPost(
             [i18n.DelAllMarkPost],
             '刪除所有標記',
             response='y' + command.Enter,
-            log_level=log.Level.INFO
+            log_level=log.level.INFO
         ),
         connect_core.TargetUnit(
             [
@@ -203,7 +203,7 @@ def markPost(
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.Level.INFO
+            log_level=log.level.INFO
         ),
     ]
 

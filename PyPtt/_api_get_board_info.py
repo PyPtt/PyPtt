@@ -30,9 +30,9 @@ def get_board_info(
     cmd = ''.join(cmd_list)
 
     if call_by_others:
-        log_level = log.Level.DEBUG
+        log_level = log.level.DEBUG
     else:
-        log_level = log.Level.INFO
+        log_level = log.level.INFO
 
     target_list = [
         connect_core.TargetUnit(
@@ -68,7 +68,7 @@ def get_board_info(
         online_user = int(r.group(0)) - 1
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '人氣',
         online_user
     )
@@ -96,7 +96,7 @@ def get_board_info(
         boardname = r.group(0)[1:-5].strip()
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '看板名稱',
         boardname
     )
@@ -110,7 +110,7 @@ def get_board_info(
         chinese_des = r.group(0)[5:].strip()
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '中文敘述',
         chinese_des
     )
@@ -122,7 +122,7 @@ def get_board_info(
         moderators = moderator_line.split('/')
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '板主名單',
         moderators
     )
@@ -130,7 +130,7 @@ def get_board_info(
     open_status = ('公開狀態(是否隱形): 公開' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '公開狀態',
         open_status
     )
@@ -140,7 +140,7 @@ def get_board_info(
     )
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '隱板時可以進入十大排行榜',
         into_top_ten_when_hide
     )
@@ -148,7 +148,7 @@ def get_board_info(
     non_board_members_post = ('開放 非看板會員發文' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '非看板會員發文',
         non_board_members_post
     )
@@ -156,7 +156,7 @@ def get_board_info(
     reply_post = ('開放 回應文章' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '回應文章',
         reply_post
     )
@@ -164,7 +164,7 @@ def get_board_info(
     self_del_post = ('開放 自刪文章' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '自刪文章',
         self_del_post
     )
@@ -172,7 +172,7 @@ def get_board_info(
     push_post = ('開放 推薦文章' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '推薦文章',
         push_post
     )
@@ -180,7 +180,7 @@ def get_board_info(
     boo_post = ('開放 噓文' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '噓文',
         boo_post
     )
@@ -191,7 +191,7 @@ def get_board_info(
     fast_push = ('開放 快速連推文章' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '快速連推文章',
         fast_push
     )
@@ -206,7 +206,7 @@ def get_board_info(
             min_interval = 0
         log.show_value(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             '最低間隔時間',
             min_interval
         )
@@ -218,7 +218,7 @@ def get_board_info(
     push_record_ip = ('推文時 自動 記錄來源 IP' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '記錄來源 IP',
         push_record_ip
     )
@@ -228,7 +228,7 @@ def get_board_info(
     push_aligned = ('推文時 對齊 開頭' in ori_screen)
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '對齊開頭',
         push_aligned
     )
@@ -239,7 +239,7 @@ def get_board_info(
     )
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '板主可刪除部份違規文字',
         moderator_can_del_illegal_content
     )
@@ -250,7 +250,7 @@ def get_board_info(
     )
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '轉錄文章 會 自動記錄，且 需要 發文權限',
         tran_post_auto_recorded_and_require_post_permissions
     )
@@ -260,7 +260,7 @@ def get_board_info(
     )
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '冷靜模式',
         cool_mode
     )
@@ -271,7 +271,7 @@ def get_board_info(
 
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '禁止未滿十八歲進入',
         require18
     )
@@ -285,7 +285,7 @@ def get_board_info(
         require_login_time = 0
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '發文限制登入次數',
         require_login_time
     )
@@ -299,7 +299,7 @@ def get_board_info(
         require_illegal_post = 0
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         '發文限制退文篇數',
         require_illegal_post
     )

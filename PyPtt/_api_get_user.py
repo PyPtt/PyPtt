@@ -58,7 +58,7 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
     ori_screen = api.connect_core.get_screen_queue()[-1]
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         'OriScreen',
         ori_screen
     )
@@ -117,18 +117,18 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
 
     signature_file = '\n'.join(ori_screen.split('\n')[6:-1])
 
-    log.show_value(api.config, log.Level.DEBUG, 'ptt_id', ptt_id)
-    log.show_value(api.config, log.Level.DEBUG, 'money', money)
-    log.show_value(api.config, log.Level.DEBUG, 'login_time', login_time)
-    log.show_value(api.config, log.Level.DEBUG, 'legal_post', legal_post)
-    log.show_value(api.config, log.Level.DEBUG, 'illegal_post', illegal_post)
-    log.show_value(api.config, log.Level.DEBUG, 'status', status)
-    log.show_value(api.config, log.Level.DEBUG, 'mail', mail)
-    log.show_value(api.config, log.Level.DEBUG, 'last_login', last_login)
-    log.show_value(api.config, log.Level.DEBUG, 'last_ip', last_ip)
-    log.show_value(api.config, log.Level.DEBUG, 'five_chess', five_chess)
-    log.show_value(api.config, log.Level.DEBUG, 'chess', chess)
-    log.show_value(api.config, log.Level.DEBUG,
+    log.show_value(api.config, log.level.DEBUG, 'ptt_id', ptt_id)
+    log.show_value(api.config, log.level.DEBUG, 'money', money)
+    log.show_value(api.config, log.level.DEBUG, 'login_time', login_time)
+    log.show_value(api.config, log.level.DEBUG, 'legal_post', legal_post)
+    log.show_value(api.config, log.level.DEBUG, 'illegal_post', illegal_post)
+    log.show_value(api.config, log.level.DEBUG, 'status', status)
+    log.show_value(api.config, log.level.DEBUG, 'mail', mail)
+    log.show_value(api.config, log.level.DEBUG, 'last_login', last_login)
+    log.show_value(api.config, log.level.DEBUG, 'last_ip', last_ip)
+    log.show_value(api.config, log.level.DEBUG, 'five_chess', five_chess)
+    log.show_value(api.config, log.level.DEBUG, 'chess', chess)
+    log.show_value(api.config, log.level.DEBUG,
                    'signature_file', signature_file)
 
     user = data_type.UserInfo(

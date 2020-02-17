@@ -76,19 +76,19 @@ def get_newest_index(
                 i18n.NoPost,
                 '沒有文章...',
                 break_detect=True,
-                log_level=log.Level.DEBUG
+                log_level=log.level.DEBUG
             ),
             connect_core.TargetUnit(
                 i18n.Success,
                 screens.Target.InBoard,
                 break_detect=True,
-                log_level=log.Level.DEBUG
+                log_level=log.level.DEBUG
             ),
             connect_core.TargetUnit(
                 i18n.Success,
                 screens.Target.InBoardWithCursor,
                 break_detect=True,
-                log_level=log.Level.DEBUG
+                log_level=log.level.DEBUG
             ),
             connect_core.TargetUnit(
                 i18n.NoSuchBoard,
@@ -130,7 +130,7 @@ def get_newest_index(
             if need_continue:
                 log.show_value(
                     api.config,
-                    log.Level.DEBUG,
+                    log.level.DEBUG,
                     i18n.FindNewestIndex,
                     IndexTemp
                 )
