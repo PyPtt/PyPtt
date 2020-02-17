@@ -922,6 +922,16 @@ print(len(user_list))
 
 ---
 
+### 取得時間
+以下是取得批踢踢時間功能
+
+```python=
+ptt_time = ptt_bot.get_time()
+print(ptt_time)
+```
+
+---
+
 ### 取得看板資訊
 Since 0.8.32
 以下是取得看板資訊 API
@@ -1074,9 +1084,8 @@ ptt_bot.mark_post(
 ---
 
 ### 水桶
-Since 0.8.29
-
 如果板主想要自動化水桶，當然也是可以的喔!!
+Since 0.8.29
 
 ```python=
 ptt_bot.bucket(
