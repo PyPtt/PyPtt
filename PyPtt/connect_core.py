@@ -52,7 +52,7 @@ class TargetUnit(object):
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
         if log_level == 0:
-            self._log_level = log.Level.INFO
+            self._log_level = log.level.INFO
         else:
             self._log_level = log_level
         self._Response = response
@@ -150,7 +150,7 @@ class API(object):
         )
 
         log.show_value(
-            self.config, log.Level.INFO, [
+            self.config, log.level.INFO, [
                 i18n.connect_core,
             ],
             i18n.Init
@@ -160,7 +160,7 @@ class API(object):
         def _wait():
             for i in range(self.config.retry_wait_time):
                 log.show_value(
-                    self.config, log.Level.INFO, [
+                    self.config, log.level.INFO, [
                         i18n.Prepare,
                         i18n.Again,
                         i18n.Connect,
@@ -171,7 +171,7 @@ class API(object):
                 time.sleep(1)
 
         log.show_value(
-            self.config, log.Level.INFO, [
+            self.config, log.level.INFO, [
                 i18n.connect_core,
             ],
             i18n.Active
@@ -180,14 +180,14 @@ class API(object):
         if self.config.connect_mode == connect_mode.TELNET:
             log.show_value(
                 self.config,
-                log.Level.INFO,
+                log.level.INFO,
                 i18n.ConnectMode,
                 i18n.ConnectMode_Telnet
             )
         elif self.config.connect_mode == connect_mode.WEBSOCKET:
             log.show_value(
                 self.config,
-                log.Level.INFO,
+                log.level.INFO,
                 i18n.ConnectMode,
                 i18n.ConnectMode_WebSocket
             )
@@ -246,7 +246,7 @@ class API(object):
                 print(e)
                 if self.config.host == data_type.host_type.PTT1:
                     log.show_value(
-                        self.config, log.Level.INFO, [
+                        self.config, log.level.INFO, [
                             i18n.Connect,
                             i18n.PTT,
                         ],
@@ -254,7 +254,7 @@ class API(object):
                     )
                 else:
                     log.show_value(
-                        self.config, log.Level.INFO, [
+                        self.config, log.level.INFO, [
                             i18n.Connect,
                             i18n.PTT2,
                         ],
@@ -332,7 +332,7 @@ class API(object):
             if is_secret:
                 log.show_value(
                     self.config,
-                    log.Level.DEBUG, [
+                    log.level.DEBUG, [
                         i18n.SendMsg
                     ],
                     i18n.HideSensitiveInfor
@@ -340,7 +340,7 @@ class API(object):
             else:
                 log.show_value(
                     self.config,
-                    log.Level.DEBUG, [
+                    log.level.DEBUG, [
                         i18n.SendMsg
                     ],
                     msg
@@ -437,7 +437,7 @@ class API(object):
                         end_time = time.time()
                         log.show_value(
                             self.config,
-                            log.Level.DEBUG, [
+                            log.level.DEBUG, [
                                 i18n.SpendTime,
                             ],
                             round(end_time - start_time, 2)

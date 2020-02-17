@@ -32,11 +32,11 @@ def init():
     print('===英文顯示===')
     PTT.API(language=PTT.i18n.language.ENGLISH)
     print('===log DEBUG===')
-    PTT.API(log_level=PTT.log.Level.DEBUG)
+    PTT.API(log_level=PTT.log.level.DEBUG)
     print('===log INFO===')
-    PTT.API(log_level=PTT.log.Level.INFO)
+    PTT.API(log_level=PTT.log.level.INFO)
     print('===log SLIENT===')
-    PTT.API(log_level=PTT.log.Level.SILENT)
+    PTT.API(log_level=PTT.log.level.SILENT)
     print('===log SLIENT======')
 
     print('===負向===')
@@ -1081,7 +1081,7 @@ if __name__ == '__main__':
 
         init()
         ptt_bot = PTT.API(
-            # log_level=PTT.log.Level.TRACE,
+            # log_level=PTT.log.level.TRACE,
         )
         try:
             ptt_bot.login(
@@ -1709,7 +1709,7 @@ github: https://tinyurl.com/umqff3v
                 ID2, Password2 = get_password('Account2.txt')
 
             PTTBot2 = PTT.API(
-                # log_level=PTT.log.Level.TRACE,
+                # log_level=PTT.log.level.TRACE,
             )
             try:
                 PTTBot2.login(
@@ -1780,8 +1780,8 @@ github: https://tinyurl.com/umqff3v
             # init()
             # threading_test()
             ptt_bot = PTT.API(
-                # log_level=PTT.log.Level.TRACE,
-                # log_level=PTT.log.Level.DEBUG,
+                # log_level=PTT.log.level.TRACE,
+                # log_level=PTT.log.level.DEBUG,
                 # host=PTT.data_type.host_type.PTT2
 
                 # for 本機測試

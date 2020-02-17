@@ -72,13 +72,13 @@ def check_index(
         if index > max_value:
             log.show_value(
                 config,
-                log.Level.INFO,
+                log.level.INFO,
                 'Index',
                 index
             )
             log.show_value(
                 config,
-                log.Level.INFO,
+                log.level.INFO,
                 'max_value',
                 max_value
             )

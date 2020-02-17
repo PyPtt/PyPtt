@@ -32,7 +32,7 @@ def get_waterball(api, operate_type:int) -> list:
             i18n.NoWaterball,
             '◆ 暫無訊息記錄',
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -43,7 +43,7 @@ def get_waterball(api, operate_type:int) -> list:
             response=command.Left + water_ball_operate_type +
                      command.Enter + command.GoMainMenu,
             break_detect_after_send=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -51,7 +51,7 @@ def get_waterball(api, operate_type:int) -> list:
             ],
             screens.Target.InWaterBallList,
             break_detect=True,
-            log_level=log.Level.DEBUG
+            log_level=log.level.DEBUG
         ),
     ]
 
@@ -75,7 +75,7 @@ def get_waterball(api, operate_type:int) -> list:
         )
         log.show_value(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'index',
             index
         )
@@ -95,14 +95,14 @@ def get_waterball(api, operate_type:int) -> list:
         # ScreenTemp = OriScreen
         log.show_value(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'OriScreen',
             ori_screen
         )
 
         log.show_value(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'LastLine',
             last_line
         )
@@ -167,7 +167,7 @@ def get_waterball(api, operate_type:int) -> list:
             all_waterball.append(new_content_part)
             log.show_value(
                 api.config,
-                log.Level.DEBUG,
+                log.level.DEBUG,
                 'NewContentPart',
                 new_content_part
             )
@@ -192,7 +192,7 @@ def get_waterball(api, operate_type:int) -> list:
         all_waterball = all_waterball.replace('\\\n', '')
     log.show_value(
         api.config,
-        log.Level.DEBUG,
+        log.level.DEBUG,
         'AllWaterball',
         all_waterball
     )
@@ -206,14 +206,14 @@ def get_waterball(api, operate_type:int) -> list:
         if (not line.startswith('To')) and (not line.startswith('★')):
             log.show_value(
                 api.config,
-                log.Level.DEBUG,
+                log.level.DEBUG,
                 'Discard waterball',
                 line
             )
             continue
         log.show_value(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'Ready to parse waterball',
             line
         )
@@ -221,7 +221,7 @@ def get_waterball(api, operate_type:int) -> list:
         if line.startswith('To'):
             log.show_value(
                 api.config,
-                log.Level.DEBUG,
+                log.level.DEBUG,
                 'Waterball Type',
                 'Send'
             )
@@ -242,7 +242,7 @@ def get_waterball(api, operate_type:int) -> list:
         elif line.startswith('★'):
             log.show_value(
                 api.config,
-                log.Level.DEBUG,
+                log.level.DEBUG,
                 'Waterball Type',
                 'Catch'
             )
@@ -262,19 +262,19 @@ def get_waterball(api, operate_type:int) -> list:
 
         log.show_value(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'Waterball target',
             target
         )
         log.show_value(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'Waterball content',
             content
         )
         log.show_value(
             api.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'Waterball date',
             date
         )
@@ -332,7 +332,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
 
         log.show_value(
             api.config,
-            log.Level.INFO,
+            log.level.INFO,
             i18n.WaterBall,
             waterball
         )

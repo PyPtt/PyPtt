@@ -21,7 +21,7 @@ def mail(
 
     # log.showValue(
     #     api.config,
-    #     log.Level.INFO,
+    #     log.level.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -113,7 +113,7 @@ def mail(
 
     log.show_value(
         api.config,
-        log.Level.INFO,
+        log.level.INFO,
         i18n.SendMail,
         i18n.Success
     )

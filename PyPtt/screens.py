@@ -133,7 +133,7 @@ class Target(object):
 
 
 def show(config, screen_queue, function_name=None):
-    if config.log_level != log.Level.TRACE:
+    if config.log_level != log.level.TRACE:
         return
 
     if isinstance(screen_queue, list):
@@ -279,7 +279,7 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
                              ]
 
                 # log.showValue(
-                #     log.Level.INFO,
+                #     log.level.INFO,
                 #     'origin_line',
                 #     origin_line
                 # )

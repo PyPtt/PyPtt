@@ -9,7 +9,7 @@ except ModuleNotFoundError:
     import i18n
 
 
-class Level(object):
+class level(object):
 
     TRACE = 1
     DEBUG = 2
@@ -44,7 +44,7 @@ def merge(config, msg) -> str:
 
 def log(config, log_level, msg):
 
-    if not lib_util.check_range(Level, log_level):
+    if not lib_util.check_range(level, log_level):
         raise ValueError('log_level', log_level)
 
     if config.log_level > log_level:
@@ -54,9 +54,9 @@ def log(config, log_level, msg):
     msg = merge(config, msg)
 
     total_message = '[' + strftime('%m%d %H:%M:%S') + ']'
-    if log_level == Level.DEBUG:
+    if log_level == level.DEBUG:
         total_message += '[' + i18n.Debug + '] ' + msg
-    elif log_level == Level.INFO:
+    elif log_level == level.INFO:
         total_message += '[' + i18n.Info + '] ' + msg
 
     try:
@@ -78,7 +78,7 @@ def show_value(config, log_level, msg, log_value):
     if config.log_level > log_level:
         return
 
-    if not lib_util.check_range(Level, log_level):
+    if not lib_util.check_range(level, log_level):
         raise ValueError('log_level', log_level)
 
     if isinstance(log_value, list):

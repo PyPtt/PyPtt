@@ -89,7 +89,7 @@ class API:
 
         if log_level == 0:
             log_level = self.config.log_level
-        elif not lib_util.check_range(log.Level, log_level):
+        elif not lib_util.check_range(log.level, log_level):
             raise ValueError('[PyPtt] Unknown log_level', log_level)
         else:
             self.config.log_level = log_level
@@ -106,14 +106,14 @@ class API:
             self.config.log_handler = log_handler
             log.show_value(
                 self.config,
-                log.Level.INFO,
+                log.level.INFO,
                 i18n.log_handler,
                 i18n.Init
             )
         elif has_log_handler and not set_log_handler_result:
             log.show_value(
                 self.config,
-                log.Level.INFO,
+                log.level.INFO,
                 i18n.log_handler,
                 [
                     i18n.Init,
@@ -123,7 +123,7 @@ class API:
 
         if self.config.language == i18n.language.CHINESE:
             log.show_value(
-                self.config, log.Level.INFO, [
+                self.config, log.level.INFO, [
                     i18n.ChineseTranditional,
                     i18n.languageModule
                 ],
@@ -131,7 +131,7 @@ class API:
             )
         elif self.config.language == i18n.language.ENGLISH:
             log.show_value(
-                self.config, log.Level.INFO, [
+                self.config, log.level.INFO, [
                     i18n.English,
                     i18n.languageModule
                 ],
@@ -161,7 +161,7 @@ class API:
         if self.config.host == data_type.host_type.PTT1:
             log.show_value(
                 self.config,
-                log.Level.INFO,
+                log.level.INFO,
                 [
                     i18n.Connect,
                     i18n.host
@@ -171,7 +171,7 @@ class API:
         elif self.config.host == data_type.host_type.PTT2:
             log.show_value(
                 self.config,
-                log.Level.INFO,
+                log.level.INFO,
                 [
                     i18n.Connect,
                     i18n.host
@@ -181,7 +181,7 @@ class API:
         elif self.config.host == data_type.host_type.LOCALHOST:
             log.show_value(
                 self.config,
-                log.Level.INFO,
+                log.level.INFO,
                 [
                     i18n.Connect,
                     i18n.host
@@ -197,14 +197,14 @@ class API:
 
         log.show_value(
             self.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'ThreadID',
             self._ThreadID
         )
 
         log.show_value(
             self.config,
-            log.Level.INFO,
+            log.level.INFO,
             [
                 i18n.Library,
                 ' v ' + version.V,
@@ -218,13 +218,13 @@ class API:
             return
         log.show_value(
             self.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'ThreadID',
             self._ThreadID
         )
         log.show_value(
             self.config,
-            log.Level.DEBUG,
+            log.level.DEBUG,
             'Current thread id',
             current_thread_id
         )
@@ -294,7 +294,7 @@ class API:
 
     def log(self, msg: str) -> None:
         self._one_thread()
-        log.log(self.config, log.Level.INFO, msg)
+        log.log(self.config, log.level.INFO, msg)
 
     def get_time(self) -> str:
         self._one_thread()
@@ -457,7 +457,7 @@ class API:
             if need_continue:
                 log.log(
                     self.config,
-                    log.Level.DEBUG,
+                    log.level.DEBUG,
                     'Wait for retry repost'
                 )
                 time.sleep(0.1)
@@ -691,21 +691,21 @@ class API:
 
             log.show_value(
                 self.config,
-                log.Level.DEBUG,
+                log.level.DEBUG,
                 'StartIndex',
                 start_index
             )
 
             log.show_value(
                 self.config,
-                log.Level.DEBUG,
+                log.level.DEBUG,
                 'EndIndex',
                 end_index
             )
 
             error_post_list = []
             del_post_list = []
-            if self.config.log_level == log.Level.INFO:
+            if self.config.log_level == log.level.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=end_index - start_index + 1,
                     redirect_stdout=True
@@ -744,7 +744,7 @@ class API:
                             raise e
                         log.log(
                             self.config,
-                            log.Level.INFO,
+                            log.level.INFO,
                             i18n.RestoreConnection
                         )
                         self._login(
@@ -758,7 +758,7 @@ class API:
                             raise e
                         log.log(
                             self.config,
-                            log.Level.INFO,
+                            log.level.INFO,
                             i18n.RestoreConnection
                         )
                         self._login(
@@ -776,7 +776,7 @@ class API:
                     if need_continue:
                         log.log(
                             self.config,
-                            log.Level.DEBUG,
+                            log.level.DEBUG,
                             'Wait for retry repost'
                         )
                         time.sleep(0.1)
@@ -784,7 +784,7 @@ class API:
 
                     break
 
-                if self.config.log_level == log.Level.INFO:
+                if self.config.log_level == log.level.INFO:
                     PB.update(index - start_index)
                 if post is None:
                     error_post_list.append(index)
@@ -798,7 +798,7 @@ class API:
                 if post.delete_status != data_type.post_delete_status.NOT_DELETED:
                     del_post_list.append(index)
                 post_handler(post)
-            if self.config.log_level == log.Level.INFO:
+            if self.config.log_level == log.level.INFO:
                 PB.finish()
 
             return error_post_list, del_post_list
@@ -832,7 +832,7 @@ class API:
             # PostAID = ""
             _url = 'https://www.ptt.cc/bbs/'
             index = str(newest_index)
-            if self.config.log_level == log.Level.INFO:
+            if self.config.log_level == log.level.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=end_page - start_page + 1,
                     redirect_stdout=True
@@ -852,7 +852,7 @@ class API:
             for index in range(start_page, newest_index + 1):
                 log.show_value(
                     self.config,
-                    log.Level.DEBUG,
+                    log.level.DEBUG,
                     'CurrentPage',
                     index
                 )
@@ -892,12 +892,12 @@ class API:
                     )
                     post_handler(post)
 
-                if self.config.log_level == log.Level.INFO:
+                if self.config.log_level == log.level.INFO:
                     PB.update(index - start_page)
 
             log.show_value(
                 self.config,
-                log.Level.DEBUG,
+                log.level.DEBUG,
                 'DelPostList',
                 del_post_list
             )
@@ -905,7 +905,7 @@ class API:
             # 4. 把組合出來的 Post 塞給 handler
 
             # 5. 顯示 progress bar
-            if self.config.log_level == log.Level.INFO:
+            if self.config.log_level == log.level.INFO:
                 PB.finish()
 
             return error_post_list, del_post_list
@@ -1056,7 +1056,7 @@ class API:
         for push in push_list:
             log.show_value(
                 self.config,
-                log.Level.INFO,
+                log.level.INFO,
                 i18n.Push,
                 push
             )
@@ -1075,7 +1075,7 @@ class API:
                     # screens.show(self.config, self.connect_core.getScreenQueue())
                     log.log(
                         self.config,
-                        log.Level.INFO,
+                        log.level.INFO,
                         '等待快速推文'
                     )
                     time.sleep(5.2)
