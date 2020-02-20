@@ -1,6 +1,3 @@
----
-tags: PyPtt
----
 # PyPtt 完全使用手冊
 
 :::danger
