@@ -1,12 +1,9 @@
 # PyPtt 完全使用手冊
 
-:::danger
-註1:此手冊僅支援 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)，如果你使用的版本為 0.8.x，請參考 [[使用手冊 0.8]](https://hackmd.io/@CodingMan/PTTLibraryManual_0_8)
-註2:有出現在本手冊中的使用者或文章，如果不想出現，很抱歉請馬上告知我
-:::
+> 註1:此手冊僅支援 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)，如果你使用的版本為 0.8.x，請參考 [[使用手冊 0.8]](https://hackmd.io/@CodingMan/PTTLibraryManual_0_8)
+> 註2:有出現在本手冊中的使用者或文章，如果不想出現，很抱歉請馬上告知我
 
 有任何使用上的問題都可以直接問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
-Github: [PyPtt](https://github.com/PttCodingMan/PyPtt) 原 PTT Library
 
 ---
 
