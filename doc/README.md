@@ -98,10 +98,9 @@ pip install PyPtt==VERSION
 ## API
 
 ### 初始設定
-:::info
-PyPtt 並不支援兩個以上的 thread 同時操作一個物件
+
+> PyPtt 並不支援兩個以上的 thread 同時操作一個物件
 如果有需求，請啟動新 thread 後，所有操作都在同一個 thread
-:::
 
 以下是初始化物件的方式，如果沒有特別需求，這樣就可以取得物件了
 
@@ -360,10 +359,8 @@ print(f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow')
 
 ![](https://i.imgur.com/M6XGFzD.png)
 
-:::info
-備註: 因為 PTT 推文計數至少有三分鐘的時間間隔，所以在使用推文條件搜尋的情況下
+> 備註: 因為 PTT 推文計數至少有三分鐘的時間間隔，所以在使用推文條件搜尋的情況下
 可能導致結果不夠即時
-:::
 
 當然如果需要加條件搜尋也是可以的
 只是我們需要知道加了搜尋條件之後的最大編號是多少
@@ -526,14 +523,12 @@ if len(del_post_list) > 0:
 ![](https://i.imgur.com/BO3QLf2.png)
 
 
-:::info
-備註: 因為 PTT 推文計數有三分鐘的時間間隔，所以在使用推文條件搜尋的情況下
+> 備註: 因為 PTT 推文計數有三分鐘的時間間隔，所以在使用推文條件搜尋的情況下
 可能導致結果不夠即時
-:::
+
+> 在有下搜尋條件的情況下，無法使用 AID 來標記爬文範圍
+
 當然我們也可以像 getPost 那樣加入搜尋條件來爬我們的結果
-:::info
-在有下搜尋條件的情況下，無法使用 AID 來標記爬文範圍
-:::
 
 ```python=
 def show_condition(board, search_type, condition):
