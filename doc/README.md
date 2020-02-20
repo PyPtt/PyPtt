@@ -360,7 +360,7 @@ print(f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow')
 ![](https://i.imgur.com/M6XGFzD.png)
 
 > 備註: 因為 PTT 推文計數至少有三分鐘的時間間隔，所以在使用推文條件搜尋的情況下
-可能導致結果不夠即時
+> 可能導致結果不夠即時
 
 當然如果需要加條件搜尋也是可以的  
 只是我們需要知道加了搜尋條件之後的最大編號是多少  
@@ -524,7 +524,7 @@ if len(del_post_list) > 0:
 
 
 > 備註: 因為 PTT 推文計數有三分鐘的時間間隔，所以在使用推文條件搜尋的情況下
-可能導致結果不夠即時  
+> 可能導致結果不夠即時  
 > 在有下搜尋條件的情況下，無法使用 AID 來標記爬文範圍
 
 當然我們也可以像 getPost 那樣加入搜尋條件來爬我們的結果
@@ -921,8 +921,9 @@ print(ptt_time)
 ---
 
 ### 取得看板資訊
-Since 0.8.32  
-以下是取得看板資訊 API
+
+以下是取得看板資訊 API  
+Since 0.8.32
 
 ```python=
 if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
@@ -961,8 +962,9 @@ print('發文與推文限制退文篇數多少篇以下: ', board_info.require_i
 ---
 
 ### 回覆文章
-Since 0.8.26  
-以下是回覆文章 API
+
+以下是回覆文章 API  
+Since 0.8.26
 
 ```python=
 reply_post_index = 313
@@ -994,8 +996,9 @@ ptt_bot.reply_post(
 ## 板主專用 API
 
 ### 設定板標
-Since 0.8.26  
-如果有定時設定板標的需求，這時候就可以使用 set_board_title
+
+如果有定時設定板標的需求，這時候就可以使用 set_board_title  
+Since 0.8.26
 
 ```python=
 from time import strftime
@@ -1039,8 +1042,9 @@ while True:
 ---
 
 ### 標記文章
-Since 0.8.26  
+
 如果板主有標記文章 S or D 的需求，可以參考以下使用方法
+Since 0.8.26
 
 ```python=
 # s 文章
