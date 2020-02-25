@@ -838,6 +838,9 @@ except PTT.exceptions.NoSuchUser:
 
 ### 偵測是否有新信
 
+此為偵測新信 API，如果大於 1，就是有新信:D
+> 註: 如果你的信箱信件處在 1 ~ 20 封信，那會稍微等久一點
+
 ```python=
 result = ptt_bot.has_new_mail()
 if result > 0:
