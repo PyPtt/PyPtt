@@ -2,6 +2,8 @@
 
 def parse_para(value_type, parameter):
     if parameter is None:
+        if value_type is list:
+            return []
         return None
     result = value_type(parameter)
     if isinstance(result, str):

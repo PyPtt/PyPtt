@@ -583,7 +583,6 @@ for (test_board, search_type, condition) in test_list:
         search_condition=condition,
     )
 
-    # print('標題: ' + Post.getTitle())
     print('=' * 50)
 ```
 
