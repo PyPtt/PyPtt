@@ -46,7 +46,6 @@ def has_new_mail(api) -> int:
     api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.config.screen_long_timeout
     )
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
