@@ -86,6 +86,10 @@ def login(
             return 'y' + command.Enter
         return 'n' + command.Enter
 
+    api._mailbox_full = False
+    def mailbox_full():
+        api._mailbox_full = True
+
     if len(password) > 8:
         password = password[:8]
 
@@ -114,6 +118,12 @@ def login(
             i18n.loginSuccess,
             screens.Target.MainMenu,
             break_detect=True
+        ),
+        connect_core.TargetUnit(
+            i18n.MailBoxFull,
+            '【郵件選單】',
+            response=command.GoMainMenu_TypeQ,
+            handler=mailbox_full
         ),
         connect_core.TargetUnit(
             i18n.HasNewMailGotoMainMenu,
@@ -147,11 +157,6 @@ def login(
             i18n.DelWrongPWRecord,
             '您要刪除以上錯誤嘗試的記錄嗎',
             response='y' + command.Enter,
-        ),
-        connect_core.TargetUnit(
-            i18n.MailBoxFull,
-            '您保存信件數目',
-            response=command.GoMainMenu,
         ),
         connect_core.TargetUnit(
             i18n.PostNotFinish,
@@ -240,3 +245,5 @@ def login(
         )
 
     api._login_status = True
+
+    print(f'============= api._mailbox_full {api._mailbox_full}')

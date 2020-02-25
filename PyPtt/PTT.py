@@ -45,6 +45,7 @@ class API:
             log_handler=None,
             host: int = 0):
 
+        self._mailbox_full = False
         self._ID = None
         if log_handler is not None and not callable(log_handler):
             raise TypeError('[PyPtt] log_handler is must callable!!')
@@ -1278,6 +1279,8 @@ class API:
         check_value.check(self.config, str, 'title', title)
         check_value.check(self.config, str, 'content', content)
 
+        self.get_user(ptt_id)
+
         check_sign_file = False
         for i in range(0, 10):
             if str(i) == sign_file or i == sign_file:
@@ -1306,6 +1309,13 @@ class API:
             title,
             content,
             sign_file)
+
+        print(f'================================= {self._mailbox_full}')
+        if self._mailbox_full:
+            print('=================================')
+            self.logout()
+            raise exceptions.MailboxFull()
+
 
     def has_new_mail(self) -> int:
         self._one_thread()
