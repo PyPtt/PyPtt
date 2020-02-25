@@ -810,7 +810,7 @@ def mail():
 
 def has_new_mail():
     result = ptt_bot.has_new_mail()
-    print(result)
+    ptt_bot.log(result)
 
 
 ThreadBot = None

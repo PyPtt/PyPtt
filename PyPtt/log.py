@@ -49,6 +49,9 @@ def log(config, log_level, msg):
 
     if config.log_level > log_level:
         return
+
+    if isinstance(msg, int):
+        msg = str(msg)
     if len(msg) == 0:
         return
     msg = merge(config, msg)
