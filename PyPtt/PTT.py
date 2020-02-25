@@ -1310,9 +1310,7 @@ class API:
             content,
             sign_file)
 
-        print(f'================================= {self._mailbox_full}')
         if self._mailbox_full:
-            print('=================================')
             self.logout()
             raise exceptions.MailboxFull()
 

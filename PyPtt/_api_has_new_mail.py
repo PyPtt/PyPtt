@@ -27,10 +27,8 @@ def has_new_mail(api) -> int:
 
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
-    cmd_list.append('M')
-    cmd_list.append(command.Enter)
-    cmd_list.append('R')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.Ctrl_Z)
+    cmd_list.append('m')
     cmd_list.append('1')
     cmd_list.append(command.Enter)
     cmd_list.append('$')

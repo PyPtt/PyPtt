@@ -245,5 +245,3 @@ def login(
         )
 
     api._login_status = True
-
-    print(f'============= api._mailbox_full {api._mailbox_full}')

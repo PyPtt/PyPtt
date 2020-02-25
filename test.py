@@ -92,24 +92,25 @@ def get_post():
 
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_post_list = [
-            ('Python', 1),
-            ('NotExitBoard', 1),
-            ('Python', '1TJH_XY0'),
-            # 文章格式錯誤
-            ('Steam', 4444),
-            ('Stock', 92324),
-            ('Stock', '1TVnEivO'),
-            # 文章格式錯誤
-            ('movie', 457),
-            ('Gossiping', '1TU65Wi_'),
-            ('Gossiping', '1TWadtnq'),
-            ('Gossiping', '1TZBBkWP'),
-            ('Gossiping', '1UDnXefr'),
-            ('joke', '1Tc6G9eQ'),
-            # 135193
-            ('Test', 575),
-            # 待證文章
-            ('Test', '1U3pLzi0'),
+            # ('Python', 1),
+            # ('NotExitBoard', 1),
+            # ('Python', '1TJH_XY0'),
+            # # 文章格式錯誤
+            # ('Steam', 4444),
+            # ('Stock', 92324),
+            # ('Stock', '1TVnEivO'),
+            # # 文章格式錯誤
+            # ('movie', 457),
+            # ('Gossiping', '1TU65Wi_'),
+            # ('Gossiping', '1TWadtnq'),
+            # ('Gossiping', '1TZBBkWP'),
+            # ('Gossiping', '1UDnXefr'),
+            # ('joke', '1Tc6G9eQ'),
+            # # 135193
+            # ('Test', 575),
+            # # 待證文章
+            # ('Test', '1U3pLzi0'),
+            # ('NSwitch', '1UKzfkuI')
         ]
     else:
         test_post_list = [
@@ -135,104 +136,131 @@ def get_post():
         else:
             print(f'無{name}')
 
-    query = False
+    test_board = 'ALLPOST'
 
-    for (board, index) in test_post_list:
-        try:
-            if isinstance(index, int):
-                post_info = ptt_bot.get_post(
-                    board,
-                    post_index=index,
-                    # SearchType=PTT.data_type.post_search_type.KEYWORD,
-                    # SearchCondition='公告',
-                    query=query,
-                )
-            else:
-                post_info = ptt_bot.get_post(
-                    board,
-                    post_aid=index,
-                    # SearchType=PTT.data_type.post_search_type.KEYWORD,
-                    # SearchCondition='公告',
-                    query=query,
-                )
-            if post_info is None:
-                print('Empty')
-                continue
+    newest_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        test_board,
+    )
 
-            if not post_info.pass_format_check:
-                print('文章格式錯誤')
-                continue
+    post_count = 0
+    push_length = 0
 
-            if post_info.is_lock:
-                print('鎖文狀態')
-                continue
+    while True:
 
-            # show('Origin Post\n', post.origin_post)
-            print('Origin Post\n' + post_info.origin_post)
-            print('=' * 30 + ' Origin Post Finish')
-            show('Board', post_info.board)
-            show('AID', post_info.aid)
-            show('index', post_info.index)
-            show('Author', post_info.author)
-            show('push_number', post_info.push_number)
-            show('List Date', post_info.list_date)
-            show('Title', post_info.title)
-            show('Money', post_info.money)
-            show('URL', post_info.web_url)
+        post = ptt_bot.get_post(
+            test_board,
+            post_index=newest_index - post_count,
+        )
+        post_count += 1
 
-            if post_info.is_unconfirmed:
-                print('待證實文章')
+        push_length += len(post.push_list)
 
-            if not query:
-                show('Date', post_info.date)
-                show('Content', post_info.content)
-                show('IP', post_info.ip)
-                show('Location', post_info.location)
+        if post.list_date == '2/23':
+            break
 
-                # 在文章列表上的日期
+    print(post_count)
+    print(push_length)
+    print(push_length / post_count)
 
-                push_count = 0
-                boo_count = 0
-                arrow_count = 0
-
-                for push_obj in post_info.push_list:
-                    #     print(Push.getType())
-                    #     print(Push.getAuthor())
-                    #     print(Push.getContent())
-                    #     print(Push.getIP())
-                    #     print(Push.time)
-
-                    if push_obj.type == PTT.data_type.push_type.PUSH:
-                        push_count += 1
-                        push_type = '推'
-                    if push_obj.type == PTT.data_type.push_type.BOO:
-                        boo_count += 1
-                        push_type = '噓'
-                    if push_obj.type == PTT.data_type.push_type.ARROW:
-                        arrow_count += 1
-                        push_type = '→'
-
-                    author = push_obj.author
-                    content = push_obj.content
-
-                    # Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
-                    # if Push.getIP() is not None:
-                    #     Buffer += f' 來自 [{Push.getIP()}]'
-                    # Buffer += f' 時間是 [{Push.time}]'
-
-                    if push_obj.ip is not None:
-                        buffer = f'{push_type} {author}: {content} {push_obj.ip} {push_obj.time}'
-                    else:
-                        buffer = f'{push_type} {author}: {content} {push_obj.time}'
-                    print(buffer)
-
-                print(
-                    f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow = {push_count - boo_count}'
-                )
-        except Exception as e:
-
-            traceback.print_tb(e.__traceback__)
-            print(e)
+    # query = False
+    #
+    # for (board, index) in test_post_list:
+    #     try:
+    #         if isinstance(index, int):
+    #             post_info = ptt_bot.get_post(
+    #                 board,
+    #                 post_index=index,
+    #                 # SearchType=PTT.data_type.post_search_type.KEYWORD,
+    #                 # SearchCondition='公告',
+    #                 query=query,
+    #             )
+    #         else:
+    #             post_info = ptt_bot.get_post(
+    #                 board,
+    #                 post_aid=index,
+    #                 # SearchType=PTT.data_type.post_search_type.KEYWORD,
+    #                 # SearchCondition='公告',
+    #                 query=query,
+    #             )
+    #         if post_info is None:
+    #             print('Empty')
+    #             continue
+    #
+    #         if not post_info.pass_format_check:
+    #             print('文章格式錯誤')
+    #             continue
+    #
+    #         if post_info.is_lock:
+    #             print('鎖文狀態')
+    #             continue
+    #
+    #         # show('Origin Post\n', post.origin_post)
+    #         print('Origin Post\n' + post_info.origin_post)
+    #         print('=' * 30 + ' Origin Post Finish')
+    #         show('Board', post_info.board)
+    #         show('AID', post_info.aid)
+    #         show('index', post_info.index)
+    #         show('Author', post_info.author)
+    #         show('push_number', post_info.push_number)
+    #         show('List Date', post_info.list_date)
+    #         show('Title', post_info.title)
+    #         show('Money', post_info.money)
+    #         show('URL', post_info.web_url)
+    #
+    #         if post_info.is_unconfirmed:
+    #             print('待證實文章')
+    #
+    #         if not query:
+    #             show('Date', post_info.date)
+    #             show('Content', post_info.content)
+    #             show('IP', post_info.ip)
+    #             show('Location', post_info.location)
+    #
+    #             # 在文章列表上的日期
+    #
+    #             push_count = 0
+    #             boo_count = 0
+    #             arrow_count = 0
+    #
+    #             for push_obj in post_info.push_list:
+    #                 #     print(Push.getType())
+    #                 #     print(Push.getAuthor())
+    #                 #     print(Push.getContent())
+    #                 #     print(Push.getIP())
+    #                 #     print(Push.time)
+    #
+    #                 if push_obj.type == PTT.data_type.push_type.PUSH:
+    #                     push_count += 1
+    #                     push_type = '推'
+    #                 if push_obj.type == PTT.data_type.push_type.BOO:
+    #                     boo_count += 1
+    #                     push_type = '噓'
+    #                 if push_obj.type == PTT.data_type.push_type.ARROW:
+    #                     arrow_count += 1
+    #                     push_type = '→'
+    #
+    #                 author = push_obj.author
+    #                 content = push_obj.content
+    #
+    #                 # Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
+    #                 # if Push.getIP() is not None:
+    #                 #     Buffer += f' 來自 [{Push.getIP()}]'
+    #                 # Buffer += f' 時間是 [{Push.time}]'
+    #
+    #                 if push_obj.ip is not None:
+    #                     buffer = f'{push_type} {author}: {content} {push_obj.ip} {push_obj.time}'
+    #                 else:
+    #                     buffer = f'{push_type} {author}: {content} {push_obj.time}'
+    #                 print(buffer)
+    #
+    #             print(
+    #                 f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow = {push_count - boo_count}'
+    #             )
+    #     except Exception as e:
+    #
+    #         traceback.print_tb(e.__traceback__)
+    #         print(e)
 
 
 test_list = {
@@ -1780,7 +1808,7 @@ github: https://tinyurl.com/umqff3v
             # init()
             # threading_test()
             ptt_bot = PTT.API(
-                # log_level=PTT.log.level.TRACE,
+                log_level=PTT.log.level.TRACE,
                 # log_level=PTT.log.level.DEBUG,
                 # host=PTT.data_type.host_type.PTT2
 
@@ -1824,7 +1852,7 @@ github: https://tinyurl.com/umqff3v
             # call_status()
             # give_money()
             # mail()
-            # has_new_mail()
+            has_new_mail()
             # get_board_list()
             # get_board_info()
             # reply_post()
