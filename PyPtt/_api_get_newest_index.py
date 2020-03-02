@@ -1,6 +1,7 @@
 import re
 import requests
 from bs4 import BeautifulSoup
+
 try:
     from . import data_type
     from . import i18n
@@ -21,6 +22,52 @@ except ModuleNotFoundError:
     import check_value
 
 
+def _get_newest_index(api) -> int:
+    last_screen = api.connect_core.get_screen_queue()[-1]
+    # print(last_screen)
+    last_screen_list = last_screen.split('\n')
+    last_screen_list = last_screen_list[3:]
+    last_screen_list = '\n'.join([x[:9] for x in last_screen_list])
+    # print(last_screen_list)
+    all_index = re.findall(r'\d+', last_screen_list)
+
+    if len(all_index) == 0:
+        print(last_screen)
+        raise exceptions.UnknownError(i18n.UnknownError)
+
+    all_index = list(map(int, all_index))
+    all_index.sort(reverse=True)
+    # print(all_index)
+
+    max_check_range = 6
+    newest_index = 0
+    for IndexTemp in all_index:
+        need_continue = True
+        if IndexTemp > max_check_range:
+            check_range = max_check_range
+        else:
+            check_range = IndexTemp
+        for i in range(1, check_range):
+            if str(IndexTemp - i) not in last_screen:
+                need_continue = False
+                break
+        if need_continue:
+            log.show_value(
+                api.config,
+                log.level.DEBUG,
+                i18n.FindNewestIndex,
+                IndexTemp
+            )
+            newest_index = IndexTemp
+            break
+
+    if newest_index == 0:
+        screens.show(api.config, api.connect_core.get_screen_queue())
+        raise exceptions.UnknownError(i18n.UnknownError)
+
+    return newest_index
+
+
 def get_newest_index(
         api,
         index_type: int,
@@ -28,8 +75,9 @@ def get_newest_index(
         # BBS
         search_type: int = 0,
         search_condition: str = None) -> int:
-
     if index_type == data_type.index_type.BBS:
+
+        check_value.check(api.config, str, 'Board', board)
 
         api._check_board(board)
 
@@ -105,43 +153,9 @@ def get_newest_index(
         if index == 0:
             return 0
 
-        last_screen = api.connect_core.get_screen_queue()[-1]
-        all_index = re.findall(r'\d+ ', last_screen)
+        newest_index = _get_newest_index(api)
 
-        if len(all_index) == 0:
-            print(last_screen)
-            raise exceptions.UnknownError(i18n.UnknownError)
-
-        all_index = list(map(int, all_index))
-        all_index.sort(reverse=True)
-
-        max_check_range = 6
-        newest_index = 0
-        for IndexTemp in all_index:
-            need_continue = True
-            if IndexTemp > max_check_range:
-                check_range = max_check_range
-            else:
-                check_range = IndexTemp
-            for i in range(1, check_range):
-                if str(IndexTemp - i) not in last_screen:
-                    need_continue = False
-                    break
-            if need_continue:
-                log.show_value(
-                    api.config,
-                    log.level.DEBUG,
-                    i18n.FindNewestIndex,
-                    IndexTemp
-                )
-                newest_index = IndexTemp
-                break
-
-        if newest_index == 0:
-            screens.show(api.config, api.connect_core.get_screen_queue())
-            raise exceptions.UnknownError(i18n.UnknownError)
-
-    elif data_type.index_type.WEB:
+    elif index_type == data_type.index_type.WEB:
         # web
         _NewestIndex = None
         newest_index = 0
@@ -164,4 +178,32 @@ def get_newest_index(
         if _NewestIndex is None:
             raise exceptions.UnknownError('')
         newest_index = (_NewestIndex) + 1
+
+    elif index_type == data_type.index_type.MAIL:
+
+        cmd_list = []
+        cmd_list.append(command.GoMainMenu)
+        cmd_list.append(command.Ctrl_Z)
+        cmd_list.append('m')
+        cmd_list.append('1')
+        cmd_list.append(command.Enter)
+        cmd_list.append('$')
+        cmd = ''.join(cmd_list)
+
+        target_list = [
+            connect_core.TargetUnit(
+                i18n.MailBox,
+                screens.Target.InMailBox,
+                break_detect=True,
+                log_level=log.level.DEBUG
+            )
+        ]
+
+        api.connect_core.send(
+            cmd,
+            target_list,
+        )
+
+        newest_index = _get_newest_index(api)
+
     return newest_index
