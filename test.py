@@ -1784,7 +1784,7 @@ github: https://tinyurl.com/umqff3v
             # init()
             # threading_test()
             ptt_bot = PTT.API(
-                log_level=PTT.log.level.TRACE,
+                # log_level=PTT.log.level.TRACE,
                 # log_level=PTT.log.level.DEBUG,
                 # host=PTT.data_type.host_type.PTT2
 
@@ -1835,7 +1835,7 @@ github: https://tinyurl.com/umqff3v
             # get_favourite_board()
             # search_user()
             # get_post_index_test()
-            get_mail()
+            # get_mail()
 
             # bucket()
             # set_board_title()
