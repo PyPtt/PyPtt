@@ -395,6 +395,9 @@ def get_newest_index():
             index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=board)
             print(f'{board} 最新文章編號 {index}')
 
+    index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+    print(f'最新郵件編號 {index}')
+
 
 def showValue(Msg, Value):
     print(f'{Msg} =>{Value}<=')
@@ -1814,7 +1817,7 @@ github: https://tinyurl.com/umqff3v
             # get_post()
             # get_post_with_condition()
             # post()
-            # get_newest_index()
+            get_newest_index()
             # crawl_board()
             # crawl_board_with_condition()
             # push()
