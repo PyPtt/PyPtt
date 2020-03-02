@@ -6,6 +6,7 @@ try:
     from . import screens
     from . import exceptions
     from . import command
+    from . import _api_util
 except ModuleNotFoundError:
     import data_type
     import i18n
@@ -14,6 +15,7 @@ except ModuleNotFoundError:
     import screens
     import exceptions
     import command
+    import _api_util
 
 
 def mail(
@@ -131,7 +133,7 @@ def get_mail(api, index) -> data_type.MailInfo:
     cmd_list.append('m')
     cmd_list.append(str(index))
     cmd_list.append(command.Enter)
-    cmd_list.append(command.Enter)
+    # cmd_list.append(command.Enter)
     cmd = ''.join(cmd_list)
 
     target_list = [
@@ -149,6 +151,9 @@ def get_mail(api, index) -> data_type.MailInfo:
     )
 
     last_screen = api.connect_core.get_screen_queue()[-1]
+    # print(last_screen)
 
-    print(last_screen)
+    origin_mail, _ = _api_util.get_content(api, post_mode=False)
+
+    print(origin_mail)
 
