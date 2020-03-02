@@ -542,6 +542,10 @@ class API:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        if index_type == data_type.index_type.MAIL:
+            if self._unregistered_user:
+                raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
         self.config.log_last_value = None
 
         try:
@@ -1589,7 +1593,17 @@ class API:
         return _api_get_board_info.get_board_info(self, board, call_by_others)
 
     def get_mail(self, index):
-        pass
+
+        self._one_thread()
+
+        if not self._login_status:
+            raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        if self._unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+        ddd
+
 
 
 if __name__ == '__main__':
