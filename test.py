@@ -1072,6 +1072,16 @@ def get_mail():
     print(mail_info.ip)
     print(mail_info.location)
 
+    if newest_index > 1:
+        mail_info = ptt_bot.get_mail(newest_index - 1)
+
+        print(mail_info.author)
+        print(mail_info.title)
+        print(mail_info.date)
+        print(mail_info.content)
+        print(mail_info.ip)
+        print(mail_info.location)
+
 if __name__ == '__main__':
     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
 
@@ -1844,7 +1854,7 @@ github: https://tinyurl.com/umqff3v
             # get_favourite_board()
             # search_user()
             # get_post_index_test()
-            # get_mail()
+            get_mail()
 
             # bucket()
             # set_board_title()
