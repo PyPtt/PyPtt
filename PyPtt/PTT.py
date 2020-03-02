@@ -1317,7 +1317,6 @@ class API:
             self.logout()
             raise exceptions.MailboxFull()
 
-
     def has_new_mail(self) -> int:
         self._one_thread()
 
@@ -1602,8 +1601,16 @@ class API:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        ddd
+        current_index = self.get_newest_index(data_type.index_type.MAIL)
 
+        check_value.check_index(self.config, index, current_index)
+
+        try:
+            from . import _api_mail
+        except ModuleNotFoundError:
+            import _api_mail
+
+        return _api_mail.get_mail(self, index)
 
 
 if __name__ == '__main__':

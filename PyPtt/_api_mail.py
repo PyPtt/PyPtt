@@ -1,13 +1,17 @@
 try:
+    from . import data_type
     from . import i18n
     from . import connect_core
     from . import log
+    from . import screens
     from . import exceptions
     from . import command
 except ModuleNotFoundError:
+    import data_type
     import i18n
     import connect_core
     import log
+    import screens
     import exceptions
     import command
 
@@ -117,3 +121,34 @@ def mail(
         i18n.SendMail,
         i18n.Success
     )
+
+
+def get_mail(api, index) -> data_type.MailInfo:
+
+    cmd_list = []
+    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.Ctrl_Z)
+    cmd_list.append('m')
+    cmd_list.append(str(index))
+    cmd_list.append(command.Enter)
+    cmd_list.append(command.Enter)
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit(
+            i18n.MailBox,
+            screens.Target.InMailBox,
+            break_detect=True,
+            log_level=log.level.DEBUG
+        )
+    ]
+
+    api.connect_core.send(
+        cmd,
+        target_list,
+    )
+
+    last_screen = api.connect_core.get_screen_queue()[-1]
+
+    print(last_screen)
+

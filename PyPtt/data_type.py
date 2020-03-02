@@ -1,5 +1,3 @@
-
-
 def parse_para(value_type, parameter):
     if parameter is None:
         if value_type is list:
@@ -104,13 +102,21 @@ class push_type:
     max_value = ARROW
 
 
-# class MailInfo:
-#     def __init__(self, author, title, date, content, ip):
-#         self.author = parse_para(str, author)
-#         self.title = parse_para(str, title)
-#         self.date = parse_para(str, date)
-#         self.content = parse_para(str, content)
-#         self.ip = parse_para(str, ip)
+class MailInfo:
+    def __init__(
+            self,
+            origin_post: str = None,
+            author: str = None,
+            title: str = None,
+            date: str = None,
+            content: str = None,
+            ip: str = None):
+        self.origin_post = parse_para(str, origin_post)
+        self.author = parse_para(str, author)
+        self.title = parse_para(str, title)
+        self.date = parse_para(str, date)
+        self.content = parse_para(str, content)
+        self.ip = parse_para(str, ip)
 
 
 class UserInfo:
