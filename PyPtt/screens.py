@@ -171,6 +171,7 @@ def is_match(screen: str, target):
                 return False
         return True
 
+
 displayed = False
 
 
@@ -234,9 +235,9 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
         line_count = int(line_count)
         space_count = int(space_count)
         current_line = result[
-                      :result.find(
-                          f'[{line_count};{space_count}H'
-                      )].count('\n') + 1
+                       :result.find(
+                           f'[{line_count};{space_count}H'
+                       )].count('\n') + 1
         # if display:
         #     print(f'>{line_count}={space_count}<')
         #     print(f'>{current_line}<')
@@ -266,8 +267,8 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
 
                 if origin_line.count('=PTT=') > 2:
                     origin_line = origin_line[
-                                 :lib_util.findnth(origin_line, '=PTT=', 3)
-                                 ]
+                                  :lib_util.findnth(origin_line, '=PTT=', 3)
+                                  ]
 
                 # result_lines[OriginIndex] = result_lines[OriginIndex].replace(
                 #     origin_line,
@@ -275,8 +276,8 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
                 # )
 
                 origin_line = origin_line[
-                             len(f'=PTT=[{line_count};{space_count}H=PTT=[K'):
-                             ]
+                              len(f'=PTT=[{line_count};{space_count}H=PTT=[K'):
+                              ]
 
                 # log.showValue(
                 #     log.level.INFO,
@@ -290,12 +291,12 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
         elif current_line == line_count:
             # print(f'!!!!!=PTT=[{line_count};{space_count}H')
             current_space = result[
-                           :result.find(
-                               f'=PTT=[{line_count};{space_count}H'
-                           )]
+                            :result.find(
+                                f'=PTT=[{line_count};{space_count}H'
+                            )]
             current_space = current_space[
-                           current_space.rfind('\n') + 1:
-                           ]
+                            current_space.rfind('\n') + 1:
+                            ]
             # if display:
             #     print(f'>>{current_space}<<')
             #     print(f'ori length>>{len(current_space)}<<')
