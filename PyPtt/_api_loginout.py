@@ -186,6 +186,11 @@ def login(
             i18n.SigningUpdate,
             '正在更新與同步線上使用者及好友名單',
         ),
+        connect_core.TargetUnit(
+            i18n.GoMainMenu,
+            '【分類看板】',
+            response=command.GoMainMenu,
+        ),
     ]
 
     cmd_list = []
