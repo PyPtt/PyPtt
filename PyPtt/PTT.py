@@ -517,7 +517,6 @@ class API:
         check_value.check(
             self.config, int, 'index_type',
             index_type, value_class=data_type.index_type)
-        check_value.check(self.config, str, 'Board', board)
 
         try:
             from . import _api_get_newest_index
@@ -539,7 +538,7 @@ class API:
             search_condition: str = None) -> int:
         self._one_thread()
 
-        if index_type == data_type.index_type.BBS:
+        if index_type == data_type.index_type.BBS or index_type == data_type.index_type.MAIL:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
@@ -1588,6 +1587,9 @@ class API:
             import _api_get_board_info
 
         return _api_get_board_info.get_board_info(self, board, call_by_others)
+
+    def get_mail(self, index):
+        pass
 
 
 if __name__ == '__main__':
