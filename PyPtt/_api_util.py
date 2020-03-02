@@ -18,13 +18,16 @@ except ModuleNotFoundError:
     import command
 
 
-def get_content(api):
+def get_content(api, post_mode: bool = True):
     api.Unconfirmed = False
 
     def is_unconfirmed_handler():
         api.Unconfirmed = True
 
-    cmd = command.Enter * 2
+    if post_mode:
+        cmd = command.Enter * 2
+    else:
+        cmd = command.Enter
     target_list = [
         # 待證實文章
         connect_core.TargetUnit(
@@ -76,8 +79,6 @@ def get_content(api):
     content_end.append('--\n※ 發信站: 批踢踢實業坊(ptt.cc)')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
-
-    # '※ 發信站: 批踢踢實業坊(ptt.cc)'
 
     has_control_code = False
     control_code_mode = False

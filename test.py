@@ -1060,7 +1060,8 @@ def search_user():
     #     print('exist')
     # else:
     #     print('Not exist')
-
+def get_mail():
+    ptt_bot.get_mail(1)
 
 if __name__ == '__main__':
     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
@@ -1783,7 +1784,7 @@ github: https://tinyurl.com/umqff3v
             # init()
             # threading_test()
             ptt_bot = PTT.API(
-                # log_level=PTT.log.level.TRACE,
+                log_level=PTT.log.level.TRACE,
                 # log_level=PTT.log.level.DEBUG,
                 # host=PTT.data_type.host_type.PTT2
 
@@ -1834,6 +1835,7 @@ github: https://tinyurl.com/umqff3v
             # get_favourite_board()
             # search_user()
             # get_post_index_test()
+            get_mail()
 
             # bucket()
             # set_board_title()
