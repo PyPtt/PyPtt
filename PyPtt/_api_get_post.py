@@ -692,12 +692,15 @@ def get_post(
         result = push_ip_pattern.search(line)
         if result is not None:
             push_ip = result.group(0)
-            log.show_value(api.config, log.level.DEBUG, [
-                i18n.Push,
-                'IP',
-            ],
-                           push_ip
-                           )
+            log.show_value(
+                api.config,
+                log.level.DEBUG,
+                [
+                    i18n.Push,
+                    'IP',
+                ],
+                push_ip
+            )
 
         push_content = line[
                        line.find(push_author) + len(push_author):

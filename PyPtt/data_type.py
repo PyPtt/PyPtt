@@ -105,18 +105,20 @@ class push_type:
 class MailInfo:
     def __init__(
             self,
-            origin_post: str = None,
+            origin_mail: str = None,
             author: str = None,
             title: str = None,
             date: str = None,
             content: str = None,
-            ip: str = None):
-        self.origin_post = parse_para(str, origin_post)
-        self.author = parse_para(str, author)
-        self.title = parse_para(str, title)
-        self.date = parse_para(str, date)
-        self.content = parse_para(str, content)
-        self.ip = parse_para(str, ip)
+            ip: str = None,
+            location: str = None):
+        self.origin_mail: str = parse_para(str, origin_mail)
+        self.author: str = parse_para(str, author)
+        self.title: str = parse_para(str, title)
+        self.date: str = parse_para(str, date)
+        self.content: str = parse_para(str, content)
+        self.ip: str = parse_para(str, ip)
+        self.location: str = parse_para(str, location)
 
 
 class UserInfo:

@@ -1,3 +1,5 @@
+import re
+
 try:
     from . import data_type
     from . import i18n
@@ -24,7 +26,6 @@ def mail(
         title: str,
         content: str,
         sign_file) -> None:
-
     # log.showValue(
     #     api.config,
     #     log.level.INFO,
@@ -126,7 +127,6 @@ def mail(
 
 
 def get_mail(api, index) -> data_type.MailInfo:
-
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
@@ -154,6 +154,101 @@ def get_mail(api, index) -> data_type.MailInfo:
     # print(last_screen)
 
     origin_mail, _ = _api_util.get_content(api, post_mode=False)
-
     print(origin_mail)
 
+    mail_author_pattern = re.compile('作者  (.+)')
+    pattern_result = mail_author_pattern.search(origin_mail)
+    mail_author = pattern_result.group(0).strip()
+    log.show_value(
+        api.config,
+        log.level.DEBUG,
+        i18n.Author,
+        mail_author
+    )
+
+    mail_title_pattern = re.compile('標題  (.+)')
+    pattern_result = mail_title_pattern.search(origin_mail)
+    mail_title = pattern_result.group(0).strip()
+    log.show_value(
+        api.config,
+        log.level.DEBUG,
+        i18n.Title,
+        mail_title
+    )
+
+    mail_date_pattern = re.compile('時間  (.+)')
+    pattern_result = mail_date_pattern.search(origin_mail)
+    mail_date = pattern_result.group(0).strip()
+    log.show_value(
+        api.config,
+        log.level.DEBUG,
+        i18n.Date,
+        mail_date
+    )
+
+    content_start = '───────────────────────────────────────'
+    content_end = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
+
+    mail_content = origin_mail[
+              origin_mail.find(content_start) +
+              len(content_start) + 1:
+              ]
+
+    mail_content = mail_content[
+              :mail_content.rfind(content_end) + 3
+              ]
+
+    log.show_value(
+        api.config,
+        log.level.DEBUG,
+        i18n.Content,
+        mail_content
+    )
+
+    # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 111.242.182.114
+    # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 59.104.127.126 (臺灣)
+
+    ip_line = origin_mail.split('\n')
+    ip_line = [x for x in ip_line if x.startswith(content_end[3:])][0]
+    # print(ip_line)
+
+    pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+    result = pattern.search(ip_line)
+    mail_ip = result.group(0)
+    log.show_value(
+        api.config,
+        log.level.DEBUG,
+        [
+            i18n.MailBox,
+            'IP',
+        ],
+        mail_ip
+    )
+
+    location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
+    if len(location) == 0:
+        mail_location = None
+    else:
+        # print(location)
+        mail_location = location[1:-1]
+
+        log.show_value(
+            api.config,
+            log.level.DEBUG,
+            [
+                i18n.MailBox,
+                'location',
+            ],
+            mail_location
+        )
+
+    mail_result = data_type.MailInfo(
+        origin_mail=origin_mail,
+        author=mail_author,
+        title=mail_title,
+        date=mail_date,
+        content=mail_content,
+        ip=mail_ip,
+        location=mail_location)
+
+    return mail_result

@@ -1061,7 +1061,16 @@ def search_user():
     # else:
     #     print('Not exist')
 def get_mail():
-    ptt_bot.get_mail(1)
+
+    newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+    mail_info = ptt_bot.get_mail(newest_index)
+
+    print(mail_info.author)
+    print(mail_info.title)
+    print(mail_info.date)
+    print(mail_info.content)
+    print(mail_info.ip)
+    print(mail_info.location)
 
 if __name__ == '__main__':
     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
