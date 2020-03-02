@@ -1817,7 +1817,7 @@ github: https://tinyurl.com/umqff3v
             # get_post()
             # get_post_with_condition()
             # post()
-            get_newest_index()
+            # get_newest_index()
             # crawl_board()
             # crawl_board_with_condition()
             # push()
