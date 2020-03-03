@@ -190,13 +190,13 @@ def get_mail(api, index) -> data_type.MailInfo:
     content_end = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
 
     mail_content = origin_mail[
-              origin_mail.find(content_start) +
-              len(content_start) + 1:
-              ]
+                   origin_mail.find(content_start) +
+                   len(content_start) + 1:
+                   ]
 
     mail_content = mail_content[
-              :mail_content.rfind(content_end) + 3
-              ]
+                   :mail_content.rfind(content_end) + 3
+                   ]
 
     log.show_value(
         api.config,
@@ -252,3 +252,37 @@ def get_mail(api, index) -> data_type.MailInfo:
         location=mail_location)
 
     return mail_result
+
+
+def del_mail(api, index) -> None:
+    cmd_list = []
+    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.Ctrl_Z)
+    cmd_list.append('m')
+    if index > 20:
+        # speed up
+        cmd_list.append(str(1))
+        cmd_list.append(command.Enter)
+    cmd_list.append(str(index))
+    cmd_list.append(command.Enter)
+    cmd_list.append('dy')
+    cmd_list.append(command.Enter)
+
+    # cmd_list.append(command.Enter)
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit(
+            i18n.MailBox,
+            screens.Target.InMailBox,
+            break_detect=True,
+            log_level=log.level.DEBUG
+        )
+    ]
+
+    api.connect_core.send(
+        cmd,
+        target_list,
+    )
+
+    api.connect_core.get_screen_queue()[-1]
