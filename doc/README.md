@@ -842,6 +842,14 @@ except PTT.exceptions.NoSuchUser:
 newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
 print(f'最新郵件編號 {newest_index}')
 mail_info = ptt_bot.get_mail(newest_index)
+
+print(mail_info.origin_mail)    # 原始信件
+print(mail_info.author)         # 作者
+print(mail_info.title)          # 標題
+print(mail_info.date)           # 日期
+print(mail_info.content)        # 內文
+print(mail_info.ip)             # ip
+print(mail_info.location)       # 地區: 舊版本信件則為 None
 ```
 
 取完信件之後，我們來看看怎麼刪除信件  
