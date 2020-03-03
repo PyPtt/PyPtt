@@ -796,7 +796,7 @@ ptt_bot.give_money('CodingMan', 100)
 
 ---
 
-### 寄信
+### 寄信 取得信件 刪除信件
 
 以下是寄信範例  
 如果對象不存在則會丟出 PTT.exceptions.NoSuchUser 例外
@@ -806,7 +806,7 @@ ptt_id = 'CodingMan'
 content = '''如有誤寄，對..對不起
 PyPtt 程式寄信測試內容
 
-程式碼: https://github.com/PttCodingMan/PTTLibrary
+程式碼: https://github.com/PttCodingMan/PyPtt
 '''
 content = content.replace('\n', '\r\n')
 
@@ -833,6 +833,26 @@ except PTT.exceptions.NoSuchUser:
 
 ![](https://i.imgur.com/XubpFRP.png)
 
+如果有取得信件的需求，可以使用 get_mail 這支 API  
+因為是根據 index 來取得信件，所以一樣要使用 get_newest_index 來取得最新的信件編號    
+範例程式碼是固定取得最新的信件
+信件 index 範圍是 1 ~ newest_index
+
+```python=
+newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+print(f'最新郵件編號 {newest_index}')
+mail_info = ptt_bot.get_mail(newest_index)
+```
+
+取完信件之後，我們來看看怎麼刪除信件  
+範例程式碼是固定刪掉最新的信件  
+信件 index 範圍是 1 ~ newest_index
+
+```python=
+newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+print(f'最新郵件編號 {newest_index}')
+ptt_bot.del_mail(newest_index)
+```
 
 ---
 
