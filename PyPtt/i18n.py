@@ -1,4 +1,3 @@
-
 try:
     from . import lib_util
 except ModuleNotFoundError:
@@ -6,7 +5,6 @@ except ModuleNotFoundError:
 
 
 class language(object):
-
     CHINESE: int = 1
     ENGLISH: int = 2
 
@@ -169,6 +167,7 @@ UnconfirmedPost = None
 Reading = None
 ReadComplete = None
 QuitUserProfile = None
+NoMail = None
 
 
 def specific_load(language, lang_list):
@@ -1101,6 +1100,12 @@ def load(input_lang):
         f'Quit User Profile',
     ])
 
+    global NoMail
+    NoMail = specific_load(input_lang, [
+        f'沒有信件',
+        f'You have no mail',
+    ])
+
     # No changes have been made to any settings
 
     # Quote original
@@ -1120,7 +1125,6 @@ def load(input_lang):
 
 
 def _createlist():
-
     i18nStrList = []
 
     for k, v in globals().items():

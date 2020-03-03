@@ -812,7 +812,7 @@ def mail():
 
     newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
     print(f'最新郵件編號 {newest_index}')
-    ptt_bot.del_mail(newest_index)
+    # ptt_bot.del_mail(newest_index)
 
 
 def has_new_mail():
@@ -1851,7 +1851,7 @@ github: https://tinyurl.com/umqff3v
             # get_waterball()
             # call_status()
             # give_money()
-            mail()
+            # mail()
             # has_new_mail()
             # get_board_list()
             # get_board_info()

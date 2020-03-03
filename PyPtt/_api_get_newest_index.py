@@ -185,9 +185,9 @@ def get_newest_index(
         cmd_list.append(command.GoMainMenu)
         cmd_list.append(command.Ctrl_Z)
         cmd_list.append('m')
-        cmd_list.append('1')
-        cmd_list.append(command.Enter)
-        cmd_list.append('$')
+        # cmd_list.append('1')
+        # cmd_list.append(command.Enter)
+        # cmd_list.append('$')
         cmd = ''.join(cmd_list)
 
         target_list = [
@@ -196,13 +196,22 @@ def get_newest_index(
                 screens.Target.InMailBox,
                 break_detect=True,
                 log_level=log.level.DEBUG
+            ),
+            connect_core.TargetUnit(
+                i18n.NoMail,
+                screens.Target.MainMenu,
+                break_detect=True,
+                log_level=log.level.DEBUG
             )
         ]
 
-        api.connect_core.send(
+        index = api.connect_core.send(
             cmd,
             target_list,
         )
+
+        if index == 1:
+            return 0
 
         newest_index = _get_newest_index(api)
 
