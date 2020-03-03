@@ -936,6 +936,7 @@ print(len(user_list))
 ```
 
 執行結果
+
 ![](https://i.imgur.com/gce3qy4.png)
 
 ---
@@ -987,6 +988,7 @@ print('發文與推文限制退文篇數多少篇以下: ', board_info.require_i
 ![](https://i.imgur.com/TIR71MY.png)
 
 執行結果
+
 ![](https://i.imgur.com/unHbEUp.png)
 
 ---
@@ -1167,4 +1169,5 @@ ptt_bot.post(
 )
 ```
 執行結果
+
 ![](https://i.imgur.com/TOskgf0.png)
