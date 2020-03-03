@@ -1069,6 +1069,7 @@ def get_mail():
     newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
     mail_info = ptt_bot.get_mail(newest_index)
 
+    print(mail_info.origin_mail)
     print(mail_info.author)
     print(mail_info.title)
     print(mail_info.date)
