@@ -836,7 +836,8 @@ except PTT.exceptions.NoSuchUser:
 如果有取得信件的需求，可以使用 get_mail 這支 API  
 因為是根據 index 來取得信件，所以一樣要使用 get_newest_index 來取得最新的信件編號    
 範例程式碼是固定取得最新的信件
-信件 index 範圍是 1 ~ newest_index
+信件 index 範圍是 1 ~ newest_index  
+Since 0.9.8
 
 ```python=
 newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
@@ -854,7 +855,8 @@ print(mail_info.location)       # 地區: 舊版本信件則為 None
 
 取完信件之後，我們來看看怎麼刪除信件  
 範例程式碼是固定刪掉最新的信件  
-信件 index 範圍是 1 ~ newest_index
+信件 index 範圍是 1 ~ newest_index  
+Since 0.9.8
 
 ```python=
 newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
