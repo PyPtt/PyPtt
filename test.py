@@ -1650,7 +1650,7 @@ github: https://tinyurl.com/umqff3v
             user_list = ptt_bot.search_user(
                 'coding'
             )
-            if len(user_list) != 14:
+            if len(user_list) == 0:
                 content = '查詢網友測試失敗'
                 ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
                              content, post_aid=basic_post_aid)
