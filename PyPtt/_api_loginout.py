@@ -88,6 +88,11 @@ def login(
 
     api._mailbox_full = False
     def mailbox_full():
+        log.log(
+            api.config,
+            log.level.INFO,
+            i18n.MailBoxFull
+        )
         api._mailbox_full = True
 
     if len(password) > 8:
@@ -120,16 +125,16 @@ def login(
             break_detect=True
         ),
         connect_core.TargetUnit(
-            i18n.MailBoxFull,
-            '【郵件選單】',
-            response=command.GoMainMenu_TypeQ,
-            handler=mailbox_full
-        ),
-        connect_core.TargetUnit(
             i18n.HasNewMailGotoMainMenu,
             '你有新信件',
             # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
             response=command.GoMainMenu + 'A' + command.Right + command.Left,
+        ),
+        connect_core.TargetUnit(
+            i18n.MailBoxFull,
+            '【郵件選單】',
+            response=command.GoMainMenu_TypeQ,
+            handler=mailbox_full
         ),
         connect_core.TargetUnit(
             i18n.GoMainMenu,
