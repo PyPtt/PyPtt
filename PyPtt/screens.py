@@ -131,6 +131,8 @@ class Target(object):
         '★ 這份文件是可播放的文字動畫，要開始播放嗎？'
     ]
 
+    CursorToGoodbye = MainMenu
+
 
 def show(config, screen_queue, function_name=None):
     if config.log_level != log.level.TRACE:

@@ -8,6 +8,7 @@ try:
     from . import screens
     from . import exceptions
     from . import command
+    from . import _api_util
 except ModuleNotFoundError:
     import data_type
     import i18n
@@ -16,6 +17,7 @@ except ModuleNotFoundError:
     import screens
     import exceptions
     import command
+    import _api_util
 
 
 def logout(api) -> None:
@@ -211,68 +213,46 @@ def login(
     )
     ori_screen = api.connect_core.get_screen_queue()[-1]
     if index == 0:
-        capacity_line = ori_screen.split('\n')[2]
-        log.show_value(
-            api.config,
-            log.level.DEBUG,
-            'capacity_line',
-            capacity_line
-        )
-        pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
-        if pattern_result is not None:
-            # print(pattern_result.group(0))
-            current_capacity = pattern_result.group(0).split('/')[0]
-            max_capacity = pattern_result.group(0).split('/')[1]
-            log.show_value(
-                api.config,
-                log.level.DEBUG,
-                'current_capacity',
-                current_capacity
-            )
-            log.show_value(
-                api.config,
-                log.level.DEBUG,
-                'max_capacity',
-                max_capacity
-            )
 
+        current_capacity, max_capacity = _api_util.get_mailbox_capacity(api)
+
+        log.log(
+            api.config,
+            log.level.INFO,
+            i18n.HasNewMailGotoMainMenu
+        )
+
+        if current_capacity > max_capacity:
+            api._mailbox_full = True
             log.log(
                 api.config,
                 log.level.INFO,
-                i18n.HasNewMailGotoMainMenu
+                i18n.MailBoxFull)
+
+        if api._mailbox_full:
+            log.log(
+                api.config,
+                log.level.INFO,
+                i18n.UseMailboxAPIWillLogoutAfterExecution
             )
 
-            if current_capacity > max_capacity:
-                api._mailbox_full = True
-                log.log(
-                    api.config,
-                    log.level.INFO,
-                    i18n.MailBoxFull)
-
-            if api._mailbox_full:
-                log.log(
-                    api.config,
-                    log.level.INFO,
-                    i18n.UseMailboxAPIWillLogoutAfterExecution
-                )
-
-            target_list = [
-                connect_core.TargetUnit(
-                    i18n.loginSuccess,
-                    screens.Target.MainMenu,
-                    break_detect=True
-                )
-            ]
-
-            cmd = command.GoMainMenu + 'A' + command.Right + command.Left
-
-            index = api.connect_core.send(
-                cmd,
-                target_list,
-                screen_timeout=api.config.screen_long_timeout,
-                secret=True
+        target_list = [
+            connect_core.TargetUnit(
+                i18n.loginSuccess,
+                screens.Target.MainMenu,
+                break_detect=True
             )
-            ori_screen = api.connect_core.get_screen_queue()[-1]
+        ]
+
+        cmd = command.GoMainMenu + 'A' + command.Right + command.Left
+
+        index = api.connect_core.send(
+            cmd,
+            target_list,
+            screen_timeout=api.config.screen_long_timeout,
+            secret=True
+        )
+        ori_screen = api.connect_core.get_screen_queue()[-1]
 
     if target_list[index].get_display_msg() != i18n.loginSuccess:
         print(ori_screen)
@@ -294,6 +274,13 @@ def login(
 
     if api.cursor not in screens.Target.InBoardWithCursor:
         screens.Target.InBoardWithCursor.append('\n' + api.cursor)
+
+    if len(screens.Target.MainMenu) == len(screens.Target.CursorToGoodbye):
+        if api.cursor == '>':
+            screens.Target.CursorToGoodbye.append('> (G)oodbye')
+        else:
+            screens.Target.CursorToGoodbye.append('●(G)oodbye')
+
 
     api._unregistered_user = True
     if '(T)alk' in ori_screen:

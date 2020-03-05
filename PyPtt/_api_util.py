@@ -210,3 +210,33 @@ def get_content(api, post_mode: bool = True):
     )
 
     return origin_post, has_control_code
+
+
+def get_mailbox_capacity(api):
+    last_screen = api.connect_core.get_screen_queue()[-1]
+    capacity_line = last_screen.split('\n')[2]
+    log.show_value(
+        api.config,
+        log.level.DEBUG,
+        'capacity_line',
+        capacity_line
+    )
+    pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
+    if pattern_result is not None:
+        # print(pattern_result.group(0))
+        current_capacity = int(pattern_result.group(0).split('/')[0])
+        max_capacity = int(pattern_result.group(0).split('/')[1])
+        log.show_value(
+            api.config,
+            log.level.DEBUG,
+            'current_capacity',
+            current_capacity
+        )
+        log.show_value(
+            api.config,
+            log.level.DEBUG,
+            'max_capacity',
+            max_capacity
+        )
+        return current_capacity, max_capacity
+    return 0, 0
