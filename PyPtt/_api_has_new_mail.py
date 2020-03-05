@@ -6,12 +6,14 @@ try:
     from . import log
     from . import screens
     from . import command
+    from . import _api_util
 except ModuleNotFoundError:
     import i18n
     import connect_core
     import log
     import screens
     import command
+    import _api_util
 
 
 def has_new_mail(api) -> int:
@@ -20,45 +22,45 @@ def has_new_mail(api) -> int:
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
     cmd_list.append('m')
-    cmd_list.append('1')
-    cmd_list.append(command.Enter)
-    # cmd_list.append('$')
+    # cmd_list.append('1')
+    # cmd_list.append(command.Enter)
     cmd = ''.join(cmd_list)
     current_capacity = None
     plus_count = 0
-    last_index = 0
     index_pattern = re.compile('(\d+)')
     checked_index_list = []
     break_detect = False
 
-    while True:
-        target_list = [
-            connect_core.TargetUnit(
-                i18n.MailBox,
-                screens.Target.InMailBox,
-                break_detect=True,
-                log_level=log.level.DEBUG
-            )
-        ]
-
-        api.connect_core.send(
-            cmd,
-            target_list,
+    target_list = [
+        connect_core.TargetUnit(
+            i18n.MailBox,
+            screens.Target.InMailBox,
+            break_detect=True,
+            log_level=log.level.DEBUG
         )
-        last_screen = api.connect_core.get_screen_queue()[-1]
+    ]
 
-        if current_capacity is None:
-            capacity_line = last_screen.split('\n')[2]
-            log.show_value(
-                api.config,
-                log.level.DEBUG,
-                'capacity_line',
-                capacity_line
+    api.connect_core.send(
+        cmd,
+        target_list,
+    )
+    current_capacity, _ = _api_util.get_mailbox_capacity(api)
+    if current_capacity > 20:
+        cmd_list = []
+        cmd_list.append(command.GoMainMenu)
+        cmd_list.append(command.Ctrl_Z)
+        cmd_list.append('m')
+        cmd_list.append('1')
+        cmd_list.append(command.Enter)
+        cmd = ''.join(cmd_list)
+
+    while True:
+        if current_capacity > 20:
+            api.connect_core.send(
+                cmd,
+                target_list,
             )
-
-            pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
-            if pattern_result is not None:
-                current_capacity = pattern_result.group(0).split('/')[0]
+        last_screen = api.connect_core.get_screen_queue()[-1]
 
         last_screen_list = last_screen.split('\n')
         last_screen_list = last_screen_list[3:-1]

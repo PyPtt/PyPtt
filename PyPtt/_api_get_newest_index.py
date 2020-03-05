@@ -11,6 +11,7 @@ try:
     from . import exceptions
     from . import command
     from . import check_value
+    from . import _api_util
 except ModuleNotFoundError:
     import data_type
     import i18n
@@ -20,6 +21,7 @@ except ModuleNotFoundError:
     import exceptions
     import command
     import check_value
+    import _api_util
 
 
 def _get_newest_index(api) -> int:
@@ -186,9 +188,6 @@ def get_newest_index(
         cmd_list.append(command.GoMainMenu)
         cmd_list.append(command.Ctrl_Z)
         cmd_list.append('m')
-        cmd_list.append('1')
-        cmd_list.append(command.Enter)
-        cmd_list.append('$')
         cmd = ''.join(cmd_list)
 
         target_list = [
@@ -196,14 +195,14 @@ def get_newest_index(
                 i18n.MailBox,
                 screens.Target.InMailBox,
                 break_detect=True,
-                log_level=log.level.DEBUG
+                # log_level=log.level.DEBUG
             ),
             connect_core.TargetUnit(
                 i18n.NoMail,
-                screens.Target.MainMenu,
+                screens.Target.CursorToGoodbye,
                 break_detect=True,
                 log_level=log.level.DEBUG
-            )
+            ),
         ]
 
         index = api.connect_core.send(
@@ -211,9 +210,10 @@ def get_newest_index(
             target_list,
         )
 
-        if index == 1:
-            return 0
-
-        newest_index = _get_newest_index(api)
+        if index == 0:
+            current_capacity, _ = _api_util.get_mailbox_capacity(api)
+            newest_index = current_capacity
+        else:
+            newest_index = 0
 
     return newest_index
