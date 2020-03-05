@@ -95,7 +95,7 @@ def get_content(api, post_mode: bool = True):
         index = api.connect_core.send(cmd, target_list)
 
         if index == 3 or index == 4:
-            return None
+            return None, False
 
         last_screen = api.connect_core.get_screen_queue()[-1]
         lines = last_screen.split('\n')

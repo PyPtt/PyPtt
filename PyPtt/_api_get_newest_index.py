@@ -62,7 +62,8 @@ def _get_newest_index(api) -> int:
             break
 
     if newest_index == 0:
-        screens.show(api.config, api.connect_core.get_screen_queue())
+        last_screen = api.connect_core.get_screen_queue()[-1]
+        print(last_screen)
         raise exceptions.UnknownError(i18n.UnknownError)
 
     return newest_index
@@ -185,9 +186,9 @@ def get_newest_index(
         cmd_list.append(command.GoMainMenu)
         cmd_list.append(command.Ctrl_Z)
         cmd_list.append('m')
-        # cmd_list.append('1')
-        # cmd_list.append(command.Enter)
-        # cmd_list.append('$')
+        cmd_list.append('1')
+        cmd_list.append(command.Enter)
+        cmd_list.append('$')
         cmd = ''.join(cmd_list)
 
         target_list = [
