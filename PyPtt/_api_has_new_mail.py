@@ -15,40 +15,55 @@ except ModuleNotFoundError:
 
 def has_new_mail(api) -> int:
 
-    # log.showValue(
-    #     api.config,
-    #     log.level.INFO,
-    #     [
-    #         i18n.PTT,
-    #         i18n.Msg
-    #     ],
-    #     i18n.MarkPost
-    # )
-
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
     cmd_list.append('m')
     cmd_list.append('1')
     cmd_list.append(command.Enter)
-    cmd_list.append('$')
+    # cmd_list.append('$')
     cmd = ''.join(cmd_list)
+    current_capacity = None
+    plus_count = 0
 
-    target_list = [
-        connect_core.TargetUnit(
-            i18n.MailBox,
-            screens.Target.InMailBox,
-            break_detect=True,
-            log_level=log.level.DEBUG
+    while True:
+        target_list = [
+            connect_core.TargetUnit(
+                i18n.MailBox,
+                screens.Target.InMailBox,
+                break_detect=True,
+                log_level=log.level.DEBUG
+            )
+        ]
+
+        api.connect_core.send(
+            cmd,
+            target_list,
         )
-    ]
+        last_screen = api.connect_core.get_screen_queue()[-1]
 
-    api.connect_core.send(
-        cmd,
-        target_list,
-    )
+        if current_capacity is None:
+            capacity_line = last_screen.split('\n')[2]
+            log.show_value(
+                api.config,
+                log.level.DEBUG,
+                'capacity_line',
+                capacity_line
+            )
 
-    ori_screen = api.connect_core.get_screen_queue()[-1]
+            pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
+            if pattern_result is not None:
+                current_capacity = pattern_result.group(0).split('/')[0]
 
-    pattern = re.findall('[\s]+[\d]+ (\+)[\s]+', ori_screen)
-    return len(pattern)
+        last_screen_list = last_screen.split('\n')
+        last_screen_list = last_screen_list[3:]
+
+        current_plus_count = len([x for x in last_screen_list if '+' in x])
+        plus_count += current_plus_count
+
+        break_detect = (len([x for x in last_screen_list if str(current_capacity) in x]) != 0)
+        if break_detect:
+            break
+        cmd = command.Ctrl_F
+
+    return plus_count
