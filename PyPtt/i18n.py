@@ -168,17 +168,18 @@ Reading = None
 ReadComplete = None
 QuitUserProfile = None
 NoMail = None
+UseMailboxAPIWillLogoutAfterExecution = None
 
 
-def specific_load(language, lang_list):
+def specific_load(input_language, lang_list):
     global languageList
 
     if len(languageList) != len(lang_list):
         raise ValueError('SpecificLoad LangList legnth error')
 
-    if language not in languageList:
-        raise ValueError('SpecificLoad Unknow language', language)
-    return lang_list[languageList.index(language)]
+    if input_language not in languageList:
+        raise ValueError('SpecificLoad Unknow language', input_language)
+    return lang_list[languageList.index(input_language)]
 
 
 def replace(string, *args):
@@ -1105,6 +1106,14 @@ def load(input_lang):
         f'沒有信件',
         f'You have no mail',
     ])
+
+    global UseMailboxAPIWillLogoutAfterExecution
+    UseMailboxAPIWillLogoutAfterExecution = specific_load(input_lang, [
+        f'如果使用信箱相關功能，將執行後自動登出',
+        f'If you use mailbox related functions, you will be logged out automatically after execution',
+    ])
+
+    #
 
     # No changes have been made to any settings
 

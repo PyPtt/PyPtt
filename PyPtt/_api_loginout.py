@@ -1,3 +1,5 @@
+import re
+
 try:
     from . import data_type
     from . import i18n
@@ -17,7 +19,6 @@ except ModuleNotFoundError:
 
 
 def logout(api) -> None:
-
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('g')
@@ -70,7 +71,6 @@ def login(
         ptt_id,
         password,
         kick_other_login):
-
     if api._login_status:
         api.logout()
 
@@ -120,21 +120,17 @@ def login(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.loginSuccess,
-            screens.Target.MainMenu,
+            # i18n.HasNewMailGotoMainMenu,
+            i18n.MailBox,
+            screens.Target.InMailBox,
+            # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
+            response=command.GoMainMenu + 'A' + command.Right + command.Left,
             break_detect=True
         ),
         connect_core.TargetUnit(
-            i18n.HasNewMailGotoMainMenu,
-            '你有新信件',
-            # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
-            response=command.GoMainMenu + 'A' + command.Right + command.Left,
-        ),
-        connect_core.TargetUnit(
-            i18n.MailBoxFull,
-            '【郵件選單】',
-            response=command.GoMainMenu_TypeQ,
-            handler=mailbox_full
+            i18n.loginSuccess,
+            screens.Target.MainMenu,
+            break_detect=True
         ),
         connect_core.TargetUnit(
             i18n.GoMainMenu,
@@ -213,13 +209,75 @@ def login(
         refresh=False,
         secret=True
     )
+    ori_screen = api.connect_core.get_screen_queue()[-1]
+    if index == 0:
+        capacity_line = ori_screen.split('\n')[2]
+        log.show_value(
+            api.config,
+            log.level.DEBUG,
+            'capacity_line',
+            capacity_line
+        )
+        pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
+        if pattern_result is not None:
+            # print(pattern_result.group(0))
+            current_capacity = pattern_result.group(0).split('/')[0]
+            max_capacity = pattern_result.group(0).split('/')[1]
+            log.show_value(
+                api.config,
+                log.level.DEBUG,
+                'current_capacity',
+                current_capacity
+            )
+            log.show_value(
+                api.config,
+                log.level.DEBUG,
+                'max_capacity',
+                max_capacity
+            )
+
+            log.log(
+                api.config,
+                log.level.INFO,
+                i18n.HasNewMailGotoMainMenu
+            )
+
+            if current_capacity > max_capacity:
+                api._mailbox_full = True
+                log.log(
+                    api.config,
+                    log.level.INFO,
+                    i18n.MailBoxFull)
+
+            if api._mailbox_full:
+                log.log(
+                    api.config,
+                    log.level.INFO,
+                    i18n.UseMailboxAPIWillLogoutAfterExecution
+                )
+
+            target_list = [
+                connect_core.TargetUnit(
+                    i18n.loginSuccess,
+                    screens.Target.MainMenu,
+                    break_detect=True
+                )
+            ]
+
+            cmd = command.GoMainMenu + 'A' + command.Right + command.Left
+
+            index = api.connect_core.send(
+                cmd,
+                target_list,
+                screen_timeout=api.config.screen_long_timeout,
+                secret=True
+            )
+            ori_screen = api.connect_core.get_screen_queue()[-1]
 
     if target_list[index].get_display_msg() != i18n.loginSuccess:
-        ori_screen = api.connect_core.get_screen_queue()[-1]
         print(ori_screen)
         raise exceptions.LoginError()
 
-    ori_screen = api.connect_core.get_screen_queue()[-1]
     if '> (' in ori_screen:
         api.cursor = data_type.Cursor.NEW
         log.log(
@@ -232,8 +290,7 @@ def login(
         log.log(
             api.config,
             log.level.DEBUG,
-            i18n.OldCursor
-        )
+            i18n.OldCursor)
 
     if api.cursor not in screens.Target.InBoardWithCursor:
         screens.Target.InBoardWithCursor.append('\n' + api.cursor)
