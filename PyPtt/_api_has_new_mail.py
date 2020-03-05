@@ -1,4 +1,5 @@
 import re
+
 try:
     from . import i18n
     from . import connect_core
@@ -14,7 +15,6 @@ except ModuleNotFoundError:
 
 
 def has_new_mail(api) -> int:
-
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
@@ -25,6 +25,10 @@ def has_new_mail(api) -> int:
     cmd = ''.join(cmd_list)
     current_capacity = None
     plus_count = 0
+    last_index = 0
+    index_pattern = re.compile('(\d+)')
+    checked_index_list = []
+    break_detect = False
 
     while True:
         target_list = [
@@ -56,12 +60,27 @@ def has_new_mail(api) -> int:
                 current_capacity = pattern_result.group(0).split('/')[0]
 
         last_screen_list = last_screen.split('\n')
-        last_screen_list = last_screen_list[3:]
+        last_screen_list = last_screen_list[3:-1]
+        last_screen_list = [x[:10] for x in last_screen_list]
 
-        current_plus_count = len([x for x in last_screen_list if '+' in x])
+        current_plus_count = 0
+        for line in last_screen_list:
+            if str(current_capacity) in line:
+                break_detect = True
+
+            index_result = index_pattern.search(line)
+            if index_result is None:
+                continue
+            current_index = index_result.group(0)
+            if current_index in checked_index_list:
+                continue
+            checked_index_list.append(current_index)
+            if '+' not in line:
+                continue
+
+            current_plus_count += 1
+
         plus_count += current_plus_count
-
-        break_detect = (len([x for x in last_screen_list if str(current_capacity) in x]) != 0)
         if break_detect:
             break
         cmd = command.Ctrl_F
