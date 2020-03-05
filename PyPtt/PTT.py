@@ -1323,6 +1323,9 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        if self.get_newest_index(data_type.index_type.MAIL) == 0:
+            return 0
+
         self.config.log_last_value = None
 
         try:
@@ -1601,6 +1604,8 @@ class API:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
+        self.config.log_last_value = None
+
         current_index = self.get_newest_index(data_type.index_type.MAIL)
 
         check_value.check_index(self.config, index, current_index)
@@ -1621,8 +1626,9 @@ class API:
         if self._unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        current_index = self.get_newest_index(data_type.index_type.MAIL)
+        self.config.log_last_value = None
 
+        current_index = self.get_newest_index(data_type.index_type.MAIL)
         check_value.check_index(self.config, index, current_index)
 
         try:
