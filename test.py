@@ -1070,25 +1070,48 @@ def search_user():
 def get_mail():
 
     newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+    print(f'最新信箱編號 {newest_index}')
     mail_info = ptt_bot.get_mail(newest_index)
 
-    print(mail_info.origin_mail)
-    print(mail_info.author)
-    print(mail_info.title)
-    print(mail_info.date)
-    print(mail_info.content)
-    print(mail_info.ip)
-    print(mail_info.location)
-
-    if newest_index > 1:
-        mail_info = ptt_bot.get_mail(newest_index - 1)
-
+    if mail_info is not None:
+        print(mail_info.origin_mail)
         print(mail_info.author)
         print(mail_info.title)
         print(mail_info.date)
         print(mail_info.content)
         print(mail_info.ip)
         print(mail_info.location)
+
+        if newest_index > 1:
+            mail_info = ptt_bot.get_mail(newest_index - 1)
+            if mail_info is not None:
+                print(mail_info.author)
+                print(mail_info.title)
+                print(mail_info.date)
+                print(mail_info.content)
+                print(mail_info.ip)
+                print(mail_info.location)
+
+def mail_recviver():
+
+    while True:
+        # ptt_bot.config.log_level = PTT.log.level.TRACE
+        newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+        # ptt_bot.config.log_level = PTT.log.level.INFO
+        ptt_bot.log(f'最新信箱編號 {newest_index}')
+        #
+        # user = ptt_bot.get_user(ptt_id)
+        # ptt_bot.log(f'信箱狀態: {user.mail_status}')
+
+        for index in range(1, newest_index + 1):
+            mail_info = ptt_bot.get_mail(newest_index)
+            print(mail_info.author)
+            print(mail_info.content)
+            ptt_bot.del_mail(index)
+
+        print('完成休息')
+        time.sleep(3)
+
 
 if __name__ == '__main__':
     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
@@ -1863,6 +1886,7 @@ github: https://tinyurl.com/umqff3v
             # search_user()
             # get_post_index_test()
             # get_mail()
+            # mail_recviver()
 
 
             # bucket()
