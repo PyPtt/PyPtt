@@ -188,6 +188,8 @@ def get_newest_index(
         cmd_list.append(command.GoMainMenu)
         cmd_list.append(command.Ctrl_Z)
         cmd_list.append('m')
+        cmd_list.append(command.Ctrl_F * 50)
+
         cmd = ''.join(cmd_list)
 
         target_list = [
@@ -205,15 +207,28 @@ def get_newest_index(
             ),
         ]
 
-        index = api.connect_core.send(
-            cmd,
-            target_list,
-        )
-
-        if index == 0:
+        def get_index(api):
             current_capacity, _ = _api_util.get_mailbox_capacity(api)
-            newest_index = current_capacity
-        else:
+            last_screen = api.connect_core.get_screen_queue()[-1]
+            cursor_line = [x for x in last_screen.split('\n') if x.strip().startswith(api.cursor)][0]
+            # print(cursor_line)
+            list_index = int(re.compile('(\d+)').search(cursor_line).group(0))
+            if list_index > current_capacity:
+                newest_index = list_index
+            else:
+                newest_index = current_capacity
+
+            return newest_index
+
+        for _ in range(3):
+            index = api.connect_core.send(
+                cmd,
+                target_list,
+            )
+
+            if index == 0:
+                newest_index = get_index(api)
+                break
             newest_index = 0
 
     return newest_index

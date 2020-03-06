@@ -1606,9 +1606,11 @@ class API:
 
         self.config.log_last_value = None
 
+        if index == 0:
+            return None
         current_index = self.get_newest_index(data_type.index_type.MAIL)
 
-        check_value.check_index(self.config, index, current_index)
+        check_value.check_index(self.config, 'index', index, current_index)
 
         try:
             from . import _api_mail

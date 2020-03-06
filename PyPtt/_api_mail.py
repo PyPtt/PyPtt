@@ -154,11 +154,11 @@ def get_mail(api, index) -> data_type.MailInfo:
     # print(last_screen)
 
     origin_mail, _ = _api_util.get_content(api, post_mode=False)
-    print(origin_mail)
+    # print(origin_mail)
 
     mail_author_pattern = re.compile('作者  (.+)')
     pattern_result = mail_author_pattern.search(origin_mail)
-    mail_author = pattern_result.group(0).strip()
+    mail_author = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
@@ -168,7 +168,7 @@ def get_mail(api, index) -> data_type.MailInfo:
 
     mail_title_pattern = re.compile('標題  (.+)')
     pattern_result = mail_title_pattern.search(origin_mail)
-    mail_title = pattern_result.group(0).strip()
+    mail_title = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
@@ -178,7 +178,7 @@ def get_mail(api, index) -> data_type.MailInfo:
 
     mail_date_pattern = re.compile('時間  (.+)')
     pattern_result = mail_date_pattern.search(origin_mail)
-    mail_date = pattern_result.group(0).strip()
+    mail_date = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
