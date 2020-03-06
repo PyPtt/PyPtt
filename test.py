@@ -1069,28 +1069,29 @@ def search_user():
     #     print('Not exist')
 def get_mail():
 
-    newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
-    print(f'最新信箱編號 {newest_index}')
-    mail_info = ptt_bot.get_mail(newest_index)
+    for _ in range(3):
+        newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+        print(f'最新信箱編號 {newest_index}')
+        mail_info = ptt_bot.get_mail(newest_index)
 
-    if mail_info is not None:
-        print(mail_info.origin_mail)
-        print(mail_info.author)
-        print(mail_info.title)
-        print(mail_info.date)
-        print(mail_info.content)
-        print(mail_info.ip)
-        print(mail_info.location)
+        if mail_info is not None:
+            # print(mail_info.origin_mail)
+            print(mail_info.author)
+            # print(mail_info.title)
+            # print(mail_info.date)
+            # print(mail_info.content)
+            # print(mail_info.ip)
+            # print(mail_info.location)
 
-        if newest_index > 1:
-            mail_info = ptt_bot.get_mail(newest_index - 1)
-            if mail_info is not None:
-                print(mail_info.author)
-                print(mail_info.title)
-                print(mail_info.date)
-                print(mail_info.content)
-                print(mail_info.ip)
-                print(mail_info.location)
+        # if newest_index > 1:
+        #     mail_info = ptt_bot.get_mail(newest_index - 1)
+        #     if mail_info is not None:
+        #         print(mail_info.author)
+        #         print(mail_info.title)
+        #         print(mail_info.date)
+        #         print(mail_info.content)
+        #         print(mail_info.ip)
+        #         print(mail_info.location)
 
 def mail_recviver():
 

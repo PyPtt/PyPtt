@@ -93,7 +93,6 @@ def get_content(api, post_mode: bool = True):
 
     while True:
         index = api.connect_core.send(cmd, target_list)
-
         if index == 3 or index == 4:
             return None, False
 

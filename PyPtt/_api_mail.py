@@ -136,10 +136,28 @@ def get_mail(api, index) -> data_type.MailInfo:
     # cmd_list.append(command.Enter)
     cmd = ''.join(cmd_list)
 
+    fast_target = ''
+    for i in range(0, 5):
+        space = ' ' * i
+        fast_target = f'{api.cursor}{space}{index}'
+
+        if api.cursor == data_type.Cursor.NEW:
+            if len(fast_target) == 6:
+                break
+        else:
+            if len(fast_target) == 5:
+                break
+
     target_list = [
         connect_core.TargetUnit(
             i18n.MailBox,
             screens.Target.InMailBox,
+            break_detect=True,
+            log_level=log.level.DEBUG
+        ),
+        connect_core.TargetUnit(
+            i18n.MailBox,
+            fast_target,
             break_detect=True,
             log_level=log.level.DEBUG
         )
@@ -149,8 +167,7 @@ def get_mail(api, index) -> data_type.MailInfo:
         cmd,
         target_list,
     )
-
-    last_screen = api.connect_core.get_screen_queue()[-1]
+    # last_screen = api.connect_core.get_screen_queue()[-1]
     # print(last_screen)
 
     origin_mail, _ = _api_util.get_content(api, post_mode=False)
