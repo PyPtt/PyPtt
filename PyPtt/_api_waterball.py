@@ -71,7 +71,7 @@ def get_waterball(api, operate_type:int) -> list:
         index = api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=1
+            # screen_timeout=1
         )
         log.show_value(
             api.config,
@@ -122,7 +122,16 @@ def get_waterball(api, operate_type:int) -> list:
         # print('=' * 50)
 
         pattern_result = line_from_pattern.search(last_line)
-        last_read_line_list = pattern_result.group(0).split('~')
+        try:
+            last_read_line_list = pattern_result.group(0).split('~')
+        except Exception as e:
+            import traceback
+            traceback.print_tb(e.__traceback__)
+            print(e)
+            print(f'ori_screen {ori_screen}')
+            print(f'last_line {last_line}')
+            raise e
+
         last_read_line_a_temp = int(last_read_line_list[0])
         last_read_line_b_temp = int(last_read_line_list[1])
         # last_read_line_a = last_read_line_a_temp - 1

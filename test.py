@@ -703,23 +703,27 @@ def throw_waterball():
 
 
 def get_waterball():
-    operate_type = PTT.data_type.waterball_operate_type.NOTHING
+    # operate_type = PTT.data_type.waterball_operate_type.NOTHING
     # OperateType = PTT.data_type.waterball_operate_type.MAIL
-    # OperateType = PT4T.waterball_operate_type.CLEAR
+    operate_type = PTT.data_type.waterball_operate_type.CLEAR
 
-    waterball_list = ptt_bot.get_waterball(operate_type)
+    while True:
+        newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+        waterball_list = ptt_bot.get_waterball(operate_type)
 
-    if waterball_list is None:
-        return
+        if waterball_list is None:
+            return
 
-    print('Result:')
-    for waterball in waterball_list:
-        if waterball.type == PTT.data_type.waterball_type.CATCH:
-            temp = '★' + waterball.target + ' '
-        elif waterball.type == PTT.data_type.waterball_type.SEND:
-            temp = 'To ' + waterball.target + ': '
-        temp += waterball.content + ' [' + waterball.date + ']'
-        print(temp)
+        # print('Result:')
+        for waterball in waterball_list:
+            if waterball.type == PTT.data_type.waterball_type.CATCH:
+                temp = '★' + waterball.target + ' '
+            elif waterball.type == PTT.data_type.waterball_type.SEND:
+                temp = 'To ' + waterball.target + ': '
+            temp += waterball.content + ' [' + waterball.date + ']'
+            print(temp)
+
+        time.sleep(0.5)
 
 
 def call_status():
