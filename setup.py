@@ -93,7 +93,7 @@ setup(
         'Topic :: Internet',
         'Topic :: Terminals :: Telnet',
         # Pick your license as you wish
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
 
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
