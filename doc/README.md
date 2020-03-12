@@ -220,6 +220,12 @@ except PTT.exceptions.LoginTooOften:
     sys.exit()
 ptt_bot.log('登入成功')
 
+if ptt_bot.unregistered_user:
+    print('未註冊使用者')
+
+    if ptt_bot.process_picks != 0:
+        print(f'註冊單處理順位 {ptt_bot.process_picks}')
+
 # call ptt_bot other api
 
 ptt_bot.logout()
