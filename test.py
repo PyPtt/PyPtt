@@ -1864,6 +1864,12 @@ github: https://tinyurl.com/umqff3v
                 ptt_bot.log('請稍等一下再登入')
                 sys.exit()
 
+            if ptt_bot.unregistered_user:
+                print('未註冊使用者')
+
+                if ptt_bot.process_picks != 0:
+                    print(f'註冊單處理順位 {ptt_bot.process_picks}')
+
             ###################################
 
             ###################################
