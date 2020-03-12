@@ -199,8 +199,8 @@ ptt_bot = PTT.API(
     
 ### 登入登出
 
-以下就是登入登出範例
-
+以下就是登入登出範例  
+登入完成，你可以查看一些變數來了解帳號的狀態
 
 ```python=
 import sys
@@ -225,6 +225,9 @@ if ptt_bot.unregistered_user:
 
     if ptt_bot.process_picks != 0:
         print(f'註冊單處理順位 {ptt_bot.process_picks}')
+
+if ptt_bot.registered_user:
+    print('已註冊使用者')
 
 # call ptt_bot other api
 
