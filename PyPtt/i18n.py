@@ -169,6 +169,8 @@ ReadComplete = None
 QuitUserProfile = None
 NoMail = None
 UseMailboxAPIWillLogoutAfterExecution = None
+PicksInRegister = None
+RegisterInProcessing = None
 
 
 def specific_load(input_language, lang_list):
@@ -1113,6 +1115,17 @@ def load(input_lang):
         f'If you use mailbox related functions, you will be logged out automatically after execution',
     ])
 
+    global PicksInRegister
+    PicksInRegister = specific_load(input_lang, [
+        '註冊申請單處理順位',
+        'Registration application processing order',
+    ])
+
+    global RegisterInProcessing
+    RegisterInProcessing = specific_load(input_lang, [
+        '註冊申請單尚在處理中',
+        'Register is in processing',
+    ])
     #
 
     # No changes have been made to any settings

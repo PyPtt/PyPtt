@@ -21,7 +21,7 @@ except ModuleNotFoundError:
 def get_content(api, post_mode: bool = True):
     api.Unconfirmed = False
 
-    def is_unconfirmed_handler():
+    def is_unconfirmed_handler(screen):
         api.Unconfirmed = True
 
     if post_mode:
