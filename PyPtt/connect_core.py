@@ -410,7 +410,7 @@ class API(object):
                     condition = Target.is_match(screen)
                     if condition:
                         if Target._Handler is not None:
-                            Target._Handler()
+                            Target._Handler(screen)
                         if len(screen) > 0:
                             screens.show(self.config, screen)
                             self._RDQ.add(screen)

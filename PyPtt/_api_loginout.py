@@ -97,6 +97,11 @@ def login(
         )
         api._mailbox_full = True
 
+    def register_processing(screen):
+        pattern = re.compile('[\d]+')
+        api.process_picks = pattern.search(screen).group(0)
+
+
     if len(password) > 8:
         password = password[:8]
 
@@ -179,6 +184,12 @@ def login(
             kick_other_loginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
             response=kick_other_loginResponse,
+        ),
+        connect_core.TargetUnit(
+            i18n.AnyKeyContinue,
+            '◆ 您的註冊申請單尚在處理中',
+            response=command.Enter,
+            handler=register_processing
         ),
         connect_core.TargetUnit(
             i18n.AnyKeyContinue,
@@ -282,20 +293,28 @@ def login(
             screens.Target.CursorToGoodbye.append('●(G)oodbye')
 
 
-    api._unregistered_user = True
+    api.unregistered_user = True
     if '(T)alk' in ori_screen:
-        api._unregistered_user = False
+        api.unregistered_user = False
     if '(P)lay' in ori_screen:
-        api._unregistered_user = False
+        api.unregistered_user = False
     if '(N)amelist' in ori_screen:
-        api._unregistered_user = False
+        api.unregistered_user = False
 
-    if api._unregistered_user:
+    if api.unregistered_user:
         # print(ori_screen)
         log.log(
             api.config,
             log.level.INFO,
-            i18n.UnregisteredUserCantUseAllAPI
+            i18n.UnregisteredUserCantUseAllAPI)
+    api.registered_user = not api.unregistered_user
+
+    if api.process_picks != 0:
+        log.show_value(
+            api.config,
+            log.level.INFO,
+            i18n.PicksInRegister,
+            api.process_picks
         )
 
     api._login_status = True
