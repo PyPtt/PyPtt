@@ -248,8 +248,8 @@ def get_post(
 
         push_number = cursor_line
         # print(f'2>{push_number}<')
-        push_number = push_number[7:11]
-        # print(PushNumber)
+        push_number = push_number[7:10]
+        # print(push_number)
         push_number = push_number.split(' ')
         # print(PushNumber)
         push_number = list(filter(None, push_number))
