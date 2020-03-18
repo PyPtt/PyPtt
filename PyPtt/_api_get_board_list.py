@@ -115,7 +115,7 @@ def get_board_list(api) -> list:
             front_part_list = list(filter(None, front_part_list))
             # print(f'FrontPartList =>{FrontPartList}<=')
             no = int(front_part_list[0].rstrip(')'))
-            # print(f'No  =>{No}<=')
+            # print(f'No  =>{no}<=')
             # print(f'LastNo =>{LastNo}<=')
 
             log.show_value(
