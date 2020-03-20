@@ -99,7 +99,7 @@ def login(
 
     def register_processing(screen):
         pattern = re.compile('[\d]+')
-        api.process_picks = pattern.search(screen).group(0)
+        api.process_picks = int(pattern.search(screen).group(0))
 
 
     if len(password) > 8:
