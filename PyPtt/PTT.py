@@ -1033,12 +1033,39 @@ class API:
         board_info = self._board_info_list[board.lower()]
 
         if board_info.is_push_record_ip:
-            max_push_length = 33
+            log.log(
+                self.config,
+                log.level.INFO,
+                i18n.record_ip)
+            if board_info.is_push_aligned:
+                log.log(
+                    self.config,
+                    log.level.INFO,
+                    i18n.push_aligned)
+                max_push_length = 32
+            else:
+                log.log(
+                    self.config,
+                    log.level.INFO,
+                    i18n.not_push_aligned)
+                max_push_length = 43 - len(self._ID)
         else:
+            log.log(
+                self.config,
+                log.level.INFO,
+                i18n.not_record_ip)
             #     推文對齊
             if board_info.is_push_aligned:
+                log.log(
+                    self.config,
+                    log.level.INFO,
+                    i18n.push_aligned)
                 max_push_length = 46
             else:
+                log.log(
+                    self.config,
+                    log.level.INFO,
+                    i18n.not_push_aligned)
                 max_push_length = 58 - len(self._ID)
 
         push_list = []

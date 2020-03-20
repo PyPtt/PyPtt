@@ -171,6 +171,10 @@ NoMail = None
 UseMailboxAPIWillLogoutAfterExecution = None
 PicksInRegister = None
 RegisterInProcessing = None
+record_ip = None
+not_record_ip = None
+push_aligned = None
+not_push_aligned = None
 
 
 def specific_load(input_language, lang_list):
@@ -922,7 +926,6 @@ def load(input_lang):
         f'{PTT2} Not Support',
     ])
 
-    # Animation
     global AnimationPost
     AnimationPost = specific_load(input_lang, [
         '動畫文章',
@@ -1126,7 +1129,30 @@ def load(input_lang):
         '註冊申請單尚在處理中',
         'Register is in processing',
     ])
-    #
+
+    global record_ip
+    record_ip = specific_load(input_lang, [
+        '紀錄 IP',
+        'Record ip',
+    ])
+
+    global not_record_ip
+    not_record_ip = specific_load(input_lang, [
+        '不紀錄 IP',
+        'Not record ip',
+    ])
+
+    global push_aligned
+    push_aligned = specific_load(input_lang, [
+        '推文對齊',
+        'Push aligned',
+    ])
+
+    global not_push_aligned
+    not_push_aligned = specific_load(input_lang, [
+        '無推文對齊',
+        'No push aligned',
+    ])
 
     # No changes have been made to any settings
 

@@ -674,8 +674,8 @@ def push():
         # ('Wanted', '1Teyovc3')
     ]
 
-    content = '推文測試'
-    testround: int = 10
+    content = '批踢踢實業坊，簡稱批踢踢、PTT，是一個臺灣電子布告欄（BBS），採用Telnet BBS技術運作，建立在台灣學術網路的資源之上，以學術性質為原始目的，提供線上言論空間。目前由國立臺灣大學電子布告欄系統研究社管理，大部份的系統原始碼由國立臺灣大學資訊工程學系的學生與校友進行維護，並且邀請法律專業人士擔任法律顧問。它有兩個分站，分別為批踢踢兔與批踢踢參。目前在批踢踢實業坊與批踢踢兔註冊總人數約150萬人，尖峰時段兩站超過15萬名使用者同時上線，擁有超過2萬個不同主題的看板，每日超過2萬篇新文章及50萬則推文被發表，是台灣使用人次最多的網路論壇之一。'
+    testround: int = 1
     for (board, index) in test_post_list:
         for i in range(testround):
             if isinstance(index, int):
@@ -1020,6 +1020,19 @@ def get_board_info():
     # x - 轉錄文章 會 自動記錄，且 需要 發文權限     c)文章類別 n)發文注意事項
     # j - 未 設為冷靜模式                            p)進板畫面
     # 8 - 禁止 未滿十八歲進入
+
+    board_list = ptt_bot.get_board_list()
+    for board in board_list:
+        board_info = ptt_bot.get_board_info(board)
+
+        if not board_info.is_push_record_ip:
+            continue
+        if board_info.is_push_aligned:
+            continue
+
+        print(f'{board} !!!!!!!!!!')
+        # break
+    return
 
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         board_info = ptt_bot.get_board_info('Gossiping')
@@ -1834,7 +1847,7 @@ github: https://tinyurl.com/umqff3v
 
         ptt_bot.logout()
     else:
-        ptt_id, password = get_password('Account.txt')
+        ptt_id, password = get_password('Account3.txt')
         try:
             # init()
             # threading_test()
