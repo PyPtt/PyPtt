@@ -193,7 +193,8 @@ class API:
             )
 
         self.connect_core = connect_core.API(self.config)
-        self._ExistBoardList = []
+        self._exist_board_list = []
+        self._board_info_list = dict()
         self._ModeratorList = dict()
         self._LastThrowWaterBallTime = 0
         self._ThreadID = threading.get_ident()
@@ -473,9 +474,10 @@ class API:
             self,
             board: str,
             check_moderator: bool = False) -> None:
-        if board.lower() not in self._ExistBoardList:
+        if board.lower() not in self._exist_board_list:
             board_info = self._get_board_info(board)
-            self._ExistBoardList.append(board.lower())
+            self._exist_board_list.append(board.lower())
+            self._board_info_list[board.lower()] = board_info
 
             moderators = board_info.moderators
             moderators = [x.lower() for x in moderators]
@@ -1028,7 +1030,17 @@ class API:
 
         self._check_board(board)
 
-        max_push_length = 33
+        board_info = self._board_info_list[board.lower()]
+
+        if board_info.is_push_record_ip:
+            max_push_length = 33
+        else:
+            #     推文對齊
+            if board_info.is_push_aligned:
+                max_push_length = 46
+            else:
+                max_push_length = 58 - len(self._ID)
+
         push_list = []
 
         temp_start_index = 0
