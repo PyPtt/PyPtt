@@ -131,7 +131,7 @@ class Target(object):
         '★ 這份文件是可播放的文字動畫，要開始播放嗎？'
     ]
 
-    CursorToGoodbye = MainMenu
+    CursorToGoodbye = MainMenu.copy()
 
 
 def show(config, screen_queue, function_name=None):
@@ -162,16 +162,6 @@ def show(config, screen_queue, function_name=None):
     if function_name is not None:
         print('錯誤在 ' + function_name + ' 函式發生')
     print('-' * 50)
-
-
-def is_match(screen: str, target):
-    if isinstance(target, str):
-        return target in screen
-    if isinstance(target, list):
-        for T in target:
-            if T not in screen:
-                return False
-        return True
 
 
 displayed = False
