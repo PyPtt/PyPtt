@@ -536,7 +536,7 @@ if len(del_post_list) > 0:
 > 可能導致結果不夠即時  
 > 在有下搜尋條件的情況下，無法使用 AID 來標記爬文範圍
 
-當然我們也可以像 getPost 那樣加入搜尋條件來爬我們的結果
+當然我們也可以像 get_post 那樣加入搜尋條件來爬我們的結果
 
 ```python=
 def show_condition(board, search_type, condition):
