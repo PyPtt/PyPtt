@@ -114,6 +114,7 @@ VerifyID = None
 TradingInProgress = None
 Transaction = None
 MoneyTooFew = None
+TransactionCancelled = None
 ConstantRedBag = None
 SendMail = None
 Select = None
@@ -786,6 +787,12 @@ def load(input_lang):
     MoneyTooFew = specific_load(input_lang, [
         '金額過少，交易取消!',
         'The amount is too small, the transaction is cancelled!',
+    ])
+
+    global TransactionCancelled
+    TransactionCancelled = specific_load(input_lang, [
+        '交易取消!',
+        'The transaction is cancelled!',
     ])
 
     global ConstantRedBag

@@ -38,10 +38,15 @@ def give_money(
             exceptions_=exceptions.MoneyTooFew()
         ),
         connect_core.TargetUnit(
-            i18n.NoMoney,
+            i18n.TransactionCancelled,
             '交易取消!',
             break_detect=True,
-            exceptions_=exceptions.UnknownError()
+            exceptions_=exceptions.UnknownError(i18n.TransactionCancelled)
+        ),
+        connect_core.TargetUnit(
+            i18n.Transaction,
+            '確定進行交易嗎？',
+            response='y' + command.Enter
         ),
         connect_core.TargetUnit(
             [
