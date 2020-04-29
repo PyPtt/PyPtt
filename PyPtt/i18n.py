@@ -159,6 +159,7 @@ MarkPost = None
 DelAllMarkPost = None
 NoSuchPost = None
 GoMainMenu = None
+ErrorLoginRichPeopleGoMainMenu = None
 CanNotUseSearchPostCodeF = None
 FavouriteBoardList = None
 bucket = None
@@ -1058,6 +1059,13 @@ def load(input_lang):
         '回到主選單',
         'Back to main memu',
     ])
+
+    global ErrorLoginRichPeopleGoMainMenu
+    GoMainMenu = specific_load(input_lang, [
+        '誤入大富翁區，回到主選單',
+        'Stray into the Monopoly area and return to the main menu',
+    ])
+
 
     global CanNotUseSearchPostCodeF
     CanNotUseSearchPostCodeF = specific_load(input_lang, [

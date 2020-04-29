@@ -89,6 +89,7 @@ def login(
         return 'n' + command.Enter
 
     api._mailbox_full = False
+
     def mailbox_full():
         log.log(
             api.config,
@@ -100,7 +101,6 @@ def login(
     def register_processing(screen):
         pattern = re.compile('[\d]+')
         api.process_picks = int(pattern.search(screen).group(0))
-
 
     if len(password) > 8:
         password = password[:8]
@@ -205,6 +205,18 @@ def login(
             '【分類看板】',
             response=command.GoMainMenu,
         ),
+        connect_core.TargetUnit(
+            i18n.ErrorLoginRichPeopleGoMainMenu,
+            [
+                '大富翁',
+                '排行榜',
+                '名次',
+                '代號',
+                '暱稱',
+                '數目',
+            ],
+            response=command.GoMainMenu,
+        ),
     ]
 
     cmd_list = []
@@ -291,7 +303,6 @@ def login(
             screens.Target.CursorToGoodbye.append('> (G)oodbye')
         else:
             screens.Target.CursorToGoodbye.append('●(G)oodbye')
-
 
     api.unregistered_user = True
     if '(T)alk' in ori_screen:
