@@ -89,7 +89,6 @@ def performance_test():
 
 
 def get_post():
-
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_post_list = [
             ('Python', 1),
@@ -283,7 +282,6 @@ def get_post_with_condition():
             ('PttSuggest', PTT.data_type.post_search_type.KEYWORD, '[問題]'),
             ('PttSuggest', PTT.data_type.post_search_type.PUSH, '10'),
         ]
-
 
     test_range = 1
     query = False
@@ -785,7 +783,8 @@ def call_status():
 
 
 def give_money():
-    ptt_bot.give_money('DeepLearning', 1)
+    for _ in range(3):
+        ptt_bot.give_money('DeepLearning', 1)
 
 
 def mail():
@@ -1084,8 +1083,9 @@ def search_user():
     #     print('exist')
     # else:
     #     print('Not exist')
-def get_mail():
 
+
+def get_mail():
     for _ in range(3):
         newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
         print(f'最新信箱編號 {newest_index}')
@@ -1110,8 +1110,8 @@ def get_mail():
         #         print(mail_info.ip)
         #         print(mail_info.location)
 
-def mail_recviver():
 
+def mail_recviver():
     while True:
         # ptt_bot.config.log_level = PTT.log.level.TRACE
         newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
@@ -1914,7 +1914,6 @@ github: https://tinyurl.com/umqff3v
             # get_post_index_test()
             # get_mail()
             # mail_recviver()
-
 
             # bucket()
             # set_board_title()
