@@ -16,7 +16,7 @@ def get_password(password_file):
             ptt_id = account['ID']
             password = account['Password']
     except FileNotFoundError:
-        print('Please note PTT ID and Password in Account.txt')
+        print(f'Please note PTT ID and Password in {password_file}')
         print('{"ID":"YourID", "Password":"YourPassword"}')
         sys.exit()
 
