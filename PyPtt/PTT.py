@@ -1680,6 +1680,19 @@ class API:
 
         return _api_mail.del_mail(self, index)
 
+    def change_pw(self, new_password):
+        self._one_thread()
+
+        if not self._login_status:
+            raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        try:
+            from . import _api_change_pw
+        except ModuleNotFoundError:
+            import _api_change_pw
+
+        return _api_change_pw.change_pw(self, new_password)
+
 
 if __name__ == '__main__':
     print('PyPtt v ' + version.V)

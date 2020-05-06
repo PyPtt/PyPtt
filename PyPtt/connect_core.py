@@ -406,7 +406,6 @@ class API(object):
 
                 find_target = False
                 for Target in target_list:
-
                     condition = Target.is_match(screen)
                     if condition:
                         if Target._Handler is not None:

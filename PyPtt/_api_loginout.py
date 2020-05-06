@@ -213,7 +213,7 @@ def login(
                 '名次',
                 '代號',
                 '暱稱',
-                '數目',
+                '數目'
             ],
             response=command.GoMainMenu,
         ),

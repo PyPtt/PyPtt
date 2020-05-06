@@ -17,7 +17,8 @@ except ModuleNotFoundError:
 
 
 def get_board_info(
-        api, board: str,
+        api,
+        board: str,
         call_by_others: bool) -> None:
 
     cmd_list = []
