@@ -47,7 +47,8 @@ class TargetUnit(object):
             exceptions_=None,
             refresh=True,
             secret=False,
-            handler=None):
+            handler=None,
+            max_match: int = 0):
 
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
@@ -62,16 +63,22 @@ class TargetUnit(object):
         self._BreakAfterSend = break_detect_after_send
         self._Secret = secret
         self._Handler = handler
+        self._max_match = max_match
+        self._current_match = 0
 
     def is_match(self, screen: str) -> bool:
+        if self._current_match >= self._max_match > 0:
+            return False
         if isinstance(self._DetectTarget, str):
             if self._DetectTarget in screen:
+                self._current_match += 1
                 return True
             return False
         elif isinstance(self._DetectTarget, list):
             for Target in self._DetectTarget:
                 if Target not in screen:
                     return False
+            self._current_match += 1
             return True
 
     def get_display_msg(self) -> str:
