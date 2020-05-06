@@ -1130,6 +1130,9 @@ def mail_recviver():
         print('完成休息')
         time.sleep(3)
 
+def change_pw():
+    ptt_bot.change_pw(password)
+
 
 if __name__ == '__main__':
     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
@@ -1914,6 +1917,7 @@ github: https://tinyurl.com/umqff3v
             # get_post_index_test()
             # get_mail()
             # mail_recviver()
+            # change_pw()
 
             # bucket()
             # set_board_title()

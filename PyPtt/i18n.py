@@ -39,6 +39,7 @@ Info = None
 Debug = None
 Again = None
 ErrorIDPW = None
+ErrorPW = None
 ScreenNoMatchTarget = None
 SigningUnPleaseWait = None
 Msg = None
@@ -336,6 +337,12 @@ def load(input_lang):
     ErrorIDPW = specific_load(input_lang, [
         '密碼不對或無此帳號',
         'Wrong password or no such id',
+    ])
+
+    global ErrorPW
+    ErrorPW = specific_load(input_lang, [
+        '密碼不正確',
+        'Wrong password',
     ])
 
     global ScreenNoMatchTarget
