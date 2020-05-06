@@ -148,6 +148,14 @@ class WrongIDorPassword(Exception):
         return self.message
 
 
+class WrongPassword(Exception):
+    def __init__(self):
+        self.message = i18n.ErrorPW
+
+    def __str__(self):
+        return self.message
+
+
 class LoginTooOften(Exception):
     def __init__(self):
         self.message = i18n.LoginTooOften

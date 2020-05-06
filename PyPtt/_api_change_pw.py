@@ -1,5 +1,3 @@
-
-
 try:
     from . import data_type
     from . import i18n
@@ -17,6 +15,7 @@ except ModuleNotFoundError:
     import exceptions
     import command
 
+
 def change_pw(
         api,
         new_password: str) -> None:
@@ -31,40 +30,47 @@ def change_pw(
     cmd = ''.join(cmd_list)
 
     target_list = [
-        # 請您確定(Y/N)？
+        connect_core.TargetUnit(
+            i18n.ErrorPW,
+            '您輸入的密碼不正確',
+            exceptions_=exceptions.WrongPassword()
+        ),
         connect_core.TargetUnit(
             i18n.confirm,
             '請您確定(Y/N)？',
-            response='Y'
+            response='Y' + command.Enter
         ),
         connect_core.TargetUnit(
             i18n.CheckNewPassword,
             '檢查新密碼',
-            response=new_password + command.Enter
+            response=new_password + command.Enter,
+            max_match=1
         ),
         connect_core.TargetUnit(
             i18n.InputNewPassword,
             '設定新密碼',
-            response=new_password + command.Enter
+            response=new_password + command.Enter,
+            max_match=1
         ),
         connect_core.TargetUnit(
             i18n.InputOriginPassword,
             '輸入原密碼',
-            response=api._Password + command.Enter
+            response=api._Password + command.Enter,
+            max_match=1
         ),
-        # connect_core.TargetUnit(
-        #     i18n.Done,
-        #     '[呼叫器]',
-        #     break_detect=True
-        # ),
+        connect_core.TargetUnit(
+            i18n.Done,
+            '設定個人資料與密碼',
+            break_detect=True
+        ),
     ]
-
-    # api._Password = password
 
     api.connect_core.send(
         cmd,
-        target_list
+        target_list,
     )
 
-    ori_screen = api.connect_core.get_screen_queue()[-1]
+    api._Password = new_password
+
+    # ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)

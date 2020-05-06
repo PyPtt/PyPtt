@@ -1686,6 +1686,8 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        new_password = new_password[:8]
+
         try:
             from . import _api_change_pw
         except ModuleNotFoundError:
