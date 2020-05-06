@@ -64,6 +64,9 @@ Integer = None
 Boolean = None
 ID = None
 Password = None
+InputOriginPassword = None
+InputNewPassword = None
+CheckNewPassword = None
 Board = None
 IntoBoard = None
 BothInput = None
@@ -177,6 +180,7 @@ record_ip = None
 not_record_ip = None
 push_aligned = None
 not_push_aligned = None
+confirm = None
 
 
 def specific_load(input_language, lang_list):
@@ -482,6 +486,24 @@ def load(input_lang):
     Password = specific_load(input_lang, [
         '密碼',
         'Password',
+    ])
+
+    global InputOriginPassword
+    InputOriginPassword = specific_load(input_lang, [
+        '輸入原密碼',
+        'Input Origin Password',
+    ])
+
+    global InputNewPassword
+    InputNewPassword = specific_load(input_lang, [
+        '設定新密碼',
+        'Input New Password',
+    ])
+
+    global CheckNewPassword
+    CheckNewPassword = specific_load(input_lang, [
+        '檢查新密碼',
+        'CheckNewPassword',
     ])
 
     global Board
@@ -1166,6 +1188,12 @@ def load(input_lang):
     not_push_aligned = specific_load(input_lang, [
         '無推文對齊',
         'No push aligned',
+    ])
+
+    global confirm
+    confirm = specific_load(input_lang, [
+        '確認',
+        'Confirm',
     ])
 
     # No changes have been made to any settings
