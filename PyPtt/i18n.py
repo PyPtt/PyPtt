@@ -1061,11 +1061,10 @@ def load(input_lang):
     ])
 
     global ErrorLoginRichPeopleGoMainMenu
-    GoMainMenu = specific_load(input_lang, [
+    ErrorLoginRichPeopleGoMainMenu = specific_load(input_lang, [
         '誤入大富翁區，回到主選單',
         'Stray into the Monopoly area and return to the main menu',
     ])
-
 
     global CanNotUseSearchPostCodeF
     CanNotUseSearchPostCodeF = specific_load(input_lang, [
