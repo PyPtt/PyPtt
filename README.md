@@ -58,4 +58,4 @@ pip install PyPtt
 
 ## 贊助清單
 
-#### 尚無贊助
+#### leftc
