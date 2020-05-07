@@ -48,8 +48,7 @@ pip install PyPtt
 #### requests (Since 0.8.25)
 
 ## 贊助
-#### 在這個 github 的小園地，用熱血的心為您打造在 PTT 翱翔的翅膀
-#### 希望您可以贊助這雙翅膀，讓我們一起飛得更遠
+#### 如果這個專案對你有幫助，贊助我一杯咖啡吧!!
 ####
 #### [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 ####
