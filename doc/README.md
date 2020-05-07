@@ -92,6 +92,9 @@ pip install PyPtt==VERSION
 ###### PTT.exceptions.UserHasPreviouslyBeenBanned
     Since 0.9.1
     使用者之前已被禁言
+###### PTT.exceptions.WrongPassword
+    Since 0.9.16
+    密碼錯誤
 
 ---
 
@@ -1033,6 +1036,17 @@ ptt_bot.reply_post(
     '測試回應到板上還有信箱，如有打擾抱歉',
     post_index=reply_post_index
 )
+```
+
+---
+
+### 更改密碼
+
+以下是更改密碼 API  
+Since 0.9.16
+
+```python=
+ptt_bot.change_pw(new_password)
 ```
 
 ---
