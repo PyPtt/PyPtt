@@ -1693,7 +1693,7 @@ class API:
         except ModuleNotFoundError:
             import _api_change_pw
 
-        return _api_change_pw.change_pw(self, new_password)
+        _api_change_pw.change_pw(self, new_password)
 
 
 if __name__ == '__main__':
