@@ -65,10 +65,12 @@ def change_pw(
         ),
     ]
 
-    api.connect_core.send(
+    index = api.connect_core.send(
         cmd,
         target_list,
     )
+    if index < 0:
+        raise exceptions.Timeout
 
     api._Password = new_password
 

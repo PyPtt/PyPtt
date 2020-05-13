@@ -182,6 +182,7 @@ not_record_ip = None
 push_aligned = None
 not_push_aligned = None
 confirm = None
+timeout = None
 
 
 def specific_load(input_language, lang_list):
@@ -1201,6 +1202,12 @@ def load(input_lang):
     confirm = specific_load(input_lang, [
         '確認',
         'Confirm',
+    ])
+
+    global timeout
+    timeout = specific_load(input_lang, [
+        '超時',
+        'Timeout',
     ])
 
     # No changes have been made to any settings

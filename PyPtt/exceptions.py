@@ -260,3 +260,11 @@ class MailboxFull(Exception):
 
     def __str__(self):
         return self.message
+
+
+class Timeout(Exception):
+    def __init__(self):
+        self.message = i18n.timeout
+
+    def __str__(self):
+        return self.message
