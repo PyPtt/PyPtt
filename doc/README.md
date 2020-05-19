@@ -95,6 +95,9 @@ pip install PyPtt==VERSION
 ###### PTT.exceptions.WrongPassword
     Since 0.9.16
     密碼錯誤
+###### PTT.exceptions.NoSearchResult
+    Since 0.9.17
+    沒有搜尋結果
 
 ---
 
