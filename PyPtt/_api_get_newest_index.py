@@ -104,7 +104,7 @@ def get_newest_index(
         normal_newest_index = -1
         if search_condition is not None:
 
-            normal_newest_index = get_newest_index(index_type, board)
+            normal_newest_index = get_newest_index(api, index_type, board=board)
 
             if search_type == data_type.post_search_type.KEYWORD:
                 cmd_list.append('/')
