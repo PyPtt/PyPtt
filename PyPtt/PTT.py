@@ -558,6 +558,8 @@ class API:
                 board,
                 search_type,
                 search_condition)
+        except exceptions.NoSearchResult:
+            raise exceptions.NoSearchResult
         except Exception:
             return self._get_newest_index(
                 index_type,

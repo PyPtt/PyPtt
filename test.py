@@ -1130,6 +1130,7 @@ def mail_recviver():
         print('完成休息')
         time.sleep(3)
 
+
 def change_pw():
     ptt_bot.change_pw(password)
 
@@ -1898,7 +1899,7 @@ github: https://tinyurl.com/umqff3v
             # get_post()
             # get_post_with_condition()
             # post()
-            # get_newest_index()
+            get_newest_index()
             # crawl_board()
             # crawl_board_with_condition()
             # push()
