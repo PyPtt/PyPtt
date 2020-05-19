@@ -183,6 +183,7 @@ push_aligned = None
 not_push_aligned = None
 confirm = None
 timeout = None
+NoSearchResult = None
 
 
 def specific_load(input_language, lang_list):
@@ -1208,6 +1209,12 @@ def load(input_lang):
     timeout = specific_load(input_lang, [
         '超時',
         'Timeout',
+    ])
+
+    global NoSearchResult
+    NoSearchResult = specific_load(input_lang, [
+        '沒有搜尋結果',
+        'No Search Result',
     ])
 
     # No changes have been made to any settings

@@ -268,3 +268,11 @@ class Timeout(Exception):
 
     def __str__(self):
         return self.message
+
+
+class NoSearchResult(Exception):
+    def __init__(self):
+        self.message = i18n.NoSearchResult
+
+    def __str__(self):
+        return self.message

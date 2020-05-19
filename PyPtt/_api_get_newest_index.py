@@ -101,7 +101,11 @@ def get_newest_index(
         cmd_list.append(command.Ctrl_C * 2)
         cmd_list.append(command.Space)
 
+        normal_newest_index = -1
         if search_condition is not None:
+
+            normal_newest_index = get_newest_index(index_type, board)
+
             if search_type == data_type.post_search_type.KEYWORD:
                 cmd_list.append('/')
             elif search_type == data_type.post_search_type.AUTHOR:
@@ -157,6 +161,9 @@ def get_newest_index(
             return 0
 
         newest_index = _get_newest_index(api)
+
+        if normal_newest_index == newest_index:
+            raise exceptions.NoSearchResult()
 
     elif index_type == data_type.index_type.WEB:
         # web
