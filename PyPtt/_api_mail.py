@@ -211,9 +211,15 @@ def get_mail(api, index) -> data_type.MailInfo:
                    len(content_start) + 1:
                    ]
 
-    mail_content = mail_content[
-                   :mail_content.rfind(content_end) + 3
-                   ]
+    red_envelope = False
+    if content_end not in origin_mail and 'Ptt幣的大紅包喔' in origin_mail:
+        mail_content = mail_content.strip()
+        red_envelope = True
+    else:
+
+        mail_content = mail_content[
+                       :mail_content.rfind(content_end) + 3
+                       ]
 
     log.show_value(
         api.config,
@@ -222,42 +228,46 @@ def get_mail(api, index) -> data_type.MailInfo:
         mail_content
     )
 
-    # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 111.242.182.114
-    # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 59.104.127.126 (臺灣)
-
-    ip_line = origin_mail.split('\n')
-    ip_line = [x for x in ip_line if x.startswith(content_end[3:])][0]
-    # print(ip_line)
-
-    pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
-    result = pattern.search(ip_line)
-    mail_ip = result.group(0)
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        [
-            i18n.MailBox,
-            'IP',
-        ],
-        mail_ip
-    )
-
-    location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
-    if len(location) == 0:
+    if red_envelope:
+        mail_ip = None
         mail_location = None
     else:
-        # print(location)
-        mail_location = location[1:-1]
+        # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 111.242.182.114
+        # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 59.104.127.126 (臺灣)
 
+        ip_line = origin_mail.split('\n')
+        ip_line = [x for x in ip_line if x.startswith(content_end[3:])][0]
+        # print(ip_line)
+
+        pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+        result = pattern.search(ip_line)
+        mail_ip = result.group(0)
         log.show_value(
             api.config,
             log.level.DEBUG,
             [
                 i18n.MailBox,
-                'location',
+                'IP',
             ],
-            mail_location
+            mail_ip
         )
+
+        location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
+        if len(location) == 0:
+            mail_location = None
+        else:
+            # print(location)
+            mail_location = location[1:-1]
+
+            log.show_value(
+                api.config,
+                log.level.DEBUG,
+                [
+                    i18n.MailBox,
+                    'location',
+                ],
+                mail_location
+            )
 
     mail_result = data_type.MailInfo(
         origin_mail=origin_mail,
