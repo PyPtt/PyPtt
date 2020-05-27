@@ -276,7 +276,8 @@ def get_mail(api, index) -> data_type.MailInfo:
         date=mail_date,
         content=mail_content,
         ip=mail_ip,
-        location=mail_location)
+        location=mail_location,
+        red_envelope=red_envelope)
 
     return mail_result
 

@@ -89,7 +89,7 @@ def get_board_info(
     )
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
-    # print(OriScreen)
+    # print(ori_screen)
 
     p = re.compile('《(.+)》看板設定')
     r = p.search(ori_screen)
@@ -120,7 +120,10 @@ def get_board_info(
     r = p.search(ori_screen)
     if r is not None:
         moderator_line = r.group(0)[5:].strip()
-        moderators = moderator_line.split('/')
+        if '(無)' in moderator_line:
+            moderators = None
+        else:
+            moderators = moderator_line.split('/')
     log.show_value(
         api.config,
         log.level.DEBUG,

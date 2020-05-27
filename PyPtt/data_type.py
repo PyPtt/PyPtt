@@ -111,7 +111,8 @@ class MailInfo:
             date: str = None,
             content: str = None,
             ip: str = None,
-            location: str = None):
+            location: str = None,
+            is_red_envelope: bool = False):
         self.origin_mail: str = parse_para(str, origin_mail)
         self.author: str = parse_para(str, author)
         self.title: str = parse_para(str, title)
@@ -119,6 +120,7 @@ class MailInfo:
         self.content: str = parse_para(str, content)
         self.ip: str = parse_para(str, ip)
         self.location: str = parse_para(str, location)
+        self.is_red_envelope = parse_para(bool, is_red_envelope)
 
 
 class UserInfo:
