@@ -194,7 +194,7 @@ def login(
         connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
-            response=command.Enter
+            response=' '
         ),
         connect_core.TargetUnit(
             i18n.SigningUpdate,
@@ -216,6 +216,21 @@ def login(
                 '數目'
             ],
             response=command.GoMainMenu,
+        ),
+        connect_core.TargetUnit(
+            i18n.SkipRegistrationForm,
+            '您確定要填寫註冊單嗎',
+            response=command.Enter * 3
+        ),
+        connect_core.TargetUnit(
+            i18n.SkipRegistrationForm,
+            '以上資料是否正確',
+            response='y' + command.Enter
+        ),
+        connect_core.TargetUnit(
+            i18n.SkipRegistrationForm,
+            '另外若輸入後發生認證碼錯誤請先確認輸入是否為最後一封',
+            response='x' + command.Enter
         ),
     ]
 
