@@ -353,8 +353,11 @@ class API(object):
                     msg
                 )
             if self.config.connect_mode == connect_mode.TELNET:
-                self._core.read_very_eager()
-                self._core.write(msg)
+                try:
+                    self._core.read_very_eager()
+                    self._core.write(msg)
+                except EOFError:
+                    raise exceptions.ConnectionClosed()
             else:
                 try:
                     asyncio.get_event_loop().run_until_complete(
