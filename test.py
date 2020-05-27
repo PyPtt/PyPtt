@@ -1020,21 +1020,21 @@ def get_board_info():
     # j - 未 設為冷靜模式                            p)進板畫面
     # 8 - 禁止 未滿十八歲進入
 
-    board_list = ptt_bot.get_board_list()
-    for board in board_list:
-        board_info = ptt_bot.get_board_info(board)
-
-        if not board_info.is_push_record_ip:
-            continue
-        if board_info.is_push_aligned:
-            continue
-
-        print(f'{board} !!!!!!!!!!')
-        # break
-    return
+    # board_list = ptt_bot.get_board_list()
+    # for board in board_list:
+    #     board_info = ptt_bot.get_board_info(board)
+    #
+    #     if not board_info.is_push_record_ip:
+    #         continue
+    #     if board_info.is_push_aligned:
+    #         continue
+    #
+    #     print(f'{board} !!!!!!!!!!')
+    #     # break
+    # return
 
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-        board_info = ptt_bot.get_board_info('Gossiping')
+        board_info = ptt_bot.get_board_info('L_LifePlan')
     else:
         board_info = ptt_bot.get_board_info('WhoAmI')
     print('板名: ', board_info.board)
@@ -1899,7 +1899,7 @@ github: https://tinyurl.com/umqff3v
             # get_post()
             # get_post_with_condition()
             # post()
-            get_newest_index()
+            # get_newest_index()
             # crawl_board()
             # crawl_board_with_condition()
             # push()
@@ -1911,7 +1911,7 @@ github: https://tinyurl.com/umqff3v
             # mail()
             # has_new_mail()
             # get_board_list()
-            # get_board_info()
+            get_board_info()
             # reply_post()
             # get_favourite_board()
             # search_user()
