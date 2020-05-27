@@ -184,6 +184,7 @@ not_push_aligned = None
 confirm = None
 timeout = None
 NoSearchResult = None
+SkipRegistrationForm = None
 
 
 def specific_load(input_language, lang_list):
@@ -1215,6 +1216,12 @@ def load(input_lang):
     NoSearchResult = specific_load(input_lang, [
         '沒有搜尋結果',
         'No Search Result',
+    ])
+
+    global SkipRegistrationForm
+    SkipRegistrationForm = specific_load(input_lang, [
+        '跳過填寫註冊單',
+        'Skip Registration Form',
     ])
 
     # No changes have been made to any settings
