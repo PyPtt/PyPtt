@@ -120,7 +120,8 @@ class Target(object):
     InBoardList = [
         '【看板列表】',
         '選擇看板',
-        '已讀/未讀',
+        '只列最愛',
+        '已讀/未讀'
     ]
 
     UseTooManyResources = [
