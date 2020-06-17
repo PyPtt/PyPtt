@@ -56,7 +56,7 @@ def post(
     cmd_list.append(command.Enter)
     cmd_list.append(str(title))
     cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_Y * 30)
+    cmd_list.append(command.Ctrl_Y * 40)
     cmd_list.append(str(content))
     cmd_list.append(command.Ctrl_X)
     cmd = ''.join(cmd_list)
