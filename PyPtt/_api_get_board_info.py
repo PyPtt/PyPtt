@@ -121,7 +121,7 @@ def get_board_info(
     if r is not None:
         moderator_line = r.group(0)[5:].strip()
         if '(無)' in moderator_line:
-            moderators = None
+            moderators = []
         else:
             moderators = moderator_line.split('/')
     log.show_value(
