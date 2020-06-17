@@ -1034,31 +1034,41 @@ def get_board_info():
     # return
 
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-        board_info = ptt_bot.get_board_info('L_LifePlan')
+        test_board_list = [
+            # 'Python',
+            # 'L_LifePlan',
+            'NDHU-sl103'
+        ]
     else:
-        board_info = ptt_bot.get_board_info('WhoAmI')
-    print('板名: ', board_info.board)
-    print('線上人數: ', board_info.online_user)
-    print('中文敘述: ', board_info.chinese_des)
-    print('板主: ', board_info.moderators)
-    print('公開狀態(是否隱形): ', board_info.is_open)
-    print('隱板時是否可進入十大排行榜: ', board_info.is_into_top_ten_when_hide)
-    print('是否開放非看板會員發文: ', board_info.can_non_board_members_post)
-    print('是否開放回應文章: ', board_info.can_reply_post)
-    print('是否開放自刪文章: ', board_info.can_self_del_post)
-    print('是否開放推薦文章: ', board_info.can_push_post)
-    print('是否開放噓文: ', board_info.can_boo_post)
-    print('是否可以快速連推文章: ', board_info.can_fast_push)
-    print('推文最低間隔時間: ', board_info.min_interval)
-    print('推文時是否記錄來源 IP: ', board_info.is_push_record_ip)
-    print('推文時是否對齊開頭: ', board_info.is_push_aligned)
-    print('板主是否可刪除部份違規文字: ', board_info.can_moderator_del_illegal_content)
-    print('轉錄文章是否自動記錄，且是否需要發文權限: ',
-          board_info.is_tran_post_auto_recorded_and_require_post_permissions)
-    print('是否為冷靜模式: ', board_info.is_cool_mode)
-    print('是否需要滿十八歲才可進入: ', board_info.is_require18)
-    print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
-    print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
+        test_board_list = [
+            'WhoAmI'
+        ]
+
+    for board in test_board_list:
+        board_info = ptt_bot.get_board_info(board)
+        print('==============')
+        print('板名: ', board_info.board)
+        print('線上人數: ', board_info.online_user)
+        print('中文敘述: ', board_info.chinese_des)
+        print('板主: ', board_info.moderators)
+        print('公開狀態(是否隱形): ', board_info.is_open)
+        print('隱板時是否可進入十大排行榜: ', board_info.is_into_top_ten_when_hide)
+        print('是否開放非看板會員發文: ', board_info.can_non_board_members_post)
+        print('是否開放回應文章: ', board_info.can_reply_post)
+        print('是否開放自刪文章: ', board_info.can_self_del_post)
+        print('是否開放推薦文章: ', board_info.can_push_post)
+        print('是否開放噓文: ', board_info.can_boo_post)
+        print('是否可以快速連推文章: ', board_info.can_fast_push)
+        print('推文最低間隔時間: ', board_info.min_interval)
+        print('推文時是否記錄來源 IP: ', board_info.is_push_record_ip)
+        print('推文時是否對齊開頭: ', board_info.is_push_aligned)
+        print('板主是否可刪除部份違規文字: ', board_info.can_moderator_del_illegal_content)
+        print('轉錄文章是否自動記錄，且是否需要發文權限: ',
+              board_info.is_tran_post_auto_recorded_and_require_post_permissions)
+        print('是否為冷靜模式: ', board_info.is_cool_mode)
+        print('是否需要滿十八歲才可進入: ', board_info.is_require18)
+        print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
+        print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
 
 
 def bucket():
@@ -1862,7 +1872,7 @@ github: https://tinyurl.com/umqff3v
 
                 # for 本機測試
                 # connect_mode=PTT.connect_core.connect_mode.TELNET,
-                # host=PTT.data_type.host_type.LOCALhost,
+                # host=PTT.data_type.host_type.LOCALHOST,
                 # port=8888,
             )
             try:
@@ -1911,7 +1921,7 @@ github: https://tinyurl.com/umqff3v
             # mail()
             # has_new_mail()
             # get_board_list()
-            get_board_info()
+            # get_board_info()
             # reply_post()
             # get_favourite_board()
             # search_user()
