@@ -64,7 +64,7 @@ def get_board_list(api) -> list:
         front_part_list = [x for x in front_part.split(' ')]
         front_part_list = list(filter(None, front_part_list))
         # print(f'FrontPartList =>{FrontPartList}<=')
-        max_no = int(front_part_list[0])
+        max_no = int(front_part_list[0].rstrip(')'))
 
     log.show_value(
         api.config,
