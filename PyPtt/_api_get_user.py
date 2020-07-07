@@ -30,8 +30,8 @@ def parse_user_page(screen):
             line = line[6:]
             # print(f' ==> [{line}]')
             result_buffer = line[:27].strip()
-            # print(f' ==> [{result_buffer}]')
             result.append(result_buffer)
+            # print(f' ==> [{result_buffer}]')
             line = line[line.find(result_buffer) + len(result_buffer):].strip()
             result_buffer = line[6:]
             result.append(result_buffer)
@@ -40,11 +40,12 @@ def parse_user_page(screen):
             line = line[6:]
             # print(f' ==> [{line}]')
             result_buffer = line[:line.find('《')].strip()
-            # print(f' ==> [{result_buffer}]')
             buffer = result_buffer.split(' ')[0]
+            # print(f' ==> [{buffer}]')
             result.append(buffer)
             line = line[line.find(result_buffer) + len(result_buffer):].strip()
             result_buffer = line[6:]
+            # print(f' ==> [{result_buffer}]')
             result.append(result_buffer)
         elif i == 2 or i == 3 or i == 4:
             line = line[line.find('》') + 1:]
