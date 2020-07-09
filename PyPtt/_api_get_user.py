@@ -20,6 +20,47 @@ except ModuleNotFoundError:
     import command
 
 
+def parse_user_page(screen):
+    lines = screen.split('\n')[1:]
+    # print(' =>' + '\n =>'.join(lines))
+
+    result = []
+    for i, line in enumerate(lines):
+        if i == 0:
+            line = line[6:]
+            # print(f' ==> [{line}]')
+            result_buffer = line[:27].strip()
+            result.append(result_buffer)
+            # print(f' ==> [{result_buffer}]')
+            line = line[line.find(result_buffer) + len(result_buffer):].strip()
+            result_buffer = line[6:]
+            result.append(result_buffer)
+            # print(f' ==> [{result_buffer}]')
+        elif i == 1:
+            line = line[6:]
+            # print(f' ==> [{line}]')
+            result_buffer = line[:line.find('《')].strip()
+            buffer = result_buffer.split(' ')[0]
+            # print(f' ==> [{buffer}]')
+            result.append(buffer)
+            line = line[line.find(result_buffer) + len(result_buffer):].strip()
+            result_buffer = line[6:]
+            # print(f' ==> [{result_buffer}]')
+            result.append(result_buffer)
+        elif i == 2 or i == 3 or i == 4:
+            line = line[line.find('》') + 1:]
+            # print(f' ==> [{line}]')
+            result_buffer = line[:line.find('《')].strip()
+            result.append(result_buffer)
+            line = line[line.find(result_buffer) + len(result_buffer):].strip()
+            # print(f' ==> [{line}]')
+            result_buffer = line[6:].strip()
+            # print(f' ==> [{result_buffer}]')
+            result.append(result_buffer)
+
+    return result
+
+
 def get_user(api, ptt_id: str) -> data_type.UserInfo:
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
@@ -56,12 +97,6 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
         target_list
     )
     ori_screen = api.connect_core.get_screen_queue()[-1]
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        'OriScreen',
-        ori_screen
-    )
     if index == 1:
         raise exceptions.NoSuchUser(ptt_id)
     # PTT1
@@ -87,17 +122,20 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
 
     # 《個人名片》CodingMan 目前沒有名片
 
-    data = lib_util.get_sub_string_list(ori_screen, '》', ['《', '\n'])
+    # print(ori_screen)
+
+    # data = lib_util.get_sub_string_list(ori_screen, '》', ['《', '\n'])
+    data = parse_user_page(ori_screen)
     if len(data) < 10:
         print('\n'.join(data))
         print(len(data))
         raise exceptions.ParseError(ori_screen)
 
+    # print('\n=> '.join(data))
+
     ptt_id = data[0]
     money = data[1]
-    login_time = data[2]
-    login_time = login_time[:login_time.find(' ')]
-    login_time = int(login_time)
+    login_time = int(data[2])
 
     temp = re.findall(r'\d+', data[3])
     legal_post = int(temp[0])

@@ -124,6 +124,15 @@ def get_board_info(
             moderators = []
         else:
             moderators = moderator_line.split('/')
+            for moderator in moderators.copy():
+                check = True
+                for c in moderator:
+                    if len(c.encode('big5')) > 1:
+                        check = False
+                        break
+                if not check:
+                    moderators.remove(moderator)
+
     log.show_value(
         api.config,
         log.level.DEBUG,

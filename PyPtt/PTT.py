@@ -1151,7 +1151,7 @@ class API:
     def _get_user(self, user_id) -> data_type.UserInfo:
 
         check_value.check(self.config, str, 'UserID', user_id)
-        if len(user_id) < 3:
+        if len(user_id) < 2:
             raise ValueError(log.merge(
                 self.config,
                 [
