@@ -1697,6 +1697,42 @@ class API:
 
         _api_change_pw.change_pw(self, new_password)
 
+    def get_aid_from_url(self, url) -> (str, str):
+
+        check_value.check(self.config, str, 'url', url)
+
+        if not url.startswith('https://www.ptt.cc/bbs') or not url.endswith('.html'):
+            raise ValueError(log.merge([
+                i18n.ErrorParameter,
+                'url must be www.ptt.cc web site'
+            ]))
+
+        aid_table = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
+
+        board = url[23:]
+        board = board[:board.find('/')]
+
+        temp = url[-23:].split('.')
+
+        id_0 = int(temp[1])  # dec
+        id_1 = int(temp[3], 16)  # hex
+
+        aid_0 = ''
+        while id_0 > 0:
+            index = id_0 % 64
+            aid_0 = f'{aid_table[index]}{aid_0}'
+            id_0 = int(id_0 / 64)
+
+        aid_1 = ''
+        while id_1 > 0:
+            index = id_1 % 64
+            aid_1 = f'{aid_table[index]}{aid_1}'
+            id_1 = int(id_1 / 64)
+
+        aid = f'{aid_0}{aid_1}'
+
+        return board, aid
+
 
 if __name__ == '__main__':
     print('PyPtt v ' + version.V)

@@ -58,8 +58,8 @@ def init():
         sys.exit(-1)
 
     def handler(msg):
-        with open('log.txt', 'a', encoding='utf-8') as F:
-            F.write(msg + '\n')
+        with open('log.txt', 'a', encoding='utf-8') as f:
+            f.write(msg + '\n')
 
     ptt_bot = PTT.API(
         log_handler=handler
@@ -232,6 +232,12 @@ def get_post():
 
             traceback.print_tb(e.__traceback__)
             print(e)
+
+
+def get_aid_from_url():
+    url = 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
+    board, aid = ptt_bot.get_aid_from_url(url)
+    print(board, aid)
 
 
 test_list = {
@@ -1929,6 +1935,7 @@ github: https://tinyurl.com/umqff3v
             # get_mail()
             # mail_recviver()
             # change_pw()
+            # get_aid_from_url()
 
             # bucket()
             # set_board_title()
