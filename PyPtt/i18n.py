@@ -185,6 +185,7 @@ confirm = None
 timeout = None
 NoSearchResult = None
 SkipRegistrationForm = None
+url = None
 
 
 def specific_load(input_language, lang_list):
@@ -1222,6 +1223,12 @@ def load(input_lang):
     SkipRegistrationForm = specific_load(input_lang, [
         '跳過填寫註冊單',
         'Skip Registration Form',
+    ])
+
+    global url
+    url = specific_load(input_lang, [
+        '網址',
+        'url',
     ])
 
     # No changes have been made to any settings
