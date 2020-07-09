@@ -644,7 +644,8 @@ def crawl_board_with_condition():
 
 def get_user():
     try:
-        user = ptt_bot.get_user('CodingMan')
+        user = ptt_bot.get_user('for40255')
+        # user = ptt_bot.get_user('CodingMan')
         if user is None:
             return
 
@@ -1919,7 +1920,7 @@ github: https://tinyurl.com/umqff3v
             # crawl_board()
             # crawl_board_with_condition()
             # push()
-            # get_user()
+            get_user()
             # throw_waterball()
             # get_waterball()
             # call_status()
