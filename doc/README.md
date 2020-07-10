@@ -1054,6 +1054,18 @@ ptt_bot.change_pw(new_password)
 
 ---
 
+### 從文章網址取得看板與 aid
+
+以下是由文章網址取得看板與 aid API  
+Since 0.9.20
+
+```python=
+url = 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
+board, aid = ptt_bot.get_aid_from_url(url)
+```
+
+---
+
 ## 板主專用 API
 
 ### 設定板標

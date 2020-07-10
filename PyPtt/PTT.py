@@ -2,6 +2,7 @@
 import progressbar
 import threading
 import requests
+import re
 from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
@@ -1697,37 +1698,45 @@ class API:
 
         _api_change_pw.change_pw(self, new_password)
 
-    def get_aid_from_url(self, url) -> (str, str):
+    def get_aid_from_url(self, url: str) -> (str, str):
 
         check_value.check(self.config, str, 'url', url)
 
-        if not url.startswith('https://www.ptt.cc/bbs') or not url.endswith('.html'):
-            raise ValueError(log.merge([
-                i18n.ErrorParameter,
-                'url must be www.ptt.cc web site'
-            ]))
+        pattern = re.compile('https://www.ptt.cc/bbs/[-.\w]+/M.[\d]+.A[.\w]*.html')
+        r = pattern.search(url)
+        if r is None:
+            raise ValueError(log.merge(
+                self.config,
+                [
+                    i18n.ErrorParameter,
+                    'url must be www.ptt.cc article url'
+                ]))
 
         aid_table = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
 
         board = url[23:]
         board = board[:board.find('/')]
 
-        temp = url[-23:].split('.')
+        temp = url[url.rfind('/') + 1:].split('.')
+        # print(temp)
 
         id_0 = int(temp[1])  # dec
-        id_1 = int(temp[3], 16)  # hex
 
         aid_0 = ''
-        while id_0 > 0:
+        for _ in range(6):
             index = id_0 % 64
             aid_0 = f'{aid_table[index]}{aid_0}'
             id_0 = int(id_0 / 64)
 
-        aid_1 = ''
-        while id_1 > 0:
-            index = id_1 % 64
-            aid_1 = f'{aid_table[index]}{aid_1}'
-            id_1 = int(id_1 / 64)
+        if temp[3] != 'html':
+            id_1 = int(temp[3], 16)  # hex
+            aid_1 = ''
+            for _ in range(2):
+                index = id_1 % 64
+                aid_1 = f'{aid_table[index]}{aid_1}'
+                id_1 = int(id_1 / 64)
+        else:
+            aid_1 = '00'
 
         aid = f'{aid_0}{aid_1}'
 

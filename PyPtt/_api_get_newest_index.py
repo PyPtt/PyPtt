@@ -34,8 +34,9 @@ def _get_newest_index(api) -> int:
     all_index = re.findall(r'\d+', last_screen_list)
 
     if len(all_index) == 0:
-        print(last_screen)
-        raise exceptions.UnknownError(i18n.UnknownError)
+        # print(last_screen)
+        # raise exceptions.UnknownError(i18n.UnknownError)
+        return 0
 
     all_index = list(map(int, all_index))
     all_index.sort(reverse=True)

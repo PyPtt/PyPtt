@@ -235,9 +235,109 @@ def get_post():
 
 
 def get_aid_from_url():
-    url = 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
-    board, aid = ptt_bot.get_aid_from_url(url)
-    print(board, aid)
+    # test_url = [
+    #     'https://www.ptt.cc/bbs/NDHU-His_WV/M.1072146614.A.D59.html',
+    #     'https://www.ptt.cc/bbs/NDMC-M99c/M.1084922723.A.html',
+    # ]
+    #
+    # for url in test_url:
+    #     board, aid = ptt_bot.get_aid_from_url(url)
+    #     print(board, aid)
+    #
+    # return
+
+    bug_board = [
+        'ck55th316'
+    ]
+
+    def random_board_test():
+        board_list = ptt_bot.get_board_list()
+        board_list = [x for x in board_list if x not in bug_board]
+
+        test_range = 5000
+
+        test_board = random.sample(board_list, test_range)
+
+        for test_board in test_board:
+
+            print(test_board)
+
+            newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
+            print(f'newest_index {newest_index}')
+            if newest_index == 0:
+                continue
+            while True:
+                current_index = random.randrange(1, newest_index + 1)
+                print(current_index)
+
+                post_info = ptt_bot.get_post(test_board, post_index=current_index, query=True)
+                if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
+                    continue
+
+                if post_info.web_url is None:
+                    print(f'error url is None {test_board} {current_index}')
+                    break
+
+                if post_info.aid is None:
+                    print(f'error aid is None {test_board} {current_index}')
+                    continue
+
+                convert_board, convert_aid = ptt_bot.get_aid_from_url(post_info.web_url)
+
+                if convert_board != test_board:
+                    print('board not match')
+                    print(f'post_info {test_board}')
+                    print(f'convert {convert_board}')
+                    raise ValueError()
+
+                if convert_aid != post_info.aid:
+                    print('aid not match')
+                    print(f'post_info {post_info.aid}')
+                    print(f'convert {convert_aid}')
+                    raise ValueError()
+
+                break
+        print('===================================')
+
+    def random_post_test():
+        test_board = 'Gossiping'
+        newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
+        print(f'{test_board} newest_index {newest_index}')
+
+        test_range = 5000
+
+        start_index = random.randrange(1, newest_index + 1 - test_range)
+        print(start_index)
+
+        for current_index in range(start_index, start_index + test_range):
+            print(current_index)
+            post_info = ptt_bot.get_post(test_board, post_index=current_index, query=True)
+            if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
+                continue
+
+            if post_info.web_url is None:
+                print(f'error url is None {test_board} {current_index}')
+                break
+
+            if post_info.aid is None:
+                print(f'error aid is None {test_board} {current_index}')
+                continue
+
+            convert_board, convert_aid = ptt_bot.get_aid_from_url(post_info.web_url)
+
+            if convert_board != test_board:
+                print('board not match')
+                print(f'post_info {test_board}')
+                print(f'convert {convert_board}')
+                raise ValueError()
+
+            if convert_aid != post_info.aid:
+                print('aid not match')
+                print(f'post_info {post_info.aid}')
+                print(f'convert {convert_aid}')
+                raise ValueError()
+
+    random_post_test()
 
 
 test_list = {
@@ -1920,7 +2020,7 @@ github: https://tinyurl.com/umqff3v
             # crawl_board()
             # crawl_board_with_condition()
             # push()
-            get_user()
+            # get_user()
             # throw_waterball()
             # get_waterball()
             # call_status()
