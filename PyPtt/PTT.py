@@ -1700,8 +1700,10 @@ class API:
 
     def get_aid_from_url(self, url: str) -> (str, str):
 
+        # 檢查是否為字串
         check_value.check(self.config, str, 'url', url)
 
+        # 檢查是否符合 PTT BBS 文章網址格式
         pattern = re.compile('https://www.ptt.cc/bbs/[-.\w]+/M.[\d]+.A[.\w]*.html')
         r = pattern.search(url)
         if r is None:
@@ -1712,6 +1714,8 @@ class API:
                     'url must be www.ptt.cc article url'
                 ]))
 
+        # 演算法參考 https://www.ptt.cc/man/C_Chat/DE98/DFF5/DB61/M.1419434423.A.DF0.html
+        # aid 字元表
         aid_table = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
 
         board = url[23:]
