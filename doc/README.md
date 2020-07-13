@@ -478,8 +478,6 @@ for (test_board, search_type, condition) in test_list:
 
 以下是大範圍爬文範例
 
-[效能比較表](https://hackmd.io/@CodingMan/crawlerbenchmark)
-
 文章資料結構(post_info)可參考，[取得特定文章](#取得特定文章)
 
 ```python=
