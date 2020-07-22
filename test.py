@@ -452,18 +452,17 @@ def get_post_with_condition():
     #     print('標題: ' + Post.getTitle())
     #     print('=' * 50)
 
-
     search_list = [
         # (PTT.data_type.post_search_type.KEYWORD, '新聞'),
         (PTT.data_type.post_search_type.AUTHOR, 'Code'),
     ]
 
     index = ptt_bot.get_newest_index(
-            PTT.data_type.index_type.BBS,
-            'Gossiping',
-            search_type=PTT.data_type.post_search_type.KEYWORD,
-            search_condition='新聞',
-            search_list=search_list)
+        PTT.data_type.index_type.BBS,
+        'Gossiping',
+        search_type=PTT.data_type.post_search_type.KEYWORD,
+        search_condition='新聞',
+        search_list=search_list)
     print(f'Gossiping 最新文章編號 {index}')
 
     for current_index in range(1, index + 1):
@@ -736,44 +735,62 @@ def crawl_board_with_condition():
     #         traceback.print_tb(e.__traceback__)
     #         print(e)
 
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-        test_list = [
-            # ptt1
-            ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
-            ('Baseball', PTT.data_type.post_search_type.PUSH, '20')
-        ]
-    else:
-        test_list = [
-            ('WhoAmI', PTT.data_type.post_search_type.KEYWORD, '[閒聊]'),
-            ('WhoAmI', PTT.data_type.post_search_type.PUSH, '10')
-        ]
+    # if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+    #     test_list = [
+    #         # ptt1
+    #         ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
+    #         ('Baseball', PTT.data_type.post_search_type.PUSH, '20')
+    #     ]
+    # else:
+    #     test_list = [
+    #         ('WhoAmI', PTT.data_type.post_search_type.KEYWORD, '[閒聊]'),
+    #         ('WhoAmI', PTT.data_type.post_search_type.PUSH, '10')
+    #     ]
+    #
+    # test_range = 100
+    #
+    # for (board, search_type, search_condition) in test_list:
+    #     show_condition(board, search_type, search_condition)
+    #     newest_index = ptt_bot.get_newest_index(
+    #         PTT.data_type.index_type.BBS,
+    #         board,
+    #         search_type=search_type,
+    #         search_condition=search_condition)
+    #     print(f'{board} 最新文章編號 {newest_index}')
+    #
+    #     start_index = newest_index - test_range + 1
+    #
+    #     error_post_list, del_post_list = ptt_bot.crawl_board(
+    #         PTT.data_type.crawl_type.BBS,
+    #         crawlHandler,
+    #         board,
+    #         start_index=start_index,
+    #         end_index=newest_index,
+    #         search_type=search_type,
+    #         search_condition=search_condition,
+    #     )
+    #     print('=' * 50)
 
-    test_range = 100
+    search_list = [
+        (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+        (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+    ]
 
-    for (board, search_type, search_condition) in test_list:
-        show_condition(board, search_type, search_condition)
-        newest_index = ptt_bot.get_newest_index(
-            PTT.data_type.index_type.BBS,
-            board,
-            search_type=search_type,
-            search_condition=search_condition,
-        )
-        print(f'{board} 最新文章編號 {newest_index}')
+    newest_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        'Gossiping',
+        search_list=search_list)
+    print(f'Gossiping 最新文章編號 {newest_index}')
 
-        start_index = newest_index - test_range + 1
-
-        error_post_list, del_post_list = ptt_bot.crawl_board(
-            PTT.data_type.crawl_type.BBS,
-            crawlHandler,
-            board,
-            start_index=start_index,
-            end_index=newest_index,
-            search_type=search_type,
-            search_condition=search_condition,
-        )
-
-        # print('標題: ' + Post.getTitle())
-        print('=' * 50)
+    error_post_list, del_post_list = ptt_bot.crawl_board(
+        PTT.data_type.crawl_type.BBS,
+        crawlHandler,
+        'Gossiping',
+        start_index=1,
+        end_index=newest_index,
+        # search_type=search_type,
+        # search_condition=search_condition,
+        search_list=search_list)
 
 
 def get_user():
