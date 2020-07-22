@@ -415,7 +415,8 @@ for (test_board, search_type, condition) in test_list:
 ![](https://i.imgur.com/jF63MGp.png)
 
 如果有多重搜尋條件，可以使用以下範例  
-PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋
+PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋  
+Since 0.9.21
 
 ```python
 search_list = [
@@ -502,7 +503,8 @@ for (test_board, search_type, condition) in test_list:
 ```
 
 如果有多重搜尋條件，可以使用以下範例  
-PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋
+PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋  
+Since 0.9.21
 
 ```python
 search_list = [
@@ -648,7 +650,8 @@ for (test_board, search_type, condition) in test_list:
 ```
 
 如果有多重搜尋條件，可以使用以下範例  
-PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋
+PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋  
+Since 0.9.21
 
 ```python
 search_list = [
