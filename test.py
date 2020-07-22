@@ -478,33 +478,33 @@ github: https://tinyurl.com/umqff3v
 
 
 def get_newest_index():
-    # if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-    #     test_board_list = [
-    #         'Wanted',
-    #         'Gossiping',
-    #         'Test',
-    #         'Stock',
-    #         'movie'
-    #     ]
-    # else:
-    #     test_board_list = [
-    #         'PttSuggest',
-    #         'Test',
-    #         'WhoAmI',
-    #         'CodingMan'
-    #     ]
-    #
-    # for board in test_board_list:
-    #     for _ in range(100):
-    #         index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=board)
-    #         print(f'{board} 最新文章編號 {index}')
-    #
-    # index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
-    # print(f'最新郵件編號 {index}')
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        test_board_list = [
+            'Wanted',
+            'Gossiping',
+            'Test',
+            'Stock',
+            'movie'
+        ]
+    else:
+        test_board_list = [
+            'PttSuggest',
+            'Test',
+            'WhoAmI',
+            'CodingMan'
+        ]
+
+    for board in test_board_list:
+        for _ in range(100):
+            index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=board)
+            print(f'{board} 最新文章編號 {index}')
+
+    index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+    print(f'最新郵件編號 {index}')
 
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         search_list = [
-            1,
+            (PTT.data_type.post_search_type.KEYWORD, '徵求'),
             (PTT.data_type.post_search_type.AUTHOR, 'CodingMan')
         ]
         index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board='Wanted', search_list=search_list)
@@ -2025,7 +2025,7 @@ github: https://tinyurl.com/umqff3v
             # get_post()
             # get_post_with_condition()
             # post()
-            # get_newest_index()
+            get_newest_index()
             # crawl_board()
             # crawl_board_with_condition()
             # push()
@@ -2058,5 +2058,4 @@ github: https://tinyurl.com/umqff3v
         except KeyboardInterrupt:
             pass
 
-        get_newest_index()
         ptt_bot.logout()
