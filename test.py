@@ -453,7 +453,7 @@ def get_post_with_condition():
     #     print('=' * 50)
 
     search_list = [
-        # (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+        (PTT.data_type.post_search_type.KEYWORD, '新聞'),
         (PTT.data_type.post_search_type.AUTHOR, 'Code'),
     ]
 
@@ -788,8 +788,6 @@ def crawl_board_with_condition():
         'Gossiping',
         start_index=1,
         end_index=newest_index,
-        # search_type=search_type,
-        # search_condition=search_condition,
         search_list=search_list)
 
 
