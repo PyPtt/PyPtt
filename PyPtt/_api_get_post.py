@@ -27,7 +27,9 @@ def get_post(
         post_index: int = 0,
         search_type: int = 0,
         search_condition: str = None,
+        search_list: list = None,
         query: bool = False) -> data_type.PostInfo:
+
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
@@ -54,6 +56,23 @@ def get_post(
 
             cmd_list.append(search_condition)
             cmd_list.append(command.Enter)
+
+        if search_list is not None:
+            for search_type_, search_condition_ in search_list:
+
+                if search_type_ == data_type.post_search_type.KEYWORD:
+                    cmd_list.append('/')
+                elif search_type_ == data_type.post_search_type.AUTHOR:
+                    cmd_list.append('a')
+                elif search_type_ == data_type.post_search_type.PUSH:
+                    cmd_list.append('Z')
+                elif search_type_ == data_type.post_search_type.MARK:
+                    cmd_list.append('G')
+                elif search_type_ == data_type.post_search_type.MONEY:
+                    cmd_list.append('A')
+
+                cmd_list.append(search_condition_)
+                cmd_list.append(command.Enter)
 
         cmd_list.append(str(post_index))
 

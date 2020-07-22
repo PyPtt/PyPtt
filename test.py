@@ -453,6 +453,31 @@ def get_post_with_condition():
     #     print('=' * 50)
 
 
+    search_list = [
+        # (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+        (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+    ]
+
+    index = ptt_bot.get_newest_index(
+            PTT.data_type.index_type.BBS,
+            'Gossiping',
+            search_type=PTT.data_type.post_search_type.KEYWORD,
+            search_condition='新聞',
+            search_list=search_list)
+    print(f'Gossiping 最新文章編號 {index}')
+
+    for current_index in range(1, index + 1):
+        post_info = ptt_bot.get_post(
+            'Gossiping',
+            post_index=current_index,
+            search_type=PTT.data_type.post_search_type.KEYWORD,
+            search_condition='新聞',
+            search_list=search_list,
+            query=True)
+
+        print(current_index, post_info.title)
+
+
 def post():
     content = '''
 此為 PyPtt 貼文測試內容，如有打擾請告知。
@@ -2025,7 +2050,7 @@ github: https://tinyurl.com/umqff3v
             # get_post()
             # get_post_with_condition()
             # post()
-            get_newest_index()
+            # get_newest_index()
             # crawl_board()
             # crawl_board_with_condition()
             # push()
