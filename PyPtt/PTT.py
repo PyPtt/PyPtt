@@ -517,7 +517,8 @@ class API:
             board: str = None,
             # BBS
             search_type: int = 0,
-            search_condition: str = None) -> int:
+            search_condition: str = None,
+            search_list: list = None) -> int:
 
         check_value.check(
             self.config, int, 'index_type',
@@ -533,14 +534,16 @@ class API:
             index_type,
             board,
             search_type,
-            search_condition)
+            search_condition,
+            search_list)
 
     def get_newest_index(
             self,
             index_type: int,
             board: str = None,
             search_type: int = 0,
-            search_condition: str = None) -> int:
+            search_condition: str = None,
+            search_list: list = None) -> int:
         self._one_thread()
 
         if index_type == data_type.index_type.BBS or index_type == data_type.index_type.MAIL:
@@ -558,7 +561,8 @@ class API:
                 index_type,
                 board,
                 search_type,
-                search_condition)
+                search_condition,
+                search_list)
         except exceptions.NoSearchResult:
             raise exceptions.NoSearchResult
         except Exception:
@@ -566,7 +570,8 @@ class API:
                 index_type,
                 board,
                 search_type,
-                search_condition)
+                search_condition,
+                search_list)
 
     def crawl_board(
             self,

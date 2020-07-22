@@ -78,7 +78,8 @@ def get_newest_index(
         board: str = None,
         # BBS
         search_type: int = 0,
-        search_condition: str = None) -> int:
+        search_condition: str = None,
+        search_list: list = None) -> int:
     if index_type == data_type.index_type.BBS:
 
         check_value.check(api.config, str, 'Board', board)
@@ -92,6 +93,11 @@ def get_newest_index(
             check_value.check(
                 api.config, str,
                 'SearchCondition', search_condition)
+
+        if search_list is not None:
+            check_value.check(
+                api.config, list,
+                'search_list', search_list)
         check_value.check(api.config, int, 'SearchType', search_type)
 
         cmd_list = []
@@ -120,6 +126,25 @@ def get_newest_index(
 
             cmd_list.append(search_condition)
             cmd_list.append(command.Enter)
+
+        elif search_list is not None:
+            normal_newest_index = get_newest_index(api, index_type, board=board)
+
+            for search_type_, search_condition_ in search_list:
+
+                if search_type_ == data_type.post_search_type.KEYWORD:
+                    cmd_list.append('/')
+                elif search_type_ == data_type.post_search_type.AUTHOR:
+                    cmd_list.append('a')
+                elif search_type_ == data_type.post_search_type.PUSH:
+                    cmd_list.append('Z')
+                elif search_type_ == data_type.post_search_type.MARK:
+                    cmd_list.append('G')
+                elif search_type_ == data_type.post_search_type.MONEY:
+                    cmd_list.append('A')
+
+                cmd_list.append(search_condition_)
+                cmd_list.append(command.Enter)
 
         cmd_list.append('1')
         cmd_list.append(command.Enter)
