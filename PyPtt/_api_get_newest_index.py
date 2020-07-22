@@ -127,8 +127,10 @@ def get_newest_index(
             cmd_list.append(search_condition)
             cmd_list.append(command.Enter)
 
-        elif search_list is not None:
-            normal_newest_index = get_newest_index(api, index_type, board=board)
+        if search_list is not None:
+
+            if normal_newest_index == -1:
+                normal_newest_index = get_newest_index(api, index_type, board=board)
 
             for search_type_, search_condition_ in search_list:
 

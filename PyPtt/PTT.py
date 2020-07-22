@@ -322,6 +322,7 @@ class API:
             post_index: int = 0,
             search_type: int = 0,
             search_condition: str = None,
+            search_list: list = None,
             query: bool = False) -> data_type.PostInfo:
         self._one_thread()
 
@@ -339,6 +340,10 @@ class API:
         if search_condition is not None:
             check_value.check(self.config, str,
                               'SearchCondition', search_condition)
+
+        if search_list is not None:
+            check_value.check(self.config, list,
+                              'search_list', search_condition)
 
         if len(board) == 0:
             raise ValueError(log.merge(
@@ -410,8 +415,8 @@ class API:
                 data_type.index_type.BBS,
                 board=board,
                 search_type=search_type,
-                search_condition=search_condition
-            )
+                search_condition=search_condition,
+                search_list=search_list)
 
             if post_index < 1 or newest_index < post_index:
                 raise ValueError(log.merge(
@@ -435,6 +440,7 @@ class API:
                     post_index,
                     search_type,
                     search_condition,
+                    search_list,
                     query
                 )
             except exceptions.ParseError as e:
@@ -495,6 +501,7 @@ class API:
             post_index: int = 0,
             search_type: int = 0,
             search_condition: str = None,
+            search_list: list = None,
             query: bool = False) -> data_type.PostInfo:
 
         try:
@@ -509,6 +516,7 @@ class API:
             post_index,
             search_type,
             search_condition,
+            search_list,
             query)
 
     def _get_newest_index(
