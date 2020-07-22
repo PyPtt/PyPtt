@@ -724,7 +724,7 @@ for _ in range(3):
 
 以下則是推文範例
 
-```python+=20
+```python
 test_board = 'Test'
 test_index = 398
 index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
