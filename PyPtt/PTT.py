@@ -593,6 +593,7 @@ class API:
             end_aid: str = None,
             search_type: int = 0,
             search_condition: str = None,
+            search_list: list = None,
             query: bool = False,
             # 網頁版本
             start_page: int = 0,
@@ -624,6 +625,11 @@ class API:
             if search_condition is not None:
                 check_value.check(self.config, str,
                                   'SearchCondition', search_condition)
+
+            if search_list is not None:
+                check_value.check(self.config, list,
+                                  'search_list', search_list)
+
             if start_aid is not None:
                 check_value.check(self.config, str, 'StartAID', start_aid)
             if end_aid is not None:
@@ -745,6 +751,7 @@ class API:
                             post_index=index,
                             search_type=search_type,
                             search_condition=search_condition,
+                            search_list=search_list,
                             query=query
                         )
                     except exceptions.ParseError as e:
