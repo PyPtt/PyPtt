@@ -11,19 +11,19 @@
 
 ###### 安裝
 
-```batch=
+```batch
 pip install PyPtt
 ```
 
 ###### 更新
 
-```batch=
+```batch
 pip install PyPtt --upgrade
 ```
 
 ###### 安裝特定版本
 
-```batch=
+```batch
 pip install PyPtt==VERSION
 ```
 ---
