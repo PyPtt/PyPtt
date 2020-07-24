@@ -360,12 +360,12 @@ def get_post(
         return post
 
     # print('=' * 20)
-    # print()
+    # print(origin_post)
     # print('=' * 20)
 
     content_start = '───────────────────────────────────────'
     content_end = []
-    content_end.append('--\n※ 發信站: 批踢踢實業坊(ptt.cc)')
+    content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
 
