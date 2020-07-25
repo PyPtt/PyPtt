@@ -3,7 +3,7 @@
 > 註1:此手冊僅支援 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)，如果你使用的版本為 0.8.x，請參考 [[使用手冊 0.8]](https://hackmd.io/@CodingMan/PTTLibraryManual_0_8)  
 > 註2:有出現在本手冊中的使用者或文章，如果不想出現，很抱歉請馬上告知我
 
-有任何使用上的問題都可以直接問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
+如果有任何使用上的問題，歡迎使用友善的態度問我 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
 
 ---
 
@@ -11,19 +11,19 @@
 
 ###### 安裝
 
-```batch=
+```batch
 pip install PyPtt
 ```
 
 ###### 更新
 
-```batch=
+```batch
 pip install PyPtt --upgrade
 ```
 
 ###### 安裝特定版本
 
-```batch=
+```batch
 pip install PyPtt==VERSION
 ```
 ---
@@ -110,14 +110,14 @@ pip install PyPtt==VERSION
 
 以下是初始化物件的方式，如果沒有特別需求，這樣就可以取得物件了
 
-```python=
+```python
 from PyPtt import PTT
 ptt_bot = PTT.API()
 ```
 
 如果有改變語言顯示的需求，目前有支援英文與繁體中文
 
-```python=
+```python
 from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) Chinese
@@ -128,7 +128,7 @@ ptt_bot = PTT.API(
 
 也可以修改 Log 等級方便回報錯誤
 
-```python=
+```python
 from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) INFO
@@ -140,7 +140,7 @@ ptt_bot = PTT.API(
 
 如果你的網路環境比較慢(例如海外)，常常不小心就 timeout，也有參數可以調整  
 Since 0.9.1
-```python=
+```python
 from PyPtt import PTT
 ptt_bot = PTT.API(
     # 預設 3 秒後判定此畫面沒有可辨識的目標
@@ -159,7 +159,7 @@ ptt_bot = PTT.API(
 你可以加入 log handler 就可以捕捉到所有輸出  
 Since 0.8.11
 
-```python=
+```python
 from PyPtt import PTT
 def handler(msg):
     with open('log.txt', 'a', encoding='utf-8') as f:
@@ -174,7 +174,7 @@ ptt_bot = PTT.API(
 批踢踢兔 Since 0.8.25  
 本機 Since 0.9.1
 
-```python=
+```python
 from PyPtt import PTT
 ptt2_bot = PTT.API(
     # (預設值) PTT1
@@ -190,7 +190,7 @@ ptt2_bot = PTT.API(
 值得注意的是，根據測試結果無加密的 telnet 比 websocket 慢  
 Since 0.9.1
 
-```python=
+```python
 from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) WEBSOCKET
@@ -208,7 +208,7 @@ ptt_bot = PTT.API(
 以下就是登入登出範例  
 登入完成，你可以查看一些變數來了解帳號的狀態
 
-```python=
+```python
 import sys
 from PyPtt import PTT
 
@@ -246,7 +246,7 @@ ptt_bot.logout()
 如果你的登入需要剔除其他的登入  
 那可以將 kick_other_login=True 加入 login 參數
 
-```python=
+```python
 import sys
 from PyPtt import PTT
 
@@ -279,7 +279,7 @@ ptt_bot.logout()
 
 以下便是最簡單的取得特定文章的範例  
 註: Python 板第 7486 篇文章
-```python=
+```python
 from PyPtt import PTT
 
 post_info = ptt_bot.get_post(
@@ -290,7 +290,7 @@ post_info = ptt_bot.get_post(
 
 或者用 AID 也可以的
 
-```python=
+```python
 import sys
 from PyPtt import PTT
 
@@ -382,7 +382,7 @@ print(f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow')
 只是我們需要知道加了搜尋條件之後的最大編號是多少  
 請看以下範例
 
-```python=
+```python
 test_list = [
     ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]')
 ]
@@ -414,6 +414,36 @@ for (test_board, search_type, condition) in test_list:
 
 ![](https://i.imgur.com/jF63MGp.png)
 
+如果有多重搜尋條件，可以使用以下範例  
+PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋  
+Since 0.9.21
+
+```python
+search_list = [
+    (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+    (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+]
+
+index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.BBS,
+    'Gossiping',
+    search_type=PTT.data_type.post_search_type.KEYWORD,
+    search_condition='新聞',
+    search_list=search_list)
+print(f'Gossiping 最新文章編號 {index}')
+
+for current_index in range(1, index + 1):
+    post_info = ptt_bot.get_post(
+        'Gossiping',
+        post_index=current_index,
+        search_type=PTT.data_type.post_search_type.KEYWORD,
+        search_condition='新聞',
+        search_list=search_list,
+        query=True)
+
+    print(current_index, post_info.title)
+```
+
 如果只需要對文章按 Q 的資訊  
 Since 0.8.16
 
@@ -423,7 +453,7 @@ Since 0.8.16
 你可以啟用 query 模式，這樣就不會進入文章解析內文、推文、IP與地點等等  
 可以提升效能
 
-```python=
+```python
 post_info = ptt_bot.get_post(
     'Python',
     post_aid='1TJH_XY0',
@@ -438,7 +468,7 @@ post_info = ptt_bot.get_post(
 當你想要取得的文章編號範圍包含最新文章的時候  
 你就會需要這隻 API 來取得最新編號是多少
 
-```python=
+```python
 test_board_list = [
     'Wanted',
     'Gossiping',
@@ -456,7 +486,7 @@ for test_board in test_board_list:
 ```
 當然如果下了搜尋條件，編號也會跟著不同，這時候只需要把搜尋條件塞進去即可
 
-```python=
+```python
 test_list = [
     ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
     ('Baseball', PTT.data_type.post_search_type.PUSH, '20')
@@ -472,17 +502,34 @@ for (test_board, search_type, condition) in test_list:
     print(f'{test_board} 最新文章編號 {newest_index}')
 ```
 
+如果有多重搜尋條件，可以使用以下範例  
+PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋  
+Since 0.9.21
+
+```python
+search_list = [
+    (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+    (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+]
+
+index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.BBS,
+    'Gossiping',
+    search_type=PTT.data_type.post_search_type.KEYWORD,
+    search_condition='新聞',
+    search_list=search_list)
+print(f'Gossiping 最新文章編號 {index}')
+```
+
 ---
 
 ### 取得大範圍文章
 
 以下是大範圍爬文範例
 
-[效能比較表](https://hackmd.io/@CodingMan/crawlerbenchmark)
-
 文章資料結構(post_info)可參考，[取得特定文章](#取得特定文章)
 
-```python=
+```python
 def crawl_handler(post_info):
 
     if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
@@ -545,7 +592,7 @@ if len(del_post_list) > 0:
 
 當然我們也可以像 get_post 那樣加入搜尋條件來爬我們的結果
 
-```python=
+```python
 def show_condition(board, search_type, condition):
     if search_type == PTT.data_type.post_search_type.KEYWORD:
         condition_type = '關鍵字'
@@ -602,6 +649,31 @@ for (test_board, search_type, condition) in test_list:
     print('=' * 50)
 ```
 
+如果有多重搜尋條件，可以使用以下範例  
+PS: 如果 search_list 與 search_type search_condition 同時使用，會全部一起搜尋  
+Since 0.9.21
+
+```python
+search_list = [
+        (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+        (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+    ]
+
+    newest_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        'Gossiping',
+        search_list=search_list)
+    print(f'Gossiping 最新文章編號 {newest_index}')
+
+    error_post_list, del_post_list = ptt_bot.crawl_board(
+        PTT.data_type.crawl_type.BBS,
+        crawlHandler,
+        'Gossiping',
+        start_index=1,
+        end_index=newest_index,
+        search_list=search_list)
+```
+
 如果只需要對文章按 Q 的資訊  
 Since 0.8.16
 
@@ -610,7 +682,7 @@ Since 0.8.16
 你可以啟用 Query 模式，這樣就不會點進去解析內文、推文跟 IP 等等  
 可以加快一些速度，並減少出錯機率
 
-```python=
+```python
 error_post_list, del_post_list = ptt_bot.crawl_board(
     PTT.data_type.crawl_type.BBS,
     crawlHandler,
@@ -626,7 +698,7 @@ error_post_list, del_post_list = ptt_bot.crawl_board(
 
 以下範例是在測試板貼文的範例
 
-```python=
+```python
 content = '''
 此為 PyPtt 貼文測試內容，如有打擾請告知。
 github: https://tinyurl.com/umqff3v
@@ -652,7 +724,7 @@ for _ in range(3):
 
 以下則是推文範例
 
-```python+=20
+```python
 test_board = 'Test'
 test_index = 398
 index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
@@ -678,7 +750,7 @@ ptt_bot.push(test_board, PTT.data_type.push_type.PUSH, content, post_index=test_
 以下是查詢使用者範例  
 如果查無使用者則會丟出 PTT.exceptions.NoSuchUser 例外
 
-```python=
+```python
 try:
     user = ptt_bot.get_user('CodingMan')
     if user is None:
@@ -713,7 +785,7 @@ except PTT.exceptions.NoSuchUser:
 在這裡將會展示取得現在呼叫器狀態後  
 隨機地去設定除了現在以外的一種呼叫器狀態
 
-```python=
+```python
 def show_call_status(call_status):
     if call_status == PTT.data_type.call_status.ON:
         print('呼叫器狀態[打開]')
@@ -757,7 +829,7 @@ show_call_status(call_status)
 無此使用者 PTT.exceptions.NoSuchUser  
 使用者離線 PTT.exceptions.UserOffline
 
-```python=
+```python
 ptt_id = 'SampleUser'
 content = '水球測試 :D'
 try:
@@ -771,7 +843,7 @@ except PTT.exceptions.UserOffline:
 接下來是接水球範例  
 建議如果要穩定收到水球請參考 [呼叫器](#呼叫器) 先將呼叫器切換成關閉
 
-```python=
+```python
 import sys
 import time
 
@@ -806,7 +878,7 @@ while True:
 
 以下是給 P 幣的範例
 
-```python=
+```python
 ptt_bot.give_money('CodingMan', 100)
 ```
 
@@ -817,7 +889,7 @@ ptt_bot.give_money('CodingMan', 100)
 以下是寄信範例  
 如果對象不存在則會丟出 PTT.exceptions.NoSuchUser 例外
 
-```python=
+```python
 ptt_id = 'CodingMan'
 content = '''如有誤寄，對..對不起
 PyPtt 程式寄信測試內容
@@ -855,7 +927,7 @@ except PTT.exceptions.NoSuchUser:
 信件 index 範圍是 1 ~ newest_index  
 Since 0.9.8
 
-```python=
+```python
 newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
 print(f'最新郵件編號 {newest_index}')
 mail_info = ptt_bot.get_mail(newest_index)
@@ -874,7 +946,7 @@ print(mail_info.location)       # 地區: 舊版本信件則為 None
 信件 index 範圍是 1 ~ newest_index  
 Since 0.9.8
 
-```python=
+```python
 newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
 print(f'最新郵件編號 {newest_index}')
 ptt_bot.del_mail(newest_index)
@@ -887,7 +959,7 @@ ptt_bot.del_mail(newest_index)
 此為偵測新信 API，如果大於 1，就是有新信:D
 > 註: 如果你的信箱信件處在 1 ~ 20 封信，那會稍微等久一點
 
-```python=
+```python
 result = ptt_bot.has_new_mail()
 if result > 0:
     print(f'You got {result} mail(s)')
@@ -905,7 +977,7 @@ else:
 
 Since 0.8.13
 
-```python=
+```python
 board_list = ptt_bot.get_board_list()
 print(f'總共有 {len(board_list)} 個看板')
 ```
@@ -920,7 +992,7 @@ print(f'總共有 {len(board_list)} 個看板')
 
 Since 0.8.28
 
-```python=
+```python
 favourite_board_list = ptt_bot.get_favourite_board()
 
 for board in favourite_board_list:
@@ -942,7 +1014,7 @@ for board in favourite_board_list:
 支援特定頁面範圍，以提升搜尋效能  
 Since 0.8.30
 
-```python=
+```python
 user_list = ptt_bot.search_user(
     'coding',
     # min_page=1,
@@ -962,7 +1034,7 @@ print(len(user_list))
 ### 取得時間
 以下是取得批踢踢時間功能
 
-```python=
+```python
 ptt_time = ptt_bot.get_time()
 print(ptt_time)
 ```
@@ -974,7 +1046,7 @@ print(ptt_time)
 以下是取得看板資訊 API  
 Since 0.8.32
 
-```python=
+```python
 if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
     board_info = ptt_bot.get_board_info('Gossiping')
 else:
@@ -1016,7 +1088,7 @@ print('發文與推文限制退文篇數多少篇以下: ', board_info.require_i
 以下是回覆文章 API  
 Since 0.8.26
 
-```python=
+```python
 reply_post_index = 313
 
 ptt_bot.reply_post(
@@ -1048,7 +1120,7 @@ ptt_bot.reply_post(
 以下是更改密碼 API  
 Since 0.9.16
 
-```python=
+```python
 ptt_bot.change_pw(new_password)
 ```
 
@@ -1059,7 +1131,7 @@ ptt_bot.change_pw(new_password)
 以下是由文章網址取得看板與 aid API  
 Since 0.9.20
 
-```python=
+```python
 url = 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
 board, aid = ptt_bot.get_aid_from_url(url)
 ```
@@ -1073,7 +1145,7 @@ board, aid = ptt_bot.get_aid_from_url(url)
 如果有定時設定板標的需求，這時候就可以使用 set_board_title  
 Since 0.8.26
 
-```python=
+```python
 from time import strftime
 
 test_board = 'QQboard'
@@ -1119,7 +1191,7 @@ while True:
 如果板主有標記文章 S or D 的需求，可以參考以下使用方法
 Since 0.8.26
 
-```python=
+```python
 # s 文章
 mark_type = PTT.data_type.mark_type.S
 # 標記文章
@@ -1151,7 +1223,7 @@ ptt_bot.mark_post(
 如果板主想要自動化水桶，當然也是可以的喔!!  
 Since 0.8.29
 
-```python=
+```python
 ptt_bot.bucket(
     # 看板
     'QQBoard',
@@ -1176,15 +1248,15 @@ ptt_bot.bucket(
 
 安裝
 
-```python=
+```python
 ! pip install nest_asyncio
 ```
 引用
-```python=
+```python
 import nest_asyncio
 ```
 全部引用完之後
-```python=
+```python
 nest_asyncio.apply()
 ```
 就可以順利在 jupyter 使用了
@@ -1193,7 +1265,7 @@ nest_asyncio.apply()
 
 如果在 Po 文的時候有上色的需求，可以透過模擬鍵盤輸入的方式達到上色碼的效果
 
-```python=
+```python
 content = [
     PTT.command.Ctrl_C + PTT.command.Left + '5' + PTT.command.Right + '這是閃爍字' + PTT.command.Ctrl_C,
     PTT.command.Ctrl_C + PTT.command.Left + '31' + PTT.command.Right + '前景紅色' + PTT.command.Ctrl_C,

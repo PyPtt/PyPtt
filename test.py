@@ -109,23 +109,25 @@ def get_post():
             ('Test', 575),
             # 待證文章
             ('Test', '1U3pLzi0'),
+            # 古早文章
+            ('LAW', 1)
         ]
     else:
         test_post_list = [
             # PTT2
-            # ('PttSuggest', 1),
-            # ('PttSuggest', '0z7TVw00'),
+            ('PttSuggest', 1),
+            ('PttSuggest', '0z7TVw00'),
             # 文章格式錯誤
             # 發信站:
-            # ('PttSuggest', '1EbQObff'),
+            ('PttSuggest', '1EbQObff'),
             # 文章起始消失跳躍，導致沒有結尾 (已經修正)
-            # ('WhoAmI', '1Tc0ooap'),
+            ('WhoAmI', '1Tc0ooap'),
             # Test
             # 文章格式錯誤
             # 瞎改
-            # ('Test', '1Sp1W7Fi'),
-            # ('Test', '1TXRkuDW'),
-            # ('WhoAmI', '1TqJhzQH')
+            ('Test', '1Sp1W7Fi'),
+            ('Test', '1TXRkuDW'),
+            ('WhoAmI', '1TqJhzQH')
         ]
 
     def show(name, value):
@@ -452,6 +454,30 @@ def get_post_with_condition():
     #     print('標題: ' + Post.getTitle())
     #     print('=' * 50)
 
+    search_list = [
+        (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+        (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+    ]
+
+    index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        'Gossiping',
+        search_type=PTT.data_type.post_search_type.KEYWORD,
+        search_condition='新聞',
+        search_list=search_list)
+    print(f'Gossiping 最新文章編號 {index}')
+
+    for current_index in range(1, index + 1):
+        post_info = ptt_bot.get_post(
+            'Gossiping',
+            post_index=current_index,
+            search_type=PTT.data_type.post_search_type.KEYWORD,
+            search_condition='新聞',
+            search_list=search_list,
+            query=True)
+
+        print(current_index, post_info.title)
+
 
 def post():
     content = '''
@@ -501,6 +527,15 @@ def get_newest_index():
 
     index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
     print(f'最新郵件編號 {index}')
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        search_list = [
+            (PTT.data_type.post_search_type.KEYWORD, '徵求'),
+            (PTT.data_type.post_search_type.AUTHOR, 'CodingMan')
+        ]
+        index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board='Wanted', search_list=search_list)
+
+    print(f'最新文章編號 {index}')
 
 
 def showValue(Msg, Value):
@@ -702,44 +737,60 @@ def crawl_board_with_condition():
     #         traceback.print_tb(e.__traceback__)
     #         print(e)
 
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-        test_list = [
-            # ptt1
-            ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
-            ('Baseball', PTT.data_type.post_search_type.PUSH, '20')
-        ]
-    else:
-        test_list = [
-            ('WhoAmI', PTT.data_type.post_search_type.KEYWORD, '[閒聊]'),
-            ('WhoAmI', PTT.data_type.post_search_type.PUSH, '10')
-        ]
+    # if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+    #     test_list = [
+    #         # ptt1
+    #         ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
+    #         ('Baseball', PTT.data_type.post_search_type.PUSH, '20')
+    #     ]
+    # else:
+    #     test_list = [
+    #         ('WhoAmI', PTT.data_type.post_search_type.KEYWORD, '[閒聊]'),
+    #         ('WhoAmI', PTT.data_type.post_search_type.PUSH, '10')
+    #     ]
+    #
+    # test_range = 100
+    #
+    # for (board, search_type, search_condition) in test_list:
+    #     show_condition(board, search_type, search_condition)
+    #     newest_index = ptt_bot.get_newest_index(
+    #         PTT.data_type.index_type.BBS,
+    #         board,
+    #         search_type=search_type,
+    #         search_condition=search_condition)
+    #     print(f'{board} 最新文章編號 {newest_index}')
+    #
+    #     start_index = newest_index - test_range + 1
+    #
+    #     error_post_list, del_post_list = ptt_bot.crawl_board(
+    #         PTT.data_type.crawl_type.BBS,
+    #         crawlHandler,
+    #         board,
+    #         start_index=start_index,
+    #         end_index=newest_index,
+    #         search_type=search_type,
+    #         search_condition=search_condition,
+    #     )
+    #     print('=' * 50)
 
-    test_range = 100
+    search_list = [
+        (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+        (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+    ]
 
-    for (board, search_type, search_condition) in test_list:
-        show_condition(board, search_type, search_condition)
-        newest_index = ptt_bot.get_newest_index(
-            PTT.data_type.index_type.BBS,
-            board,
-            search_type=search_type,
-            search_condition=search_condition,
-        )
-        print(f'{board} 最新文章編號 {newest_index}')
+    newest_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        'Gossiping',
+        search_list=search_list)
+    print(f'Gossiping 最新文章編號 {newest_index}')
 
-        start_index = newest_index - test_range + 1
-
-        error_post_list, del_post_list = ptt_bot.crawl_board(
-            PTT.data_type.crawl_type.BBS,
-            crawlHandler,
-            board,
-            start_index=start_index,
-            end_index=newest_index,
-            search_type=search_type,
-            search_condition=search_condition,
-        )
-
-        # print('標題: ' + Post.getTitle())
-        print('=' * 50)
+    error_post_list, del_post_list = ptt_bot.crawl_board(
+        PTT.data_type.crawl_type.BBS,
+        crawlHandler,
+        'Gossiping',
+        start_index=1,
+        end_index=newest_index,
+        search_list=search_list)
 
 
 def get_user():
