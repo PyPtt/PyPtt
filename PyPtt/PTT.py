@@ -322,6 +322,7 @@ class API:
             post_index: int = 0,
             search_type: int = 0,
             search_condition: str = None,
+            search_list: list = None,
             query: bool = False) -> data_type.PostInfo:
         self._one_thread()
 
@@ -339,6 +340,10 @@ class API:
         if search_condition is not None:
             check_value.check(self.config, str,
                               'SearchCondition', search_condition)
+
+        if search_list is not None:
+            check_value.check(self.config, list,
+                              'search_list', search_condition)
 
         if len(board) == 0:
             raise ValueError(log.merge(
@@ -410,8 +415,8 @@ class API:
                 data_type.index_type.BBS,
                 board=board,
                 search_type=search_type,
-                search_condition=search_condition
-            )
+                search_condition=search_condition,
+                search_list=search_list)
 
             if post_index < 1 or newest_index < post_index:
                 raise ValueError(log.merge(
@@ -435,6 +440,7 @@ class API:
                     post_index,
                     search_type,
                     search_condition,
+                    search_list,
                     query
                 )
             except exceptions.ParseError as e:
@@ -495,6 +501,7 @@ class API:
             post_index: int = 0,
             search_type: int = 0,
             search_condition: str = None,
+            search_list: list = None,
             query: bool = False) -> data_type.PostInfo:
 
         try:
@@ -509,6 +516,7 @@ class API:
             post_index,
             search_type,
             search_condition,
+            search_list,
             query)
 
     def _get_newest_index(
@@ -517,7 +525,8 @@ class API:
             board: str = None,
             # BBS
             search_type: int = 0,
-            search_condition: str = None) -> int:
+            search_condition: str = None,
+            search_list: list = None) -> int:
 
         check_value.check(
             self.config, int, 'index_type',
@@ -533,14 +542,16 @@ class API:
             index_type,
             board,
             search_type,
-            search_condition)
+            search_condition,
+            search_list)
 
     def get_newest_index(
             self,
             index_type: int,
             board: str = None,
             search_type: int = 0,
-            search_condition: str = None) -> int:
+            search_condition: str = None,
+            search_list: list = None) -> int:
         self._one_thread()
 
         if index_type == data_type.index_type.BBS or index_type == data_type.index_type.MAIL:
@@ -558,7 +569,8 @@ class API:
                 index_type,
                 board,
                 search_type,
-                search_condition)
+                search_condition,
+                search_list)
         except exceptions.NoSearchResult:
             raise exceptions.NoSearchResult
         except Exception:
@@ -566,7 +578,8 @@ class API:
                 index_type,
                 board,
                 search_type,
-                search_condition)
+                search_condition,
+                search_list)
 
     def crawl_board(
             self,
@@ -580,6 +593,7 @@ class API:
             end_aid: str = None,
             search_type: int = 0,
             search_condition: str = None,
+            search_list: list = None,
             query: bool = False,
             # 網頁版本
             start_page: int = 0,
@@ -611,6 +625,11 @@ class API:
             if search_condition is not None:
                 check_value.check(self.config, str,
                                   'SearchCondition', search_condition)
+
+            if search_list is not None:
+                check_value.check(self.config, list,
+                                  'search_list', search_list)
+
             if start_aid is not None:
                 check_value.check(self.config, str, 'StartAID', start_aid)
             if end_aid is not None:
@@ -732,6 +751,7 @@ class API:
                             post_index=index,
                             search_type=search_type,
                             search_condition=search_condition,
+                            search_list=search_list,
                             query=query
                         )
                     except exceptions.ParseError as e:
