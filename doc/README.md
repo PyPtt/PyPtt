@@ -1212,3 +1212,16 @@ ptt_bot.post(
 執行結果
 
 ![](https://i.imgur.com/TOskgf0.png)
+
+---
+
+### 在 Mac 無法使用 websocket 連線
+有兩種方法
+1. 在 python 資料夾中執行 ./Install\ Certificates.command
+```shell script
+cd /Applications/Python\ 3.6/
+./Install\ Certificates.command
+```
+2. 請從 homebrew 重新安裝 python3
+
+詳細請參考 https://stackoverflow.com/questions/40684543/how-to-make-python-use-ca-certificates-from-mac-os-truststore
