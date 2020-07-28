@@ -232,6 +232,11 @@ def login(
             '另外若輸入後發生認證碼錯誤請先確認輸入是否為最後一封',
             response='x' + command.Enter
         ),
+        connect_core.TargetUnit(
+            i18n.SkipRegistrationForm,
+            '此帳號已設定為只能使用安全連線',
+            exceptions_=exceptions.OnlySecureConnection()
+        )
     ]
 
     cmd_list = []
