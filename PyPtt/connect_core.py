@@ -490,8 +490,10 @@ class API(object):
                 mid_time = time.time()
 
             if not find_target:
-                raise exceptions.NoMatchTargetError(self._RDQ)
-        raise exceptions.NoMatchTargetError(self._RDQ)
+                # raise exceptions.NoMatchTargetError(self._RDQ)
+                return -1
+        # raise exceptions.NoMatchTargetError(self._RDQ)
+        return -1
 
     def close(self):
         if self.config.connect_mode == connect_mode.WEBSOCKET:
