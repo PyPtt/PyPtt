@@ -276,3 +276,13 @@ class NoSearchResult(Exception):
 
     def __str__(self):
         return self.message
+
+
+# 此帳號已設定為只能使用安全連線
+
+class OnlySecureConnection(Exception):
+    def __init__(self):
+        self.message = i18n.OnlySecureConnection
+
+    def __str__(self):
+        return self.message

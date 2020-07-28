@@ -186,6 +186,7 @@ timeout = None
 NoSearchResult = None
 SkipRegistrationForm = None
 url = None
+OnlySecureConnection = None
 
 
 def specific_load(input_language, lang_list):
@@ -1229,6 +1230,12 @@ def load(input_lang):
     url = specific_load(input_lang, [
         '網址',
         'url',
+    ])
+
+    global OnlySecureConnection
+    OnlySecureConnection = specific_load(input_lang, [
+        '已設定為只能使用安全連線',
+        'Secure connections only',
     ])
 
     # No changes have been made to any settings

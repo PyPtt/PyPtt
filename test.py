@@ -110,7 +110,9 @@ def get_post():
             # 待證文章
             ('Test', '1U3pLzi0'),
             # 古早文章
-            ('LAW', 1)
+            ('LAW', 1),
+            # 辦刪除文章
+            ('Test', 347)
         ]
     else:
         test_post_list = [
@@ -166,6 +168,10 @@ def get_post():
 
             if post_info.is_lock:
                 print('鎖文狀態')
+                continue
+
+            if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
+                print('文章已經被刪除')
                 continue
 
             # show('Origin Post\n', post.origin_post)
@@ -2019,7 +2025,7 @@ github: https://tinyurl.com/umqff3v
 
         ptt_bot.logout()
     else:
-        ptt_id, password = get_password('Account3.txt')
+        ptt_id, password = get_password('Account2.txt')
         try:
             # init()
             # threading_test()
