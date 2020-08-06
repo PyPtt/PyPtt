@@ -311,7 +311,8 @@ class BoardInfo:
             cool_mode=None,
             require18=None,
             require_login_time=None,
-            require_illegal_post=None):
+            require_illegal_post=None,
+            post_kind=None):
         self.board: str = parse_para(str, board)
         self.online_user: int = parse_para(int, online_user)
         self.chinese_des: str = parse_para(str, chinese_des)
@@ -335,3 +336,4 @@ class BoardInfo:
         self.is_require18: bool = parse_para(bool, require18)
         self.require_login_time: int = parse_para(int, require_login_time)
         self.require_illegal_post: int = parse_para(int, require_illegal_post)
+        self.post_kind: list = parse_para(list, post_kind)
