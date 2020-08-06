@@ -40,13 +40,18 @@ def post(
             i18n.NoPermission,
             '使用者不可發言',
             break_detect=True,
-        )
+        ),
+        connect_core.TargetUnit(
+            i18n.NoPermission,
+            '無法發文: 未達看板要求權限',
+            break_detect=True
+        ),
     ]
     index = api.connect_core.send(cmd, target_list)
     if index < 0:
         screens.show(api.config, api.connect_core.get_screen_queue())
         raise exceptions.UnknownError(i18n.UnknownError)
-    if index == 1:
+    if index == 1 or index == 2:
         raise exceptions.NoPermission(i18n.NoPermission)
 
     screens.show(api.config, api.connect_core.get_screen_queue())
