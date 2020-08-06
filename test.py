@@ -2038,6 +2038,8 @@ github: https://tinyurl.com/umqff3v
                 # connect_mode=PTT.connect_core.connect_mode.TELNET,
                 # host=PTT.data_type.host_type.LOCALHOST,
                 # port=8888,
+
+                # language=PTT.i18n.language.ENGLISH
             )
             try:
                 ptt_bot.login(
