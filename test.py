@@ -1116,42 +1116,35 @@ def set_board_title():
 
 
 def mark_post():
-    mark_type = PTT.data_type.mark_type.S
-
-    # PTTBot.markPost(
-    #     mark_type,
-    #     'CodingMan',
-    #     PostIndex=2
-    # )
-
-    # PTTBot.markPost(
-    #     mark_type,
-    #     'CodingMan',
-    #     PostIndex=3
-    # )
-
-    # PTTBot.markPost(
-    #     mark_type,
-    #     'CodingMan',
-    #     PostIndex=4
-    # )
-
-    # if mark_type == PTT.data_type.mark_type.D:
-    #     PTTBot.markPost(
-    #         PTT.data_type.mark_type.DeleteD,
-    #         'CodingMan',
-    #         PostIndex=4
-    #     )
+    mark_type = PTT.data_type.mark_type.D
 
     ptt_bot.mark_post(
         mark_type,
-        'QQBoard',
-        post_index=2000
+        'CodingMan',
+        post_index=844
     )
+
+    ptt_bot.mark_post(
+        mark_type,
+        'CodingMan',
+        post_index=846
+    )
+
+    # if mark_type == PTT.data_type.mark_type.D:
+    #     ptt_bot.mark_post(
+    #         PTT.data_type.mark_type.DeleteD,
+    #         'CodingMan'
+    #     )
+
+    # ptt_bot.mark_post(
+    #     mark_type,
+    #     'QQBoard',
+    #     post_index=2000
+    # )
 
     # PTTBot.mark_post(
     #     mark_type,
-    #     'give',
+    #     'CodingMan',
     #     post_index=2000
     # )
 
@@ -2025,7 +2018,7 @@ github: https://tinyurl.com/umqff3v
 
         ptt_bot.logout()
     else:
-        ptt_id, password = get_password('Account2.txt')
+        ptt_id, password = get_password('Account3.txt')
         try:
             # init()
             # threading_test()
