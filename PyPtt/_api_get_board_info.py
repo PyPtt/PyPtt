@@ -19,8 +19,8 @@ except ModuleNotFoundError:
 def get_board_info(
         api,
         board: str,
+        get_post_kind: bool,
         call_by_others: bool) -> None:
-
     cmd_list = []
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
@@ -317,55 +317,61 @@ def get_board_info(
         require_illegal_post
     )
 
-    # Go certain board, then post to get post type info
-    cmd_list = []
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_P)
-    cmd = ''.join(cmd_list)
+    kind_list = None
+    if get_post_kind:
 
-    target_list = [
-        connect_core.TargetUnit(
-            i18n.NoPermission,
-            '無法發文: 未達看板要求權限',
-            break_detect=True
+        # Go certain board, then post to get post type info
+        cmd_list = []
+        cmd_list.append(command.GoMainMenu)
+        cmd_list.append('qs')
+        cmd_list.append(board)
+        cmd_list.append(command.Enter)
+        cmd_list.append(command.Ctrl_P)
+        cmd = ''.join(cmd_list)
+
+        target_list = [
+            connect_core.TargetUnit(
+                i18n.NoPermission,
+                '無法發文: 未達看板要求權限',
+                break_detect=True
+            ),
+            connect_core.TargetUnit(
+                i18n.Done,
+                '或不選)',
+                break_detect=True
+            )
+        ]
+
+        index = api.connect_core.send(
+            cmd,
+            target_list
         )
-    ]
 
-    index = api.connect_core.send(
-        cmd,
-        target_list
-    )
+        if index == 0:
+            raise exceptions.NoPermission(i18n.NoPermission)
+            # no post permission
 
-    if index == 0:
-        raise exceptions.NoPermission(i18n.NoPermission)
-        # no post permission
+        ori_screen = api.connect_core.get_screen_queue()[-1]
+        screen_lines = ori_screen.split('\n')
 
-    ori_screen = api.connect_core.get_screen_queue()[-1]
-    screen_lines = ori_screen.split('\n')
-    kind_list = []
+        for i in screen_lines:
+            if '種類：' in i:
+                type_pattern = re.compile('\d\.([^\ ]*)')
+                # 0 is not present any type that the key hold None object
+                kind_list = type_pattern.findall(i)
+                break
 
-    for i in screen_lines:
-        if '種類：' in i:
-            type_pattern = re.compile('\d\.([^\ ]*)')
-            # 0 is not present any type that the key hold None object
-            kind_list = [None] + type_pattern.findall(i)
-            break
+        # Clear post status
+        cmd_list = []
+        cmd_list.append(command.Ctrl_C)
+        cmd_list.append(command.Ctrl_C)
+        cmd = ''.join(cmd_list)
 
-
-    # Clear post status
-    cmd_list = []
-    cmd_list.append(command.Ctrl_C)
-    cmd_list.append(command.Ctrl_C)
-    cmd = ''.join(cmd_list)
-
-    target_list = []
-    api.connect_core.send(
-        cmd,
-        target_list
-    )
+        target_list = []
+        api.connect_core.send(
+            cmd,
+            target_list
+        )
 
     board_info = data_type.BoardInfo(
         boardname,
