@@ -115,14 +115,14 @@ def markPost(
             ]))
 
     if post_index != 0:
-        NewestIndex = api._get_newest_index(
+        newest_index = api._get_newest_index(
             data_type.index_type.BBS,
             board=board,
             search_type=search_type,
             search_condition=search_condition
         )
         check_value.check_index(api.config, 'PostIndex',
-                                post_index, max_value=NewestIndex)
+                                post_index, max_value=newest_index)
 
     if mark_type == data_type.mark_type.UNCONFIRMED:
         # 批踢踢兔沒有待證文章功能 QQ

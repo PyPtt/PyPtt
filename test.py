@@ -1116,17 +1116,19 @@ def set_board_title():
 
 
 def mark_post():
+
+    board = 'CodingMan'
     mark_type = PTT.data_type.mark_type.D
 
     ptt_bot.mark_post(
         mark_type,
-        'CodingMan',
+        board,
         post_index=844
     )
 
     ptt_bot.mark_post(
         mark_type,
-        'CodingMan',
+        board,
         post_index=846
     )
 
