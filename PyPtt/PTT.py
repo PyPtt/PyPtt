@@ -482,7 +482,7 @@ class API:
             board: str,
             check_moderator: bool = False) -> None:
         if board.lower() not in self._exist_board_list:
-            board_info = self._get_board_info(board)
+            board_info = self._get_board_info(board, False)
             self._exist_board_list.append(board.lower())
             self._board_info_list[board.lower()] = board_info
 
@@ -1636,7 +1636,7 @@ class API:
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
-    def get_board_info(self, board: str) -> data_type.BoardInfo:
+    def get_board_info(self, board: str, get_post_kind: bool = False) -> data_type.BoardInfo:
 
         self._one_thread()
 
@@ -1647,16 +1647,16 @@ class API:
 
         check_value.check(self.config, str, 'board', board)
 
-        return self._get_board_info(board, call_by_others=False)
+        return self._get_board_info(board, get_post_kind, call_by_others=False)
 
-    def _get_board_info(self, board: str, call_by_others: bool = True) -> data_type.BoardInfo:
+    def _get_board_info(self, board: str, get_post_kind, call_by_others: bool = True) -> data_type.BoardInfo:
 
         try:
             from . import _api_get_board_info
         except ModuleNotFoundError:
             import _api_get_board_info
 
-        return _api_get_board_info.get_board_info(self, board, call_by_others)
+        return _api_get_board_info.get_board_info(self, board, get_post_kind, call_by_others)
 
     def get_mail(self, index):
 
