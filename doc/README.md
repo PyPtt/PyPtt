@@ -148,10 +148,10 @@ ptt_bot = PTT.API(
     # 預設 10 秒後判定此畫面沒有可辨識的目標
     # 適用於需要特別等待的情況，例如: 剔除其他登入、發文等等
     # 建議不要低於 10 秒，剔除其他登入最長可能會花費約 6 ~ 7 秒
-    screen_long_timeout=15,
+    screen_long_time_out=15,
     # 預設 60 秒後判定此畫面沒有可辨識的目標
     # 適用於貼文等待的情況，建議不要低於 60 秒
-    screen_post_timeout=120,
+    screen_post_time_out=120,
 )
 ```
 
@@ -340,7 +340,7 @@ print('地區: ' + post_info.location)
 # Since 0.8.19
 print('文章推文數: ' + post_info.push_number)
 
-if post_info.unconfirmed:
+if post_info.is_unconfirmed:
     # Since 0.8.30
     print('待證實文章')
 

@@ -40,7 +40,7 @@ class API:
             log_level: int = 0,
             screen_time_out: int = 0,
             screen_long_time_out: int = 0,
-            screen_post_timeout: int = 0,
+            screen_post_time_out: int = 0,
             connect_mode: int = 0,
             port: int = 0,
             log_handler=None,
@@ -88,8 +88,8 @@ class API:
             self.config.screen_timeout = screen_time_out
         if screen_long_time_out != 0:
             self.config.screen_long_timeout = screen_long_time_out
-        if screen_post_timeout != 0:
-            self.config.screen_post_timeout = screen_post_timeout
+        if screen_post_time_out != 0:
+            self.config.screen_post_timeout = screen_post_time_out
 
         if log_level == 0:
             log_level = self.config.log_level
