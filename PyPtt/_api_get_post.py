@@ -296,7 +296,7 @@ def get_post(
                 push_number = push_number[1:]
 
             if len(push_number) == 0:
-                push_number = '0'
+                push_number = None
 
         # print(PushNumber)
         log.show_value(api.config, log.level.DEBUG,
