@@ -275,7 +275,7 @@ def get_post(
         # print(PushNumber)
 
         if len(push_number) == 0:
-            push_number = None
+            push_number = '0'
         else:
             push_number = push_number[-1]
             # print(PushNumber)

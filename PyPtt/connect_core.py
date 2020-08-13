@@ -184,6 +184,20 @@ class API(object):
             i18n.Active
         )
 
+        telnet_host, websocket_host, websocket_origin = '', '', ''
+        if self.config.host == data_type.host_type.PTT1:
+            telnet_host = 'ptt.cc'
+            websocket_host = 'wss://ws.ptt.cc/bbs/'
+            websocket_origin = 'https://term.ptt.cc'
+        elif self.config.host == data_type.host_type.PTT2:
+            telnet_host = 'ptt2.cc'
+            websocket_host = 'wss://ws.ptt2.cc/bbs/'
+            websocket_origin = 'https://term.ptt2.cc'
+        else:
+            telnet_host = 'localhost'
+            websocket_host = 'wss://localhost'
+            websocket_origin = 'https://term.ptt.cc'
+
         if self.config.connect_mode == connect_mode.TELNET:
             log.show_value(
                 self.config,
@@ -209,12 +223,8 @@ class API(object):
             try:
                 if self.config.connect_mode == connect_mode.TELNET:
 
-                    if self.config.host == data_type.host_type.PTT1:
-                        self._core = telnetlib.Telnet('ptt.cc', self.config.port)
-                    elif self.config.host == data_type.host_type.PTT2:
-                        self._core = telnetlib.Telnet('ptt2.cc', self.config.port)
-                    else:
-                        self._core = telnetlib.Telnet('localhost', self.config.port)
+                    self._core = telnetlib.Telnet(telnet_host, self.config.port)
+
                 else:
 
                     if thread_id not in new_event_loop:
@@ -225,27 +235,12 @@ class API(object):
                         except Exception as e:
                             pass
 
-                    if self.config.host == data_type.host_type.PTT1:
-                        self._core = asyncio.get_event_loop().run_until_complete(
-                            websockets.connect(
-                                'wss://ws.ptt.cc/bbs/',
-                                origin='https://term.ptt.cc'
-                            )
+                    self._core = asyncio.get_event_loop().run_until_complete(
+                        websockets.connect(
+                            websocket_host,
+                            origin=websocket_origin
                         )
-                    elif self.config.host == data_type.host_type.PTT2:
-                        self._core = asyncio.get_event_loop().run_until_complete(
-                            websockets.connect(
-                                'wss://ws.ptt2.cc/bbs',
-                                origin='https://term.ptt2.cc'
-                            )
-                        )
-                    else:
-                        self._core = asyncio.get_event_loop().run_until_complete(
-                            websockets.connect(
-                                'wss://localhost',
-                                origin='https://term.ptt.cc'
-                            )
-                        )
+                    )
 
                 connect_success = True
             except Exception as e:

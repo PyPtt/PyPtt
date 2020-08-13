@@ -102,7 +102,7 @@ def get_board_info(
         boardname
     )
 
-    if boardname != board:
+    if boardname.lower() != board.lower():
         raise exceptions.NoSuchBoard(api.config, board)
 
     p = re.compile('中文敘述: (.+)')
