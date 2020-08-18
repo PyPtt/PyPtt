@@ -1046,8 +1046,7 @@ class API:
         if post_index != 0:
             newest_index = self._get_newest_index(
                 data_type.index_type.BBS,
-                board=board
-            )
+                board=board)
             check_value.check_index(self.config, 'PostIndex',
                                     post_index, newest_index)
 
@@ -1091,34 +1090,26 @@ class API:
                     i18n.not_push_aligned)
                 max_push_length = 58 - len(self._ID)
 
+        push_content = push_content.strip()
+
         push_list = []
+        while push_content:
+            index = 0
+            jump = 0
 
-        temp_start_index = 0
-        temp_end_index = temp_start_index + 1
+            while len(push_content[:index].encode('big5-uao', 'replace')) < max_push_length:
 
-        while temp_end_index <= len(push_content):
-
-            temp = ''
-            last_temp = None
-            while len(temp.encode('big5-uao', 'replace')) < max_push_length:
-                temp = push_content[temp_start_index:temp_end_index]
-
-                if not len(temp.encode('big5-uao', 'replace')) < max_push_length:
+                if index == len(push_content):
                     break
-                elif push_content.endswith(temp):
-                    break
-                elif temp.endswith('\n'):
-                    break
-                elif last_temp == temp:
+                if push_content[index] == '\n':
+                    jump = 1
                     break
 
-                temp_end_index += 1
-                last_temp = temp
+                index += 1
 
-            push_list.append(temp.strip())
+            push_list.append(push_content[:index])
+            push_content = push_content[index + jump:]
 
-            temp_start_index = temp_end_index
-            temp_end_index = temp_start_index + 1
         push_list = filter(None, push_list)
 
         for push in push_list:
@@ -1126,8 +1117,7 @@ class API:
                 self.config,
                 log.level.INFO,
                 i18n.Push,
-                push
-            )
+                push)
 
             for _ in range(2):
                 try:
@@ -1136,16 +1126,14 @@ class API:
                         push_type,
                         push,
                         post_aid=post_aid,
-                        post_index=post_index
-                    )
+                        post_index=post_index)
                     break
                 except exceptions.NoFastPush:
                     # screens.show(self.config, self.connect_core.getScreenQueue())
                     log.log(
                         self.config,
                         log.level.INFO,
-                        '等待快速推文'
-                    )
+                        '等待快速推文')
                     time.sleep(5.2)
 
     def _push(
