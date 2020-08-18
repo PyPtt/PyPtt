@@ -134,39 +134,7 @@ def markPost(
         check_moderator=True
     )
 
-    cmd_list = []
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-
-    cmd = ''.join(cmd_list)
-
-    target_list = [
-        connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
-            '任意鍵',
-            response=' ',
-        ),
-        connect_core.TargetUnit(
-            [
-                '動畫播放中',
-            ],
-            '互動式動畫播放中',
-            response=command.Ctrl_C,
-            log_level=log.level.DEBUG
-        ),
-        connect_core.TargetUnit(
-            [
-                '進板成功',
-            ],
-            screens.Target.InBoard,
-            break_detect=True,
-            log_level=log.level.DEBUG
-        ),
-    ]
-
-    index = api.connect_core.send(cmd, target_list)
+    api._goto_board()
 
     cmd_list = []
     if post_aid is not None:
