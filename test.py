@@ -1205,17 +1205,19 @@ def get_board_info():
 
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_board_list = [
-            # 'Python',
+            'Python',
             # 'L_LifePlan',
-            'NDHU-sl103'
+            # 'NDHU-sl103'
         ]
     else:
         test_board_list = [
             'WhoAmI'
         ]
 
+    get_post_kind = True
+
     for board in test_board_list:
-        board_info = ptt_bot.get_board_info(board)
+        board_info = ptt_bot.get_board_info(board, get_post_kind=get_post_kind)
         print('==============')
         print('板名: ', board_info.board)
         print('線上人數: ', board_info.online_user)
@@ -1239,6 +1241,9 @@ def get_board_info():
         print('是否需要滿十八歲才可進入: ', board_info.is_require18)
         print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
         print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
+
+        if get_post_kind:
+            print('發文種類:', ' '.join(board_info.post_kind))
 
 
 def bucket():

@@ -5,6 +5,7 @@ try:
     from . import i18n
     from . import connect_core
     from . import log
+    from . import screens
     from . import exceptions
     from . import command
 except ModuleNotFoundError:
@@ -12,6 +13,7 @@ except ModuleNotFoundError:
     import i18n
     import connect_core
     import log
+    import screens
     import exceptions
     import command
 
@@ -43,12 +45,12 @@ def get_board_info(
             raise exceptions.NoSuchBoard(api.config, board)
         # 減一是把自己本身拿掉
         online_user = int(r.group(0)) - 1
+
     log.show_value(
         api.config,
         log.level.DEBUG,
         '人氣',
-        online_user
-    )
+        online_user)
 
     target_list = [
         connect_core.TargetUnit(
@@ -61,8 +63,7 @@ def get_board_info(
 
     api.connect_core.send(
         'i',
-        target_list
-    )
+        target_list)
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
@@ -75,8 +76,7 @@ def get_board_info(
         api.config,
         log.level.DEBUG,
         '看板名稱',
-        boardname
-    )
+        boardname)
 
     if boardname.lower() != board.lower():
         raise exceptions.NoSuchBoard(api.config, board)
@@ -89,8 +89,7 @@ def get_board_info(
         api.config,
         log.level.DEBUG,
         '中文敘述',
-        chinese_des
-    )
+        chinese_des)
 
     p = re.compile('板主名單: (.+)')
     r = p.search(ori_screen)
@@ -113,66 +112,57 @@ def get_board_info(
         api.config,
         log.level.DEBUG,
         '板主名單',
-        moderators
-    )
+        moderators)
 
     open_status = ('公開狀態(是否隱形): 公開' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '公開狀態',
-        open_status
-    )
+        open_status)
 
     into_top_ten_when_hide = (
-            '隱板時 可以 進入十大排行榜' in ori_screen
-    )
+            '隱板時 可以 進入十大排行榜' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '隱板時可以進入十大排行榜',
-        into_top_ten_when_hide
-    )
+        into_top_ten_when_hide)
 
     non_board_members_post = ('開放 非看板會員發文' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '非看板會員發文',
-        non_board_members_post
-    )
+        non_board_members_post)
 
     reply_post = ('開放 回應文章' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '回應文章',
-        reply_post
-    )
+        reply_post)
 
     self_del_post = ('開放 自刪文章' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '自刪文章',
-        self_del_post
-    )
+        self_del_post)
 
     push_post = ('開放 推薦文章' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '推薦文章',
-        push_post
-    )
+        push_post)
 
     boo_post = ('開放 噓文' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '噓文',
-        boo_post
-    )
+        boo_post)
 
     # 限制 快速連推文章, 最低間隔時間: 5 秒
     # 開放 快速連推文章
@@ -182,8 +172,7 @@ def get_board_info(
         api.config,
         log.level.DEBUG,
         '快速連推文章',
-        fast_push
-    )
+        fast_push)
 
     if not fast_push:
         p = re.compile('最低間隔時間: [\d]+')
@@ -197,8 +186,7 @@ def get_board_info(
             api.config,
             log.level.DEBUG,
             '最低間隔時間',
-            min_interval
-        )
+            min_interval)
     else:
         min_interval = 0
 
@@ -209,8 +197,7 @@ def get_board_info(
         api.config,
         log.level.DEBUG,
         '記錄來源 IP',
-        push_record_ip
-    )
+        push_record_ip)
 
     # 推文時 對齊 開頭
     # 推文時 不用對齊 開頭
@@ -219,51 +206,42 @@ def get_board_info(
         api.config,
         log.level.DEBUG,
         '對齊開頭',
-        push_aligned
-    )
+        push_aligned)
 
     # 板主 可 刪除部份違規文字
     moderator_can_del_illegal_content = (
-            '板主 可 刪除部份違規文字' in ori_screen
-    )
+            '板主 可 刪除部份違規文字' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '板主可刪除部份違規文字',
-        moderator_can_del_illegal_content
-    )
+        moderator_can_del_illegal_content)
 
     # 轉錄文章 會 自動記錄，且 需要 發文權限
     tran_post_auto_recorded_and_require_post_permissions = (
-            '轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen
-    )
+            '轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '轉錄文章 會 自動記錄，且 需要 發文權限',
-        tran_post_auto_recorded_and_require_post_permissions
-    )
+        tran_post_auto_recorded_and_require_post_permissions)
 
     cool_mode = (
-            '未 設為冷靜模式' not in ori_screen
-    )
+            '未 設為冷靜模式' not in ori_screen)
     log.show_value(
         api.config,
         log.level.DEBUG,
         '冷靜模式',
-        cool_mode
-    )
+        cool_mode)
 
     require18 = (
-            '禁止 未滿十八歲進入' in ori_screen
-    )
+            '禁止 未滿十八歲進入' in ori_screen)
 
     log.show_value(
         api.config,
         log.level.DEBUG,
         '禁止未滿十八歲進入',
-        require18
-    )
+        require18)
 
     p = re.compile('登入次數 [\d]+ 次以上')
     r = p.search(ori_screen)
@@ -276,8 +254,7 @@ def get_board_info(
         api.config,
         log.level.DEBUG,
         '發文限制登入次數',
-        require_login_time
-    )
+        require_login_time)
 
     p = re.compile('退文篇數 [\d]+ 篇以下')
     r = p.search(ori_screen)
@@ -290,18 +267,15 @@ def get_board_info(
         api.config,
         log.level.DEBUG,
         '發文限制退文篇數',
-        require_illegal_post
-    )
+        require_illegal_post)
 
     kind_list = None
     if get_post_kind:
 
+        api._goto_board(board)
+
         # Go certain board, then post to get post type info
         cmd_list = []
-        cmd_list.append(command.GoMainMenu)
-        cmd_list.append('qs')
-        cmd_list.append(board)
-        cmd_list.append(command.Enter)
         cmd_list.append(command.Ctrl_P)
         cmd = ''.join(cmd_list)
 
@@ -320,8 +294,7 @@ def get_board_info(
 
         index = api.connect_core.send(
             cmd,
-            target_list
-        )
+            target_list)
 
         if index == 0:
             raise exceptions.NoPermission(i18n.NoPermission)
@@ -343,11 +316,16 @@ def get_board_info(
         cmd_list.append(command.Ctrl_C)
         cmd = ''.join(cmd_list)
 
-        target_list = []
+        target_list = [
+            connect_core.TargetUnit(
+                i18n.Done,
+                screens.Target.InBoard,
+                break_detect=True
+            )
+        ]
         api.connect_core.send(
             cmd,
-            target_list
-        )
+            target_list)
 
     board_info = data_type.BoardInfo(
         boardname,
@@ -371,6 +349,5 @@ def get_board_info(
         require18,
         require_login_time,
         require_illegal_post,
-        kind_list,
-    )
+        kind_list)
     return board_info
