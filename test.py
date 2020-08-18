@@ -832,18 +832,29 @@ def push():
     test_post_list = [
         # ('Gossiping', 95692),
         # ('Test', 'QQQQQQ'),
-        ('Test', 793),
+        ('Test', 309),
         # ('Wanted', '1Teyovc3')
     ]
 
-    content = '批踢踢實業坊，簡稱批踢踢、PTT，是一個臺灣電子布告欄（BBS），採用Telnet BBS技術運作，建立在台灣學術網路的資源之上，以學術性質為原始目的，提供線上言論空間。目前由國立臺灣大學電子布告欄系統研究社管理，大部份的系統原始碼由國立臺灣大學資訊工程學系的學生與校友進行維護，並且邀請法律專業人士擔任法律顧問。它有兩個分站，分別為批踢踢兔與批踢踢參。目前在批踢踢實業坊與批踢踢兔註冊總人數約150萬人，尖峰時段兩站超過15萬名使用者同時上線，擁有超過2萬個不同主題的看板，每日超過2萬篇新文章及50萬則推文被發表，是台灣使用人次最多的網路論壇之一。'
+    # 分段推文
+    # content = '批踢踢實業坊，簡稱批踢踢、PTT，是一個臺灣電子布告欄（BBS），採用Telnet BBS技術運作，建立在台灣學術網路的資源之上，以學術性質為原始目的，提供線上言論空間。目前由國立臺灣大學電子布告欄系統研究社管理，大部份的系統原始碼由國立臺灣大學資訊工程學系的學生與校友進行維護，並且邀請法律專業人士擔任法律顧問。它有兩個分站，分別為批踢踢兔與批踢踢參。目前在批踢踢實業坊與批踢踢兔註冊總人數約150萬人，尖峰時段兩站超過15萬名使用者同時上線，擁有超過2萬個不同主題的看板，每日超過2萬篇新文章及50萬則推文被發表，是台灣使用人次最多的網路論壇之一。'
+    # 短推文
+    # content = '安安'
+    # 連續重複推文
+    content = '''安安
+安安
+安安
+安安
+安安
+    '''
+
     testround: int = 1
     for (board, index) in test_post_list:
         for i in range(testround):
             if isinstance(index, int):
-                ptt_bot.push(board, PTT.data_type.push_type.PUSH, content + str(i), post_index=index)
+                ptt_bot.push(board, PTT.data_type.push_type.PUSH, content, post_index=index)
             else:
-                ptt_bot.push(board, PTT.data_type.push_type.PUSH, content + str(i), post_aid=index)
+                ptt_bot.push(board, PTT.data_type.push_type.PUSH, content, post_aid=index)
 
     # Index = PTTBot.getNewestIndex(
     #     PTT.data_type.index_type.BBS,
