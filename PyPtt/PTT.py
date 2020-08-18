@@ -13,7 +13,7 @@ try:
     from . import i18n
     from . import connect_core
     from . import log
-    # from . import screens
+    from . import screens
     from . import exceptions
     from . import command
     from . import check_value
@@ -25,7 +25,7 @@ except ModuleNotFoundError:
     import i18n
     import connect_core
     import log
-    # import screens
+    import screens
     import exceptions
     import command
     import check_value
@@ -481,6 +481,7 @@ class API:
             self,
             board: str,
             check_moderator: bool = False) -> None:
+
         if board.lower() not in self._exist_board_list:
             board_info = self._get_board_info(board, False)
             self._exist_board_list.append(board.lower())
@@ -1754,7 +1755,45 @@ class API:
 
         return board, aid
 
+    def _goto_board(self, board: str) -> None:
+
+        cmd_list = []
+        cmd_list.append(command.GoMainMenu)
+        cmd_list.append('qs')
+        cmd_list.append(board)
+        cmd_list.append(command.Enter)
+
+        cmd = ''.join(cmd_list)
+
+        target_list = [
+            connect_core.TargetUnit(
+                i18n.AnyKeyContinue,
+                '任意鍵',
+                response=' ',
+                log_level=log.level.DEBUG
+            ),
+            connect_core.TargetUnit(
+                [
+                    '動畫播放中',
+                ],
+                '互動式動畫播放中',
+                response=command.Ctrl_C,
+                log_level=log.level.DEBUG
+            ),
+            connect_core.TargetUnit(
+                [
+                    '進板成功',
+                ],
+                screens.Target.InBoard,
+                break_detect=True,
+                log_level=log.level.DEBUG
+            ),
+        ]
+
+        self.connect_core.send(cmd, target_list)
+
 
 if __name__ == '__main__':
     print('PyPtt v ' + version.V)
     print('Developed by CodingMan')
+    print('Github: PttCodingMan')

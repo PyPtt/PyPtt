@@ -21,36 +21,12 @@ def get_board_info(
         board: str,
         get_post_kind: bool,
         call_by_others: bool) -> None:
-    cmd_list = []
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_C * 2)
-    cmd_list.append(command.Space)
-    cmd = ''.join(cmd_list)
-
     if call_by_others:
         log_level = log.level.DEBUG
     else:
         log_level = log.level.INFO
 
-    target_list = [
-        connect_core.TargetUnit(
-            i18n.IntoBoard,
-            [
-                '文章選讀',
-                '進板畫面'
-            ],
-            break_detect=True,
-            log_level=log_level
-        ),
-    ]
-
-    api.connect_core.send(
-        cmd,
-        target_list
-    )
+    api._goto_board(board)
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(OriScreen)
