@@ -131,10 +131,9 @@ def markPost(
 
     api._check_board(
         board,
-        check_moderator=True
-    )
+        check_moderator=True)
 
-    api._goto_board()
+    api._goto_board(board)
 
     cmd_list = []
     if post_aid is not None:
