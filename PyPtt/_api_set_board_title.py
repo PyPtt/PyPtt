@@ -11,25 +11,10 @@ except ModuleNotFoundError:
 def set_board_title(
         api,
         board: str,
-        new_title: str) ->None:
-
-    # log.showValue(
-    #     api.config,
-    #     log.level.INFO,
-    #     [
-    #         i18n.PTT,
-    #         i18n.Msg
-    #     ],
-    #     i18n.MarkPost
-    # )
+        new_title: str) -> None:
+    api._goto_board(board)
 
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_C * 2)
-    cmd_list.append(command.Space)
     cmd_list.append('I')
     cmd_list.append(command.Ctrl_P)
     cmd_list.append('b')
