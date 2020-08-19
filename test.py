@@ -543,7 +543,7 @@ def get_newest_index():
         ]
         index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board='Wanted', search_list=search_list)
 
-    print(f'最新文章編號 {index}')
+        print(f'最新文章編號 {index}')
 
 
 def showValue(Msg, Value):
