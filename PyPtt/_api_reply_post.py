@@ -33,13 +33,9 @@ def reply_post(
     #     i18n.MarkPost
     # )
 
+    api._goto_board(board)
+
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_C * 2)
-    cmd_list.append(command.Space)
 
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
@@ -129,11 +125,9 @@ def reply_post(
     api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.config.screen_long_timeout
-    )
+        screen_timeout=api.config.screen_long_timeout)
 
     log.log(
         api.config,
         log.level.INFO,
-        i18n.RespondSuccess
-    )
+        i18n.RespondSuccess)
