@@ -13,14 +13,9 @@ except ModuleNotFoundError:
 
 
 def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
+    api._goto_board(board)
 
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_C * 2)
-    cmd_list.append(command.Space)
     cmd_list.append('i')
     cmd_list.append(command.Ctrl_P)
     cmd_list.append('w')
