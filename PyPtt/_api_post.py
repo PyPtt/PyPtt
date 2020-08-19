@@ -19,7 +19,7 @@ def post(
         content: str,
         post_type: int,
         sign_file) -> None:
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
@@ -56,7 +56,7 @@ def post(
 
     screens.show(api.config, api.connect_core.get_screen_queue())
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(str(post_type))
     cmd_list.append(command.Enter)
     cmd_list.append(str(title))

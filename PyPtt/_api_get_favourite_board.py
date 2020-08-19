@@ -12,7 +12,7 @@ except ModuleNotFoundError:
 
 def get_favourite_board(api) -> list:
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('F')
     cmd_list.append(command.Enter)
@@ -27,7 +27,7 @@ def get_favourite_board(api) -> list:
         )
     ]
 
-    favourite_board_list = []
+    favourite_board_list = list()
     while True:
 
         api.connect_core.send(

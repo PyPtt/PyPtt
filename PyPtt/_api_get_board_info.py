@@ -31,9 +31,9 @@ def get_board_info(
     api._goto_board(board)
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
-    # print(OriScreen)
+    # print(ori_screen)
     nuser = ori_screen.split('\n')[2]
-    # print(Nuser)
+    # print('nuser', nuser)
     if '[靜]' in nuser:
         online_user = 0
     else:
@@ -96,7 +96,7 @@ def get_board_info(
     if r is not None:
         moderator_line = r.group(0)[5:].strip()
         if '(無)' in moderator_line:
-            moderators = []
+            moderators = list()
         else:
             moderators = moderator_line.split('/')
             for moderator in moderators.copy():
@@ -275,7 +275,7 @@ def get_board_info(
         api._goto_board(board)
 
         # Go certain board, then post to get post type info
-        cmd_list = []
+        cmd_list = list()
         cmd_list.append(command.Ctrl_P)
         cmd = ''.join(cmd_list)
 
@@ -311,7 +311,7 @@ def get_board_info(
                 break
 
         # Clear post status
-        cmd_list = []
+        cmd_list = list()
         cmd_list.append(command.Ctrl_C)
         cmd_list.append(command.Ctrl_C)
         cmd = ''.join(cmd_list)

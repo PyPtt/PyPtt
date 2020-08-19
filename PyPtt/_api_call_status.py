@@ -18,7 +18,7 @@ except ModuleNotFoundError:
 
 def get_call_status(api) -> None:
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('A')
     cmd_list.append(command.Right)
@@ -110,7 +110,7 @@ def set_call_status(api, call_status) -> None:
 
     current_call_status = api._get_call_status()
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_U)
     cmd_list.append('p')

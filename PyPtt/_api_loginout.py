@@ -21,7 +21,7 @@ except ModuleNotFoundError:
 
 
 def logout(api) -> None:
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('g')
     cmd_list.append(command.Enter)
@@ -239,7 +239,7 @@ def login(
         )
     ]
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(ptt_id)
     cmd_list.append(command.Enter)
     cmd_list.append(password)

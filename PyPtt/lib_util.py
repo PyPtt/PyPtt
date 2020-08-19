@@ -16,7 +16,7 @@ def get_file_name(string):
 
 # def get_sub_string_list(main_string, target_a, target_b):
 #
-#     result = []
+#     result = list()
 #
 #     if not isinstance(target_b, list):
 #         target_b = [target_b]

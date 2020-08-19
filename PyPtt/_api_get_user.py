@@ -24,7 +24,7 @@ def parse_user_page(screen):
     lines = screen.split('\n')[1:]
     # print(' =>' + '\n =>'.join(lines))
 
-    result = []
+    result = list()
     for i, line in enumerate(lines):
         if i == 0:
             line = line[6:]
@@ -62,7 +62,7 @@ def parse_user_page(screen):
 
 
 def get_user(api, ptt_id: str) -> data_type.UserInfo:
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('T')
     cmd_list.append(command.Enter)

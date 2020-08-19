@@ -24,7 +24,7 @@ except ModuleNotFoundError:
     import command
     import exceptions
 
-new_event_loop = []
+new_event_loop = list()
 
 
 class connect_mode(object):
@@ -133,7 +133,7 @@ async def websocket_receiver(core, screen_time_out, recv_data_obj):
 
 class ReceiveDataQueue(object):
     def __init__(self):
-        self._ReceiveDataQueue = []
+        self._ReceiveDataQueue = list()
 
     def add(self, screen):
         self._ReceiveDataQueue.append(screen)

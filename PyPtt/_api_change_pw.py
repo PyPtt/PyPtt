@@ -19,7 +19,7 @@ except ModuleNotFoundError:
 def change_pw(
         api,
         new_password: str) -> None:
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('U')
     cmd_list.append(command.Enter)

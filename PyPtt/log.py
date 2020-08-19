@@ -97,7 +97,7 @@ def show_value(config, log_level, msg, log_value):
     if check_ptt_msg == msg and log_value == config.log_last_value:
         return
 
-    total_message = []
+    total_message = list()
     total_message.append(msg)
     total_message.append(' [')
     total_message.append(log_value)

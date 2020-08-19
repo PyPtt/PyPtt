@@ -36,7 +36,7 @@ def mail(
     #     i18n.MarkPost
     # )
 
-    CmdList = []
+    CmdList = list()
     CmdList.append(command.GoMainMenu)
     CmdList.append('M')
     CmdList.append(command.Enter)
@@ -69,7 +69,7 @@ def mail(
         screen_timeout=api.config.screen_long_timeout
     )
 
-    CmdList = []
+    CmdList = list()
     CmdList.append(title)
     CmdList.append(command.Enter)
     CmdList.append(content)
@@ -127,7 +127,7 @@ def mail(
 
 
 def get_mail(api, index) -> data_type.MailInfo:
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
     cmd_list.append('m')
@@ -283,7 +283,7 @@ def get_mail(api, index) -> data_type.MailInfo:
 
 
 def del_mail(api, index) -> None:
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
     cmd_list.append('m')
