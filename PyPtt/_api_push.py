@@ -23,14 +23,9 @@ def push(
         push_content: str,
         post_aid: str,
         post_index: int) -> None:
+    api._goto_board(board)
 
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_C * 2)
-    cmd_list.append(command.Space)
 
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
@@ -101,7 +96,7 @@ def push(
         push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
         log.show_value(api.config, log.level.DEBUG,
-                      'Push option line', push_option_line)
+                       'Push option line', push_option_line)
 
         enable_push = '值得推薦' in push_option_line
         enable_boo = '給它噓聲' in push_option_line
