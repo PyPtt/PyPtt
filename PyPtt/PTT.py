@@ -194,11 +194,12 @@ class API:
             )
 
         self.connect_core = connect_core.API(self.config)
-        self._exist_board_list = []
+        self._exist_board_list = list()
         self._board_info_list = dict()
         self._ModeratorList = dict()
         self._LastThrowWaterBallTime = 0
         self._ThreadID = threading.get_ident()
+        self._goto_board_list = list()
 
         log.show_value(
             self.config,
@@ -574,13 +575,6 @@ class API:
                 search_list)
         except exceptions.NoSearchResult:
             raise exceptions.NoSearchResult
-        except Exception:
-            return self._get_newest_index(
-                index_type,
-                board,
-                search_type,
-                search_condition,
-                search_list)
 
     def crawl_board(
             self,
@@ -734,8 +728,8 @@ class API:
                 end_index
             )
 
-            error_post_list = []
-            del_post_list = []
+            error_post_list = list()
+            del_post_list = list()
             if self.config.log_level == log.level.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=end_index - start_index + 1,
@@ -845,8 +839,7 @@ class API:
             # 1. 取得總共有幾頁 MaxPage
             newest_index = self._get_newest_index(
                 data_type.index_type.WEB,
-                board=board
-            )
+                board=board)
             # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
 
             check_value.check_index_range(
@@ -859,8 +852,8 @@ class API:
             )
 
             # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 data_type.PostInfo
-            error_post_list = []
-            del_post_list = []
+            error_post_list = list()
+            del_post_list = list()
             # PostAID = ""
             _url = 'https://www.ptt.cc/bbs/'
             index = str(newest_index)
@@ -1093,7 +1086,7 @@ class API:
 
         push_content = push_content.strip()
 
-        push_list = []
+        push_list = list()
         while push_content:
             index = 0
             jump = 0
@@ -1757,7 +1750,7 @@ class API:
 
     def _goto_board(self, board: str) -> None:
 
-        cmd_list = []
+        cmd_list = list()
         cmd_list.append(command.GoMainMenu)
         cmd_list.append('qs')
         cmd_list.append(board)
@@ -1790,7 +1783,13 @@ class API:
             ),
         ]
 
-        self.connect_core.send(cmd, target_list)
+        if board in self._goto_board_list:
+            refresh = True
+        else:
+            refresh = False
+            self._goto_board_list.append(board)
+
+        self.connect_core.send(cmd, target_list, refresh=refresh)
 
 
 if __name__ == '__main__':
