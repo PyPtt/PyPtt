@@ -19,13 +19,10 @@ def post(
         content: str,
         post_type: int,
         sign_file) -> None:
+
+    api._goto_board(board)
+
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_C * 2)
-    cmd_list.append(command.Space)
     cmd_list.append(command.Ctrl_P)
 
     cmd = ''.join(cmd_list)
