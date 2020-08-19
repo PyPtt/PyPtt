@@ -1748,7 +1748,7 @@ class API:
 
         return board, aid
 
-    def _goto_board(self, board: str) -> None:
+    def _goto_board(self, board: str, refresh: bool = False) -> None:
 
         cmd_list = list()
         cmd_list.append(command.GoMainMenu)
@@ -1783,13 +1783,16 @@ class API:
             ),
         ]
 
-        if board in self._goto_board_list:
-            refresh = True
+        if refresh:
+            current_refresh = True
         else:
-            refresh = False
-            self._goto_board_list.append(board)
+            if board.lower() in self._goto_board_list:
+                current_refresh = True
+            else:
+                current_refresh = False
+        self._goto_board_list.append(board.lower())
 
-        self.connect_core.send(cmd, target_list, refresh=refresh)
+        self.connect_core.send(cmd, target_list, refresh=current_refresh)
 
 
 if __name__ == '__main__':
