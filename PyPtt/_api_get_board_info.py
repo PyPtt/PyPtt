@@ -28,7 +28,7 @@ def get_board_info(
     else:
         log_level = log.level.INFO
 
-    api._goto_board(board)
+    api._goto_board(board, refresh=True)
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
