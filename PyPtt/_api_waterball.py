@@ -65,7 +65,7 @@ def get_waterball(api, operate_type:int) -> list:
     water_ball_date_pattern = re.compile(
         '\[[\d]+/[\d]+/[\d]+ [\d]+:[\d]+:[\d]+\]')
 
-    all_waterball = []
+    all_waterball = list()
     first_page = True
     while True:
         index = api.connect_core.send(
@@ -209,7 +209,7 @@ def get_waterball(api, operate_type:int) -> list:
     # print(AllWaterball)
     # print('=' * 20)
 
-    water_ball_list = []
+    water_ball_list = list()
     for line in all_waterball.split('\n'):
 
         if (not line.startswith('To')) and (not line.startswith('★')):
@@ -303,7 +303,7 @@ def get_waterball(api, operate_type:int) -> list:
 def throw_waterball(api: object, target_id: str, content: str) -> None:
     max_length = 50
 
-    water_ball_list = []
+    water_ball_list = list()
     temp_start_index = 0
     temp_end_index = temp_start_index + 1
 
@@ -379,7 +379,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
             )
         ]
 
-        cmd_list = []
+        cmd_list = list()
         cmd_list.append(command.GoMainMenu)
         cmd_list.append('T')
         cmd_list.append(command.Enter)

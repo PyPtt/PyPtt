@@ -25,7 +25,7 @@ def get_board_list(api) -> list:
     #     i18n.MarkPost
     # )
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('F')
     cmd_list.append(command.Enter)
@@ -79,7 +79,7 @@ def get_board_list(api) -> list:
             redirect_stdout=True
         )
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('F')
     cmd_list.append(command.Enter)
@@ -87,7 +87,7 @@ def get_board_list(api) -> list:
     cmd_list.append('0')
     cmd = ''.join(cmd_list)
 
-    board_list = []
+    board_list = list()
     while True:
 
         api.connect_core.send(

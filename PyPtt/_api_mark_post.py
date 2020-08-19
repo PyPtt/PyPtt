@@ -135,7 +135,7 @@ def markPost(
 
     api._goto_board(board)
 
-    cmd_list = []
+    cmd_list = list()
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
 

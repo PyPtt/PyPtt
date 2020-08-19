@@ -24,7 +24,7 @@ def push(
         post_aid: str,
         post_index: int) -> None:
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
@@ -95,7 +95,7 @@ def push(
         else:
             raise exceptions.NoSuchPost(board, post_index)
 
-    cmd_list = []
+    cmd_list = list()
 
     if index == 0:
         push_option_line = api.connect_core.get_screen_queue()[-1]

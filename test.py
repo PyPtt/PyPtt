@@ -526,8 +526,10 @@ def get_newest_index():
             'CodingMan'
         ]
 
+    test_range = 3
+
     for board in test_board_list:
-        for _ in range(100):
+        for _ in range(test_range):
             index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=board)
             print(f'{board} 最新文章編號 {index}')
 
@@ -1129,18 +1131,18 @@ def set_board_title():
 def mark_post():
 
     board = 'CodingMan'
-    mark_type = PTT.data_type.mark_type.D
+    mark_type = PTT.data_type.mark_type.S
 
     ptt_bot.mark_post(
         mark_type,
         board,
-        post_index=844
+        post_index=850
     )
 
     ptt_bot.mark_post(
         mark_type,
         board,
-        post_index=846
+        post_index=851
     )
 
     # if mark_type == PTT.data_type.mark_type.D:

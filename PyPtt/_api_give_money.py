@@ -13,7 +13,7 @@ except ModuleNotFoundError:
 def give_money(
         api, ptt_id: str, money: int) -> None:
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('P')
     cmd_list.append(command.Enter)

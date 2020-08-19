@@ -75,7 +75,7 @@ def get_content(api, post_mode: bool = True):
     line_from_pattern = re.compile('[\d]+~[\d]+')
 
     content_start = '───────────────────────────────────────'
-    content_end = []
+    content_end = list()
     content_end.append('--\n※ 發信站: 批踢踢實業坊(ptt.cc)')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
@@ -88,7 +88,7 @@ def get_content(api, post_mode: bool = True):
     content_start_jump_set = False
 
     first_page = True
-    origin_post = []
+    origin_post = list()
     stop_dict = dict()
 
     while True:

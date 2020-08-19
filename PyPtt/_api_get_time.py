@@ -13,7 +13,7 @@ except ModuleNotFoundError:
 
 def get_time(api) -> str:
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('A')
     cmd_list.append(command.Right)

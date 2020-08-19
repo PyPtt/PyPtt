@@ -18,7 +18,7 @@ except ModuleNotFoundError:
 
 def has_new_mail(api) -> int:
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
     cmd_list.append('m')
@@ -28,7 +28,7 @@ def has_new_mail(api) -> int:
     current_capacity = None
     plus_count = 0
     index_pattern = re.compile('(\d+)')
-    checked_index_list = []
+    checked_index_list = list()
     break_detect = False
 
     target_list = [
@@ -46,7 +46,7 @@ def has_new_mail(api) -> int:
     )
     current_capacity, _ = _api_util.get_mailbox_capacity(api)
     if current_capacity > 20:
-        cmd_list = []
+        cmd_list = list()
         cmd_list.append(command.GoMainMenu)
         cmd_list.append(command.Ctrl_Z)
         cmd_list.append('m')

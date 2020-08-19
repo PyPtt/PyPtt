@@ -20,7 +20,7 @@ def get_post_index(
         board: str,
         aid: str) -> int:
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)

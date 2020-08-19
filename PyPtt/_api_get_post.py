@@ -30,7 +30,7 @@ def get_post(
         search_list: list = None,
         query: bool = False) -> data_type.PostInfo:
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
@@ -364,7 +364,7 @@ def get_post(
     # print('=' * 20)
 
     content_start = '───────────────────────────────────────'
-    content_end = []
+    content_end = list()
     content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
@@ -374,10 +374,10 @@ def get_post(
     board_pattern = re.compile('看板  (.+)')
 
     post_date = None
-    post_content = []
+    post_content = list()
     ip = None
     location = None
-    push_list = []
+    push_list = list()
 
     # 格式確認，亂改的我也沒辦法Q_Q
     origin_post_lines = origin_post.split('\n')
@@ -672,7 +672,7 @@ def get_post(
     push_date_pattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
     push_ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
-    push_list = []
+    push_list = list()
 
     for line in origin_post_lines:
         if line.startswith('推'):

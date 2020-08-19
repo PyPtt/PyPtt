@@ -12,7 +12,7 @@ except ModuleNotFoundError:
 
 def search_user(
         api: object, ptt_id: str, min_page: int, max_page: int) -> list:
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('T')
     cmd_list.append(command.Enter)
@@ -37,7 +37,7 @@ def search_user(
         ),
     ]
 
-    resultlist = []
+    resultlist = list()
 
     while True:
 

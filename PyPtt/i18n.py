@@ -1243,7 +1243,7 @@ def load(input_lang):
     # Quote original
 
     # global List
-    # List = []
+    # List = list()
 
     # for k, v in globals().items():
     #     # System Var
@@ -1257,7 +1257,7 @@ def load(input_lang):
 
 
 def _createlist():
-    i18nStrList = []
+    i18nStrList = list()
 
     for k, v in globals().items():
         # System Var

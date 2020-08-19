@@ -23,7 +23,7 @@ def set_board_title(
     #     i18n.MarkPost
     # )
 
-    cmd_list = []
+    cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('qs')
     cmd_list.append(board)
