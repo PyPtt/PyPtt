@@ -100,41 +100,9 @@ def get_newest_index(
                 'search_list', search_list)
         check_value.check(api.config, int, 'SearchType', search_type)
 
-        cmd_list = []
-        cmd_list.append(command.GoMainMenu)
-        cmd_list.append('qs')
-        cmd_list.append(board)
-        cmd_list.append(command.Enter)
+        api._goto_board(board)
 
-        cmd = ''.join(cmd_list)
-
-        target_list = [
-            connect_core.TargetUnit(
-                i18n.AnyKeyContinue,
-                '任意鍵',
-                response=' ',
-            ),
-            connect_core.TargetUnit(
-                [
-                    '動畫播放中',
-                ],
-                '互動式動畫播放中',
-                response=command.Ctrl_C,
-                log_level=log.level.DEBUG
-            ),
-            connect_core.TargetUnit(
-                [
-                    '進板成功',
-                ],
-                screens.Target.InBoard,
-                break_detect=True,
-                log_level=log.level.DEBUG
-            ),
-        ]
-
-        index = api.connect_core.send(cmd, target_list)
-
-        cmd_list = []
+        cmd_list = list()
 
         normal_newest_index = -1
         if search_condition is not None:
@@ -247,7 +215,7 @@ def get_newest_index(
 
     elif index_type == data_type.index_type.MAIL:
 
-        cmd_list = []
+        cmd_list = list()
         cmd_list.append(command.GoMainMenu)
         cmd_list.append(command.Ctrl_Z)
         cmd_list.append('m')
