@@ -29,7 +29,7 @@ def parse_user_page(screen):
         if i == 0:
             line = line[6:]
             # print(f' ==> [{line}]')
-            result_buffer = line[:27].strip()
+            result_buffer = line[:26].strip()
             result.append(result_buffer)
             # print(f' ==> [{result_buffer}]')
             line = line[line.find(result_buffer) + len(result_buffer):].strip()
