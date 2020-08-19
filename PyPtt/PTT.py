@@ -1755,6 +1755,7 @@ class API:
         cmd_list.append('qs')
         cmd_list.append(board)
         cmd_list.append(command.Enter)
+        cmd_list.append(command.Space)
 
         cmd = ''.join(cmd_list)
 
