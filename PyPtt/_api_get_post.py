@@ -30,13 +30,9 @@ def get_post(
         search_list: list = None,
         query: bool = False) -> data_type.PostInfo:
 
+    api._goto_board(board)
+
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_C * 2)
-    cmd_list.append(command.Space)
 
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
