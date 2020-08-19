@@ -1,4 +1,3 @@
-
 try:
     from . import i18n
     from . import connect_core
@@ -19,15 +18,9 @@ def get_post_index(
         api,
         board: str,
         aid: str) -> int:
+    api._goto_board(board)
 
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('qs')
-    cmd_list.append(board)
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_C * 2)
-    cmd_list.append(command.Space)
-
     cmd_list.append('#')
     cmd_list.append(aid)
     cmd_list.append(command.Enter)

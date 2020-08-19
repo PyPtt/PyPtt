@@ -2107,7 +2107,6 @@ github: https://tinyurl.com/umqff3v
             # reply_post()
             # get_favourite_board()
             # search_user()
-            # get_post_index_test()
             # get_mail()
             # mail_recviver()
             # change_pw()
