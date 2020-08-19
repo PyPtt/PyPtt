@@ -32,8 +32,21 @@ def get_board_info(
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
-    nuser = ori_screen.split('\n')[2]
+
+    for line in ori_screen.split('\n'):
+        if '編號' not in line:
+            continue
+        if '日 期' not in line:
+            continue
+        if '人氣' not in line:
+            continue
+
+        nuser = line
+        break
+
+    # print('------------------------')
     # print('nuser', nuser)
+    # print('------------------------')
     if '[靜]' in nuser:
         online_user = 0
     else:
