@@ -70,6 +70,8 @@ def get_post(
                 cmd_list.append(search_condition_)
                 cmd_list.append(command.Enter)
 
+        cmd_list.append(str(max(1, post_index - 100)))
+        cmd_list.append(command.Enter)
         cmd_list.append(str(post_index))
 
     cmd_list.append(command.Enter)
