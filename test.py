@@ -804,12 +804,18 @@ def crawl_board_with_condition():
 def get_user():
 
     test_user = [
+        # 暱稱有特殊字元
         'for40255',
         'CodingMan'
     ]
 
+    test_user = ptt_bot.search_user('c', max_page=1)
+    test_user = test_user[:10]
+    print(f'共有 {len(test_user)} 使用者')
+
     for user in test_user:
         try:
+            ptt_bot.log(user)
             user = ptt_bot.get_user(user)
             if user is None:
                 return
@@ -826,6 +832,8 @@ def get_user():
             ptt_bot.log('五子棋戰績: ' + user.five_chess)
             ptt_bot.log('象棋戰績:' + user.chess)
             ptt_bot.log('簽名檔:' + user.signature_file)
+
+            ptt_bot.log('=====================')
 
         except PTT.exceptions.NoSuchUser:
             print('無此使用者')
