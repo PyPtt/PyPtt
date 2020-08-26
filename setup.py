@@ -8,16 +8,11 @@ from PyPtt import version
 
 # Always prefer setuptools over distlib_utils
 from setuptools import setup
-# from setuptools import find_packages
-# To use a consistent encoding
-# from codecs import open
-from os import path
 
-here = path.abspath(path.dirname(__file__))
-
-# Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+long_description = '''PyPtt (PTT Library) 是一套 Pure Python PTT API。具備大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，你都可以在這裡找到完整的使用範例
+可自由選擇 WebSocket 或者 Telnet 來連線，並支援繁體中文與英文顯示
+詳情請洽 https://github.com/PttCodingMan/PyPtt
+'''
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
@@ -71,7 +66,7 @@ setup(
 
     # This should be a valid email address corresponding to the author listed
     # above.
-    author_email='thetruth0906@gmail.com',  # Optional
+    author_email='pttcodingman@gmail.com',  # Optional
 
     # Classifiers help users find your project by categorizing it.
     #
@@ -97,6 +92,7 @@ setup(
 
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
 
         'Natural Language :: Chinese (Traditional)',
         'Natural Language :: English',
