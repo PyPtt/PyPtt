@@ -113,8 +113,11 @@ def get_board_list(api) -> list:
                 front_part = line[:line.find('●')]
             front_part_list = [x for x in front_part.split(' ')]
             front_part_list = list(filter(None, front_part_list))
-            # print(f'FrontPartList =>{FrontPartList}<=')
-            no = int(front_part_list[0].rstrip(')'))
+
+            number = front_part_list[0]
+            if ')' in number:
+                number = number[:number.rfind(')')]
+            no = int(number)
             # print(f'No  =>{no}<=')
             # print(f'LastNo =>{LastNo}<=')
 
