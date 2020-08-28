@@ -193,5 +193,5 @@ def test_PyPtt():
     run_on_ptt_2()
 
 
-test_init()
-test_PyPtt()
+# test_init()
+# test_PyPtt()
