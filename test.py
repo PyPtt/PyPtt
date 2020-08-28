@@ -1442,8 +1442,8 @@ if __name__ == '__main__':
                 ('Test', '1U3pLzi0', None, False, None),
             ]
 
-            for b, i, ex, check_format, c in TestPostList:
-                get_post_test_func(b, i, ex, check_format, c)
+            for b, i, exception_, check_format, c in TestPostList:
+                get_post_test_func(b, i, exception_, check_format, c)
 
             print('取得文章測試全部通過')
 
