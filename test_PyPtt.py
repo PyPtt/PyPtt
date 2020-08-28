@@ -27,27 +27,27 @@ def test_hello():
 
 
 class TestCase:
-    # def __init__(self):
-    #     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
-    #
-    #     self.run_ci = False
-    #     self.travis_ci = False
-    #
-    #     if '-ci' in sys.argv:
-    #         self.run_ci = True
-    #
-    #     if self.run_ci:
-    #
-    #         self.ptt_id = os.getenv('PTT_ID_0')
-    #         self.password = os.getenv('PTT_PW_0')
-    #         if self.ptt_id is None or self.password is None:
-    #             print('從環境變數取得帳號密碼失敗')
-    #             self.ptt_id, self.password = get_password('test_account.txt')
-    #             self.travis_ci = False
-    #         else:
-    #             self.travis_ci = True
-    #
-    #     assert (1 == 2)
+    def __init__(self):
+        print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
+
+        self.run_ci = False
+        self.travis_ci = False
+
+        if '-ci' in sys.argv:
+            self.run_ci = True
+
+        if self.run_ci:
+
+            self.ptt_id = os.getenv('PTT_ID_0')
+            self.password = os.getenv('PTT_PW_0')
+            if self.ptt_id is None or self.password is None:
+                print('從環境變數取得帳號密碼失敗')
+                self.ptt_id, self.password = get_password('test_account.txt')
+                self.travis_ci = False
+            else:
+                self.travis_ci = True
+
+        assert (1 == 2)
 
     def test_init(self):
         assert (3 == 2)
