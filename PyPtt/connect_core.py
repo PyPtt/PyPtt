@@ -203,15 +203,13 @@ class API(object):
                 self.config,
                 log.level.INFO,
                 i18n.ConnectMode,
-                i18n.ConnectMode_Telnet
-            )
+                i18n.ConnectMode_Telnet)
         elif self.config.connect_mode == connect_mode.WEBSOCKET:
             log.show_value(
                 self.config,
                 log.level.INFO,
                 i18n.ConnectMode,
-                i18n.ConnectMode_WebSocket
-            )
+                i18n.ConnectMode_WebSocket)
 
         connect_success = False
 
@@ -238,9 +236,7 @@ class API(object):
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             websocket_host,
-                            origin=websocket_origin
-                        )
-                    )
+                            origin=websocket_origin))
 
                 connect_success = True
             except Exception as e:
@@ -252,16 +248,14 @@ class API(object):
                             i18n.Connect,
                             i18n.PTT,
                         ],
-                        i18n.Fail
-                    )
+                        i18n.Fail)
                 else:
                     log.show_value(
                         self.config, log.level.INFO, [
                             i18n.Connect,
                             i18n.PTT2,
                         ],
-                        i18n.Fail
-                    )
+                        i18n.Fail)
                 _wait()
                 continue
 

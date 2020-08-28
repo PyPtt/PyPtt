@@ -151,6 +151,12 @@ def login(
             exceptions_=exceptions.WrongIDorPassword()
         ),
         connect_core.TargetUnit(
+            i18n.ErrorIDPW,
+            '請重新輸入',
+            break_detect=True,
+            exceptions_=exceptions.WrongIDorPassword()
+        ),
+        connect_core.TargetUnit(
             i18n.LoginTooOften,
             '登入太頻繁',
             break_detect=True,
@@ -238,8 +244,15 @@ def login(
             exceptions_=exceptions.OnlySecureConnection()
         )
     ]
+    #
+    # #
+    #
+    # IAC = '\xff'
+    # WILL = '\xfb'
+    # NAWS = '\x1f'
 
     cmd_list = list()
+    # cmd_list.append(IAC + WILL + NAWS)
     cmd_list.append(ptt_id)
     cmd_list.append(command.Enter)
     cmd_list.append(password)
@@ -252,8 +265,7 @@ def login(
         target_list,
         screen_timeout=api.config.screen_long_timeout,
         refresh=False,
-        secret=True
-    )
+        secret=True)
     ori_screen = api.connect_core.get_screen_queue()[-1]
     if index == 0:
 
