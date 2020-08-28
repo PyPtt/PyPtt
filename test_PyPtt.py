@@ -23,6 +23,8 @@ run_ci = None
 travis_ci = None
 ptt_id = None
 ptt_pw = None
+ptt2_id = None
+ptt2_pw = None
 
 
 def test_init():
@@ -70,6 +72,8 @@ def test_init():
     global travis_ci
     global ptt_id
     global ptt_pw
+    global ptt2_id
+    global ptt2_pw
 
     run_ci = False
     travis_ci = False
@@ -81,16 +85,26 @@ def test_init():
 
         ptt_id = os.getenv('PTT_ID_0')
         ptt_pw = os.getenv('PTT_PW_0')
+
+        ptt2_id = os.getenv('PTT2_ID_0')
+        ptt2_pw = os.getenv('PTT2_PW_0')
         if ptt_id is None or ptt_pw is None:
             print('從環境變數取得帳號密碼失敗')
             ptt_id, ptt_pw = get_password('test_account.txt')
+            ptt2_id, ptt2_pw = get_password('test_account_2.txt')
             travis_ci = False
         else:
             travis_ci = True
+    else:
+        ptt_id, ptt_pw = get_password('test_account.txt')
+        ptt2_id, ptt2_pw = get_password('test_account_2.txt')
 
 
 def case(ptt_bot):
-    ptt_bot.login(ptt_id, ptt_pw, kick_other_login=True)
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        ptt_bot.login(ptt_id, ptt_pw, kick_other_login=True)
+    else:
+        ptt_bot.login(ptt2_id, ptt2_pw, kick_other_login=True)
 
     def showTestResult(board, IndexAID, result):
         if result:
@@ -177,3 +191,7 @@ def run_on_ptt_2():
 def test_PyPtt():
     run_on_ptt_1()
     run_on_ptt_2()
+
+
+test_init()
+test_PyPtt()
