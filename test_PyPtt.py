@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-
+import traceback
 from PyPtt import PTT
 
 
@@ -87,3 +87,93 @@ def test_init():
             travis_ci = False
         else:
             travis_ci = True
+
+
+def case(ptt_bot):
+    def showTestResult(board, IndexAID, result):
+        if result:
+            if isinstance(IndexAID, int):
+                print(f'{board} index {IndexAID} 測試通過')
+            else:
+                print(f'{board} AID {IndexAID} 測試通過')
+        else:
+            if isinstance(IndexAID, int):
+                print(f'{board} index {IndexAID} 測試失敗')
+            else:
+                print(f'{board} AID {IndexAID} 測試失敗')
+                ptt_bot.logout()
+                sys.exit(1)
+
+    def get_post_test_func(board, IndexAID, targetEx, checkformat, checkStr):
+        try:
+            if isinstance(IndexAID, int):
+                post_info = ptt_bot.get_post(
+                    board,
+                    post_index=IndexAID,
+                )
+            else:
+                post_info = ptt_bot.get_post(
+                    board,
+                    post_aid=IndexAID,
+                )
+        except Exception as e:
+            if targetEx is not None and isinstance(e, targetEx):
+                showTestResult(board, IndexAID, True)
+                return
+            showTestResult(board, IndexAID, False)
+
+            traceback.print_tb(e.__traceback__)
+            print(e)
+            assert 'test fail'
+
+        if checkStr is None and targetEx is None and not checkformat:
+            print(post_info.content)
+
+        if checkformat and not post_info.pass_format_check:
+            showTestResult(board, IndexAID, True)
+            return
+
+        if checkStr is not None and checkStr not in post_info.content:
+            assert 'checkStr not in post_info.content'
+
+        if isinstance(IndexAID, int):
+            print(f'{board} index {IndexAID} 測試通過')
+        else:
+            print(f'{board} AID {IndexAID} 測試通過')
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        test_post_list = [
+            ('Python', 1, None, False, '總算可以來想想板的走向了..XD'),
+            ('NotExitBoard', 1, PTT.exceptions.NoSuchBoard, False, None),
+            ('Python', '1TJH_XY0', None, False, '大家嗨，我是 CodingMan'),
+            # 文章格式錯誤
+            ('Steam', 4444, None, True, None),
+            # 文章格式錯誤
+            ('movie', 457, None, True, None),
+            ('Gossiping', '1TU65Wi_', None, False, None),
+            ('joke', '1Tc6G9eQ', None, False, None),
+            # 待證文章
+            ('Test', '1U3pLzi0', None, False, None),
+        ]
+    else:
+        test_post_list = []
+
+    for b, i, exception_, check_format, c in test_post_list:
+        get_post_test_func(b, i, exception_, check_format, c)
+
+
+def run_on_ptt_1():
+    ptt_bot = PTT.API(host=PTT.data_type.host_type.PTT1)
+    case(ptt_bot)
+    ptt_bot.logout()
+
+
+def run_on_ptt_2():
+    ptt_bot = PTT.API(host=PTT.data_type.host_type.PTT2)
+    case(ptt_bot)
+    ptt_bot.logout()
+
+
+def test_PyPtt():
+    run_on_ptt_1()
+    run_on_ptt_2()
