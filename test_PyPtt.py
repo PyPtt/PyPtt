@@ -90,6 +90,8 @@ def test_init():
 
 
 def case(ptt_bot):
+    ptt_bot.login(ptt_id, ptt_pw, kick_other_login=True)
+
     def showTestResult(board, IndexAID, result):
         if result:
             if isinstance(IndexAID, int):
@@ -109,13 +111,11 @@ def case(ptt_bot):
             if isinstance(IndexAID, int):
                 post_info = ptt_bot.get_post(
                     board,
-                    post_index=IndexAID,
-                )
+                    post_index=IndexAID)
             else:
                 post_info = ptt_bot.get_post(
                     board,
-                    post_aid=IndexAID,
-                )
+                    post_aid=IndexAID)
         except Exception as e:
             if targetEx is not None and isinstance(e, targetEx):
                 showTestResult(board, IndexAID, True)
@@ -161,17 +161,17 @@ def case(ptt_bot):
     for b, i, exception_, check_format, c in test_post_list:
         get_post_test_func(b, i, exception_, check_format, c)
 
+    ptt_bot.logout()
+
 
 def run_on_ptt_1():
     ptt_bot = PTT.API(host=PTT.data_type.host_type.PTT1)
     case(ptt_bot)
-    ptt_bot.logout()
 
 
 def run_on_ptt_2():
     ptt_bot = PTT.API(host=PTT.data_type.host_type.PTT2)
     case(ptt_bot)
-    ptt_bot.logout()
 
 
 def test_PyPtt():
