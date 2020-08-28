@@ -35,5 +35,7 @@ jobs:
     - name: Test with pytest
       env:
         TEST_SECRET: ${{ secrets.TEST_SECRET }}
+        PTT_ID_0: ${{ secrets.PTT_ID_0 }}
+        PTT_PW_0: ${{ secrets.PTT_PW_0 }}
       run: |
-        pytest
+        pytest -ci
