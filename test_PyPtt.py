@@ -106,54 +106,53 @@ def case(ptt_bot):
     else:
         ptt_bot.login(ptt2_id, ptt2_pw, kick_other_login=True)
 
-    def showTestResult(board, IndexAID, result):
+    def show_test_result(board, IndexAID, result):
         if result:
             if isinstance(IndexAID, int):
-                print(f'{board} index {IndexAID} 測試通過')
+                ptt_bot.log(f'{board} index {IndexAID} 測試通過')
             else:
-                print(f'{board} AID {IndexAID} 測試通過')
+                ptt_bot.log(f'{board} AID {IndexAID} 測試通過')
         else:
             if isinstance(IndexAID, int):
-                print(f'{board} index {IndexAID} 測試失敗')
+                ptt_bot.log(f'{board} index {IndexAID} 測試失敗')
             else:
-                print(f'{board} AID {IndexAID} 測試失敗')
+                ptt_bot.log(f'{board} AID {IndexAID} 測試失敗')
                 ptt_bot.logout()
                 sys.exit(1)
 
-    def get_post_test_func(board, IndexAID, targetEx, checkformat, checkStr):
+    def get_post_test_func(board, index_aid, target_ex, check_format, check_string):
+
+        ptt_bot.log(f'開始測試 {board} 板 文章{"編號" if isinstance(index_aid, int) else " aid"} {index_aid}')
         try:
-            if isinstance(IndexAID, int):
+            if isinstance(index_aid, int):
                 post_info = ptt_bot.get_post(
                     board,
-                    post_index=IndexAID)
+                    post_index=index_aid)
             else:
                 post_info = ptt_bot.get_post(
                     board,
-                    post_aid=IndexAID)
+                    post_aid=index_aid)
         except Exception as e:
-            if targetEx is not None and isinstance(e, targetEx):
-                showTestResult(board, IndexAID, True)
+            if target_ex is not None and isinstance(e, target_ex):
+                show_test_result(board, index_aid, True)
                 return
-            showTestResult(board, IndexAID, False)
+            show_test_result(board, index_aid, False)
 
-            traceback.print_tb(e.__traceback__)
-            print(e)
+            traceback.ptt_bot.log_tb(e.__traceback__)
+            ptt_bot.log(e)
             assert 'test fail'
 
-        if checkStr is None and targetEx is None and not checkformat:
-            print(post_info.content)
+        if check_string is None and target_ex is None and not check_format:
+            ptt_bot.log(post_info.content)
 
-        if checkformat and not post_info.pass_format_check:
-            showTestResult(board, IndexAID, True)
+        if check_format and not post_info.pass_format_check:
+            show_test_result(board, index_aid, True)
             return
 
-        if checkStr is not None and checkStr not in post_info.content:
-            assert 'checkStr not in post_info.content'
+        if check_string is not None and check_string not in post_info.content:
+            assert 'check_string not in post_info.content'
 
-        if isinstance(IndexAID, int):
-            print(f'{board} index {IndexAID} 測試通過')
-        else:
-            print(f'{board} AID {IndexAID} 測試通過')
+        ptt_bot.log(f'{board} 板 文章{"編號" if isinstance(index_aid, int) else " aid"} {index_aid} 測試通過')
 
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_post_list = [
@@ -172,8 +171,8 @@ def case(ptt_bot):
     else:
         test_post_list = []
 
-    for b, i, exception_, check_format, c in test_post_list:
-        get_post_test_func(b, i, exception_, check_format, c)
+    for b, i, exception_, check_format, check_string in test_post_list:
+        get_post_test_func(b, i, exception_, check_format, check_string)
 
     ptt_bot.logout()
 
@@ -193,5 +192,5 @@ def test_PyPtt():
     run_on_ptt_2()
 
 
-# test_init()
-# test_PyPtt()
+test_init()
+test_PyPtt()
