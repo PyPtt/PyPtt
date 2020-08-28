@@ -19,35 +19,71 @@ def get_password(password_file):
     return ptt_id, password
 
 
-def test_hello():
-    test_secret = os.getenv('TEST_SECRET')
-    print(test_secret)
-    print('Hello success')
-    # assert (1 == 2)
+run_ci = None
+travis_ci = None
+ptt_id = None
+ptt_pw = None
 
 
-class TestCase:
-    def __init__(self):
-        print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
+def test_init():
+    print('===正向===')
+    print('===預設值===')
+    PTT.API()
+    print('===中文顯示===')
+    PTT.API(language=PTT.i18n.language.CHINESE)
+    print('===英文顯示===')
+    PTT.API(language=PTT.i18n.language.ENGLISH)
+    print('===log DEBUG===')
+    PTT.API(log_level=PTT.log.level.DEBUG)
+    print('===log INFO===')
+    PTT.API(log_level=PTT.log.level.INFO)
+    print('===log SLIENT===')
+    PTT.API(log_level=PTT.log.level.SILENT)
+    print('===log SLIENT======')
 
-        self.run_ci = False
-        self.travis_ci = False
+    print('===負向===')
+    try:
+        print('===語言 99===')
+        PTT.API(language=99)
+    except ValueError:
+        print('通過')
+    except:
+        print('沒通過')
+        sys.exit(-1)
+    print('===語言放字串===')
+    try:
+        PTT.API(language='PTT.i18n.language.ENGLISH')
+    except TypeError:
+        print('通過')
+    except:
+        print('沒通過')
+        sys.exit(-1)
 
-        if '-ci' in sys.argv:
-            self.run_ci = True
+    def handler(msg):
+        with open('log.txt', 'a', encoding='utf-8') as f:
+            f.write(msg + '\n')
 
-        if self.run_ci:
+    ptt_bot = PTT.API(log_handler=handler)
+    ptt_bot.log('Test log')
 
-            self.ptt_id = os.getenv('PTT_ID_0')
-            self.password = os.getenv('PTT_PW_0')
-            if self.ptt_id is None or self.password is None:
-                print('從環境變數取得帳號密碼失敗')
-                self.ptt_id, self.password = get_password('test_account.txt')
-                self.travis_ci = False
-            else:
-                self.travis_ci = True
+    global run_ci
+    global travis_ci
+    global ptt_id
+    global ptt_pw
 
-        assert (1 == 2)
+    run_ci = False
+    travis_ci = False
 
-    def test_init(self):
-        assert (3 == 2)
+    if '-ci' in sys.argv:
+        run_ci = True
+
+    if run_ci:
+
+        ptt_id = os.getenv('PTT_ID_0')
+        ptt_pw = os.getenv('PTT_PW_0')
+        if ptt_id is None or ptt_pw is None:
+            print('從環境變數取得帳號密碼失敗')
+            ptt_id, ptt_pw = get_password('test_account.txt')
+            travis_ci = False
+        else:
+            travis_ci = True
