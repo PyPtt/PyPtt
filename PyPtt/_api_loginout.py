@@ -244,15 +244,15 @@ def login(
             exceptions_=exceptions.OnlySecureConnection()
         )
     ]
-
     #
-
-    IAC = '\xff'
-    WILL = '\xfb'
-    NAWS = '\x1f'
+    # #
+    #
+    # IAC = '\xff'
+    # WILL = '\xfb'
+    # NAWS = '\x1f'
 
     cmd_list = list()
-    cmd_list.append(IAC + WILL + NAWS)
+    # cmd_list.append(IAC + WILL + NAWS)
     cmd_list.append(ptt_id)
     cmd_list.append(command.Enter)
     cmd_list.append(password)
