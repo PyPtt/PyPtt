@@ -1,7 +1,7 @@
-import sys
+import os
 
 
 def test_hello():
-    for arg in sys.argv:
-        print(arg)
+    test_secret = os.getenv('TEST_SECRET')
+    print(test_secret)
     print('Hello success')
