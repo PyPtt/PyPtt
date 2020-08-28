@@ -26,7 +26,7 @@ def test_hello():
     # assert (1 == 2)
 
 
-class test:
+class Test:
     def __init__(self):
         print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
 
@@ -48,3 +48,6 @@ class test:
                 self.travis_ci = True
 
         assert (1 == 2)
+
+    def test_init(self):
+        assert (3 == 2)
