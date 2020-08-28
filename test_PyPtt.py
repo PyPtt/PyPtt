@@ -102,9 +102,9 @@ def test_init():
 
 def case(ptt_bot):
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-        ptt_bot.login(ptt_id, ptt_pw, kick_other_login=True)
+        ptt_bot.login(ptt_id, ptt_pw)
     else:
-        ptt_bot.login(ptt2_id, ptt2_pw, kick_other_login=True)
+        ptt_bot.login(ptt2_id, ptt2_pw)
 
     def show_test_result(board, IndexAID, result):
         if result:
