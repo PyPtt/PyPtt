@@ -44,5 +44,5 @@ jobs:
         pytest -ci
     - name: upload result
       uses: actions/upload-artifact@v2
-        with:
-          path: test_result.txt
+      with:
+        path: test_result.txt
