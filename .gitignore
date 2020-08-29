@@ -18,3 +18,4 @@ venv/
 /log.txt
 PyPtt.egg-info/
 /test_account*.txt
+/test_result.txt
