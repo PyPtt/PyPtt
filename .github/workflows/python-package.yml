@@ -34,9 +34,6 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
-      uses: actions/upload-artifact@v2
-      with:
-        path: test_result.txt
       env:
         TEST_SECRET: ${{ secrets.TEST_SECRET }}
         PTT_ID_0: ${{ secrets.PTT_ID_0 }}
@@ -45,3 +42,7 @@ jobs:
         PTT2_PW_0: ${{ secrets.PTT2_PW_0 }}
       run: |
         pytest -ci
+    - name: upload result
+      uses: actions/upload-artifact@v2
+        with:
+          path: test_result.txt
