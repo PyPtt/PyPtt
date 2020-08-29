@@ -5,6 +5,12 @@ import traceback
 from PyPtt import PTT
 
 
+def log(msg, mode: str = 'at'):
+    print(msg)
+    with open('test_result.txt', mode, encoding='utf-8') as f:
+        f.write(msg + '\n')
+
+
 def get_password(password_file):
     try:
         with open(password_file) as AccountFile:
@@ -12,8 +18,8 @@ def get_password(password_file):
             ptt_id = account['ID']
             password = account['Password']
     except FileNotFoundError:
-        print(f'Please note PTT ID and Password in {password_file}')
-        print('{"ID":"YourID", "Password":"YourPassword"}')
+        log(f'Please note PTT ID and Password in {password_file}')
+        log('{"ID":"YourID", "Password":"YourPassword"}')
         sys.exit()
 
     return ptt_id, password
@@ -28,37 +34,38 @@ ptt2_pw = None
 
 
 def test_init():
-    print('===正向===')
-    print('===預設值===')
+    log('init', mode='w')
+    log('===正向===')
+    log('===預設值===')
     PTT.API()
-    print('===中文顯示===')
+    log('===中文顯示===')
     PTT.API(language=PTT.i18n.language.CHINESE)
-    print('===英文顯示===')
+    log('===英文顯示===')
     PTT.API(language=PTT.i18n.language.ENGLISH)
-    print('===log DEBUG===')
+    log('===log DEBUG===')
     PTT.API(log_level=PTT.log.level.DEBUG)
-    print('===log INFO===')
+    log('===log INFO===')
     PTT.API(log_level=PTT.log.level.INFO)
-    print('===log SLIENT===')
+    log('===log SLIENT===')
     PTT.API(log_level=PTT.log.level.SILENT)
-    print('===log SLIENT======')
+    log('===log SLIENT======')
 
-    print('===負向===')
+    log('===負向===')
     try:
-        print('===語言 99===')
+        log('===語言 99===')
         PTT.API(language=99)
     except ValueError:
-        print('通過')
+        log('通過')
     except:
-        print('沒通過')
+        log('沒通過')
         sys.exit(-1)
-    print('===語言放字串===')
+    log('===語言放字串===')
     try:
         PTT.API(language='PTT.i18n.language.ENGLISH')
     except TypeError:
-        print('通過')
+        log('通過')
     except:
-        print('沒通過')
+        log('沒通過')
         sys.exit(-1)
 
     def handler(msg):
@@ -89,7 +96,7 @@ def test_init():
         ptt2_id = os.getenv('PTT2_ID_0')
         ptt2_pw = os.getenv('PTT2_PW_0')
         if ptt_id is None or ptt_pw is None:
-            print('從環境變數取得帳號密碼失敗')
+            log('從環境變數取得帳號密碼失敗')
             ptt_id, ptt_pw = get_password('test_account.txt')
             ptt2_id, ptt2_pw = get_password('test_account_2.txt')
             travis_ci = False
@@ -178,12 +185,16 @@ def case(ptt_bot):
 
 
 def run_on_ptt_1():
-    ptt_bot = PTT.API(host=PTT.data_type.host_type.PTT1)
+    ptt_bot = PTT.API(
+        host=PTT.data_type.host_type.PTT1,
+        log_handler=log)
     case(ptt_bot)
 
 
 def run_on_ptt_2():
-    ptt_bot = PTT.API(host=PTT.data_type.host_type.PTT2)
+    ptt_bot = PTT.API(
+        host=PTT.data_type.host_type.PTT2,
+        log_handler=log)
     case(ptt_bot)
 
 
