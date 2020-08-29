@@ -6,7 +6,6 @@ from PyPtt import PTT
 
 
 def log(msg, mode: str = 'at'):
-    print(msg)
     with open('test_result.txt', mode, encoding='utf-8') as f:
         f.write(msg + '\n')
 
@@ -95,6 +94,7 @@ def test_init():
 
         ptt2_id = os.getenv('PTT2_ID_0')
         ptt2_pw = os.getenv('PTT2_PW_0')
+
         if ptt_id is None or ptt_pw is None:
             log('從環境變數取得帳號密碼失敗')
             ptt_id, ptt_pw = get_password('test_account.txt')
@@ -159,6 +159,8 @@ def case(ptt_bot):
         if check_string is not None and check_string not in post_info.content:
             assert 'check_string not in post_info.content'
 
+        log(post_info.content)
+
         ptt_bot.log(f'{board} 板 文章{"編號" if isinstance(index_aid, int) else " aid"} {index_aid} 測試通過')
 
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
@@ -176,7 +178,11 @@ def case(ptt_bot):
             ('Test', '1U3pLzi0', None, False, None),
         ]
     else:
-        test_post_list = []
+        test_post_list = [
+            # 2001 年的文章
+            ('WhoAmI', 1, None, True, None),
+            ('CodingMan', 1, None, True, None),
+        ]
 
     for b, i, exception_, check_format, check_string in test_post_list:
         get_post_test_func(b, i, exception_, check_format, check_string)
