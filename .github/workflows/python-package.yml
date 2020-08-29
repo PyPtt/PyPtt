@@ -42,6 +42,3 @@ jobs:
         PTT2_PW_0: ${{ secrets.PTT2_PW_0 }}
       run: |
         pytest -ci
-
-    - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
