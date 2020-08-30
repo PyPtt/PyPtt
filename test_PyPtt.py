@@ -115,9 +115,11 @@ def test_init():
 
 def case(ptt_bot):
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        ptt_bot.log('開始測試 PTT1')
         ptt_bot.login(ptt_id, ptt_pw)
         current_id = ptt_id
     else:
+        ptt_bot.log('開始測試 PTT2')
         ptt_bot.login(ptt2_id, ptt2_pw)
         current_id = ptt2_id
 
@@ -255,7 +257,7 @@ PyPtt 程式貼文基準測試內文
         title,
         content,
         1,
-        1)
+        0)
 
     # 取得 Test 最新文章編號
     index = ptt_bot.get_newest_index(
