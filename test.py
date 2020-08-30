@@ -1501,14 +1501,12 @@ PyPtt 程式貼文基準測試內文
                 Title,
                 content,
                 1,
-                1
-            )
+                0)
 
             # 取得 Test 最新文章編號
             index = ptt_bot.get_newest_index(
                 PTT.data_type.index_type.BBS,
-                board=basic_board
-            )
+                board=basic_board)
 
             # 搜尋基準文章
             basic_post_aid = None
@@ -1517,16 +1515,14 @@ PyPtt 程式貼文基準測試內文
 
                 post_info = ptt_bot.get_post(
                     basic_board,
-                    post_index=index - i,
-                )
+                    post_index=index - i)
 
                 if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                         Title in post_info.title:
                     print('使用文章編號取得基準文章成功')
                     post_info = ptt_bot.get_post(
                         basic_board,
-                        post_aid=post_info.aid,
-                    )
+                        post_aid=post_info.aid)
                     if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                             Title in post_info.title:
                         print('使用文章代碼取得基準文章成功')

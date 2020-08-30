@@ -25,11 +25,12 @@ def get_password(password_file):
 
 
 run_ci = None
-travis_ci = None
+automation_ci = None
 ptt_id = None
 ptt_pw = None
 ptt2_id = None
 ptt2_pw = None
+current_py_version = None
 
 
 def test_init():
@@ -75,14 +76,15 @@ def test_init():
     ptt_bot.log('Test log')
 
     global run_ci
-    global travis_ci
+    global automation_ci
     global ptt_id
     global ptt_pw
     global ptt2_id
     global ptt2_pw
+    global current_py_version
 
     run_ci = False
-    travis_ci = False
+    automation_ci = False
 
     if '-ci' in sys.argv:
         run_ci = True
@@ -99,12 +101,17 @@ def test_init():
             log('從環境變數取得帳號密碼失敗')
             ptt_id, ptt_pw = get_password('test_account.txt')
             ptt2_id, ptt2_pw = get_password('test_account_2.txt')
-            travis_ci = False
+            automation_ci = False
         else:
-            travis_ci = True
+            automation_ci = True
     else:
         ptt_id, ptt_pw = get_password('test_account.txt')
         ptt2_id, ptt2_pw = get_password('test_account_2.txt')
+
+    for x in range(6, 10):
+        if f'3.{x}' in sys.argv:
+            current_py_version = f'3.{x}'
+            break
 
 
 def case(ptt_bot):
@@ -175,17 +182,114 @@ def case(ptt_bot):
             ('Gossiping', '1TU65Wi_', None, False, None),
             ('joke', '1Tc6G9eQ', None, False, None),
             # 待證文章
-            ('Test', '1U3pLzi0', None, False, None),
-        ]
+            ('Test', '1U3pLzi0', None, False, None)]
     else:
         test_post_list = [
             # 2001 年的文章
             ('WhoAmI', 1, None, True, None),
-            ('CodingMan', 1, None, True, None),
-        ]
+            ('CodingMan', 1, None, True, None)]
 
     for b, i, exception_, check_format, check_string in test_post_list:
         get_post_test_func(b, i, exception_, check_format, check_string)
+
+    ptt_bot.log('取得文章基準測試全部通過')
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        test_board_list = [
+            'Wanted',
+            'Gossiping',
+            'Test',
+            'Stock',
+            'movie']
+    else:
+        test_board_list = [
+            'WhoAmI',
+            'CodingMan',
+            'Test']
+
+    for test_board in test_board_list:
+        basic_index = 0
+        for _ in range(50):
+            index = ptt_bot.get_newest_index(
+                PTT.data_type.index_type.BBS,
+                board=test_board)
+
+            if basic_index == 0:
+                ptt_bot.log(f'{test_board} 最新文章編號 {index}')
+                basic_index = index
+            elif abs(basic_index - index) > 5:
+                ptt_bot.log(f'{test_board} 最新文章編號 {index}')
+                ptt_bot.log(f'basic_index {basic_index}')
+                ptt_bot.log(f'Index {index}')
+                ptt_bot.log('取得看板最新文章編號測試失敗')
+                ptt_bot.logout()
+
+                assert False
+    ptt_bot.log('取得看板最新文章編號測試全部通過')
+
+    title = 'PyPtt 程式貼文基準測試標題'
+    content = f'''
+PyPtt v {ptt_bot.get_version()}
+
+PyPtt 程式貼文基準測試內文
+
+使用 python {current_py_version}    
+
+この日本のベンチマーク
+    '''
+    if automation_ci:
+        content = '''
+    此次測試由 Github Actions 啟動
+    ''' + content
+    else:
+        content = f'''
+    此次測試由 {ptt_id} 啟動
+    ''' + content
+    content = content.replace('\n', '\r\n')
+
+    basic_board = 'Test'
+    # 貼出基準文章
+    ptt_bot.post(
+        basic_board,
+        title,
+        content,
+        1,
+        1)
+
+    # 取得 Test 最新文章編號
+    index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        board=basic_board)
+
+    # 搜尋基準文章
+    basic_post_aid = None
+    basic_post_index = 0
+    for i in range(5):
+
+        post_info = ptt_bot.get_post(
+            basic_board,
+            post_index=index - i)
+
+        if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
+                title in post_info.title:
+            ptt_bot.log('使用文章編號取得基準文章成功')
+            post_info = ptt_bot.get_post(
+                basic_board,
+                post_aid=post_info.aid)
+            if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
+                    title in post_info.title:
+                ptt_bot.log('使用文章代碼取得基準文章成功')
+                basic_post_aid = post_info.aid
+                basic_post_index = index - i
+                break
+
+    if basic_post_aid is None:
+        ptt_bot.log('取得基準文章失敗')
+        ptt_bot.logout()
+        assert False
+
+    ptt_bot.log('取得基準文章成功')
+    ptt_bot.log('貼文測試全部通過')
 
     ptt_bot.logout()
 
