@@ -1,11 +1,11 @@
 ![](https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/logo/facebook_cover_photo_2.png)
 # PyPtt
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/PyPtt)
 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/PyPtt)
 ![PyPtt CI](https://github.com/PttCodingMan/PyPtt/workflows/PyPtt%20CI/badge.svg?branch=add_actions)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/940fe61df0a0443ba883307e11e7b22d)](https://www.codacy.com/manual/PttCodingMan/PyPtt?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PyPtt&amp;utm_campaign=Badge_Grade)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/940fe61df0a0443ba883307e11e7b22d)](https://www.codacy.com/manual/PttCodingMan/PyPtt?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PyPtt&amp;utm_campaign=Badge_Grade)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/PyPtt)
 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
@@ -19,7 +19,7 @@
 #### 完整的支援: PyPtt 是目前支援最完整的 PTT API，除了 PTT 也相容於 PTT2，詳細範例請參考 [PyPtt 文件](https://github.com/PttCodingMan/PyPtt/tree/master/doc)
 #### 即時的爬蟲: 登入式爬蟲，除了可以取得即時的推文，也可以下條件搜尋，不需要整個版都爬下來再來清洗資料最後才分析
 #### 快速的客服: 如果有任何問題你可以在 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt) 找到我
-#### 完整的測試: 你可以在 [![Build Status](https://travis-ci.org/PttCodingMan/PyPtt.svg?branch=master)](https://travis-ci.org/PttCodingMan/PyPtt) 找到完整測試結果
+#### 完整的測試: 你可以在 ![PyPtt CI](https://github.com/PttCodingMan/PyPtt/workflows/PyPtt%20CI/badge.svg?branch=add_actions) 找到完整測試結果
 #### 程式碼品質: 你可以在 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/940fe61df0a0443ba883307e11e7b22d)](https://www.codacy.com/manual/PttCodingMan/PyPtt?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PttCodingMan/PyPtt&amp;utm_campaign=Badge_Grade) 找到程式碼品質報告與評等
 
 ## 版本
