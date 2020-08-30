@@ -116,8 +116,10 @@ def test_init():
 def case(ptt_bot):
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         ptt_bot.login(ptt_id, ptt_pw)
+        current_id = ptt_id
     else:
         ptt_bot.login(ptt2_id, ptt2_pw)
+        current_id = ptt2_id
 
     def show_test_result(board, IndexAID, result):
         if result:
@@ -238,11 +240,11 @@ PyPtt 程式貼文基準測試內文
     '''
     if automation_ci:
         content = '''
-    此次測試由 Github Actions 啟動
+此次測試由 Github Actions 啟動
     ''' + content
     else:
         content = f'''
-    此次測試由 {ptt_id} 啟動
+此次測試由 {current_id} 啟動
     ''' + content
     content = content.replace('\n', '\r\n')
 
@@ -269,13 +271,13 @@ PyPtt 程式貼文基準測試內文
             basic_board,
             post_index=index - i)
 
-        if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
+        if current_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                 title in post_info.title:
             ptt_bot.log('使用文章編號取得基準文章成功')
             post_info = ptt_bot.get_post(
                 basic_board,
                 post_aid=post_info.aid)
-            if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
+            if current_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                     title in post_info.title:
                 ptt_bot.log('使用文章代碼取得基準文章成功')
                 basic_post_aid = post_info.aid
@@ -313,4 +315,4 @@ def test_PyPtt():
 
 
 test_init()
-# test_PyPtt()
+test_PyPtt()
