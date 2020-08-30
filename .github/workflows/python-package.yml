@@ -41,7 +41,7 @@ jobs:
         PTT2_ID_0: ${{ secrets.PTT2_ID_0 }}
         PTT2_PW_0: ${{ secrets.PTT2_PW_0 }}
       run: |
-        pytest -ci
+        pytest -ci ${{ matrix.python-version }}
     - name: upload result
       uses: actions/upload-artifact@v2
       with:
