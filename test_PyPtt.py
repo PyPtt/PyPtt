@@ -108,10 +108,9 @@ def test_init():
         ptt_id, ptt_pw = get_password('test_account.txt')
         ptt2_id, ptt2_pw = get_password('test_account_2.txt')
 
-    for x in range(6, 10):
-        if f'3.{x}' in sys.argv:
-            current_py_version = f'3.{x}'
-            break
+    current_py_version = os.getenv('PYTHON_VERSION')
+    if current_py_version is None:
+        current_py_version = sys.version[:3]
 
 
 def case(ptt_bot):
@@ -314,4 +313,4 @@ def test_PyPtt():
 
 
 test_init()
-test_PyPtt()
+# test_PyPtt()
