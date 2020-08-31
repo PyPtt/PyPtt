@@ -337,7 +337,9 @@ PyPtt 程式貼文基準測試內文
 
     push_success_count = 0
     for push in post_info.push_list:
-        if push.content in test_push_list:
+
+        search_list = [True for content, _ in test_push_list if push.content == content]
+        if len(search_list) == 1:
             push_success_count += 1
 
     if push_success_count != len(test_push_list):
