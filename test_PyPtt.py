@@ -232,22 +232,24 @@ def case(ptt_bot):
 
     title = 'PyPtt 程式貼文基準測試標題'
     content = f'''
-PyPtt v {ptt_bot.get_version()}
+此為 PyPtt v {ptt_bot.get_version()} CI 測試流程
+詳細請參考 https://github.com/PttCodingMan/PyPtt
+
+此次測試使用 python {current_py_version}
+以下為基準測試內文
 
 PyPtt 程式貼文基準測試內文
 
-使用 python {current_py_version}    
-
 この日本のベンチマーク
-    '''
+'''
     if automation_ci:
         content = '''
 此次測試由 Github Actions 啟動
-    ''' + content
+''' + content
     else:
         content = f'''
 此次測試由 {current_id} 啟動
-    ''' + content
+''' + content
     content = content.replace('\n', '\r\n')
 
     basic_board = 'Test'
@@ -293,6 +295,8 @@ PyPtt 程式貼文基準測試內文
 
     ptt_bot.log('取得基準文章成功')
     ptt_bot.log('貼文測試全部通過')
+
+    ################################################
 
     try:
         content1 = '編號推文基準文字123'
@@ -353,6 +357,75 @@ PyPtt 程式貼文基準測試內文
     ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
                  content, post_aid=basic_post_aid)
 
+    ################################################
+
+    def show_condition(test_board, search_type, condition):
+        if search_type == PTT.data_type.post_search_type.KEYWORD:
+            type_str = '關鍵字'
+        if search_type == PTT.data_type.post_search_type.AUTHOR:
+            type_str = '作者'
+        if search_type == PTT.data_type.post_search_type.PUSH:
+            type_str = '推文數'
+        if search_type == PTT.data_type.post_search_type.MARK:
+            type_str = '標記'
+        if search_type == PTT.data_type.post_search_type.MONEY:
+            type_str = '稿酬'
+
+        ptt_bot.log(f'{test_board} 使用 {type_str} 搜尋 {condition}')
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        test_list = [
+            ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
+            ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Wanted)'),
+            ('Wanted', PTT.data_type.post_search_type.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PTT.data_type.post_search_type.KEYWORD, '普悠瑪'),
+        ]
+    else:
+        test_list = [
+            ('WhoAmI', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
+            ('Test', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
+        ]
+
+    test_range = 1
+    query_mode = False
+
+    for (test_board, search_type, condition) in test_list:
+        show_condition(test_board, search_type, condition)
+        index = ptt_bot.get_newest_index(
+            PTT.data_type.index_type.BBS,
+            test_board,
+            search_type=search_type,
+            search_condition=condition)
+        ptt_bot.log(f'{test_board} 最新文章編號 {index}')
+
+        for i in range(test_range):
+            post_info = ptt_bot.get_post(
+                test_board,
+                post_index=index - i,
+                search_type=search_type,
+                search_condition=condition,
+                query=query_mode)
+
+            ptt_bot.log(f'列表日期: [{post_info.list_date}]')
+            ptt_bot.log(f'作者: [{post_info.author}]')
+            ptt_bot.log(f'標題: [{post_info.title}]')
+
+            if post_info.delete_status == PTT.data_type.post_delete_status.NOT_DELETED:
+                if not query_mode:
+                    ptt_bot.log('內文:')
+                    ptt_bot.log(post_info.content)
+            elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
+                ptt_bot.log('文章被作者刪除')
+            elif post_info.delete_status == PTT.data_type.post_delete_status.MODERATOR:
+                ptt_bot.log('文章被版主刪除')
+            ptt_bot.log('=' * 20)
+
+        content = f'{test_board} 取得文章測試完成'
+        ptt_bot.push('Test', PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
+
+    ################################################
     ptt_bot.logout()
 
 
