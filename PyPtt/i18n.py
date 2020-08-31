@@ -36,6 +36,7 @@ Fail = None
 Success = None
 Prepare = None
 Info = None
+OutSide = None
 Debug = None
 Again = None
 ErrorIDPW = None
@@ -324,6 +325,12 @@ def load(input_lang):
     Info = specific_load(input_lang, [
         '資訊',
         'INFO',
+    ])
+
+    global OutSide
+    OutSide = specific_load(input_lang, [
+        '外部',
+        'OUTS',
     ])
 
     global Debug

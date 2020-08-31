@@ -300,7 +300,7 @@ class API:
 
     def log(self, msg: str) -> None:
         self._one_thread()
-        log.log(self.config, log.level.INFO, msg)
+        log.log(self.config, log.level.OUTSIDE, msg)
 
     def get_time(self) -> str:
         self._one_thread()
