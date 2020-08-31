@@ -1546,8 +1546,7 @@ PyPtt 程式貼文基準測試內文
             try:
                 index = ptt_bot.get_newest_index(
                     PTT.data_type.index_type.BBS,
-                    board=basic_board
-                )
+                    board=basic_board)
                 Content1 = '編號推文基準文字123'
                 ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
                              Content1, post_index=index + 1)
@@ -1567,8 +1566,7 @@ PyPtt 程式貼文基準測試內文
 
             post_info = ptt_bot.get_post(
                 basic_board,
-                post_aid=basic_post_aid,
-            )
+                post_aid=basic_post_aid,)
 
             Content1Check = False
             Content2Check = False

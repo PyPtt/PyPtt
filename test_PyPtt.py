@@ -294,6 +294,64 @@ PyPtt 程式貼文基準測試內文
     ptt_bot.log('取得基準文章成功')
     ptt_bot.log('貼文測試全部通過')
 
+    try:
+        content1 = '編號推文基準文字123'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
+                     content1, post_aid='QQQQQQQ')
+        ptt_bot.log('推文反向測試失敗')
+        ptt_bot.logout()
+        assert False
+    except PTT.exceptions.NoSuchPost:
+        ptt_bot.log('推文反向測試通過')
+
+    try:
+        index = ptt_bot.get_newest_index(
+            PTT.data_type.index_type.BBS,
+            board=basic_board)
+        content1 = '編號推文基準文字123'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
+                     content1, post_index=index + 100)
+        ptt_bot.log('推文反向測試失敗')
+        ptt_bot.logout()
+        assert False
+    except ValueError:
+        ptt_bot.log('推文反向測試通過')
+
+    content1 = '編號推文基準文字123'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
+                 content1, post_index=basic_post_index)
+
+    content2 = '代碼推文基準文字123'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
+                 content2, post_aid=basic_post_aid)
+
+    post_info = ptt_bot.get_post(
+        basic_board,
+        post_aid=basic_post_aid)
+
+    content1_check = False
+    content2_check = False
+    for push in post_info.push_list:
+        if content1 in push.content:
+            content1_check = True
+        if content2 in push.content:
+            content2_check = True
+
+    if not content1_check:
+        ptt_bot.log('編號推文基準測試失敗')
+        ptt_bot.logout()
+        assert False
+    ptt_bot.log('編號推文基準測試成功')
+    if not content2_check:
+        ptt_bot.log('代碼推文基準測試失敗')
+        ptt_bot.logout()
+        assert False
+    ptt_bot.log('代碼推文基準測試成功')
+
+    content = '推文基準測試全部通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
     ptt_bot.logout()
 
 
