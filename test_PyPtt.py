@@ -317,35 +317,34 @@ PyPtt 程式貼文基準測試內文
     except ValueError:
         ptt_bot.log('推文反向測試通過')
 
-    content1 = '編號推文基準文字123'
-    ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
-                 content1, post_index=basic_post_index)
+    test_push_list = [
+        ('編號推文基準文字123', basic_post_index),
+        ('代碼推文基準文字123', basic_post_aid),
+        ('安安', basic_post_aid),
+        ('QQ', basic_post_aid)]
 
-    content2 = '代碼推文基準文字123'
-    ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
-                 content2, post_aid=basic_post_aid)
+    for push_content, post_index_aid in test_push_list:
+        if isinstance(post_index_aid, int):
+            ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
+                         push_content, post_index=basic_post_index)
+        else:
+            ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
+                         push_content, post_aid=basic_post_aid)
 
     post_info = ptt_bot.get_post(
         basic_board,
         post_aid=basic_post_aid)
 
-    content1_check = False
-    content2_check = False
+    push_success_count = 0
     for push in post_info.push_list:
-        if content1 in push.content:
-            content1_check = True
-        if content2 in push.content:
-            content2_check = True
+        if push.content in test_push_list:
+            push_success_count += 1
 
-    if not content1_check:
-        ptt_bot.log('編號推文基準測試失敗')
+    if push_success_count != len(test_push_list):
+        ptt_bot.log('推文基準測試失敗')
         ptt_bot.logout()
         assert False
-    ptt_bot.log('編號推文基準測試成功')
-    if not content2_check:
-        ptt_bot.log('代碼推文基準測試失敗')
-        ptt_bot.logout()
-        assert False
+
     ptt_bot.log('代碼推文基準測試成功')
 
     content = '推文基準測試全部通過'
