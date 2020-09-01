@@ -353,7 +353,7 @@ PyPtt 程式貼文基準測試內文
 
     ptt_bot.log('代碼推文基準測試成功')
 
-    content = '推文基準測試全部通過'
+    content = '===推文基準測試全部通過'
     ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
                  content, post_aid=basic_post_aid)
 
@@ -424,6 +424,136 @@ PyPtt 程式貼文基準測試內文
         content = f'{test_board} 取得文章測試完成'
         ptt_bot.push('Test', PTT.data_type.push_type.ARROW,
                      content, post_aid=basic_post_aid)
+
+    ################################################
+
+    def crawl_handler(post):
+
+        def detect_none(Name, Obj, Enable=True):
+            if Obj is None and Enable:
+                raise ValueError(Name + ' is None')
+
+        if post.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
+            if post.delete_status == PTT.data_type.post_delete_status.MODERATOR:
+                # print(f'[版主刪除][{post.getAuthor()}]')
+                pass
+            elif post.delete_status == PTT.data_type.post_delete_status.AUTHOR:
+                # print(f'[作者刪除][{post.getAuthor()}]')
+                pass
+            elif post.delete_status == PTT.data_type.post_delete_status.UNKNOWN:
+                # print(f'[不明刪除]')
+                pass
+            return
+
+        # if post.getTitle().startswith('Fw:') or post.getTitle().startswith('轉'):
+        # print(f'[{post.aid}][{post.getAuthor()}][{post.getTitle()}]')
+        # print(f'[{post.getContent()}]')
+
+        # print(f'[{post.getAuthor()}][{post.getTitle()}]')
+
+        push_number = post.push_number
+        if push_number is not None:
+            if push_number == '爆':
+                pass
+            elif push_number.startswith('X'):
+                N = push_number[1:]
+            else:
+                pass
+                # if not push_number.isdigit():
+                #     print(f'[{post.aid}][{post.push_number}]')
+                #     print(f'[{post.aid}][{post.push_number}]')
+                #     print(f'[{post.aid}][{post.push_number}]')
+                #     raise ValueError()
+            # print(f'[{post.aid}][{post.getPushNumber()}]')
+
+        detect_none('標題', post.title)
+        # detect_none('AID', post.aid)
+        detect_none('Author', post.author)
+        # detect_none('Money', post.getMoney())
+
+        # detect_none('WebUrl', post.web_url)
+        # detect_none('ListDate', post.getListDate())
+
+        # if not Query:
+        # detect_none('Date', post.getDate())
+        # detect_none('Content', post.getContent())
+        # detect_none('IP', post.getIP())
+
+        # time.sleep(0.2)
+
+    query_mode = False
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        test_board_list = [
+            'Wanted',
+            'joke',
+            'Gossiping',
+            'C_Chat']
+    else:
+        test_board_list = [
+            'Test']
+
+    # 改成 5 篇，不然 100 篇太耗時間了
+    test_range = 5
+    for test_board in test_board_list:
+        newest_index = ptt_bot.get_newest_index(
+            PTT.data_type.index_type.BBS,
+            board=test_board
+        ) - 10000
+        # 到很久之前的文章去才不會撞到被刪掉的文章
+
+        error_post_list, del_post_list = ptt_bot.crawl_board(
+            PTT.data_type.crawl_type.BBS,
+            crawl_handler,
+            test_board,
+            start_index=newest_index - test_range + 1,
+            end_index=newest_index,
+            query=query_mode)
+
+        start_post = None
+        offset = 0
+        while True:
+            start_post = ptt_bot.get_post(
+                test_board,
+                post_index=newest_index - test_range + 1 - offset)
+            offset += 1
+            if start_post is None:
+                continue
+            if start_post.aid is None:
+                continue
+            break
+
+        end_post = None
+        offset = 0
+        while True:
+            end_post = ptt_bot.get_post(
+                test_board,
+                post_index=newest_index + offset,
+            )
+            offset += 1
+            if end_post is None:
+                continue
+            if end_post.aid is None:
+                continue
+            break
+
+        ptt_bot.log(test_board)
+        ptt_bot.log(f'start_post index {newest_index - test_range + 1}')
+        ptt_bot.log(f'EndPost index {newest_index}')
+
+        error_post_list, del_post_list = ptt_bot.crawl_board(
+            PTT.data_type.crawl_type.BBS,
+            crawl_handler,
+            test_board,
+            start_aid=start_post.aid,
+            end_aid=end_post.aid)
+        content = f'{test_board} 爬板測試完成'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
+
+    content = '===爬板測試全部通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
 
     ################################################
     ptt_bot.logout()
