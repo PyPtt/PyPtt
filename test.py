@@ -2038,14 +2038,14 @@ github: https://tinyurl.com/umqff3v
 
         ptt_bot.logout()
     else:
-        ptt_id, password = get_password('Account.txt')
+        ptt_id, password = get_password('test_account.txt')
         try:
             # init()
             # threading_test()
             ptt_bot = PTT.API(
                 # log_level=PTT.log.level.TRACE,
                 # log_level=PTT.log.level.DEBUG,
-                host=PTT.data_type.host_type.PTT2
+                # host=PTT.data_type.host_type.PTT2
 
                 # for 本機測試
                 # connect_mode=PTT.connect_core.connect_mode.TELNET,
