@@ -112,6 +112,13 @@ class Target(object):
         '鴻雁往返'
     ]
 
+    InMailMenu = [
+        '【電子郵件】',
+        '我的信箱',
+        '把所有私人資料打包回去',
+        '寄信給帳號站長',
+    ]
+
     PostNoContent = [
         '◆ 此文章無內容',
         AnyKey
