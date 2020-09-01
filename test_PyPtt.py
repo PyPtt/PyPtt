@@ -425,6 +425,10 @@ PyPtt 程式貼文基準測試內文
         ptt_bot.push('Test', PTT.data_type.push_type.ARROW,
                      content, post_aid=basic_post_aid)
 
+    content = '===取得文章測試全部通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
     ################################################
 
     def crawl_handler(post):
@@ -552,6 +556,72 @@ PyPtt 程式貼文基準測試內文
                      content, post_aid=basic_post_aid)
 
     content = '===爬板測試全部通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    ################################################
+
+    user = ptt_bot.get_user(current_id)
+    if user is None:
+        ptt_bot.log('取得使用者測試失敗')
+        ptt_bot.logout()
+        assert False
+
+    try:
+        user = ptt_bot.get_user('sdjfklsdj')
+        ptt_bot.log('取得使用者反向測試失敗')
+        ptt_bot.logout()
+        assert False
+    except PTT.exceptions.NoSuchUser:
+        ptt_bot.log('取得使用者反向測試通過')
+
+    ################################################
+
+    new_mail1 = ptt_bot.has_new_mail()
+    ptt_bot.log(f'有 {new_mail1} 封新信')
+    content = '取得幾封新信測試通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    try:
+        ptt_bot.mail(
+            'sdjfkdsjfls',
+            '程式寄信標題',
+            '反向測試信件內容',
+            0)
+
+        content = '寄信反向測試失敗'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
+        ptt_bot.logout()
+        assert False
+
+    except PTT.exceptions.NoSuchUser:
+        content = '寄信反向測試成功'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
+
+    content = '''如有誤寄，對..對不起
+PyPtt 程式寄信測試內容
+'''
+    content = content.replace('\n', '\r\n')
+    ptt_bot.mail(
+        current_id,
+        '程式寄信標題',
+        content,
+        0)
+
+    new_mail2 = ptt_bot.has_new_mail()
+    ptt_bot.log(f'有 {new_mail2} 封新信')
+    if new_mail2 > new_mail1:
+        content = '寄信測試通過'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
+    else:
+        ptt_bot.logout()
+        assert False
+
+    content = '===寄信測試全部通過'
     ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
                  content, post_aid=basic_post_aid)
 
