@@ -150,11 +150,10 @@ def show(config, screen_queue, function_name=None):
         for Screen in screen_queue:
             print('-' * 50)
             try:
-                print(Screen.encode(
-                    sys.stdin.encoding, "replace").decode(
-                    sys.stdin.encoding
-                )
-                )
+                print(
+                    Screen.encode(
+                        sys.stdin.encoding, "replace").decode(
+                        sys.stdin.encoding))
             except Exception:
                 print(Screen.encode('utf-8', "replace").decode('utf-8'))
     else:

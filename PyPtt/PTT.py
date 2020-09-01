@@ -1685,7 +1685,7 @@ class API:
 
         return _api_mail.del_mail(self, index)
 
-    def change_pw(self, new_password):
+    def change_pw(self, new_password) -> None:
         self._one_thread()
 
         if not self._login_status:

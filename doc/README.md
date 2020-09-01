@@ -122,8 +122,7 @@ from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) Chinese
     # language=PTT.i18n.language.CHINESE,
-    language=PTT.i18n.language.ENGLISH,
-)
+    language=PTT.i18n.language.ENGLISH)
 ```
 
 也可以修改 Log 等級方便回報錯誤
@@ -134,8 +133,7 @@ ptt_bot = PTT.API(
     # (預設值) INFO
     # log_level=PTT.log.level.INFO,
     # log_level=PTT.log.level.DEBUG,
-    log_level=PTT.log.level.TRACE,
-)
+    log_level=PTT.log.level.TRACE)
 ```
 
 如果你的網路環境比較慢(例如海外)，常常不小心就 timeout，也有參數可以調整  
@@ -151,8 +149,7 @@ ptt_bot = PTT.API(
     screen_long_time_out=15,
     # 預設 60 秒後判定此畫面沒有可辨識的目標
     # 適用於貼文等待的情況，建議不要低於 60 秒
-    screen_post_time_out=120,
-)
+    screen_post_time_out=120)
 ```
 
 當然如果你有需要將 log 輸出成檔案或者其他需要處理 log 的需求  
@@ -166,8 +163,7 @@ def handler(msg):
         f.write(msg + '\n')
 
 ptt_bot = PTT.API(
-    log_handler=handler
-)
+    log_handler=handler)
 ```
 
 當然 PyPtt 也支援批踢踢兔與本機。  
@@ -181,8 +177,7 @@ ptt2_bot = PTT.API(
     # host=PTT.data_type.host_type.PTT1,
     # host=PTT.data_type.host_type.PTT2,
     # host=PTT.data_type.host_type.LOCALHOST,
-    host=PTT.data_type.host_type.PTT2
-)
+    host=PTT.data_type.host_type.PTT2)
 ```
 
 如果有 telnet 的需求，可以切換連線模式  
@@ -197,8 +192,7 @@ ptt_bot = PTT.API(
     # connect_mode=PTT.connect_core.connect_mode.WEBSOCKET,
     connect_mode=PTT.connect_core.connect_mode.TELNET,
     # (預設值) 23
-    port=8888
-)
+    port=8888)
 ```
 
 ---
@@ -255,8 +249,7 @@ try:
     ptt_bot.login(
         ptt_id,
         password,
-        kick_other_login=True
-    )
+        kick_other_login=True)
 except PTT.exceptions.LoginError:
     ptt_bot.log('登入失敗')
     sys.exit()
@@ -284,8 +277,7 @@ from PyPtt import PTT
 
 post_info = ptt_bot.get_post(
     'Python',
-    post_index=7486
-)
+    post_index=7486)
 ```
 
 或者用 AID 也可以的
@@ -296,8 +288,7 @@ from PyPtt import PTT
 
 post_info = ptt_bot.get_post(
     'Python',
-    post_aid='1TJH_XY0'
-)
+    post_aid='1TJH_XY0')
 
 # 從以上兩個範例可以看到 get_post 回傳了 post_info
 # 這裡面包含了文章所有屬性
@@ -457,8 +448,7 @@ Since 0.8.16
 post_info = ptt_bot.get_post(
     'Python',
     post_aid='1TJH_XY0',
-    query=True,
-)
+    query=True)
 ```
 
 ---
@@ -549,8 +539,7 @@ test_range = 1000
 
 newest_index = ptt_bot.get_newest_index(
     PTT.data_type.index_type.BBS,
-    board=test_board
-)
+    board=test_board)
 start_index = newest_index - test_range + 1
 
 print(f'預備爬行 {test_board} 編號 {start_index} ~ {newest_index} 文章')
@@ -689,8 +678,8 @@ error_post_list, del_post_list = ptt_bot.crawl_board(
     'Gossiping',
     start_index=1,
     end_index=100,
-    query=True,  # Optional
-)
+    # Optional
+    query=True)
 ```
 
 ---
@@ -718,8 +707,7 @@ for _ in range(3):
         # 標題分類
         1,
         # 簽名檔
-        0
-    )
+        0)
 ```
 
 以下則是推文範例
@@ -1095,22 +1083,19 @@ ptt_bot.reply_post(
     PTT.data_type.reply_type.BOARD,
     'Test',
     '測試回應到板上，如有打擾抱歉',
-    post_index=reply_post_index
-)
+    post_index=reply_post_index)
 
 ptt_bot.reply_post(
     PTT.data_type.reply_type.MAIL,
     'Test',
     '測試回應到信箱，如有打擾抱歉',
-    post_index=reply_post_index
-)
+    post_index=reply_post_index)
 
 ptt_bot.reply_post(
     PTT.data_type.reply_type.BOARD_MAIL,
     'Test',
     '測試回應到板上還有信箱，如有打擾抱歉',
-    post_index=reply_post_index
-)
+    post_index=reply_post_index)
 ```
 
 ---
@@ -1212,9 +1197,10 @@ ptt_bot.mark_post(
     post_aid='QQaid',
     # Postindex 可搭配 SearchType and SearchCondition 使用
     post_index=10,
-    search_type=search_type, # Optional
-    search_condition=search_condition # Optional
-)
+    # Optional
+    search_type=search_type,
+    # Optional
+    search_condition=search_condition)
 ```
 
 ---
@@ -1232,8 +1218,7 @@ ptt_bot.bucket(
     # 水桶原因
     'Bucket Reason',
     # 水桶對象
-    'CodingMan'
-)
+    'CodingMan')
 ```
 
 ---
@@ -1278,8 +1263,7 @@ ptt_bot.post(
     'PyPtt 程式色碼貼文測試',
     content,
     1,
-    0
-)
+    0)
 ```
 執行結果
 

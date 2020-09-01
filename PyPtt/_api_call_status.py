@@ -34,8 +34,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]打開',
             break_detect=True,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -43,8 +42,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]拔掉',
             break_detect=True,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -52,8 +50,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]防水',
             break_detect=True,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -61,8 +58,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]好友',
             break_detect=True,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -70,16 +66,14 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]關閉',
             break_detect=True,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
             ],
             '★',
             response=cmd,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
     ]
 
     for i in range(2):
@@ -124,15 +118,13 @@ def set_call_status(api, call_status) -> None:
                 i18n.Success
             ],
             screens.Target.InUserList,
-            break_detect=True
-        )
+            break_detect=True)
     ]
 
     while current_call_status != call_status:
         api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=api.config.screen_long_timeout
-        )
+            screen_timeout=api.config.screen_long_timeout)
 
         current_call_status = api._get_call_status()

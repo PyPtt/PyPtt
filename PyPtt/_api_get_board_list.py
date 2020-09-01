@@ -37,15 +37,13 @@ def get_board_list(api) -> list:
         connect_core.TargetUnit(
             i18n.BoardList,
             screens.Target.InBoardList,
-            break_detect=True
-        )
+            break_detect=True)
     ]
 
     api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.config.screen_long_timeout
-    )
+        screen_timeout=api.config.screen_long_timeout)
     ori_screen = api.connect_core.get_screen_queue()[-1]
 
     max_no = 0
@@ -70,14 +68,12 @@ def get_board_list(api) -> list:
         api.config,
         log.level.DEBUG,
         'MaxNo',
-        max_no
-    )
+        max_no)
 
     if api.config.log_level == log.level.INFO:
         pb = progressbar.ProgressBar(
             max_value=max_no,
-            redirect_stdout=True
-        )
+            redirect_stdout=True)
 
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
@@ -93,8 +89,7 @@ def get_board_list(api) -> list:
         api.connect_core.send(
             cmd,
             target_list,
-            screen_timeout=api.config.screen_long_timeout
-        )
+            screen_timeout=api.config.screen_long_timeout)
 
         ori_screen = api.connect_core.get_screen_queue()[-1]
         # print(OriScreen)
@@ -125,8 +120,7 @@ def get_board_list(api) -> list:
                 api.config,
                 log.level.DEBUG,
                 'Board NO',
-                no
-            )
+                no)
 
             board_name = front_part_list[1]
             if board_name.startswith('ˇ'):
@@ -136,8 +130,7 @@ def get_board_list(api) -> list:
                 api.config,
                 log.level.DEBUG,
                 'Board Name',
-                board_name
-            )
+                board_name)
 
             board_list.append(board_name)
 
