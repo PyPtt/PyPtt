@@ -703,6 +703,30 @@ PyPtt 程式寄信測試內容
 
     ################################################
 
+    favourite_board_list = ptt_bot.get_favourite_board()
+    for test_board in favourite_board_list:
+        if test_board.board is None or test_board.type is None or test_board.title is None:
+            ptt_bot.log('取得我的最愛測試失敗')
+            ptt_bot.logout()
+            assert False
+
+    content = '===取得我的最愛測試成功'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    ################################################
+
+    user_list = ptt_bot.search_user('coding')
+    if len(user_list) == 0:
+        ptt_bot.log('查詢網友測試失敗')
+        ptt_bot.logout()
+        assert False
+    content = '===查詢網友測試成功'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    ################################################
+
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         content = '===PTT 1 測試全部通過'
         ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
