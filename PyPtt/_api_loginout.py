@@ -83,7 +83,7 @@ def login(
             return i18n.kick_other_login
         return i18n.Notkick_other_login
 
-    def kick_other_loginResponse(Screen):
+    def kick_other_loginResponse(screen):
         if api.config.kick_other_login:
             return 'y' + command.Enter
         return 'n' + command.Enter
@@ -133,6 +133,11 @@ def login(
             # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
             response=command.GoMainMenu + 'A' + command.Right + command.Left,
             break_detect=True
+        ),
+        connect_core.TargetUnit(
+            i18n.MailBox,
+            screens.Target.InMailMenu,
+            response=command.GoMainMenu,
         ),
         connect_core.TargetUnit(
             i18n.loginSuccess,
@@ -345,7 +350,6 @@ def login(
             api.config,
             log.level.INFO,
             i18n.PicksInRegister,
-            api.process_picks
-        )
+            api.process_picks)
 
     api._login_status = True
