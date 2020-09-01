@@ -62,8 +62,7 @@ def init():
             f.write(msg + '\n')
 
     ptt_bot = PTT.API(
-        log_handler=handler
-    )
+        log_handler=handler)
     ptt_bot.log('Test log')
 
 
@@ -232,8 +231,7 @@ def get_post():
                     print(buffer)
 
                 print(
-                    f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow = {push_count - boo_count}'
-                )
+                    f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow = {push_count - boo_count}')
         except Exception as e:
 
             traceback.print_tb(e.__traceback__)
@@ -404,8 +402,7 @@ def get_post_with_condition():
             PTT.data_type.index_type.BBS,
             board,
             search_type=search_type,
-            search_condition=condition,
-        )
+            search_condition=condition)
         print(f'{board} 最新文章編號 {index}')
 
         for i in range(test_range):
@@ -415,8 +412,7 @@ def get_post_with_condition():
                 # PostIndex=611,
                 search_type=search_type,
                 search_condition=condition,
-                query=query
-            )
+                query=query)
 
             print('列表日期:')
             print(post.list_date)
@@ -503,8 +499,7 @@ github: https://tinyurl.com/umqff3v
             # 標題分類
             1,
             # 簽名檔
-            0
-        )
+            0)
 
 
 def get_newest_index():
@@ -646,8 +641,7 @@ def crawl_board():
                 if index_type == 'Index':
                     newest_index = ptt_bot.get_newest_index(
                         PTT.data_type.index_type.BBS,
-                        board=TestBoard
-                    )
+                        board=TestBoard)
                     start_index = newest_index - test_range + 1
 
                     print(
@@ -660,8 +654,7 @@ def crawl_board():
                         TestBoard,
                         start_index=start_index,
                         end_index=newest_index,
-                        query=query
-                    )
+                        query=query)
                 elif index_type == 'AID':
 
                     start_aid = '1TnDKzxw'
@@ -672,8 +665,7 @@ def crawl_board():
                         crawlHandler,
                         TestBoard,
                         start_aid=start_aid,
-                        end_aid=end_aid
-                    )
+                        end_aid=end_aid)
                 if len(error_post_list) > 0:
                     print('格式錯誤文章: \n' + '\n'.join(str(x)
                                                    for x in error_post_list))
@@ -687,8 +679,7 @@ def crawl_board():
 
                 newest_index = ptt_bot.get_newest_index(
                     PTT.data_type.index_type.WEB,
-                    board=TestBoard
-                )
+                    board=TestBoard)
                 end_page = newest_index
 
                 start_page = end_page - test_range + 1
@@ -701,9 +692,7 @@ def crawl_board():
                     crawlHandler,
                     TestBoard,
                     start_page=start_page,
-                    end_page=end_page
-                    # Query=Query
-                )
+                    end_page=end_page)
 
                 if len(del_post_list) > 0:
                     print('\n'.join(del_post_list))
@@ -1931,21 +1920,18 @@ github: https://tinyurl.com/umqff3v
                 PTT.data_type.reply_type.BOARD,
                 basic_board,
                 '使用文章ID測試回應到板上',
-                post_aid=basic_post_aid
-            )
+                post_aid=basic_post_aid)
 
             index = ptt_bot.get_newest_index(
                 PTT.data_type.index_type.BBS,
-                board=basic_board
-            )
+                board=basic_board)
 
             TestPass = False
             for i in range(5):
 
                 post_info = ptt_bot.get_post(
                     basic_board,
-                    post_index=index - i,
-                )
+                    post_index=index - i)
 
                 if ptt_id in post_info.author and '使用文章ID測試回應到板上' in post_info.content:
                     TestPass = True
