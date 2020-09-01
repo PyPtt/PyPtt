@@ -274,14 +274,12 @@ class API:
             return self._login(
                 ptt_id,
                 password,
-                kick_other_login=kick_other_login
-            )
+                kick_other_login=kick_other_login)
         except exceptions.LoginError:
             return self._login(
                 ptt_id,
                 password,
-                kick_other_login=kick_other_login
-            )
+                kick_other_login=kick_other_login)
 
     def logout(self) -> None:
         self._one_thread()
@@ -298,9 +296,11 @@ class API:
 
         return _api_loginout.logout(self)
 
-    def log(self, msg: str) -> None:
+    def log(self, *msg) -> None:
         self._one_thread()
-        log.log(self.config, log.level.OUTSIDE, msg)
+        msg = [str(x) for x in msg]
+        current_msg = ' '.join(msg)
+        log.log(self.config, log.level.OUTSIDE, current_msg)
 
     def get_time(self) -> str:
         self._one_thread()
