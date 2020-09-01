@@ -702,6 +702,16 @@ PyPtt 程式寄信測試內容
                  content, post_aid=basic_post_aid)
 
     ################################################
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        content = '===PTT 1 測試全部通過'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
+    else:
+        content = '===PTT 2 測試全部通過'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
+
     ptt_bot.logout()
 
 
