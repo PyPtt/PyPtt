@@ -1899,21 +1899,18 @@ github: https://tinyurl.com/umqff3v
                 PTT.data_type.reply_type.BOARD,
                 basic_board,
                 '使用文章編號測試回應到板上',
-                post_index=basic_post_index
-            )
+                post_index=basic_post_index)
 
             index = ptt_bot.get_newest_index(
                 PTT.data_type.index_type.BBS,
-                board=basic_board
-            )
+                board=basic_board)
 
             TestPass = False
             for i in range(5):
 
                 post_info = ptt_bot.get_post(
                     basic_board,
-                    post_index=index - i,
-                )
+                    post_index=index - i)
 
                 if ptt_id in post_info.author and '使用文章編號測試回應到板上' in post_info.content:
                     TestPass = True
