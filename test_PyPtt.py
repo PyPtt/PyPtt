@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import traceback
+import random
 from PyPtt import PTT
 
 
@@ -118,10 +119,12 @@ def case(ptt_bot):
         ptt_bot.log('開始測試 PTT1')
         ptt_bot.login(ptt_id, ptt_pw)
         current_id = ptt_id
+        current_pw = ptt_pw
     else:
         ptt_bot.log('開始測試 PTT2')
         ptt_bot.login(ptt2_id, ptt2_pw)
         current_id = ptt2_id
+        current_pw = ptt2_pw
 
     def show_test_result(board, IndexAID, result):
         if result:
@@ -532,8 +535,7 @@ PyPtt 程式貼文基準測試內文
         while True:
             end_post = ptt_bot.get_post(
                 test_board,
-                post_index=newest_index + offset,
-            )
+                post_index=newest_index + offset)
             offset += 1
             if end_post is None:
                 continue
@@ -641,6 +643,21 @@ PyPtt 程式寄信測試內容
 
     ################################################
 
+    ptt_time = ptt_bot.get_time()
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        content = f'PTT1 主機時間 {ptt_time}'
+    else:
+        content = f'PTT2 主機時間 {ptt_time}'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    content = '===取得主機時間測試全部通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    ################################################
+
     try:
         ptt_bot.get_board_info('NotExistBoard')
 
@@ -721,9 +738,162 @@ PyPtt 程式寄信測試內容
         ptt_bot.log('查詢網友測試失敗')
         ptt_bot.logout()
         assert False
+
     content = '===查詢網友測試成功'
     ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
                  content, post_aid=basic_post_aid)
+
+    ################################################
+
+    ptt_bot.change_pw(current_pw)
+    ptt_bot.change_pw(current_pw)
+
+    content = '===變更密碼測試成功'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    ################################################
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+
+        url_list = [
+            'https://www.ptt.cc/bbs/Gossiping/M.1583473330.A.61B.html',
+            'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
+        ]
+
+        check_result = True
+        for url in url_list:
+            board, aid = ptt_bot.get_aid_from_url(url)
+
+            if not url.startswith(f'https://www.ptt.cc/bbs/{board}/'):
+                check_result = False
+                break
+
+            post_info = ptt_bot.get_post(board, post_aid=aid, query=True)
+            if post_info.aid != aid:
+                check_result = False
+                break
+
+        if not check_result:
+            ptt_bot.log('get_aid_from_url 失敗')
+            ptt_bot.logout()
+            assert False
+        else:
+            content = '=== get_aid_from_url 測試成功'
+            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                         content, post_aid=basic_post_aid)
+
+    ################################################
+
+    content = '使用文章編號測試回應到板上'
+
+    ptt_bot.reply_post(
+        PTT.data_type.reply_type.BOARD,
+        basic_board,
+        content,
+        post_index=basic_post_index)
+
+    index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        board=basic_board)
+
+    test_pass = False
+    for i in range(5):
+
+        post_info = ptt_bot.get_post(
+            basic_board,
+            post_index=index - i)
+
+        if current_id in post_info.author and content in post_info.content:
+            test_pass = True
+            content = f'{content}成功'
+            ptt_bot.push(
+                basic_board, PTT.data_type.push_type.ARROW,
+                content, post_aid=basic_post_aid)
+            break
+    if not test_pass:
+        ptt_bot.log(f'{content}失敗')
+        ptt_bot.logout()
+        assert False
+
+    content = '使用 aid 測試回應到板上'
+
+    ptt_bot.reply_post(
+        PTT.data_type.reply_type.BOARD,
+        basic_board,
+        content,
+        post_aid=basic_post_aid)
+
+    index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        board=basic_board)
+
+    test_pass = False
+    for i in range(5):
+
+        post_info = ptt_bot.get_post(
+            basic_board,
+            post_index=index - i)
+
+        if current_id in post_info.author and content in post_info.content:
+            test_pass = True
+            content = f'{content}成功'
+            ptt_bot.push(
+                basic_board, PTT.data_type.push_type.ARROW,
+                content, post_aid=basic_post_aid)
+            break
+    if not test_pass:
+        ptt_bot.log(f'{content}失敗')
+        ptt_bot.logout()
+        assert False
+
+    content = '===回覆文章測試成功'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    ################################################
+
+    def show_call_status(call_status):
+        if call_status == PTT.data_type.call_status.ON:
+            ptt_bot.log('呼叫器狀態[打開]')
+        elif call_status == PTT.data_type.call_status.OFF:
+            ptt_bot.log('呼叫器狀態[關閉]')
+        elif call_status == PTT.data_type.call_status.UNPLUG:
+            ptt_bot.log('呼叫器狀態[拔掉]')
+        elif call_status == PTT.data_type.call_status.WATERPROOF:
+            ptt_bot.log('呼叫器狀態[防水]')
+        elif call_status == PTT.data_type.call_status.FRIEND:
+            ptt_bot.log('呼叫器狀態[朋友]')
+        else:
+            ptt_bot.log(f'Unknown call_status: {call_status}')
+
+    call_status = ptt_bot.get_call_status()
+    show_call_status(call_status)
+
+    test_queue = [x for x in range(
+        PTT.data_type.call_status.min_value, PTT.data_type.call_status.max_value + 1
+    )]
+    random.shuffle(test_queue)
+    test_queue.remove(call_status)
+
+    test_pass = True
+    for i in range(2):
+        ptt_bot.set_call_status(test_queue[i])
+        call_status = ptt_bot.get_call_status()
+        show_call_status(call_status)
+
+        if call_status != test_queue[i]:
+            test_pass = False
+            break
+
+    if not test_pass:
+        ptt_bot.log('設定呼叫器測試失敗')
+        ptt_bot.logout()
+        assert False
+    else:
+        content = '===設定呼叫器測試通過'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
 
     ################################################
 
