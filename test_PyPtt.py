@@ -575,6 +575,10 @@ PyPtt 程式貼文基準測試內文
     except PTT.exceptions.NoSuchUser:
         ptt_bot.log('取得使用者反向測試通過')
 
+    content = '===取得使用者測試全部通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
     ################################################
 
     new_mail1 = ptt_bot.has_new_mail()
@@ -622,6 +626,78 @@ PyPtt 程式寄信測試內容
         assert False
 
     content = '===寄信測試全部通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    ################################################
+
+    board_list = ptt_bot.get_board_list()
+    ptt_bot.log(f'總共有 {len(board_list)} 個板名')
+    ptt_bot.log(f'總共有 {len(set(board_list))} 個不重複板名')
+
+    content = '===取得全站看板清單測試全部通過'
+    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                 content, post_aid=basic_post_aid)
+
+    ################################################
+
+    try:
+        ptt_bot.get_board_info('NotExistBoard')
+
+        ptt_bot.log('取得看板資訊反向測試失敗')
+
+        ptt_bot.logout()
+        assert False
+    except PTT.exceptions.NoSuchBoard:
+        ptt_bot.log('取得看板資訊反向測試成功')
+        content = '取得看板資訊反向測試成功'
+        ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
+                     content, post_aid=basic_post_aid)
+
+    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        test_board_list = [
+            'Wanted',
+            'Gossiping',
+            'Test',
+            'Stock',
+            'movie']
+    else:
+        test_board_list = [
+            'WhoAmI',
+            'CodingMan',
+            'Test']
+
+    for board in test_board_list:
+        board_info = ptt_bot.get_board_info(board, get_post_kind=True)
+
+        ptt_bot.log('發文類別: ', ' '.join(board_info.post_kind))
+
+        ptt_bot.log('板名: ', board_info.board)
+        ptt_bot.log('線上人數: ', board_info.online_user)
+        # setting
+        ptt_bot.log('中文敘述: ', board_info.chinese_des)
+        ptt_bot.log('板主: ', board_info.moderators)
+        ptt_bot.log('公開狀態(是否隱形): ', board_info.is_open)
+        ptt_bot.log('隱板時是否可進入十大排行榜: ', board_info.is_into_top_ten_when_hide)
+        ptt_bot.log('是否開放非看板會員發文: ', board_info.can_non_board_members_post)
+        ptt_bot.log('是否開放回應文章: ', board_info.can_reply_post)
+        ptt_bot.log('是否開放自刪文章: ', board_info.can_self_del_post)
+        ptt_bot.log('是否開放推薦文章: ', board_info.can_push_post)
+        ptt_bot.log('是否開放噓文: ', board_info.can_boo_post)
+        ptt_bot.log('是否可以快速連推文章: ', board_info.can_fast_push)
+        ptt_bot.log('推文最低間隔時間: ', board_info.min_interval)
+        ptt_bot.log('推文時是否記錄來源 IP: ', board_info.is_push_record_ip)
+        ptt_bot.log('推文時是否對齊開頭: ', board_info.is_push_aligned)
+        ptt_bot.log('板主是否可刪除部份違規文字: ', board_info.can_moderator_del_illegal_content)
+        ptt_bot.log('轉錄文章是否自動記錄，且是否需要發文權限: ',
+                    board_info.is_tran_post_auto_recorded_and_require_post_permissions)
+        ptt_bot.log('是否為冷靜模式: ', board_info.is_cool_mode)
+        ptt_bot.log('是否需要滿十八歲才可進入: ', board_info.is_require18)
+        ptt_bot.log('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
+        ptt_bot.log('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
+        ptt_bot.log('=' * 20)
+
+    content = '===取得看板資訊全部通過'
     ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
                  content, post_aid=basic_post_aid)
 
