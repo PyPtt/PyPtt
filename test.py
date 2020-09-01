@@ -1766,8 +1766,7 @@ PyPtt 程式貼文基準測試內文
                     'sdjfkdsjfls',
                     '程式寄信標題',
                     content,
-                    0
-                )
+                    0)
 
                 content = '寄信反向測試失敗'
                 print(content)
