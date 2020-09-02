@@ -38,8 +38,12 @@ jobs:
         TEST_SECRET: ${{ secrets.TEST_SECRET }}
         PTT_ID_0: ${{ secrets.PTT_ID_0 }}
         PTT_PW_0: ${{ secrets.PTT_PW_0 }}
+        PTT_ID_1: ${{ secrets.PTT_ID_1 }}
+        PTT_PW_1: ${{ secrets.PTT_PW_1 }}
         PTT2_ID_0: ${{ secrets.PTT2_ID_0 }}
         PTT2_PW_0: ${{ secrets.PTT2_PW_0 }}
+        PTT2_ID_1: ${{ secrets.PTT2_ID_1 }}
+        PTT2_PW_1: ${{ secrets.PTT2_PW_1 }}
         PYTHON_VERSION: ${{ matrix.python-version }}
       run: |
         pytest -ci
