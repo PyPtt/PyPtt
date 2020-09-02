@@ -895,8 +895,7 @@ try:
         # 內文
         content,
         # 簽名檔
-        0
-    )
+        0)
 except PTT.exceptions.NoSuchUser:
     print('No Such User')
 ```
