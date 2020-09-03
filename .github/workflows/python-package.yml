@@ -5,7 +5,7 @@ name: PyPtt CI
 
 on:
   push:
-    branches: [ add_actions ]
+    branches: [ master ]
 
 jobs:
   build:
