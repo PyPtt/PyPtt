@@ -127,8 +127,7 @@ async def websocket_receiver(core, screen_time_out, recv_data_obj):
     # Wait for at most 1 second
     await asyncio.wait_for(
         websocket_recv_func(core, recv_data_obj),
-        timeout=screen_time_out
-    )
+        timeout=screen_time_out)
 
 
 class ReceiveDataQueue(object):
@@ -153,15 +152,13 @@ class API(object):
                 i18n.UseTooManyResources,
             ],
             screens.Target.UseTooManyResources,
-            exceptions_=exceptions.UseTooManyResources()
-        )
+            exceptions_=exceptions.UseTooManyResources())
 
         log.show_value(
             self.config, log.level.INFO, [
                 i18n.connect_core,
             ],
-            i18n.Init
-        )
+            i18n.Init)
 
     def connect(self) -> None:
         def _wait():
@@ -173,16 +170,14 @@ class API(object):
                         i18n.Connect,
                         i18n.PTT,
                     ],
-                    str(self.config.retry_wait_time - i)
-                )
+                    str(self.config.retry_wait_time - i))
                 time.sleep(1)
 
         log.show_value(
             self.config, log.level.INFO, [
                 i18n.connect_core,
             ],
-            i18n.Active
-        )
+            i18n.Active)
 
         telnet_host, websocket_host, websocket_origin = '', '', ''
         if self.config.host == data_type.host_type.PTT1:
@@ -331,16 +326,14 @@ class API(object):
                     log.level.DEBUG, [
                         i18n.SendMsg
                     ],
-                    i18n.HideSensitiveInfor
-                )
+                    i18n.HideSensitiveInfor)
             else:
                 log.show_value(
                     self.config,
                     log.level.DEBUG, [
                         i18n.SendMsg
                     ],
-                    msg
-                )
+                    msg)
             if self.config.connect_mode == connect_mode.TELNET:
                 try:
                     self._core.read_very_eager()
@@ -350,8 +343,7 @@ class API(object):
             else:
                 try:
                     asyncio.get_event_loop().run_until_complete(
-                        self._core.send(msg)
-                    )
+                        self._core.send(msg))
                 except websockets.exceptions.ConnectionClosedError:
                     raise exceptions.ConnectionClosed()
                 except RuntimeError:
@@ -382,8 +374,7 @@ class API(object):
 
                         asyncio.get_event_loop().run_until_complete(
                             websocket_receiver(
-                                self._core, current_screen_timeout, recv_data_obj)
-                        )
+                                self._core, current_screen_timeout, recv_data_obj))
 
                     except websockets.exceptions.ConnectionClosed:
                         # print(f'0.1 {use_too_many_res}')
@@ -399,8 +390,7 @@ class API(object):
 
                 receive_data_buffer += recv_data_obj.data
                 receive_data_temp = receive_data_buffer.decode(
-                    'big5-uao', errors='replace'
-                )
+                    'big5-uao', errors='replace')
                 screen = clean_screen(receive_data_temp)
 
                 find_target = False

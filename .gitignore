@@ -17,5 +17,5 @@ Account*.txt
 venv/
 /log.txt
 PyPtt.egg-info/
-/test_account.txt
-/test_account_2.txt
+/test_account*.txt
+/test_result.txt
