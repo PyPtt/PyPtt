@@ -74,14 +74,12 @@ def check_index(
                 config,
                 log.level.INFO,
                 'Index',
-                index
-            )
+                index)
             log.show_value(
                 config,
                 log.level.INFO,
                 'max_value',
-                max_value
-            )
+                max_value)
             raise ValueError(
                 log.merge(
                     config,

@@ -10,10 +10,11 @@ except ModuleNotFoundError:
 
 
 class level(object):
-
     TRACE = 1
     DEBUG = 2
     INFO = 3
+    # 由外部代入的 log
+    OUTSIDE = 3.1
     SILENT = 4
 
     min_value = TRACE
@@ -43,7 +44,6 @@ def merge(config, msg) -> str:
 
 
 def log(config, log_level, msg):
-
     if not lib_util.check_range(level, log_level):
         raise ValueError('log_level', log_level)
 
@@ -61,6 +61,8 @@ def log(config, log_level, msg):
         total_message += '[' + i18n.Debug + '] ' + msg
     elif log_level == level.INFO:
         total_message += '[' + i18n.Info + '] ' + msg
+    elif log_level == level.OUTSIDE:
+        total_message += '[' + i18n.OutSide + '] ' + msg
 
     try:
         print(total_message.encode(
@@ -77,7 +79,6 @@ def log(config, log_level, msg):
 
 
 def show_value(config, log_level, msg, log_value):
-
     if config.log_level > log_level:
         return
 

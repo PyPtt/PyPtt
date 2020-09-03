@@ -112,6 +112,13 @@ class Target(object):
         '鴻雁往返'
     ]
 
+    InMailMenu = [
+        '【電子郵件】',
+        '我的信箱',
+        '把所有私人資料打包回去',
+        '寄信給帳號站長',
+    ]
+
     PostNoContent = [
         '◆ 此文章無內容',
         AnyKey
@@ -143,11 +150,10 @@ def show(config, screen_queue, function_name=None):
         for Screen in screen_queue:
             print('-' * 50)
             try:
-                print(Screen.encode(
-                    sys.stdin.encoding, "replace").decode(
-                    sys.stdin.encoding
-                )
-                )
+                print(
+                    Screen.encode(
+                        sys.stdin.encoding, "replace").decode(
+                        sys.stdin.encoding))
             except Exception:
                 print(Screen.encode('utf-8', "replace").decode('utf-8'))
     else:

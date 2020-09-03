@@ -62,8 +62,7 @@ def init():
             f.write(msg + '\n')
 
     ptt_bot = PTT.API(
-        log_handler=handler
-    )
+        log_handler=handler)
     ptt_bot.log('Test log')
 
 
@@ -89,6 +88,12 @@ def performance_test():
 
 
 def get_post():
+    def show(name, value):
+        if value is not None:
+            print(f'{name} [{value}]')
+        else:
+            print(f'無{name}')
+
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_post_list = [
             ('Python', 1),
@@ -132,12 +137,6 @@ def get_post():
             ('WhoAmI', '1TqJhzQH')
         ]
 
-    def show(name, value):
-        if value is not None:
-            print(f'{name} [{value}]')
-        else:
-            print(f'無{name}')
-
     query = False
 
     for (board, index) in test_post_list:
@@ -148,16 +147,14 @@ def get_post():
                     post_index=index,
                     # SearchType=PTT.data_type.post_search_type.KEYWORD,
                     # SearchCondition='公告',
-                    query=query,
-                )
+                    query=query)
             else:
                 post_info = ptt_bot.get_post(
                     board,
                     post_aid=index,
                     # SearchType=PTT.data_type.post_search_type.KEYWORD,
                     # SearchCondition='公告',
-                    query=query,
-                )
+                    query=query)
             if post_info is None:
                 print('Empty')
                 continue
@@ -234,8 +231,7 @@ def get_post():
                     print(buffer)
 
                 print(
-                    f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow = {push_count - boo_count}'
-                )
+                    f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow = {push_count - boo_count}')
         except Exception as e:
 
             traceback.print_tb(e.__traceback__)
@@ -406,8 +402,7 @@ def get_post_with_condition():
             PTT.data_type.index_type.BBS,
             board,
             search_type=search_type,
-            search_condition=condition,
-        )
+            search_condition=condition)
         print(f'{board} 最新文章編號 {index}')
 
         for i in range(test_range):
@@ -417,8 +412,7 @@ def get_post_with_condition():
                 # PostIndex=611,
                 search_type=search_type,
                 search_condition=condition,
-                query=query
-            )
+                query=query)
 
             print('列表日期:')
             print(post.list_date)
@@ -505,8 +499,7 @@ github: https://tinyurl.com/umqff3v
             # 標題分類
             1,
             # 簽名檔
-            0
-        )
+            0)
 
 
 def get_newest_index():
@@ -648,8 +641,7 @@ def crawl_board():
                 if index_type == 'Index':
                     newest_index = ptt_bot.get_newest_index(
                         PTT.data_type.index_type.BBS,
-                        board=TestBoard
-                    )
+                        board=TestBoard)
                     start_index = newest_index - test_range + 1
 
                     print(
@@ -662,8 +654,7 @@ def crawl_board():
                         TestBoard,
                         start_index=start_index,
                         end_index=newest_index,
-                        query=query
-                    )
+                        query=query)
                 elif index_type == 'AID':
 
                     start_aid = '1TnDKzxw'
@@ -674,8 +665,7 @@ def crawl_board():
                         crawlHandler,
                         TestBoard,
                         start_aid=start_aid,
-                        end_aid=end_aid
-                    )
+                        end_aid=end_aid)
                 if len(error_post_list) > 0:
                     print('格式錯誤文章: \n' + '\n'.join(str(x)
                                                    for x in error_post_list))
@@ -689,8 +679,7 @@ def crawl_board():
 
                 newest_index = ptt_bot.get_newest_index(
                     PTT.data_type.index_type.WEB,
-                    board=TestBoard
-                )
+                    board=TestBoard)
                 end_page = newest_index
 
                 start_page = end_page - test_range + 1
@@ -703,9 +692,7 @@ def crawl_board():
                     crawlHandler,
                     TestBoard,
                     start_page=start_page,
-                    end_page=end_page
-                    # Query=Query
-                )
+                    end_page=end_page)
 
                 if len(del_post_list) > 0:
                     print('\n'.join(del_post_list))
@@ -802,7 +789,6 @@ def crawl_board_with_condition():
 
 
 def get_user():
-
     test_user = [
         # 暱稱有特殊字元
         'for40255',
@@ -857,12 +843,12 @@ def push():
     # 短推文
     # content = '安安'
     # 連續重複推文
-#     content = '''安安
-# 安安
-# 安安
-# 安安
-# 安安
-#     '''
+    #     content = '''安安
+    # 安安
+    # 安安
+    # 安安
+    # 安安
+    #     '''
 
     testround: int = 3
     for (board, index) in test_post_list:
@@ -1140,7 +1126,6 @@ def set_board_title():
 
 
 def mark_post():
-
     board = 'CodingMan'
     mark_type = PTT.data_type.mark_type.S
 
@@ -1442,8 +1427,8 @@ if __name__ == '__main__':
                 ('Test', '1U3pLzi0', None, False, None),
             ]
 
-            for b, i, ex, check_format, c in TestPostList:
-                get_post_test_func(b, i, ex, check_format, c)
+            for b, i, exception_, check_format, c in TestPostList:
+                get_post_test_func(b, i, exception_, check_format, c)
 
             print('取得文章測試全部通過')
 
@@ -1501,14 +1486,12 @@ PyPtt 程式貼文基準測試內文
                 Title,
                 content,
                 1,
-                1
-            )
+                0)
 
             # 取得 Test 最新文章編號
             index = ptt_bot.get_newest_index(
                 PTT.data_type.index_type.BBS,
-                board=basic_board
-            )
+                board=basic_board)
 
             # 搜尋基準文章
             basic_post_aid = None
@@ -1517,16 +1500,14 @@ PyPtt 程式貼文基準測試內文
 
                 post_info = ptt_bot.get_post(
                     basic_board,
-                    post_index=index - i,
-                )
+                    post_index=index - i)
 
                 if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                         Title in post_info.title:
                     print('使用文章編號取得基準文章成功')
                     post_info = ptt_bot.get_post(
                         basic_board,
-                        post_aid=post_info.aid,
-                    )
+                        post_aid=post_info.aid)
                     if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                             Title in post_info.title:
                         print('使用文章代碼取得基準文章成功')
@@ -1554,8 +1535,7 @@ PyPtt 程式貼文基準測試內文
             try:
                 index = ptt_bot.get_newest_index(
                     PTT.data_type.index_type.BBS,
-                    board=basic_board
-                )
+                    board=basic_board)
                 Content1 = '編號推文基準文字123'
                 ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
                              Content1, post_index=index + 1)
@@ -1575,8 +1555,7 @@ PyPtt 程式貼文基準測試內文
 
             post_info = ptt_bot.get_post(
                 basic_board,
-                post_aid=basic_post_aid,
-            )
+                post_aid=basic_post_aid,)
 
             Content1Check = False
             Content2Check = False
@@ -1776,8 +1755,7 @@ PyPtt 程式貼文基準測試內文
                     'sdjfkdsjfls',
                     '程式寄信標題',
                     content,
-                    0
-                )
+                    0)
 
                 content = '寄信反向測試失敗'
                 print(content)
@@ -1910,21 +1888,18 @@ github: https://tinyurl.com/umqff3v
                 PTT.data_type.reply_type.BOARD,
                 basic_board,
                 '使用文章編號測試回應到板上',
-                post_index=basic_post_index
-            )
+                post_index=basic_post_index)
 
             index = ptt_bot.get_newest_index(
                 PTT.data_type.index_type.BBS,
-                board=basic_board
-            )
+                board=basic_board)
 
             TestPass = False
             for i in range(5):
 
                 post_info = ptt_bot.get_post(
                     basic_board,
-                    post_index=index - i,
-                )
+                    post_index=index - i)
 
                 if ptt_id in post_info.author and '使用文章編號測試回應到板上' in post_info.content:
                     TestPass = True
@@ -1945,21 +1920,18 @@ github: https://tinyurl.com/umqff3v
                 PTT.data_type.reply_type.BOARD,
                 basic_board,
                 '使用文章ID測試回應到板上',
-                post_aid=basic_post_aid
-            )
+                post_aid=basic_post_aid)
 
             index = ptt_bot.get_newest_index(
                 PTT.data_type.index_type.BBS,
-                board=basic_board
-            )
+                board=basic_board)
 
             TestPass = False
             for i in range(5):
 
                 post_info = ptt_bot.get_post(
                     basic_board,
-                    post_index=index - i,
-                )
+                    post_index=index - i)
 
                 if ptt_id in post_info.author and '使用文章ID測試回應到板上' in post_info.content:
                     TestPass = True
@@ -2049,7 +2021,7 @@ github: https://tinyurl.com/umqff3v
 
         ptt_bot.logout()
     else:
-        ptt_id, password = get_password('Account3.txt')
+        ptt_id, password = get_password('test_account.txt')
         try:
             # init()
             # threading_test()

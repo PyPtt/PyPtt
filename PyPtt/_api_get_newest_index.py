@@ -59,8 +59,7 @@ def _get_newest_index(api) -> int:
                 api.config,
                 log.level.DEBUG,
                 i18n.FindNewestIndex,
-                IndexTemp
-            )
+                IndexTemp)
             newest_index = IndexTemp
             break
 
@@ -155,25 +154,21 @@ def get_newest_index(
                 i18n.NoPost,
                 '沒有文章...',
                 break_detect=True,
-                log_level=log.level.DEBUG
-            ),
+                log_level=log.level.DEBUG),
             connect_core.TargetUnit(
                 i18n.Success,
                 screens.Target.InBoard,
                 break_detect=True,
-                log_level=log.level.DEBUG
-            ),
+                log_level=log.level.DEBUG),
             connect_core.TargetUnit(
                 i18n.Success,
                 screens.Target.InBoardWithCursor,
                 break_detect=True,
-                log_level=log.level.DEBUG
-            ),
+                log_level=log.level.DEBUG),
             connect_core.TargetUnit(
                 i18n.NoSuchBoard,
                 screens.Target.MainMenu_Exiting,
-                exceptions_=exceptions.NoSuchBoard(api.config, board)
-            ),
+                exceptions_=exceptions.NoSuchBoard(api.config, board)),
         ]
         index = api.connect_core.send(cmd, target_list)
         if index < 0:
@@ -227,15 +222,12 @@ def get_newest_index(
             connect_core.TargetUnit(
                 i18n.MailBox,
                 screens.Target.InMailBox,
-                break_detect=True,
-                # log_level=log.level.DEBUG
-            ),
+                break_detect=True),
             connect_core.TargetUnit(
                 i18n.NoMail,
                 screens.Target.CursorToGoodbye,
                 break_detect=True,
-                log_level=log.level.DEBUG
-            ),
+                log_level=log.level.DEBUG),
         ]
 
         def get_index(api):
@@ -254,8 +246,7 @@ def get_newest_index(
         for _ in range(3):
             index = api.connect_core.send(
                 cmd,
-                target_list,
-            )
+                target_list)
 
             if index == 0:
                 newest_index = get_index(api)
