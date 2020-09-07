@@ -225,7 +225,7 @@ class API(object):
                         try:
                             loop = asyncio.new_event_loop()
                             asyncio.set_event_loop(loop)
-                        except Exception as e:
+                        except:
                             pass
 
                     self._core = asyncio.get_event_loop().run_until_complete(

@@ -71,6 +71,7 @@ InputNewPassword = None
 CheckNewPassword = None
 Board = None
 IntoBoard = None
+ReadingBoardInfo = None
 BothInput = None
 NoInput = None
 CatchPost = None
