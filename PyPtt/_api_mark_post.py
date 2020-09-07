@@ -179,8 +179,7 @@ def markPost(
             [i18n.DelAllMarkPost],
             '刪除所有標記',
             response='y' + command.Enter,
-            log_level=log.level.INFO
-        ),
+            log_level=log.level.INFO),
         connect_core.TargetUnit(
             [
                 i18n.Mark,
@@ -188,8 +187,7 @@ def markPost(
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.level.INFO
-        ),
+            log_level=log.level.INFO),
     ]
 
-    index = api.connect_core.send(cmd, target_list)
+    api.connect_core.send(cmd, target_list)

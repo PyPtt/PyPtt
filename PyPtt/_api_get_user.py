@@ -2,7 +2,6 @@ import re
 
 try:
     from . import data_type
-    from . import lib_util
     from . import i18n
     from . import connect_core
     from . import log
@@ -11,7 +10,6 @@ try:
     from . import command
 except ModuleNotFoundError:
     import data_type
-    import lib_util
     import i18n
     import connect_core
     import log

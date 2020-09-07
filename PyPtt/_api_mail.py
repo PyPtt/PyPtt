@@ -310,7 +310,6 @@ def del_mail(api, index) -> None:
 
     api.connect_core.send(
         cmd,
-        target_list,
-    )
+        target_list)
 
-    api.connect_core.get_screen_queue()[-1]
+    # api.connect_core.get_screen_queue()[-1]

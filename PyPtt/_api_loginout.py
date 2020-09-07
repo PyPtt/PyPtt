@@ -87,12 +87,12 @@ def login(
 
     api._mailbox_full = False
 
-    def mailbox_full():
-        log.log(
-            api.config,
-            log.level.INFO,
-            i18n.MailBoxFull)
-        api._mailbox_full = True
+    # def mailbox_full():
+    #     log.log(
+    #         api.config,
+    #         log.level.INFO,
+    #         i18n.MailBoxFull)
+    #     api._mailbox_full = True
 
     def register_processing(screen):
         pattern = re.compile('[\d]+')
@@ -267,15 +267,13 @@ def login(
             log.log(
                 api.config,
                 log.level.INFO,
-                i18n.UseMailboxAPIWillLogoutAfterExecution
-            )
+                i18n.UseMailboxAPIWillLogoutAfterExecution)
 
         target_list = [
             connect_core.TargetUnit(
                 i18n.loginSuccess,
                 screens.Target.MainMenu,
-                break_detect=True
-            )
+                break_detect=True)
         ]
 
         cmd = command.GoMainMenu + 'A' + command.Right + command.Left
@@ -284,8 +282,7 @@ def login(
             cmd,
             target_list,
             screen_timeout=api.config.screen_long_timeout,
-            secret=True
-        )
+            secret=True)
         ori_screen = api.connect_core.get_screen_queue()[-1]
 
     if target_list[index].get_display_msg() != i18n.loginSuccess:
@@ -297,8 +294,7 @@ def login(
         log.log(
             api.config,
             log.level.DEBUG,
-            i18n.NewCursor
-        )
+            i18n.NewCursor)
     else:
         api.cursor = data_type.Cursor.OLD
         log.log(
