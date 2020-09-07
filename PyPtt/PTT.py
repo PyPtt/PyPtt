@@ -1748,6 +1748,23 @@ class API:
 
         return board, aid
 
+    def get_bottom_post_list(self, board) -> list:
+
+        self._one_thread()
+
+        if not self._login_status:
+            raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        check_value.check(self.config, str, 'board', board)
+        self._check_board(board)
+
+        try:
+            from . import _api_get_bottom_post_list
+        except ModuleNotFoundError:
+            import _api_get_bottom_post_list
+
+        return _api_get_bottom_post_list.get_bottom_post_list(self, board)
+
     def _goto_board(self, board: str, refresh: bool = False) -> None:
 
         cmd_list = list()
