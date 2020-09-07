@@ -72,7 +72,7 @@ def get_content(api, post_mode: bool = True):
 
     content_start = '───────────────────────────────────────'
     content_end = list()
-    content_end.append('--\n※ 發信站: 批踢踢實業坊(ptt.cc)')
+    content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
 
@@ -235,3 +235,5 @@ def get_mailbox_capacity(api):
         )
         return current_capacity, max_capacity
     return 0, 0
+
+def parse_query_post(api, ori_screen):

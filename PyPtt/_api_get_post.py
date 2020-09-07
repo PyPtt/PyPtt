@@ -173,8 +173,7 @@ def get_post(
             author=post_author,
             list_date=list_date,
             delete_status=post_del_status,
-            format_check=True
-        )
+            format_check=True)
 
     elif index == 0:
 
@@ -319,8 +318,8 @@ def get_post(
                 list_date=list_date,
                 format_check=True,
                 push_number=push_number,
-                lock=True,
-            )
+                lock=True)
+
             return post
 
     if query:
@@ -334,8 +333,7 @@ def get_post(
             money=post_money,
             list_date=list_date,
             format_check=True,
-            push_number=push_number,
-        )
+            push_number=push_number)
         return post
 
     origin_post, has_control_code = _api_util.get_content(api)
@@ -353,8 +351,7 @@ def get_post(
             control_code=has_control_code,
             format_check=False,
             push_number=push_number,
-            unconfirmed=api.Unconfirmed,
-        )
+            unconfirmed=api.Unconfirmed)
         return post
 
     # print('=' * 20)
@@ -438,8 +435,7 @@ def get_post(
         api.config,
         log.level.DEBUG,
         i18n.Author,
-        post_author
-    )
+        post_author)
 
     post_title_pattern = re.compile('標題  (.+)')
 
@@ -450,8 +446,8 @@ def get_post(
             api.config,
             log.level.DEBUG,
             i18n.SubstandardPost,
-            i18n.Title
-        )
+            i18n.Title)
+
         post = data_type.PostInfo(
             board=board,
             aid=post_aid,
@@ -470,8 +466,7 @@ def get_post(
             location=location,
             push_number=push_number,
             origin_post=origin_post,
-            unconfirmed=api.Unconfirmed,
-        )
+            unconfirmed=api.Unconfirmed,)
         return post
     post_title = pattern_result.group(0)
     post_title = post_title[4:].strip()
@@ -480,8 +475,7 @@ def get_post(
         api.config,
         log.level.DEBUG,
         i18n.Title,
-        post_title
-    )
+        post_title)
 
     post_date_pattern = re.compile('時間  (.+)')
     date_line = origin_post_lines[2]

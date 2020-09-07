@@ -1321,786 +1321,88 @@ def change_pw():
 if __name__ == '__main__':
     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
 
-    RunCI = False
-    TravisCI = False
-    if len(sys.argv) == 2:
-        if sys.argv[1] == '-ci':
-            RunCI = True
-
-    if RunCI:
-
-        ptt_id = os.getenv('PTTLibrary_ID')
-        password = os.getenv('PTTLibrary_Password')
-        if ptt_id is None or password is None:
-            print('從環境變數取得帳號密碼失敗')
-            ptt_id, password = get_password('Account.txt')
-            TravisCI = False
-        else:
-            TravisCI = True
-
-        init()
+    ptt_id, password = get_password('test_account.txt')
+    try:
+        # init()
+        # threading_test()
         ptt_bot = PTT.API(
             # log_level=PTT.log.level.TRACE,
+            # log_level=PTT.log.level.DEBUG,
+            # host=PTT.data_type.host_type.PTT2
+
+            # for 本機測試
+            # connect_mode=PTT.connect_core.connect_mode.TELNET,
+            # host=PTT.data_type.host_type.LOCALHOST,
+            # port=8888,
+
+            # language=PTT.i18n.language.ENGLISH
         )
         try:
             ptt_bot.login(
                 ptt_id,
                 password,
-                kick_other_login=True
+                # kick_other_login=True
             )
-            pass
         except PTT.exceptions.LoginError:
             ptt_bot.log('登入失敗')
-            sys.exit(1)
-
-
-        # 基準測試
-
-        def showTestResult(board, IndexAID, result):
-            if result:
-                if isinstance(IndexAID, int):
-                    print(f'{board} index {IndexAID} 測試通過')
-                else:
-                    print(f'{board} AID {IndexAID} 測試通過')
-            else:
-                if isinstance(IndexAID, int):
-                    print(f'{board} index {IndexAID} 測試失敗')
-                else:
-                    print(f'{board} AID {IndexAID} 測試失敗')
-                    ptt_bot.logout()
-                    sys.exit(1)
-
-
-        def get_post_test_func(board, IndexAID, targetEx, checkformat, checkStr):
-            try:
-                if isinstance(IndexAID, int):
-                    post_info = ptt_bot.get_post(
-                        board,
-                        post_index=IndexAID,
-                    )
-                else:
-                    post_info = ptt_bot.get_post(
-                        board,
-                        post_aid=IndexAID,
-                    )
-            except Exception as e:
-                if targetEx is not None and isinstance(e, targetEx):
-                    showTestResult(board, IndexAID, True)
-                    return
-                showTestResult(board, IndexAID, False)
-
-                traceback.print_tb(e.__traceback__)
-                print(e)
-                ptt_bot.logout()
-                sys.exit(1)
-
-            if checkStr is None and targetEx is None and not checkformat:
-                print(post_info.content)
-
-            if checkformat and not post_info.pass_format_check:
-                showTestResult(board, IndexAID, True)
-                return
-
-            if checkStr is not None and checkStr not in post_info.content:
-                ptt_bot.logout()
-                sys.exit(1)
-
-            if isinstance(IndexAID, int):
-                print(f'{board} index {IndexAID} 測試通過')
-            else:
-                print(f'{board} AID {IndexAID} 測試通過')
-
-
-        try:
-
-            TestPostList = [
-                ('Python', 1, None, False, '總算可以來想想板的走向了..XD'),
-                ('NotExitBoard', 1, PTT.exceptions.NoSuchBoard, False, None),
-                ('Python', '1TJH_XY0', None, False, '大家嗨，我是 CodingMan'),
-                # 文章格式錯誤
-                ('Steam', 4444, None, True, None),
-                # 文章格式錯誤
-                ('movie', 457, None, True, None),
-                ('Gossiping', '1TU65Wi_', None, False, None),
-                ('joke', '1Tc6G9eQ', None, False, None),
-                # 待證文章
-                ('Test', '1U3pLzi0', None, False, None),
-            ]
-
-            for b, i, exception_, check_format, c in TestPostList:
-                get_post_test_func(b, i, exception_, check_format, c)
-
-            print('取得文章測試全部通過')
-
-            test_board_list = [
-                'Wanted',
-                'Gossiping',
-                'Test',
-                'Stock',
-                'movie'
-            ]
-
-            for test_board in test_board_list:
-                BasicIndex = 0
-                for _ in range(50):
-                    index = ptt_bot.get_newest_index(
-                        PTT.data_type.index_type.BBS,
-                        board=test_board
-                    )
-
-                    if BasicIndex == 0:
-                        print(f'{test_board} 最新文章編號 {index}')
-                        BasicIndex = index
-                    elif abs(BasicIndex - index) > 5:
-                        print(f'{test_board} 最新文章編號 {index}')
-                        print(f'BasicIndex {BasicIndex}')
-                        print(f'Index {index}')
-                        print('取得看板最新文章編號測試失敗')
-
-                        ptt_bot.logout()
-                        sys.exit(1)
-            print('取得看板最新文章編號測試全部通過')
-
-            Title = 'PyPtt 程式貼文基準測試標題'
-            content = f'''
-PyPtt v {ptt_bot.get_version()}
-
-PyPtt 程式貼文基準測試內文
-
-この日本のベンチマーク
-'''
-            if TravisCI:
-                content = '''
-此次測試由 Travis CI 啟動
-''' + content
-            else:
-                content = f'''
-此次測試由 {ptt_id} 啟動
-''' + content
-            content = content.replace('\n', '\r\n')
-
-            basic_board = 'Test'
-            # 貼出基準文章
-            ptt_bot.post(
-                basic_board,
-                Title,
-                content,
-                1,
-                0)
-
-            # 取得 Test 最新文章編號
-            index = ptt_bot.get_newest_index(
-                PTT.data_type.index_type.BBS,
-                board=basic_board)
-
-            # 搜尋基準文章
-            basic_post_aid = None
-            basic_post_index = 0
-            for i in range(5):
-
-                post_info = ptt_bot.get_post(
-                    basic_board,
-                    post_index=index - i)
-
-                if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
-                        Title in post_info.title:
-                    print('使用文章編號取得基準文章成功')
-                    post_info = ptt_bot.get_post(
-                        basic_board,
-                        post_aid=post_info.aid)
-                    if ptt_id in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
-                            Title in post_info.title:
-                        print('使用文章代碼取得基準文章成功')
-                        basic_post_aid = post_info.aid
-                        basic_post_index = index - i
-                        break
-
-            if basic_post_aid is None:
-                print('取得基準文章失敗')
-                ptt_bot.logout()
-                sys.exit(1)
-            print('取得基準文章成功')
-            print('貼文測試全部通過')
-
-            try:
-                Content1 = '編號推文基準文字123'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
-                             Content1, post_aid='QQQQQQQ')
-                print('推文反向測試失敗')
-                ptt_bot.logout()
-                sys.exit(1)
-            except PTT.exceptions.NoSuchPost:
-                print('推文反向測試通過')
-
-            try:
-                index = ptt_bot.get_newest_index(
-                    PTT.data_type.index_type.BBS,
-                    board=basic_board)
-                Content1 = '編號推文基準文字123'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
-                             Content1, post_index=index + 1)
-                print('推文反向測試失敗')
-                ptt_bot.logout()
-                sys.exit(1)
-            except ValueError:
-                print('推文反向測試通過')
-
-            Content1 = '編號推文基準文字123'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
-                         Content1, post_index=basic_post_index)
-
-            Content2 = '代碼推文基準文字123'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.PUSH,
-                         Content2, post_aid=basic_post_aid)
-
-            post_info = ptt_bot.get_post(
-                basic_board,
-                post_aid=basic_post_aid,)
-
-            Content1Check = False
-            Content2Check = False
-            for push in post_info.push_list:
-                if Content1 in push.content:
-                    Content1Check = True
-                if Content2 in push.content:
-                    Content2Check = True
-
-            if not Content1Check:
-                print('編號推文基準測試失敗')
-                ptt_bot.logout()
-                sys.exit(1)
-            print('編號推文基準測試成功')
-            if not Content2Check:
-                print('代碼推文基準測試失敗')
-                ptt_bot.logout()
-                sys.exit(1)
-            print('代碼推文基準測試成功')
-
-            content = '推文基準測試全部通過'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            test_list = [
-                ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
-                ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Wanted)'),
-                ('Wanted', PTT.data_type.post_search_type.KEYWORD, '(本文已被刪除)'),
-                ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Gossiping)'),
-                ('Gossiping', PTT.data_type.post_search_type.KEYWORD, '普悠瑪'),
-            ]
-
-            test_range = 1
-
-            for (test_board, search_type, condition) in test_list:
-                show_condition(test_board, search_type, condition)
-                index = ptt_bot.get_newest_index(
-                    PTT.data_type.index_type.BBS,
-                    test_board,
-                    search_type=search_type,
-                    search_condition=condition,
-                )
-                print(f'{test_board} 最新文章編號 {index}')
-
-                for i in range(test_range):
-                    post_info = ptt_bot.get_post(
-                        test_board,
-                        post_index=index - i,
-                        search_type=search_type,
-                        search_condition=condition,
-                        query=False
-                    )
-
-                    print('列表日期:')
-                    print(post_info.list_date)
-                    print('作者:')
-                    print(post_info.author)
-                    print('標題:')
-                    print(post_info.title)
-
-                    if post_info.delete_status == PTT.data_type.post_delete_status.NOT_DELETED:
-                        if not query:
-                            print('內文:')
-                            print(post_info.content)
-                    elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
-                        print('文章被作者刪除')
-                    elif post_info.delete_status == PTT.data_type.post_delete_status.MODERATOR:
-                        print('文章被版主刪除')
-                    print('=' * 50)
-
-                content = f'{test_board} 取得文章測試完成'
-                ptt_bot.push('Test', PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-
-            content = '取得文章測試全部通過'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            content = '貼文測試全部通過'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            test_board_list = [
-                'Wanted',
-                'joke',
-                'Gossiping',
-                'C_Chat'
-            ]
-
-            # 改成 10 篇，不然 100 篇太耗時間了
-            Range = 10
-            for test_board in test_board_list:
-                newest_index = ptt_bot.get_newest_index(
-                    PTT.data_type.index_type.BBS,
-                    board=test_board
-                ) - 10000
-                # 到很久之前的文章去才不會撞到被刪掉的文章
-
-                error_post_list, del_post_list = ptt_bot.crawl_board(
-                    PTT.data_type.crawl_type.BBS,
-                    crawlHandler,
-                    test_board,
-                    start_index=newest_index - Range + 1,
-                    end_index=newest_index,
-                    query=query
-                )
-
-                StartPost = None
-                offset = 0
-                while True:
-                    StartPost = ptt_bot.get_post(
-                        test_board,
-                        post_index=newest_index - Range + 1 - offset,
-                    )
-                    offset += 1
-                    if StartPost is None:
-                        continue
-                    if StartPost.aid is None:
-                        continue
-                    break
-
-                EndPost = None
-                offset = 0
-                while True:
-                    EndPost = ptt_bot.get_post(
-                        test_board,
-                        post_index=newest_index + offset,
-                    )
-                    offset += 1
-                    if EndPost is None:
-                        continue
-                    if EndPost.aid is None:
-                        continue
-                    break
-
-                print(test_board)
-                print(f'StartPost index {newest_index - Range + 1}')
-                print(f'EndPost index {newest_index}')
-
-                error_post_list, del_post_list = ptt_bot.crawl_board(
-                    PTT.data_type.crawl_type.BBS,
-                    crawlHandler,
-                    test_board,
-                    start_aid=StartPost.aid,
-                    end_aid=EndPost.aid
-                )
-                content = f'{test_board} 爬板測試完成'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-
-            content = '爬板測試全部完成'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            user = ptt_bot.get_user(ptt_id)
-            if user is None:
-                print('取得使用者測試失敗')
-                content = '取得使用者測試失敗'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-                ptt_bot.logout()
-                sys.exit(1)
-
-            ptt_bot.log('使用者ID: ' + user.id)
-            ptt_bot.log('使用者經濟狀況: ' + str(user.money))
-            ptt_bot.log('登入次數: ' + str(user.login_time))
-            ptt_bot.log('有效文章數: ' + str(user.legal_post))
-            ptt_bot.log('退文文章數: ' + str(user.illegal_post))
-            ptt_bot.log('目前動態: ' + user.status)
-            ptt_bot.log('信箱狀態: ' + user.mail_status)
-            ptt_bot.log('最後登入時間: ' + user.last_login)
-            ptt_bot.log('上次故鄉: ' + user.last_ip)
-            ptt_bot.log('五子棋戰績: ' + user.five_chess)
-            ptt_bot.log('象棋戰績:' + user.chess)
-            ptt_bot.log('簽名檔:' + user.signature_file)
-
-            try:
-                user = ptt_bot.get_user('sdjfklsdj')
-                print('取得使用者反向測試失敗')
-                content = '取得使用者反向測試失敗'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-
-                ptt_bot.logout()
-                sys.exit(1)
-            except PTT.exceptions.NoSuchUser:
-                print('取得使用者反向測試通過')
-
-            NewMail1 = ptt_bot.has_new_mail()
-            print(f'有 {NewMail1} 封新信')
-            content = '取得幾封新信測試通過'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            try:
-                ptt_bot.mail(
-                    'sdjfkdsjfls',
-                    '程式寄信標題',
-                    content,
-                    0)
-
-                content = '寄信反向測試失敗'
-                print(content)
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-                ptt_bot.logout()
-                sys.exit(1)
-
-            except PTT.exceptions.NoSuchUser:
-                content = '寄信反向測試成功'
-                print(content)
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-
-            content = '''如有誤寄，對..對不起
-PyPtt 程式寄信測試內容
-
-github: https://tinyurl.com/umqff3v
-'''
-            content = content.replace('\n', '\r\n')
-            ptt_bot.mail(
-                ptt_id,
-                '程式寄信標題',
-                content,
-                0
-            )
-
-            NewMail2 = ptt_bot.has_new_mail()
-            print(f'有 {NewMail2} 封新信')
-            if NewMail2 > NewMail1:
-                content = '寄信測試通過'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-            else:
-                content = '寄信測試失敗'
-                print(content)
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-                ptt_bot.logout()
-                sys.exit(1)
-
-            content = '寄信測試成功'
-            print(content)
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            board_list = ptt_bot.get_board_list()
-            print(f'總共有 {len(board_list)} 個板名')
-            print(f'總共有 {len(set(board_list))} 個不重複板名')
-
-            content = '取得全站看板測試通過'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-            content = f'總共有 {len(set(board_list))} 個不重複板名'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            try:
-                ptt_bot.get_board_info('NotExistBoard')
-
-                print('取得看板資訊反向測試失敗')
-                content = '取得看板資訊反向測試失敗'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-
-                ptt_bot.logout()
-                sys.exit(1)
-            except PTT.exceptions.NoSuchBoard:
-                print('取得看板資訊反向測試成功')
-                content = '取得看板資訊反向測試成功'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-
-            board_info = ptt_bot.get_board_info('Gossiping')
-            print('板名: ', board_info.board)
-            print('線上人數: ', board_info.online_user)
-            # setting
-            print('中文敘述: ', board_info.chinese_des)
-            print('板主: ', board_info.moderators)
-            print('公開狀態(是否隱形): ', board_info.is_open)
-            print('隱板時是否可進入十大排行榜: ', board_info.is_into_top_ten_when_hide)
-            print('是否開放非看板會員發文: ', board_info.can_non_board_members_post)
-            print('是否開放回應文章: ', board_info.can_reply_post)
-            print('是否開放自刪文章: ', board_info.can_self_del_post)
-            print('是否開放推薦文章: ', board_info.can_push_post)
-            print('是否開放噓文: ', board_info.can_boo_post)
-            print('是否可以快速連推文章: ', board_info.can_fast_push)
-            print('推文最低間隔時間: ', board_info.min_interval)
-            print('推文時是否記錄來源 IP: ', board_info.is_push_record_ip)
-            print('推文時是否對齊開頭: ', board_info.is_push_aligned)
-            print('板主是否可刪除部份違規文字: ', board_info.can_moderator_del_illegal_content)
-            print('轉錄文章是否自動記錄，且是否需要發文權限: ',
-                  board_info.is_tran_post_auto_recorded_and_require_post_permissions)
-            print('是否為冷靜模式: ', board_info.is_cool_mode)
-            print('是否需要滿十八歲才可進入: ', board_info.is_require18)
-            print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
-            print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
-
-            content = '取得看板資訊測試成功'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            FBlist = ptt_bot.get_favourite_board()
-            for test_board in FBlist:
-                if test_board.board is None or test_board.type is None or test_board.title is None:
-                    content = '取得我的最愛測試失敗'
-                    ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                                 content, post_aid=basic_post_aid)
-                    ptt_bot.logout()
-                    sys.exit(1)
-
-            content = '取得我的最愛測試成功'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            user_list = ptt_bot.search_user(
-                'coding'
-            )
-            if len(user_list) == 0:
-                content = '查詢網友測試失敗'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-                ptt_bot.logout()
-                sys.exit(1)
-            content = '查詢網友測試成功'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-            ptt_bot.reply_post(
-                PTT.data_type.reply_type.BOARD,
-                basic_board,
-                '使用文章編號測試回應到板上',
-                post_index=basic_post_index)
-
-            index = ptt_bot.get_newest_index(
-                PTT.data_type.index_type.BBS,
-                board=basic_board)
-
-            TestPass = False
-            for i in range(5):
-
-                post_info = ptt_bot.get_post(
-                    basic_board,
-                    post_index=index - i)
-
-                if ptt_id in post_info.author and '使用文章編號測試回應到板上' in post_info.content:
-                    TestPass = True
-                    content = '使用文章編號測試回應到板上成功'
-                    print(content)
-                    ptt_bot.push(
-                        basic_board, PTT.data_type.push_type.ARROW,
-                        content, post_aid=basic_post_aid)
-                    break
-            if not TestPass:
-                content = '使用文章編號測試回應到板上失敗'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-                ptt_bot.logout()
-                sys.exit(1)
-
-            ptt_bot.reply_post(
-                PTT.data_type.reply_type.BOARD,
-                basic_board,
-                '使用文章ID測試回應到板上',
-                post_aid=basic_post_aid)
-
-            index = ptt_bot.get_newest_index(
-                PTT.data_type.index_type.BBS,
-                board=basic_board)
-
-            TestPass = False
-            for i in range(5):
-
-                post_info = ptt_bot.get_post(
-                    basic_board,
-                    post_index=index - i)
-
-                if ptt_id in post_info.author and '使用文章ID測試回應到板上' in post_info.content:
-                    TestPass = True
-                    content = '使用文章ID測試回應到板上成功'
-                    print(content)
-                    ptt_bot.push(
-                        basic_board, PTT.data_type.push_type.ARROW,
-                        content, post_aid=basic_post_aid)
-                    break
-            if not TestPass:
-                content = '使用文章ID測試回應到板上失敗'
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-                ptt_bot.logout()
-                sys.exit(1)
-
-            if TravisCI:
-                ID2 = os.getenv('PTTLibrary_ID2')
-                Password2 = os.getenv('PTTLibrary_Password2')
-            else:
-                ID2, Password2 = get_password('Account2.txt')
-
-            PTTBot2 = PTT.API(
-                # log_level=PTT.log.level.TRACE,
-            )
-            try:
-                PTTBot2.login(
-                    ID2,
-                    Password2,
-                    # kick_other_login=True
-                )
-                pass
-            except PTT.exceptions.LoginError:
-                PTTBot2.log('PTTBot2登入失敗')
-                sys.exit(1)
-
-            operate_type = PTT.data_type.waterball_operate_type.CLEAR
-            ptt_bot.get_waterball(operate_type)
-            PTTBot2.get_waterball(operate_type)
-
-            ptt_bot.set_call_status(PTT.data_type.call_status.OFF)
-            PTTBot2.set_call_status(PTT.data_type.call_status.OFF)
-
-            TestPass = False
-            PTTBot2.throw_waterball(ptt_id, '水球測試基準訊息')
-            waterball_list = ptt_bot.get_waterball(operate_type)
-            for waterball_info in waterball_list:
-                if not waterball_info.type == PTT.data_type.waterball_type.CATCH:
-                    continue
-
-                Target = waterball_info.target
-                content = waterball_info.content
-
-                print(f'收到來自 {Target} 的水球 [{content}]')
-
-                if '水球測試基準訊息' in content:
-                    TestPass = True
-                    break
-
-            if not TestPass:
-                content = '水球測試基準測試失敗'
-                print(content)
-                ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                             content, post_aid=basic_post_aid)
-                ptt_bot.logout()
-                PTTBot2.logout()
-                sys.exit(1)
-
-            content = '水球測試基準測試成功'
-            print(content)
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-            PTTBot2.logout()
-
-            content = '自動化測試全部完成'
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-
-        except Exception as e:
-            traceback.print_tb(e.__traceback__)
-            print(e)
-            content = str(e)
-            ptt_bot.push(basic_board, PTT.data_type.push_type.ARROW,
-                         content, post_aid=basic_post_aid)
-        except KeyboardInterrupt:
-            pass
-
-        ptt_bot.logout()
-    else:
-        ptt_id, password = get_password('test_account.txt')
-        try:
-            # init()
-            # threading_test()
-            ptt_bot = PTT.API(
-                # log_level=PTT.log.level.TRACE,
-                # log_level=PTT.log.level.DEBUG,
-                # host=PTT.data_type.host_type.PTT2
-
-                # for 本機測試
-                # connect_mode=PTT.connect_core.connect_mode.TELNET,
-                # host=PTT.data_type.host_type.LOCALHOST,
-                # port=8888,
-
-                # language=PTT.i18n.language.ENGLISH
-            )
-            try:
-                ptt_bot.login(
-                    ptt_id,
-                    password,
-                    # kick_other_login=True
-                )
-            except PTT.exceptions.LoginError:
-                ptt_bot.log('登入失敗')
-                sys.exit()
-            except PTT.exceptions.WrongIDorPassword:
-                ptt_bot.log('帳號密碼錯誤')
-                sys.exit()
-            except PTT.exceptions.LoginTooOften:
-                ptt_bot.log('請稍等一下再登入')
-                sys.exit()
-
-            if ptt_bot.unregistered_user:
-                print('未註冊使用者')
-
-                if ptt_bot.process_picks != 0:
-                    print(f'註冊單處理順位 {ptt_bot.process_picks}')
-
-            if ptt_bot.registered_user:
-                print('已註冊使用者')
-
-            ###################################
-
-            ###################################
-
-            # performance_test()
-
-            # get_post()
-            # get_post_with_condition()
-            # post()
-            # get_newest_index()
-            # crawl_board()
-            # crawl_board_with_condition()
-            # push()
-            # get_user()
-            # throw_waterball()
-            # get_waterball()
-            # call_status()
-            # give_money()
-            # mail()
-            # has_new_mail()
-            # get_board_list()
-            # get_board_info()
-            # reply_post()
-            # get_favourite_board()
-            # search_user()
-            # get_mail()
-            # mail_recviver()
-            # change_pw()
-            # get_aid_from_url()
-
-            # bucket()
-            # set_board_title()
-            # mark_post()
-
-
-        except Exception as e:
-            traceback.print_tb(e.__traceback__)
-            print(e)
-        except KeyboardInterrupt:
-            pass
-
-        ptt_bot.logout()
+            sys.exit()
+        except PTT.exceptions.WrongIDorPassword:
+            ptt_bot.log('帳號密碼錯誤')
+            sys.exit()
+        except PTT.exceptions.LoginTooOften:
+            ptt_bot.log('請稍等一下再登入')
+            sys.exit()
+
+        if ptt_bot.unregistered_user:
+            print('未註冊使用者')
+
+            if ptt_bot.process_picks != 0:
+                print(f'註冊單處理順位 {ptt_bot.process_picks}')
+
+        if ptt_bot.registered_user:
+            print('已註冊使用者')
+
+        ###################################
+
+        ###################################
+
+        # performance_test()
+
+        # get_post()
+        # get_post_with_condition()
+        # post()
+        # get_newest_index()
+        # crawl_board()
+        # crawl_board_with_condition()
+        # push()
+        # get_user()
+        # throw_waterball()
+        # get_waterball()
+        # call_status()
+        # give_money()
+        # mail()
+        # has_new_mail()
+        # get_board_list()
+        # get_board_info()
+        # reply_post()
+        # get_favourite_board()
+        # search_user()
+        # get_mail()
+        # mail_recviver()
+        # change_pw()
+        # get_aid_from_url()
+
+        # bucket()
+        # set_board_title()
+        # mark_post()
+
+
+    except Exception as e:
+        traceback.print_tb(e.__traceback__)
+        print(e)
+    except KeyboardInterrupt:
+        pass
+
+    ptt_bot.get_bottom_post_list('Wanted')
+
+    ptt_bot.logout()
