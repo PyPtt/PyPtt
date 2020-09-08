@@ -835,7 +835,7 @@ PyPtt 程式寄信測試內容
                            content, post_aid=basic_post_aid)
 
     ################################################
-    
+
     if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
         test_board_list = [
             'Wanted',
