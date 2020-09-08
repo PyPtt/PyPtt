@@ -849,19 +849,20 @@ PyPtt 程式寄信測試內容
             'WB_Newboard'
         ]
 
-    print('=' * 50)
     for board in test_board_list:
 
         bottom_post_list = ptt_bot_0.get_bottom_post_list(board)
 
         if len(bottom_post_list) == 0:
-            print(f'{board} 板無置頂文章')
+            ptt_bot_0.log('{board} 板無置頂文章')
         else:
-            print(f'{board} 共有 {len(bottom_post_list)} 置頂文章')
+            ptt_bot_0.log(f'{board} 共有 {len(bottom_post_list)} 置頂文章')
             for post in bottom_post_list:
-                print(post.title)
+                ptt_bot_0.log(post.title)
 
-        print('=' * 50)
+    content = '===取得置底文章測試成功'
+    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
+                   content, post_aid=basic_post_aid)
 
     ################################################
 
