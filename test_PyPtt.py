@@ -836,6 +836,35 @@ PyPtt 程式寄信測試內容
 
     ################################################
 
+    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+        test_board_list = [
+            'Wanted',
+            'Python',
+            'Gossiping'
+        ]
+    else:
+        test_board_list = [
+            'CodingMan',
+            'WhoamI',
+            'WB_Newboard'
+        ]
+
+    print('=' * 50)
+    for board in test_board_list:
+
+        bottom_post_list = ptt_bot_0.get_bottom_post_list(board)
+
+        if len(bottom_post_list) == 0:
+            print(f'{board} 板無置頂文章')
+        else:
+            print(f'{board} 共有 {len(bottom_post_list)} 置頂文章')
+            for post in bottom_post_list:
+                print(post.title)
+
+        print('=' * 50)
+
+    ################################################
+
     content = '使用文章編號測試回應到板上'
 
     ptt_bot_0.reply_post(
@@ -1015,6 +1044,35 @@ PyPtt 程式寄信測試內容
     ptt_bot_0.logout()
 
 
+def single_case(ptt_bot_0, ptt_bot_1):
+    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+        ptt_bot_0.log('開始測試 PTT1')
+
+        current_id_0 = ptt_id_0
+        current_pw_0 = ptt_pw_0
+        current_id_1 = ptt_id_1
+        current_pw_1 = ptt_pw_1
+    else:
+        ptt_bot_0.log('開始測試 PTT2')
+        current_id_0 = ptt2_id_0
+        current_pw_0 = ptt2_pw_0
+        current_id_1 = ptt2_id_1
+        current_pw_1 = ptt2_pw_1
+
+    try:
+        ptt_bot_0.login(current_id_0, current_pw_0)
+        ptt_bot_0.log('id_0 登入測試成功')
+    except:
+        ptt_bot_0.log('id_0 登入測試失敗')
+        assert False
+    pass
+
+    #####################
+    #####################
+
+    ptt_bot_0.logout()
+
+
 def run_on_ptt_1():
     ptt_bot_0 = PTT.API(
         host=PTT.data_type.host_type.PTT1,
@@ -1024,6 +1082,7 @@ def run_on_ptt_1():
         host=PTT.data_type.host_type.PTT1,
         log_handler=log)
     case(ptt_bot_0, ptt_bot_1)
+    #single_case(ptt_bot_0, ptt_bot_1)
 
 
 def run_on_ptt_2():
@@ -1034,6 +1093,7 @@ def run_on_ptt_2():
         host=PTT.data_type.host_type.PTT2,
         log_handler=log)
     case(ptt_bot_0, ptt_bot_1)
+    #single_case(ptt_bot_0, ptt_bot_1)
 
 
 def test_PyPtt():

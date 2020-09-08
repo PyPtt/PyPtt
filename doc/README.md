@@ -166,7 +166,7 @@ ptt_bot = PTT.API(
     log_handler=handler)
 ```
 
-當然 PyPtt 也支援批踢踢兔與本機。  
+當然 PyPtt 也支援 PTT2 與 Localhost。  
 批踢踢兔 Since 0.8.25  
 本機 Since 0.9.1
 
@@ -305,7 +305,7 @@ if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
         print(f'[作者刪除][{post_info.author}]')
     elif post_info.delete_status == PTT.data_type.post_delete_status.UNKNOWN:
         print(f'[不明刪除]')
-    return
+    sys.exit()
 
 if post_info.is_lock:
     print('[鎖文]')
@@ -442,7 +442,7 @@ Since 0.8.16
 
 
 你可以啟用 query 模式，這樣就不會進入文章解析內文、推文、IP與地點等等  
-可以提升效能
+可以避免 BBS 需要翻頁的問題，進而提升效能
 
 ```python
 post_info = ptt_bot.get_post(
@@ -1031,13 +1031,19 @@ print(ptt_time)
 ### 取得看板資訊
 
 以下是取得看板資訊 API  
-Since 0.8.32
+Since 0.8.32  
+
+加入 get_post_kind 可以取得發文類別  
+Since 0.9.20
 
 ```python
+
+get_post_kind = False
+
 if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-    board_info = ptt_bot.get_board_info('Gossiping')
+    board_info = ptt_bot.get_board_info('Gossiping', get_post_kind=get_post_kind)
 else:
-    board_info = ptt_bot.get_board_info('WhoAmI')
+    board_info = ptt_bot.get_board_info('WhoAmI', get_post_kind=get_post_kind)
 print('板名: ', board_info.board)
 print('線上人數: ', board_info.online_user)
 print('中文敘述: ', board_info.chinese_des)
@@ -1060,6 +1066,10 @@ print('是否為冷靜模式: ', board_info.is_cool_mode)
 print('是否需要滿十八歲才可進入: ', board_info.is_require18)
 print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
 print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
+
+if get_post_kind:
+    print('發文類別:', ' '.join(board_info.post_kind))
+
 ```
 
 ![](https://i.imgur.com/TIR71MY.png)
@@ -1118,6 +1128,23 @@ Since 0.9.20
 ```python
 url = 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
 board, aid = ptt_bot.get_aid_from_url(url)
+```
+
+---
+### 取得置底文章
+
+以下是取得置底文章的範例  
+Since 0.9.23
+
+```python
+bottom_post_list = ptt_bot.get_bottom_post_list('Gossiping')
+
+if len(bottom_post_list) == 0:
+    print(f'Gossiping 板無置頂文章')
+else:
+    print(f'Gossiping 共有 {len(bottom_post_list)} 置頂文章')
+    for post_info in bottom_post_list:
+        print(post_info.title)
 ```
 
 ---
