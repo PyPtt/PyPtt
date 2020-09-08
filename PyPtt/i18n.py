@@ -189,6 +189,7 @@ NoSearchResult = None
 SkipRegistrationForm = None
 url = None
 OnlySecureConnection = None
+CatchBottomPostSuccess = None
 
 
 def specific_load(input_language, lang_list):
@@ -1244,6 +1245,12 @@ def load(input_lang):
     OnlySecureConnection = specific_load(input_lang, [
         '已設定為只能使用安全連線',
         'Secure connections only',
+    ])
+
+    global CatchBottomPostSuccess
+    CatchBottomPostSuccess = specific_load(input_lang, [
+        '取得置底文章成功',
+        'Catch bottom post success',
     ])
 
     # No changes have been made to any settings
