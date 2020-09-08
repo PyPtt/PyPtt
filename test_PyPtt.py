@@ -137,6 +137,8 @@ def test_init():
 
 
 def case(ptt_bot_0, ptt_bot_1):
+
+    return
     if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
         ptt_bot_0.log('開始測試 PTT1')
 
