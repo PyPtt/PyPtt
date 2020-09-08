@@ -1243,14 +1243,34 @@ def get_board_info():
         if get_post_kind:
             print('發文種類:', ' '.join(board_info.post_kind))
 
+def get_bottom_post_list():
+
+    test_board_list = [
+        'Wanted',
+        'Python',
+        'Gossiping'
+    ]
+
+    print('=' * 50)
+    for board in test_board_list:
+
+        bottom_post_list = ptt_bot.get_bottom_post_list(board)
+        if len(bottom_post_list) == 0:
+            print(f'{board} 板無置頂文章')
+        else:
+            print(f'{board} 共有 {len(bottom_post_list)} 置頂文章')
+            for post in bottom_post_list:
+                print(post.title)
+
+        print('=' * 50)
+
 
 def bucket():
     ptt_bot.bucket(
         'QQBoard',
         7,
         'Bucket Reason',
-        'CodingMan'
-    )
+        'CodingMan')
 
 
 def search_user():
@@ -1391,6 +1411,7 @@ if __name__ == '__main__':
         # mail_recviver()
         # change_pw()
         # get_aid_from_url()
+        get_bottom_post_list()
 
         # bucket()
         # set_board_title()
@@ -1402,7 +1423,5 @@ if __name__ == '__main__':
         print(e)
     except KeyboardInterrupt:
         pass
-
-    ptt_bot.get_bottom_post_list('Wanted')
 
     ptt_bot.logout()
