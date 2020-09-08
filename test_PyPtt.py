@@ -1081,8 +1081,8 @@ def run_on_ptt_1():
     ptt_bot_1 = PTT.API(
         host=PTT.data_type.host_type.PTT1,
         log_handler=log)
-    #case(ptt_bot_0, ptt_bot_1)
-    single_case(ptt_bot_0, ptt_bot_1)
+    case(ptt_bot_0, ptt_bot_1)
+    #single_case(ptt_bot_0, ptt_bot_1)
 
 
 def run_on_ptt_2():
@@ -1092,8 +1092,8 @@ def run_on_ptt_2():
     ptt_bot_1 = PTT.API(
         host=PTT.data_type.host_type.PTT2,
         log_handler=log)
-    #case(ptt_bot_0, ptt_bot_1)
-    single_case(ptt_bot_0, ptt_bot_1)
+    case(ptt_bot_0, ptt_bot_1)
+    #single_case(ptt_bot_0, ptt_bot_1)
 
 
 def test_PyPtt():
