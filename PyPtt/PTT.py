@@ -1748,7 +1748,24 @@ class API:
 
         return board, aid
 
-    def _goto_board(self, board: str, refresh: bool = False) -> None:
+    def get_bottom_post_list(self, board) -> list:
+
+        self._one_thread()
+
+        if not self._login_status:
+            raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        check_value.check(self.config, str, 'board', board)
+        self._check_board(board)
+
+        try:
+            from . import _api_get_bottom_post_list
+        except ModuleNotFoundError:
+            import _api_get_bottom_post_list
+
+        return _api_get_bottom_post_list.get_bottom_post_list(self, board)
+
+    def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
 
         cmd_list = list()
         cmd_list.append(command.GoMainMenu)
@@ -1756,6 +1773,11 @@ class API:
         cmd_list.append(board)
         cmd_list.append(command.Enter)
         cmd_list.append(command.Space)
+
+        if end:
+            cmd_list.append('1')
+            cmd_list.append(command.Enter)
+            cmd_list.append('$')
 
         cmd = ''.join(cmd_list)
 
