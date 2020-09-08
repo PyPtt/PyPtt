@@ -1765,7 +1765,7 @@ class API:
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
-    def _goto_board(self, board: str, refresh: bool = False) -> None:
+    def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
 
         cmd_list = list()
         cmd_list.append(command.GoMainMenu)
@@ -1773,6 +1773,11 @@ class API:
         cmd_list.append(board)
         cmd_list.append(command.Enter)
         cmd_list.append(command.Space)
+
+        if end:
+            cmd_list.append('1')
+            cmd_list.append(command.Enter)
+            cmd_list.append('$')
 
         cmd = ''.join(cmd_list)
 
