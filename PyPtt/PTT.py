@@ -38,9 +38,9 @@ class API:
             self,
             language: int = 0,
             log_level: int = 0,
-            screen_time_out: int = 0,
-            screen_long_time_out: int = 0,
-            screen_post_time_out: int = 0,
+            screen_timeout: int = 0,
+            screen_long_timeout: int = 0,
+            screen_post_timeout: int = 0,
             connect_mode: int = 0,
             port: int = 0,
             log_handler=None,
@@ -57,7 +57,7 @@ class API:
             try:
                 log_handler(f'PyPtt v {version.V}')
                 log_handler('Developed by CodingMan')
-            except Exception:
+            except TypeError:
                 log_handler = None
                 set_log_handler_result = False
         else:
@@ -77,19 +77,19 @@ class API:
             raise TypeError('[PyPtt] language must be integer')
         if not isinstance(log_level, int):
             raise TypeError('[PyPtt] log_level must be integer')
-        if not isinstance(screen_time_out, int):
+        if not isinstance(screen_timeout, int):
             raise TypeError('[PyPtt] screen_timeout must be integer')
-        if not isinstance(screen_long_time_out, int):
+        if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
         if not isinstance(host, int):
             raise TypeError('[PyPtt] host must be integer')
 
-        if screen_time_out != 0:
-            self.config.screen_timeout = screen_time_out
-        if screen_long_time_out != 0:
-            self.config.screen_long_timeout = screen_long_time_out
-        if screen_post_time_out != 0:
-            self.config.screen_post_timeout = screen_post_time_out
+        if screen_timeout != 0:
+            self.config.screen_timeout = screen_timeout
+        if screen_long_timeout != 0:
+            self.config.screen_long_timeout = screen_long_timeout
+        if screen_post_timeout != 0:
+            self.config.screen_post_timeout = screen_post_timeout
 
         if log_level == 0:
             log_level = self.config.log_level

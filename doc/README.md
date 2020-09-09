@@ -142,14 +142,14 @@ Since 0.9.1
 from PyPtt import PTT
 ptt_bot = PTT.API(
     # 預設 3 秒後判定此畫面沒有可辨識的目標
-    screen_time_out=5,
+    screen_timeout=5,
     # 預設 10 秒後判定此畫面沒有可辨識的目標
     # 適用於需要特別等待的情況，例如: 剔除其他登入、發文等等
     # 建議不要低於 10 秒，剔除其他登入最長可能會花費約 6 ~ 7 秒
-    screen_long_time_out=15,
+    screen_long_timeout=15,
     # 預設 60 秒後判定此畫面沒有可辨識的目標
     # 適用於貼文等待的情況，建議不要低於 60 秒
-    screen_post_time_out=120)
+    screen_post_timeout=120)
 ```
 
 當然如果你有需要將 log 輸出成檔案或者其他需要處理 log 的需求  
