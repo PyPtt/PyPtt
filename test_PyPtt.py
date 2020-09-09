@@ -926,9 +926,9 @@ PyPtt 程式寄信測試內容
         bottom_post_list = ptt_bot_0.get_bottom_post_list(board)
 
         if len(bottom_post_list) == 0:
-            ptt_bot_0.log('{board} 板無置頂文章')
+            ptt_bot_0.log(f'{board} 板無置底文章')
         else:
-            ptt_bot_0.log(f'{board} 共有 {len(bottom_post_list)} 置頂文章')
+            ptt_bot_0.log(f'{board} 共有 {len(bottom_post_list)} 置底文章')
             for post in bottom_post_list:
                 ptt_bot_0.log(post.title)
 
@@ -1175,4 +1175,4 @@ def test_PyPtt():
 
 
 test_init()
-# test_PyPtt()
+test_PyPtt()
