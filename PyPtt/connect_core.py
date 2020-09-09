@@ -123,11 +123,11 @@ async def websocket_recv_func(core, recv_data_obj):
     recv_data_obj.data = await core.recv()
 
 
-async def websocket_receiver(core, screen_time_out, recv_data_obj):
+async def websocket_receiver(core, screen_timeout, recv_data_obj):
     # Wait for at most 1 second
     await asyncio.wait_for(
         websocket_recv_func(core, recv_data_obj),
-        timeout=screen_time_out)
+        timeout=screen_timeout)
 
 
 class ReceiveDataQueue(object):

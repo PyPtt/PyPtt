@@ -38,9 +38,9 @@ class API:
             self,
             language: int = 0,
             log_level: int = 0,
-            screen_time_out: int = 0,
-            screen_long_time_out: int = 0,
-            screen_post_time_out: int = 0,
+            screen_timeout: int = 0,
+            screen_long_timeout: int = 0,
+            screen_post_timeout: int = 0,
             connect_mode: int = 0,
             port: int = 0,
             log_handler=None,
@@ -57,7 +57,7 @@ class API:
             try:
                 log_handler(f'PyPtt v {version.V}')
                 log_handler('Developed by CodingMan')
-            except Exception:
+            except TypeError:
                 log_handler = None
                 set_log_handler_result = False
         else:
@@ -77,19 +77,19 @@ class API:
             raise TypeError('[PyPtt] language must be integer')
         if not isinstance(log_level, int):
             raise TypeError('[PyPtt] log_level must be integer')
-        if not isinstance(screen_time_out, int):
+        if not isinstance(screen_timeout, int):
             raise TypeError('[PyPtt] screen_timeout must be integer')
-        if not isinstance(screen_long_time_out, int):
+        if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
         if not isinstance(host, int):
             raise TypeError('[PyPtt] host must be integer')
 
-        if screen_time_out != 0:
-            self.config.screen_timeout = screen_time_out
-        if screen_long_time_out != 0:
-            self.config.screen_long_timeout = screen_long_time_out
-        if screen_post_time_out != 0:
-            self.config.screen_post_timeout = screen_post_time_out
+        if screen_timeout != 0:
+            self.config.screen_timeout = screen_timeout
+        if screen_long_timeout != 0:
+            self.config.screen_long_timeout = screen_long_timeout
+        if screen_post_timeout != 0:
+            self.config.screen_post_timeout = screen_post_timeout
 
         if log_level == 0:
             log_level = self.config.log_level
@@ -112,8 +112,7 @@ class API:
                 self.config,
                 log.level.INFO,
                 i18n.log_handler,
-                i18n.Init
-            )
+                i18n.Init)
         elif has_log_handler and not set_log_handler_result:
             log.show_value(
                 self.config,
@@ -122,8 +121,7 @@ class API:
                 [
                     i18n.Init,
                     i18n.Fail
-                ]
-            )
+                ])
 
         if self.config.language == i18n.language.CHINESE:
             log.show_value(
@@ -131,17 +129,15 @@ class API:
                     i18n.ChineseTranditional,
                     i18n.languageModule
                 ],
-                i18n.Init
-            )
+                i18n.Init)
         elif self.config.language == i18n.language.ENGLISH:
             log.show_value(
                 self.config, log.level.INFO, [
                     i18n.English,
                     i18n.languageModule
                 ],
-                i18n.Init
-            )
-
+                i18n.Init)
+        check_value.check(self.config, int, 'connect_mode', connect_mode)
         if connect_mode == 0:
             connect_mode = self.config.connect_mode
         elif not lib_util.check_range(connect_core.connect_mode, connect_mode):
@@ -149,6 +145,7 @@ class API:
         else:
             self.config.connect_mode = connect_mode
 
+        check_value.check(self.config, int, 'port', port)
         if port == 0:
             port = self.config.port
         elif not 0 < port < 65535:
@@ -156,6 +153,7 @@ class API:
         else:
             self.config.port = port
 
+        check_value.check(self.config, int, 'host', host)
         if host == 0:
             host = self.config.host
         elif not lib_util.check_range(data_type.host_type, host):
@@ -170,8 +168,7 @@ class API:
                     i18n.Connect,
                     i18n.host
                 ],
-                i18n.PTT
-            )
+                i18n.PTT)
         elif self.config.host == data_type.host_type.PTT2:
             log.show_value(
                 self.config,
@@ -180,8 +177,7 @@ class API:
                     i18n.Connect,
                     i18n.host
                 ],
-                i18n.PTT2
-            )
+                i18n.PTT2)
         elif self.config.host == data_type.host_type.LOCALHOST:
             log.show_value(
                 self.config,
@@ -190,8 +186,7 @@ class API:
                     i18n.Connect,
                     i18n.host
                 ],
-                i18n.Localhost
-            )
+                i18n.Localhost)
 
         self.connect_core = connect_core.API(self.config)
         self._exist_board_list = list()
@@ -205,8 +200,7 @@ class API:
             self.config,
             log.level.DEBUG,
             'ThreadID',
-            self._ThreadID
-        )
+            self._ThreadID)
 
         log.show_value(
             self.config,
@@ -215,8 +209,7 @@ class API:
                 i18n.Library,
                 ' v ' + version.V,
             ],
-            i18n.Init
-        )
+            i18n.Init)
 
     def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
@@ -226,14 +219,14 @@ class API:
             self.config,
             log.level.DEBUG,
             'ThreadID',
-            self._ThreadID
-        )
+            self._ThreadID)
+
         log.show_value(
             self.config,
             log.level.DEBUG,
             'Current thread id',
-            current_thread_id
-        )
+            current_thread_id)
+
         raise exceptions.MultiThreadOperated()
 
     def get_version(self) -> str:
