@@ -1767,11 +1767,6 @@ class API:
         cmd_list.append(command.Enter)
         cmd_list.append(command.Space)
 
-        if end:
-            cmd_list.append('1')
-            cmd_list.append(command.Enter)
-            cmd_list.append('$')
-
         cmd = ''.join(cmd_list)
 
         target_list = [
@@ -1807,8 +1802,26 @@ class API:
             else:
                 current_refresh = False
         self._goto_board_list.append(board.lower())
-
         self.connect_core.send(cmd, target_list, refresh=current_refresh)
+
+        if end:
+
+            cmd_list = list()
+            cmd_list.append('1')
+            cmd_list.append(command.Enter)
+            cmd_list.append('$')
+            cmd = ''.join(cmd_list)
+
+            target_list = [
+                connect_core.TargetUnit(
+                    '',
+                    screens.Target.InBoard,
+                    break_detect=True,
+                    log_level=log.level.DEBUG
+                ),
+            ]
+
+            self.connect_core.send(cmd, target_list)
 
 
 if __name__ == '__main__':
