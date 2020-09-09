@@ -41,6 +41,94 @@ current_py_version = None
 
 def test_init():
     log('init', mode='w')
+
+    log('===負向===')
+    try:
+        log('===語言 99===')
+        PTT.API(language=99)
+    except ValueError:
+        log('通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+    log('===語言放字串===')
+    try:
+        PTT.API(language='PTT.i18n.language.ENGLISH')
+    except TypeError:
+        log('通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    try:
+        log('===亂塞 log_level===')
+        PTT.API(log_level='log_level')
+        log('沒通過')
+        assert False
+    except TypeError:
+        log('通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    try:
+        log('===亂塞 log_level===')
+        PTT.API(log_level=100)
+        log('沒通過')
+        assert False
+    except ValueError:
+        log('通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    try:
+        PTT.API(log_handler='test')
+        assert False
+    except TypeError:
+        log('log_handler 字串測試通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    try:
+        PTT.API(screen_time_out='test')
+        assert False
+    except TypeError:
+        log('screen_time_out 字串測試通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    try:
+        PTT.API(screen_long_time_out='test')
+        assert False
+    except TypeError:
+        log('screen_long_time_out 字串測試通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    try:
+        PTT.API(host='test')
+        assert False
+    except TypeError:
+        log('host 字串測試通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    try:
+        PTT.API(connect_mode='test')
+        assert False
+    except TypeError:
+        log('host 字串測試通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    ################################################
+
     log('===正向===')
     log('===預設值===')
     PTT.API()
@@ -55,25 +143,9 @@ def test_init():
     log('===log SLIENT===')
     PTT.API(log_level=PTT.log.level.SILENT)
     log('===log SLIENT======')
+    PTT.API(host=PTT.data_type.host_type.LOCALHOST)
 
-    log('===負向===')
-    try:
-        log('===語言 99===')
-        PTT.API(language=99)
-    except ValueError:
-        log('通過')
-    except:
-        log('沒通過')
-        sys.exit(-1)
-    log('===語言放字串===')
-    try:
-        PTT.API(language='PTT.i18n.language.ENGLISH')
-    except TypeError:
-        log('通過')
-    except:
-        log('沒通過')
-        sys.exit(-1)
-
+    ################################################
     def handler(msg):
         with open('log.txt', 'a', encoding='utf-8') as f:
             f.write(msg + '\n')
@@ -1083,7 +1155,7 @@ def run_on_ptt_1():
         host=PTT.data_type.host_type.PTT1,
         log_handler=log)
     case(ptt_bot_0, ptt_bot_1)
-    #single_case(ptt_bot_0, ptt_bot_1)
+    # single_case(ptt_bot_0, ptt_bot_1)
 
 
 def run_on_ptt_2():
@@ -1094,7 +1166,7 @@ def run_on_ptt_2():
         host=PTT.data_type.host_type.PTT2,
         log_handler=log)
     case(ptt_bot_0, ptt_bot_1)
-    #single_case(ptt_bot_0, ptt_bot_1)
+    # single_case(ptt_bot_0, ptt_bot_1)
 
 
 def test_PyPtt():
@@ -1103,4 +1175,4 @@ def test_PyPtt():
 
 
 test_init()
-test_PyPtt()
+# test_PyPtt()
