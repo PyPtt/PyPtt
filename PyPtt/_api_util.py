@@ -366,4 +366,4 @@ def parse_query_post(api, ori_screen):
     log.show_value(api.config, log.level.DEBUG,
                    'PushNumber', push_number)
 
-    return lock_post, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
+    return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
