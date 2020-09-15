@@ -171,9 +171,10 @@ def get_post(
 
     elif index == 0:
 
-        lock_post, post_title, post_aid, post_web, post_money, list_date, push_number, post_index = _api_util.parse_query_post(
-            api,
-            ori_screen)
+        lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index = \
+            _api_util.parse_query_post(
+                api,
+                ori_screen)
 
         if lock_post:
             post = data_type.PostInfo(
