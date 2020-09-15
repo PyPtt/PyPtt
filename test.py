@@ -137,10 +137,12 @@ def get_post():
             ('WhoAmI', '1TqJhzQH')
         ]
 
-    query = False
+    query = True
 
     for (board, index) in test_post_list:
         try:
+
+            print('看板', board, index)
             if isinstance(index, int):
                 post_info = ptt_bot.get_post(
                     board,
@@ -172,8 +174,9 @@ def get_post():
                 continue
 
             # show('Origin Post\n', post.origin_post)
-            print('Origin Post\n' + post_info.origin_post)
-            print('=' * 30 + ' Origin Post Finish')
+            if not query:
+                print('Origin Post\n' + post_info.origin_post)
+                print('=' * 30 + ' Origin Post Finish')
             show('Board', post_info.board)
             show('AID', post_info.aid)
             show('index', post_info.index)
