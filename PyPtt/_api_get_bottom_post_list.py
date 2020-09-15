@@ -70,9 +70,10 @@ def get_bottom_post_list(api, board):
         api.connect_core.send(cmd, target_list)
         last_screen = api.connect_core.get_screen_queue()[-1]
 
-        lock_post, post_title, post_aid, post_web, post_money, list_date, push_number, post_index = _api_util.parse_query_post(
-            api,
-            last_screen)
+        lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index = \
+            _api_util.parse_query_post(
+                api,
+                last_screen)
 
         current_post = api.get_post(board, post_aid=post_aid, query=True)
 
@@ -91,4 +92,3 @@ def get_bottom_post_list(api, board):
     log.log(api.config, log.level.INFO, i18n.CatchBottomPostSuccess)
 
     return list(reversed(result))
-
