@@ -1174,5 +1174,6 @@ def test_PyPtt():
     run_on_ptt_2()
 
 
-test_init()
-test_PyPtt()
+if __name__ == '__main__':
+    test_init()
+    test_PyPtt()
