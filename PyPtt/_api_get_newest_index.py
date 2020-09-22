@@ -1,6 +1,4 @@
 import re
-import requests
-from bs4 import BeautifulSoup
 
 try:
     from . import data_type
