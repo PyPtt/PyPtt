@@ -127,7 +127,7 @@ setup(
         'progressbar2',
         'websockets',
         'uao',
-        'single_log'
+        'single-log'
     ],
 
     # List additional groups of dependencies here (e.g. development

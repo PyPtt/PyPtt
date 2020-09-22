@@ -44,7 +44,7 @@ pip install PyPtt
 #### progressbar2
 #### websockets
 #### uao
-#### single_log
+#### single-log
 
 ## 立場聲明
 #### 本專案意旨在提供 PTT 自動化機器人函式庫，並無意違反任何 PTT 站方規範。
