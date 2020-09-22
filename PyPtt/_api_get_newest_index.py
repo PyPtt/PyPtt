@@ -183,28 +183,29 @@ def get_newest_index(
             raise exceptions.NoSearchResult()
 
     elif index_type == data_type.index_type.WEB:
+        pass
         # web
-        _NewestIndex = None
-        newest_index = 0
-        _url = 'https://www.ptt.cc/bbs/'
-        url = _url + board
-        r = requests.get(url, cookies={'over18': '1'})
-
-        if r.status_code != requests.codes.ok:
-            raise exceptions.NoSuchBoard(api.config, board)
-        soup = BeautifulSoup(r.text, 'html.parser')
-
-        for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
-            text = data.text
-            herf = data.get('href')
-            if '上頁' in text:
-                _NewestIndex = herf.split('index')[1].split('.')[0]
-                # print("_NewestIndex: " + _NewestIndex)
-                _NewestIndex = int(_NewestIndex)
-
-        if _NewestIndex is None:
-            raise exceptions.UnknownError('')
-        newest_index = (_NewestIndex) + 1
+        # _NewestIndex = None
+        # newest_index = 0
+        # _url = 'https://www.ptt.cc/bbs/'
+        # url = _url + board
+        # r = requests.get(url, cookies={'over18': '1'})
+        #
+        # if r.status_code != requests.codes.ok:
+        #     raise exceptions.NoSuchBoard(api.config, board)
+        # soup = BeautifulSoup(r.text, 'html.parser')
+        #
+        # for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
+        #     text = data.text
+        #     herf = data.get('href')
+        #     if '上頁' in text:
+        #         _NewestIndex = herf.split('index')[1].split('.')[0]
+        #         # print("_NewestIndex: " + _NewestIndex)
+        #         _NewestIndex = int(_NewestIndex)
+        #
+        # if _NewestIndex is None:
+        #     raise exceptions.UnknownError('')
+        # newest_index = (_NewestIndex) + 1
 
     elif index_type == data_type.index_type.MAIL:
 

@@ -819,110 +819,110 @@ class API:
             return error_post_list, del_post_list
 
         else:
-            if self.config.host == data_type.host_type.PTT2:
-                raise exceptions.HostNotSupport(lib_util.get_current_func_name())
-
-            # 網頁版本爬蟲
-            # https://www.ptt.cc/bbs/index.html
-
-            # 1. 取得總共有幾頁 MaxPage
-            newest_index = self._get_newest_index(
-                data_type.index_type.WEB,
-                board=board)
-            # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
-
-            check_value.check_index_range(
-                self.config,
-                'StartPage',
-                start_page,
-                'EndPage',
-                end_page,
-                max_value=newest_index
-            )
-
-            # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 data_type.PostInfo
-            error_post_list = list()
-            del_post_list = list()
-            # PostAID = ""
-            _url = 'https://www.ptt.cc/bbs/'
-            index = str(newest_index)
-            if self.config.log_level == log.level.INFO:
-                PB = progressbar.ProgressBar(
-                    max_value=end_page - start_page + 1,
-                    redirect_stdout=True
-                )
-
-            def deleted_post(post_title):
-                if post_title.startswith('('):
-                    if '本文' in post_title:
-                        return data_type.post_delete_status.AUTHOR
-                    elif post_title.startswith('(已被'):
-                        return data_type.post_delete_status.MODERATOR
-                    else:
-                        return data_type.post_delete_status.UNKNOWN
-                else:
-                    return data_type.post_delete_status.NOT_DELETED
-
-            for index in range(start_page, newest_index + 1):
-                log.show_value(
-                    self.config,
-                    log.level.DEBUG,
-                    'CurrentPage',
-                    index
-                )
-
-                url = _url + board + '/index' + str(index) + '.html'
-                r = requests.get(url, cookies={'over18': '1'})
-                if r.status_code != requests.codes.ok:
-                    raise exceptions.NoSuchBoard(self.config, board)
-                soup = BeautifulSoup(r.text, 'html.parser')
-
-                for div in soup.select('div.r-ent'):
-                    web = div.select('div.title a')
-                    post = {
-                        'author': div.select('div.author')[0].text,
-                        'title': div.select('div.title')[0].text.strip('\n').strip(),
-                        'web': web[0].get('href') if web else ''
-                    }
-                    if post['title'].startswith('('):
-                        del_post_list.append(post['title'])
-                        if post['title'].startswith('(本文'):
-                            if '[' in post['title']:
-                                post['author'] = post['title'].split(
-                                    '[')[1].split(']')[0]
-                            else:
-                                post['author'] = post['title'].split('<')[
-                                    1].split('>')[0]
-                        else:
-                            post['author'] = post['title'].split('<')[
-                                1].split('>')[0]
-
-                    post = data_type.PostInfo(
-                        board=board,
-                        author=post['author'],
-                        title=post['title'],
-                        web_url='https://www.ptt.cc' + post['web'],
-                        delete_status=deleted_post(post['title'])
-                    )
-                    post_handler(post)
-
-                if self.config.log_level == log.level.INFO:
-                    PB.update(index - start_page)
-
-            log.show_value(
-                self.config,
-                log.level.DEBUG,
-                'DelPostList',
-                del_post_list
-            )
-
-            # 4. 把組合出來的 Post 塞給 handler
-
-            # 5. 顯示 progress bar
-            if self.config.log_level == log.level.INFO:
-                PB.finish()
-
-            return error_post_list, del_post_list
+            pass
+            # if self.config.host == data_type.host_type.PTT2:
+            #     raise exceptions.HostNotSupport(lib_util.get_current_func_name())
+            #
+            # # 網頁版本爬蟲
+            # # https://www.ptt.cc/bbs/index.html
+            #
+            # # 1. 取得總共有幾頁 MaxPage
+            # newest_index = self._get_newest_index(
+            #     data_type.index_type.WEB,
+            #     board=board)
+            # # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
+            #
+            # check_value.check_index_range(
+            #     self.config,
+            #     'StartPage',
+            #     start_page,
+            #     'EndPage',
+            #     end_page,
+            #     max_value=newest_index
+            # )
+            #
+            # # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 data_type.PostInfo
+            # error_post_list = list()
+            # del_post_list = list()
+            # # PostAID = ""
+            # _url = 'https://www.ptt.cc/bbs/'
+            # index = str(newest_index)
+            # if self.config.log_level == log.level.INFO:
+            #     PB = progressbar.ProgressBar(
+            #         max_value=end_page - start_page + 1,
+            #         redirect_stdout=True
+            #     )
+            #
+            # def deleted_post(post_title):
+            #     if post_title.startswith('('):
+            #         if '本文' in post_title:
+            #             return data_type.post_delete_status.AUTHOR
+            #         elif post_title.startswith('(已被'):
+            #             return data_type.post_delete_status.MODERATOR
+            #         else:
+            #             return data_type.post_delete_status.UNKNOWN
+            #     else:
+            #         return data_type.post_delete_status.NOT_DELETED
+            #
+            # for index in range(start_page, newest_index + 1):
+            #     log.show_value(
+            #         self.config,
+            #         log.level.DEBUG,
+            #         'CurrentPage',
+            #         index)
+            #
+            #     url = _url + board + '/index' + str(index) + '.html'
+            #     r = requests.get(url, cookies={'over18': '1'})
+            #     if r.status_code != requests.codes.ok:
+            #         raise exceptions.NoSuchBoard(self.config, board)
+            #     soup = BeautifulSoup(r.text, 'html.parser')
+            #
+            #     for div in soup.select('div.r-ent'):
+            #         web = div.select('div.title a')
+            #         post = {
+            #             'author': div.select('div.author')[0].text,
+            #             'title': div.select('div.title')[0].text.strip('\n').strip(),
+            #             'web': web[0].get('href') if web else ''
+            #         }
+            #         if post['title'].startswith('('):
+            #             del_post_list.append(post['title'])
+            #             if post['title'].startswith('(本文'):
+            #                 if '[' in post['title']:
+            #                     post['author'] = post['title'].split(
+            #                         '[')[1].split(']')[0]
+            #                 else:
+            #                     post['author'] = post['title'].split('<')[
+            #                         1].split('>')[0]
+            #             else:
+            #                 post['author'] = post['title'].split('<')[
+            #                     1].split('>')[0]
+            #
+            #         post = data_type.PostInfo(
+            #             board=board,
+            #             author=post['author'],
+            #             title=post['title'],
+            #             web_url='https://www.ptt.cc' + post['web'],
+            #             delete_status=deleted_post(post['title'])
+            #         )
+            #         post_handler(post)
+            #
+            #     if self.config.log_level == log.level.INFO:
+            #         PB.update(index - start_page)
+            #
+            # log.show_value(
+            #     self.config,
+            #     log.level.DEBUG,
+            #     'DelPostList',
+            #     del_post_list
+            # )
+            #
+            # # 4. 把組合出來的 Post 塞給 handler
+            #
+            # # 5. 顯示 progress bar
+            # if self.config.log_level == log.level.INFO:
+            #     PB.finish()
+            #
+            # return error_post_list, del_post_list
 
     def post(
             self,
