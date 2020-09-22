@@ -44,8 +44,7 @@ pip install PyPtt
 #### progressbar2
 #### websockets
 #### uao
-#### beautifulsoup4 (Since 0.8.25)
-#### requests (Since 0.8.25)
+#### single_log
 
 ## 立場聲明
 #### 本專案意旨在提供 PTT 自動化機器人函式庫，並無意違反任何 PTT 站方規範。
