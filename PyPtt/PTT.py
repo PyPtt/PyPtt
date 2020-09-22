@@ -1,10 +1,7 @@
 ﻿import time
 import progressbar
 import threading
-import requests
 import re
-from bs4 import BeautifulSoup
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 try:
     from . import data_type
@@ -30,7 +27,6 @@ except ModuleNotFoundError:
     import command
     import check_value
     import version
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 class API:
