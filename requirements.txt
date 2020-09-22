@@ -1,4 +1,4 @@
 progressbar2
 websockets
 uao
-single_log
+single-log
