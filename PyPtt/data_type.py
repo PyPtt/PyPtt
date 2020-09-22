@@ -240,7 +240,7 @@ class index_type:
     WEB: int = 3
 
     min_value = BBS
-    max_value = WEB
+    max_value = MAIL
 
 
 class crawl_type:
@@ -250,7 +250,7 @@ class crawl_type:
     WEB: int = 2
 
     min_value = BBS
-    max_value = WEB
+    max_value = BBS
 
 
 class host_type:
