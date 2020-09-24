@@ -231,8 +231,7 @@ class NoSuchPost(Exception):
         self.message = i18n.replace(
             i18n.NoSuchPost,
             board,
-            aid
-        )
+            aid)
 
     def __str__(self):
         return self.message
@@ -283,6 +282,17 @@ class NoSearchResult(Exception):
 class OnlySecureConnection(Exception):
     def __init__(self):
         self.message = i18n.OnlySecureConnection
+
+    def __str__(self):
+        return self.message
+
+
+class DeletedPost(Exception):
+    def __init__(self, board, aid):
+        self.message = i18n.replace(
+            i18n.DeletedPost,
+            board,
+            aid)
 
     def __str__(self):
         return self.message
