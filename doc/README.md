@@ -1148,6 +1148,24 @@ else:
 ```
 
 ---
+### 刪除文章
+
+以下是刪除文章的範例  
+Since 0.9.25
+
+```python
+try:
+    ptt_bot.del_post('Test', post_index=index)
+    ptt_bot.log(f'Test {index} 刪除成功')
+except PTT.exceptions.NoPermission:
+    ptt_bot.log(f'Test {index} 無刪除權限')
+except PTT.exceptions.DeletedPost:
+    ptt_bot.log(f'Test {index} 已經被刪除')
+except PTT.exceptions.NoSuchPost:
+    ptt_bot.log(f'Test {index} 無此文章')
+```
+
+---
 
 ## 板主專用 API
 
