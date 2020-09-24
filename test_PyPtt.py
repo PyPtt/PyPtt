@@ -1134,6 +1134,35 @@ PyPtt 程式寄信測試內容
 
     ################################################
 
+    title = 'PyPtt 程式自動化測試報告'
+    content = f'''
+此為 PyPtt v {ptt_bot_0.get_version()} CI 測試流程
+詳細請參考 https://github.com/PttCodingMan/PyPtt
+
+此次測試使用 python {current_py_version}
+
+結果:
+    所有測試皆通過。
+'''
+    if automation_ci:
+        content = '''
+此次測試由 Github Actions 啟動
+    ''' + content
+    else:
+        content = f'''
+此次測試由 {current_id_0} 啟動
+    ''' + content
+    content = content.replace('\n', '\r\n')
+
+    ptt_bot_0.post(
+        basic_board,
+        title,
+        content,
+        1,
+        0)
+
+    ################################################
+
     ptt_bot_0.logout()
 
 
@@ -1169,7 +1198,6 @@ def single_case(ptt_bot_0, ptt_bot_1):
 def run_on_ptt_1():
     ptt_bot_0 = PTT.API(
         host=PTT.data_type.host_type.PTT1,
-        log_level=PTT.log.level.TRACE,
         log_handler=log)
 
     ptt_bot_1 = PTT.API(
@@ -1182,7 +1210,6 @@ def run_on_ptt_1():
 def run_on_ptt_2():
     ptt_bot_0 = PTT.API(
         host=PTT.data_type.host_type.PTT2,
-        log_level=PTT.log.level.TRACE,
         log_handler=log)
     ptt_bot_1 = PTT.API(
         host=PTT.data_type.host_type.PTT2,
