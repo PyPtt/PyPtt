@@ -522,7 +522,7 @@ def get_newest_index():
             'CodingMan'
         ]
 
-    test_range = 3
+    test_range = 100
 
     for board in test_board_list:
         for _ in range(test_range):
@@ -1246,8 +1246,8 @@ def get_board_info():
         if get_post_kind:
             print('發文種類:', ' '.join(board_info.post_kind))
 
-def get_bottom_post_list():
 
+def get_bottom_post_list():
     test_board_list = [
         'Wanted',
         'Python',
@@ -1266,6 +1266,41 @@ def get_bottom_post_list():
                 print(post.title)
 
         print('=' * 50)
+
+
+def del_post():
+    content = '''
+此為 PyPtt 貼文測試內容，如有打擾請告知。
+github: https://github.com/PttCodingMan/PyPtt
+'''
+    content = content.replace('\n', '\r\n')
+
+    for _ in range(3):
+        ptt_bot.post(
+            # 看板
+            'Test',
+            # 標題
+            'PyPtt 程式貼文測試',
+            # 內文
+            content,
+            # 標題分類
+            1,
+            # 簽名檔
+            0)
+
+    index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, 'Test')
+
+    for i in range(5):
+        current_index = index - int(i)
+        try:
+            ptt_bot.del_post('Test', post_index=current_index)
+            ptt_bot.log(f'Test {current_index} 刪除成功')
+        except PTT.exceptions.NoPermission:
+            ptt_bot.log(f'Test {current_index} 無刪除權限')
+        except PTT.exceptions.DeletedPost:
+            ptt_bot.log(f'Test {current_index} 已經被刪除')
+        except PTT.exceptions.NoSuchPost:
+            ptt_bot.log(f'Test {current_index} 無此文章')
 
 
 def bucket():
@@ -1344,7 +1379,6 @@ def change_pw():
 if __name__ == '__main__':
     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
 
-    ptt_id, password = get_password('test_account.txt')
     try:
         # init()
         # threading_test()
@@ -1360,6 +1394,11 @@ if __name__ == '__main__':
 
             # language=PTT.i18n.language.ENGLISH
         )
+
+        if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+            ptt_id, password = get_password('test_account_0.txt')
+        else:
+            ptt_id, password = get_password('test_account_2.txt')
         try:
             ptt_bot.login(
                 ptt_id,
@@ -1415,6 +1454,7 @@ if __name__ == '__main__':
         # change_pw()
         # get_aid_from_url()
         # get_bottom_post_list()
+        # del_post()
 
         # bucket()
         # set_board_title()
