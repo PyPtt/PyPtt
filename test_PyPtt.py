@@ -279,7 +279,7 @@ def case(ptt_bot_0, ptt_bot_1):
                 return
             show_test_result(board, index_aid, False)
 
-            traceback.ptt_bot.log_tb(e.__traceback__)
+            traceback.log_tb(e.__traceback__)
             ptt_bot_0.log(e)
             ptt_bot_0.logout()
             assert False
@@ -1114,6 +1114,26 @@ PyPtt 程式寄信測試內容
         ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
                        content, post_aid=basic_post_aid)
 
+    ################################################
+
+    index = ptt_bot_0.get_newest_index(
+        PTT.data_type.index_type.BBS,
+        board=basic_board)
+    # 往前搜尋 50 篇刪除
+    for i in range(50):
+        current_index = index - i
+        try:
+            ptt_bot_0.del_post(basic_board, post_index=current_index)
+            ptt_bot_0.log(f'{basic_board} {current_index} 刪除成功')
+        except PTT.exceptions.NoPermission:
+            ptt_bot_0.log(f'{basic_board} {current_index} 無刪除權限')
+        except PTT.exceptions.DeletedPost:
+            ptt_bot_0.log(f'{basic_board} {current_index} 已經被刪除')
+        except PTT.exceptions.NoSuchPost:
+            ptt_bot_0.log(f'{basic_board} {current_index} 無此文章')
+
+    ################################################
+
     ptt_bot_0.logout()
 
 
@@ -1149,6 +1169,7 @@ def single_case(ptt_bot_0, ptt_bot_1):
 def run_on_ptt_1():
     ptt_bot_0 = PTT.API(
         host=PTT.data_type.host_type.PTT1,
+        log_level=PTT.log.level.TRACE,
         log_handler=log)
 
     ptt_bot_1 = PTT.API(
@@ -1161,6 +1182,7 @@ def run_on_ptt_1():
 def run_on_ptt_2():
     ptt_bot_0 = PTT.API(
         host=PTT.data_type.host_type.PTT2,
+        log_level=PTT.log.level.TRACE,
         log_handler=log)
     ptt_bot_1 = PTT.API(
         host=PTT.data_type.host_type.PTT2,
