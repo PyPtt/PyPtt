@@ -21,8 +21,7 @@ def reply_post(
         content: str,
         sign_file,
         post_aid: str,
-        post_index: int) ->None:
-
+        post_index: int) -> None:
     # log.showValue(
     #     api.config,
     #     log.level.INFO,

@@ -191,6 +191,7 @@ class API:
         self._LastThrowWaterBallTime = 0
         self._ThreadID = threading.get_ident()
         self._goto_board_list = list()
+        self._board_info_list = dict()
 
         log.show_value(
             self.config,
@@ -431,8 +432,7 @@ class API:
                     search_type,
                     search_condition,
                     search_list,
-                    query
-                )
+                    query)
             except exceptions.ParseError as e:
                 if i == 1:
                     raise e
@@ -459,8 +459,7 @@ class API:
                 log.log(
                     self.config,
                     log.level.DEBUG,
-                    'Wait for retry repost'
-                )
+                    'Wait for retry repost')
                 time.sleep(0.1)
                 continue
 
@@ -470,7 +469,7 @@ class API:
     def _check_board(
             self,
             board: str,
-            check_moderator: bool = False) -> None:
+            check_moderator: bool = False) -> data_type.BoardInfo:
 
         if board.lower() not in self._exist_board_list:
             board_info = self._get_board_info(board, False)
@@ -480,10 +479,13 @@ class API:
             moderators = board_info.moderators
             moderators = [x.lower() for x in moderators]
             self._ModeratorList[board.lower()] = moderators
+            self._board_info_list[board.lower()] = board_info
 
         if check_moderator:
             if self._ID.lower() not in self._ModeratorList[board.lower()]:
                 raise exceptions.NeedModeratorPermission(board)
+
+        return self._board_info_list[board.lower()]
 
     def _get_post(
             self,
@@ -665,8 +667,7 @@ class API:
                     data_type.index_type.BBS,
                     board=board,
                     search_type=search_type,
-                    search_condition=search_condition
-                )
+                    search_condition=search_condition)
 
                 check_value.check_index_range(
                     self.config,
@@ -674,8 +675,7 @@ class API:
                     start_index,
                     'end_index',
                     end_index,
-                    max_value=newest_index
-                )
+                    max_value=newest_index)
             elif start_aid is not None and end_aid is not None:
                 start_index = self.get_post(
                     board,
@@ -1680,6 +1680,8 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        self.config.log_last_value = None
+
         new_password = new_password[:8]
 
         try:
@@ -1744,6 +1746,8 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        self.config.log_last_value = None
+
         check_value.check(self.config, str, 'board', board)
         self._check_board(board)
 
@@ -1753,6 +1757,76 @@ class API:
             import _api_get_bottom_post_list
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
+
+    def del_post(
+            self,
+            board,
+            post_aid: str = None,
+            post_index: int = 0) -> None:
+        self._one_thread()
+
+        if not self._login_status:
+            raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        self.config.log_last_value = None
+
+        check_value.check(self.config, str, 'Board', board)
+        if post_aid is not None:
+            check_value.check(self.config, str, 'PostAID', post_aid)
+        check_value.check(self.config, int, 'PostIndex', post_index)
+
+        if len(board) == 0:
+            raise ValueError(log.merge(
+                self.config,
+                [
+                    i18n.Board,
+                    i18n.ErrorParameter,
+                    board
+                ]))
+
+        if post_index != 0 and isinstance(post_aid, str):
+            raise ValueError(log.merge(
+                self.config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter,
+                    i18n.BothInput
+                ]))
+
+        if post_index == 0 and post_aid is None:
+            raise ValueError(log.merge(
+                self.config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter,
+                    i18n.NoInput
+                ]))
+
+        if post_index != 0:
+            newest_index = self._get_newest_index(
+                data_type.index_type.BBS,
+                board=board)
+            check_value.check_index(
+                self.config,
+                'PostIndex',
+                post_index,
+                newest_index)
+
+        board_info = self._check_board(board)
+
+        try:
+            from . import _api_del_post
+        except ModuleNotFoundError:
+            import _api_del_post
+
+        return _api_del_post.del_post(
+            self,
+            board_info,
+            board,
+            post_aid,
+            post_index)
 
     def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
 
