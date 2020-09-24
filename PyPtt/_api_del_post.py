@@ -18,15 +18,27 @@ except ModuleNotFoundError:
 
 def del_post(
         api,
+        board_info,
         board,
         post_aid: str = None,
         post_index: int = 0) -> None:
-    post_info = api.get_post(board, post_aid=post_aid, post_index=post_index)
+
+    check_author = True
+    for moderator in board_info.moderators:
+        if api._ID.lower() == moderator.lower():
+            check_author = False
+            break
+
+    post_info = api.get_post(board, post_aid=post_aid, post_index=post_index, query=True)
     if post_info.delete_status != data_type.post_delete_status.NOT_DELETED:
         if post_aid is not None:
             raise exceptions.DeletedPost(board, post_aid)
         else:
             raise exceptions.DeletedPost(board, post_index)
+
+    if check_author:
+        if api._ID.lower() != post_info.author.lower():
+            raise exceptions.NoPermission(i18n.NoPermission)
 
     api._goto_board(board)
 
@@ -48,16 +60,19 @@ def del_post(
 
     target_list = [
         connect_core.TargetUnit(
+            i18n.AnyKeyContinue,
+            '請按任意鍵繼續',
+            response=' '),
+        connect_core.TargetUnit(
             i18n.ConfirmDelete,
             '請確定刪除(Y/N)?[N]',
             response='y' + command.Enter,
-            handler=confirm_delete_handler
-        ),
+            max_match=1,
+            handler=confirm_delete_handler),
         connect_core.TargetUnit(
             i18n.DeleteSuccess,
             screens.Target.InBoard,
-            break_detect=True
-        ),
+            break_detect=True),
     ]
 
     index = api.connect_core.send(
