@@ -190,6 +190,9 @@ SkipRegistrationForm = None
 url = None
 OnlySecureConnection = None
 CatchBottomPostSuccess = None
+ConfirmDelete = None
+DeleteSuccess = None
+DeletedPost = None
 
 
 def specific_load(input_language, lang_list):
@@ -1251,6 +1254,24 @@ def load(input_lang):
     CatchBottomPostSuccess = specific_load(input_lang, [
         '取得置底文章成功',
         'Catch bottom post success',
+    ])
+
+    global ConfirmDelete
+    ConfirmDelete = specific_load(input_lang, [
+        '確定刪除',
+        'Confirm delete',
+    ])
+
+    global DeleteSuccess
+    DeleteSuccess = specific_load(input_lang, [
+        '刪除成功',
+        'Delete Success',
+    ])
+
+    global DeletedPost
+    DeletedPost = specific_load(input_lang, [
+        '已刪除文章',
+        'Deleted Post',
     ])
 
     # No changes have been made to any settings
