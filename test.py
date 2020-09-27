@@ -1327,6 +1327,21 @@ def search_user():
 
 
 def get_mail():
+    mail_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+    ptt_bot.log(
+        '最新信件編號',
+        mail_index)
+
+    for i in reversed(range(1, mail_index + 1)):
+        ptt_bot.log(
+            '檢查信件編號',
+            i)
+
+        mail_info = ptt_bot.get_mail(i)
+
+        print(mail_info.title)
+
+
     for _ in range(3):
         newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
         print(f'最新信箱編號 {newest_index}')
