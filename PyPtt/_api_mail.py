@@ -175,36 +175,47 @@ def get_mail(api, index) -> data_type.MailInfo:
 
     mail_author_pattern = re.compile('作者  (.+)')
     pattern_result = mail_author_pattern.search(origin_mail)
-    mail_author = pattern_result.group(0)[2:].strip()
+    if pattern_result is None:
+        mail_author = None
+    else:
+        mail_author = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
         i18n.Author,
-        mail_author
-    )
+        mail_author)
 
     mail_title_pattern = re.compile('標題  (.+)')
     pattern_result = mail_title_pattern.search(origin_mail)
-    mail_title = pattern_result.group(0)[2:].strip()
+    if pattern_result is None:
+        mail_title = None
+    else:
+        mail_title = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
         i18n.Title,
-        mail_title
-    )
+        mail_title)
 
     mail_date_pattern = re.compile('時間  (.+)')
     pattern_result = mail_date_pattern.search(origin_mail)
-    mail_date = pattern_result.group(0)[2:].strip()
+    if pattern_result is None:
+        mail_date = None
+    else:
+        mail_date = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
         i18n.Date,
-        mail_date
-    )
+        mail_date)
+
+    # --
+    # ※ 發信站: 批踢踢實業坊(ptt.cc)
+    # ◆ From: 220.142.14.95
 
     content_start = '───────────────────────────────────────'
     content_end = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
+    content_ip_old = '◆ From: '
 
     mail_content = origin_mail[
                    origin_mail.find(content_start) +
@@ -225,8 +236,7 @@ def get_mail(api, index) -> data_type.MailInfo:
         api.config,
         log.level.DEBUG,
         i18n.Content,
-        mail_content
-    )
+        mail_content)
 
     if red_envelope:
         mail_ip = None
@@ -236,38 +246,52 @@ def get_mail(api, index) -> data_type.MailInfo:
         # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 59.104.127.126 (臺灣)
 
         ip_line = origin_mail.split('\n')
-        ip_line = [x for x in ip_line if x.startswith(content_end[3:])][0]
-        # print(ip_line)
+        ip_line = [x for x in ip_line if x.startswith(content_end[3:])]
 
-        pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
-        result = pattern.search(ip_line)
-        mail_ip = result.group(0)
-        log.show_value(
-            api.config,
-            log.level.DEBUG,
-            [
-                i18n.MailBox,
-                'IP',
-            ],
-            mail_ip
-        )
-
-        location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
-        if len(location) == 0:
+        if len(ip_line) == 0:
+            mail_ip = None
             mail_location = None
         else:
-            # print(location)
-            mail_location = location[1:-1]
+            ip_line = ip_line[0]
 
+            pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+            result = pattern.search(ip_line)
+            if result is None:
+                ip_line = origin_mail.split('\n')
+                ip_line = [x for x in ip_line if x.startswith(content_ip_old)]
+
+                if len(ip_line) == 0:
+                    mail_ip = None
+                else:
+                    ip_line = ip_line[0]
+                    result = pattern.search(ip_line)
+                    mail_ip = result.group(0)
+            else:
+                mail_ip = result.group(0)
             log.show_value(
                 api.config,
                 log.level.DEBUG,
                 [
                     i18n.MailBox,
-                    'location',
+                    'IP',
                 ],
-                mail_location
-            )
+                mail_ip)
+
+            location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
+            if len(location) == 0:
+                mail_location = None
+            else:
+                # print(location)
+                mail_location = location[1:-1]
+
+                log.show_value(
+                    api.config,
+                    log.level.DEBUG,
+                    [
+                        i18n.MailBox,
+                        'location',
+                    ],
+                    mail_location)
 
     mail_result = data_type.MailInfo(
         origin_mail=origin_mail,
@@ -277,7 +301,7 @@ def get_mail(api, index) -> data_type.MailInfo:
         content=mail_content,
         ip=mail_ip,
         location=mail_location,
-        red_envelope=red_envelope)
+        is_red_envelope=red_envelope)
 
     return mail_result
 
