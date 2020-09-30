@@ -1647,7 +1647,12 @@ class API:
 
         return _api_get_board_info.get_board_info(self, board, get_post_kind, call_by_others)
 
-    def get_mail(self, index):
+    def get_mail(
+            self,
+            index: int,
+            search_type: int = 0,
+            search_condition: str = None,
+            search_list: list = None):
 
         self._one_thread()
 
@@ -1669,7 +1674,12 @@ class API:
         except ModuleNotFoundError:
             import _api_mail
 
-        return _api_mail.get_mail(self, index)
+        return _api_mail.get_mail(
+            self,
+            index,
+            search_type,
+            search_condition,
+            search_list)
 
     def del_mail(self, index):
         self._one_thread()

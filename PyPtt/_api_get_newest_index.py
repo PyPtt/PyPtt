@@ -150,7 +150,7 @@ def get_newest_index(
         # print('normal_newest_index', normal_newest_index)
 
         cmd_list.extend(_cmd_list)
-        cmd_list.append(command.Ctrl_F * 5)
+        cmd_list.append(command.Ctrl_F * 50)
 
         cmd = ''.join(cmd_list)
 

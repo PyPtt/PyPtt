@@ -109,14 +109,29 @@ def mail(
         i18n.Success)
 
 
-def get_mail(api, index) -> data_type.MailInfo:
+def get_mail(
+        api,
+        index,
+        search_type: int = 0,
+        search_condition: str = None,
+        search_list: list = None) -> data_type.MailInfo:
+
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
     cmd_list.append('m')
+
+    _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
+        api,
+        data_type.index_type.MAIL,
+        search_type,
+        search_condition,
+        search_list,
+        None)
+    cmd_list.extend(_cmd_list)
+
     cmd_list.append(str(index))
     cmd_list.append(command.Enter)
-    # cmd_list.append(command.Enter)
     cmd = ''.join(cmd_list)
 
     fast_target = ''
