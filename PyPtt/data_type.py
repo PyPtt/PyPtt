@@ -46,6 +46,21 @@ class post_search_type:
     max_value = MONEY
 
 
+class mail_search_type:
+    # 文章搜尋類型
+
+    NOPE: int = 0
+    # 搜尋關鍵字    / ?
+    KEYWORD: int = 1
+    # 搜尋作者      a
+    AUTHOR: int = 2
+    # 搜尋標記      G
+    MARK: int = 3
+
+    min_value = NOPE
+    max_value = MARK
+
+
 class waterball_type:
     # 水球接收狀態
 
