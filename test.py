@@ -981,8 +981,7 @@ def mail():
             'sdjfkdsjfls',
             '程式寄信標題',
             content,
-            0
-        )
+            0)
     except PTT.exceptions.NoSuchUser:
         pass
 
@@ -990,8 +989,8 @@ def mail():
         ptt_id,
         '程式寄信標題',
         content,
-        0
-    )
+        0,
+        False)
 
     newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
     print(f'最新郵件編號 {newest_index}')
