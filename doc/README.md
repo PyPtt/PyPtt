@@ -453,7 +453,8 @@ post_info = ptt_bot.get_post(
 
 ---
 
-### 取得最新文章編號
+### 取得最新編號
+#### 文章
 
 當你想要取得的文章編號範圍包含最新文章的時候  
 你就會需要這隻 API 來取得最新編號是多少
@@ -509,6 +510,40 @@ index = ptt_bot.get_newest_index(
     search_condition='新聞',
     search_list=search_list)
 print(f'Gossiping 最新文章編號 {index}')
+```
+
+#### 郵件
+
+當你想要取得新信的時候  
+你就會需要這隻 API 來取得信箱的最新編號是多少
+
+```python
+index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL)
+```
+
+單一搜尋條件  
+Since 0.9.27
+
+```python
+mail_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL,
+        search_type=PTT.data_type.mail_search_type.KEYWORD,
+        search_condition='範例標題')
+```
+
+搜尋清單  
+Since 0.9.27
+
+```python
+search_list = [
+    (PTT.data_type.mail_search_type.KEYWORD, '關鍵字1'),
+    (PTT.data_type.mail_search_type.KEYWORD, '關鍵字2')
+]
+
+mail_index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.MAIL,
+    search_list=search_list)
 ```
 
 ---
@@ -926,6 +961,56 @@ print(mail_info.date)           # 日期
 print(mail_info.content)        # 內文
 print(mail_info.ip)             # ip
 print(mail_info.location)       # 地區: 舊版本信件則為 None
+```
+
+單一搜尋條件取得信件範例  
+Since 0.9.27
+
+```python
+mail_index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.MAIL,
+    search_type=PTT.data_type.mail_search_type.KEYWORD,
+    search_condition='關鍵字')
+
+ptt_bot.log(
+    '最新信件編號',
+    mail_index)
+
+for i in reversed(range(1, mail_index + 1)):
+    ptt_bot.log(
+        '檢查信件編號',
+        i)
+
+    mail_info = ptt_bot.get_mail(
+        i,
+        search_type=PTT.data_type.mail_search_type.KEYWORD,
+        search_condition='關鍵字'
+    )
+```
+
+多重搜尋條件取得信件範例  
+Since 0.9.27
+
+```python
+search_list = [
+    (PTT.data_type.mail_search_type.KEYWORD, '關鍵字1'),
+    (PTT.data_type.mail_search_type.KEYWORD, '關鍵字2')
+]
+
+mail_index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.MAIL,
+    search_list=search_list)
+
+for i in reversed(range(1, mail_index + 1)):
+    ptt_bot.log(
+        '檢查信件編號',
+        i)
+
+    mail_info = ptt_bot.get_mail(
+        i,
+        search_list=search_list)
+
+    print(mail_info.title)
 ```
 
 取完信件之後，我們來看看怎麼刪除信件  
