@@ -428,7 +428,7 @@ class API(object):
                             log.level.DEBUG, [
                                 i18n.SpendTime,
                             ],
-                            round(end_time - start_time, 2)
+                            round(end_time - start_time, 3)
                         )
 
                         if Target.is_break():
