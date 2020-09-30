@@ -712,12 +712,15 @@ PyPtt 程式貼文基準測試內文
     ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
                    content, post_aid=basic_post_aid)
 
+    mail_title = '程式寄信標題'
+
     try:
         ptt_bot_0.mail(
             'sdjfkdsjfls',
-            '程式寄信標題',
+            mail_title,
             '反向測試信件內容',
-            0)
+            0,
+            backup=False)
 
         content = '寄信反向測試失敗'
         ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
@@ -736,9 +739,10 @@ PyPtt 程式寄信測試內容
     content = content.replace('\n', '\r\n')
     ptt_bot_0.mail(
         current_id_0,
-        '程式寄信標題',
+        mail_title,
         content,
-        0)
+        0,
+        backup=False)
 
     new_mail2 = ptt_bot_0.has_new_mail()
     ptt_bot_0.log(f'有 {new_mail2} 封新信')
@@ -1113,6 +1117,25 @@ PyPtt 程式寄信測試內容
         content = '===PTT 2 測試全部通過'
         ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
                        content, post_aid=basic_post_aid)
+
+    ################################################
+
+    index = ptt_bot_0.get_newest_index(
+        PTT.data_type.index_type.MAIL)
+    # 往前搜尋 50 封刪除
+    for i in range(50):
+        current_index = index - i
+        if current_index < 1:
+            break
+
+        mail_info = ptt_bot_0.get_mail(current_index)
+        if mail_title != mail_info.title:
+            continue
+
+        ptt_bot_0.del_mail(current_index)
+        ptt_bot_0.log(f'第 {current_index} 封測試信刪除成功')
+
+    # mail_title
 
     ################################################
 
