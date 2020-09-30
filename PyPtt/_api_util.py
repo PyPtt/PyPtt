@@ -1,12 +1,14 @@
 import re
 
 try:
+    from . import data_type
     from . import i18n
     from . import connect_core
     from . import log
     from . import screens
     from . import command
 except ModuleNotFoundError:
+    import data_type
     import i18n
     import connect_core
     import log
@@ -367,3 +369,71 @@ def parse_query_post(api, ori_screen):
                    'PushNumber', push_number)
 
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
+
+
+def get_search_condition_cmd(
+        api,
+        index_type: int,
+        search_type: int = 0,
+        search_condition: str = None,
+        search_list: list = None,
+        # BBS
+        board: str = None):
+    cmd_list = list()
+
+    normal_newest_index = -1
+    if search_condition is not None:
+
+        if index_type == data_type.index_type.BBS:
+            normal_newest_index = api.get_newest_index(index_type, board=board)
+        else:
+            normal_newest_index = api.get_newest_index(index_type)
+
+        if search_type == data_type.post_search_type.KEYWORD:
+            cmd_list.append('/')
+        elif search_type == data_type.post_search_type.AUTHOR:
+            cmd_list.append('a')
+        elif search_type == data_type.post_search_type.MARK:
+            cmd_list.append('G')
+
+        if index_type == data_type.index_type.BBS:
+            if search_type == data_type.post_search_type.PUSH:
+                cmd_list.append('Z')
+            elif search_type == data_type.post_search_type.MONEY:
+                cmd_list.append('A')
+
+        cmd_list.append(search_condition)
+        cmd_list.append(command.Enter)
+
+    if search_list is not None:
+
+        if normal_newest_index == -1:
+            if index_type == data_type.index_type.BBS:
+                normal_newest_index = api.get_newest_index(index_type, board=board)
+            else:
+                normal_newest_index = api.get_newest_index(index_type)
+
+        for search_type_, search_condition_ in search_list:
+
+            # print('==>', search_type_, search_condition_)
+
+            if search_type_ == data_type.post_search_type.KEYWORD:
+                cmd_list.append('/')
+            elif search_type_ == data_type.post_search_type.AUTHOR:
+                cmd_list.append('a')
+            elif search_type_ == data_type.post_search_type.MARK:
+                cmd_list.append('G')
+            elif index_type == data_type.index_type.BBS:
+                if search_type_ == data_type.post_search_type.PUSH:
+                    cmd_list.append('Z')
+                elif search_type_ == data_type.post_search_type.MONEY:
+                    cmd_list.append('A')
+                else:
+                    continue
+            else:
+                continue
+
+            cmd_list.append(search_condition_)
+            cmd_list.append(command.Enter)
+
+    return cmd_list, normal_newest_index
