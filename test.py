@@ -1356,23 +1356,49 @@ def get_mail():
         mail_info = ptt_bot.get_mail(newest_index)
 
         if mail_info is not None:
-            # print(mail_info.origin_mail)
             print(mail_info.author)
-            # print(mail_info.title)
-            # print(mail_info.date)
-            # print(mail_info.content)
-            # print(mail_info.ip)
-            # print(mail_info.location)
 
-        # if newest_index > 1:
-        #     mail_info = ptt_bot.get_mail(newest_index - 1)
-        #     if mail_info is not None:
-        #         print(mail_info.author)
-        #         print(mail_info.title)
-        #         print(mail_info.date)
-        #         print(mail_info.content)
-        #         print(mail_info.ip)
-        #         print(mail_info.location)
+    mail_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL,
+        search_type=PTT.data_type.mail_search_type.KEYWORD,
+        search_condition='uPtt')
+
+    ptt_bot.log(
+        '最新信件編號',
+        mail_index)
+
+    for i in reversed(range(1, mail_index + 1)):
+        ptt_bot.log(
+            '檢查信件編號',
+            i)
+
+        mail_info = ptt_bot.get_mail(
+            i,
+            search_type=PTT.data_type.mail_search_type.KEYWORD,
+            search_condition='uPtt'
+        )
+
+        print(mail_info.title)
+
+    search_list = [
+        (PTT.data_type.mail_search_type.KEYWORD, 'uPtt'),
+        (PTT.data_type.mail_search_type.KEYWORD, 'key')
+    ]
+
+    mail_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL,
+        search_list=search_list)
+
+    for i in reversed(range(1, mail_index + 1)):
+        ptt_bot.log(
+            '檢查信件編號',
+            i)
+
+        mail_info = ptt_bot.get_mail(
+            i,
+            search_list=search_list)
+
+        print(mail_info.title)
 
 
 def mail_recviver():
