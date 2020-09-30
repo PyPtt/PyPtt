@@ -69,77 +69,96 @@ def _get_newest_index(api) -> int:
     return newest_index
 
 
+def _search_condition(
+        api,
+        index_type: int,
+        search_type: int = 0,
+        search_condition: str = None,
+        search_list: list = None,
+        # BBS
+        board: str = None):
+    cmd_list = list()
+
+    normal_newest_index = -1
+    if search_condition is not None:
+
+        if index_type == data_type.index_type.BBS:
+            normal_newest_index = get_newest_index(api, index_type, board=board)
+        else:
+            normal_newest_index = get_newest_index(api, index_type)
+
+        if search_type == data_type.post_search_type.KEYWORD:
+            cmd_list.append('/')
+        elif search_type == data_type.post_search_type.AUTHOR:
+            cmd_list.append('a')
+        elif search_type == data_type.post_search_type.MARK:
+            cmd_list.append('G')
+
+        if index_type == data_type.index_type.BBS:
+            if search_type == data_type.post_search_type.PUSH:
+                cmd_list.append('Z')
+            elif search_type == data_type.post_search_type.MONEY:
+                cmd_list.append('A')
+
+        cmd_list.append(search_condition)
+        cmd_list.append(command.Enter)
+
+    if search_list is not None:
+
+        if normal_newest_index == -1:
+            if index_type == data_type.index_type.BBS:
+                normal_newest_index = get_newest_index(api, index_type, board=board)
+            else:
+                normal_newest_index = get_newest_index(api, index_type)
+
+        for search_type_, search_condition_ in search_list:
+
+            # print('==>', search_type_, search_condition_)
+
+            if search_type_ == data_type.post_search_type.KEYWORD:
+                cmd_list.append('/')
+            elif search_type_ == data_type.post_search_type.AUTHOR:
+                cmd_list.append('a')
+            elif search_type_ == data_type.post_search_type.MARK:
+                cmd_list.append('G')
+            elif index_type == data_type.index_type.BBS:
+                if search_type_ == data_type.post_search_type.PUSH:
+                    cmd_list.append('Z')
+                elif search_type_ == data_type.post_search_type.MONEY:
+                    cmd_list.append('A')
+                else:
+                    continue
+            else:
+                continue
+
+            cmd_list.append(search_condition_)
+            cmd_list.append(command.Enter)
+
+    return cmd_list, normal_newest_index
+
+
 def get_newest_index(
         api,
         index_type: int,
-        board: str = None,
-        # BBS
         search_type: int = 0,
         search_condition: str = None,
-        search_list: list = None) -> int:
+        search_list: list = None,
+        # BBS
+        board: str = None) -> int:
     if index_type == data_type.index_type.BBS:
 
         check_value.check(api.config, str, 'Board', board)
 
         api._check_board(board)
-
-        check_value.check(
-            api.config, int, 'SearchType', search_type,
-            value_class=data_type.post_search_type)
-        if search_condition is not None:
-            check_value.check(
-                api.config, str,
-                'SearchCondition', search_condition)
-
-        if search_list is not None:
-            check_value.check(
-                api.config, list,
-                'search_list', search_list)
-        check_value.check(api.config, int, 'SearchType', search_type)
-
         api._goto_board(board)
 
-        cmd_list = list()
-
-        normal_newest_index = -1
-        if search_condition is not None:
-
-            normal_newest_index = get_newest_index(api, index_type, board=board)
-
-            if search_type == data_type.post_search_type.KEYWORD:
-                cmd_list.append('/')
-            elif search_type == data_type.post_search_type.AUTHOR:
-                cmd_list.append('a')
-            elif search_type == data_type.post_search_type.PUSH:
-                cmd_list.append('Z')
-            elif search_type == data_type.post_search_type.MARK:
-                cmd_list.append('G')
-            elif search_type == data_type.post_search_type.MONEY:
-                cmd_list.append('A')
-
-            cmd_list.append(search_condition)
-            cmd_list.append(command.Enter)
-
-        if search_list is not None:
-
-            if normal_newest_index == -1:
-                normal_newest_index = get_newest_index(api, index_type, board=board)
-
-            for search_type_, search_condition_ in search_list:
-
-                if search_type_ == data_type.post_search_type.KEYWORD:
-                    cmd_list.append('/')
-                elif search_type_ == data_type.post_search_type.AUTHOR:
-                    cmd_list.append('a')
-                elif search_type_ == data_type.post_search_type.PUSH:
-                    cmd_list.append('Z')
-                elif search_type_ == data_type.post_search_type.MARK:
-                    cmd_list.append('G')
-                elif search_type_ == data_type.post_search_type.MONEY:
-                    cmd_list.append('A')
-
-                cmd_list.append(search_condition_)
-                cmd_list.append(command.Enter)
+        cmd_list, normal_newest_index = _search_condition(
+            api,
+            index_type,
+            search_type,
+            search_condition,
+            search_list,
+            board)
 
         cmd_list.append('1')
         cmd_list.append(command.Enter)
@@ -182,38 +201,24 @@ def get_newest_index(
         if normal_newest_index == newest_index:
             raise exceptions.NoSearchResult()
 
-    elif index_type == data_type.index_type.WEB:
-        pass
-        # web
-        # _NewestIndex = None
-        # newest_index = 0
-        # _url = 'https://www.ptt.cc/bbs/'
-        # url = _url + board
-        # r = requests.get(url, cookies={'over18': '1'})
-        #
-        # if r.status_code != requests.codes.ok:
-        #     raise exceptions.NoSuchBoard(api.config, board)
-        # soup = BeautifulSoup(r.text, 'html.parser')
-        #
-        # for index, data in enumerate(soup.select('div.btn-group.btn-group-paging a')):
-        #     text = data.text
-        #     herf = data.get('href')
-        #     if '上頁' in text:
-        #         _NewestIndex = herf.split('index')[1].split('.')[0]
-        #         # print("_NewestIndex: " + _NewestIndex)
-        #         _NewestIndex = int(_NewestIndex)
-        #
-        # if _NewestIndex is None:
-        #     raise exceptions.UnknownError('')
-        # newest_index = (_NewestIndex) + 1
-
     elif index_type == data_type.index_type.MAIL:
 
         cmd_list = list()
         cmd_list.append(command.GoMainMenu)
         cmd_list.append(command.Ctrl_Z)
         cmd_list.append('m')
-        cmd_list.append(command.Ctrl_F * 50)
+
+        _cmd_list, normal_newest_index = _search_condition(
+            api,
+            index_type,
+            search_type,
+            search_condition,
+            search_list,
+            board)
+        # print('normal_newest_index', normal_newest_index)
+
+        cmd_list.extend(_cmd_list)
+        cmd_list.append(command.Ctrl_F * 5)
 
         cmd = ''.join(cmd_list)
 
@@ -233,22 +238,36 @@ def get_newest_index(
             current_capacity, _ = _api_util.get_mailbox_capacity(api)
             last_screen = api.connect_core.get_screen_queue()[-1]
             cursor_line = [x for x in last_screen.split('\n') if x.strip().startswith(api.cursor)][0]
-            # print(cursor_line)
+            # print('---->', cursor_line)
             list_index = int(re.compile('(\d+)').search(cursor_line).group(0))
-            if list_index > current_capacity:
-                newest_index = list_index
+
+            # print('----> list_index', list_index)
+            # print('----> current_capacity', current_capacity)
+            if search_type == 0 and search_list is None:
+                if list_index > current_capacity:
+                    newest_index = list_index
+                else:
+                    newest_index = current_capacity
             else:
-                newest_index = current_capacity
+                newest_index = list_index
 
             return newest_index
 
-        for _ in range(3):
+        for i in range(3):
             index = api.connect_core.send(
                 cmd,
                 target_list)
+            # print('index', index)
+            # last_screen = api.connect_core.get_screen_queue()[-1]
+            # print(last_screen)
 
             if index == 0:
                 newest_index = get_index(api)
+                if normal_newest_index == newest_index:
+                    if i == 2:
+                        raise exceptions.NoSearchResult()
+                    else:
+                        continue
                 break
             newest_index = 0
 

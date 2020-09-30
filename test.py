@@ -529,17 +529,26 @@ def get_newest_index():
             index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=board)
             print(f'{board} 最新文章編號 {index}')
 
+    ###############################################
+
     index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
     print(f'最新郵件編號 {index}')
 
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-        search_list = [
-            (PTT.data_type.post_search_type.KEYWORD, '徵求'),
-            (PTT.data_type.post_search_type.AUTHOR, 'CodingMan')
-        ]
-        index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board='Wanted', search_list=search_list)
+    index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL,
+        search_type=PTT.data_type.mail_search_type.KEYWORD,
+        search_condition='uPtt')
+    print(f'最新郵件編號 {index}')
 
-        print(f'最新文章編號 {index}')
+    search_list = [
+        (PTT.data_type.mail_search_type.KEYWORD, 'uPtt'),
+        (PTT.data_type.mail_search_type.KEYWORD, 'key')
+    ]
+
+    index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL,
+        search_list=search_list)
+    print(f'最新郵件編號 {index}')
 
 
 def showValue(Msg, Value):
@@ -992,7 +1001,8 @@ def mail():
         0,
         False)
 
-    newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+    newest_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL)
     print(f'最新郵件編號 {newest_index}')
     # ptt_bot.del_mail(newest_index)
 
@@ -1339,7 +1349,6 @@ def get_mail():
         mail_info = ptt_bot.get_mail(i)
 
         print(mail_info.title)
-
 
     for _ in range(3):
         newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
