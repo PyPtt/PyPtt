@@ -515,11 +515,10 @@ class API:
     def _get_newest_index(
             self,
             index_type: int,
-            board: str = None,
-            # BBS
             search_type: int = 0,
             search_condition: str = None,
-            search_list: list = None) -> int:
+            search_list: list = None,
+            board: str = None) -> int:
 
         check_value.check(
             self.config, int, 'index_type',
@@ -533,10 +532,10 @@ class API:
         return _api_get_newest_index.get_newest_index(
             self,
             index_type,
-            board,
             search_type,
             search_condition,
-            search_list)
+            search_list,
+            board)
 
     def get_newest_index(
             self,
@@ -551,21 +550,38 @@ class API:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        if index_type == data_type.index_type.BBS:
+            check_value.check(
+                self.config, int, 'SearchType', search_type,
+                value_class=data_type.post_search_type)
+
         if index_type == data_type.index_type.MAIL:
             if self.unregistered_user:
                 raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
+            check_value.check(
+                self.config, int, 'SearchType', search_type,
+                value_class=data_type.mail_search_type)
+
         self.config.log_last_value = None
 
-        try:
-            return self._get_newest_index(
-                index_type,
-                board,
-                search_type,
-                search_condition,
-                search_list)
-        except exceptions.NoSearchResult:
-            raise exceptions.NoSearchResult
+        if search_condition is not None:
+            check_value.check(
+                self.config, str,
+                'SearchCondition', search_condition)
+
+        if search_list is not None:
+            check_value.check(
+                self.config, list,
+                'search_list', search_list)
+        check_value.check(self.config, int, 'SearchType', search_type)
+
+        return self._get_newest_index(
+            index_type,
+            search_type,
+            search_condition,
+            search_list,
+            board)
 
     def crawl_board(
             self,
