@@ -127,6 +127,7 @@ Select = None
 SignatureFile = None
 NoSignatureFile = None
 SelfSaveDraft = None
+NotSelfSaveDraft = None
 MailBox = None
 NoSuchBoard = None
 HideSensitiveInfor = None
@@ -876,6 +877,12 @@ def load(input_lang):
     SelfSaveDraft = specific_load(input_lang, [
         '自存底稿',
         'Self-Save Draft',
+    ])
+
+    global NotSelfSaveDraft
+    NotSelfSaveDraft = specific_load(input_lang, [
+        '放棄自存底稿',
+        'Not Self-Save Draft',
     ])
 
     global MailBox

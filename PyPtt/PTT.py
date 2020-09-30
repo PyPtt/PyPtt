@@ -1302,7 +1302,8 @@ class API:
             ptt_id: str,
             title: str,
             content: str,
-            sign_file) -> None:
+            sign_file,
+            backup: bool = True) -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -1346,7 +1347,8 @@ class API:
             ptt_id,
             title,
             content,
-            sign_file)
+            sign_file,
+            backup)
 
         if self._mailbox_full:
             self.logout()
@@ -1875,7 +1877,6 @@ class API:
         self.connect_core.send(cmd, target_list, refresh=current_refresh)
 
         if end:
-
             cmd_list = list()
             cmd_list.append('1')
             cmd_list.append(command.Enter)
