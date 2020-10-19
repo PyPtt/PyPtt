@@ -117,7 +117,9 @@ def get_post():
             # 古早文章
             ('LAW', 1),
             # 辦刪除文章
-            ('Test', 347)
+            ('Test', 347),
+            # push number parse error
+            ('Gossiping', '1TgbvAW3')
         ]
     else:
         test_post_list = [
@@ -179,6 +181,7 @@ def get_post():
                 print('=' * 30 + ' Origin Post Finish')
             show('Board', post_info.board)
             show('AID', post_info.aid)
+            show('push num', post_info.push_number)
             show('index', post_info.index)
             show('Author', post_info.author)
             show('push_number', post_info.push_number)
@@ -537,7 +540,7 @@ def get_newest_index():
     index = ptt_bot.get_newest_index(
         PTT.data_type.index_type.MAIL,
         search_type=PTT.data_type.mail_search_type.KEYWORD,
-        search_condition='uPtt')
+        search_condition='uPtt system')
     print(f'最新郵件編號 {index}')
 
     search_list = [
@@ -1361,7 +1364,7 @@ def get_mail():
     mail_index = ptt_bot.get_newest_index(
         PTT.data_type.index_type.MAIL,
         search_type=PTT.data_type.mail_search_type.KEYWORD,
-        search_condition='uPtt')
+        search_condition='uPtt system')
 
     ptt_bot.log(
         '最新信件編號',
@@ -1375,8 +1378,7 @@ def get_mail():
         mail_info = ptt_bot.get_mail(
             i,
             search_type=PTT.data_type.mail_search_type.KEYWORD,
-            search_condition='uPtt'
-        )
+            search_condition='uPtt system')
 
         print(mail_info.title)
 
@@ -1445,7 +1447,7 @@ if __name__ == '__main__':
         )
 
         if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-            ptt_id, password = get_password('test_account_0.txt')
+            ptt_id, password = get_password('test_account_1.txt')
         else:
             ptt_id, password = get_password('test_account_2.txt')
         try:
