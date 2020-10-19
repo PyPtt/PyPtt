@@ -331,7 +331,7 @@ def parse_query_post(api, ori_screen):
     push_number = push_number.split(' ')
     # print(PushNumber)
     push_number = list(filter(None, push_number))
-    print(push_number)
+    # print(push_number)
 
     if len(push_number) == 0:
         push_number = None
