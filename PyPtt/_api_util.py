@@ -354,11 +354,6 @@ def parse_query_post(api, ori_screen):
         if push_number.lower().startswith('='):
             push_number = push_number[1:]
 
-        if push_number.lower().startswith('xx'):
-            push_number = '-100'
-        elif push_number.lower().startswith('x'):
-            push_number = '-' + push_number[1:]
-
         if len(push_number) == 0:
             push_number = None
 
