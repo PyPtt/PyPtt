@@ -8,6 +8,8 @@ from PyPtt import PTT
 
 
 def log(msg, mode: str = 'at'):
+    if not msg:
+        return
     with open('test_result.txt', mode, encoding='utf-8') as f:
         f.write(msg + '\n')
 
