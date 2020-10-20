@@ -326,12 +326,12 @@ def parse_query_post(api, ori_screen):
 
     push_number = cursor_line
     # print(f'2>{push_number}<')
-    push_number = push_number[7:12]
+    push_number = push_number[7:11]
     # print(push_number)
     push_number = push_number.split(' ')
     # print(PushNumber)
     push_number = list(filter(None, push_number))
-    # print(PushNumber)
+    # print(push_number)
 
     if len(push_number) == 0:
         push_number = None
