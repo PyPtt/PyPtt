@@ -347,7 +347,7 @@ def get_post(
         i18n.Title,
         post_title)
 
-    post_date_pattern = re.compile('時間  (.+)')
+    post_date_pattern = re.compile('時間  .{24}')
     date_line = origin_post_lines[2]
     pattern_result = post_date_pattern.search(date_line)
     if pattern_result is None:
