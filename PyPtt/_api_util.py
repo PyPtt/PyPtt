@@ -282,6 +282,7 @@ def parse_query_post(api, ori_screen):
     aid_line = [line for line in ori_screen.split(
         '\n') if line.startswith('│ 文章代碼(AID)')]
 
+    post_aid = None
     if len(aid_line) == 1:
         aid_line = aid_line[0]
         pattern = re.compile('#[\w|-]+')
