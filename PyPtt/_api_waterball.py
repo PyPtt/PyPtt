@@ -117,12 +117,22 @@ def get_waterball(api, operate_type:int) -> list:
         try:
             last_read_line_list = pattern_result.group(0).split('~')
         except Exception as e:
-            import traceback
-            traceback.print_tb(e.__traceback__)
-            print(e)
-            print(f'ori_screen {ori_screen}')
-            print(f'last_line {last_line}')
-            raise e
+            # Error result
+            # 'NoneType' object has no attribute 'group'
+            # ori_screen 【聊天說話】                     批踢踢實業坊
+            #                    )                  │   \  /  /▎  ‧  ▉  ▁__C \  \
+            #               )    (.                 │   / ∕/◤  .   ．▉   ▔▔ ◣ ﹨|
+            #              ( (      :.              │  7／ ◤▁▁▁▁▁▉▁▁▁▁  ◣＼
+            #   ╰╮╮    ▁▂▃▄▃▂▁            │  〢∕▄▄▄▄▄▄█▄▄▄▄▄▄\〢
+            #    ╰     ▊▃▄▅▆▅▄▃\▆◣       │  ==}             █            {==
+            # last_line       ▄▆▉▇▅▃▃▃▅▇◤ ◥▍     │  〣\    ▅▆     █  █
+
+            # import traceback
+            # traceback.print_tb(e.__traceback__)
+            # print(e)
+            # print(f'ori_screen {ori_screen}')
+            # print(f'last_line {last_line}')
+            continue
 
         last_read_line_a_temp = int(last_read_line_list[0])
         last_read_line_b_temp = int(last_read_line_list[1])
