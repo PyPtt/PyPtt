@@ -29,6 +29,10 @@ except ModuleNotFoundError:
     import version
 
 
+def reset():
+    connect_core.new_event_loop = list()
+
+
 class API:
     def __init__(
             self,
