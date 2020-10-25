@@ -24,8 +24,6 @@ except ModuleNotFoundError:
     import command
     import exceptions
 
-new_event_loop = list()
-
 
 class connect_mode(object):
     TELNET = 1
@@ -208,9 +206,6 @@ class API(object):
 
         connect_success = False
 
-        global new_event_loop
-        thread_id = threading.get_ident()
-
         for _ in range(2):
 
             try:
@@ -220,13 +215,11 @@ class API(object):
 
                 else:
 
-                    if thread_id not in new_event_loop:
-                        new_event_loop.append(thread_id)
-                        try:
-                            loop = asyncio.new_event_loop()
-                            asyncio.set_event_loop(loop)
-                        except:
-                            pass
+                    try:
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                    except:
+                        pass
 
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
@@ -369,6 +362,7 @@ class API(object):
                         recv_data_obj.data = self._core.read_very_eager()
                     except EOFError:
                         return -1
+
                 else:
                     try:
 
@@ -387,6 +381,8 @@ class API(object):
                         raise exceptions.ConnectionClosed()
                     except asyncio.TimeoutError:
                         return -1
+                    except RuntimeError:
+                        raise exceptions.ConnectionClosed()
 
                 receive_data_buffer += recv_data_obj.data
                 receive_data_temp = receive_data_buffer.decode(
