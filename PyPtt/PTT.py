@@ -51,16 +51,18 @@ class API:
             has_log_handler = True
             set_log_handler_result = True
             try:
-                log_handler(f'PyPtt v {version.V}')
-                log_handler('Developed by CodingMan')
+                if log_level != log.level.SILENT:
+                    log_handler(f'PyPtt v {version.V}')
+                    log_handler('Developed by CodingMan')
             except TypeError:
                 log_handler = None
                 set_log_handler_result = False
         else:
             has_log_handler = False
 
-        print(f'PyPtt v {version.V}')
-        print('Developed by CodingMan')
+        if log_level != log.level.SILENT:
+            print(f'PyPtt v {version.V}')
+            print('Developed by CodingMan')
 
         self._login_status = False
         self.unregistered_user = True
