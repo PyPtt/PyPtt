@@ -177,7 +177,6 @@ class API(object):
             ],
             i18n.Active)
 
-        telnet_host, websocket_host, websocket_origin = '', '', ''
         if self.config.host == data_type.host_type.PTT1:
             telnet_host = 'ptt.cc'
             websocket_host = 'wss://ws.ptt.cc/bbs/'
@@ -215,11 +214,9 @@ class API(object):
 
                 else:
 
-                    try:
+                    if not threading.current_thread() is threading.main_thread():
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
-                    except:
-                        pass
 
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
