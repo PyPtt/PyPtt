@@ -1355,6 +1355,7 @@ ptt_bot.bucket(
 ## 疑難排解
 
 ### 在 jupyter 使用
+### 遭遇 the event loop is already running 錯誤
 
 因為 jupyter 內部也使用了 asyncio 作為協程管理工具  
 會跟 PyPtt 內部的 asyncio 衝突  
@@ -1410,3 +1411,12 @@ cd /Applications/Python\ 3.6/
 2. 請從 homebrew 重新安裝 python3
 
 詳細請參考 https://stackoverflow.com/questions/40684543/how-to-make-python-use-ca-certificates-from-mac-os-truststore
+
+---
+
+### 在 Anaconda 中遭遇 certificate verify failed
+應急可使用下列指令關閉 SSL 驗證或者使用 Telnet 連線模式
+
+```shell script
+conda config --set ssl_verify false 
+```
