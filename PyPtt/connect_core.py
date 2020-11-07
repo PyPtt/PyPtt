@@ -29,7 +29,7 @@ class connect_mode(object):
     TELNET = 1
     WEBSOCKET = 2
 
-    min_value = TELNET
+    min_value = WEBSOCKET
     max_value = WEBSOCKET
 
 
