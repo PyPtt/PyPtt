@@ -1269,4 +1269,4 @@ def test_PyPtt():
 
 if __name__ == '__main__':
     test_init()
-    # test_PyPtt()
+    test_PyPtt()
