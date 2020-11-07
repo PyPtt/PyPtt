@@ -16,6 +16,7 @@ try:
     from . import screens
     from . import command
     from . import exceptions
+    from . import version
 except ModuleNotFoundError:
     import data_type
     import i18n
@@ -23,6 +24,10 @@ except ModuleNotFoundError:
     import screens
     import command
     import exceptions
+    import version
+
+
+websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 
 
 class connect_mode(object):
@@ -217,6 +222,12 @@ class API(object):
                     if not threading.current_thread() is threading.main_thread():
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
+
+                    log.show_value(
+                        self.config,
+                        log.level.DEBUG,
+                        'USER_AGENT',
+                        websockets.http.USER_AGENT)
 
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
