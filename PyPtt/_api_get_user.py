@@ -2,7 +2,6 @@ import re
 
 try:
     from . import data_type
-    from . import lib_util
     from . import i18n
     from . import connect_core
     from . import log
@@ -11,7 +10,6 @@ try:
     from . import command
 except ModuleNotFoundError:
     import data_type
-    import lib_util
     import i18n
     import connect_core
     import log
@@ -80,22 +78,19 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
                 i18n.Success,
             ],
             screens.Target.AnyKey,
-            break_detect=True,
-        ),
+            break_detect=True),
         connect_core.TargetUnit(
             [
                 i18n.GetUser,
                 i18n.Fail,
             ],
             screens.Target.InTalk,
-            break_detect=True,
-        ),
+            break_detect=True),
     ]
 
     index = api.connect_core.send(
         cmd,
-        target_list
-    )
+        target_list)
     ori_screen = api.connect_core.get_screen_queue()[-1]
     if index == 1:
         raise exceptions.NoSuchUser(ptt_id)
@@ -181,6 +176,5 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
         last_ip,
         five_chess,
         chess,
-        signature_file
-    )
+        signature_file)
     return user

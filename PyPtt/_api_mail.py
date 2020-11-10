@@ -25,29 +25,20 @@ def mail(
         ptt_id: str,
         title: str,
         content: str,
-        sign_file) -> None:
-    # log.showValue(
-    #     api.config,
-    #     log.level.INFO,
-    #     [
-    #         i18n.PTT,
-    #         i18n.Msg
-    #     ],
-    #     i18n.MarkPost
-    # )
+        sign_file,
+        backup: bool = True) -> None:
+    cmd_list = list()
+    cmd_list.append(command.GoMainMenu)
+    cmd_list.append('M')
+    cmd_list.append(command.Enter)
+    cmd_list.append('S')
+    cmd_list.append(command.Enter)
+    cmd_list.append(ptt_id)
+    cmd_list.append(command.Enter)
 
-    CmdList = list()
-    CmdList.append(command.GoMainMenu)
-    CmdList.append('M')
-    CmdList.append(command.Enter)
-    CmdList.append('S')
-    CmdList.append(command.Enter)
-    CmdList.append(ptt_id)
-    CmdList.append(command.Enter)
+    cmd = ''.join(cmd_list)
 
-    Cmd = ''.join(CmdList)
-
-    TargetList = [
+    target_list = [
         connect_core.TargetUnit(
             [
                 i18n.Start,
@@ -64,76 +55,83 @@ def mail(
     ]
 
     api.connect_core.send(
-        Cmd,
-        TargetList,
+        cmd,
+        target_list,
         screen_timeout=api.config.screen_long_timeout
     )
 
-    CmdList = list()
-    CmdList.append(title)
-    CmdList.append(command.Enter)
-    CmdList.append(content)
-    CmdList.append(command.Ctrl_X)
+    cmd_list = list()
+    cmd_list.append(title)
+    cmd_list.append(command.Enter)
+    cmd_list.append(content)
+    cmd_list.append(command.Ctrl_X)
 
-    Cmd = ''.join(CmdList)
+    cmd = ''.join(cmd_list)
 
     if sign_file == 0:
-        SingFileSelection = i18n.NoSignatureFile
+        sing_file_selection = i18n.NoSignatureFile
     else:
-        SingFileSelection = i18n.Select + ' ' + \
-                            str(sign_file) + 'th ' + i18n.SignatureFile
+        sing_file_selection = i18n.Select + ' ' + \
+                              str(sign_file) + 'th ' + i18n.SignatureFile
 
-    TargetList = [
+    target_list = [
         connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
-            break_detect=True
-        ),
+            break_detect=True),
         connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            response='s' + command.Enter,
-            # Refresh=False,
-        ),
+            response='s' + command.Enter, ),
         connect_core.TargetUnit(
-            i18n.SelfSaveDraft,
+            i18n.SelfSaveDraft if backup else i18n.NotSelfSaveDraft,
             '是否自存底稿',
-            response='y' + command.Enter
-        ),
+            response=('y' if backup else 'n') + command.Enter),
         connect_core.TargetUnit(
-            SingFileSelection,
+            sing_file_selection,
             '選擇簽名檔',
-            response=str(sign_file) + command.Enter
-        ),
+            response=str(sign_file) + command.Enter),
         connect_core.TargetUnit(
-            SingFileSelection,
+            sing_file_selection,
             'x=隨機',
-            response=str(sign_file) + command.Enter
-        ),
+            response=str(sign_file) + command.Enter),
     ]
 
     api.connect_core.send(
-        Cmd,
-        TargetList,
-        screen_timeout=api.config.screen_post_timeout
-    )
+        cmd,
+        target_list,
+        screen_timeout=api.config.screen_post_timeout)
 
     log.show_value(
         api.config,
         log.level.INFO,
         i18n.SendMail,
-        i18n.Success
-    )
+        i18n.Success)
 
 
-def get_mail(api, index) -> data_type.MailInfo:
+def get_mail(
+        api,
+        index,
+        search_type: int = 0,
+        search_condition: str = None,
+        search_list: list = None) -> data_type.MailInfo:
+
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
     cmd_list.append('m')
+
+    _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
+        api,
+        data_type.index_type.MAIL,
+        search_type,
+        search_condition,
+        search_list,
+        None)
+    cmd_list.extend(_cmd_list)
+
     cmd_list.append(str(index))
     cmd_list.append(command.Enter)
-    # cmd_list.append(command.Enter)
     cmd = ''.join(cmd_list)
 
     fast_target = ''
@@ -153,14 +151,12 @@ def get_mail(api, index) -> data_type.MailInfo:
             i18n.MailBox,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
         connect_core.TargetUnit(
             i18n.MailBox,
             fast_target,
             break_detect=True,
-            log_level=log.level.DEBUG
-        )
+            log_level=log.level.DEBUG)
     ]
 
     api.connect_core.send(
@@ -175,41 +171,51 @@ def get_mail(api, index) -> data_type.MailInfo:
 
     mail_author_pattern = re.compile('作者  (.+)')
     pattern_result = mail_author_pattern.search(origin_mail)
-    mail_author = pattern_result.group(0)[2:].strip()
+    if pattern_result is None:
+        mail_author = None
+    else:
+        mail_author = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
         i18n.Author,
-        mail_author
-    )
+        mail_author)
 
     mail_title_pattern = re.compile('標題  (.+)')
     pattern_result = mail_title_pattern.search(origin_mail)
-    mail_title = pattern_result.group(0)[2:].strip()
+    if pattern_result is None:
+        mail_title = None
+    else:
+        mail_title = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
         i18n.Title,
-        mail_title
-    )
+        mail_title)
 
     mail_date_pattern = re.compile('時間  (.+)')
     pattern_result = mail_date_pattern.search(origin_mail)
-    mail_date = pattern_result.group(0)[2:].strip()
+    if pattern_result is None:
+        mail_date = None
+    else:
+        mail_date = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
         log.level.DEBUG,
         i18n.Date,
-        mail_date
-    )
+        mail_date)
+
+    # --
+    # ※ 發信站: 批踢踢實業坊(ptt.cc)
+    # ◆ From: 220.142.14.95
 
     content_start = '───────────────────────────────────────'
     content_end = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
+    content_ip_old = '◆ From: '
 
     mail_content = origin_mail[
                    origin_mail.find(content_start) +
-                   len(content_start) + 1:
-                   ]
+                   len(content_start) + 1:]
 
     red_envelope = False
     if content_end not in origin_mail and 'Ptt幣的大紅包喔' in origin_mail:
@@ -218,15 +224,13 @@ def get_mail(api, index) -> data_type.MailInfo:
     else:
 
         mail_content = mail_content[
-                       :mail_content.rfind(content_end) + 3
-                       ]
+                       :mail_content.rfind(content_end) + 3]
 
     log.show_value(
         api.config,
         log.level.DEBUG,
         i18n.Content,
-        mail_content
-    )
+        mail_content)
 
     if red_envelope:
         mail_ip = None
@@ -236,38 +240,52 @@ def get_mail(api, index) -> data_type.MailInfo:
         # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 59.104.127.126 (臺灣)
 
         ip_line = origin_mail.split('\n')
-        ip_line = [x for x in ip_line if x.startswith(content_end[3:])][0]
-        # print(ip_line)
+        ip_line = [x for x in ip_line if x.startswith(content_end[3:])]
 
-        pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
-        result = pattern.search(ip_line)
-        mail_ip = result.group(0)
-        log.show_value(
-            api.config,
-            log.level.DEBUG,
-            [
-                i18n.MailBox,
-                'IP',
-            ],
-            mail_ip
-        )
-
-        location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
-        if len(location) == 0:
+        if len(ip_line) == 0:
+            mail_ip = None
             mail_location = None
         else:
-            # print(location)
-            mail_location = location[1:-1]
+            ip_line = ip_line[0]
 
+            pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+            result = pattern.search(ip_line)
+            if result is None:
+                ip_line = origin_mail.split('\n')
+                ip_line = [x for x in ip_line if x.startswith(content_ip_old)]
+
+                if len(ip_line) == 0:
+                    mail_ip = None
+                else:
+                    ip_line = ip_line[0]
+                    result = pattern.search(ip_line)
+                    mail_ip = result.group(0)
+            else:
+                mail_ip = result.group(0)
             log.show_value(
                 api.config,
                 log.level.DEBUG,
                 [
                     i18n.MailBox,
-                    'location',
+                    'IP',
                 ],
-                mail_location
-            )
+                mail_ip)
+
+            location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
+            if len(location) == 0:
+                mail_location = None
+            else:
+                # print(location)
+                mail_location = location[1:-1]
+
+                log.show_value(
+                    api.config,
+                    log.level.DEBUG,
+                    [
+                        i18n.MailBox,
+                        'location',
+                    ],
+                    mail_location)
 
     mail_result = data_type.MailInfo(
         origin_mail=origin_mail,
@@ -277,7 +295,7 @@ def get_mail(api, index) -> data_type.MailInfo:
         content=mail_content,
         ip=mail_ip,
         location=mail_location,
-        red_envelope=red_envelope)
+        is_red_envelope=red_envelope)
 
     return mail_result
 
@@ -304,13 +322,9 @@ def del_mail(api, index) -> None:
             i18n.MailBox,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.level.DEBUG
-        )
+            log_level=log.level.DEBUG)
     ]
 
     api.connect_core.send(
         cmd,
-        target_list,
-    )
-
-    api.connect_core.get_screen_queue()[-1]
+        target_list)

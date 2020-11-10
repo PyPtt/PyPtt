@@ -122,8 +122,7 @@ from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) Chinese
     # language=PTT.i18n.language.CHINESE,
-    language=PTT.i18n.language.ENGLISH,
-)
+    language=PTT.i18n.language.ENGLISH)
 ```
 
 也可以修改 Log 等級方便回報錯誤
@@ -134,8 +133,7 @@ ptt_bot = PTT.API(
     # (預設值) INFO
     # log_level=PTT.log.level.INFO,
     # log_level=PTT.log.level.DEBUG,
-    log_level=PTT.log.level.TRACE,
-)
+    log_level=PTT.log.level.TRACE)
 ```
 
 如果你的網路環境比較慢(例如海外)，常常不小心就 timeout，也有參數可以調整  
@@ -144,15 +142,14 @@ Since 0.9.1
 from PyPtt import PTT
 ptt_bot = PTT.API(
     # 預設 3 秒後判定此畫面沒有可辨識的目標
-    screen_time_out=5,
+    screen_timeout=5,
     # 預設 10 秒後判定此畫面沒有可辨識的目標
     # 適用於需要特別等待的情況，例如: 剔除其他登入、發文等等
     # 建議不要低於 10 秒，剔除其他登入最長可能會花費約 6 ~ 7 秒
-    screen_long_time_out=15,
+    screen_long_timeout=15,
     # 預設 60 秒後判定此畫面沒有可辨識的目標
     # 適用於貼文等待的情況，建議不要低於 60 秒
-    screen_post_time_out=120,
-)
+    screen_post_timeout=120)
 ```
 
 當然如果你有需要將 log 輸出成檔案或者其他需要處理 log 的需求  
@@ -166,11 +163,10 @@ def handler(msg):
         f.write(msg + '\n')
 
 ptt_bot = PTT.API(
-    log_handler=handler
-)
+    log_handler=handler)
 ```
 
-當然 PyPtt 也支援批踢踢兔與本機。  
+當然 PyPtt 也支援 PTT2 與 Localhost。  
 批踢踢兔 Since 0.8.25  
 本機 Since 0.9.1
 
@@ -181,8 +177,7 @@ ptt2_bot = PTT.API(
     # host=PTT.data_type.host_type.PTT1,
     # host=PTT.data_type.host_type.PTT2,
     # host=PTT.data_type.host_type.LOCALHOST,
-    host=PTT.data_type.host_type.PTT2
-)
+    host=PTT.data_type.host_type.PTT2)
 ```
 
 如果有 telnet 的需求，可以切換連線模式  
@@ -197,8 +192,7 @@ ptt_bot = PTT.API(
     # connect_mode=PTT.connect_core.connect_mode.WEBSOCKET,
     connect_mode=PTT.connect_core.connect_mode.TELNET,
     # (預設值) 23
-    port=8888
-)
+    port=8888)
 ```
 
 ---
@@ -255,8 +249,7 @@ try:
     ptt_bot.login(
         ptt_id,
         password,
-        kick_other_login=True
-    )
+        kick_other_login=True)
 except PTT.exceptions.LoginError:
     ptt_bot.log('登入失敗')
     sys.exit()
@@ -284,8 +277,7 @@ from PyPtt import PTT
 
 post_info = ptt_bot.get_post(
     'Python',
-    post_index=7486
-)
+    post_index=7486)
 ```
 
 或者用 AID 也可以的
@@ -296,8 +288,7 @@ from PyPtt import PTT
 
 post_info = ptt_bot.get_post(
     'Python',
-    post_aid='1TJH_XY0'
-)
+    post_aid='1TJH_XY0')
 
 # 從以上兩個範例可以看到 get_post 回傳了 post_info
 # 這裡面包含了文章所有屬性
@@ -314,7 +305,7 @@ if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
         print(f'[作者刪除][{post_info.author}]')
     elif post_info.delete_status == PTT.data_type.post_delete_status.UNKNOWN:
         print(f'[不明刪除]')
-    return
+    sys.exit()
 
 if post_info.is_lock:
     print('[鎖文]')
@@ -451,19 +442,19 @@ Since 0.8.16
 
 
 你可以啟用 query 模式，這樣就不會進入文章解析內文、推文、IP與地點等等  
-可以提升效能
+可以避免 BBS 需要翻頁的問題，進而提升效能
 
 ```python
 post_info = ptt_bot.get_post(
     'Python',
     post_aid='1TJH_XY0',
-    query=True,
-)
+    query=True)
 ```
 
 ---
 
-### 取得最新文章編號
+### 取得最新編號
+#### 文章
 
 當你想要取得的文章編號範圍包含最新文章的時候  
 你就會需要這隻 API 來取得最新編號是多少
@@ -521,6 +512,40 @@ index = ptt_bot.get_newest_index(
 print(f'Gossiping 最新文章編號 {index}')
 ```
 
+#### 郵件
+
+當你想要取得新信的時候  
+你就會需要這隻 API 來取得信箱的最新編號是多少
+
+```python
+index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL)
+```
+
+單一搜尋條件  
+Since 0.9.27
+
+```python
+mail_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL,
+        search_type=PTT.data_type.mail_search_type.KEYWORD,
+        search_condition='範例標題')
+```
+
+搜尋清單  
+Since 0.9.27
+
+```python
+search_list = [
+    (PTT.data_type.mail_search_type.KEYWORD, '關鍵字1'),
+    (PTT.data_type.mail_search_type.KEYWORD, '關鍵字2')
+]
+
+mail_index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.MAIL,
+    search_list=search_list)
+```
+
 ---
 
 ### 取得大範圍文章
@@ -549,8 +574,7 @@ test_range = 1000
 
 newest_index = ptt_bot.get_newest_index(
     PTT.data_type.index_type.BBS,
-    board=test_board
-)
+    board=test_board)
 start_index = newest_index - test_range + 1
 
 print(f'預備爬行 {test_board} 編號 {start_index} ~ {newest_index} 文章')
@@ -689,8 +713,8 @@ error_post_list, del_post_list = ptt_bot.crawl_board(
     'Gossiping',
     start_index=1,
     end_index=100,
-    query=True,  # Optional
-)
+    # Optional
+    query=True)
 ```
 
 ---
@@ -718,8 +742,7 @@ for _ in range(3):
         # 標題分類
         1,
         # 簽名檔
-        0
-    )
+        0)
 ```
 
 以下則是推文範例
@@ -907,8 +930,7 @@ try:
         # 內文
         content,
         # 簽名檔
-        0
-    )
+        0)
 except PTT.exceptions.NoSuchUser:
     print('No Such User')
 ```
@@ -939,6 +961,56 @@ print(mail_info.date)           # 日期
 print(mail_info.content)        # 內文
 print(mail_info.ip)             # ip
 print(mail_info.location)       # 地區: 舊版本信件則為 None
+```
+
+單一搜尋條件取得信件範例  
+Since 0.9.27
+
+```python
+mail_index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.MAIL,
+    search_type=PTT.data_type.mail_search_type.KEYWORD,
+    search_condition='關鍵字')
+
+ptt_bot.log(
+    '最新信件編號',
+    mail_index)
+
+for i in reversed(range(1, mail_index + 1)):
+    ptt_bot.log(
+        '檢查信件編號',
+        i)
+
+    mail_info = ptt_bot.get_mail(
+        i,
+        search_type=PTT.data_type.mail_search_type.KEYWORD,
+        search_condition='關鍵字'
+    )
+```
+
+多重搜尋條件取得信件範例  
+Since 0.9.27
+
+```python
+search_list = [
+    (PTT.data_type.mail_search_type.KEYWORD, '關鍵字1'),
+    (PTT.data_type.mail_search_type.KEYWORD, '關鍵字2')
+]
+
+mail_index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.MAIL,
+    search_list=search_list)
+
+for i in reversed(range(1, mail_index + 1)):
+    ptt_bot.log(
+        '檢查信件編號',
+        i)
+
+    mail_info = ptt_bot.get_mail(
+        i,
+        search_list=search_list)
+
+    print(mail_info.title)
 ```
 
 取完信件之後，我們來看看怎麼刪除信件  
@@ -1044,13 +1116,19 @@ print(ptt_time)
 ### 取得看板資訊
 
 以下是取得看板資訊 API  
-Since 0.8.32
+Since 0.8.32  
+
+加入 get_post_kind 可以取得發文類別  
+Since 0.9.20
 
 ```python
+
+get_post_kind = False
+
 if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-    board_info = ptt_bot.get_board_info('Gossiping')
+    board_info = ptt_bot.get_board_info('Gossiping', get_post_kind=get_post_kind)
 else:
-    board_info = ptt_bot.get_board_info('WhoAmI')
+    board_info = ptt_bot.get_board_info('WhoAmI', get_post_kind=get_post_kind)
 print('板名: ', board_info.board)
 print('線上人數: ', board_info.online_user)
 print('中文敘述: ', board_info.chinese_des)
@@ -1073,6 +1151,10 @@ print('是否為冷靜模式: ', board_info.is_cool_mode)
 print('是否需要滿十八歲才可進入: ', board_info.is_require18)
 print('發文與推文限制登入次數需多少次以上: ', board_info.require_login_time)
 print('發文與推文限制退文篇數多少篇以下: ', board_info.require_illegal_post)
+
+if get_post_kind:
+    print('發文類別:', ' '.join(board_info.post_kind))
+
 ```
 
 ![](https://i.imgur.com/TIR71MY.png)
@@ -1095,22 +1177,19 @@ ptt_bot.reply_post(
     PTT.data_type.reply_type.BOARD,
     'Test',
     '測試回應到板上，如有打擾抱歉',
-    post_index=reply_post_index
-)
+    post_index=reply_post_index)
 
 ptt_bot.reply_post(
     PTT.data_type.reply_type.MAIL,
     'Test',
     '測試回應到信箱，如有打擾抱歉',
-    post_index=reply_post_index
-)
+    post_index=reply_post_index)
 
 ptt_bot.reply_post(
     PTT.data_type.reply_type.BOARD_MAIL,
     'Test',
     '測試回應到板上還有信箱，如有打擾抱歉',
-    post_index=reply_post_index
-)
+    post_index=reply_post_index)
 ```
 
 ---
@@ -1134,6 +1213,41 @@ Since 0.9.20
 ```python
 url = 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
 board, aid = ptt_bot.get_aid_from_url(url)
+```
+
+---
+### 取得置底文章
+
+以下是取得置底文章的範例  
+Since 0.9.23
+
+```python
+bottom_post_list = ptt_bot.get_bottom_post_list('Gossiping')
+
+if len(bottom_post_list) == 0:
+    print(f'Gossiping 板無置頂文章')
+else:
+    print(f'Gossiping 共有 {len(bottom_post_list)} 置頂文章')
+    for post_info in bottom_post_list:
+        print(post_info.title)
+```
+
+---
+### 刪除文章
+
+以下是刪除文章的範例  
+Since 0.9.25
+
+```python
+try:
+    ptt_bot.del_post('Test', post_index=index)
+    ptt_bot.log(f'Test {index} 刪除成功')
+except PTT.exceptions.NoPermission:
+    ptt_bot.log(f'Test {index} 無刪除權限')
+except PTT.exceptions.DeletedPost:
+    ptt_bot.log(f'Test {index} 已經被刪除')
+except PTT.exceptions.NoSuchPost:
+    ptt_bot.log(f'Test {index} 無此文章')
 ```
 
 ---
@@ -1212,9 +1326,10 @@ ptt_bot.mark_post(
     post_aid='QQaid',
     # Postindex 可搭配 SearchType and SearchCondition 使用
     post_index=10,
-    search_type=search_type, # Optional
-    search_condition=search_condition # Optional
-)
+    # Optional
+    search_type=search_type,
+    # Optional
+    search_condition=search_condition)
 ```
 
 ---
@@ -1232,8 +1347,7 @@ ptt_bot.bucket(
     # 水桶原因
     'Bucket Reason',
     # 水桶對象
-    'CodingMan'
-)
+    'CodingMan')
 ```
 
 ---
@@ -1241,6 +1355,7 @@ ptt_bot.bucket(
 ## 疑難排解
 
 ### 在 jupyter 使用
+### 遭遇 the event loop is already running 錯誤
 
 因為 jupyter 內部也使用了 asyncio 作為協程管理工具  
 會跟 PyPtt 內部的 asyncio 衝突  
@@ -1278,8 +1393,7 @@ ptt_bot.post(
     'PyPtt 程式色碼貼文測試',
     content,
     1,
-    0
-)
+    0)
 ```
 執行結果
 
@@ -1297,3 +1411,12 @@ cd /Applications/Python\ 3.6/
 2. 請從 homebrew 重新安裝 python3
 
 詳細請參考 https://stackoverflow.com/questions/40684543/how-to-make-python-use-ca-certificates-from-mac-os-truststore
+
+---
+
+### 在 Anaconda 中遭遇 certificate verify failed
+應急可使用下列指令關閉 SSL 驗證或者使用 Telnet 連線模式
+
+```shell script
+conda config --set ssl_verify false 
+```

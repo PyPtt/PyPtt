@@ -36,6 +36,7 @@ Fail = None
 Success = None
 Prepare = None
 Info = None
+OutSide = None
 Debug = None
 Again = None
 ErrorIDPW = None
@@ -70,6 +71,7 @@ InputNewPassword = None
 CheckNewPassword = None
 Board = None
 IntoBoard = None
+ReadingBoardInfo = None
 BothInput = None
 NoInput = None
 CatchPost = None
@@ -125,6 +127,7 @@ Select = None
 SignatureFile = None
 NoSignatureFile = None
 SelfSaveDraft = None
+NotSelfSaveDraft = None
 MailBox = None
 NoSuchBoard = None
 HideSensitiveInfor = None
@@ -187,6 +190,10 @@ NoSearchResult = None
 SkipRegistrationForm = None
 url = None
 OnlySecureConnection = None
+CatchBottomPostSuccess = None
+ConfirmDelete = None
+DeleteSuccess = None
+DeletedPost = None
 
 
 def specific_load(input_language, lang_list):
@@ -324,6 +331,12 @@ def load(input_lang):
     Info = specific_load(input_lang, [
         '資訊',
         'INFO',
+    ])
+
+    global OutSide
+    OutSide = specific_load(input_lang, [
+        '外部',
+        'OUTS',
     ])
 
     global Debug
@@ -866,6 +879,12 @@ def load(input_lang):
         'Self-Save Draft',
     ])
 
+    global NotSelfSaveDraft
+    NotSelfSaveDraft = specific_load(input_lang, [
+        '放棄自存底稿',
+        'Not Self-Save Draft',
+    ])
+
     global MailBox
     MailBox = specific_load(input_lang, [
         '郵件選單',
@@ -1236,6 +1255,30 @@ def load(input_lang):
     OnlySecureConnection = specific_load(input_lang, [
         '已設定為只能使用安全連線',
         'Secure connections only',
+    ])
+
+    global CatchBottomPostSuccess
+    CatchBottomPostSuccess = specific_load(input_lang, [
+        '取得置底文章成功',
+        'Catch bottom post success',
+    ])
+
+    global ConfirmDelete
+    ConfirmDelete = specific_load(input_lang, [
+        '確定刪除',
+        'Confirm delete',
+    ])
+
+    global DeleteSuccess
+    DeleteSuccess = specific_load(input_lang, [
+        '刪除成功',
+        'Delete Success',
+    ])
+
+    global DeletedPost
+    DeletedPost = specific_load(input_lang, [
+        '已刪除文章',
+        'Deleted Post',
     ])
 
     # No changes have been made to any settings

@@ -1,10 +1,7 @@
 ﻿import time
 import progressbar
 import threading
-import requests
 import re
-from bs4 import BeautifulSoup
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 try:
     from . import data_type
@@ -30,7 +27,6 @@ except ModuleNotFoundError:
     import command
     import check_value
     import version
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 class API:
@@ -38,9 +34,9 @@ class API:
             self,
             language: int = 0,
             log_level: int = 0,
-            screen_time_out: int = 0,
-            screen_long_time_out: int = 0,
-            screen_post_time_out: int = 0,
+            screen_timeout: int = 0,
+            screen_long_timeout: int = 0,
+            screen_post_timeout: int = 0,
             connect_mode: int = 0,
             port: int = 0,
             log_handler=None,
@@ -55,16 +51,18 @@ class API:
             has_log_handler = True
             set_log_handler_result = True
             try:
-                log_handler(f'PyPtt v {version.V}')
-                log_handler('Developed by CodingMan')
-            except Exception:
+                if log_level != log.level.SILENT:
+                    log_handler(f'PyPtt v {version.V}')
+                    log_handler('Developed by CodingMan')
+            except TypeError:
                 log_handler = None
                 set_log_handler_result = False
         else:
             has_log_handler = False
 
-        print(f'PyPtt v {version.V}')
-        print('Developed by CodingMan')
+        if log_level != log.level.SILENT:
+            print(f'PyPtt v {version.V}')
+            print('Developed by CodingMan')
 
         self._login_status = False
         self.unregistered_user = True
@@ -77,19 +75,19 @@ class API:
             raise TypeError('[PyPtt] language must be integer')
         if not isinstance(log_level, int):
             raise TypeError('[PyPtt] log_level must be integer')
-        if not isinstance(screen_time_out, int):
+        if not isinstance(screen_timeout, int):
             raise TypeError('[PyPtt] screen_timeout must be integer')
-        if not isinstance(screen_long_time_out, int):
+        if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
         if not isinstance(host, int):
             raise TypeError('[PyPtt] host must be integer')
 
-        if screen_time_out != 0:
-            self.config.screen_timeout = screen_time_out
-        if screen_long_time_out != 0:
-            self.config.screen_long_timeout = screen_long_time_out
-        if screen_post_time_out != 0:
-            self.config.screen_post_timeout = screen_post_time_out
+        if screen_timeout != 0:
+            self.config.screen_timeout = screen_timeout
+        if screen_long_timeout != 0:
+            self.config.screen_long_timeout = screen_long_timeout
+        if screen_post_timeout != 0:
+            self.config.screen_post_timeout = screen_post_timeout
 
         if log_level == 0:
             log_level = self.config.log_level
@@ -112,8 +110,7 @@ class API:
                 self.config,
                 log.level.INFO,
                 i18n.log_handler,
-                i18n.Init
-            )
+                i18n.Init)
         elif has_log_handler and not set_log_handler_result:
             log.show_value(
                 self.config,
@@ -122,8 +119,7 @@ class API:
                 [
                     i18n.Init,
                     i18n.Fail
-                ]
-            )
+                ])
 
         if self.config.language == i18n.language.CHINESE:
             log.show_value(
@@ -131,17 +127,15 @@ class API:
                     i18n.ChineseTranditional,
                     i18n.languageModule
                 ],
-                i18n.Init
-            )
+                i18n.Init)
         elif self.config.language == i18n.language.ENGLISH:
             log.show_value(
                 self.config, log.level.INFO, [
                     i18n.English,
                     i18n.languageModule
                 ],
-                i18n.Init
-            )
-
+                i18n.Init)
+        check_value.check(self.config, int, 'connect_mode', connect_mode)
         if connect_mode == 0:
             connect_mode = self.config.connect_mode
         elif not lib_util.check_range(connect_core.connect_mode, connect_mode):
@@ -149,6 +143,7 @@ class API:
         else:
             self.config.connect_mode = connect_mode
 
+        check_value.check(self.config, int, 'port', port)
         if port == 0:
             port = self.config.port
         elif not 0 < port < 65535:
@@ -156,6 +151,7 @@ class API:
         else:
             self.config.port = port
 
+        check_value.check(self.config, int, 'host', host)
         if host == 0:
             host = self.config.host
         elif not lib_util.check_range(data_type.host_type, host):
@@ -170,8 +166,7 @@ class API:
                     i18n.Connect,
                     i18n.host
                 ],
-                i18n.PTT
-            )
+                i18n.PTT)
         elif self.config.host == data_type.host_type.PTT2:
             log.show_value(
                 self.config,
@@ -180,8 +175,7 @@ class API:
                     i18n.Connect,
                     i18n.host
                 ],
-                i18n.PTT2
-            )
+                i18n.PTT2)
         elif self.config.host == data_type.host_type.LOCALHOST:
             log.show_value(
                 self.config,
@@ -190,8 +184,7 @@ class API:
                     i18n.Connect,
                     i18n.host
                 ],
-                i18n.Localhost
-            )
+                i18n.Localhost)
 
         self.connect_core = connect_core.API(self.config)
         self._exist_board_list = list()
@@ -200,13 +193,13 @@ class API:
         self._LastThrowWaterBallTime = 0
         self._ThreadID = threading.get_ident()
         self._goto_board_list = list()
+        self._board_info_list = dict()
 
         log.show_value(
             self.config,
             log.level.DEBUG,
             'ThreadID',
-            self._ThreadID
-        )
+            self._ThreadID)
 
         log.show_value(
             self.config,
@@ -215,8 +208,7 @@ class API:
                 i18n.Library,
                 ' v ' + version.V,
             ],
-            i18n.Init
-        )
+            i18n.Init)
 
     def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
@@ -226,14 +218,14 @@ class API:
             self.config,
             log.level.DEBUG,
             'ThreadID',
-            self._ThreadID
-        )
+            self._ThreadID)
+
         log.show_value(
             self.config,
             log.level.DEBUG,
             'Current thread id',
-            current_thread_id
-        )
+            current_thread_id)
+
         raise exceptions.MultiThreadOperated()
 
     def get_version(self) -> str:
@@ -274,14 +266,12 @@ class API:
             return self._login(
                 ptt_id,
                 password,
-                kick_other_login=kick_other_login
-            )
+                kick_other_login=kick_other_login)
         except exceptions.LoginError:
             return self._login(
                 ptt_id,
                 password,
-                kick_other_login=kick_other_login
-            )
+                kick_other_login=kick_other_login)
 
     def logout(self) -> None:
         self._one_thread()
@@ -298,9 +288,11 @@ class API:
 
         return _api_loginout.logout(self)
 
-    def log(self, msg: str) -> None:
+    def log(self, *msg) -> None:
         self._one_thread()
-        log.log(self.config, log.level.INFO, msg)
+        msg = [str(x) for x in msg]
+        current_msg = ' '.join(msg)
+        log.log(self.config, log.level.OUTSIDE, current_msg)
 
     def get_time(self) -> str:
         self._one_thread()
@@ -442,8 +434,7 @@ class API:
                     search_type,
                     search_condition,
                     search_list,
-                    query
-                )
+                    query)
             except exceptions.ParseError as e:
                 if i == 1:
                     raise e
@@ -470,8 +461,7 @@ class API:
                 log.log(
                     self.config,
                     log.level.DEBUG,
-                    'Wait for retry repost'
-                )
+                    'Wait for retry repost')
                 time.sleep(0.1)
                 continue
 
@@ -481,7 +471,7 @@ class API:
     def _check_board(
             self,
             board: str,
-            check_moderator: bool = False) -> None:
+            check_moderator: bool = False) -> data_type.BoardInfo:
 
         if board.lower() not in self._exist_board_list:
             board_info = self._get_board_info(board, False)
@@ -491,10 +481,13 @@ class API:
             moderators = board_info.moderators
             moderators = [x.lower() for x in moderators]
             self._ModeratorList[board.lower()] = moderators
+            self._board_info_list[board.lower()] = board_info
 
         if check_moderator:
             if self._ID.lower() not in self._ModeratorList[board.lower()]:
                 raise exceptions.NeedModeratorPermission(board)
+
+        return self._board_info_list[board.lower()]
 
     def _get_post(
             self,
@@ -524,11 +517,10 @@ class API:
     def _get_newest_index(
             self,
             index_type: int,
-            board: str = None,
-            # BBS
             search_type: int = 0,
             search_condition: str = None,
-            search_list: list = None) -> int:
+            search_list: list = None,
+            board: str = None) -> int:
 
         check_value.check(
             self.config, int, 'index_type',
@@ -542,10 +534,10 @@ class API:
         return _api_get_newest_index.get_newest_index(
             self,
             index_type,
-            board,
             search_type,
             search_condition,
-            search_list)
+            search_list,
+            board)
 
     def get_newest_index(
             self,
@@ -560,21 +552,38 @@ class API:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.Requirelogin)
 
+        if index_type == data_type.index_type.BBS:
+            check_value.check(
+                self.config, int, 'SearchType', search_type,
+                value_class=data_type.post_search_type)
+
         if index_type == data_type.index_type.MAIL:
             if self.unregistered_user:
                 raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
+            check_value.check(
+                self.config, int, 'SearchType', search_type,
+                value_class=data_type.mail_search_type)
+
         self.config.log_last_value = None
 
-        try:
-            return self._get_newest_index(
-                index_type,
-                board,
-                search_type,
-                search_condition,
-                search_list)
-        except exceptions.NoSearchResult:
-            raise exceptions.NoSearchResult
+        if search_condition is not None:
+            check_value.check(
+                self.config, str,
+                'SearchCondition', search_condition)
+
+        if search_list is not None:
+            check_value.check(
+                self.config, list,
+                'search_list', search_list)
+        check_value.check(self.config, int, 'SearchType', search_type)
+
+        return self._get_newest_index(
+            index_type,
+            search_type,
+            search_condition,
+            search_list,
+            board)
 
     def crawl_board(
             self,
@@ -676,8 +685,7 @@ class API:
                     data_type.index_type.BBS,
                     board=board,
                     search_type=search_type,
-                    search_condition=search_condition
-                )
+                    search_condition=search_condition)
 
                 check_value.check_index_range(
                     self.config,
@@ -685,8 +693,7 @@ class API:
                     start_index,
                     'end_index',
                     end_index,
-                    max_value=newest_index
-                )
+                    max_value=newest_index)
             elif start_aid is not None and end_aid is not None:
                 start_index = self.get_post(
                     board,
@@ -830,110 +837,110 @@ class API:
             return error_post_list, del_post_list
 
         else:
-            if self.config.host == data_type.host_type.PTT2:
-                raise exceptions.HostNotSupport(lib_util.get_current_func_name())
-
-            # 網頁版本爬蟲
-            # https://www.ptt.cc/bbs/index.html
-
-            # 1. 取得總共有幾頁 MaxPage
-            newest_index = self._get_newest_index(
-                data_type.index_type.WEB,
-                board=board)
-            # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
-
-            check_value.check_index_range(
-                self.config,
-                'StartPage',
-                start_page,
-                'EndPage',
-                end_page,
-                max_value=newest_index
-            )
-
-            # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 data_type.PostInfo
-            error_post_list = list()
-            del_post_list = list()
-            # PostAID = ""
-            _url = 'https://www.ptt.cc/bbs/'
-            index = str(newest_index)
-            if self.config.log_level == log.level.INFO:
-                PB = progressbar.ProgressBar(
-                    max_value=end_page - start_page + 1,
-                    redirect_stdout=True
-                )
-
-            def deleted_post(post_title):
-                if post_title.startswith('('):
-                    if '本文' in post_title:
-                        return data_type.post_delete_status.AUTHOR
-                    elif post_title.startswith('(已被'):
-                        return data_type.post_delete_status.MODERATOR
-                    else:
-                        return data_type.post_delete_status.UNKNOWN
-                else:
-                    return data_type.post_delete_status.NOT_DELETED
-
-            for index in range(start_page, newest_index + 1):
-                log.show_value(
-                    self.config,
-                    log.level.DEBUG,
-                    'CurrentPage',
-                    index
-                )
-
-                url = _url + board + '/index' + str(index) + '.html'
-                r = requests.get(url, cookies={'over18': '1'})
-                if r.status_code != requests.codes.ok:
-                    raise exceptions.NoSuchBoard(self.config, board)
-                soup = BeautifulSoup(r.text, 'html.parser')
-
-                for div in soup.select('div.r-ent'):
-                    web = div.select('div.title a')
-                    post = {
-                        'author': div.select('div.author')[0].text,
-                        'title': div.select('div.title')[0].text.strip('\n').strip(),
-                        'web': web[0].get('href') if web else ''
-                    }
-                    if post['title'].startswith('('):
-                        del_post_list.append(post['title'])
-                        if post['title'].startswith('(本文'):
-                            if '[' in post['title']:
-                                post['author'] = post['title'].split(
-                                    '[')[1].split(']')[0]
-                            else:
-                                post['author'] = post['title'].split('<')[
-                                    1].split('>')[0]
-                        else:
-                            post['author'] = post['title'].split('<')[
-                                1].split('>')[0]
-
-                    post = data_type.PostInfo(
-                        board=board,
-                        author=post['author'],
-                        title=post['title'],
-                        web_url='https://www.ptt.cc' + post['web'],
-                        delete_status=deleted_post(post['title'])
-                    )
-                    post_handler(post)
-
-                if self.config.log_level == log.level.INFO:
-                    PB.update(index - start_page)
-
-            log.show_value(
-                self.config,
-                log.level.DEBUG,
-                'DelPostList',
-                del_post_list
-            )
-
-            # 4. 把組合出來的 Post 塞給 handler
-
-            # 5. 顯示 progress bar
-            if self.config.log_level == log.level.INFO:
-                PB.finish()
-
-            return error_post_list, del_post_list
+            pass
+            # if self.config.host == data_type.host_type.PTT2:
+            #     raise exceptions.HostNotSupport(lib_util.get_current_func_name())
+            #
+            # # 網頁版本爬蟲
+            # # https://www.ptt.cc/bbs/index.html
+            #
+            # # 1. 取得總共有幾頁 MaxPage
+            # newest_index = self._get_newest_index(
+            #     data_type.index_type.WEB,
+            #     board=board)
+            # # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
+            #
+            # check_value.check_index_range(
+            #     self.config,
+            #     'StartPage',
+            #     start_page,
+            #     'EndPage',
+            #     end_page,
+            #     max_value=newest_index
+            # )
+            #
+            # # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 data_type.PostInfo
+            # error_post_list = list()
+            # del_post_list = list()
+            # # PostAID = ""
+            # _url = 'https://www.ptt.cc/bbs/'
+            # index = str(newest_index)
+            # if self.config.log_level == log.level.INFO:
+            #     PB = progressbar.ProgressBar(
+            #         max_value=end_page - start_page + 1,
+            #         redirect_stdout=True
+            #     )
+            #
+            # def deleted_post(post_title):
+            #     if post_title.startswith('('):
+            #         if '本文' in post_title:
+            #             return data_type.post_delete_status.AUTHOR
+            #         elif post_title.startswith('(已被'):
+            #             return data_type.post_delete_status.MODERATOR
+            #         else:
+            #             return data_type.post_delete_status.UNKNOWN
+            #     else:
+            #         return data_type.post_delete_status.NOT_DELETED
+            #
+            # for index in range(start_page, newest_index + 1):
+            #     log.show_value(
+            #         self.config,
+            #         log.level.DEBUG,
+            #         'CurrentPage',
+            #         index)
+            #
+            #     url = _url + board + '/index' + str(index) + '.html'
+            #     r = requests.get(url, cookies={'over18': '1'})
+            #     if r.status_code != requests.codes.ok:
+            #         raise exceptions.NoSuchBoard(self.config, board)
+            #     soup = BeautifulSoup(r.text, 'html.parser')
+            #
+            #     for div in soup.select('div.r-ent'):
+            #         web = div.select('div.title a')
+            #         post = {
+            #             'author': div.select('div.author')[0].text,
+            #             'title': div.select('div.title')[0].text.strip('\n').strip(),
+            #             'web': web[0].get('href') if web else ''
+            #         }
+            #         if post['title'].startswith('('):
+            #             del_post_list.append(post['title'])
+            #             if post['title'].startswith('(本文'):
+            #                 if '[' in post['title']:
+            #                     post['author'] = post['title'].split(
+            #                         '[')[1].split(']')[0]
+            #                 else:
+            #                     post['author'] = post['title'].split('<')[
+            #                         1].split('>')[0]
+            #             else:
+            #                 post['author'] = post['title'].split('<')[
+            #                     1].split('>')[0]
+            #
+            #         post = data_type.PostInfo(
+            #             board=board,
+            #             author=post['author'],
+            #             title=post['title'],
+            #             web_url='https://www.ptt.cc' + post['web'],
+            #             delete_status=deleted_post(post['title'])
+            #         )
+            #         post_handler(post)
+            #
+            #     if self.config.log_level == log.level.INFO:
+            #         PB.update(index - start_page)
+            #
+            # log.show_value(
+            #     self.config,
+            #     log.level.DEBUG,
+            #     'DelPostList',
+            #     del_post_list
+            # )
+            #
+            # # 4. 把組合出來的 Post 塞給 handler
+            #
+            # # 5. 顯示 progress bar
+            # if self.config.log_level == log.level.INFO:
+            #     PB.finish()
+            #
+            # return error_post_list, del_post_list
 
     def post(
             self,
@@ -1313,7 +1320,8 @@ class API:
             ptt_id: str,
             title: str,
             content: str,
-            sign_file) -> None:
+            sign_file,
+            backup: bool = True) -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -1357,7 +1365,8 @@ class API:
             ptt_id,
             title,
             content,
-            sign_file)
+            sign_file,
+            backup)
 
         if self._mailbox_full:
             self.logout()
@@ -1640,7 +1649,12 @@ class API:
 
         return _api_get_board_info.get_board_info(self, board, get_post_kind, get_board_limit, call_by_others)
 
-    def get_mail(self, index):
+    def get_mail(
+            self,
+            index: int,
+            search_type: int = 0,
+            search_condition: str = None,
+            search_list: list = None):
 
         self._one_thread()
 
@@ -1662,7 +1676,12 @@ class API:
         except ModuleNotFoundError:
             import _api_mail
 
-        return _api_mail.get_mail(self, index)
+        return _api_mail.get_mail(
+            self,
+            index,
+            search_type,
+            search_condition,
+            search_list)
 
     def del_mail(self, index):
         self._one_thread()
@@ -1685,11 +1704,13 @@ class API:
 
         return _api_mail.del_mail(self, index)
 
-    def change_pw(self, new_password):
+    def change_pw(self, new_password) -> None:
         self._one_thread()
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        self.config.log_last_value = None
 
         new_password = new_password[:8]
 
@@ -1748,7 +1769,96 @@ class API:
 
         return board, aid
 
-    def _goto_board(self, board: str, refresh: bool = False) -> None:
+    def get_bottom_post_list(self, board) -> list:
+
+        self._one_thread()
+
+        if not self._login_status:
+            raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        self.config.log_last_value = None
+
+        check_value.check(self.config, str, 'board', board)
+        self._check_board(board)
+
+        try:
+            from . import _api_get_bottom_post_list
+        except ModuleNotFoundError:
+            import _api_get_bottom_post_list
+
+        return _api_get_bottom_post_list.get_bottom_post_list(self, board)
+
+    def del_post(
+            self,
+            board,
+            post_aid: str = None,
+            post_index: int = 0) -> None:
+        self._one_thread()
+
+        if not self._login_status:
+            raise exceptions.Requirelogin(i18n.Requirelogin)
+
+        self.config.log_last_value = None
+
+        check_value.check(self.config, str, 'Board', board)
+        if post_aid is not None:
+            check_value.check(self.config, str, 'PostAID', post_aid)
+        check_value.check(self.config, int, 'PostIndex', post_index)
+
+        if len(board) == 0:
+            raise ValueError(log.merge(
+                self.config,
+                [
+                    i18n.Board,
+                    i18n.ErrorParameter,
+                    board
+                ]))
+
+        if post_index != 0 and isinstance(post_aid, str):
+            raise ValueError(log.merge(
+                self.config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter,
+                    i18n.BothInput
+                ]))
+
+        if post_index == 0 and post_aid is None:
+            raise ValueError(log.merge(
+                self.config,
+                [
+                    'PostIndex',
+                    'PostAID',
+                    i18n.ErrorParameter,
+                    i18n.NoInput
+                ]))
+
+        if post_index != 0:
+            newest_index = self._get_newest_index(
+                data_type.index_type.BBS,
+                board=board)
+            check_value.check_index(
+                self.config,
+                'PostIndex',
+                post_index,
+                newest_index)
+
+        board_info = self._check_board(board)
+
+        try:
+            from . import _api_del_post
+        except ModuleNotFoundError:
+            import _api_del_post
+
+        return _api_del_post.del_post(
+            self,
+            board_info,
+            board,
+            post_aid,
+            post_index)
+
+    def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
 
         cmd_list = list()
         cmd_list.append(command.GoMainMenu)
@@ -1792,8 +1902,25 @@ class API:
             else:
                 current_refresh = False
         self._goto_board_list.append(board.lower())
-
         self.connect_core.send(cmd, target_list, refresh=current_refresh)
+
+        if end:
+            cmd_list = list()
+            cmd_list.append('1')
+            cmd_list.append(command.Enter)
+            cmd_list.append('$')
+            cmd = ''.join(cmd_list)
+
+            target_list = [
+                connect_core.TargetUnit(
+                    '',
+                    screens.Target.InBoard,
+                    break_detect=True,
+                    log_level=log.level.DEBUG
+                ),
+            ]
+
+            self.connect_core.send(cmd, target_list)
 
 
 if __name__ == '__main__':

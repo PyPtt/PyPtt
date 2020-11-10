@@ -37,8 +37,7 @@ def logout(api) -> None:
                 i18n.Success,
             ],
             '任意鍵',
-            break_detect=True,
-        ),
+            break_detect=True),
     ]
 
     log.log(
@@ -47,8 +46,7 @@ def logout(api) -> None:
         [
             i18n.Start,
             i18n.logout
-        ]
-    )
+        ])
 
     try:
         api.connect_core.send(cmd, target_list)
@@ -64,8 +62,7 @@ def logout(api) -> None:
         api.config,
         log.level.INFO,
         i18n.logout,
-        i18n.Done
-    )
+        i18n.Done)
 
 
 def login(
@@ -83,20 +80,19 @@ def login(
             return i18n.kick_other_login
         return i18n.Notkick_other_login
 
-    def kick_other_loginResponse(Screen):
+    def kick_other_loginResponse(screen):
         if api.config.kick_other_login:
             return 'y' + command.Enter
         return 'n' + command.Enter
 
     api._mailbox_full = False
 
-    def mailbox_full():
-        log.log(
-            api.config,
-            log.level.INFO,
-            i18n.MailBoxFull
-        )
-        api._mailbox_full = True
+    # def mailbox_full():
+    #     log.log(
+    #         api.config,
+    #         log.level.INFO,
+    #         i18n.MailBoxFull)
+    #     api._mailbox_full = True
 
     def register_processing(screen):
         pattern = re.compile('[\d]+')
@@ -122,8 +118,7 @@ def login(
             i18n.login,
             i18n.ID
         ],
-        ptt_id
-    )
+        ptt_id)
 
     target_list = [
         connect_core.TargetUnit(
@@ -132,24 +127,24 @@ def login(
             screens.Target.InMailBox,
             # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
             response=command.GoMainMenu + 'A' + command.Right + command.Left,
-            break_detect=True
-        ),
+            break_detect=True),
+        connect_core.TargetUnit(
+            i18n.MailBox,
+            screens.Target.InMailMenu,
+            response=command.GoMainMenu),
         connect_core.TargetUnit(
             i18n.loginSuccess,
             screens.Target.MainMenu,
-            break_detect=True
-        ),
+            break_detect=True),
         connect_core.TargetUnit(
             i18n.GoMainMenu,
             '【看板列表】',
-            response=command.GoMainMenu,
-        ),
+            response=command.GoMainMenu),
         connect_core.TargetUnit(
             i18n.ErrorIDPW,
             '密碼不對',
             break_detect=True,
-            exceptions_=exceptions.WrongIDorPassword()
-        ),
+            exceptions_=exceptions.WrongIDorPassword()),
         connect_core.TargetUnit(
             i18n.ErrorIDPW,
             '請重新輸入',
@@ -160,57 +155,46 @@ def login(
             i18n.LoginTooOften,
             '登入太頻繁',
             break_detect=True,
-            exceptions_=exceptions.LoginTooOften()
-        ),
+            exceptions_=exceptions.LoginTooOften()),
         connect_core.TargetUnit(
             i18n.SystemBusyTryLater,
             '系統過載',
-            break_detect=True,
-        ),
+            break_detect=True),
         connect_core.TargetUnit(
             i18n.DelWrongPWRecord,
             '您要刪除以上錯誤嘗試的記錄嗎',
-            response='y' + command.Enter,
-        ),
+            response='y' + command.Enter),
         connect_core.TargetUnit(
             i18n.PostNotFinish,
             '請選擇暫存檔 (0-9)[0]',
-            response=command.Enter,
-        ),
+            response=command.Enter),
         connect_core.TargetUnit(
             i18n.PostNotFinish,
             '有一篇文章尚未完成',
-            response='Q' + command.Enter,
-        ),
+            response='Q' + command.Enter),
         connect_core.TargetUnit(
             i18n.SigningUnPleaseWait,
-            '登入中，請稍候',
-        ),
+            '登入中，請稍候'),
         connect_core.TargetUnit(
             kick_other_loginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
-            response=kick_other_loginResponse,
-        ),
+            response=kick_other_loginResponse),
         connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '◆ 您的註冊申請單尚在處理中',
             response=command.Enter,
-            handler=register_processing
-        ),
+            handler=register_processing),
         connect_core.TargetUnit(
             i18n.AnyKeyContinue,
             '任意鍵',
-            response=' '
-        ),
+            response=' '),
         connect_core.TargetUnit(
             i18n.SigningUpdate,
-            '正在更新與同步線上使用者及好友名單',
-        ),
+            '正在更新與同步線上使用者及好友名單'),
         connect_core.TargetUnit(
             i18n.GoMainMenu,
             '【分類看板】',
-            response=command.GoMainMenu,
-        ),
+            response=command.GoMainMenu),
         connect_core.TargetUnit(
             i18n.ErrorLoginRichPeopleGoMainMenu,
             [
@@ -221,28 +205,23 @@ def login(
                 '暱稱',
                 '數目'
             ],
-            response=command.GoMainMenu,
-        ),
+            response=command.GoMainMenu),
         connect_core.TargetUnit(
             i18n.SkipRegistrationForm,
             '您確定要填寫註冊單嗎',
-            response=command.Enter * 3
-        ),
+            response=command.Enter * 3),
         connect_core.TargetUnit(
             i18n.SkipRegistrationForm,
             '以上資料是否正確',
-            response='y' + command.Enter
-        ),
+            response='y' + command.Enter),
         connect_core.TargetUnit(
             i18n.SkipRegistrationForm,
             '另外若輸入後發生認證碼錯誤請先確認輸入是否為最後一封',
-            response='x' + command.Enter
-        ),
+            response='x' + command.Enter),
         connect_core.TargetUnit(
             i18n.SkipRegistrationForm,
             '此帳號已設定為只能使用安全連線',
-            exceptions_=exceptions.OnlySecureConnection()
-        )
+            exceptions_=exceptions.OnlySecureConnection())
     ]
     #
     # #
@@ -288,15 +267,13 @@ def login(
             log.log(
                 api.config,
                 log.level.INFO,
-                i18n.UseMailboxAPIWillLogoutAfterExecution
-            )
+                i18n.UseMailboxAPIWillLogoutAfterExecution)
 
         target_list = [
             connect_core.TargetUnit(
                 i18n.loginSuccess,
                 screens.Target.MainMenu,
-                break_detect=True
-            )
+                break_detect=True)
         ]
 
         cmd = command.GoMainMenu + 'A' + command.Right + command.Left
@@ -305,8 +282,7 @@ def login(
             cmd,
             target_list,
             screen_timeout=api.config.screen_long_timeout,
-            secret=True
-        )
+            secret=True)
         ori_screen = api.connect_core.get_screen_queue()[-1]
 
     if target_list[index].get_display_msg() != i18n.loginSuccess:
@@ -318,8 +294,7 @@ def login(
         log.log(
             api.config,
             log.level.DEBUG,
-            i18n.NewCursor
-        )
+            i18n.NewCursor)
     else:
         api.cursor = data_type.Cursor.OLD
         log.log(
@@ -357,7 +332,6 @@ def login(
             api.config,
             log.level.INFO,
             i18n.PicksInRegister,
-            api.process_picks
-        )
+            api.process_picks)
 
     api._login_status = True

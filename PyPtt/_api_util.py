@@ -6,7 +6,6 @@ try:
     from . import connect_core
     from . import log
     from . import screens
-    from . import exceptions
     from . import command
 except ModuleNotFoundError:
     import data_type
@@ -14,7 +13,6 @@ except ModuleNotFoundError:
     import connect_core
     import log
     import screens
-    import exceptions
     import command
 
 
@@ -76,7 +74,7 @@ def get_content(api, post_mode: bool = True):
 
     content_start = '───────────────────────────────────────'
     content_end = list()
-    content_end.append('--\n※ 發信站: 批踢踢實業坊(ptt.cc)')
+    content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
 
@@ -218,8 +216,8 @@ def get_mailbox_capacity(api):
         api.config,
         log.level.DEBUG,
         'capacity_line',
-        capacity_line
-    )
+        capacity_line)
+
     pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
     if pattern_result is not None:
         # print(pattern_result.group(0))
@@ -229,13 +227,214 @@ def get_mailbox_capacity(api):
             api.config,
             log.level.DEBUG,
             'current_capacity',
-            current_capacity
-        )
+            current_capacity)
+
         log.show_value(
             api.config,
             log.level.DEBUG,
             'max_capacity',
-            max_capacity
-        )
+            max_capacity)
+
         return current_capacity, max_capacity
     return 0, 0
+
+
+def parse_query_post(api, ori_screen):
+    lock_post = False
+    try:
+        cursor_line = [line for line in ori_screen.split(
+            '\n') if line.strip().startswith(api.cursor)][0]
+    except Exception as e:
+        print(api.cursor)
+        print(ori_screen)
+        raise e
+
+    post_author = cursor_line
+    if '□' in post_author:
+        post_author = post_author[:post_author.find('□')].strip()
+    elif 'R:' in post_author:
+        post_author = post_author[:post_author.find('R:')].strip()
+    elif ' 轉 ' in post_author:
+        post_author = post_author[:post_author.find('轉')].strip()
+    elif ' 鎖 ' in post_author:
+        post_author = post_author[:post_author.find('鎖')].strip()
+        lock_post = True
+    post_author = post_author[post_author.rfind(' '):].strip()
+
+    post_title = cursor_line
+    if ' □ ' in post_title:
+        post_title = post_title[post_title.find('□') + 1:].strip()
+    elif ' R:' in post_title:
+        post_title = post_title[post_title.find('R:'):].strip()
+    elif ' 轉 ' in post_title:
+        # print(f'[{PostTitle}]=========>')
+        post_title = post_title[post_title.find('轉') + 1:].strip()
+        post_title = f'Fw: {post_title}'
+        # print(f'=========>[{PostTitle}]')
+    elif ' 鎖 ' in post_title:
+        post_title = post_title[post_title.find('鎖') + 1:].strip()
+
+    ori_screen_temp = ori_screen[ori_screen.find('┌──────────'):]
+    ori_screen_temp = ori_screen_temp[:ori_screen_temp.find(
+        '└─────────────')
+                      ]
+
+    aid_line = [line for line in ori_screen.split(
+        '\n') if line.startswith('│ 文章代碼(AID)')]
+
+    post_aid = None
+    if len(aid_line) == 1:
+        aid_line = aid_line[0]
+        pattern = re.compile('#[\w|-]+')
+        pattern_result = pattern.search(aid_line)
+        post_aid = pattern_result.group(0)[1:]
+
+    pattern = re.compile('文章網址: https:[\S]+html')
+    pattern_result = pattern.search(ori_screen_temp)
+    if pattern_result is None:
+        post_web = None
+    else:
+        post_web = pattern_result.group(0)[6:]
+
+    pattern = re.compile('這一篇文章值 [\d]+ Ptt幣')
+    pattern_result = pattern.search(ori_screen_temp)
+    if pattern_result is None:
+        # 特殊文章無價格
+        post_money = -1
+    else:
+        post_money = pattern_result.group(0)[7:]
+        post_money = post_money[:post_money.find(' ')]
+        post_money = int(post_money)
+
+    pattern = re.compile('[\d]+\/[\d]+')
+    pattern_result = pattern.search(cursor_line)
+    if pattern_result is None:
+        list_date = None
+    else:
+        list_date = pattern_result.group(0)
+        list_date = list_date[-5:]
+    # print(list_date)
+
+    # >  7485   9 8/09 CodingMan    □ [閒聊] PTT Library 更新
+    # > 79189 M 1 9/17 LittleCalf   □ [公告] 禁言退文公告
+    # >781508 +爆 9/17 jodojeda     □ [新聞] 國人吃魚少 學者：應把吃魚當成輕鬆愉快
+    # >781406 +X1 9/17 kingofage111 R: [申請] ReDmango 請辭Gossiping板主職務
+
+    pattern = re.compile('[\d]+')
+    pattern_result = pattern.search(cursor_line)
+    if pattern_result is not None:
+        post_index = int(pattern_result.group(0))
+
+    push_number = cursor_line
+    # print(f'2>{push_number}<')
+    push_number = push_number[7:11]
+    # print(push_number)
+    push_number = push_number.split(' ')
+    # print(PushNumber)
+    push_number = list(filter(None, push_number))
+    # print(push_number)
+
+    if len(push_number) == 0:
+        push_number = None
+    else:
+        push_number = push_number[-1]
+        # print(PushNumber)
+
+        if push_number.startswith('+') or push_number.startswith('~'):
+            push_number = push_number[1:]
+            # print(PushNumber)
+        if push_number.lower().startswith('m'):
+            push_number = push_number[1:]
+            # print(PushNumber)
+        if push_number.lower().startswith('!'):
+            push_number = push_number[1:]
+
+        if push_number.lower().startswith('s'):
+            push_number = push_number[1:]
+
+        if push_number.lower().startswith('='):
+            push_number = push_number[1:]
+
+        if len(push_number) == 0:
+            push_number = None
+
+    # print(PushNumber)
+    log.show_value(api.config, log.level.DEBUG,
+                   'PostAuthor', post_author)
+    log.show_value(api.config, log.level.DEBUG, 'PostTitle', post_title)
+    log.show_value(api.config, log.level.DEBUG, 'PostAID', post_aid)
+    log.show_value(api.config, log.level.DEBUG, 'PostWeb', post_web)
+    log.show_value(api.config, log.level.DEBUG, 'PostMoney', post_money)
+    log.show_value(api.config, log.level.DEBUG, 'ListDate', list_date)
+    log.show_value(api.config, log.level.DEBUG,
+                   'PushNumber', push_number)
+
+    return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
+
+
+def get_search_condition_cmd(
+        api,
+        index_type: int,
+        search_type: int = 0,
+        search_condition: str = None,
+        search_list: list = None,
+        # BBS
+        board: str = None):
+    cmd_list = list()
+
+    normal_newest_index = -1
+    if search_condition is not None:
+
+        if index_type == data_type.index_type.BBS:
+            normal_newest_index = api.get_newest_index(index_type, board=board)
+        else:
+            normal_newest_index = api.get_newest_index(index_type)
+
+        if search_type == data_type.post_search_type.KEYWORD:
+            cmd_list.append('/')
+        elif search_type == data_type.post_search_type.AUTHOR:
+            cmd_list.append('a')
+        elif search_type == data_type.post_search_type.MARK:
+            cmd_list.append('G')
+
+        if index_type == data_type.index_type.BBS:
+            if search_type == data_type.post_search_type.PUSH:
+                cmd_list.append('Z')
+            elif search_type == data_type.post_search_type.MONEY:
+                cmd_list.append('A')
+
+        cmd_list.append(search_condition)
+        cmd_list.append(command.Enter)
+
+    if search_list is not None:
+
+        if normal_newest_index == -1:
+            if index_type == data_type.index_type.BBS:
+                normal_newest_index = api.get_newest_index(index_type, board=board)
+            else:
+                normal_newest_index = api.get_newest_index(index_type)
+
+        for search_type_, search_condition_ in search_list:
+
+            # print('==>', search_type_, search_condition_)
+
+            if search_type_ == data_type.post_search_type.KEYWORD:
+                cmd_list.append('/')
+            elif search_type_ == data_type.post_search_type.AUTHOR:
+                cmd_list.append('a')
+            elif search_type_ == data_type.post_search_type.MARK:
+                cmd_list.append('G')
+            elif index_type == data_type.index_type.BBS:
+                if search_type_ == data_type.post_search_type.PUSH:
+                    cmd_list.append('Z')
+                elif search_type_ == data_type.post_search_type.MONEY:
+                    cmd_list.append('A')
+                else:
+                    continue
+            else:
+                continue
+
+            cmd_list.append(search_condition_)
+            cmd_list.append(command.Enter)
+
+    return cmd_list, normal_newest_index

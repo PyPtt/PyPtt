@@ -81,8 +81,7 @@ def push(
 
     index = api.connect_core.send(
         cmd,
-        target_list
-    )
+        target_list)
 
     if index == -1:
         if post_aid is not None:
@@ -138,5 +137,4 @@ def push(
 
     api.connect_core.send(
         cmd,
-        target_list
-    )
+        target_list)

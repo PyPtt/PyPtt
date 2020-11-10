@@ -33,6 +33,7 @@ def get_board_info(
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
 
+    nuser = None
     for line in ori_screen.split('\n'):
         if '編號' not in line:
             continue
@@ -43,6 +44,9 @@ def get_board_info(
 
         nuser = line
         break
+
+    if nuser is None:
+        raise exceptions.NoSuchBoard(api.config, board)
 
     # print('------------------------')
     # print('nuser', nuser)

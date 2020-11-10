@@ -1,17 +1,11 @@
 try:
-    from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
-    from . import screens
     from . import exceptions
     from . import command
 except ModuleNotFoundError:
-    import data_type
     import i18n
     import connect_core
-    import log
-    import screens
     import exceptions
     import command
 
@@ -33,36 +27,30 @@ def change_pw(
         connect_core.TargetUnit(
             i18n.ErrorPW,
             '您輸入的密碼不正確',
-            exceptions_=exceptions.WrongPassword()
-        ),
+            exceptions_=exceptions.WrongPassword()),
         connect_core.TargetUnit(
             i18n.confirm,
             '請您確定(Y/N)？',
-            response='Y' + command.Enter
-        ),
+            response='Y' + command.Enter),
         connect_core.TargetUnit(
             i18n.CheckNewPassword,
             '檢查新密碼',
             response=new_password + command.Enter,
-            max_match=1
-        ),
+            max_match=1),
         connect_core.TargetUnit(
             i18n.InputNewPassword,
             '設定新密碼',
             response=new_password + command.Enter,
-            max_match=1
-        ),
+            max_match=1),
         connect_core.TargetUnit(
             i18n.InputOriginPassword,
             '輸入原密碼',
             response=api._Password + command.Enter,
-            max_match=1
-        ),
+            max_match=1),
         connect_core.TargetUnit(
             i18n.Done,
             '設定個人資料與密碼',
-            break_detect=True
-        ),
+            break_detect=True),
     ]
 
     index = api.connect_core.send(

@@ -127,8 +127,7 @@ setup(
         'progressbar2',
         'websockets',
         'uao',
-        'beautifulsoup4',
-        'requests'
+        'SingleLog'
     ],
 
     # List additional groups of dependencies here (e.g. development

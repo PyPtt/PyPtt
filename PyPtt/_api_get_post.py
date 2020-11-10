@@ -29,7 +29,6 @@ def get_post(
         search_condition: str = None,
         search_list: list = None,
         query: bool = False) -> data_type.PostInfo:
-
     api._goto_board(board)
 
     cmd_list = list()
@@ -88,8 +87,7 @@ def get_post(
             screens.Target.QueryPost,
             break_detect=True,
             refresh=False,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.PostDeleted,
@@ -97,13 +95,11 @@ def get_post(
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.level.DEBUG
-        ),
+            log_level=log.level.DEBUG),
         connect_core.TargetUnit(
             i18n.NoSuchBoard,
             screens.Target.MainMenu_Exiting,
-            exceptions_=exceptions.NoSuchBoard(api.config, board)
-        ),
+            exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
 
     index = api.connect_core.send(cmd, target_list)
@@ -119,8 +115,7 @@ def get_post(
             api.config,
             log.level.DEBUG,
             'OriScreen',
-            ori_screen
-        )
+            ori_screen)
 
         cursor_line = [line for line in ori_screen.split(
             '\n') if line.startswith(api.cursor)]
@@ -133,8 +128,7 @@ def get_post(
             api.config,
             log.level.DEBUG,
             'CursorLine',
-            cursor_line
-        )
+            cursor_line)
 
         pattern = re.compile('[\d]+\/[\d]+')
         pattern_result = pattern.search(cursor_line)
@@ -173,139 +167,14 @@ def get_post(
             author=post_author,
             list_date=list_date,
             delete_status=post_del_status,
-            format_check=True
-        )
+            format_check=True)
 
     elif index == 0:
 
-        lock_post = False
-        try:
-            cursor_line = [line for line in ori_screen.split(
-                '\n') if line.strip().startswith(api.cursor)][0]
-        except Exception as e:
-            print(api.cursor)
-            print(ori_screen)
-            raise e
-
-        post_author = cursor_line
-        if '□' in post_author:
-            post_author = post_author[:post_author.find('□')].strip()
-        elif 'R:' in post_author:
-            post_author = post_author[:post_author.find('R:')].strip()
-        elif ' 轉 ' in post_author:
-            post_author = post_author[:post_author.find('轉')].strip()
-        elif ' 鎖 ' in post_author:
-            post_author = post_author[:post_author.find('鎖')].strip()
-            lock_post = True
-        post_author = post_author[post_author.rfind(' '):].strip()
-
-        post_title = cursor_line
-        if ' □ ' in post_title:
-            post_title = post_title[post_title.find('□') + 1:].strip()
-        elif ' R:' in post_title:
-            post_title = post_title[post_title.find('R:'):].strip()
-        elif ' 轉 ' in post_title:
-            # print(f'[{PostTitle}]=========>')
-            post_title = post_title[post_title.find('轉') + 1:].strip()
-            post_title = f'Fw: {post_title}'
-            # print(f'=========>[{PostTitle}]')
-        elif ' 鎖 ' in post_title:
-            post_title = post_title[post_title.find('鎖') + 1:].strip()
-
-        ori_screen_temp = ori_screen[ori_screen.find('┌──────────'):]
-        ori_screen_temp = ori_screen_temp[:ori_screen_temp.find(
-            '└─────────────')
-                          ]
-
-        aid_line = [line for line in ori_screen.split(
-            '\n') if line.startswith('│ 文章代碼(AID)')]
-
-        if len(aid_line) == 1:
-            aid_line = aid_line[0]
-            pattern = re.compile('#[\w|-]+')
-            pattern_result = pattern.search(aid_line)
-            post_aid = pattern_result.group(0)[1:]
-
-        pattern = re.compile('文章網址: https:[\S]+html')
-        pattern_result = pattern.search(ori_screen_temp)
-        if pattern_result is None:
-            post_web = None
-        else:
-            post_web = pattern_result.group(0)[6:]
-
-        pattern = re.compile('這一篇文章值 [\d]+ Ptt幣')
-        pattern_result = pattern.search(ori_screen_temp)
-        if pattern_result is None:
-            # 特殊文章無價格
-            post_money = -1
-        else:
-            post_money = pattern_result.group(0)[7:]
-            post_money = post_money[:post_money.find(' ')]
-            post_money = int(post_money)
-
-        pattern = re.compile('[\d]+\/[\d]+')
-        pattern_result = pattern.search(cursor_line)
-        if pattern_result is None:
-            list_date = None
-        else:
-            list_date = pattern_result.group(0)
-            list_date = list_date[-5:]
-        # print(list_date)
-
-        # >  7485   9 8/09 CodingMan    □ [閒聊] PTT Library 更新
-        # > 79189 M 1 9/17 LittleCalf   □ [公告] 禁言退文公告
-        # >781508 +爆 9/17 jodojeda     □ [新聞] 國人吃魚少 學者：應把吃魚當成輕鬆愉快
-        # >781406 +X1 9/17 kingofage111 R: [申請] ReDmango 請辭Gossiping板主職務
-
-        if post_index == 0:
-            pattern = re.compile('[\d]+')
-            pattern_result = pattern.search(cursor_line)
-            if pattern_result is not None:
-                post_index = int(pattern_result.group(0))
-
-        push_number = cursor_line
-        # print(f'2>{push_number}<')
-        push_number = push_number[7:12]
-        # print(push_number)
-        push_number = push_number.split(' ')
-        # print(PushNumber)
-        push_number = list(filter(None, push_number))
-        # print(PushNumber)
-
-        if len(push_number) == 0:
-            push_number = None
-        else:
-            push_number = push_number[-1]
-            # print(PushNumber)
-
-            if push_number.startswith('+') or push_number.startswith('~'):
-                push_number = push_number[1:]
-                # print(PushNumber)
-            if push_number.lower().startswith('m'):
-                push_number = push_number[1:]
-                # print(PushNumber)
-            if push_number.lower().startswith('!'):
-                push_number = push_number[1:]
-
-            if push_number.lower().startswith('s'):
-                push_number = push_number[1:]
-
-            if push_number.lower().startswith('='):
-                push_number = push_number[1:]
-
-            if len(push_number) == 0:
-                push_number = None
-
-        # print(PushNumber)
-        log.show_value(api.config, log.level.DEBUG,
-                       'PostAuthor', post_author)
-        log.show_value(api.config, log.level.DEBUG, 'PostTitle', post_title)
-        log.show_value(api.config, log.level.DEBUG, 'PostAID', post_aid)
-        log.show_value(api.config, log.level.DEBUG, 'PostWeb', post_web)
-        log.show_value(api.config, log.level.DEBUG, 'PostMoney', post_money)
-        log.show_value(api.config, log.level.DEBUG, 'ListDate', list_date)
-        log.show_value(api.config, log.level.DEBUG,
-                       'PushNumber', push_number)
+        lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index = \
+            _api_util.parse_query_post(
+                api,
+                ori_screen)
 
         if lock_post:
             post = data_type.PostInfo(
@@ -319,8 +188,8 @@ def get_post(
                 list_date=list_date,
                 format_check=True,
                 push_number=push_number,
-                lock=True,
-            )
+                lock=True)
+
             return post
 
     if query:
@@ -334,8 +203,7 @@ def get_post(
             money=post_money,
             list_date=list_date,
             format_check=True,
-            push_number=push_number,
-        )
+            push_number=push_number)
         return post
 
     origin_post, has_control_code = _api_util.get_content(api)
@@ -353,8 +221,7 @@ def get_post(
             control_code=has_control_code,
             format_check=False,
             push_number=push_number,
-            unconfirmed=api.Unconfirmed,
-        )
+            unconfirmed=api.Unconfirmed)
         return post
 
     # print('=' * 20)
@@ -438,8 +305,7 @@ def get_post(
         api.config,
         log.level.DEBUG,
         i18n.Author,
-        post_author
-    )
+        post_author)
 
     post_title_pattern = re.compile('標題  (.+)')
 
@@ -450,8 +316,8 @@ def get_post(
             api.config,
             log.level.DEBUG,
             i18n.SubstandardPost,
-            i18n.Title
-        )
+            i18n.Title)
+
         post = data_type.PostInfo(
             board=board,
             aid=post_aid,
@@ -470,8 +336,7 @@ def get_post(
             location=location,
             push_number=push_number,
             origin_post=origin_post,
-            unconfirmed=api.Unconfirmed,
-        )
+            unconfirmed=api.Unconfirmed)
         return post
     post_title = pattern_result.group(0)
     post_title = post_title[4:].strip()
@@ -480,10 +345,9 @@ def get_post(
         api.config,
         log.level.DEBUG,
         i18n.Title,
-        post_title
-    )
+        post_title)
 
-    post_date_pattern = re.compile('時間  (.+)')
+    post_date_pattern = re.compile('時間  .{24}')
     date_line = origin_post_lines[2]
     pattern_result = post_date_pattern.search(date_line)
     if pattern_result is None:

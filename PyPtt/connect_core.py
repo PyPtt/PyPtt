@@ -16,6 +16,7 @@ try:
     from . import screens
     from . import command
     from . import exceptions
+    from . import version
 except ModuleNotFoundError:
     import data_type
     import i18n
@@ -23,15 +24,17 @@ except ModuleNotFoundError:
     import screens
     import command
     import exceptions
+    import version
 
-new_event_loop = list()
+
+websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 
 
 class connect_mode(object):
     TELNET = 1
     WEBSOCKET = 2
 
-    min_value = TELNET
+    min_value = WEBSOCKET
     max_value = WEBSOCKET
 
 
@@ -123,12 +126,11 @@ async def websocket_recv_func(core, recv_data_obj):
     recv_data_obj.data = await core.recv()
 
 
-async def websocket_receiver(core, screen_time_out, recv_data_obj):
+async def websocket_receiver(core, screen_timeout, recv_data_obj):
     # Wait for at most 1 second
     await asyncio.wait_for(
         websocket_recv_func(core, recv_data_obj),
-        timeout=screen_time_out
-    )
+        timeout=screen_timeout)
 
 
 class ReceiveDataQueue(object):
@@ -153,15 +155,13 @@ class API(object):
                 i18n.UseTooManyResources,
             ],
             screens.Target.UseTooManyResources,
-            exceptions_=exceptions.UseTooManyResources()
-        )
+            exceptions_=exceptions.UseTooManyResources())
 
         log.show_value(
             self.config, log.level.INFO, [
                 i18n.connect_core,
             ],
-            i18n.Init
-        )
+            i18n.Init)
 
     def connect(self) -> None:
         def _wait():
@@ -173,18 +173,15 @@ class API(object):
                         i18n.Connect,
                         i18n.PTT,
                     ],
-                    str(self.config.retry_wait_time - i)
-                )
+                    str(self.config.retry_wait_time - i))
                 time.sleep(1)
 
         log.show_value(
             self.config, log.level.INFO, [
                 i18n.connect_core,
             ],
-            i18n.Active
-        )
+            i18n.Active)
 
-        telnet_host, websocket_host, websocket_origin = '', '', ''
         if self.config.host == data_type.host_type.PTT1:
             telnet_host = 'ptt.cc'
             websocket_host = 'wss://ws.ptt.cc/bbs/'
@@ -213,9 +210,6 @@ class API(object):
 
         connect_success = False
 
-        global new_event_loop
-        thread_id = threading.get_ident()
-
         for _ in range(2):
 
             try:
@@ -225,13 +219,15 @@ class API(object):
 
                 else:
 
-                    if thread_id not in new_event_loop:
-                        new_event_loop.append(thread_id)
-                        try:
-                            loop = asyncio.new_event_loop()
-                            asyncio.set_event_loop(loop)
-                        except Exception as e:
-                            pass
+                    if not threading.current_thread() is threading.main_thread():
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+
+                    log.show_value(
+                        self.config,
+                        log.level.DEBUG,
+                        'USER_AGENT',
+                        websockets.http.USER_AGENT)
 
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
@@ -331,16 +327,14 @@ class API(object):
                     log.level.DEBUG, [
                         i18n.SendMsg
                     ],
-                    i18n.HideSensitiveInfor
-                )
+                    i18n.HideSensitiveInfor)
             else:
                 log.show_value(
                     self.config,
                     log.level.DEBUG, [
                         i18n.SendMsg
                     ],
-                    msg
-                )
+                    msg)
             if self.config.connect_mode == connect_mode.TELNET:
                 try:
                     self._core.read_very_eager()
@@ -350,8 +344,7 @@ class API(object):
             else:
                 try:
                     asyncio.get_event_loop().run_until_complete(
-                        self._core.send(msg)
-                    )
+                        self._core.send(msg))
                 except websockets.exceptions.ConnectionClosedError:
                     raise exceptions.ConnectionClosed()
                 except RuntimeError:
@@ -377,13 +370,13 @@ class API(object):
                         recv_data_obj.data = self._core.read_very_eager()
                     except EOFError:
                         return -1
+
                 else:
                     try:
 
                         asyncio.get_event_loop().run_until_complete(
                             websocket_receiver(
-                                self._core, current_screen_timeout, recv_data_obj)
-                        )
+                                self._core, current_screen_timeout, recv_data_obj))
 
                     except websockets.exceptions.ConnectionClosed:
                         # print(f'0.1 {use_too_many_res}')
@@ -396,11 +389,12 @@ class API(object):
                         raise exceptions.ConnectionClosed()
                     except asyncio.TimeoutError:
                         return -1
+                    except RuntimeError:
+                        raise exceptions.ConnectionClosed()
 
                 receive_data_buffer += recv_data_obj.data
                 receive_data_temp = receive_data_buffer.decode(
-                    'big5-uao', errors='replace'
-                )
+                    'big5-uao', errors='replace')
                 screen = clean_screen(receive_data_temp)
 
                 find_target = False
@@ -438,7 +432,7 @@ class API(object):
                             log.level.DEBUG, [
                                 i18n.SpendTime,
                             ],
-                            round(end_time - start_time, 2)
+                            round(end_time - start_time, 3)
                         )
 
                         if Target.is_break():

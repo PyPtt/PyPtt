@@ -28,8 +28,7 @@ def get_time(api) -> str:
                 i18n.Success,
             ],
             screens.Target.MainMenu,
-            break_detect=True
-        ),
+            break_detect=True),
     ]
 
     index = api.connect_core.send(cmd, target_list)
