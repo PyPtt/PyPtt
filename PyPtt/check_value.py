@@ -66,6 +66,7 @@ def check_index(
                     str(index),
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
+                    f'{index} must bigger than 0'
                 ]))
 
     if max_value is not None:
@@ -88,6 +89,7 @@ def check_index(
                         str(index),
                         i18n.ErrorParameter,
                         i18n.OutOfRange,
+                        f'must between 0 ~ {max_value} but get {index}'
                     ]))
 
 
@@ -110,6 +112,7 @@ def check_index_range(
                     str(start_name),
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
+                    f'{start_index} must bigger than 1'
                 ]))
 
     if end_index < 1:
@@ -121,6 +124,7 @@ def check_index_range(
                     str(end_index),
                     i18n.ErrorParameter,
                     i18n.OutOfRange,
+                    f'{end_index} must bigger than 1'
                 ]))
 
     if start_index > end_index:
@@ -132,7 +136,7 @@ def check_index_range(
                     str(start_index),
                     i18n.MustSmallOrEqual,
                     end_name,
-                    str(end_index),
+                    str(end_index)
                 ]))
 
     if max_value is not None:

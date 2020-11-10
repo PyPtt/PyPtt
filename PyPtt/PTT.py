@@ -418,6 +418,7 @@ class API:
                         'PostIndex',
                         i18n.ErrorParameter,
                         i18n.OutOfRange,
+                        f'0 ~ {newest_index} but get {post_index}'
                     ]))
 
         self._check_board(board)
