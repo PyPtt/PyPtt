@@ -22,6 +22,7 @@ def get_board_info(
         api,
         board: str,
         get_post_kind: bool,
+        get_board_limit: bool,
         call_by_others: bool) -> None:
     if call_by_others:
         log_level = log.level.DEBUG
@@ -31,7 +32,6 @@ def get_board_info(
     api._goto_board(board, refresh=True)
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
-    # print(ori_screen)
 
     for line in ori_screen.split('\n'):
         if '編號' not in line:
@@ -283,6 +283,80 @@ def get_board_info(
         require_illegal_post)
 
     kind_list = None
+    login_limit = None
+    retirement_limit = None
+
+    if get_board_limit:
+
+        api._goto_board(board)
+
+        # Go certain board, then get board info
+        cmd_list = list()
+        cmd_list.append('I')
+        cmd = ''.join(cmd_list)
+
+        # If no certain limit return both zero
+        target_list = [
+            connect_core.TargetUnit(
+                i18n.Done,
+                '無特別限制',
+                break_detect=True
+            )
+        ]
+
+        index = api.connect_core.send(
+            cmd,
+            target_list)
+
+        if not index == 0:
+            # Regex to get limit
+            ori_screen = api.connect_core.get_screen_queue()[-1]
+            screen_lines = ori_screen.split('\n')
+
+            for i in screen_lines:
+                # regex login limit
+                if '登入次數' in i and '次以上' in i:
+                    type_pattern = re.compile('登入次數 (\d*) 次以上')
+                    login_limit = type_pattern.findall(i)
+                    
+                    if not len(login_limit) == 0:
+                        login_limit = int(login_limit[0])
+                    else:
+                        login_limit = 0
+
+                # regex retirement limit
+                if '退文篇數' in i and '篇以下' in i:
+                    type_pattern = re.compile('退文篇數 (\d*) 篇以下')
+                    retirement_limit = type_pattern.findall(i)
+
+                    if not len(retirement_limit) == 0:
+                        retirement_limit = int(retirement_limit[0])
+                    else:
+                        retirement_limit = 0
+
+                if not (login_limit == None or retirement_limit == None):
+                    break
+
+            # Clear post status
+            cmd_list = list()
+            cmd_list.append(command.Ctrl_C)
+            cmd_list.append(command.Ctrl_C)
+            cmd = ''.join(cmd_list)
+
+            target_list = [
+                connect_core.TargetUnit(
+                    i18n.Done,
+                    screens.Target.InBoard,
+                    break_detect=True
+                )
+            ]
+            api.connect_core.send(
+                cmd,
+                target_list)
+        else:
+            login_limit = 0
+            retirement_limit = 0
+
     if get_post_kind:
 
         api._goto_board(board)
@@ -362,5 +436,7 @@ def get_board_info(
         require18,
         require_login_time,
         require_illegal_post,
-        kind_list)
+        kind_list,
+        login_limit,
+        retirement_limit)
     return board_info

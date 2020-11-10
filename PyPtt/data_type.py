@@ -312,7 +312,7 @@ class BoardInfo:
             require18=None,
             require_login_time=None,
             require_illegal_post=None,
-            post_kind=None):
+            post_kind=None, push_login_limit=None, post_retirement_limit=None):
         self.board: str = parse_para(str, board)
         self.online_user: int = parse_para(int, online_user)
         self.chinese_des: str = parse_para(str, chinese_des)
@@ -337,3 +337,5 @@ class BoardInfo:
         self.require_login_time: int = parse_para(int, require_login_time)
         self.require_illegal_post: int = parse_para(int, require_illegal_post)
         self.post_kind: list = parse_para(list, post_kind)
+        self.push_login_limit: int = parse_para(int, push_login_limit)
+        self.post_retirement_limit: int = parse_para(int, post_retirement_limit)

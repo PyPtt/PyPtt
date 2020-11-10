@@ -1618,7 +1618,7 @@ class API:
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
-    def get_board_info(self, board: str, get_post_kind: bool = False) -> data_type.BoardInfo:
+    def get_board_info(self, board: str, get_post_kind: bool = False, get_board_limit: bool = False) -> data_type.BoardInfo:
 
         self._one_thread()
 
@@ -1629,16 +1629,16 @@ class API:
 
         check_value.check(self.config, str, 'board', board)
 
-        return self._get_board_info(board, get_post_kind, call_by_others=False)
+        return self._get_board_info(board, get_post_kind, get_board_limit, call_by_others=False)
 
-    def _get_board_info(self, board: str, get_post_kind, call_by_others: bool = True) -> data_type.BoardInfo:
+    def _get_board_info(self, board: str, get_post_kind, get_board_limit, call_by_others: bool = True) -> data_type.BoardInfo:
 
         try:
             from . import _api_get_board_info
         except ModuleNotFoundError:
             import _api_get_board_info
 
-        return _api_get_board_info.get_board_info(self, board, get_post_kind, call_by_others)
+        return _api_get_board_info.get_board_info(self, board, get_post_kind, get_board_limit, call_by_others)
 
     def get_mail(self, index):
 
