@@ -129,6 +129,25 @@ def test_init():
         log('沒通過: 跳出其他例外')
         assert False
 
+
+    try:
+        PTT.API(connect_mode=PTT.connect_core.connect_mode.TELNET)
+        assert False
+    except ValueError:
+        log('TELNET 測試通過')
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
+    try:
+        PTT.API(connect_mode=PTT.connect_core.connect_mode.WEBSOCKET)
+        log('WEBSOCKET 測試通過')
+    except ValueError:
+        assert False
+    except:
+        log('沒通過: 跳出其他例外')
+        assert False
+
     ################################################
 
     log('===正向===')
