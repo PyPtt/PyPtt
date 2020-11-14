@@ -952,6 +952,9 @@ class API:
             sign_file) -> None:
         self._one_thread()
 
+        if self.unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
@@ -1002,6 +1005,9 @@ class API:
             post_aid: str = None,
             post_index: int = 0) -> None:
         self._one_thread()
+
+        if self.unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
@@ -1795,6 +1801,9 @@ class API:
             post_aid: str = None,
             post_index: int = 0) -> None:
         self._one_thread()
+
+        if self.unregistered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
