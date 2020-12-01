@@ -232,7 +232,7 @@ def login(
 
     cmd_list = list()
     # cmd_list.append(IAC + WILL + NAWS)
-    cmd_list.append(ptt_id)
+    cmd_list.append(ptt_id + ',')
     cmd_list.append(command.Enter)
     cmd_list.append(password)
     cmd_list.append(command.Enter)

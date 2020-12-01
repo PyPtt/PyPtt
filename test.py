@@ -492,8 +492,7 @@ github: https://tinyurl.com/umqff3v
 
 開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual
 '''
-    content = content.replace('\n', '\r\n')
-
+    
     for _ in range(3):
         ptt_bot.post(
             # 看板
@@ -1434,7 +1433,7 @@ if __name__ == '__main__':
         # init()
         # threading_test()
         ptt_bot = PTT.API(
-            # log_level=PTT.log.level.TRACE,
+            log_level=PTT.log.level.TRACE,
             # log_level=PTT.log.level.DEBUG,
             # host=PTT.data_type.host_type.PTT2
 
