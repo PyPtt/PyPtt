@@ -965,6 +965,8 @@ class API:
         check_value.check(self.config, str, 'Content', content)
         check_value.check(self.config, int, 'PostType', post_type)
 
+        content = content.replace('\n', '\r\n')
+
         check_sign_file = False
         for i in range(0, 10):
             if str(i) == sign_file or i == sign_file:

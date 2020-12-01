@@ -276,16 +276,12 @@ class API(object):
 
             # screen = re.sub('\[[\d+;]*m', '', screen)
 
-            recv_screen = re.sub(r'[\r]', '', recv_screen)
-            # recv_screen = re.sub(r'[\x00-\x08]', '', recv_screen)
-            recv_screen = re.sub(r'[\x00-\x07]', '', recv_screen)
-            # print(recv_screen)
-            recv_screen = re.sub(r'[\x0b\x0c]', '', recv_screen)
-            # screen = re.sub(r'[\x0e-\x1f]', '', screen)
-
-            recv_screen = re.sub(r'[\x0e-\x1A]', '', recv_screen)
-            recv_screen = re.sub(r'[\x1C-\x1F]', '', recv_screen)
-            recv_screen = re.sub(r'[\x7f-\xff]', '', recv_screen)
+            # recv_screen = re.sub(r'[\r]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x00-\x07]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x0b\x0c]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x0e-\x1A]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x1C-\x1F]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x7f-\xff]', '', recv_screen)
 
             recv_screen = screens.vt100(recv_screen)
 
@@ -394,7 +390,7 @@ class API(object):
 
                 receive_data_buffer += recv_data_obj.data
                 receive_data_temp = receive_data_buffer.decode(
-                    'big5-uao', errors='replace')
+                    'utf-8', errors='replace')
                 screen = clean_screen(receive_data_temp)
 
                 find_target = False
