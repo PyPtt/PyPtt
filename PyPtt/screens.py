@@ -1,5 +1,8 @@
 import re
 import sys
+from uao import register_uao
+
+register_uao()
 
 try:
     from . import lib_util
@@ -373,12 +376,87 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
 
 
 class vt100_parser:
+    def _h(self):
+        self._cursor_x = 0
+        self._cursor_y = 0
+
+    def _2j(self):
+        self._screen = [''] * 24
+
+    def _move(self, x, y):
+        self._cursor_x = x
+        self._cursor_y = y
+
+    def _newline(self):
+        self._cursor_x = 0
+        self._cursor_y += 1
+
     def __init__(self, data):
-        self._data = data
+        # self._data = data
+        # http://ascii-table.com/ansi-escape-sequences-vt-100.php
 
+        self._cursor_x = 0
+        self._cursor_y = 0
+        self._screen = [''] * 24
+
+        data = data.decode('utf-8')
+        # print(data)
+
+        # remove color
+        data = re.sub('\x1B\[[\d+;]*m', '', data)
+        data = re.sub(r'[\x1B]', '=ESC=', data)
         data = re.sub(r'[\r]', '', data)
-
         print(data)
+
+        xy_pattern = re.compile('^=ESC=\[[\d]+;[\d]+H')
+        max_t = 1000
+        t = 0
+        while data:
+            if data.startswith('=ESC=[H'):
+                data = data[len('=ESC=[H'):]
+                self._h()
+            elif data.startswith('=ESC=[2J'):
+                data = data[len('=ESC=[2J'):]
+                self._2j()
+            else:
+                xy_result = xy_pattern.search(data)
+                if xy_result:
+                    xy_part = xy_result.group(0)
+                    print('!=', xy_part)
+
+                    new_y = int(xy_part[6:xy_part.find(';')]) - 1
+                    new_x = int(xy_part[xy_part.find(';') + 1: -1])
+                    # print(new_x, new_y)
+                    self._move(new_x, new_y)
+
+                    data = data[len(xy_part):]
+
+                else:
+                    if data[:1] == '\n':
+                        data = data[1:]
+                        self._newline()
+                        continue
+                    print(f'-{data[:1]}-{len(data[:1].encode("big5-uao", "replace"))}')
+
+                    current_line_length = len(self._screen[self._cursor_y].encode('big5-uao', 'replace'))
+                    if current_line_length < self._cursor_x:
+                        append_space = ' ' * (self._cursor_x - current_line_length)
+                        self._screen[self._cursor_y] += append_space
+
+                    self._screen[self._cursor_y] += data[:1]
+                    self._cursor_x += len(data[:1].encode('big5-uao', 'replace'))
+                    data = data[1:]
+
+                    print('\n'.join(self._screen))
+                    print('=' * 20)
+
+                    # t += 1
+                    # if t >= max_t:
+                    #     break
+
+        print('\n'.join(self._screen))
+        print('=' * 20)
+        # print(data)
 
 
 if __name__ == '__main__':
@@ -576,7 +654,7 @@ if __name__ == '__main__':
          226, 150, 188, 27, 91, 55, 59, 53, 57, 72, 32, 32, 8, 8, 226, 150, 188, 27, 91, 55, 59, 54, 49, 72, 32, 32, 8,
          8, 226, 150, 188, 27, 91, 55, 59, 54, 51, 72, 32, 32, 8, 8, 226, 150, 188, 27, 91, 55, 59, 54, 53, 72, 32, 32,
          8, 8, 226, 150, 188, 27, 91, 55, 59, 54, 55, 72, 32, 32, 8, 8, 226, 150, 188, 27, 91, 55, 59, 54, 57, 72, 32,
-         32, 8, 8, 226, 150, 188, 27, 91, 55, 59, 55, 49, 72, 32, 32, 8, 8, 226, 150, 188]).decode('utf-8')
+         32, 8, 8, 226, 150, 188, 27, 91, 55, 59, 55, 49, 72, 32, 32, 8, 8, 226, 150, 188])
     # screen = screen.decode('utf-8')
     # print(screen)
 
