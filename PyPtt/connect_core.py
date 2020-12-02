@@ -389,9 +389,12 @@ class API(object):
                         raise exceptions.ConnectionClosed()
 
                 receive_data_buffer += recv_data_obj.data
-                receive_data_temp = receive_data_buffer.decode(
-                    'utf-8', errors='replace')
-                screen = clean_screen(receive_data_temp)
+                # receive_data_temp = receive_data_buffer.decode(
+                #     'utf-8', errors='replace')
+                # screen = clean_screen(receive_data_temp)
+
+                vt100_p = screens.VT100Parser(receive_data_buffer)
+                screen = vt100_p.screen
 
                 find_target = False
                 for Target in target_list:
