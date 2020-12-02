@@ -402,7 +402,7 @@ class VT100Parser:
         self._cursor_y = 0
         self.screen = [''] * 24
 
-        data = data.decode('utf-8')
+        data = data.decode('utf-8', errors='replace')
         # print(data)
 
         # remove color
@@ -414,6 +414,7 @@ class VT100Parser:
         xy_pattern = re.compile('^=ESC=\[[\d]+;[\d]+H')
 
         while data:
+            print('-')
             if data.startswith('=ESC=[H'):
                 data = data[len('=ESC=[H'):]
                 self._h()
