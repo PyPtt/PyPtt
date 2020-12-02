@@ -397,6 +397,16 @@ class API(object):
                     'big5-uao', errors='replace')
                 screen = clean_screen(receive_data_temp)
 
+                # qq = receive_data_temp.encode('utf-8')
+                # b = None
+                # for q in qq:
+                #     if not b:
+                #         b = f'bytes([{q}'
+                #     else:
+                #         b += f', {q}'
+                # b += f'])'
+                # print(b)
+
                 find_target = False
                 for Target in target_list:
                     condition = Target.is_match(screen)
