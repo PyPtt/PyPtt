@@ -394,7 +394,7 @@ class VT100Parser:
     def _k(self):
         self.screen[self._cursor_y] = self.screen[self._cursor_y][:self._cursor_x]
 
-    def __init__(self, data, encoding='utf-8'):
+    def __init__(self, data, encoding):
         # self._data = data
         # http://ascii-table.com/ansi-escape-sequences-vt-100.php
 
@@ -416,6 +416,7 @@ class VT100Parser:
         init_data = data
         last_data = None
         while data:
+            # print('-')
             if data == last_data:
                 # print('=' * 5, 'error break', '=' * 5)
                 # print(init_data)
@@ -424,15 +425,20 @@ class VT100Parser:
                 break
             last_data = data
             # print('-')
-            if data.startswith('=ESC=[H'):
-                data = data[len('=ESC=[H'):]
-                self._h()
-            elif data.startswith('=ESC=[2J'):
-                data = data[len('=ESC=[2J'):]
-                self._2j()
-            elif data.startswith('=ESC=[K'):
-                data = data[len('=ESC=[K'):]
-                self._k()
+            while True:
+                if data.startswith('=ESC=[H'):
+                    data = data[len('=ESC=[H'):]
+                    self._h()
+                    continue
+                elif data.startswith('=ESC=[2J'):
+                    data = data[len('=ESC=[2J'):]
+                    self._2j()
+                    continue
+                elif data.startswith('=ESC=[K'):
+                    data = data[len('=ESC=[K'):]
+                    self._k()
+                    continue
+                break
 
             xy_result = xy_pattern.search(data)
             if xy_result:
