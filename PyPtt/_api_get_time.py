@@ -2,11 +2,13 @@ import re
 try:
     from . import i18n
     from . import connect_core
+    from . import log
     from . import screens
     from . import command
 except ModuleNotFoundError:
     import i18n
     import connect_core
+    import log
     import screens
     import command
 
@@ -28,6 +30,7 @@ def get_time(api) -> str:
                 i18n.Success,
             ],
             screens.Target.MainMenu,
+            log_level=log.level.DEBUG,
             break_detect=True),
     ]
 
