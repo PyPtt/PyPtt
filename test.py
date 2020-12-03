@@ -67,7 +67,7 @@ def init():
 
 
 def performance_test():
-    test_time = 100
+    test_time = 1000
     print(f'效能測試 get_time {test_time} 次')
 
     start_time = time.time()
@@ -77,7 +77,7 @@ def performance_test():
         if ptt_time is None:
             print('PTT_TIME is None')
             break
-        print(ptt_time)
+        # print(ptt_time)
     end_time = time.time()
     ptt_bot.logout()
     print('Performance Test WebSocket ' + str(
@@ -1433,7 +1433,7 @@ if __name__ == '__main__':
         # init()
         # threading_test()
         ptt_bot = PTT.API(
-            log_level=PTT.log.level.TRACE,
+            # log_level=PTT.log.level.TRACE,
             # log_level=PTT.log.level.DEBUG,
             # host=PTT.data_type.host_type.PTT2
 
@@ -1478,7 +1478,7 @@ if __name__ == '__main__':
 
         ###################################
 
-        # performance_test()
+        performance_test()
 
         # get_post()
         # get_post_with_condition()
