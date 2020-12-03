@@ -120,6 +120,13 @@ def login(
         ],
         ptt_id)
 
+    def switch_to_utf8(_):
+        log.log(
+            api.config,
+            log.level.DEBUG,
+            '密碼正確，轉換至 utf-8')
+        api.connect_core.encoding = 'utf-8'
+
     target_list = [
         connect_core.TargetUnit(
             # i18n.HasNewMailGotoMainMenu,
@@ -175,6 +182,12 @@ def login(
         connect_core.TargetUnit(
             i18n.SigningUnPleaseWait,
             '登入中，請稍候'),
+        connect_core.TargetUnit(
+            i18n.SigningUnPleaseWait,
+            '密碼正確',
+            handler=switch_to_utf8
+        ),
+        # 密碼正確
         connect_core.TargetUnit(
             kick_other_loginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
@@ -253,8 +266,7 @@ def login(
         log.log(
             api.config,
             log.level.INFO,
-            i18n.HasNewMailGotoMainMenu
-        )
+            i18n.HasNewMailGotoMainMenu)
 
         if current_capacity > max_capacity:
             api._mailbox_full = True

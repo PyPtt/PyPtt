@@ -148,6 +148,7 @@ class ReceiveDataQueue(object):
 class API(object):
     def __init__(self, config):
 
+        self.encoding = 'big5-uao'
         self.config = config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
@@ -176,6 +177,7 @@ class API(object):
                     str(self.config.retry_wait_time - i))
                 time.sleep(1)
 
+        self.encoding = 'big5-uao'
         log.show_value(
             self.config, log.level.INFO, [
                 i18n.connect_core,
@@ -393,7 +395,7 @@ class API(object):
                 #     'utf-8', errors='replace')
                 # screen = clean_screen(receive_data_temp)
 
-                vt100_p = screens.VT100Parser(receive_data_buffer)
+                vt100_p = screens.VT100Parser(receive_data_buffer, self.encoding)
                 screen = vt100_p.screen
 
                 find_target = False

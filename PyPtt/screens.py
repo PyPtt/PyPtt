@@ -416,7 +416,7 @@ class VT100Parser:
         init_data = data
         last_data = None
         while data:
-            if last_data and data == last_data:
+            if data == last_data:
                 # print('=' * 5, 'error break', '=' * 5)
                 # print(init_data)
                 # print('=' * 20)
