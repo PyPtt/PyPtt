@@ -382,6 +382,7 @@ class VT100Parser:
 
     def _2j(self):
         self.screen = [''] * 24
+        self.screen_length = dict()
 
     def _move(self, x, y):
         self._cursor_x = x
@@ -401,6 +402,7 @@ class VT100Parser:
         self._cursor_x = 0
         self._cursor_y = 0
         self.screen = [''] * 24
+        self.screen_length = dict()
 
         data = data.decode(encoding, errors='replace')
         # print(data)
@@ -413,18 +415,9 @@ class VT100Parser:
 
         xy_pattern = re.compile('^=ESC=\[[\d]+;[\d]+H')
 
-        init_data = data
-        last_data = None
+        count = 0
         while data:
-            # print('-')
-            if data == last_data:
-                # print('=' * 5, 'error break', '=' * 5)
-                # print(init_data)
-                # print('=' * 20)
-                # print(data)
-                break
-            last_data = data
-            # print('-')
+            count += 1
             while True:
                 if data.startswith('=ESC=[H'):
                     data = data[len('=ESC=[H'):]
@@ -459,28 +452,48 @@ class VT100Parser:
                     continue
                 # print(f'-{data[:1]}-{len(data[:1].encode("big5-uao", "replace"))}')
 
-                current_line_length = len(self.screen[self._cursor_y].encode('big5-uao', 'replace'))
+                if self._cursor_y not in self.screen_length:
+                    self.screen_length[self._cursor_y] = len(self.screen[self._cursor_y].encode('big5-uao', 'replace'))
+
+                current_line_length = self.screen_length[self._cursor_y]
+                replace_mode = False
                 if current_line_length < self._cursor_x:
                     append_space = ' ' * (self._cursor_x - current_line_length)
                     self.screen[self._cursor_y] += append_space
+                elif current_line_length > self._cursor_x:
+                    replace_mode = True
 
                 next_newline = data.find('\n')
                 next_newline = 1920 if next_newline < 0 else next_newline
-                next_sec = data.find('=ESC=')
-                next_sec = 1920 if next_sec < 0 else next_sec
-                current_index = min(next_newline, next_sec)
+                next_esc = data.find('=ESC=')
+                next_esc = 1920 if next_esc < 0 else next_esc
+                if next_esc == 0:
+                    break
+                current_index = min(next_newline, next_esc)
 
                 current_data = data[:current_index]
+                current_data_length = len(current_data.encode('big5-uao', 'replace'))
 
-                self.screen[self._cursor_y] += current_data
-                self._cursor_x += len(current_data.encode('big5-uao', 'replace'))
+                # print('=', current_data, '=', current_data_length)
+                if replace_mode:
+                    current_line = self.screen[self._cursor_y][:self._cursor_x]
+                    current_line += current_data
+                    current_line += self.screen[self._cursor_y][self._cursor_x + len(current_data):]
+
+                    self.screen[self._cursor_y] = current_line
+                else:
+                    self.screen[self._cursor_y] += current_data
+                    self._cursor_x += current_data_length
+                    self.screen_length[self._cursor_y] = self._cursor_x
+
                 data = data[current_index:]
 
-                # print('\n'.join(self._screen))
+                # print('\n'.join(self.screen))
         # print('\n'.join(self._screen))
         # print('=' * 20)
         # print(data)
 
+        # print('Spend', count, 'cycle')
         self.screen = '\n'.join(self.screen)
 
 
@@ -490,5 +503,5 @@ if __name__ == '__main__':
     # screen = screen.decode('utf-8')
     # print(screen)
 
-    p = VT100Parser(screen)
+    p = VT100Parser(screen, 'utf-8')
     print(p.screen)
