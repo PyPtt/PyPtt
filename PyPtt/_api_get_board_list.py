@@ -1,4 +1,5 @@
 import progressbar
+import requests
 try:
     from . import i18n
     from . import connect_core
@@ -13,7 +14,19 @@ except ModuleNotFoundError:
     import command
 
 
+def get_board_list_http(api) -> list:
+    headers = {"authorization": "bearer " + api.access_token}
+    r = api.session.get('https://ptt-app-dev-codingman.pichuchen.tw/v1/boards', headers = headers)
+    responseData = r.json()
+    data = responseData['data']
+    board_list = list()
+    for b in data:
+        board_list.append(b["Boardname"])   
+    return board_list
+
+
 def get_board_list(api) -> list:
+    return get_board_list_http(api)
 
     # log.showValue(
     #     api.config,

@@ -1,5 +1,5 @@
 import re
-
+import requests
 try:
     from . import data_type
     from . import i18n
@@ -64,12 +64,37 @@ def logout(api) -> None:
         i18n.logout,
         i18n.Done)
 
+def login_http(
+        api,
+        ptt_id,
+        password,
+        kick_other_login):
+    api.session = requests.Session()
+
+    payload = {
+        'grant_type': 'password', 
+        'username': ptt_id,
+        'password': password,
+    }
+    r = api.session.post('https://ptt-app-dev-codingman.pichuchen.tw/v1/token', data = payload)
+
+    print(r.text)
+    responseData = r.json()
+    api.access_token = responseData["access_token"]
+    
+    print(responseData)
+
+
+    api._login_status = True
+    return 
 
 def login(
         api,
         ptt_id,
         password,
         kick_other_login):
+    return login_http(api, ptt_id, password, kick_other_login)
+
     if api._login_status:
         api.logout()
 
