@@ -93,7 +93,8 @@ def login(
         ptt_id,
         password,
         kick_other_login):
-    return login_http(api, ptt_id, password, kick_other_login)
+    if api.config.connect_mode == connect_core.connect_mode.PTT_APP:
+        return login_http(api, ptt_id, password, kick_other_login)
 
     if api._login_status:
         api.logout()

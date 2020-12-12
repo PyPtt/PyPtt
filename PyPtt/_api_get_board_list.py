@@ -26,7 +26,9 @@ def get_board_list_http(api) -> list:
 
 
 def get_board_list(api) -> list:
-    return get_board_list_http(api)
+
+    if api.config.connect_mode == connect_core.connect_mode.PTT_APP:
+        return get_board_list_http(api)
 
     # log.showValue(
     #     api.config,
