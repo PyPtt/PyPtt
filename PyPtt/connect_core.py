@@ -33,9 +33,10 @@ websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 class connect_mode(object):
     TELNET = 1
     WEBSOCKET = 2
+    PTT_APP = 3
 
-    min_value = WEBSOCKET
-    max_value = WEBSOCKET
+    min_value = TELNET
+    max_value = PTT_APP
 
 
 class TargetUnit(object):
@@ -216,7 +217,9 @@ class API(object):
                 if self.config.connect_mode == connect_mode.TELNET:
 
                     self._core = telnetlib.Telnet(telnet_host, self.config.port)
-
+                elif self.config.connect_mode == connect_mode.PTT_APP:
+                    # Connection from PTT APP, what should we do? fetch the version info?
+                    pass
                 else:
 
                     if not threading.current_thread() is threading.main_thread():
@@ -341,6 +344,8 @@ class API(object):
                     self._core.write(msg)
                 except EOFError:
                     raise exceptions.ConnectionClosed()
+            # elif self.config.connect_mode == connect_mode.PTT_APP:
+            #     pass
             else:
                 try:
                     asyncio.get_event_loop().run_until_complete(
