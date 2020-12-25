@@ -26,6 +26,7 @@ def get_content(api, post_mode: bool = True):
         cmd = command.Enter * 2
     else:
         cmd = command.Enter
+
     target_list = [
         # 待證實文章
         connect_core.TargetUnit(
@@ -129,12 +130,13 @@ def get_content(api, post_mode: bool = True):
             origin_post.append(last_screen)
         else:
             # print(LastScreen)
-            # print(f'LastReadLineATemp [{LastReadLineATemp}]')
-            # print(f'LastReadLineBTemp [{LastReadLineBTemp}]')
-            # print(f'Dis [{23 - (LastReadLineBTemp - LastReadLineATemp)}]')
-            # print(f'ContentStartJump {ContentStartJump}')
-            # print(f'GetLineB {LastReadLineBTemp - LastReadLineB}')
-            # print(f'GetLineA {LastReadLineATemp - LastReadLineA}')
+            # print(f'last_read_line_a_temp [{last_read_line_a_temp}]')
+            # print(f'last_read_line_b_temp [{last_read_line_b_temp}]')
+            # print(f'last_read_line_a {last_read_line_a}')
+            # print(f'last_read_line_b {last_read_line_b}')
+            # print(f'GetLineB {last_read_line_a_temp - last_read_line_a}')
+            # print(f'GetLineA {last_read_line_b_temp - last_read_line_b}')
+            # print(f'show line {last_read_line_b_temp - last_read_line_a_temp + 1}')
             if not control_code_mode:
 
                 if last_read_line_a_temp in stop_dict:
@@ -144,8 +146,22 @@ def get_content(api, post_mode: bool = True):
                     get_line_b = last_read_line_b_temp - last_read_line_b
                     if get_line_b > 0:
                         # print('Type 1')
-                        # print(f'GetLineB [{GetLineB}]')
+                        # print(f'Type 1 line_dis [{line_dis}]')
+                        # print(f'Type 1 get_line_b [{get_line_b}]')
+                        # print('index', index)
                         new_content_part = '\n'.join(lines[-get_line_b:])
+                        if index == 1 and len(new_content_part) == get_line_b - 1:
+                            #print('!!!!!!!!!!!!!!!!!!!!!' * 10)
+                            new_content_part = '\n'.join(lines[-(get_line_b * 2):])
+                        elif origin_post:
+                            last_line_temp = origin_post[-1].strip()
+                            try_line = lines[-(get_line_b + 1)].strip()
+
+                            if not last_line_temp.endswith(try_line):
+                                # print('=====' * 20)
+                                # print('== last line [', last_line_temp, ']')
+                                # print('== try_line [', try_line, ']')
+                                new_content_part = try_line + '\n' + new_content_part
                     else:
                         # 駐足現象，LastReadLineB跟上一次相比並沒有改變
                         if (last_read_line_b_temp + 1) not in stop_dict:
@@ -155,6 +171,7 @@ def get_content(api, post_mode: bool = True):
                         get_line_a = last_read_line_a_temp - last_read_line_a
 
                         if get_line_a > 0:
+                            # print(f'Type 2 get_line_a [{get_line_a}]')
                             new_content_part = '\n'.join(lines[-get_line_a:])
                         else:
                             new_content_part = '\n'.join(lines)
