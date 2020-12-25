@@ -105,9 +105,6 @@ def get_post():
             ('Stock', '1TVnEivO'),
             # 文章格式錯誤
             ('movie', 457),
-            ('Gossiping', '1TU65Wi_'),
-            ('Gossiping', '1TWadtnq'),
-            ('Gossiping', '1TZBBkWP'),
             ('Gossiping', '1UDnXefr'),
             ('joke', '1Tc6G9eQ'),
             # 135193
@@ -119,7 +116,7 @@ def get_post():
             # 辦刪除文章
             ('Test', 347),
             # push number parse error
-            ('Gossiping', '1TgbvAW3')
+            ('Ptt25sign', '1VppdKLW'),
         ]
     else:
         test_post_list = [
@@ -139,7 +136,7 @@ def get_post():
             ('WhoAmI', '1TqJhzQH')
         ]
 
-    query = True
+    query = False
 
     for (board, index) in test_post_list:
         try:
@@ -235,6 +232,8 @@ def get_post():
                     else:
                         buffer = f'{push_type} {author}: {content} {push_obj.time}'
                     print(buffer)
+
+                # print(post_info.origin_post)
 
                 print(
                     f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow = {push_count - boo_count}')
@@ -488,9 +487,15 @@ def get_post_with_condition():
 def post():
     content = '''
 此為 PyPtt 貼文測試內容，如有打擾請告知。
-github: https://tinyurl.com/umqff3v
+github: https://github.com/PttCodingMan/PyPtt
 
-開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual
+開發手冊: https://github.com/PttCodingMan/PyPtt/tree/master/doc
+ポ
+ポポ
+ポポポ
+☂
+☂☂
+☂☂☂
 '''
     content = content.replace('\n', '\r\n')
 
@@ -1479,7 +1484,7 @@ if __name__ == '__main__':
 
         ###################################
 
-        performance_test()
+        # performance_test()
 
         # get_post()
         # get_post_with_condition()
@@ -1513,6 +1518,7 @@ if __name__ == '__main__':
 
 
     except Exception as e:
+        print(type(e))
         traceback.print_tb(e.__traceback__)
         print(e)
     except KeyboardInterrupt:
