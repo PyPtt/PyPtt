@@ -16,7 +16,7 @@ except ModuleNotFoundError:
 
 def get_board_list_http(api) -> list:
     headers = {"authorization": "bearer " + api.access_token}
-    r = api.session.get('https://ptt-app-dev-codingman.pichuchen.tw/v1/boards', headers = headers)
+    r = api.session.get(api.config.host + '/v1/boards', headers = headers)
     responseData = r.json()
     data = responseData['data']
     board_list = list()

@@ -76,15 +76,9 @@ def login_http(
         'username': ptt_id,
         'password': password,
     }
-    r = api.session.post('https://ptt-app-dev-codingman.pichuchen.tw/v1/token', data = payload)
-
-    print(r.text)
+    r = api.session.post(api.config.host + '/v1/token', data = payload)
     responseData = r.json()
     api.access_token = responseData["access_token"]
-    
-    print(responseData)
-
-
     api._login_status = True
     return 
 
