@@ -80,6 +80,7 @@ def login_http(
     responseData = r.json()
     api.access_token = responseData["access_token"]
     api._login_status = True
+    api.unregistered_user = False
     return 
 
 def login(
