@@ -208,6 +208,18 @@ class API(object):
                 log.level.INFO,
                 i18n.ConnectMode,
                 i18n.ConnectMode_WebSocket)
+        elif self.config.connect_mode == connect_mode.PTT_APP:
+            log.show_value(
+                self.config,
+                log.level.INFO,
+                i18n.ConnectMode,
+                i18n.ConnectMode_PTT_APP)
+        else:
+            log.show_value(
+                self.config,
+                log.level.ERROR,
+                i18n.ConnectMode,
+                i18n.ConnectMode_Unknown)
 
         connect_success = False
 
@@ -315,7 +327,7 @@ class API(object):
             if refresh and not msg.endswith(command.Refresh):
                 msg = msg + command.Refresh
             try:
-                msg = msg.encode('big5-uao', 'replace')
+                msg = msg.encode('big5uao', 'replace')
 
             except AttributeError:
                 pass
@@ -399,7 +411,7 @@ class API(object):
 
                 receive_data_buffer += recv_data_obj.data
                 receive_data_temp = receive_data_buffer.decode(
-                    'big5-uao', errors='replace')
+                    'big5uao', errors='replace')
                 screen = clean_screen(receive_data_temp)
 
                 find_target = False
