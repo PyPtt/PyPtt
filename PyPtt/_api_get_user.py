@@ -1,4 +1,5 @@
 import re
+import time
 
 try:
     from . import data_type
@@ -58,8 +59,42 @@ def parse_user_page(screen):
 
     return result
 
+def get_user_http(api, ptt_id: str) -> data_type.UserInfo:
+    headers = {"authorization": "bearer " + api.access_token}
+
+    start_time = time.time()
+    r = api.session.get(api.config.host + '/v1/users/' + ptt_id + '/information', headers = headers)
+    end_time = time.time()
+    log.show_value(
+        api.config,
+        log.level.DEBUG, [
+            i18n.SpendTime,
+        ],
+        round(end_time - start_time, 3)
+    )
+    responseData = r.json()
+    data = responseData['data']
+
+    user = data_type.UserInfo(
+        data['user_id'],
+        data['money'],
+        data['number_of_login_days'],
+        data['number_of_posts'],
+        -1,
+        "狀態尚未實作",
+        "信箱尚未實作",
+        data['last_login_time'],
+        data['last_login_ip'],
+        "五子棋狀態尚未實作",
+        "象棋狀態尚未實作",
+        "簽名檔讀取尚未實作")
+    return user
 
 def get_user(api, ptt_id: str) -> data_type.UserInfo:
+
+    if api.config.connect_mode == connect_core.connect_mode.PTT_APP:
+        return get_user_http(api, ptt_id)
+
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('T')
