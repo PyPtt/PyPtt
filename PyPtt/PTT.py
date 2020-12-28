@@ -79,7 +79,7 @@ class API:
             raise TypeError('[PyPtt] screen_timeout must be integer')
         if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
-        if not isinstance(host, int):
+        if not (isinstance(host, int) or isinstance(host, str)):
             raise TypeError('[PyPtt] host must be integer')
 
         if screen_timeout != 0:
@@ -151,11 +151,11 @@ class API:
         else:
             self.config.port = port
 
-        check_value.check(self.config, int, 'host', host)
-        if host == 0:
-            host = self.config.host
-        elif not lib_util.check_range(data_type.host_type, host):
-            raise ValueError('[PyPtt] Unknown host', host)
+        # check_value.check(self.config, int, 'host', host)
+        # if host == 0:
+        #     host = self.config.host
+        # elif not lib_util.check_range(data_type.host_type, host):
+        #     raise ValueError('[PyPtt] Unknown host', host)
         self.config.host = host
 
         if self.config.host == data_type.host_type.PTT1:
