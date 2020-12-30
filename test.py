@@ -67,7 +67,7 @@ def init():
 
 
 def performance_test():
-    test_time = 1000
+    test_time = 2000
     print(f'效能測試 get_time {test_time} 次')
 
     start_time = time.time()
@@ -79,12 +79,33 @@ def performance_test():
             break
         # print(ptt_time)
     end_time = time.time()
-    ptt_bot.logout()
-    print('Performance Test WebSocket ' + str(
+    print('Performance Test get_time ' + str(
         round(end_time - start_time, 2)) + ' s')
+
+    start_time = time.time()
+    for _ in range(test_time):
+        ptt_time = ptt_bot.fast_get_time()
+
+        if ptt_time is None:
+            print('PTT_TIME is None')
+            break
+        # print(ptt_time)
+    end_time = time.time()
+    print('Performance Test fast_get_time ' + str(
+        round(end_time - start_time, 2)) + ' s')
+
+    ptt_bot.logout()
+
 
     print('Performance Test finish')
     sys.exit()
+
+#             for _ in range(1000):
+#             ptt_time = ptt_bot.fast_get_time()
+#             if len(ptt_time) != 5:
+#                 print('error!', ptt_time)
+#                 break
+#             # print(ptt_time)
 
 
 def get_post():
@@ -1481,6 +1502,14 @@ if __name__ == '__main__':
             print('已註冊使用者')
 
         ###################################
+
+        ptt_bot.fast_post(
+            'Test',
+            'Fast title',
+            'Fast content',
+            1,
+            0
+        )
 
         ###################################
 
