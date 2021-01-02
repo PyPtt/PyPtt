@@ -15,6 +15,9 @@ try:
     from . import command
     from . import check_value
     from . import version
+
+    from . import _api_post
+    from . import _api_get_time
 except ModuleNotFoundError:
     import data_type
     import config
@@ -27,6 +30,9 @@ except ModuleNotFoundError:
     import command
     import check_value
     import version
+
+    import _api_post
+    import _api_get_time
 
 
 class API:
@@ -294,17 +300,13 @@ class API:
         current_msg = ' '.join(msg)
         log.log(self.config, log.level.OUTSIDE, current_msg)
 
+
     def get_time(self) -> str:
         self._one_thread()
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.Requirelogin)
 
         self.config.log_last_value = None
-
-        try:
-            from . import _api_get_time
-        except ModuleNotFoundError:
-            import _api_get_time
 
         return _api_get_time.get_time(self)
 
@@ -1931,6 +1933,26 @@ class API:
             ]
 
             self.connect_core.send(cmd, target_list)
+
+    def fast_post_step0(
+            self,
+            board: str,
+            title: str,
+            content: str,
+            post_type: int
+    ):
+        _api_post.fast_post_step0(
+            self,
+            board,
+            title,
+            content,
+            post_type)
+
+    def fast_post_step1(
+            self,
+            sign_file
+    ):
+        _api_post.fast_post_step1(self, sign_file)
 
 
 if __name__ == '__main__':
