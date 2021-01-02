@@ -1,4 +1,5 @@
 import re
+
 try:
     from . import i18n
     from . import connect_core
@@ -13,40 +14,7 @@ except ModuleNotFoundError:
     import command
 
 
-def fast_get_time(api) -> str:
-
-    cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('A')
-    cmd_list.append(command.Right)
-    cmd_list.append(command.Left)
-
-    cmd = ''.join(cmd_list)
-
-    target_list = [
-        connect_core.TargetUnit(
-            [
-                i18n.GetPTTTime,
-                i18n.Success,
-            ],
-            screens.Target.MainMenu,
-            log_level=log.level.DEBUG,
-            break_detect=True),
-    ]
-
-    index = api.connect_core.fast_send(cmd, target_list)
-    if index != 0:
-        return None
-
-    ori_screen = api.connect_core.get_screen_queue()[-1]
-    line_list = ori_screen.split('\n')
-    pattern = re.compile('[\d]+:[\d][\d]')
-
-    line_list = line_list[-1][19:24]
-    return line_list
-
 def get_time(api) -> str:
-
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('A')

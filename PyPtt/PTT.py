@@ -300,8 +300,6 @@ class API:
         current_msg = ' '.join(msg)
         log.log(self.config, log.level.OUTSIDE, current_msg)
 
-    def fast_get_time(self) -> str:
-        return _api_get_time.fast_get_time(self)
 
     def get_time(self) -> str:
         self._one_thread()
@@ -946,22 +944,6 @@ class API:
             #     PB.finish()
             #
             # return error_post_list, del_post_list
-
-    def fast_post(
-            self,
-            board: str,
-            title: str,
-            content: str,
-            post_type: int,
-            sign_file) -> None:
-
-        _api_post.fast_post(
-            self,
-            board,
-            title,
-            content,
-            post_type,
-            sign_file)
 
     def post(
             self,
@@ -1951,6 +1933,26 @@ class API:
             ]
 
             self.connect_core.send(cmd, target_list)
+
+    def fast_post_step0(
+            self,
+            board: str,
+            title: str,
+            content: str,
+            post_type: int
+    ):
+        _api_post.fast_post_step0(
+            self,
+            board,
+            title,
+            content,
+            post_type)
+
+    def fast_post_step1(
+            self,
+            sign_file
+    ):
+        _api_post.fast_post_step1(self, sign_file)
 
 
 if __name__ == '__main__':
