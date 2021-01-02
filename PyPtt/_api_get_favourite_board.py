@@ -27,6 +27,7 @@ def get_favourite_board(api) -> list:
         )
     ]
 
+    board_list = list()
     favourite_board_list = list()
     while True:
 
@@ -64,6 +65,8 @@ def get_favourite_board(api) -> list:
 
             board_type = linebuff[-2:]
             board = linebuff[:-2].strip()
+            if board.startswith('ˇ'):
+                board = board[1:]
 
             board_title = line[17:].strip()
             # print(line)
@@ -71,16 +74,23 @@ def get_favourite_board(api) -> list:
             # print('\t' + Board)
             # print('\t' + BoardTitle)
 
+            if board in board_list:
+                return favourite_board_list
+            board_list.append(board)
+            #
+            # print('board', board)
+            # print('board_type', board_type)
+            # print('board_title', board_title)
+
             f_board = data_type.FavouriteBoard(
                 board,
                 board_type,
                 board_title
             )
-
             favourite_board_list.append(f_board)
 
         # print(len(FavouriteBoardList))
-        # print(len(ScreenBuf))
+        # print(len(screen_buf))
         if len(screen_buf) < 20:
             break
 
