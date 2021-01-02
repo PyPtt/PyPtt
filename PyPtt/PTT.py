@@ -1107,7 +1107,7 @@ class API:
             index = 0
             jump = 0
 
-            while len(push_content[:index].encode('big5-uao', 'replace')) < max_push_length:
+            while len(push_content[:index].encode('big5uao', 'replace')) < max_push_length:
 
                 if index == len(push_content):
                     break
