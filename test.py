@@ -1503,14 +1503,6 @@ if __name__ == '__main__':
 
         ###################################
 
-        ptt_bot.fast_post(
-            'Test',
-            'Fast title',
-            'Fast content',
-            1,
-            0
-        )
-
         ###################################
 
         # performance_test()

@@ -275,7 +275,7 @@ class API(object):
             if refresh and not msg.endswith(command.Refresh):
                 msg = msg + command.Refresh
             try:
-                msg = msg.encode('big5-uao', 'replace')
+                msg = msg.encode('big5uao', 'replace')
 
             except AttributeError:
                 pass
@@ -329,7 +329,7 @@ class API(object):
 
                 receive_data_buffer += recv_data_obj.data
                 screen = receive_data_buffer.decode(
-                    'big5-uao', errors='replace')
+                    'big5uao', errors='replace')
 
                 find_target = False
                 for Target in target_list:
@@ -440,7 +440,7 @@ class API(object):
             if refresh and not msg.endswith(command.Refresh):
                 msg = msg + command.Refresh
             try:
-                msg = msg.encode('big5-uao', 'replace')
+                msg = msg.encode('big5uao', 'replace')
 
             except AttributeError:
                 pass
@@ -522,7 +522,7 @@ class API(object):
 
                 receive_data_buffer += recv_data_obj.data
                 receive_data_temp = receive_data_buffer.decode(
-                    'big5-uao', errors='replace')
+                    'big5uao', errors='replace')
                 screen = clean_screen(receive_data_temp)
 
                 # qq = receive_data_temp.encode('utf-8')
