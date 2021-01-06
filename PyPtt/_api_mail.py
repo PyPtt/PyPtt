@@ -20,6 +20,7 @@ except ModuleNotFoundError:
     import _api_util
 
 
+# 寄信
 def mail(
         api,
         ptt_id: str,
@@ -27,7 +28,9 @@ def mail(
         content: str,
         sign_file,
         backup: bool = True) -> None:
+
     cmd_list = list()
+    # 回到主選單
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('M')
     cmd_list.append(command.Enter)
@@ -45,13 +48,11 @@ def mail(
                 i18n.SendMail
             ],
             '主題：',
-            break_detect=True
-        ),
+            break_detect=True),
         connect_core.TargetUnit(
             i18n.NoSuchUser,
             '【電子郵件】',
-            exceptions_=exceptions.NoSuchUser(ptt_id)
-        ),
+            exceptions_=exceptions.NoSuchUser(ptt_id))
     ]
 
     api.connect_core.send(
@@ -68,6 +69,7 @@ def mail(
 
     cmd = ''.join(cmd_list)
 
+    # 根據簽名檔調整顯示訊息
     if sign_file == 0:
         sing_file_selection = i18n.NoSignatureFile
     else:
@@ -109,13 +111,17 @@ def mail(
         i18n.Success)
 
 
+content_start = '───────────────────────────────────────'
+content_end = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
+content_ip_old = '◆ From: '
+
+
 def get_mail(
         api,
         index,
         search_type: int = 0,
         search_condition: str = None,
         search_list: list = None) -> data_type.MailInfo:
-
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append(command.Ctrl_Z)
@@ -208,10 +214,6 @@ def get_mail(
     # --
     # ※ 發信站: 批踢踢實業坊(ptt.cc)
     # ◆ From: 220.142.14.95
-
-    content_start = '───────────────────────────────────────'
-    content_end = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
-    content_ip_old = '◆ From: '
 
     mail_content = origin_mail[
                    origin_mail.find(content_start) +
