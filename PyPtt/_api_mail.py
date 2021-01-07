@@ -43,6 +43,7 @@ def mail(
 
     cmd = ''.join(cmd_list)
 
+    # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
             [
@@ -80,7 +81,7 @@ def mail(
     else:
         sing_file_selection = i18n.Select + ' ' + \
                               str(sign_file) + 'th ' + i18n.SignatureFile
-
+    # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
             i18n.AnyKeyContinue,
@@ -104,6 +105,7 @@ def mail(
             response=str(sign_file) + command.Enter),
     ]
 
+    # 送出訊息
     api.connect_core.send(
         cmd,
         target_list,
@@ -142,6 +144,7 @@ def get_mail(
     cmd_list.append(command.Ctrl_Z)
     cmd_list.append('m')
 
+    # 處理條件整理出指令
     _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
         api,
         data_type.index_type.MAIL,
@@ -151,16 +154,19 @@ def get_mail(
         None)
     cmd_list.extend(_cmd_list)
 
+    # 前進至目標信件位置
     cmd_list.append(str(index))
     cmd_list.append(command.Enter)
     cmd = ''.join(cmd_list)
 
+    # 有時候會沒有最底下一列，只好偵測游標是否出現
     if api.cursor == data_type.Cursor.NEW:
         space_length = 6 - len(api.cursor) - len(str(index))
     else:
         space_length = 5 - len(api.cursor) - len(str(index))
     fast_target = f"{api.cursor}{' ' * space_length}{index}"
 
+    # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
             i18n.MailBox,
@@ -174,12 +180,15 @@ def get_mail(
             log_level=log.level.DEBUG)
     ]
 
+    # 送出訊息
     api.connect_core.send(
         cmd,
         target_list)
 
+    # 取得信件全文
     origin_mail, _ = _api_util.get_content(api, post_mode=False)
 
+    # 使用表示式分析信件作者
     pattern_result = mail_author_pattern.search(origin_mail)
     if pattern_result is None:
         mail_author = None
@@ -192,6 +201,7 @@ def get_mail(
         i18n.Author,
         mail_author)
 
+    # 使用表示式分析信件標題
     pattern_result = mail_title_pattern.search(origin_mail)
     if pattern_result is None:
         mail_title = None
@@ -204,6 +214,7 @@ def get_mail(
         i18n.Title,
         mail_title)
 
+    # 使用表示式分析信件日期
     pattern_result = mail_date_pattern.search(origin_mail)
     if pattern_result is None:
         mail_date = None
@@ -215,10 +226,12 @@ def get_mail(
         i18n.Date,
         mail_date)
 
+    # 從全文拿掉信件開頭作為信件內文
     mail_content = origin_mail[
                    origin_mail.find(content_start) +
                    len(content_start) + 1:]
 
+    # 紅包偵測
     red_envelope = False
     if content_end not in origin_mail and 'Ptt幣的大紅包喔' in origin_mail:
         mail_content = mail_content.strip()
@@ -241,10 +254,13 @@ def get_mail(
         # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 111.242.182.114
         # ※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 59.104.127.126 (臺灣)
 
+        # 非紅包開始解析 ip 與 地區
+
         ip_line_list = origin_mail.split('\n')
         ip_line = [x for x in ip_line_list if x.startswith(content_end[3:])]
 
         if len(ip_line) == 0:
+            # 沒 ip 就沒地區
             mail_ip = None
             mail_location = None
         else:
@@ -262,6 +278,7 @@ def get_mail(
                     mail_ip = result.group(0)
             else:
                 mail_ip = result.group(0)
+
             log.show_value(
                 api.config,
                 log.level.DEBUG,
@@ -320,6 +337,7 @@ def del_mail(api, index) -> None:
     cmd_list.append(command.Enter)
     cmd = ''.join(cmd_list)
 
+    # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
             i18n.MailBox,
@@ -328,6 +346,7 @@ def del_mail(api, index) -> None:
             log_level=log.level.DEBUG)
     ]
 
+    # 送出
     api.connect_core.send(
         cmd,
         target_list)
