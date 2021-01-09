@@ -141,6 +141,7 @@ class API:
                     i18n.languageModule
                 ],
                 i18n.Init)
+
         check_value.check(self.config, int, 'connect_mode', connect_mode)
         if connect_mode == 0:
             connect_mode = self.config.connect_mode
@@ -1535,7 +1536,7 @@ class API:
         except ModuleNotFoundError:
             import _api_mark_post
 
-        _api_mark_post.markPost(
+        _api_mark_post.mark_post(
             self,
             mark_type,
             board,
