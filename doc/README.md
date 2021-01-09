@@ -329,6 +329,7 @@ print('IP: ' + post_info.ip)
 print('List Date: ' + post_info.list_date)
 print('地區: ' + post_info.location)
 # Since 0.8.19
+# 有可能為 None，因為不是每篇文在文章列表都有推文數
 print('文章推文數: ' + post_info.push_number)
 
 if post_info.is_unconfirmed:
@@ -1403,14 +1404,19 @@ ptt_bot.post(
 
 ### 在 Mac 無法使用 websocket 連線
 有兩種方法
-1. 在 python 資料夾中執行 ./Install\ Certificates.command
+1. 在 python 資料夾中執行 ./Install\ Certificates.command  
+以 python 3.6 舉例
+
 ```shell script
 cd /Applications/Python\ 3.6/
 ./Install\ Certificates.command
 ```
 2. 請從 homebrew 重新安裝 python3
 
-詳細請參考 https://stackoverflow.com/questions/40684543/how-to-make-python-use-ca-certificates-from-mac-os-truststore
+```
+brew install openssl
+brew install python --with-brewed-openssl
+```
 
 ---
 
