@@ -85,8 +85,8 @@ class API:
             raise TypeError('[PyPtt] screen_timeout must be integer')
         if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
-        if not isinstance(host, int):
-            raise TypeError('[PyPtt] host must be integer')
+        if (not isinstance(host, int)) and (not isinstance(host, str)):
+            raise TypeError('[PyPtt] host must be integer or string')
 
         if screen_timeout != 0:
             self.config.screen_timeout = screen_timeout
@@ -142,27 +142,14 @@ class API:
                 ],
                 i18n.Init)
 
-        check_value.check(self.config, int, 'connect_mode', connect_mode)
-        if connect_mode == 0:
-            connect_mode = self.config.connect_mode
-        elif not lib_util.check_range(connect_core.connect_mode, connect_mode):
-            raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
-        else:
-            self.config.connect_mode = connect_mode
-
-        check_value.check(self.config, int, 'port', port)
-        if port == 0:
-            port = self.config.port
-        elif not 0 < port < 65535:
-            raise ValueError('[PyPtt] Unknown port', port)
-        else:
-            self.config.port = port
-
-        check_value.check(self.config, int, 'host', host)
-        if host == 0:
-            host = self.config.host
-        elif not lib_util.check_range(data_type.host_type, host):
-            raise ValueError('[PyPtt] Unknown host', host)
+        ##################
+        if isinstance(host, int):
+            if host == 0:
+                host = self.config.host
+            elif not lib_util.check_range(data_type.host_type, host):
+                raise ValueError('[PyPtt] Unknown host', host)
+        # elif isinstance(host, str):
+        #     pass
         self.config.host = host
 
         if self.config.host == data_type.host_type.PTT1:
@@ -192,6 +179,39 @@ class API:
                     i18n.host
                 ],
                 i18n.Localhost)
+        else:
+            log.show_value(
+                self.config,
+                log.level.INFO,
+                [
+                    i18n.Connect,
+                    i18n.host
+                ],
+                self.config.host)
+        ##################
+
+        if isinstance(host, int):
+            connect_core.connect_mode.min_value = connect_core.connect_mode.WEBSOCKET
+            connect_core.connect_mode.max_value = connect_core.connect_mode.WEBSOCKET
+        elif isinstance(host, str):
+            connect_core.connect_mode.min_value = connect_core.connect_mode.TELNET
+            connect_core.connect_mode.max_value = connect_core.connect_mode.WEBSOCKET
+
+        check_value.check(self.config, int, 'connect_mode', connect_mode)
+        if connect_mode == 0:
+            connect_mode = self.config.connect_mode
+        elif not lib_util.check_range(connect_core.connect_mode, connect_mode):
+            raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
+        else:
+            self.config.connect_mode = connect_mode
+
+        check_value.check(self.config, int, 'port', port)
+        if port == 0:
+            port = self.config.port
+        elif not 0 < port < 65535:
+            raise ValueError('[PyPtt] Unknown port', port)
+        else:
+            self.config.port = port
 
         self.connect_core = connect_core.API(self.config)
         self._exist_board_list = list()
