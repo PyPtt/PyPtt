@@ -1469,6 +1469,11 @@ if __name__ == '__main__':
             # host=PTT.data_type.host_type.LOCALHOST,
             # port=8888,
 
+            # for 自定義 url 測試
+            # connect_mode=PTT.connect_core.connect_mode.TELNET,
+            # host='localhost',
+            # port=8888,
+
             # language=PTT.i18n.language.ENGLISH
         )
 
