@@ -34,7 +34,7 @@ class connect_mode(object):
     TELNET = 1
     WEBSOCKET = 2
 
-    min_value = WEBSOCKET
+    min_value = TELNET
     max_value = WEBSOCKET
 
 
@@ -190,9 +190,13 @@ class API(object):
             telnet_host = 'ptt2.cc'
             websocket_host = 'wss://ws.ptt2.cc/bbs/'
             websocket_origin = 'https://term.ptt2.cc'
-        else:
+        elif self.config.host == data_type.host_type.LOCALHOST:
             telnet_host = 'localhost'
             websocket_host = 'wss://localhost'
+            websocket_origin = 'https://term.ptt.cc'
+        else:
+            telnet_host = self.config.host
+            websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
 
         if self.config.connect_mode == connect_mode.TELNET:
