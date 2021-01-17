@@ -191,9 +191,13 @@ class API(object):
             telnet_host = 'ptt2.cc'
             websocket_host = 'wss://ws.ptt2.cc/bbs/'
             websocket_origin = 'https://term.ptt2.cc'
-        else:
+        elif self.config.host == data_type.host_type.LOCALHOST:
             telnet_host = 'localhost'
             websocket_host = 'wss://localhost'
+            websocket_origin = 'https://term.ptt.cc'
+        else:
+            telnet_host = self.config.host
+            websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
 
         if self.config.connect_mode == connect_mode.TELNET:
@@ -275,6 +279,134 @@ class API(object):
         if not connect_success:
             raise exceptions.ConnectError(self.config)
 
+    def fast_send(
+            self,
+            msg: str,
+            target_list: list,
+            refresh: bool = True) -> int:
+
+        break_detect_after_send = False
+        break_index = -1
+
+        use_too_many_res = False
+        while True:
+
+            if refresh and not msg.endswith(command.Refresh):
+                msg = msg + command.Refresh
+            try:
+                msg = msg.encode('big5uao', 'replace')
+
+            except AttributeError:
+                pass
+            except Exception as e:
+                traceback.print_tb(e.__traceback__)
+                print(e)
+                msg = msg.encode('big5', 'replace')
+
+            try:
+                asyncio.get_event_loop().run_until_complete(
+                    self._core.send(msg))
+            except websockets.exceptions.ConnectionClosedError:
+                raise exceptions.ConnectionClosed()
+            except RuntimeError:
+                raise exceptions.ConnectionClosed()
+            except websockets.exceptions.ConnectionClosedOK:
+                raise exceptions.ConnectionClosed()
+
+            if break_detect_after_send:
+                return break_index
+
+            msg = ''
+            receive_data_buffer = bytes()
+
+            # print(f'0 {use_too_many_res}')
+            start_time = time.time()
+            mid_time = time.time()
+            while mid_time - start_time < self.config.screen_timeout:
+
+                recv_data_obj = RecvData()
+
+                try:
+
+                    asyncio.get_event_loop().run_until_complete(
+                        websocket_receiver(
+                            self._core, self.config.screen_timeout, recv_data_obj))
+
+                except websockets.exceptions.ConnectionClosed:
+                    # print(f'0.1 {use_too_many_res}')
+                    if use_too_many_res:
+                        # print(f'0.2 {use_too_many_res}')
+                        raise exceptions.UseTooManyResources()
+                    # print(f'0.3 {use_too_many_res}')
+                    raise exceptions.ConnectionClosed()
+                except websockets.exceptions.ConnectionClosedOK:
+                    raise exceptions.ConnectionClosed()
+                except asyncio.TimeoutError:
+                    return -1
+                except RuntimeError:
+                    raise exceptions.ConnectionClosed()
+
+                receive_data_buffer += recv_data_obj.data
+                screen = receive_data_buffer.decode(
+                    'big5uao', errors='replace')
+
+                find_target = False
+                for Target in target_list:
+                    condition = Target.is_match(screen)
+                    if condition:
+                        if len(screen) > 0:
+                            screens.show(self.config, screen)
+                            self._RDQ.add(screen)
+                            # self._ReceiveDataQueue.append(screen)
+                            if Target == self._UseTooManyResources:
+                                # print('!!!!!!!!!!!!!!!')
+                                use_too_many_res = True
+                                # print(f'1 {use_too_many_res}')
+                                break
+                            Target.raise_exception()
+
+                        find_target = True
+
+                        if Target.is_break():
+                            return target_list.index(Target)
+
+                        msg = Target.get_response(screen)
+
+                        add_refresh = False
+                        if Target.is_refresh():
+                            add_refresh = True
+                        elif refresh:
+                            add_refresh = True
+
+                        if add_refresh:
+                            if not msg.endswith(command.Refresh):
+                                msg = msg + command.Refresh
+
+                        if Target.is_break_after_send():
+                            break_index = target_list.index(Target)
+                            break_detect_after_send = True
+                        break
+
+                # print(f'2 {use_too_many_res}')
+                if use_too_many_res:
+                    # print(f'3 {use_too_many_res}')
+                    continue
+                # print(f'4 {use_too_many_res}')
+
+                if find_target:
+                    break
+                if len(screen) > 0:
+                    screens.show(self.config, screen)
+                    self._RDQ.add(screen)
+                    # self._ReceiveDataQueue.append(screen)
+
+                mid_time = time.time()
+
+            if not find_target:
+                # raise exceptions.NoMatchTargetError(self._RDQ)
+                return -1
+        # raise exceptions.NoMatchTargetError(self._RDQ)
+        return -1
     def send(
             self,
             msg: str,
@@ -413,6 +545,16 @@ class API(object):
                 receive_data_temp = receive_data_buffer.decode(
                     'big5uao', errors='replace')
                 screen = clean_screen(receive_data_temp)
+
+                # qq = receive_data_temp.encode('utf-8')
+                # b = None
+                # for q in qq:
+                #     if not b:
+                #         b = f'bytes([{q}'
+                #     else:
+                #         b += f', {q}'
+                # b += f'])'
+                # print(b)
 
                 find_target = False
                 for Target in target_list:

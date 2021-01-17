@@ -112,15 +112,6 @@ def test_init():
         assert False
 
     try:
-        PTT.API(host='test')
-        assert False
-    except TypeError:
-        log('host 字串測試通過')
-    except:
-        log('沒通過: 跳出其他例外')
-        assert False
-
-    try:
         PTT.API(connect_mode='test')
         assert False
     except TypeError:

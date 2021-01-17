@@ -228,6 +228,12 @@ def login(
             ],
             response=command.GoMainMenu),
         connect_core.TargetUnit(
+            i18n.ErrorLoginRichPeopleGoMainMenu,
+            [
+                '熱門話題'
+            ],
+            response=command.GoMainMenu),
+        connect_core.TargetUnit(
             i18n.SkipRegistrationForm,
             '您確定要填寫註冊單嗎',
             response=command.Enter * 3),
