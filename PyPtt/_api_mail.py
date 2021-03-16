@@ -85,8 +85,9 @@ def mail(
     target_list = [
         connect_core.TargetUnit(
             i18n.AnyKeyContinue,
-            '任意鍵',
-            break_detect=True),
+            '請按任意鍵繼續',
+            break_detect_after_send=True,
+            response=command.Enter),
         connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',

@@ -26,7 +26,6 @@ except ModuleNotFoundError:
     import exceptions
     import version
 
-
 websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 
 
@@ -392,6 +391,7 @@ class API(object):
                 return -1
         # raise exceptions.NoMatchTargetError(self._RDQ)
         return -1
+
     def send(
             self,
             msg: str,
