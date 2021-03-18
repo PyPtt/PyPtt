@@ -1,4 +1,5 @@
 import re
+from SingleLog.log import Logger
 
 try:
     from . import data_type
@@ -70,6 +71,8 @@ def login(
         ptt_id,
         password,
         kick_other_login):
+    logger = Logger('login', api.config.log_level)
+
     if api._login_status:
         api.logout()
 
@@ -78,7 +81,7 @@ def login(
     def kick_other_loginDisplayMsg():
         if api.config.kick_other_login:
             return i18n.kick_other_login
-        return i18n.Notkick_other_login
+        return i18n.not_kick_other_login
 
     def kick_other_loginResponse(screen):
         if api.config.kick_other_login:
@@ -111,53 +114,46 @@ def login(
 
     api.connect_core.connect()
 
-    log.show_value(
-        api.config,
-        log.level.INFO,
-        [
-            i18n.login,
-            i18n.ID
-        ],
-        ptt_id)
+    logger.show(i18n.login_id, ptt_id)
 
     target_list = [
         connect_core.TargetUnit(
             # i18n.HasNewMailGotoMainMenu,
-            i18n.MailBox,
+            i18n.mail_box,
             screens.Target.InMailBox,
             # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
             response=command.GoMainMenu + 'A' + command.Right + command.Left,
             break_detect=True),
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             screens.Target.InMailMenu,
             response=command.GoMainMenu),
         connect_core.TargetUnit(
-            i18n.loginSuccess,
+            i18n.login_success,
             screens.Target.MainMenu,
             break_detect=True),
         connect_core.TargetUnit(
-            i18n.GoMainMenu,
+            i18n.go_main_menu,
             '【看板列表】',
             response=command.GoMainMenu),
         connect_core.TargetUnit(
-            i18n.ErrorIDPW,
+            i18n.wrong_id_pw,
             '密碼不對',
             break_detect=True,
             exceptions_=exceptions.WrongIDorPassword()),
         connect_core.TargetUnit(
-            i18n.ErrorIDPW,
+            i18n.wrong_id_pw,
             '請重新輸入',
             break_detect=True,
             exceptions_=exceptions.WrongIDorPassword()
         ),
         connect_core.TargetUnit(
-            i18n.LoginTooOften,
+            i18n.login_too_often,
             '登入太頻繁',
             break_detect=True,
             exceptions_=exceptions.LoginTooOften()),
         connect_core.TargetUnit(
-            i18n.SystemBusyTryLater,
+            i18n.system_busy_try_later,
             '系統過載',
             break_detect=True),
         connect_core.TargetUnit(
@@ -192,7 +188,7 @@ def login(
             i18n.SigningUpdate,
             '正在更新與同步線上使用者及好友名單'),
         connect_core.TargetUnit(
-            i18n.GoMainMenu,
+            i18n.go_main_menu,
             '【分類看板】',
             response=command.GoMainMenu),
         connect_core.TargetUnit(
@@ -277,7 +273,7 @@ def login(
 
         target_list = [
             connect_core.TargetUnit(
-                i18n.loginSuccess,
+                i18n.login_success,
                 screens.Target.MainMenu,
                 break_detect=True)
         ]
@@ -291,7 +287,7 @@ def login(
             secret=True)
         ori_screen = api.connect_core.get_screen_queue()[-1]
 
-    if target_list[index].get_display_msg() != i18n.loginSuccess:
+    if target_list[index].get_display_msg() != i18n.login_success:
         print(ori_screen)
         raise exceptions.LoginError()
 
