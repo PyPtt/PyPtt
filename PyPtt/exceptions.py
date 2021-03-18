@@ -164,9 +164,9 @@ class LoginTooOften(Exception):
         return self.message
 
 
-class UseTooManyResources(Exception):
+class use_too_many_resources(Exception):
     def __init__(self):
-        self.message = i18n.UseTooManyResources
+        self.message = i18n.use_too_many_resources
 
     def __str__(self):
         return self.message
