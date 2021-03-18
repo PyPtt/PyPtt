@@ -3,6 +3,8 @@ import progressbar
 import threading
 import re
 
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import config
@@ -34,6 +36,8 @@ except ModuleNotFoundError:
     import _api_post
     import _api_get_time
 
+logger_level = Logger
+
 
 class API:
     def __init__(
@@ -50,25 +54,14 @@ class API:
 
         self._mailbox_full = False
         self._ID = None
-        if log_handler is not None and not callable(log_handler):
-            raise TypeError('[PyPtt] log_handler is must callable!!')
 
-        if log_handler is not None:
-            has_log_handler = True
-            set_log_handler_result = True
-            try:
-                if log_level != log.level.SILENT:
-                    log_handler(f'PyPtt v {version.V}')
-                    log_handler('Developed by CodingMan')
-            except TypeError:
-                log_handler = None
-                set_log_handler_result = False
-        else:
-            has_log_handler = False
+        if log_level == 0:
+            log_level = Logger.INFO
 
-        if log_level != log.level.SILENT:
-            print(f'PyPtt v {version.V}')
-            print('Developed by CodingMan')
+        self.logger = Logger('PyPtt', log_level, handler=log_handler)
+
+        self.logger.show('PyPtt', version.V)
+        self.logger.show('Developed by CodingMan')
 
         self._login_status = False
         self.unregistered_user = True
@@ -95,12 +88,7 @@ class API:
         if screen_post_timeout != 0:
             self.config.screen_post_timeout = screen_post_timeout
 
-        if log_level == 0:
-            log_level = self.config.log_level
-        elif not lib_util.check_range(log.level, log_level):
-            raise ValueError('[PyPtt] Unknown log_level', log_level)
-        else:
-            self.config.log_level = log_level
+        self.config.log_level = log_level
 
         if language == 0:
             language = self.config.language
@@ -110,37 +98,10 @@ class API:
             self.config.language = language
         i18n.load(self.config.language)
 
-        if log_handler is not None:
-            self.config.log_handler = log_handler
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                i18n.log_handler,
-                i18n.Init)
-        elif has_log_handler and not set_log_handler_result:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                i18n.log_handler,
-                [
-                    i18n.Init,
-                    i18n.Fail
-                ])
-
         if self.config.language == i18n.language.CHINESE:
-            log.show_value(
-                self.config, log.level.INFO, [
-                    i18n.ChineseTranditional,
-                    i18n.languageModule
-                ],
-                i18n.Init)
+            self.logger.show(i18n.chinese_traditional_module, i18n.init)
         elif self.config.language == i18n.language.ENGLISH:
-            log.show_value(
-                self.config, log.level.INFO, [
-                    i18n.English,
-                    i18n.languageModule
-                ],
-                i18n.Init)
+            self.logger.show(i18n.english_module, i18n.init)
 
         ##################
         if isinstance(host, int):
@@ -153,41 +114,14 @@ class API:
         self.config.host = host
 
         if self.config.host == data_type.host_type.PTT1:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                [
-                    i18n.Connect,
-                    i18n.host
-                ],
-                i18n.PTT)
+            self.logger.show(i18n.connect_host, i18n.PTT)
         elif self.config.host == data_type.host_type.PTT2:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                [
-                    i18n.Connect,
-                    i18n.host
-                ],
-                i18n.PTT2)
+            self.logger.show(i18n.connect_host, i18n.PTT2)
         elif self.config.host == data_type.host_type.LOCALHOST:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                [
-                    i18n.Connect,
-                    i18n.host
-                ],
-                i18n.Localhost)
+            self.logger.show(i18n.connect_host, i18n.localhost)
         else:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                [
-                    i18n.Connect,
-                    i18n.host
-                ],
-                self.config.host)
+            self.logger.show(i18n.connect_host, self.config.host)
+
         ##################
 
         if isinstance(host, int):
@@ -222,20 +156,8 @@ class API:
         self._goto_board_list = list()
         self._board_info_list = dict()
 
-        log.show_value(
-            self.config,
-            log.level.DEBUG,
-            'ThreadID',
-            self._ThreadID)
-
-        log.show_value(
-            self.config,
-            log.level.INFO,
-            [
-                i18n.Library,
-                ' v ' + version.V,
-            ],
-            i18n.Init)
+        self.logger.show(Logger.DEBUG, 'ThreadID', self._ThreadID)
+        self.logger.show('PyPtt', i18n.init)
 
     def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
@@ -320,7 +242,6 @@ class API:
         msg = [str(x) for x in msg]
         current_msg = ' '.join(msg)
         log.log(self.config, log.level.OUTSIDE, current_msg)
-
 
     def get_time(self) -> str:
         self._one_thread()
@@ -810,7 +731,7 @@ class API:
                             self.config.kick_other_login
                         )
                         need_continue = True
-                    except exceptions.UseTooManyResources as e:
+                    except exceptions.use_too_many_resources as e:
                         if i == 1:
                             raise e
                         log.log(

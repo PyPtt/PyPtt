@@ -5,6 +5,7 @@ import telnetlib
 import re
 import traceback
 import threading
+from SingleLog.log import Logger
 from uao import register_uao
 
 register_uao()
@@ -150,36 +151,29 @@ class API(object):
         self.config = config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
-            [
-                i18n.UseTooManyResources,
-            ],
-            screens.Target.UseTooManyResources,
-            exceptions_=exceptions.UseTooManyResources())
+            i18n.use_too_many_resources,
+            screens.Target.use_too_many_resources,
+            exceptions_=exceptions.use_too_many_resources())
 
-        log.show_value(
-            self.config, log.level.INFO, [
-                i18n.connect_core,
-            ],
-            i18n.Init)
+        self.logger = Logger('ConnectCore', Logger.INFO)
+        self.logger.show(i18n.connect_core, i18n.init)
 
     def connect(self) -> None:
         def _wait():
             for i in range(self.config.retry_wait_time):
-                log.show_value(
-                    self.config, log.level.INFO, [
-                        i18n.Prepare,
-                        i18n.Again,
-                        i18n.Connect,
-                        i18n.PTT,
-                    ],
-                    str(self.config.retry_wait_time - i))
+
+                if self.config.host == data_type.host_type.PTT1:
+                    self.logger.show(i18n.prepare_connect_again, i18n.PTT, str(self.config.retry_wait_time - i))
+                elif self.config.host == data_type.host_type.PTT2:
+                    self.logger.show(i18n.prepare_connect_again, i18n.PTT2, str(self.config.retry_wait_time - i))
+                elif self.config.host == data_type.host_type.LOCALHOST:
+                    self.logger.show(i18n.prepare_connect_again, i18n.localhost, str(self.config.retry_wait_time - i))
+                else:
+                    self.logger.show(i18n.prepare_connect_again, self.config.host, str(self.config.retry_wait_time - i))
+
                 time.sleep(1)
 
-        log.show_value(
-            self.config, log.level.INFO, [
-                i18n.connect_core,
-            ],
-            i18n.Active)
+        self.logger.show(i18n.connect_core, i18n.active)
 
         if self.config.host == data_type.host_type.PTT1:
             telnet_host = 'ptt.cc'
@@ -199,17 +193,9 @@ class API(object):
             websocket_origin = 'https://term.ptt.cc'
 
         if self.config.connect_mode == connect_mode.TELNET:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                i18n.ConnectMode,
-                i18n.ConnectMode_Telnet)
+            self.logger.show(i18n.connect_mode, i18n.connect_mode_TELNET)
         elif self.config.connect_mode == connect_mode.WEBSOCKET:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                i18n.ConnectMode,
-                i18n.ConnectMode_WebSocket)
+            self.logger.show(i18n.connect_mode, i18n.connect_mode_WEBSOCKET)
 
         connect_success = False
 
@@ -226,11 +212,7 @@ class API(object):
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
-                    log.show_value(
-                        self.config,
-                        log.level.DEBUG,
-                        'USER_AGENT',
-                        websockets.http.USER_AGENT)
+                    self.logger.show(Logger.DEBUG, 'USER_AGENT', websockets.http.USER_AGENT)
 
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
@@ -241,20 +223,16 @@ class API(object):
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
+
                 if self.config.host == data_type.host_type.PTT1:
-                    log.show_value(
-                        self.config, log.level.INFO, [
-                            i18n.Connect,
-                            i18n.PTT,
-                        ],
-                        i18n.Fail)
+                    self.logger.show(i18n.connect, i18n.PTT, i18n.fail)
+                elif self.config.host == data_type.host_type.PTT2:
+                    self.logger.show(i18n.connect, i18n.PTT2, i18n.fail)
+                elif self.config.host == data_type.host_type.LOCALHOST:
+                    self.logger.show(i18n.connect, i18n.localhost, i18n.fail)
                 else:
-                    log.show_value(
-                        self.config, log.level.INFO, [
-                            i18n.Connect,
-                            i18n.PTT2,
-                        ],
-                        i18n.Fail)
+                    self.logger.show(i18n.connect, self.config.host, i18n.fail)
+
                 _wait()
                 continue
 
@@ -320,7 +298,7 @@ class API(object):
                     # print(f'0.1 {use_too_many_res}')
                     if use_too_many_res:
                         # print(f'0.2 {use_too_many_res}')
-                        raise exceptions.UseTooManyResources()
+                        raise exceptions.use_too_many_resources()
                     # print(f'0.3 {use_too_many_res}')
                     raise exceptions.ConnectionClosed()
                 except websockets.exceptions.ConnectionClosedOK:
@@ -454,19 +432,10 @@ class API(object):
                 msg = msg.encode('big5', 'replace')
 
             if is_secret:
-                log.show_value(
-                    self.config,
-                    log.level.DEBUG, [
-                        i18n.SendMsg
-                    ],
-                    i18n.HideSensitiveInfor)
+                self.logger.show(Logger.DEBUG, i18n.send_msg, i18n.hide_sensitive_info)
             else:
-                log.show_value(
-                    self.config,
-                    log.level.DEBUG, [
-                        i18n.SendMsg
-                    ],
-                    msg)
+                self.logger.show(Logger.DEBUG, i18n.send_msg, msg)
+
             if self.config.connect_mode == connect_mode.TELNET:
                 try:
                     self._core.read_very_eager()
@@ -514,7 +483,7 @@ class API(object):
                         # print(f'0.1 {use_too_many_res}')
                         if use_too_many_res:
                             # print(f'0.2 {use_too_many_res}')
-                            raise exceptions.UseTooManyResources()
+                            raise exceptions.use_too_many_resources()
                         # print(f'0.3 {use_too_many_res}')
                         raise exceptions.ConnectionClosed()
                     except websockets.exceptions.ConnectionClosedOK:
@@ -540,50 +509,39 @@ class API(object):
                 # print(b)
 
                 find_target = False
-                for Target in target_list:
-                    condition = Target.is_match(screen)
+                for target in target_list:
+                    condition = target.is_match(screen)
                     if condition:
-                        if Target._Handler is not None:
-                            Target._Handler(screen)
+                        if target._Handler is not None:
+                            target._Handler(screen)
                         if len(screen) > 0:
                             screens.show(self.config, screen)
                             self._RDQ.add(screen)
                             # self._ReceiveDataQueue.append(screen)
-                            if Target == self._UseTooManyResources:
+                            if target == self._UseTooManyResources:
                                 # print('!!!!!!!!!!!!!!!')
                                 use_too_many_res = True
                                 # print(f'1 {use_too_many_res}')
                                 break
-                            Target.raise_exception()
+                            target.raise_exception()
 
                         find_target = True
 
-                        log.show_value(
-                            self.config,
-                            Target.get_log_level(),
-                            [
-                                i18n.PTT,
-                                i18n.Msg
-                            ],
-                            Target.get_display_msg()
-                        )
+                        self.logger.show(
+                            target.get_log_level(),
+                            i18n.ptt_msg,
+                            target.get_display_msg())
 
                         end_time = time.time()
-                        log.show_value(
-                            self.config,
-                            log.level.DEBUG, [
-                                i18n.SpendTime,
-                            ],
-                            round(end_time - start_time, 3)
-                        )
+                        self.logger.show(Logger.DEBUG, i18n.spend_time, round(end_time - start_time, 3))
 
-                        if Target.is_break():
-                            return target_list.index(Target)
+                        if target.is_break():
+                            return target_list.index(target)
 
-                        msg = Target.get_response(screen)
+                        msg = target.get_response(screen)
 
                         add_refresh = False
-                        if Target.is_refresh():
+                        if target.is_refresh():
                             add_refresh = True
                         elif refresh:
                             add_refresh = True
@@ -592,10 +550,10 @@ class API(object):
                             if not msg.endswith(command.Refresh):
                                 msg = msg + command.Refresh
 
-                        is_secret = Target.is_secret()
+                        is_secret = target.is_secret()
 
-                        if Target.is_break_after_send():
-                            break_index = target_list.index(Target)
+                        if target.is_break_after_send():
+                            break_index = target_list.index(target)
                             break_detect_after_send = True
                         break
 

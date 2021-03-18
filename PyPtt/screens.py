@@ -131,7 +131,7 @@ class Target(object):
         '已讀/未讀'
     ]
 
-    UseTooManyResources = [
+    use_too_many_resources = [
         '程式耗用過多計算資源'
     ]
 
