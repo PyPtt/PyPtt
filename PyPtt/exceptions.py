@@ -142,7 +142,7 @@ class MultiThreadOperated(Exception):
 
 class WrongIDorPassword(Exception):
     def __init__(self):
-        self.message = i18n.ErrorIDPW
+        self.message = i18n.wrong_id_pw
 
     def __str__(self):
         return self.message
@@ -158,7 +158,7 @@ class WrongPassword(Exception):
 
 class LoginTooOften(Exception):
     def __init__(self):
-        self.message = i18n.LoginTooOften
+        self.message = i18n.login_too_often
 
     def __str__(self):
         return self.message

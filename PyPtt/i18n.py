@@ -64,11 +64,73 @@ hide_sensitive_info = None
 send_msg = None
 ptt_msg = None
 spend_time = None
-
+kick_other_login = None
+not_kick_other_login = None
+login_id = None
+mail_box = None
+login_success = None
+go_main_menu = None
+wrong_id_pw = None
+login_too_often = None
+system_busy_try_later = None
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global system_busy_try_later
+    system_busy_try_later = specific_load(lang, [
+        '系統繁忙，請稍後再試',
+        'system busy, try later',
+    ])
+
+    global login_too_often
+    login_too_often = specific_load(lang, [
+        '登入太頻繁',
+        'login too often',
+    ])
+
+    global wrong_id_pw
+    wrong_id_pw = specific_load(lang, [
+        '帳號密碼錯誤',
+        'wrong id or pw',
+    ])
+
+    global go_main_menu
+    go_main_menu = specific_load(lang, [
+        '回到主選單',
+        'go to main menu',
+    ])
+
+    global login_success
+    login_success = specific_load(lang, [
+        '登入成功',
+        'login success',
+    ])
+
+    global mail_box
+    mail_box = specific_load(lang, [
+        '郵件信箱',
+        'mail box',
+    ])
+
+    global login_id
+    login_id = specific_load(lang, [
+        '登入帳號',
+        'login id',
+    ])
+
+    global not_kick_other_login
+    not_kick_other_login = specific_load(lang, [
+        '不剔除其他登入',
+        'not kick other login',
+    ])
+
+    global kick_other_login
+    kick_other_login = specific_load(lang, [
+        '剔除其他登入',
+        'kick other login',
+    ])
 
     global spend_time
     spend_time = specific_load(lang, [
