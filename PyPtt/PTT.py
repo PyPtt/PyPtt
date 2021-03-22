@@ -1825,7 +1825,7 @@ class API:
 
         target_list = [
             connect_core.TargetUnit(
-                i18n.AnyKeyContinue,
+                i18n.any_key_continue,
                 '任意鍵',
                 response=' ',
                 log_level=log.level.DEBUG

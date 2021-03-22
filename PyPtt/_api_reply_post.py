@@ -68,7 +68,7 @@ def reply_post(
     cmd = ''.join(cmd_list)
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵繼續',
             break_detect=True,
         ),

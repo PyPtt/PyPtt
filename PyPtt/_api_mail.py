@@ -84,7 +84,7 @@ def mail(
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '請按任意鍵繼續',
             break_detect_after_send=True,
             response=command.Enter),

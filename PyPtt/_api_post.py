@@ -48,7 +48,7 @@ def fast_post_step0(
             break_detect=True
         ),
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵繼續',
             break_detect=True,
         ),
@@ -86,7 +86,7 @@ def fast_post_step1(api: object, sign_file) -> None:
             break_detect=True
         ),
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵繼續',
             break_detect=True,
         ),
@@ -143,7 +143,7 @@ def fast_post(
             break_detect=True
         ),
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵繼續',
             break_detect=True,
         ),
@@ -218,7 +218,7 @@ def post(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵繼續',
             break_detect=True,
         ),

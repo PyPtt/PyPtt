@@ -73,10 +73,88 @@ go_main_menu = None
 wrong_id_pw = None
 login_too_often = None
 system_busy_try_later = None
+del_wrong_pw_record = None
+post_not_finish = None
+in_login_process_please_wait = None
+any_key_continue = None
+update_sync_online_user_friend_list = None
+error_login_rich_people_go_main_menu = None
+skip_registration_form = None
+only_secure_connection = None
+debug = None
+info = None
+out_side = None
+
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global debug
+    debug = specific_load(lang, [
+        '除錯',
+        'dbug',
+    ])
+
+    global info
+    info = specific_load(lang, [
+        '資訊',
+        'Info',
+    ])
+
+    global out_side
+    out_side = specific_load(lang, [
+        '外部',
+        'out',
+    ])
+
+    global only_secure_connection
+    only_secure_connection = specific_load(lang, [
+        '跳過填寫註冊單',
+        'skip registration form',
+    ])
+
+    global skip_registration_form
+    skip_registration_form = specific_load(lang, [
+        '跳過填寫註冊單',
+        'skip registration form',
+    ])
+
+    global error_login_rich_people_go_main_menu
+    error_login_rich_people_go_main_menu = specific_load(lang, [
+        '錯誤登入到大富翁排行榜，回到主選單',
+        'error login rich people, go main menu',
+    ])
+
+    global update_sync_online_user_friend_list
+    update_sync_online_user_friend_list = specific_load(lang, [
+        '正在更新與同步線上使用者及好友名單',
+        'update sync online user friend list',
+    ])
+
+    global any_key_continue
+    any_key_continue = specific_load(lang, [
+        '任意鍵繼續',
+        'any key to continue',
+    ])
+
+    global in_login_process_please_wait
+    in_login_process_please_wait = specific_load(lang, [
+        '登入中，請稍候',
+        'in login process, please wait',
+    ])
+
+    global post_not_finish
+    post_not_finish = specific_load(lang, [
+        '文章尚未完成',
+        'post is not finish',
+    ])
+
+    global del_wrong_pw_record
+    del_wrong_pw_record = specific_load(lang, [
+        '刪除錯誤密碼嘗試紀錄',
+        'delete error password record',
+    ])
 
     global system_busy_try_later
     system_busy_try_later = specific_load(lang, [
