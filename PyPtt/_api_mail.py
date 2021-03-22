@@ -30,16 +30,16 @@ def mail(
         backup: bool = True) -> None:
     cmd_list = list()
     # 回到主選單
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     # 私人信件區
     cmd_list.append('M')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     # 站內寄信
     cmd_list.append('S')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     # 輸入 id
     cmd_list.append(ptt_id)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 
@@ -67,11 +67,11 @@ def mail(
     cmd_list = list()
     # 輸入標題
     cmd_list.append(title)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     # 輸入內容
     cmd_list.append(content)
     # 儲存檔案
-    cmd_list.append(command.Ctrl_X)
+    cmd_list.append(command.ctrl_x)
 
     cmd = ''.join(cmd_list)
 
@@ -87,23 +87,23 @@ def mail(
             i18n.any_key_continue,
             '請按任意鍵繼續',
             break_detect_after_send=True,
-            response=command.Enter),
+            response=command.enter),
         connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            response='s' + command.Enter, ),
+            response='s' + command.enter, ),
         connect_core.TargetUnit(
             i18n.SelfSaveDraft if backup else i18n.NotSelfSaveDraft,
             '是否自存底稿',
-            response=('y' if backup else 'n') + command.Enter),
+            response=('y' if backup else 'n') + command.enter),
         connect_core.TargetUnit(
             sing_file_selection,
             '選擇簽名檔',
-            response=str(sign_file) + command.Enter),
+            response=str(sign_file) + command.enter),
         connect_core.TargetUnit(
             sing_file_selection,
             'x=隨機',
-            response=str(sign_file) + command.Enter),
+            response=str(sign_file) + command.enter),
     ]
 
     # 送出訊息
@@ -140,9 +140,9 @@ def get_mail(
         search_list: list = None) -> data_type.MailInfo:
     cmd_list = list()
     # 回到主選單
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     # 進入信箱
-    cmd_list.append(command.Ctrl_Z)
+    cmd_list.append(command.ctrl_z)
     cmd_list.append('m')
 
     # 處理條件整理出指令
@@ -157,7 +157,7 @@ def get_mail(
 
     # 前進至目標信件位置
     cmd_list.append(str(index))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
 
     # 有時候會沒有最底下一列，只好偵測游標是否出現
@@ -321,21 +321,21 @@ def get_mail(
 def del_mail(api, index) -> None:
     cmd_list = list()
     # 進入主選單
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     # 進入信箱
-    cmd_list.append(command.Ctrl_Z)
+    cmd_list.append(command.ctrl_z)
     cmd_list.append('m')
     if index > 20:
         # speed up
         cmd_list.append(str(1))
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
     # 前進到目標信件位置
     cmd_list.append(str(index))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     # 刪除
     cmd_list.append('dy')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
 
     # 定義如何根據情況回覆訊息

@@ -1815,11 +1815,11 @@ class API:
     def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
 
         cmd_list = list()
-        cmd_list.append(command.GoMainMenu)
+        cmd_list.append(command.go_main_menu)
         cmd_list.append('qs')
         cmd_list.append(board)
-        cmd_list.append(command.Enter)
-        cmd_list.append(command.Space)
+        cmd_list.append(command.enter)
+        cmd_list.append(command.space)
 
         cmd = ''.join(cmd_list)
 
@@ -1835,7 +1835,7 @@ class API:
                     '動畫播放中',
                 ],
                 '互動式動畫播放中',
-                response=command.Ctrl_C,
+                response=command.ctrl_c,
                 log_level=log.level.DEBUG
             ),
             connect_core.TargetUnit(
@@ -1861,7 +1861,7 @@ class API:
         if end:
             cmd_list = list()
             cmd_list.append('1')
-            cmd_list.append(command.Enter)
+            cmd_list.append(command.enter)
             cmd_list.append('$')
             cmd = ''.join(cmd_list)
 

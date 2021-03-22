@@ -253,8 +253,8 @@ class API(object):
         use_too_many_res = False
         while True:
 
-            if refresh and not msg.endswith(command.Refresh):
-                msg = msg + command.Refresh
+            if refresh and not msg.endswith(command.refresh):
+                msg = msg + command.refresh
             try:
                 msg = msg.encode('big5uao', 'replace')
 
@@ -341,8 +341,8 @@ class API(object):
                             add_refresh = True
 
                         if add_refresh:
-                            if not msg.endswith(command.Refresh):
-                                msg = msg + command.Refresh
+                            if not msg.endswith(command.refresh):
+                                msg = msg + command.refresh
 
                         if Target.is_break_after_send():
                             break_index = target_list.index(Target)
@@ -419,8 +419,8 @@ class API(object):
         use_too_many_res = False
         while True:
 
-            if refresh and not msg.endswith(command.Refresh):
-                msg = msg + command.Refresh
+            if refresh and not msg.endswith(command.refresh):
+                msg = msg + command.refresh
             try:
                 msg = msg.encode('big5uao', 'replace')
 
@@ -547,8 +547,8 @@ class API(object):
                             add_refresh = True
 
                         if add_refresh:
-                            if not msg.endswith(command.Refresh):
-                                msg = msg + command.Refresh
+                            if not msg.endswith(command.refresh):
+                                msg = msg + command.refresh
 
                         is_secret = target.is_secret()
 

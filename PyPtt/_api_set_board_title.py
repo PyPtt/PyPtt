@@ -16,12 +16,12 @@ def set_board_title(
 
     cmd_list = list()
     cmd_list.append('I')
-    cmd_list.append(command.Ctrl_P)
+    cmd_list.append(command.ctrl_p)
     cmd_list.append('b')
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Backspace * 31)
+    cmd_list.append(command.enter)
+    cmd_list.append(command.backspace * 31)
     cmd_list.append(new_title)
-    cmd_list.append(command.Enter * 2)
+    cmd_list.append(command.enter * 2)
     cmd = ''.join(cmd_list)
 
     target_list = [

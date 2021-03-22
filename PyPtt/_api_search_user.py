@@ -13,11 +13,11 @@ except ModuleNotFoundError:
 def search_user(
         api: object, ptt_id: str, min_page: int, max_page: int) -> list:
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('Q')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(ptt_id)
     cmd = ''.join(cmd_list)
 
@@ -94,13 +94,13 @@ def search_user(
     )
 
     api.connect_core.send(
-        command.Enter,
+        command.enter,
         [
             # 《ＩＤ暱稱》
             connect_core.TargetUnit(
                 i18n.QuitUserProfile,
                 '《ＩＤ暱稱》',
-                response=command.Enter,
+                response=command.enter,
                 # log_level=log.level.DEBUG
             ),
             connect_core.TargetUnit(

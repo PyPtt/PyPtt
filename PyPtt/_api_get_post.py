@@ -50,7 +50,7 @@ def get_post(
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
-            cmd_list.append(command.Enter)
+            cmd_list.append(command.enter)
 
         if search_list is not None:
             for search_type_, search_condition_ in search_list:
@@ -67,14 +67,14 @@ def get_post(
                     cmd_list.append('A')
 
                 cmd_list.append(search_condition_)
-                cmd_list.append(command.Enter)
+                cmd_list.append(command.enter)
 
         cmd_list.append(str(max(1, post_index - 100)))
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
         cmd_list.append(str(post_index))
 
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.QueryPost)
+    cmd_list.append(command.enter)
+    cmd_list.append(command.query_post)
 
     cmd = ''.join(cmd_list)
 

@@ -23,11 +23,11 @@ except ModuleNotFoundError:
 
 def logout(api) -> None:
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('g')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('y')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 
@@ -85,8 +85,8 @@ def login(
 
     def kick_other_loginResponse(screen):
         if api.config.kick_other_login:
-            return 'y' + command.Enter
-        return 'n' + command.Enter
+            return 'y' + command.enter
+        return 'n' + command.enter
 
     api._mailbox_full = False
 
@@ -122,12 +122,12 @@ def login(
             i18n.mail_box,
             screens.Target.InMailBox,
             # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
-            response=command.GoMainMenu + 'A' + command.Right + command.Left,
+            response=command.go_main_menu + 'A' + command.right + command.left,
             break_detect=True),
         connect_core.TargetUnit(
             i18n.mail_box,
             screens.Target.InMailMenu,
-            response=command.GoMainMenu),
+            response=command.go_main_menu),
         connect_core.TargetUnit(
             i18n.login_success,
             screens.Target.MainMenu,
@@ -135,7 +135,7 @@ def login(
         connect_core.TargetUnit(
             i18n.go_main_menu,
             '【看板列表】',
-            response=command.GoMainMenu),
+            response=command.go_main_menu),
         connect_core.TargetUnit(
             i18n.wrong_id_pw,
             '密碼不對',
@@ -159,15 +159,15 @@ def login(
         connect_core.TargetUnit(
             i18n.del_wrong_pw_record,
             '您要刪除以上錯誤嘗試的記錄嗎',
-            response='y' + command.Enter),
+            response='y' + command.enter),
         connect_core.TargetUnit(
             i18n.post_not_finish,
             '請選擇暫存檔 (0-9)[0]',
-            response=command.Enter),
+            response=command.enter),
         connect_core.TargetUnit(
             i18n.post_not_finish,
             '有一篇文章尚未完成',
-            response='Q' + command.Enter),
+            response='Q' + command.enter),
         connect_core.TargetUnit(
             i18n.in_login_process_please_wait,
             '登入中，請稍候'),
@@ -178,7 +178,7 @@ def login(
         connect_core.TargetUnit(
             i18n.any_key_continue,
             '◆ 您的註冊申請單尚在處理中',
-            response=command.Enter,
+            response=command.enter,
             handler=register_processing),
         connect_core.TargetUnit(
             i18n.any_key_continue,
@@ -190,7 +190,7 @@ def login(
         connect_core.TargetUnit(
             i18n.go_main_menu,
             '【分類看板】',
-            response=command.GoMainMenu),
+            response=command.go_main_menu),
         connect_core.TargetUnit(
             i18n.error_login_rich_people_go_main_menu,
             [
@@ -201,25 +201,25 @@ def login(
                 '暱稱',
                 '數目'
             ],
-            response=command.GoMainMenu),
+            response=command.go_main_menu),
         connect_core.TargetUnit(
             i18n.error_login_rich_people_go_main_menu,
             [
                 '熱門話題'
             ],
-            response=command.GoMainMenu),
+            response=command.go_main_menu),
         connect_core.TargetUnit(
             i18n.skip_registration_form,
             '您確定要填寫註冊單嗎',
-            response=command.Enter * 3),
+            response=command.enter * 3),
         connect_core.TargetUnit(
             i18n.skip_registration_form,
             '以上資料是否正確',
-            response='y' + command.Enter),
+            response='y' + command.enter),
         connect_core.TargetUnit(
             i18n.skip_registration_form,
             '另外若輸入後發生認證碼錯誤請先確認輸入是否為最後一封',
-            response='x' + command.Enter),
+            response='x' + command.enter),
         connect_core.TargetUnit(
             i18n.skip_registration_form,
             '此帳號已設定為只能使用安全連線',
@@ -235,9 +235,9 @@ def login(
     cmd_list = list()
     # cmd_list.append(IAC + WILL + NAWS)
     cmd_list.append(ptt_id)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(password)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 
@@ -278,7 +278,7 @@ def login(
                 break_detect=True)
         ]
 
-        cmd = command.GoMainMenu + 'A' + command.Right + command.Left
+        cmd = command.go_main_menu + 'A' + command.right + command.left
 
         index = api.connect_core.send(
             cmd,

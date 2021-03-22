@@ -293,7 +293,7 @@ def get_board_info(
 
         # Go certain board, then post to get post type info
         cmd_list = list()
-        cmd_list.append(command.Ctrl_P)
+        cmd_list.append(command.ctrl_p)
         cmd = ''.join(cmd_list)
 
         target_list = [
@@ -329,8 +329,8 @@ def get_board_info(
 
         # Clear post status
         cmd_list = list()
-        cmd_list.append(command.Ctrl_C)
-        cmd_list.append(command.Ctrl_C)
+        cmd_list.append(command.ctrl_c)
+        cmd_list.append(command.ctrl_c)
         cmd = ''.join(cmd_list)
 
         target_list = [

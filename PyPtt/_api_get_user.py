@@ -61,13 +61,13 @@ def parse_user_page(screen):
 
 def get_user(api, ptt_id: str) -> data_type.UserInfo:
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('Q')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(ptt_id)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 
