@@ -1460,8 +1460,8 @@ if __name__ == '__main__':
         # init()
         # threading_test()
         ptt_bot = PTT.API(
-            # log_level=PTT.log.level.TRACE,
-            # log_level=PTT.log.level.DEBUG,
+            # log_level=PTT.logger_level.TRACE,
+            # log_level=PTT.logger_level.DEBUG,
             # host=PTT.data_type.host_type.PTT2
 
             # for 本機測試

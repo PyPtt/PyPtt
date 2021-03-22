@@ -13,7 +13,6 @@ register_uao()
 try:
     from . import data_type
     from . import i18n
-    from . import log
     from . import screens
     from . import command
     from . import exceptions
@@ -21,7 +20,6 @@ try:
 except ModuleNotFoundError:
     import data_type
     import i18n
-    import log
     import screens
     import command
     import exceptions
@@ -56,7 +54,7 @@ class TargetUnit(object):
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
         if log_level == 0:
-            self._log_level = log.level.INFO
+            self._log_level = Logger.INFO
         else:
             self._log_level = log_level
         self._Response = response
@@ -155,7 +153,7 @@ class API(object):
             screens.Target.use_too_many_resources,
             exceptions_=exceptions.use_too_many_resources())
 
-        self.logger = Logger('ConnectCore', Logger.INFO)
+        self.logger = Logger('connector', config.log_level)
         self.logger.show(i18n.connect_core, i18n.init)
 
     def connect(self) -> None:
@@ -528,7 +526,8 @@ class API(object):
                         find_target = True
 
                         self.logger.show(
-                            target.get_log_level(),
+                            # target.get_log_level(),
+                            Logger.DEBUG,
                             i18n.ptt_msg,
                             target.get_display_msg())
 

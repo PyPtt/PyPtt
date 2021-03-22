@@ -5,7 +5,6 @@ try:
     from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import exceptions
     from . import command
@@ -14,7 +13,6 @@ except ModuleNotFoundError:
     import data_type
     import i18n
     import connect_core
-    import log
     import screens
     import exceptions
     import command
@@ -22,6 +20,9 @@ except ModuleNotFoundError:
 
 
 def logout(api) -> None:
+
+    logger = Logger('api_logout', api.config.log_level)
+
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('g')
@@ -33,21 +34,12 @@ def logout(api) -> None:
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.logout,
-                i18n.Success,
-            ],
+            i18n.logout_success,
             '任意鍵',
             break_detect=True),
     ]
 
-    log.log(
-        api.config,
-        log.level.INFO,
-        [
-            i18n.Start,
-            i18n.logout
-        ])
+    logger.show(i18n.logout, i18n.active)
 
     try:
         api.connect_core.send(cmd, target_list)
@@ -59,11 +51,7 @@ def logout(api) -> None:
 
     api._login_status = False
 
-    log.show_value(
-        api.config,
-        log.level.INFO,
-        i18n.logout,
-        i18n.Done)
+    logger.show(i18n.logout, i18n.complete)
 
 
 def login(
@@ -71,7 +59,7 @@ def login(
         ptt_id,
         password,
         kick_other_login):
-    logger = Logger('login', api.config.log_level)
+    logger = Logger('api_login', api.config.log_level)
 
     if api._login_status:
         api.logout()
@@ -293,16 +281,10 @@ def login(
 
     if '> (' in ori_screen:
         api.cursor = data_type.Cursor.NEW
-        log.log(
-            api.config,
-            log.level.DEBUG,
-            i18n.NewCursor)
+        logger.show(Logger.DEBUG, i18n.new_cursor)
     else:
         api.cursor = data_type.Cursor.OLD
-        log.log(
-            api.config,
-            log.level.DEBUG,
-            i18n.OldCursor)
+        logger.show(Logger.DEBUG, i18n.old_cursor)
 
     if api.cursor not in screens.Target.InBoardWithCursor:
         screens.Target.InBoardWithCursor.append('\n' + api.cursor)
