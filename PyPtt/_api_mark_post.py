@@ -139,7 +139,7 @@ def mark_post(
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
 
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
     elif post_index != 0:
         if search_condition is not None:
@@ -155,22 +155,22 @@ def mark_post(
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
-            cmd_list.append(command.Enter)
+            cmd_list.append(command.enter)
 
         cmd_list.append(str(post_index))
 
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
     if mark_type == data_type.mark_type.S:
         cmd_list.append('L')
     elif mark_type == data_type.mark_type.D:
         cmd_list.append('t')
     elif mark_type == data_type.mark_type.DeleteD:
-        cmd_list.append(command.Ctrl_D)
+        cmd_list.append(command.ctrl_d)
     elif mark_type == data_type.mark_type.M:
         cmd_list.append('m')
     elif mark_type == data_type.mark_type.UNCONFIRMED:
-        cmd_list.append(command.Ctrl_E + 'S')
+        cmd_list.append(command.ctrl_e + 'S')
 
     cmd = ''.join(cmd_list)
 
@@ -178,7 +178,7 @@ def mark_post(
         connect_core.TargetUnit(
             [i18n.DelAllMarkPost],
             '刪除所有標記',
-            response='y' + command.Enter,
+            response='y' + command.enter,
             log_level=log.level.INFO),
         connect_core.TargetUnit(
             [

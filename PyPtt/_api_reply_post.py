@@ -40,7 +40,7 @@ def reply_post(
         cmd_list.append('#' + post_aid)
     elif post_index != 0:
         cmd_list.append(str(post_index))
-    cmd_list.append(command.Enter * 2)
+    cmd_list.append(command.enter * 2)
     cmd_list.append('r')
 
     if reply_type == data_type.reply_type.BOARD:
@@ -48,21 +48,21 @@ def reply_post(
             i18n.ReplyBoard,
             '▲ 回應至',
             log_level=log.level.INFO,
-            response='F' + command.Enter
+            response='F' + command.enter
         )
     elif reply_type == data_type.reply_type.MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyMail,
             '▲ 回應至',
             log_level=log.level.INFO,
-            response='M' + command.Enter
+            response='M' + command.enter
         )
     elif reply_type == data_type.reply_type.BOARD_MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyBoard_Mail,
             '▲ 回應至',
             log_level=log.level.INFO,
-            response='B' + command.Enter
+            response='B' + command.enter
         )
 
     cmd = ''.join(cmd_list)
@@ -82,42 +82,42 @@ def reply_post(
             i18n.ForcedWrite,
             '(E)繼續編輯 (W)強制寫入',
             log_level=log.level.INFO,
-            response='W' + command.Enter
+            response='W' + command.enter
         ),
         connect_core.TargetUnit(
             i18n.SelectSignature,
             '請選擇簽名檔',
-            response=str(sign_file) + command.Enter,
+            response=str(sign_file) + command.enter,
         ),
         connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            response='s' + command.Enter,
+            response='s' + command.enter,
         ),
         connect_core.TargetUnit(
             i18n.EditPost,
             '編輯文章',
             log_level=log.level.INFO,
-            response=str(content) + command.Enter + command.Ctrl_X
+            response=str(content) + command.enter + command.ctrl_x
         ),
         connect_core.TargetUnit(
             i18n.QuoteOriginal,
             '請問要引用原文嗎',
             log_level=log.level.DEBUG,
-            response='Y' + command.Enter
+            response='Y' + command.enter
         ),
         connect_core.TargetUnit(
             i18n.UseTheOriginalTitle,
             '採用原標題[Y/n]?',
             log_level=log.level.DEBUG,
-            response='Y' + command.Enter
+            response='Y' + command.enter
         ),
         reply_target_unit,
         connect_core.TargetUnit(
             i18n.SelfSaveDraft,
             '已順利寄出，是否自存底稿',
             log_level=log.level.DEBUG,
-            response='Y' + command.Enter
+            response='Y' + command.enter
         ),
     ]
 

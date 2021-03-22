@@ -13,9 +13,9 @@ except ModuleNotFoundError:
 def get_favourite_board(api) -> list:
 
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('F')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('0')
     cmd = ''.join(cmd_list)
 
@@ -94,7 +94,7 @@ def get_favourite_board(api) -> list:
         if len(screen_buf) < 20:
             break
 
-        cmd = command.Ctrl_F
+        cmd = command.ctrl_f
 
     # ScreenBuf = '\n'.join(ScreenBuf)
     # print(ScreenBuf)

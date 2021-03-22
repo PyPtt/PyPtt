@@ -1383,9 +1383,9 @@ nest_asyncio.apply()
 
 ```python
 content = [
-    PTT.command.Ctrl_C + PTT.command.Left + '5' + PTT.command.Right + '這是閃爍字' + PTT.command.Ctrl_C,
-    PTT.command.Ctrl_C + PTT.command.Left + '31' + PTT.command.Right + '前景紅色' + PTT.command.Ctrl_C,
-    PTT.command.Ctrl_C + PTT.command.Left + '44' + PTT.command.Right + '背景藍色' + PTT.command.Ctrl_C,   
+    PTT.command.ctrl_c + PTT.command.left + '5' + PTT.command.right + '這是閃爍字' + PTT.command.ctrl_c,
+    PTT.command.ctrl_c + PTT.command.left + '31' + PTT.command.right + '前景紅色' + PTT.command.ctrl_c,
+    PTT.command.ctrl_c + PTT.command.left + '44' + PTT.command.right + '背景藍色' + PTT.command.ctrl_c,   
 ]
 content = '\r\n'.join(content)
 

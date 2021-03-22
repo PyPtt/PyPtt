@@ -93,7 +93,7 @@ def get_newest_index(
             board)
 
         cmd_list.append('1')
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
         cmd_list.append('$')
 
         cmd = ''.join(cmd_list)
@@ -136,8 +136,8 @@ def get_newest_index(
     elif index_type == data_type.index_type.MAIL:
 
         cmd_list = list()
-        cmd_list.append(command.GoMainMenu)
-        cmd_list.append(command.Ctrl_Z)
+        cmd_list.append(command.go_main_menu)
+        cmd_list.append(command.ctrl_z)
         cmd_list.append('m')
 
         _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
@@ -150,7 +150,7 @@ def get_newest_index(
         # print('normal_newest_index', normal_newest_index)
 
         cmd_list.extend(_cmd_list)
-        cmd_list.append(command.Ctrl_F * 50)
+        cmd_list.append(command.ctrl_f * 50)
 
         cmd = ''.join(cmd_list)
 

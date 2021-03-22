@@ -31,8 +31,8 @@ def push(
         cmd_list.append('#' + post_aid)
     elif post_index != 0:
         cmd_list.append(str(post_index))
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Push)
+    cmd_list.append(command.enter)
+    cmd_list.append(command.push)
 
     cmd = ''.join(cmd_list)
 
@@ -117,9 +117,9 @@ def push(
     #     push_type = data_type.push_type.ARROW
 
     cmd_list.append(push_content)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('y')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 

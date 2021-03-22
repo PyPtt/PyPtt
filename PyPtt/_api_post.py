@@ -21,13 +21,13 @@ def fast_post_step0(
     api._goto_board(board)
 
     cmd_list = list()
-    cmd_list.append(command.Ctrl_P)
+    cmd_list.append(command.ctrl_p)
     cmd_list.append(str(post_type))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(str(title))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(str(content))
-    cmd_list.append(command.Ctrl_X)
+    cmd_list.append(command.ctrl_x)
     cmd_list.append('s')
     cmd = ''.join(cmd_list)
 
@@ -117,13 +117,13 @@ def fast_post(
     api._goto_board(board)
 
     cmd_list = list()
-    cmd_list.append(command.Ctrl_P)
+    cmd_list.append(command.ctrl_p)
     cmd_list.append(str(post_type))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(str(title))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(str(content))
-    cmd_list.append(command.Ctrl_X)
+    cmd_list.append(command.ctrl_x)
     cmd = ''.join(cmd_list)
 
     target_list = [
@@ -150,12 +150,12 @@ def fast_post(
         connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            response='s' + command.Enter,
+            response='s' + command.enter,
         ),
         connect_core.TargetUnit(
             i18n.SelectSignature,
             'x=隨機',
-            response=str(sign_file) + command.Enter,
+            response=str(sign_file) + command.enter,
         ),
     ]
     index = api.connect_core.fast_send(cmd, target_list)
@@ -176,7 +176,7 @@ def post(
     api._goto_board(board)
 
     cmd_list = list()
-    cmd_list.append(command.Ctrl_P)
+    cmd_list.append(command.ctrl_p)
 
     cmd = ''.join(cmd_list)
 
@@ -208,12 +208,12 @@ def post(
 
     cmd_list = list()
     cmd_list.append(str(post_type))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(str(title))
-    cmd_list.append(command.Enter)
-    cmd_list.append(command.Ctrl_Y * 40)
+    cmd_list.append(command.enter)
+    cmd_list.append(command.ctrl_y * 40)
     cmd_list.append(str(content))
-    cmd_list.append(command.Ctrl_X)
+    cmd_list.append(command.ctrl_x)
     cmd = ''.join(cmd_list)
 
     target_list = [
@@ -225,12 +225,12 @@ def post(
         connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            response='s' + command.Enter,
+            response='s' + command.enter,
         ),
         connect_core.TargetUnit(
             i18n.SelectSignature,
             'x=隨機',
-            response=str(sign_file) + command.Enter,
+            response=str(sign_file) + command.enter,
         ),
     ]
     index = api.connect_core.send(

@@ -17,22 +17,22 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) 
 
     cmd_list = list()
     cmd_list.append('i')
-    cmd_list.append(command.Ctrl_P)
+    cmd_list.append(command.ctrl_p)
     cmd_list.append('w')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('a')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(ptt_id)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
 
     cmd_list = list()
     cmd_list.append(str(bucket_days))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(reason)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('y')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_part2 = ''.join(cmd_list)
 
     target_list = [
@@ -55,7 +55,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) 
                 i18n.Success,
             ],
             '其它鍵結束',
-            response=command.Enter,
+            response=command.enter,
         ),
         connect_core.TargetUnit(
             [
@@ -63,7 +63,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) 
                 i18n.Success,
             ],
             '權限設定系統',
-            response=command.Enter,
+            response=command.enter,
         ),
         connect_core.TargetUnit(
             [
@@ -71,7 +71,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) 
                 i18n.Success,
             ],
             '任意鍵',
-            response=command.Space,
+            response=command.space,
         ),
         connect_core.TargetUnit(
             [

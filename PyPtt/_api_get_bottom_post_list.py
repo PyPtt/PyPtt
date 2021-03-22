@@ -37,7 +37,7 @@ def get_bottom_post_list(api, board):
         return list()
 
     cmd_list = list()
-    cmd_list.append(command.QueryPost)
+    cmd_list.append(command.query_post)
     cmd = ''.join(cmd_list)
 
     target_list = [
@@ -84,9 +84,9 @@ def get_bottom_post_list(api, board):
         result.append(current_post)
 
         cmd_list = list()
-        cmd_list.append(command.Enter)
-        cmd_list.append(command.Up)
-        cmd_list.append(command.QueryPost)
+        cmd_list.append(command.enter)
+        cmd_list.append(command.up)
+        cmd_list.append(command.query_post)
         cmd = ''.join(cmd_list)
 
     log.log(api.config, log.level.INFO, i18n.CatchBottomPostSuccess)

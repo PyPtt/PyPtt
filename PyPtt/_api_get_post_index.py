@@ -23,7 +23,7 @@ def get_post_index(
     cmd_list = list()
     cmd_list.append('#')
     cmd_list.append(aid)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 

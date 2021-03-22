@@ -14,13 +14,13 @@ def change_pw(
         api,
         new_password: str) -> None:
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('U')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('I')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('2')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
 
     target_list = [
@@ -31,21 +31,21 @@ def change_pw(
         connect_core.TargetUnit(
             i18n.confirm,
             '請您確定(Y/N)？',
-            response='Y' + command.Enter),
+            response='Y' + command.enter),
         connect_core.TargetUnit(
             i18n.CheckNewPassword,
             '檢查新密碼',
-            response=new_password + command.Enter,
+            response=new_password + command.enter,
             max_match=1),
         connect_core.TargetUnit(
             i18n.InputNewPassword,
             '設定新密碼',
-            response=new_password + command.Enter,
+            response=new_password + command.enter,
             max_match=1),
         connect_core.TargetUnit(
             i18n.InputOriginPassword,
             '輸入原密碼',
-            response=api._Password + command.Enter,
+            response=api._Password + command.enter,
             max_match=1),
         connect_core.TargetUnit(
             i18n.Done,

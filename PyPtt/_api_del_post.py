@@ -48,7 +48,7 @@ def del_post(
         cmd_list.append('#' + post_aid)
     elif post_index != 0:
         cmd_list.append(str(post_index))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('d')
 
     cmd = ''.join(cmd_list)
@@ -66,7 +66,7 @@ def del_post(
         connect_core.TargetUnit(
             i18n.ConfirmDelete,
             '請確定刪除(Y/N)?[N]',
-            response='y' + command.Enter,
+            response='y' + command.enter,
             max_match=1,
             handler=confirm_delete_handler),
         connect_core.TargetUnit(

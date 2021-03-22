@@ -23,9 +23,9 @@ def get_content(api, post_mode: bool = True):
         api.Unconfirmed = True
 
     if post_mode:
-        cmd = command.Enter * 2
+        cmd = command.enter * 2
     else:
-        cmd = command.Enter
+        cmd = command.enter
 
     target_list = [
         # 待證實文章
@@ -66,7 +66,7 @@ def get_content(api, post_mode: bool = True):
                 i18n.AnimationPost,
             ],
             screens.Target.Animation,
-            response=command.GoMainMenu_TypeQ,
+            response=command.go_main_menu_type_q,
             break_detect_after_send=True
         ),
     ]
@@ -207,9 +207,9 @@ def get_content(api, post_mode: bool = True):
                 break
 
         if not push_start:
-            cmd = command.Down
+            cmd = command.down
         else:
-            cmd = command.Right
+            cmd = command.right
 
     # print(api.Unconfirmed)
     origin_post = '\n'.join(origin_post)
@@ -421,7 +421,7 @@ def get_search_condition_cmd(
                 cmd_list.append('A')
 
         cmd_list.append(search_condition)
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
     if search_list is not None:
 
@@ -452,6 +452,6 @@ def get_search_condition_cmd(
                 continue
 
             cmd_list.append(search_condition_)
-            cmd_list.append(command.Enter)
+            cmd_list.append(command.enter)
 
     return cmd_list, normal_newest_index
