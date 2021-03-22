@@ -1486,10 +1486,10 @@ if __name__ == '__main__':
             sys.exit()
 
         if ptt_bot.unregistered_user:
-            print('未註冊使用者')
+            ptt_bot.log('未註冊使用者')
 
             if ptt_bot.process_picks != 0:
-                print(f'註冊單處理順位 {ptt_bot.process_picks}')
+                ptt_bot.log(f'註冊單處理順位 {ptt_bot.process_picks}')
 
         if ptt_bot.registered_user:
             ptt_bot.log('已註冊使用者')

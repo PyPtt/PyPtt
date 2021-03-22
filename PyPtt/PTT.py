@@ -59,7 +59,6 @@ class API:
             log_level = Logger.INFO
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
-        self.outside_logger = Logger(i18n.out_side, Logger.INFO)
 
         self.logger.show('PyPtt', version.V)
         self.logger.show('Developed by CodingMan')
@@ -104,6 +103,7 @@ class API:
         elif self.config.language == i18n.language.ENGLISH:
             self.logger.show(i18n.english_module, i18n.init)
 
+        self.outside_logger = Logger(i18n.out_side, Logger.INFO, handler=log_handler)
         ##################
         if isinstance(host, int):
             if host == 0:
