@@ -82,23 +82,11 @@ def performance_test():
     print('Performance Test get_time ' + str(
         round(end_time - start_time, 2)) + ' s')
 
-    start_time = time.time()
-    for _ in range(test_time):
-        ptt_time = ptt_bot.fast_get_time()
-
-        if ptt_time is None:
-            print('PTT_TIME is None')
-            break
-        # print(ptt_time)
-    end_time = time.time()
-    print('Performance Test fast_get_time ' + str(
-        round(end_time - start_time, 2)) + ' s')
-
     ptt_bot.logout()
-
 
     print('Performance Test finish')
     sys.exit()
+
 
 #             for _ in range(1000):
 #             ptt_time = ptt_bot.fast_get_time()
@@ -1504,7 +1492,7 @@ if __name__ == '__main__':
                 print(f'註冊單處理順位 {ptt_bot.process_picks}')
 
         if ptt_bot.registered_user:
-            print('已註冊使用者')
+            ptt_bot.log('已註冊使用者')
 
         ###################################
 
