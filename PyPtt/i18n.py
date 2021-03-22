@@ -89,11 +89,18 @@ old_cursor = None
 logout_success = None
 logout = None
 complete = None
+query_ptt_time_success = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global query_ptt_time_success
+    query_ptt_time_success = specific_load(lang, [
+        '取得批踢踢時間成功',
+        'query ptt time success',
+    ])
 
     global complete
     complete = specific_load(lang, [

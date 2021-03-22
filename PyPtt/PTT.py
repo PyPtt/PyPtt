@@ -59,6 +59,7 @@ class API:
             log_level = Logger.INFO
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
+        self.outside_logger = Logger(i18n.out_side, Logger.INFO)
 
         self.logger.show('PyPtt', version.V)
         self.logger.show('Developed by CodingMan')
@@ -238,10 +239,7 @@ class API:
         return _api_loginout.logout(self)
 
     def log(self, *msg) -> None:
-        self._one_thread()
-        msg = [str(x) for x in msg]
-        current_msg = ' '.join(msg)
-        log.log(self.config, log.level.OUTSIDE, current_msg)
+        self.outside_logger.show(*msg)
 
     def get_time(self) -> str:
         self._one_thread()
