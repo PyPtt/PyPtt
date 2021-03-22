@@ -60,7 +60,7 @@ def del_post(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '請按任意鍵繼續',
             response=' '),
         connect_core.TargetUnit(

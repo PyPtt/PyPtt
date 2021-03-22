@@ -281,7 +281,7 @@ class NoSearchResult(Exception):
 
 class OnlySecureConnection(Exception):
     def __init__(self):
-        self.message = i18n.OnlySecureConnection
+        self.message = i18n.only_secure_connection
 
     def __str__(self):
         return self.message

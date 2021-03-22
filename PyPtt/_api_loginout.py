@@ -157,42 +157,42 @@ def login(
             '系統過載',
             break_detect=True),
         connect_core.TargetUnit(
-            i18n.DelWrongPWRecord,
+            i18n.del_wrong_pw_record,
             '您要刪除以上錯誤嘗試的記錄嗎',
             response='y' + command.Enter),
         connect_core.TargetUnit(
-            i18n.PostNotFinish,
+            i18n.post_not_finish,
             '請選擇暫存檔 (0-9)[0]',
             response=command.Enter),
         connect_core.TargetUnit(
-            i18n.PostNotFinish,
+            i18n.post_not_finish,
             '有一篇文章尚未完成',
             response='Q' + command.Enter),
         connect_core.TargetUnit(
-            i18n.SigningUnPleaseWait,
+            i18n.in_login_process_please_wait,
             '登入中，請稍候'),
         connect_core.TargetUnit(
             kick_other_loginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
             response=kick_other_loginResponse),
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '◆ 您的註冊申請單尚在處理中',
             response=command.Enter,
             handler=register_processing),
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵',
             response=' '),
         connect_core.TargetUnit(
-            i18n.SigningUpdate,
+            i18n.update_sync_online_user_friend_list,
             '正在更新與同步線上使用者及好友名單'),
         connect_core.TargetUnit(
             i18n.go_main_menu,
             '【分類看板】',
             response=command.GoMainMenu),
         connect_core.TargetUnit(
-            i18n.ErrorLoginRichPeopleGoMainMenu,
+            i18n.error_login_rich_people_go_main_menu,
             [
                 '大富翁',
                 '排行榜',
@@ -203,25 +203,25 @@ def login(
             ],
             response=command.GoMainMenu),
         connect_core.TargetUnit(
-            i18n.ErrorLoginRichPeopleGoMainMenu,
+            i18n.error_login_rich_people_go_main_menu,
             [
                 '熱門話題'
             ],
             response=command.GoMainMenu),
         connect_core.TargetUnit(
-            i18n.SkipRegistrationForm,
+            i18n.skip_registration_form,
             '您確定要填寫註冊單嗎',
             response=command.Enter * 3),
         connect_core.TargetUnit(
-            i18n.SkipRegistrationForm,
+            i18n.skip_registration_form,
             '以上資料是否正確',
             response='y' + command.Enter),
         connect_core.TargetUnit(
-            i18n.SkipRegistrationForm,
+            i18n.skip_registration_form,
             '另外若輸入後發生認證碼錯誤請先確認輸入是否為最後一封',
             response='x' + command.Enter),
         connect_core.TargetUnit(
-            i18n.SkipRegistrationForm,
+            i18n.skip_registration_form,
             '此帳號已設定為只能使用安全連線',
             exceptions_=exceptions.OnlySecureConnection())
     ]
