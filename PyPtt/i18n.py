@@ -84,11 +84,46 @@ only_secure_connection = None
 debug = None
 info = None
 out_side = None
+new_cursor = None
+old_cursor = None
+logout_success = None
+logout = None
+complete = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global complete
+    complete = specific_load(lang, [
+        '完成',
+        'complete',
+    ])
+
+    global logout
+    logout = specific_load(lang, [
+        '登出',
+        'logout',
+    ])
+
+    global logout_success
+    logout_success = specific_load(lang, [
+        '登出成功',
+        'logout success',
+    ])
+
+    global new_cursor
+    new_cursor = specific_load(lang, [
+        '新式游標',
+        'new cursor',
+    ])
+
+    global old_cursor
+    old_cursor = specific_load(lang, [
+        '舊式游標',
+        'old cursor',
+    ])
 
     global debug
     debug = specific_load(lang, [
