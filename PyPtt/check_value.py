@@ -13,7 +13,7 @@ def check(
         value_type,
         name,
         value,
-        value_class=None) ->None:
+        value_class=None) -> None:
     if not isinstance(value, value_type):
         if value_type is str:
             raise TypeError(
