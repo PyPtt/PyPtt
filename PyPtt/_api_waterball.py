@@ -302,10 +302,10 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
     while temp_end_index <= len(content):
         temp = ''
         last_temp = None
-        while len(temp.encode('big5-uao', 'ignore')) < max_length:
+        while len(temp.encode('big5uao', 'ignore')) < max_length:
             temp = content[temp_start_index:temp_end_index]
 
-            if not len(temp.encode('big5-uao', 'ignore')) < max_length:
+            if not len(temp.encode('big5uao', 'ignore')) < max_length:
                 break
             elif content.endswith(temp) and temp_start_index != 0:
                 break

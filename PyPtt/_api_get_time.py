@@ -1,4 +1,5 @@
 import re
+
 try:
     from . import i18n
     from . import connect_core
@@ -14,7 +15,6 @@ except ModuleNotFoundError:
 
 
 def get_time(api) -> str:
-
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
     cmd_list.append('A')

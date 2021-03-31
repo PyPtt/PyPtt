@@ -83,6 +83,9 @@ def performance_test():
     print('Performance Test WebSocket ' + str(
         round(end_time - start_time, 2)) + ' s')
 
+    ptt_bot.logout()
+
+
     print('Performance Test finish')
     sys.exit()
 
@@ -105,9 +108,6 @@ def get_post():
             ('Stock', '1TVnEivO'),
             # 文章格式錯誤
             ('movie', 457),
-            ('Gossiping', '1TU65Wi_'),
-            ('Gossiping', '1TWadtnq'),
-            ('Gossiping', '1TZBBkWP'),
             ('Gossiping', '1UDnXefr'),
             ('joke', '1Tc6G9eQ'),
             # 135193
@@ -119,7 +119,7 @@ def get_post():
             # 辦刪除文章
             ('Test', 347),
             # push number parse error
-            ('Gossiping', '1TgbvAW3')
+            ('Ptt25sign', '1VppdKLW'),
         ]
     else:
         test_post_list = [
@@ -139,7 +139,7 @@ def get_post():
             ('WhoAmI', '1TqJhzQH')
         ]
 
-    query = True
+    query = False
 
     for (board, index) in test_post_list:
         try:
@@ -235,6 +235,8 @@ def get_post():
                     else:
                         buffer = f'{push_type} {author}: {content} {push_obj.time}'
                     print(buffer)
+
+                # print(post_info.origin_post)
 
                 print(
                     f'Total {push_count} Pushs {boo_count} Boo {arrow_count} Arrow = {push_count - boo_count}')
@@ -488,9 +490,15 @@ def get_post_with_condition():
 def post():
     content = '''
 此為 PyPtt 貼文測試內容，如有打擾請告知。
-github: https://tinyurl.com/umqff3v
+github: https://github.com/PttCodingMan/PyPtt
 
-開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual
+開發手冊: https://github.com/PttCodingMan/PyPtt/tree/master/doc
+ポ
+ポポ
+ポポポ
+☂
+☂☂
+☂☂☂
 '''
     
     for _ in range(3):
@@ -1442,6 +1450,11 @@ if __name__ == '__main__':
             # host=PTT.data_type.host_type.LOCALHOST,
             # port=8888,
 
+            # for 自定義 url 測試
+            # connect_mode=PTT.connect_core.connect_mode.TELNET,
+            # host='localhost',
+            # port=8888,
+
             # language=PTT.i18n.language.ENGLISH
         )
 
@@ -1512,6 +1525,7 @@ if __name__ == '__main__':
 
 
     except Exception as e:
+        print(type(e))
         traceback.print_tb(e.__traceback__)
         print(e)
     except KeyboardInterrupt:

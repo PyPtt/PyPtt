@@ -20,7 +20,7 @@ except ModuleNotFoundError:
     import lib_util
 
 
-def markPost(
+def mark_post(
         api,
         mark_type: int,
         board: str,
