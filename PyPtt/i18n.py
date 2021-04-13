@@ -90,11 +90,46 @@ logout_success = None
 logout = None
 complete = None
 query_ptt_time_success = None
+has_new_mail_goto_main_menu = None
+mail_box_full = None
+use_mailbox_api_will_logout_after_execution = None
+unregistered_user_cant_use_all_api = None
+picks_in_register = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global picks_in_register
+    picks_in_register = specific_load(lang, [
+        '註冊申請單處理順位',
+        'Registration application processing order',
+    ])
+
+    global unregistered_user_cant_use_all_api
+    unregistered_user_cant_use_all_api = specific_load(lang, [
+        '未註冊使用者，將無法使用全部功能',
+        'Unregistered User Can\'t Use All API',
+    ])
+
+    global use_mailbox_api_will_logout_after_execution
+    use_mailbox_api_will_logout_after_execution = specific_load(lang, [
+        f'如果使用信箱相關功能，將執行後自動登出',
+        f'If you use mailbox related functions, you will be logged out automatically after execution',
+    ])
+
+    global mail_box_full
+    mail_box_full = specific_load(lang, [
+        '郵件已滿',
+        'Mail box is full',
+    ])
+
+    global has_new_mail_goto_main_menu
+    has_new_mail_goto_main_menu = specific_load(lang, [
+        '有新信，回到主選單',
+        'New mail! Back to main menu',
+    ])
 
     global query_ptt_time_success
     query_ptt_time_success = specific_load(lang, [

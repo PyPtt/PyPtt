@@ -20,7 +20,6 @@ except ModuleNotFoundError:
 
 
 def logout(api) -> None:
-
     logger = Logger('api_logout', api.config.log_level)
 
     cmd_list = list()
@@ -39,7 +38,7 @@ def logout(api) -> None:
             break_detect=True),
     ]
 
-    logger.show(i18n.logout, i18n.active)
+    logger.info(i18n.logout, i18n.active)
 
     try:
         api.connect_core.send(cmd, target_list)
@@ -51,7 +50,7 @@ def logout(api) -> None:
 
     api._login_status = False
 
-    logger.show(i18n.logout, i18n.complete)
+    logger.info(i18n.logout, i18n.complete)
 
 
 def login(
@@ -102,7 +101,7 @@ def login(
 
     api.connect_core.connect()
 
-    logger.show(i18n.login_id, ptt_id)
+    logger.info(i18n.login_id, ptt_id)
 
     target_list = [
         connect_core.TargetUnit(
@@ -240,24 +239,15 @@ def login(
 
         current_capacity, max_capacity = _api_util.get_mailbox_capacity(api)
 
-        log.log(
-            api.config,
-            log.level.INFO,
-            i18n.HasNewMailGotoMainMenu
-        )
+        logger.info(i18n.has_new_mail_goto_main_menu)
 
         if current_capacity > max_capacity:
             api._mailbox_full = True
-            log.log(
-                api.config,
-                log.level.INFO,
-                i18n.MailBoxFull)
+
+            logger.info(i18n.mail_box_full)
 
         if api._mailbox_full:
-            log.log(
-                api.config,
-                log.level.INFO,
-                i18n.UseMailboxAPIWillLogoutAfterExecution)
+            logger.info(i18n.use_mailbox_api_will_logout_after_execution)
 
         target_list = [
             connect_core.TargetUnit(
@@ -281,10 +271,10 @@ def login(
 
     if '> (' in ori_screen:
         api.cursor = data_type.Cursor.NEW
-        logger.show(Logger.DEBUG, i18n.new_cursor)
+        logger.debug(i18n.new_cursor)
     else:
         api.cursor = data_type.Cursor.OLD
-        logger.show(Logger.DEBUG, i18n.old_cursor)
+        logger.debug(i18n.old_cursor)
 
     if api.cursor not in screens.Target.InBoardWithCursor:
         screens.Target.InBoardWithCursor.append('\n' + api.cursor)
@@ -304,18 +294,11 @@ def login(
         api.unregistered_user = False
 
     if api.unregistered_user:
-        # print(ori_screen)
-        log.log(
-            api.config,
-            log.level.INFO,
-            i18n.UnregisteredUserCantUseAllAPI)
+        logger.info(i18n.unregistered_user_cant_use_all_api)
+
     api.registered_user = not api.unregistered_user
 
     if api.process_picks != 0:
-        log.show_value(
-            api.config,
-            log.level.INFO,
-            i18n.PicksInRegister,
-            api.process_picks)
+        logger.info(i18n.picks_in_register, api.process_picks)
 
     api._login_status = True

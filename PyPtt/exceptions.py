@@ -255,7 +255,7 @@ class UserHasPreviouslyBeenBanned(Exception):
 
 class MailboxFull(Exception):
     def __init__(self):
-        self.message = i18n.MailBoxFull
+        self.message = i18n.mail_box_full
 
     def __str__(self):
         return self.message

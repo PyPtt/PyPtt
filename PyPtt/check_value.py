@@ -42,8 +42,8 @@ def check_index(
 
     if max_value is not None:
         if index > max_value:
-            logger.show('index', index)
-            logger.show('max_value', max_value)
+            logger.info('index', index)
+            logger.info('max_value', max_value)
             raise ValueError(f'{name} {index} {i18n.must_between} 0 ~ {max_value}')
 
 
