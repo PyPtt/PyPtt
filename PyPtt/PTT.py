@@ -60,8 +60,8 @@ class API:
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
 
-        self.logger.show('PyPtt', version.V)
-        self.logger.show('Developed by CodingMan')
+        self.logger.info('PyPtt', version.V)
+        self.logger.info('Developed by CodingMan')
 
         self._login_status = False
         self.unregistered_user = True
@@ -99,9 +99,9 @@ class API:
         i18n.load(self.config.language)
 
         if self.config.language == i18n.language.CHINESE:
-            self.logger.show(i18n.chinese_traditional_module, i18n.init)
+            self.logger.info(i18n.chinese_traditional_module, i18n.init)
         elif self.config.language == i18n.language.ENGLISH:
-            self.logger.show(i18n.english_module, i18n.init)
+            self.logger.info(i18n.english_module, i18n.init)
 
         self.outside_logger = Logger(i18n.out_side, Logger.INFO, handler=log_handler)
         ##################
@@ -115,13 +115,13 @@ class API:
         self.config.host = host
 
         if self.config.host == data_type.host_type.PTT1:
-            self.logger.show(i18n.connect_host, i18n.PTT)
+            self.logger.info(i18n.connect_host, i18n.PTT)
         elif self.config.host == data_type.host_type.PTT2:
-            self.logger.show(i18n.connect_host, i18n.PTT2)
+            self.logger.info(i18n.connect_host, i18n.PTT2)
         elif self.config.host == data_type.host_type.LOCALHOST:
-            self.logger.show(i18n.connect_host, i18n.localhost)
+            self.logger.info(i18n.connect_host, i18n.localhost)
         else:
-            self.logger.show(i18n.connect_host, self.config.host)
+            self.logger.info(i18n.connect_host, self.config.host)
 
         ##################
 
@@ -157,8 +157,8 @@ class API:
         self._goto_board_list = list()
         self._board_info_list = dict()
 
-        self.logger.show(Logger.DEBUG, 'ThreadID', self._ThreadID)
-        self.logger.show('PyPtt', i18n.init)
+        self.logger.debug('ThreadID', self._ThreadID)
+        self.logger.info('PyPtt', i18n.init)
 
     def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
@@ -239,7 +239,7 @@ class API:
         return _api_loginout.logout(self)
 
     def log(self, *msg) -> None:
-        self.outside_logger.show(*msg)
+        self.outside_logger.info(*msg)
 
     def get_time(self) -> str:
         self._one_thread()

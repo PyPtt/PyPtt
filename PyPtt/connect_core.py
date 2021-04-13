@@ -154,24 +154,24 @@ class API(object):
             exceptions_=exceptions.use_too_many_resources())
 
         self.logger = Logger('connector', config.log_level)
-        self.logger.show(i18n.connect_core, i18n.init)
+        self.logger.info(i18n.connect_core, i18n.init)
 
     def connect(self) -> None:
         def _wait():
             for i in range(self.config.retry_wait_time):
 
                 if self.config.host == data_type.host_type.PTT1:
-                    self.logger.show(i18n.prepare_connect_again, i18n.PTT, str(self.config.retry_wait_time - i))
+                    self.logger.info(i18n.prepare_connect_again, i18n.PTT, str(self.config.retry_wait_time - i))
                 elif self.config.host == data_type.host_type.PTT2:
-                    self.logger.show(i18n.prepare_connect_again, i18n.PTT2, str(self.config.retry_wait_time - i))
+                    self.logger.info(i18n.prepare_connect_again, i18n.PTT2, str(self.config.retry_wait_time - i))
                 elif self.config.host == data_type.host_type.LOCALHOST:
-                    self.logger.show(i18n.prepare_connect_again, i18n.localhost, str(self.config.retry_wait_time - i))
+                    self.logger.info(i18n.prepare_connect_again, i18n.localhost, str(self.config.retry_wait_time - i))
                 else:
-                    self.logger.show(i18n.prepare_connect_again, self.config.host, str(self.config.retry_wait_time - i))
+                    self.logger.info(i18n.prepare_connect_again, self.config.host, str(self.config.retry_wait_time - i))
 
                 time.sleep(1)
 
-        self.logger.show(i18n.connect_core, i18n.active)
+        self.logger.info(i18n.connect_core, i18n.active)
 
         if self.config.host == data_type.host_type.PTT1:
             telnet_host = 'ptt.cc'
@@ -191,9 +191,9 @@ class API(object):
             websocket_origin = 'https://term.ptt.cc'
 
         if self.config.connect_mode == connect_mode.TELNET:
-            self.logger.show(i18n.connect_mode, i18n.connect_mode_TELNET)
+            self.logger.info(i18n.connect_mode, i18n.connect_mode_TELNET)
         elif self.config.connect_mode == connect_mode.WEBSOCKET:
-            self.logger.show(i18n.connect_mode, i18n.connect_mode_WEBSOCKET)
+            self.logger.info(i18n.connect_mode, i18n.connect_mode_WEBSOCKET)
 
         connect_success = False
 
@@ -210,7 +210,7 @@ class API(object):
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
-                    self.logger.show(Logger.DEBUG, 'USER_AGENT', websockets.http.USER_AGENT)
+                    self.logger.debug('USER_AGENT', websockets.http.USER_AGENT)
 
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
@@ -223,13 +223,13 @@ class API(object):
                 print(e)
 
                 if self.config.host == data_type.host_type.PTT1:
-                    self.logger.show(i18n.connect, i18n.PTT, i18n.fail)
+                    self.logger.info(i18n.connect, i18n.PTT, i18n.fail)
                 elif self.config.host == data_type.host_type.PTT2:
-                    self.logger.show(i18n.connect, i18n.PTT2, i18n.fail)
+                    self.logger.info(i18n.connect, i18n.PTT2, i18n.fail)
                 elif self.config.host == data_type.host_type.LOCALHOST:
-                    self.logger.show(i18n.connect, i18n.localhost, i18n.fail)
+                    self.logger.info(i18n.connect, i18n.localhost, i18n.fail)
                 else:
-                    self.logger.show(i18n.connect, self.config.host, i18n.fail)
+                    self.logger.info(i18n.connect, self.config.host, i18n.fail)
 
                 _wait()
                 continue
@@ -430,9 +430,9 @@ class API(object):
                 msg = msg.encode('big5', 'replace')
 
             if is_secret:
-                self.logger.show(Logger.DEBUG, i18n.send_msg, i18n.hide_sensitive_info)
+                self.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
             else:
-                self.logger.show(Logger.DEBUG, i18n.send_msg, msg)
+                self.logger.debug(i18n.send_msg, msg)
 
             if self.config.connect_mode == connect_mode.TELNET:
                 try:
@@ -525,14 +525,12 @@ class API(object):
 
                         find_target = True
 
-                        self.logger.show(
-                            # target.get_log_level(),
-                            Logger.DEBUG,
+                        self.logger.debug(
                             i18n.ptt_msg,
                             target.get_display_msg())
 
                         end_time = time.time()
-                        self.logger.show(Logger.DEBUG, i18n.spend_time, round(end_time - start_time, 3))
+                        self.logger.debug(i18n.spend_time, round(end_time - start_time, 3))
 
                         if target.is_break():
                             return target_list.index(target)
