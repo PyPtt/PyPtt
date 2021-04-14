@@ -67,6 +67,11 @@ def give_money(
             response=api._Password + command.Enter
         ),
         connect_core.TargetUnit(
+            i18n.AnonymousTransaction,
+            '他是你的小主人，是否匿名？',
+            response='n' + command.Enter
+        ),
+        connect_core.TargetUnit(
             i18n.InputMoney,
             '要給他多少Ptt幣呢?',
             response=command.Tab + str(money) + command.Enter
