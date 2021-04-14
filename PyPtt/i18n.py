@@ -194,6 +194,7 @@ CatchBottomPostSuccess = None
 ConfirmDelete = None
 DeleteSuccess = None
 DeletedPost = None
+AnonymousTransaction = None
 
 
 def specific_load(input_language, lang_list):
@@ -1279,6 +1280,12 @@ def load(input_lang):
     DeletedPost = specific_load(input_lang, [
         '已刪除文章',
         'Deleted Post',
+    ])
+
+    global AnonymousTransaction
+    AnonymousTransaction = specific_load(input_lang, [
+        '不使用匿名交易',
+        'Transaction without Anomalous',
     ])
 
     # No changes have been made to any settings
