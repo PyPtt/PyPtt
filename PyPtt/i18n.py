@@ -95,11 +95,32 @@ mail_box_full = None
 use_mailbox_api_will_logout_after_execution = None
 unregistered_user_cant_use_all_api = None
 picks_in_register = None
+reading_board_info = None
+no_permission = None
+NoPost = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global NoPost
+    NoPost = specific_load(lang, [
+        '沒有文章',
+        'No Post',
+    ])
+
+    global no_permission
+    no_permission = specific_load(lang, [
+        '使用者沒有權限',
+        'User Has No Permission',
+    ])
+
+    global reading_board_info
+    reading_board_info = specific_load(lang, [
+        '讀取看板資訊',
+        'Reading Board Info',
+    ])
 
     global picks_in_register
     picks_in_register = specific_load(lang, [

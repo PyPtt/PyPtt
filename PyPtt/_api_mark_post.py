@@ -31,7 +31,7 @@ def mark_post(
 
     log.show_value(
         api.config,
-        log.level.INFO,
+        Logger.INFO,
         [
             i18n.PTT,
             i18n.Msg
@@ -179,7 +179,7 @@ def mark_post(
             [i18n.DelAllMarkPost],
             '刪除所有標記',
             response='y' + command.enter,
-            log_level=log.level.INFO),
+            log_level=Logger.INFO),
         connect_core.TargetUnit(
             [
                 i18n.Mark,
@@ -187,7 +187,7 @@ def mark_post(
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.level.INFO),
+            log_level=Logger.INFO),
     ]
 
     api.connect_core.send(cmd, target_list)

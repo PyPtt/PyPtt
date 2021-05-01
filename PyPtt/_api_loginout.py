@@ -80,7 +80,7 @@ def login(
     # def mailbox_full():
     #     log.log(
     #         api.config,
-    #         log.level.INFO,
+    #         Logger.INFO,
     #         i18n.MailBoxFull)
     #     api._mailbox_full = True
 

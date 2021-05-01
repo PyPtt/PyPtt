@@ -36,7 +36,7 @@ def has_new_mail(api) -> int:
             i18n.MailBox,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=Logger.DEBUG
         )
     ]
 

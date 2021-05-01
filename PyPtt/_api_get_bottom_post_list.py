@@ -33,7 +33,7 @@ def get_bottom_post_list(api, board):
     # print(bottom_screen)
 
     if bottom_length == 0:
-        log.log(api.config, log.level.INFO, i18n.CatchBottomPostSuccess)
+        log.log(api.config, Logger.INFO, i18n.CatchBottomPostSuccess)
         return list()
 
     cmd_list = list()
@@ -49,7 +49,7 @@ def get_bottom_post_list(api, board):
             screens.Target.QueryPost,
             break_detect=True,
             refresh=False,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.PostDeleted,
@@ -57,7 +57,7 @@ def get_bottom_post_list(api, board):
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             i18n.NoSuchBoard,
             screens.Target.MainMenu_Exiting,
@@ -89,6 +89,6 @@ def get_bottom_post_list(api, board):
         cmd_list.append(command.query_post)
         cmd = ''.join(cmd_list)
 
-    log.log(api.config, log.level.INFO, i18n.CatchBottomPostSuccess)
+    log.log(api.config, Logger.INFO, i18n.CatchBottomPostSuccess)
 
     return list(reversed(result))

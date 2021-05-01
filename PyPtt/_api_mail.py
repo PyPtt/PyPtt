@@ -114,7 +114,7 @@ def mail(
 
     log.show_value(
         api.config,
-        log.level.INFO,
+        Logger.INFO,
         i18n.SendMail,
         i18n.Success)
 
@@ -173,12 +173,12 @@ def get_mail(
             i18n.MailBox,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             i18n.MailBox,
             fast_target,
             break_detect=True,
-            log_level=log.level.DEBUG)
+            log_level=Logger.DEBUG)
     ]
 
     # 送出訊息
@@ -198,7 +198,7 @@ def get_mail(
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         i18n.Author,
         mail_author)
 
@@ -211,7 +211,7 @@ def get_mail(
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         i18n.Title,
         mail_title)
 
@@ -223,7 +223,7 @@ def get_mail(
         mail_date = pattern_result.group(0)[2:].strip()
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         i18n.Date,
         mail_date)
 
@@ -244,7 +244,7 @@ def get_mail(
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         i18n.Content,
         mail_content)
 
@@ -282,7 +282,7 @@ def get_mail(
 
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 [
                     i18n.MailBox,
                     'IP',
@@ -298,7 +298,7 @@ def get_mail(
 
                 log.show_value(
                     api.config,
-                    log.level.DEBUG,
+                    Logger.DEBUG,
                     [
                         i18n.MailBox,
                         'location',
@@ -344,7 +344,7 @@ def del_mail(api, index) -> None:
             i18n.MailBox,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.level.DEBUG)
+            log_level=Logger.DEBUG)
     ]
 
     # 送出
