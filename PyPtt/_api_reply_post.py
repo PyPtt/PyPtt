@@ -24,7 +24,7 @@ def reply_post(
         post_index: int) -> None:
     # log.showValue(
     #     api.config,
-    #     log.level.INFO,
+    #     Logger.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -47,21 +47,21 @@ def reply_post(
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyBoard,
             '▲ 回應至',
-            log_level=log.level.INFO,
+            log_level=Logger.INFO,
             response='F' + command.enter
         )
     elif reply_type == data_type.reply_type.MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyMail,
             '▲ 回應至',
-            log_level=log.level.INFO,
+            log_level=Logger.INFO,
             response='M' + command.enter
         )
     elif reply_type == data_type.reply_type.BOARD_MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyBoard_Mail,
             '▲ 回應至',
-            log_level=log.level.INFO,
+            log_level=Logger.INFO,
             response='B' + command.enter
         )
 
@@ -75,13 +75,13 @@ def reply_post(
         connect_core.TargetUnit(
             i18n.NoResponse,
             '◆ 很抱歉, 此文章已結案並標記, 不得回應',
-            log_level=log.level.INFO,
+            log_level=Logger.INFO,
             exceptions_=exceptions.NoResponse()
         ),
         connect_core.TargetUnit(
             i18n.ForcedWrite,
             '(E)繼續編輯 (W)強制寫入',
-            log_level=log.level.INFO,
+            log_level=Logger.INFO,
             response='W' + command.enter
         ),
         connect_core.TargetUnit(
@@ -97,26 +97,26 @@ def reply_post(
         connect_core.TargetUnit(
             i18n.EditPost,
             '編輯文章',
-            log_level=log.level.INFO,
+            log_level=Logger.INFO,
             response=str(content) + command.enter + command.ctrl_x
         ),
         connect_core.TargetUnit(
             i18n.QuoteOriginal,
             '請問要引用原文嗎',
-            log_level=log.level.DEBUG,
+            log_level=Logger.DEBUG,
             response='Y' + command.enter
         ),
         connect_core.TargetUnit(
             i18n.UseTheOriginalTitle,
             '採用原標題[Y/n]?',
-            log_level=log.level.DEBUG,
+            log_level=Logger.DEBUG,
             response='Y' + command.enter
         ),
         reply_target_unit,
         connect_core.TargetUnit(
             i18n.SelfSaveDraft,
             '已順利寄出，是否自存底稿',
-            log_level=log.level.DEBUG,
+            log_level=Logger.DEBUG,
             response='Y' + command.enter
         ),
     ]
@@ -128,5 +128,5 @@ def reply_post(
 
     log.log(
         api.config,
-        log.level.INFO,
+        Logger.INFO,
         i18n.RespondSuccess)

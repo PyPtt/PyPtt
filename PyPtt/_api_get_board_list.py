@@ -17,7 +17,7 @@ def get_board_list(api) -> list:
 
     # log.showValue(
     #     api.config,
-    #     log.level.INFO,
+    #     Logger.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -66,11 +66,11 @@ def get_board_list(api) -> list:
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         'MaxNo',
         max_no)
 
-    if api.config.log_level == log.level.INFO:
+    if api.config.log_level == Logger.INFO:
         pb = progressbar.ProgressBar(
             max_value=max_no,
             redirect_stdout=True)
@@ -118,7 +118,7 @@ def get_board_list(api) -> list:
 
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'Board NO',
                 no)
 
@@ -128,20 +128,20 @@ def get_board_list(api) -> list:
 
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'Board Name',
                 board_name)
 
             board_list.append(board_name)
 
-            if api.config.log_level == log.level.INFO:
+            if api.config.log_level == Logger.INFO:
                 pb.update(no)
 
         if no >= max_no:
             break
         cmd = command.ctrl_f
 
-    if api.config.log_level == log.level.INFO:
+    if api.config.log_level == Logger.INFO:
         pb.finish()
 
     return board_list

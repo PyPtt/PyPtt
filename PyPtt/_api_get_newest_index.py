@@ -1,10 +1,10 @@
 import re
-
+from SingleLog.log import Logger
 try:
     from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
+    # from . import log
     from . import screens
     from . import exceptions
     from . import command
@@ -14,7 +14,7 @@ except ModuleNotFoundError:
     import data_type
     import i18n
     import connect_core
-    import log
+    # import log
     import screens
     import exceptions
     import command
@@ -55,7 +55,7 @@ def _get_newest_index(api) -> int:
         if need_continue:
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 i18n.FindNewestIndex,
                 IndexTemp)
             newest_index = IndexTemp
@@ -103,17 +103,17 @@ def get_newest_index(
                 i18n.NoPost,
                 '沒有文章...',
                 break_detect=True,
-                log_level=log.level.DEBUG),
+                log_level=Logger.DEBUG),
             connect_core.TargetUnit(
                 i18n.Success,
                 screens.Target.InBoard,
                 break_detect=True,
-                log_level=log.level.DEBUG),
+                log_level=Logger.DEBUG),
             connect_core.TargetUnit(
                 i18n.Success,
                 screens.Target.InBoardWithCursor,
                 break_detect=True,
-                log_level=log.level.DEBUG),
+                log_level=Logger.DEBUG),
             connect_core.TargetUnit(
                 i18n.NoSuchBoard,
                 screens.Target.MainMenu_Exiting,
@@ -163,7 +163,7 @@ def get_newest_index(
                 i18n.NoMail,
                 screens.Target.CursorToGoodbye,
                 break_detect=True,
-                log_level=log.level.DEBUG),
+                log_level=Logger.DEBUG),
         ]
 
         def get_index(api):

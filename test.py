@@ -32,11 +32,11 @@ def init():
     print('===英文顯示===')
     PTT.API(language=PTT.i18n.language.ENGLISH)
     print('===log DEBUG===')
-    PTT.API(log_level=PTT.log.level.DEBUG)
+    PTT.API(log_level=PTT.Logger.DEBUG)
     print('===log INFO===')
-    PTT.API(log_level=PTT.log.level.INFO)
+    PTT.API(log_level=PTT.Logger.INFO)
     print('===log SLIENT===')
-    PTT.API(log_level=PTT.log.level.SILENT)
+    PTT.API(log_level=PTT.Logger.SILENT)
     print('===log SLIENT======')
 
     print('===負向===')
@@ -106,26 +106,26 @@ def get_post():
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_post_list = [
             ('Python', 1),
-            ('NotExitBoard', 1),
-            ('Python', '1TJH_XY0'),
-            # 文章格式錯誤
-            ('Steam', 4444),
-            ('Stock', 92324),
-            ('Stock', '1TVnEivO'),
-            # 文章格式錯誤
-            ('movie', 457),
-            ('Gossiping', '1UDnXefr'),
-            ('joke', '1Tc6G9eQ'),
-            # 135193
-            ('Test', 575),
-            # 待證文章
-            ('Test', '1U3pLzi0'),
-            # 古早文章
-            ('LAW', 1),
-            # 辦刪除文章
-            ('Test', 347),
-            # push number parse error
-            ('Ptt25sign', '1VppdKLW'),
+            # ('NotExitBoard', 1),
+            # ('Python', '1TJH_XY0'),
+            # # 文章格式錯誤
+            # ('Steam', 4444),
+            # ('Stock', 92324),
+            # ('Stock', '1TVnEivO'),
+            # # 文章格式錯誤
+            # ('movie', 457),
+            # ('Gossiping', '1UDnXefr'),
+            # ('joke', '1Tc6G9eQ'),
+            # # 135193
+            # ('Test', 575),
+            # # 待證文章
+            # ('Test', '1U3pLzi0'),
+            # # 古早文章
+            # ('LAW', 1),
+            # # 辦刪除文章
+            # ('Test', 347),
+            # # push number parse error
+            # ('Ptt25sign', '1VppdKLW'),
         ]
     else:
         test_post_list = [
@@ -1419,9 +1419,9 @@ def get_mail():
 
 def mail_recviver():
     while True:
-        # ptt_bot.config.log_level = PTT.log.level.TRACE
+        # ptt_bot.config.log_level = PTT.Logger.TRACE
         newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
-        # ptt_bot.config.log_level = PTT.log.level.INFO
+        # ptt_bot.config.log_level = PTT.Logger.INFO
         ptt_bot.log(f'最新信箱編號 {newest_index}')
         #
         # user = ptt_bot.get_user(ptt_id)
@@ -1500,7 +1500,7 @@ if __name__ == '__main__':
 
         # performance_test()
 
-        # get_post()
+        get_post()
         # get_post_with_condition()
         # post()
         # get_newest_index()

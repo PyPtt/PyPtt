@@ -38,12 +38,12 @@ def fast_post_step0(
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoPermission,
+            i18n.no_permission,
             '使用者不可發言',
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoPermission,
+            i18n.no_permission,
             '無法發文: 未達看板要求權限',
             break_detect=True
         ),
@@ -63,7 +63,7 @@ def fast_post_step0(
         screens.show(api.config, api.connect_core.get_screen_queue())
         raise exceptions.UnknownError(i18n.UnknownError)
     if index == 1 or index == 2:
-        raise exceptions.NoPermission(i18n.NoPermission)
+        raise exceptions.NoPermission(i18n.no_permission)
 
 
 def fast_post_step1(api: object, sign_file) -> None:
@@ -76,12 +76,12 @@ def fast_post_step1(api: object, sign_file) -> None:
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoPermission,
+            i18n.no_permission,
             '使用者不可發言',
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoPermission,
+            i18n.no_permission,
             '無法發文: 未達看板要求權限',
             break_detect=True
         ),
@@ -133,12 +133,12 @@ def fast_post(
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoPermission,
+            i18n.no_permission,
             '使用者不可發言',
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoPermission,
+            i18n.no_permission,
             '無法發文: 未達看板要求權限',
             break_detect=True
         ),
@@ -163,7 +163,7 @@ def fast_post(
         screens.show(api.config, api.connect_core.get_screen_queue())
         raise exceptions.UnknownError(i18n.UnknownError)
     if index == 1 or index == 2:
-        raise exceptions.NoPermission(i18n.NoPermission)
+        raise exceptions.NoPermission(i18n.no_permission)
 
 
 def post(
@@ -187,12 +187,12 @@ def post(
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoPermission,
+            i18n.no_permission,
             '使用者不可發言',
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoPermission,
+            i18n.no_permission,
             '無法發文: 未達看板要求權限',
             break_detect=True
         ),
@@ -202,7 +202,7 @@ def post(
         screens.show(api.config, api.connect_core.get_screen_queue())
         raise exceptions.UnknownError(i18n.UnknownError)
     if index == 1 or index == 2:
-        raise exceptions.NoPermission(i18n.NoPermission)
+        raise exceptions.NoPermission(i18n.no_permission)
 
     screens.show(api.config, api.connect_core.get_screen_queue())
 

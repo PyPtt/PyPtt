@@ -34,7 +34,7 @@ def get_post_index(
         connect_core.TargetUnit(
             no_such_post,
             '找不到這個文章代碼',
-            log_level=log.level.DEBUG,
+            log_level=Logger.DEBUG,
             exceptions_=exceptions.NoSuchPost(board, aid)
         ),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
@@ -52,13 +52,13 @@ def get_post_index(
             i18n.Success,
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=Logger.DEBUG
         ),
         connect_core.TargetUnit(
             i18n.Success,
             screens.Target.InBoardWithCursor,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=Logger.DEBUG
         ),
         connect_core.TargetUnit(
             i18n.NoSuchBoard,

@@ -103,7 +103,7 @@ class API:
         elif self.config.language == i18n.language.ENGLISH:
             self.logger.info(i18n.english_module, i18n.init)
 
-        self.outside_logger = Logger(i18n.out_side, Logger.INFO, handler=log_handler)
+        self.outside_logger = Logger('logger', Logger.INFO, handler=log_handler)
         ##################
         if isinstance(host, int):
             if host == 0:
@@ -166,13 +166,13 @@ class API:
             return
         log.show_value(
             self.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'ThreadID',
             self._ThreadID)
 
         log.show_value(
             self.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'Current thread id',
             current_thread_id)
 
@@ -403,7 +403,7 @@ class API:
             if need_continue:
                 log.log(
                     self.config,
-                    log.level.DEBUG,
+                    Logger.DEBUG,
                     'Wait for retry repost')
                 time.sleep(0.1)
                 continue
@@ -666,21 +666,21 @@ class API:
 
             log.show_value(
                 self.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'StartIndex',
                 start_index
             )
 
             log.show_value(
                 self.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'EndIndex',
                 end_index
             )
 
             error_post_list = list()
             del_post_list = list()
-            if self.config.log_level == log.level.INFO:
+            if self.config.log_level == Logger.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=end_index - start_index + 1,
                     redirect_stdout=True
@@ -720,7 +720,7 @@ class API:
                             raise e
                         log.log(
                             self.config,
-                            log.level.INFO,
+                            Logger.INFO,
                             i18n.RestoreConnection
                         )
                         self._login(
@@ -734,7 +734,7 @@ class API:
                             raise e
                         log.log(
                             self.config,
-                            log.level.INFO,
+                            Logger.INFO,
                             i18n.RestoreConnection
                         )
                         self._login(
@@ -752,7 +752,7 @@ class API:
                     if need_continue:
                         log.log(
                             self.config,
-                            log.level.DEBUG,
+                            Logger.DEBUG,
                             'Wait for retry repost'
                         )
                         time.sleep(0.1)
@@ -760,7 +760,7 @@ class API:
 
                     break
 
-                if self.config.log_level == log.level.INFO:
+                if self.config.log_level == Logger.INFO:
                     PB.update(index - start_index)
                 if post is None:
                     error_post_list.append(index)
@@ -774,7 +774,7 @@ class API:
                 if post.delete_status != data_type.post_delete_status.NOT_DELETED:
                     del_post_list.append(index)
                 post_handler(post)
-            if self.config.log_level == log.level.INFO:
+            if self.config.log_level == Logger.INFO:
                 PB.finish()
 
             return error_post_list, del_post_list
@@ -808,7 +808,7 @@ class API:
             # # PostAID = ""
             # _url = 'https://www.ptt.cc/bbs/'
             # index = str(newest_index)
-            # if self.config.log_level == log.level.INFO:
+            # if self.config.log_level == Logger.INFO:
             #     PB = progressbar.ProgressBar(
             #         max_value=end_page - start_page + 1,
             #         redirect_stdout=True
@@ -828,7 +828,7 @@ class API:
             # for index in range(start_page, newest_index + 1):
             #     log.show_value(
             #         self.config,
-            #         log.level.DEBUG,
+            #         Logger.DEBUG,
             #         'CurrentPage',
             #         index)
             #
@@ -867,12 +867,12 @@ class API:
             #         )
             #         post_handler(post)
             #
-            #     if self.config.log_level == log.level.INFO:
+            #     if self.config.log_level == Logger.INFO:
             #         PB.update(index - start_page)
             #
             # log.show_value(
             #     self.config,
-            #     log.level.DEBUG,
+            #     Logger.DEBUG,
             #     'DelPostList',
             #     del_post_list
             # )
@@ -880,7 +880,7 @@ class API:
             # # 4. 把組合出來的 Post 塞給 handler
             #
             # # 5. 顯示 progress bar
-            # if self.config.log_level == log.level.INFO:
+            # if self.config.log_level == Logger.INFO:
             #     PB.finish()
             #
             # return error_post_list, del_post_list
@@ -1007,36 +1007,36 @@ class API:
         if board_info.is_push_record_ip:
             log.log(
                 self.config,
-                log.level.INFO,
+                Logger.INFO,
                 i18n.record_ip)
             if board_info.is_push_aligned:
                 log.log(
                     self.config,
-                    log.level.INFO,
+                    Logger.INFO,
                     i18n.push_aligned)
                 max_push_length = 32
             else:
                 log.log(
                     self.config,
-                    log.level.INFO,
+                    Logger.INFO,
                     i18n.not_push_aligned)
                 max_push_length = 43 - len(self._ID)
         else:
             log.log(
                 self.config,
-                log.level.INFO,
+                Logger.INFO,
                 i18n.not_record_ip)
             #     推文對齊
             if board_info.is_push_aligned:
                 log.log(
                     self.config,
-                    log.level.INFO,
+                    Logger.INFO,
                     i18n.push_aligned)
                 max_push_length = 46
             else:
                 log.log(
                     self.config,
-                    log.level.INFO,
+                    Logger.INFO,
                     i18n.not_push_aligned)
                 max_push_length = 58 - len(self._ID)
 
@@ -1065,7 +1065,7 @@ class API:
         for push in push_list:
             log.show_value(
                 self.config,
-                log.level.INFO,
+                Logger.INFO,
                 i18n.Push,
                 push)
 
@@ -1082,7 +1082,7 @@ class API:
                     # screens.show(self.config, self.connect_core.getScreenQueue())
                     log.log(
                         self.config,
-                        log.level.INFO,
+                        Logger.INFO,
                         '等待快速推文')
                     time.sleep(5.2)
 
@@ -1826,7 +1826,7 @@ class API:
                 i18n.any_key_continue,
                 '任意鍵',
                 response=' ',
-                log_level=log.level.DEBUG
+                log_level=Logger.DEBUG
             ),
             connect_core.TargetUnit(
                 [
@@ -1834,7 +1834,7 @@ class API:
                 ],
                 '互動式動畫播放中',
                 response=command.ctrl_c,
-                log_level=log.level.DEBUG
+                log_level=Logger.DEBUG
             ),
             connect_core.TargetUnit(
                 [
@@ -1842,7 +1842,7 @@ class API:
                 ],
                 screens.Target.InBoard,
                 break_detect=True,
-                log_level=log.level.DEBUG
+                log_level=Logger.DEBUG
             ),
         ]
 
@@ -1868,7 +1868,7 @@ class API:
                     '',
                     screens.Target.InBoard,
                     break_detect=True,
-                    log_level=log.level.DEBUG
+                    log_level=Logger.DEBUG
                 ),
             ]
 

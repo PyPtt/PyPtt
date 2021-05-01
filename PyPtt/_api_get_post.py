@@ -87,7 +87,7 @@ def get_post(
             screens.Target.QueryPost,
             break_detect=True,
             refresh=False,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.PostDeleted,
@@ -95,7 +95,7 @@ def get_post(
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             i18n.NoSuchBoard,
             screens.Target.MainMenu_Exiting,
@@ -109,11 +109,11 @@ def get_post(
     post_title = None
     if index < 0 or index == 1:
         # 文章被刪除
-        log.log(api.config, log.level.DEBUG, i18n.PostDeleted)
+        log.log(api.config, Logger.DEBUG, i18n.PostDeleted)
 
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'OriScreen',
             ori_screen)
 
@@ -126,7 +126,7 @@ def get_post(
         cursor_line = cursor_line[0]
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'CursorLine',
             cursor_line)
 
@@ -156,10 +156,10 @@ def get_post(
             post_author = None
             post_del_status = data_type.post_delete_status.UNKNOWN
 
-        log.show_value(api.config, log.level.DEBUG, 'ListDate', list_date)
-        log.show_value(api.config, log.level.DEBUG,
+        log.show_value(api.config, Logger.DEBUG, 'ListDate', list_date)
+        log.show_value(api.config, Logger.DEBUG,
                        'PostAuthor', post_author)
-        log.show_value(api.config, log.level.DEBUG,
+        log.show_value(api.config, Logger.DEBUG,
                        'post_del_status', post_del_status)
 
         return data_type.PostInfo(
@@ -259,7 +259,7 @@ def get_post(
                 board = board_temp
                 log.show_value(
                     api.config,
-                    log.level.DEBUG,
+                    Logger.DEBUG,
                     i18n.Board,
                     board
                 )
@@ -272,7 +272,7 @@ def get_post(
         if pattern_result is None:
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 i18n.SubstandardPost,
                 i18n.Author
             )
@@ -303,7 +303,7 @@ def get_post(
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         i18n.Author,
         post_author)
 
@@ -314,7 +314,7 @@ def get_post(
     if pattern_result is None:
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             i18n.SubstandardPost,
             i18n.Title)
 
@@ -343,7 +343,7 @@ def get_post(
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         i18n.Title,
         post_title)
 
@@ -353,7 +353,7 @@ def get_post(
     if pattern_result is None:
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             i18n.SubstandardPost,
             i18n.Date
         )
@@ -383,7 +383,7 @@ def get_post(
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         i18n.Date,
         post_date
     )
@@ -417,7 +417,7 @@ def get_post(
     if content_fail:
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             i18n.SubstandardPost,
             i18n.Content
         )
@@ -445,7 +445,7 @@ def get_post(
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         i18n.Content,
         post_content
     )
@@ -460,7 +460,7 @@ def get_post(
     for line in reversed(info_lines):
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'IP Line',
             line
         )
@@ -489,7 +489,7 @@ def get_post(
             # print(f'=>[{LocationTemp}]')
             if ' ' not in location_temp and len(location_temp) > 0:
                 location = location_temp
-                log.show_value(api.config, log.level.DEBUG,
+                log.show_value(api.config, Logger.DEBUG,
                                'Location', location)
             break
 
@@ -503,7 +503,7 @@ def get_post(
         if ip is None:
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 i18n.SubstandardPost,
                 'IP'
             )
@@ -528,7 +528,7 @@ def get_post(
                 unconfirmed=api.Unconfirmed,
             )
             return post
-    log.show_value(api.config, log.level.DEBUG, 'IP', ip)
+    log.show_value(api.config, Logger.DEBUG, 'IP', ip)
 
     push_author_pattern = re.compile('[推|噓|→] [\w| ]+:')
     push_date_pattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
@@ -551,7 +551,7 @@ def get_post(
             # 不符合推文格式
             continue
         push_author = result.group(0)[2:-1].strip()
-        log.show_value(api.config, log.level.DEBUG, [
+        log.show_value(api.config, Logger.DEBUG, [
             i18n.Push,
             i18n.ID,
         ],
@@ -562,7 +562,7 @@ def get_post(
         if result is None:
             continue
         push_date = result.group(0)
-        log.show_value(api.config, log.level.DEBUG, [
+        log.show_value(api.config, Logger.DEBUG, [
             i18n.Push,
             i18n.Date,
         ],
@@ -575,7 +575,7 @@ def get_post(
             push_ip = result.group(0)
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 [
                     i18n.Push,
                     'IP',
@@ -604,7 +604,7 @@ def get_post(
                        ].strip()
         log.show_value(
             api.config,
-            log.level.DEBUG, [
+            Logger.DEBUG, [
                 i18n.Push,
                 i18n.Content,
             ],

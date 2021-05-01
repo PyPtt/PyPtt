@@ -32,7 +32,7 @@ def get_waterball(api, operate_type:int) -> list:
             i18n.NoWaterball,
             '◆ 暫無訊息記錄',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.BrowseWaterball,
@@ -42,14 +42,14 @@ def get_waterball(api, operate_type:int) -> list:
             response=command.left + water_ball_operate_type +
                      command.enter + command.go_main_menu,
             break_detect_after_send=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.BrowseWaterball,
             ],
             screens.Target.InWaterBallList,
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
     ]
 
     cmd_list = [command.go_main_menu, 'T', command.enter, 'D', command.enter]
@@ -70,7 +70,7 @@ def get_waterball(api, operate_type:int) -> list:
             target_list)
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'index',
             index)
         if index == 0:
@@ -89,13 +89,13 @@ def get_waterball(api, operate_type:int) -> list:
         # ScreenTemp = OriScreen
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'OriScreen',
             ori_screen)
 
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'LastLine',
             last_line)
         if last_line.startswith('★'):
@@ -178,7 +178,7 @@ def get_waterball(api, operate_type:int) -> list:
             all_waterball.append(new_content_part)
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'NewContentPart',
                 new_content_part)
 
@@ -202,7 +202,7 @@ def get_waterball(api, operate_type:int) -> list:
         all_waterball = all_waterball.replace('\\\n', '')
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         'AllWaterball',
         all_waterball)
     # print('=' * 20)
@@ -215,20 +215,20 @@ def get_waterball(api, operate_type:int) -> list:
         if (not line.startswith('To')) and (not line.startswith('★')):
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'Discard waterball',
                 line)
             continue
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'Ready to parse waterball',
             line)
 
         if line.startswith('To'):
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'Waterball Type',
                 'Send')
             waterball_type = data_type.waterball_type.SEND
@@ -248,7 +248,7 @@ def get_waterball(api, operate_type:int) -> list:
         elif line.startswith('★'):
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'Waterball Type',
                 'Catch')
             waterball_type = data_type.waterball_type.CATCH
@@ -267,17 +267,17 @@ def get_waterball(api, operate_type:int) -> list:
 
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'Waterball target',
             target)
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'Waterball content',
             content)
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'Waterball date',
             date)
 
@@ -333,7 +333,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
 
         log.show_value(
             api.config,
-            log.level.INFO,
+            Logger.INFO,
             i18n.WaterBall,
             waterball)
 

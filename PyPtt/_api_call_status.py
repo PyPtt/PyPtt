@@ -34,7 +34,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]打開',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -42,7 +42,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]拔掉',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -50,7 +50,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]防水',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -58,7 +58,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]好友',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -66,14 +66,14 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]關閉',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
             ],
             '★',
             response=cmd,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
     ]
 
     for i in range(2):

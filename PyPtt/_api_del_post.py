@@ -38,7 +38,7 @@ def del_post(
 
     if check_author:
         if api._ID.lower() != post_info.author.lower():
-            raise exceptions.NoPermission(i18n.NoPermission)
+            raise exceptions.NoPermission(i18n.no_permission)
 
     api._goto_board(board)
 
@@ -86,7 +86,7 @@ def del_post(
 
     if index == 1:
         if not api.confirm:
-            raise exceptions.NoPermission(i18n.NoPermission)
+            raise exceptions.NoPermission(i18n.no_permission)
 
     if index == -1:
         if post_aid is not None:
