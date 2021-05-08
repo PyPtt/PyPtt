@@ -142,6 +142,7 @@ def get_content(api, post_mode: bool = True):
                 if last_read_line_a_temp in stop_dict:
                     new_content_part = '\n'.join(
                         lines[-stop_dict[last_read_line_a_temp]:])
+                    stop_dict = dict()
                 else:
                     get_line_b = last_read_line_b_temp - last_read_line_b
                     if get_line_b > 0:
@@ -151,17 +152,20 @@ def get_content(api, post_mode: bool = True):
                         # print('index', index)
                         new_content_part = '\n'.join(lines[-get_line_b:])
                         if index == 1 and len(new_content_part) == get_line_b - 1:
-                            #print('!!!!!!!!!!!!!!!!!!!!!' * 10)
+                            # print(1)
                             new_content_part = '\n'.join(lines[-(get_line_b * 2):])
                         elif origin_post:
+                            # print(2)
                             last_line_temp = origin_post[-1].strip()
                             try_line = lines[-(get_line_b + 1)].strip()
 
                             if not last_line_temp.endswith(try_line):
+                                # print(3)
                                 # print('=====' * 20)
                                 # print('== last line [', last_line_temp, ']')
                                 # print('== try_line [', try_line, ']')
                                 new_content_part = try_line + '\n' + new_content_part
+                        stop_dict = dict()
                     else:
                         # 駐足現象，LastReadLineB跟上一次相比並沒有改變
                         if (last_read_line_b_temp + 1) not in stop_dict:

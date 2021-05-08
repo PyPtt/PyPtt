@@ -106,26 +106,26 @@ def get_post():
     if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
         test_post_list = [
             ('Python', 1),
-            # ('NotExitBoard', 1),
-            # ('Python', '1TJH_XY0'),
-            # # 文章格式錯誤
-            # ('Steam', 4444),
-            # ('Stock', 92324),
-            # ('Stock', '1TVnEivO'),
-            # # 文章格式錯誤
-            # ('movie', 457),
-            # ('Gossiping', '1UDnXefr'),
-            # ('joke', '1Tc6G9eQ'),
-            # # 135193
-            # ('Test', 575),
-            # # 待證文章
-            # ('Test', '1U3pLzi0'),
-            # # 古早文章
-            # ('LAW', 1),
-            # # 辦刪除文章
-            # ('Test', 347),
-            # # push number parse error
-            # ('Ptt25sign', '1VppdKLW'),
+            ('NotExitBoard', 1),
+            ('Python', '1TJH_XY0'),
+            # 文章格式錯誤
+            ('Steam', 4444),
+            ('Stock', 92324),
+            ('Stock', '1TVnEivO'),
+            # 文章格式錯誤
+            ('movie', 457),
+            ('Gossiping', '1UDnXefr'),
+            ('joke', '1Tc6G9eQ'),
+            # 135193
+            ('Test', 575),
+            # 待證文章
+            ('Test', '1U3pLzi0'),
+            # 古早文章
+            ('LAW', 1),
+            # 辦刪除文章
+            ('Test', 347),
+            # push number parse error
+            ('Ptt25sign', '1VppdKLW'),
         ]
     else:
         test_post_list = [

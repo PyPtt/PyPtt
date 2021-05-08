@@ -98,6 +98,7 @@ picks_in_register = None
 reading_board_info = None
 no_permission = None
 NoPost = None
+set_connect_mail_first = None
 
 
 def load(lang):
@@ -108,6 +109,12 @@ def load(lang):
     NoPost = specific_load(lang, [
         '沒有文章',
         'No Post',
+    ])
+
+    global set_connect_mail_first
+    set_connect_mail_first = specific_load(lang, [
+        '設定聯絡信箱後才能修改密碼',
+        'Password can only be changed after setting the contact mailbox',
     ])
 
     global no_permission

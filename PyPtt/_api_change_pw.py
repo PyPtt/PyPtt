@@ -25,6 +25,10 @@ def change_pw(
 
     target_list = [
         connect_core.TargetUnit(
+            i18n.set_connect_mail_first,
+            '設定聯絡信箱後才能修改密碼',
+            exceptions_=exceptions.set_connect_mail_first()),
+        connect_core.TargetUnit(
             i18n.ErrorPW,
             '您輸入的密碼不正確',
             exceptions_=exceptions.WrongPassword()),
@@ -50,7 +54,7 @@ def change_pw(
         connect_core.TargetUnit(
             i18n.Done,
             '設定個人資料與密碼',
-            break_detect=True),
+            break_detect=True)
     ]
 
     index = api.connect_core.send(

@@ -59,7 +59,8 @@ def get_favourite_board(api) -> list:
         screen_buf = list(filter(None, screen_buf))
 
         for i, line in enumerate(screen_buf):
-            # print(i)
+            if '------------' in line:
+                continue
             # 16 = line.find('◎')
             linebuff = line[:16].strip()
 
