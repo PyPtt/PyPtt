@@ -896,7 +896,7 @@ PyPtt 程式寄信測試內容
     if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
 
         url_list = [
-            'https://www.ptt.cc/bbs/Gossiping/M.1583473330.A.61B.html',
+            'https://www.ptt.cc/bbs/Gossiping/M.1119417691.A.BAD.html',
             'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
         ]
 
