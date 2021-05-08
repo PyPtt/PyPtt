@@ -1460,7 +1460,7 @@ if __name__ == '__main__':
         # init()
         # threading_test()
         ptt_bot = PTT.API(
-            # log_level=PTT.log.level.TRACE,
+            log_level=PTT.log.level.TRACE,
             # log_level=PTT.log.level.DEBUG,
             # host=PTT.data_type.host_type.PTT2
 
@@ -1533,7 +1533,7 @@ if __name__ == '__main__':
         # search_user()
         # get_mail()
         # mail_recviver()
-        # change_pw()
+        change_pw()
         # get_aid_from_url()
         # get_bottom_post_list()
         # del_post()
