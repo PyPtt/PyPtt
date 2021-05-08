@@ -1,4 +1,4 @@
 progressbar2
-websockets
+websockets==8.1
 uao
 SingleLog
