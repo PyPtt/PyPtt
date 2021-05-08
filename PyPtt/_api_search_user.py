@@ -13,11 +13,11 @@ except ModuleNotFoundError:
 def search_user(
         api: object, ptt_id: str, min_page: int, max_page: int) -> list:
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('Q')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(ptt_id)
     cmd = ''.join(cmd_list)
 
@@ -31,7 +31,7 @@ def search_user(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵',
             break_detect=True,
         ),
@@ -48,7 +48,7 @@ def search_user(
         ori_screen = api.connect_core.get_screen_queue()[-1]
         log.log(
             api.config,
-            log.level.INFO,
+            Logger.INFO,
             i18n.Reading
         )
         # print(OriScreen)
@@ -89,25 +89,25 @@ def search_user(
 
     log.log(
         api.config,
-        log.level.INFO,
+        Logger.INFO,
         i18n.ReadComplete
     )
 
     api.connect_core.send(
-        command.Enter,
+        command.enter,
         [
             # 《ＩＤ暱稱》
             connect_core.TargetUnit(
                 i18n.QuitUserProfile,
                 '《ＩＤ暱稱》',
-                response=command.Enter,
-                # log_level=log.level.DEBUG
+                response=command.enter,
+                # log_level=Logger.DEBUG
             ),
             connect_core.TargetUnit(
                 i18n.Done,
                 '查詢網友',
                 break_detect=True,
-                # log_level=log.level.DEBUG
+                # log_level=Logger.DEBUG
             )
         ]
     )

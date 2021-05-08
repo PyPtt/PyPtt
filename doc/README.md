@@ -131,9 +131,9 @@ ptt_bot = PTT.API(
 from PyPtt import PTT
 ptt_bot = PTT.API(
     # (預設值) INFO
-    # log_level=PTT.log.level.INFO,
-    # log_level=PTT.log.level.DEBUG,
-    log_level=PTT.log.level.TRACE)
+    # log_level=PTT.Logger.INFO,
+    # log_level=PTT.Logger.DEBUG,
+    log_level=PTT.Logger.TRACE)
 ```
 
 如果你的網路環境比較慢(例如海外)，常常不小心就 timeout，也有參數可以調整  
@@ -1243,7 +1243,7 @@ Since 0.9.25
 try:
     ptt_bot.del_post('Test', post_index=index)
     ptt_bot.log(f'Test {index} 刪除成功')
-except PTT.exceptions.NoPermission:
+except PTT.exceptions.no_permission:
     ptt_bot.log(f'Test {index} 無刪除權限')
 except PTT.exceptions.DeletedPost:
     ptt_bot.log(f'Test {index} 已經被刪除')
@@ -1383,9 +1383,9 @@ nest_asyncio.apply()
 
 ```python
 content = [
-    PTT.command.Ctrl_C + PTT.command.Left + '5' + PTT.command.Right + '這是閃爍字' + PTT.command.Ctrl_C,
-    PTT.command.Ctrl_C + PTT.command.Left + '31' + PTT.command.Right + '前景紅色' + PTT.command.Ctrl_C,
-    PTT.command.Ctrl_C + PTT.command.Left + '44' + PTT.command.Right + '背景藍色' + PTT.command.Ctrl_C,   
+    PTT.command.ctrl_c + PTT.command.left + '5' + PTT.command.right + '這是閃爍字' + PTT.command.ctrl_c,
+    PTT.command.ctrl_c + PTT.command.left + '31' + PTT.command.right + '前景紅色' + PTT.command.ctrl_c,
+    PTT.command.ctrl_c + PTT.command.left + '44' + PTT.command.right + '背景藍色' + PTT.command.ctrl_c,   
 ]
 content = '\r\n'.join(content)
 

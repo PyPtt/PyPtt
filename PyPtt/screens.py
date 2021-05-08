@@ -1,5 +1,6 @@
 import re
 import sys
+from SingleLog.log import Logger
 from uao import register_uao
 
 register_uao()
@@ -137,7 +138,7 @@ class Target(object):
         '已讀/未讀'
     ]
 
-    UseTooManyResources = [
+    use_too_many_resources = [
         '程式耗用過多計算資源'
     ]
 
@@ -149,7 +150,7 @@ class Target(object):
 
 
 def show(config, screen_queue, function_name=None):
-    if config.log_level != log.level.TRACE:
+    if config.log_level != Logger.TRACE:
         return
 
     if isinstance(screen_queue, list):
@@ -294,7 +295,7 @@ def vt100(ori_screen: str, no_color: bool = True) -> str:
                               ]
 
                 # log.showValue(
-                #     log.level.INFO,
+                #     Logger.INFO,
                 #     'origin_line',
                 #     origin_line
                 # )

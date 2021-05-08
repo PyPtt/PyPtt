@@ -99,12 +99,12 @@ class NoSuchBoard(Exception):
         if config.host == data_type.host_type.PTT1:
             self.message = [
                 i18n.PTT,
-                i18n.NoSuchBoard
+                i18n.no_such_board
             ]
         else:
             self.message = [
                 i18n.PTT2,
-                i18n.NoSuchBoard
+                i18n.no_such_board
             ]
 
         if config.language == i18n.language.CHINESE:
@@ -142,7 +142,7 @@ class MultiThreadOperated(Exception):
 
 class WrongIDorPassword(Exception):
     def __init__(self):
-        self.message = i18n.ErrorIDPW
+        self.message = i18n.wrong_id_pw
 
     def __str__(self):
         return self.message
@@ -158,15 +158,15 @@ class WrongPassword(Exception):
 
 class LoginTooOften(Exception):
     def __init__(self):
-        self.message = i18n.LoginTooOften
+        self.message = i18n.login_too_often
 
     def __str__(self):
         return self.message
 
 
-class UseTooManyResources(Exception):
+class use_too_many_resources(Exception):
     def __init__(self):
-        self.message = i18n.UseTooManyResources
+        self.message = i18n.use_too_many_resources
 
     def __str__(self):
         return self.message
@@ -255,7 +255,7 @@ class UserHasPreviouslyBeenBanned(Exception):
 
 class MailboxFull(Exception):
     def __init__(self):
-        self.message = i18n.MailBoxFull
+        self.message = i18n.mail_box_full
 
     def __str__(self):
         return self.message
@@ -281,7 +281,7 @@ class NoSearchResult(Exception):
 
 class OnlySecureConnection(Exception):
     def __init__(self):
-        self.message = i18n.OnlySecureConnection
+        self.message = i18n.only_secure_connection
 
     def __str__(self):
         return self.message
@@ -293,6 +293,14 @@ class DeletedPost(Exception):
             i18n.DeletedPost,
             board,
             aid)
+
+    def __str__(self):
+        return self.message
+
+
+class set_connect_mail_first(Exception):
+    def __init__(self):
+        self.message = i18n.set_connect_mail_first
 
     def __str__(self):
         return self.message

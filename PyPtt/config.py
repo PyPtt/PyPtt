@@ -1,13 +1,14 @@
+
+from SingleLog.log import Logger
+
 try:
     from . import version
     from . import data_type
-    from . import log
     from . import i18n
     from . import connect_core
 except ModuleNotFoundError:
     import version
     import data_type
-    import log
     import i18n
     import connect_core
 
@@ -34,7 +35,7 @@ class Config:
     language = i18n.language.CHINESE
 
     # 預設 log 等級
-    log_level = log.level.INFO
+    log_level = Logger.INFO
 
     # 預設不剔除其他登入
     kick_other_login = False
