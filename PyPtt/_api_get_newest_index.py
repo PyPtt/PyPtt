@@ -23,6 +23,8 @@ except ModuleNotFoundError:
 
 
 def _get_newest_index(api) -> int:
+
+    logger = Logger('get_newest_index', Logger.INFO)
     last_screen = api.connect_core.get_screen_queue()[-1]
     # print(last_screen)
     last_screen_list = last_screen.split('\n')
@@ -42,23 +44,20 @@ def _get_newest_index(api) -> int:
 
     max_check_range = 6
     newest_index = 0
-    for IndexTemp in all_index:
+    for index_temp in all_index:
         need_continue = True
-        if IndexTemp > max_check_range:
+        if index_temp > max_check_range:
             check_range = max_check_range
         else:
-            check_range = IndexTemp
+            check_range = index_temp
         for i in range(1, check_range):
-            if str(IndexTemp - i) not in last_screen:
+            if str(index_temp - i) not in last_screen:
                 need_continue = False
                 break
         if need_continue:
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                i18n.FindNewestIndex,
-                IndexTemp)
-            newest_index = IndexTemp
+
+            logger.debug(i18n.find_newest_index, index_temp)
+            newest_index = index_temp
             break
 
     if newest_index == 0:
@@ -100,22 +99,22 @@ def get_newest_index(
 
         target_list = [
             connect_core.TargetUnit(
-                i18n.NoPost,
+                i18n.no_post,
                 '沒有文章...',
                 break_detect=True,
                 log_level=Logger.DEBUG),
             connect_core.TargetUnit(
-                i18n.Success,
+                i18n.complete,
                 screens.Target.InBoard,
                 break_detect=True,
                 log_level=Logger.DEBUG),
             connect_core.TargetUnit(
-                i18n.Success,
+                i18n.complete,
                 screens.Target.InBoardWithCursor,
                 break_detect=True,
                 log_level=Logger.DEBUG),
             connect_core.TargetUnit(
-                i18n.NoSuchBoard,
+                i18n.no_such_board,
                 screens.Target.MainMenu_Exiting,
                 exceptions_=exceptions.NoSuchBoard(api.config, board)),
         ]
@@ -156,11 +155,11 @@ def get_newest_index(
 
         target_list = [
             connect_core.TargetUnit(
-                i18n.MailBox,
+                i18n.mail_box,
                 screens.Target.InMailBox,
                 break_detect=True),
             connect_core.TargetUnit(
-                i18n.NoMail,
+                i18n.no_mail,
                 screens.Target.CursorToGoodbye,
                 break_detect=True,
                 log_level=Logger.DEBUG),
