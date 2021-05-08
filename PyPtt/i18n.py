@@ -196,6 +196,8 @@ DeleteSuccess = None
 DeletedPost = None
 AnonymousTransaction = None
 
+set_connect_mail_first = None
+
 
 def specific_load(input_language, lang_list):
     global languageList
@@ -219,6 +221,12 @@ def replace(string, *args):
 def load(input_lang):
     if not lib_util.check_range(language, input_lang):
         raise ValueError('Language', input_lang)
+
+    global set_connect_mail_first
+    set_connect_mail_first = specific_load(input_lang, [
+        '設定聯絡信箱後才能修改密碼',
+        'Password can only be changed after setting the contact mailbox',
+    ])
 
     global Connect
     Connect = specific_load(input_lang, [
