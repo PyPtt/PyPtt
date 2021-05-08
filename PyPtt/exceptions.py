@@ -99,12 +99,12 @@ class NoSuchBoard(Exception):
         if config.host == data_type.host_type.PTT1:
             self.message = [
                 i18n.PTT,
-                i18n.NoSuchBoard
+                i18n.no_such_board
             ]
         else:
             self.message = [
                 i18n.PTT2,
-                i18n.NoSuchBoard
+                i18n.no_such_board
             ]
 
         if config.language == i18n.language.CHINESE:

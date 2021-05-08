@@ -97,16 +97,37 @@ unregistered_user_cant_use_all_api = None
 picks_in_register = None
 reading_board_info = None
 no_permission = None
-NoPost = None
+no_post = None
 set_connect_mail_first = None
+no_such_board = None
+no_mail = None
+find_newest_index = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
 
-    global NoPost
-    NoPost = specific_load(lang, [
+    global find_newest_index
+    find_newest_index = specific_load(lang, [
+        '找到最新編號',
+        'Find Newest Index',
+    ])
+
+    global no_mail
+    no_mail = specific_load(lang, [
+        f'沒有信件',
+        f'You have no mail',
+    ])
+
+    global no_such_board
+    no_such_board = specific_load(lang, [
+        '無該板面',
+        'No Such Board',
+    ])
+
+    global no_post
+    no_post = specific_load(lang, [
         '沒有文章',
         'No Post',
     ])

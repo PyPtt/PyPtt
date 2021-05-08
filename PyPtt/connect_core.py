@@ -1,11 +1,13 @@
-import time
 import asyncio
-import websockets
-import telnetlib
 import re
-import traceback
+import telnetlib
 import threading
+import time
+import traceback
+
+import websockets
 from SingleLog.log import Logger
+from SingleLog.log import LoggerLevel
 from uao import register_uao
 
 register_uao()
@@ -41,7 +43,7 @@ class TargetUnit(object):
             self,
             display_msg,
             detect_target,
-            log_level: int = 0,
+            log_level: LoggerLevel = None,
             response: str = '',
             break_detect=False,
             break_detect_after_send=False,
@@ -53,7 +55,7 @@ class TargetUnit(object):
 
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
-        if log_level == 0:
+        if log_level is None:
             self._log_level = Logger.INFO
         else:
             self._log_level = log_level

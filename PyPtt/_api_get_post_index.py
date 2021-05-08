@@ -44,7 +44,7 @@ def get_post_index(
             exceptions_=exceptions.CanNotUseSearchPostCode()
         ),
         connect_core.TargetUnit(
-            i18n.NoPost,
+            i18n.no_post,
             '沒有文章...',
             exceptions_=exceptions.NoSuchPost(board, aid)
         ),
@@ -61,7 +61,7 @@ def get_post_index(
             log_level=Logger.DEBUG
         ),
         connect_core.TargetUnit(
-            i18n.NoSuchBoard,
+            i18n.no_such_board,
             screens.Target.MainMenu_Exiting,
             exceptions_=exceptions.NoSuchBoard(api.config, board)
             # BreakDetect=True,

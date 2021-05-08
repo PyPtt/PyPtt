@@ -97,7 +97,7 @@ def get_post(
             break_detect=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            i18n.NoSuchBoard,
+            i18n.no_such_board,
             screens.Target.MainMenu_Exiting,
             exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
