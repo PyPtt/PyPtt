@@ -4,6 +4,7 @@ import threading
 import re
 
 from SingleLog.log import Logger
+from SingleLog.log import LoggerLevel
 
 try:
     from . import data_type
@@ -72,7 +73,7 @@ class API:
 
         if not isinstance(language, int):
             raise TypeError('[PyPtt] language must be integer')
-        if not isinstance(log_level, int):
+        if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
         if not isinstance(screen_timeout, int):
             raise TypeError('[PyPtt] screen_timeout must be integer')

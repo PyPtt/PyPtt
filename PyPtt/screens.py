@@ -1,5 +1,6 @@
 import re
 import sys
+from SingleLog.log import Logger
 
 try:
     from . import lib_util
