@@ -58,11 +58,11 @@ def log(config, log_level, msg):
 
     total_message = '[' + strftime('%m%d %H:%M:%S') + ']'
     if log_level == level.DEBUG:
-        total_message += '[' + i18n.Debug + '] ' + msg
+        total_message += '[' + i18n.debug + '] ' + msg
     elif log_level == level.INFO:
-        total_message += '[' + i18n.Info + '] ' + msg
+        total_message += '[' + i18n.info + '] ' + msg
     elif log_level == level.OUTSIDE:
-        total_message += '[' + i18n.OutSide + '] ' + msg
+        total_message += '[' + i18n.out_side + '] ' + msg
 
     try:
         print(total_message.encode(

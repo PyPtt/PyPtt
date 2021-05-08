@@ -19,10 +19,10 @@ except ModuleNotFoundError:
 def get_call_status(api) -> None:
 
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('A')
-    cmd_list.append(command.Right)
-    cmd_list.append(command.Left)
+    cmd_list.append(command.right)
+    cmd_list.append(command.left)
 
     cmd = ''.join(cmd_list)
 
@@ -34,7 +34,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]打開',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -42,7 +42,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]拔掉',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -50,7 +50,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]防水',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -58,7 +58,7 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]好友',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
@@ -66,14 +66,14 @@ def get_call_status(api) -> None:
             ],
             '[呼叫器]關閉',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
             ],
             '★',
             response=cmd,
-            log_level=log.level.DEBUG),
+            log_level=Logger.DEBUG),
     ]
 
     for i in range(2):
@@ -105,8 +105,8 @@ def set_call_status(api, call_status) -> None:
     current_call_status = api._get_call_status()
 
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append(command.Ctrl_U)
+    cmd_list.append(command.go_main_menu)
+    cmd_list.append(command.ctrl_u)
     cmd_list.append('p')
 
     cmd = ''.join(cmd_list)

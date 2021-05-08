@@ -1,36 +1,33 @@
 import re
 
+from SingleLog.log import Logger
+
 try:
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import command
 except ModuleNotFoundError:
     import i18n
     import connect_core
-    import log
     import screens
     import command
 
 
 def get_time(api) -> str:
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('A')
-    cmd_list.append(command.Right)
-    cmd_list.append(command.Left)
+    cmd_list.append(command.right)
+    cmd_list.append(command.left)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.GetPTTTime,
-                i18n.Success,
-            ],
+            i18n.query_ptt_time_success,
             screens.Target.MainMenu,
-            log_level=log.level.DEBUG,
+            log_level=Logger.DEBUG,
             break_detect=True),
     ]
 

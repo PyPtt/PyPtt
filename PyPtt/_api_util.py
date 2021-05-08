@@ -23,9 +23,9 @@ def get_content(api, post_mode: bool = True):
         api.Unconfirmed = True
 
     if post_mode:
-        cmd = command.Enter * 2
+        cmd = command.enter * 2
     else:
-        cmd = command.Enter
+        cmd = command.enter
 
     target_list = [
         # 待證實文章
@@ -42,7 +42,7 @@ def get_content(api, post_mode: bool = True):
             ],
             screens.Target.PostEnd,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=Logger.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -50,7 +50,7 @@ def get_content(api, post_mode: bool = True):
             ],
             screens.Target.InPost,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=Logger.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -58,7 +58,7 @@ def get_content(api, post_mode: bool = True):
             ],
             screens.Target.PostNoContent,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=Logger.DEBUG
         ),
         # 動畫文章
         connect_core.TargetUnit(
@@ -66,7 +66,7 @@ def get_content(api, post_mode: bool = True):
                 i18n.AnimationPost,
             ],
             screens.Target.Animation,
-            response=command.GoMainMenu_TypeQ,
+            response=command.go_main_menu_type_q,
             break_detect_after_send=True
         ),
     ]
@@ -186,7 +186,7 @@ def get_content(api, post_mode: bool = True):
             origin_post.append(new_content_part)
             log.show_value(
                 api.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'NewContentPart',
                 new_content_part
             )
@@ -211,9 +211,9 @@ def get_content(api, post_mode: bool = True):
                 break
 
         if not push_start:
-            cmd = command.Down
+            cmd = command.down
         else:
-            cmd = command.Right
+            cmd = command.right
 
     # print(api.Unconfirmed)
     origin_post = '\n'.join(origin_post)
@@ -222,7 +222,7 @@ def get_content(api, post_mode: bool = True):
 
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         'OriginPost',
         origin_post
     )
@@ -235,7 +235,7 @@ def get_mailbox_capacity(api):
     capacity_line = last_screen.split('\n')[2]
     log.show_value(
         api.config,
-        log.level.DEBUG,
+        Logger.DEBUG,
         'capacity_line',
         capacity_line)
 
@@ -246,13 +246,13 @@ def get_mailbox_capacity(api):
         max_capacity = int(pattern_result.group(0).split('/')[1])
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'current_capacity',
             current_capacity)
 
         log.show_value(
             api.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'max_capacity',
             max_capacity)
 
@@ -380,14 +380,14 @@ def parse_query_post(api, ori_screen):
             push_number = None
 
     # print(PushNumber)
-    log.show_value(api.config, log.level.DEBUG,
+    log.show_value(api.config, Logger.DEBUG,
                    'PostAuthor', post_author)
-    log.show_value(api.config, log.level.DEBUG, 'PostTitle', post_title)
-    log.show_value(api.config, log.level.DEBUG, 'PostAID', post_aid)
-    log.show_value(api.config, log.level.DEBUG, 'PostWeb', post_web)
-    log.show_value(api.config, log.level.DEBUG, 'PostMoney', post_money)
-    log.show_value(api.config, log.level.DEBUG, 'ListDate', list_date)
-    log.show_value(api.config, log.level.DEBUG,
+    log.show_value(api.config, Logger.DEBUG, 'PostTitle', post_title)
+    log.show_value(api.config, Logger.DEBUG, 'PostAID', post_aid)
+    log.show_value(api.config, Logger.DEBUG, 'PostWeb', post_web)
+    log.show_value(api.config, Logger.DEBUG, 'PostMoney', post_money)
+    log.show_value(api.config, Logger.DEBUG, 'ListDate', list_date)
+    log.show_value(api.config, Logger.DEBUG,
                    'PushNumber', push_number)
 
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
@@ -425,7 +425,7 @@ def get_search_condition_cmd(
                 cmd_list.append('A')
 
         cmd_list.append(search_condition)
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
     if search_list is not None:
 
@@ -456,6 +456,6 @@ def get_search_condition_cmd(
                 continue
 
             cmd_list.append(search_condition_)
-            cmd_list.append(command.Enter)
+            cmd_list.append(command.enter)
 
     return cmd_list, normal_newest_index

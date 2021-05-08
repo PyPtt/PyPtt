@@ -14,13 +14,13 @@ def give_money(
         api, ptt_id: str, money: int) -> None:
 
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('P')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('P')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('O')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 
@@ -46,7 +46,7 @@ def give_money(
         connect_core.TargetUnit(
             i18n.Transaction,
             '確定進行交易嗎？',
-            response='y' + command.Enter
+            response='y' + command.enter
         ),
         connect_core.TargetUnit(
             [
@@ -59,32 +59,37 @@ def give_money(
         connect_core.TargetUnit(
             i18n.ConstantRedBag,
             '要修改紅包袋嗎',
-            response=command.Enter
+            response=command.enter
         ),
         connect_core.TargetUnit(
             i18n.VerifyID,
             '完成交易前要重新確認您的身份',
-            response=api._Password + command.Enter
+            response=api._Password + command.enter
+        ),
+        connect_core.TargetUnit(
+            i18n.AnonymousTransaction,
+            '他是你的小主人，是否匿名？',
+            response='n' + command.Enter
         ),
         connect_core.TargetUnit(
             i18n.InputMoney,
             '要給他多少Ptt幣呢?',
-            response=command.Tab + str(money) + command.Enter
+            response=command.tab + str(money) + command.enter
         ),
         connect_core.TargetUnit(
             i18n.InputID,
             '這位幸運兒的id',
-            response=ptt_id + command.Enter
+            response=ptt_id + command.enter
         ),
         connect_core.TargetUnit(
             i18n.AuthenticationHasNotExpired,
             '認證尚未過期',
-            response='y' + command.Enter
+            response='y' + command.enter
         ),
         connect_core.TargetUnit(
             i18n.TradingInProgress,
             '交易正在進行中',
-            response=command.Space
+            response=command.space
         )
     ]
 

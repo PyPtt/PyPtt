@@ -149,11 +149,11 @@ def test_init():
     log('===英文顯示===')
     PTT.API(language=PTT.i18n.language.ENGLISH)
     log('===log DEBUG===')
-    PTT.API(log_level=PTT.log.level.DEBUG)
+    PTT.API(log_level=PTT.Logger.DEBUG)
     log('===log INFO===')
-    PTT.API(log_level=PTT.log.level.INFO)
+    PTT.API(log_level=PTT.Logger.INFO)
     log('===log SLIENT===')
-    PTT.API(log_level=PTT.log.level.SILENT)
+    PTT.API(log_level=PTT.Logger.SILENT)
     log('===log SLIENT======')
     PTT.API(host=PTT.data_type.host_type.LOCALHOST)
 
@@ -896,7 +896,7 @@ PyPtt 程式寄信測試內容
     if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
 
         url_list = [
-            'https://www.ptt.cc/bbs/Gossiping/M.1583473330.A.61B.html',
+            'https://www.ptt.cc/bbs/Gossiping/M.1119417691.A.BAD.html',
             'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
         ]
 

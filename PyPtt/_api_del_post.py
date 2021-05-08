@@ -38,7 +38,7 @@ def del_post(
 
     if check_author:
         if api._ID.lower() != post_info.author.lower():
-            raise exceptions.NoPermission(i18n.NoPermission)
+            raise exceptions.NoPermission(i18n.no_permission)
 
     api._goto_board(board)
 
@@ -48,7 +48,7 @@ def del_post(
         cmd_list.append('#' + post_aid)
     elif post_index != 0:
         cmd_list.append(str(post_index))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('d')
 
     cmd = ''.join(cmd_list)
@@ -60,13 +60,13 @@ def del_post(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '請按任意鍵繼續',
             response=' '),
         connect_core.TargetUnit(
             i18n.ConfirmDelete,
             '請確定刪除(Y/N)?[N]',
-            response='y' + command.Enter,
+            response='y' + command.enter,
             max_match=1,
             handler=confirm_delete_handler),
         connect_core.TargetUnit(
@@ -86,7 +86,7 @@ def del_post(
 
     if index == 1:
         if not api.confirm:
-            raise exceptions.NoPermission(i18n.NoPermission)
+            raise exceptions.NoPermission(i18n.no_permission)
 
     if index == -1:
         if post_aid is not None:

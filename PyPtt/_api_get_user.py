@@ -61,13 +61,13 @@ def parse_user_page(screen):
 
 def get_user(api, ptt_id: str) -> data_type.UserInfo:
     cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('Q')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(ptt_id)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 
@@ -150,18 +150,18 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
 
     signature_file = '\n'.join(ori_screen.split('\n')[6:-1])
 
-    log.show_value(api.config, log.level.DEBUG, 'ptt_id', ptt_id)
-    log.show_value(api.config, log.level.DEBUG, 'money', money)
-    log.show_value(api.config, log.level.DEBUG, 'login_time', login_time)
-    log.show_value(api.config, log.level.DEBUG, 'legal_post', legal_post)
-    log.show_value(api.config, log.level.DEBUG, 'illegal_post', illegal_post)
-    log.show_value(api.config, log.level.DEBUG, 'status', status)
-    log.show_value(api.config, log.level.DEBUG, 'mail', mail)
-    log.show_value(api.config, log.level.DEBUG, 'last_login', last_login)
-    log.show_value(api.config, log.level.DEBUG, 'last_ip', last_ip)
-    log.show_value(api.config, log.level.DEBUG, 'five_chess', five_chess)
-    log.show_value(api.config, log.level.DEBUG, 'chess', chess)
-    log.show_value(api.config, log.level.DEBUG,
+    log.show_value(api.config, Logger.DEBUG, 'ptt_id', ptt_id)
+    log.show_value(api.config, Logger.DEBUG, 'money', money)
+    log.show_value(api.config, Logger.DEBUG, 'login_time', login_time)
+    log.show_value(api.config, Logger.DEBUG, 'legal_post', legal_post)
+    log.show_value(api.config, Logger.DEBUG, 'illegal_post', illegal_post)
+    log.show_value(api.config, Logger.DEBUG, 'status', status)
+    log.show_value(api.config, Logger.DEBUG, 'mail', mail)
+    log.show_value(api.config, Logger.DEBUG, 'last_login', last_login)
+    log.show_value(api.config, Logger.DEBUG, 'last_ip', last_ip)
+    log.show_value(api.config, Logger.DEBUG, 'five_chess', five_chess)
+    log.show_value(api.config, Logger.DEBUG, 'chess', chess)
+    log.show_value(api.config, Logger.DEBUG,
                    'signature_file', signature_file)
 
     user = data_type.UserInfo(

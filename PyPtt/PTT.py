@@ -3,6 +3,9 @@ import progressbar
 import threading
 import re
 
+from SingleLog.log import Logger
+from SingleLog.log import LoggerLevel
+
 try:
     from . import data_type
     from . import config
@@ -34,6 +37,8 @@ except ModuleNotFoundError:
     import _api_post
     import _api_get_time
 
+logger_level = Logger
+
 
 class API:
     def __init__(
@@ -50,25 +55,14 @@ class API:
 
         self._mailbox_full = False
         self._ID = None
-        if log_handler is not None and not callable(log_handler):
-            raise TypeError('[PyPtt] log_handler is must callable!!')
 
-        if log_handler is not None:
-            has_log_handler = True
-            set_log_handler_result = True
-            try:
-                if log_level != log.level.SILENT:
-                    log_handler(f'PyPtt v {version.V}')
-                    log_handler('Developed by CodingMan')
-            except TypeError:
-                log_handler = None
-                set_log_handler_result = False
-        else:
-            has_log_handler = False
+        if log_level == 0:
+            log_level = Logger.INFO
 
-        if log_level != log.level.SILENT:
-            print(f'PyPtt v {version.V}')
-            print('Developed by CodingMan')
+        self.logger = Logger('PyPtt', log_level, handler=log_handler)
+
+        self.logger.info('PyPtt', version.V)
+        self.logger.info('Developed by CodingMan')
 
         self._login_status = False
         self.unregistered_user = True
@@ -79,7 +73,7 @@ class API:
 
         if not isinstance(language, int):
             raise TypeError('[PyPtt] language must be integer')
-        if not isinstance(log_level, int):
+        if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
         if not isinstance(screen_timeout, int):
             raise TypeError('[PyPtt] screen_timeout must be integer')
@@ -95,12 +89,7 @@ class API:
         if screen_post_timeout != 0:
             self.config.screen_post_timeout = screen_post_timeout
 
-        if log_level == 0:
-            log_level = self.config.log_level
-        elif not lib_util.check_range(log.level, log_level):
-            raise ValueError('[PyPtt] Unknown log_level', log_level)
-        else:
-            self.config.log_level = log_level
+        self.config.log_level = log_level
 
         if language == 0:
             language = self.config.language
@@ -110,38 +99,12 @@ class API:
             self.config.language = language
         i18n.load(self.config.language)
 
-        if log_handler is not None:
-            self.config.log_handler = log_handler
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                i18n.log_handler,
-                i18n.Init)
-        elif has_log_handler and not set_log_handler_result:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                i18n.log_handler,
-                [
-                    i18n.Init,
-                    i18n.Fail
-                ])
-
         if self.config.language == i18n.language.CHINESE:
-            log.show_value(
-                self.config, log.level.INFO, [
-                    i18n.ChineseTranditional,
-                    i18n.languageModule
-                ],
-                i18n.Init)
+            self.logger.info(i18n.chinese_traditional_module, i18n.init)
         elif self.config.language == i18n.language.ENGLISH:
-            log.show_value(
-                self.config, log.level.INFO, [
-                    i18n.English,
-                    i18n.languageModule
-                ],
-                i18n.Init)
+            self.logger.info(i18n.english_module, i18n.init)
 
+        self.outside_logger = Logger('logger', Logger.INFO, handler=log_handler)
         ##################
         if isinstance(host, int):
             if host == 0:
@@ -153,41 +116,14 @@ class API:
         self.config.host = host
 
         if self.config.host == data_type.host_type.PTT1:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                [
-                    i18n.Connect,
-                    i18n.host
-                ],
-                i18n.PTT)
+            self.logger.info(i18n.connect_host, i18n.PTT)
         elif self.config.host == data_type.host_type.PTT2:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                [
-                    i18n.Connect,
-                    i18n.host
-                ],
-                i18n.PTT2)
+            self.logger.info(i18n.connect_host, i18n.PTT2)
         elif self.config.host == data_type.host_type.LOCALHOST:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                [
-                    i18n.Connect,
-                    i18n.host
-                ],
-                i18n.Localhost)
+            self.logger.info(i18n.connect_host, i18n.localhost)
         else:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                [
-                    i18n.Connect,
-                    i18n.host
-                ],
-                self.config.host)
+            self.logger.info(i18n.connect_host, self.config.host)
+
         ##################
 
         if isinstance(host, int):
@@ -222,20 +158,8 @@ class API:
         self._goto_board_list = list()
         self._board_info_list = dict()
 
-        log.show_value(
-            self.config,
-            log.level.DEBUG,
-            'ThreadID',
-            self._ThreadID)
-
-        log.show_value(
-            self.config,
-            log.level.INFO,
-            [
-                i18n.Library,
-                ' v ' + version.V,
-            ],
-            i18n.Init)
+        self.logger.debug('ThreadID', self._ThreadID)
+        self.logger.info('PyPtt', i18n.init)
 
     def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
@@ -243,13 +167,13 @@ class API:
             return
         log.show_value(
             self.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'ThreadID',
             self._ThreadID)
 
         log.show_value(
             self.config,
-            log.level.DEBUG,
+            Logger.DEBUG,
             'Current thread id',
             current_thread_id)
 
@@ -316,11 +240,7 @@ class API:
         return _api_loginout.logout(self)
 
     def log(self, *msg) -> None:
-        self._one_thread()
-        msg = [str(x) for x in msg]
-        current_msg = ' '.join(msg)
-        log.log(self.config, log.level.OUTSIDE, current_msg)
-
+        self.outside_logger.info(*msg)
 
     def get_time(self) -> str:
         self._one_thread()
@@ -484,7 +404,7 @@ class API:
             if need_continue:
                 log.log(
                     self.config,
-                    log.level.DEBUG,
+                    Logger.DEBUG,
                     'Wait for retry repost')
                 time.sleep(0.1)
                 continue
@@ -747,21 +667,21 @@ class API:
 
             log.show_value(
                 self.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'StartIndex',
                 start_index
             )
 
             log.show_value(
                 self.config,
-                log.level.DEBUG,
+                Logger.DEBUG,
                 'EndIndex',
                 end_index
             )
 
             error_post_list = list()
             del_post_list = list()
-            if self.config.log_level == log.level.INFO:
+            if self.config.log_level == Logger.INFO:
                 PB = progressbar.ProgressBar(
                     max_value=end_index - start_index + 1,
                     redirect_stdout=True
@@ -801,7 +721,7 @@ class API:
                             raise e
                         log.log(
                             self.config,
-                            log.level.INFO,
+                            Logger.INFO,
                             i18n.RestoreConnection
                         )
                         self._login(
@@ -810,12 +730,12 @@ class API:
                             self.config.kick_other_login
                         )
                         need_continue = True
-                    except exceptions.UseTooManyResources as e:
+                    except exceptions.use_too_many_resources as e:
                         if i == 1:
                             raise e
                         log.log(
                             self.config,
-                            log.level.INFO,
+                            Logger.INFO,
                             i18n.RestoreConnection
                         )
                         self._login(
@@ -833,7 +753,7 @@ class API:
                     if need_continue:
                         log.log(
                             self.config,
-                            log.level.DEBUG,
+                            Logger.DEBUG,
                             'Wait for retry repost'
                         )
                         time.sleep(0.1)
@@ -841,7 +761,7 @@ class API:
 
                     break
 
-                if self.config.log_level == log.level.INFO:
+                if self.config.log_level == Logger.INFO:
                     PB.update(index - start_index)
                 if post is None:
                     error_post_list.append(index)
@@ -855,7 +775,7 @@ class API:
                 if post.delete_status != data_type.post_delete_status.NOT_DELETED:
                     del_post_list.append(index)
                 post_handler(post)
-            if self.config.log_level == log.level.INFO:
+            if self.config.log_level == Logger.INFO:
                 PB.finish()
 
             return error_post_list, del_post_list
@@ -889,7 +809,7 @@ class API:
             # # PostAID = ""
             # _url = 'https://www.ptt.cc/bbs/'
             # index = str(newest_index)
-            # if self.config.log_level == log.level.INFO:
+            # if self.config.log_level == Logger.INFO:
             #     PB = progressbar.ProgressBar(
             #         max_value=end_page - start_page + 1,
             #         redirect_stdout=True
@@ -909,7 +829,7 @@ class API:
             # for index in range(start_page, newest_index + 1):
             #     log.show_value(
             #         self.config,
-            #         log.level.DEBUG,
+            #         Logger.DEBUG,
             #         'CurrentPage',
             #         index)
             #
@@ -948,12 +868,12 @@ class API:
             #         )
             #         post_handler(post)
             #
-            #     if self.config.log_level == log.level.INFO:
+            #     if self.config.log_level == Logger.INFO:
             #         PB.update(index - start_page)
             #
             # log.show_value(
             #     self.config,
-            #     log.level.DEBUG,
+            #     Logger.DEBUG,
             #     'DelPostList',
             #     del_post_list
             # )
@@ -961,7 +881,7 @@ class API:
             # # 4. 把組合出來的 Post 塞給 handler
             #
             # # 5. 顯示 progress bar
-            # if self.config.log_level == log.level.INFO:
+            # if self.config.log_level == Logger.INFO:
             #     PB.finish()
             #
             # return error_post_list, del_post_list
@@ -1090,36 +1010,36 @@ class API:
         if board_info.is_push_record_ip:
             log.log(
                 self.config,
-                log.level.INFO,
+                Logger.INFO,
                 i18n.record_ip)
             if board_info.is_push_aligned:
                 log.log(
                     self.config,
-                    log.level.INFO,
+                    Logger.INFO,
                     i18n.push_aligned)
                 max_push_length = 32
             else:
                 log.log(
                     self.config,
-                    log.level.INFO,
+                    Logger.INFO,
                     i18n.not_push_aligned)
                 max_push_length = 43 - len(self._ID)
         else:
             log.log(
                 self.config,
-                log.level.INFO,
+                Logger.INFO,
                 i18n.not_record_ip)
             #     推文對齊
             if board_info.is_push_aligned:
                 log.log(
                     self.config,
-                    log.level.INFO,
+                    Logger.INFO,
                     i18n.push_aligned)
                 max_push_length = 46
             else:
                 log.log(
                     self.config,
-                    log.level.INFO,
+                    Logger.INFO,
                     i18n.not_push_aligned)
                 max_push_length = 58 - len(self._ID)
 
@@ -1148,7 +1068,7 @@ class API:
         for push in push_list:
             log.show_value(
                 self.config,
-                log.level.INFO,
+                Logger.INFO,
                 i18n.Push,
                 push)
 
@@ -1165,7 +1085,7 @@ class API:
                     # screens.show(self.config, self.connect_core.getScreenQueue())
                     log.log(
                         self.config,
-                        log.level.INFO,
+                        Logger.INFO,
                         '等待快速推文')
                     time.sleep(5.2)
 
@@ -1896,28 +1816,28 @@ class API:
     def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
 
         cmd_list = list()
-        cmd_list.append(command.GoMainMenu)
+        cmd_list.append(command.go_main_menu)
         cmd_list.append('qs')
         cmd_list.append(board)
-        cmd_list.append(command.Enter)
-        cmd_list.append(command.Space)
+        cmd_list.append(command.enter)
+        cmd_list.append(command.space)
 
         cmd = ''.join(cmd_list)
 
         target_list = [
             connect_core.TargetUnit(
-                i18n.AnyKeyContinue,
+                i18n.any_key_continue,
                 '任意鍵',
                 response=' ',
-                log_level=log.level.DEBUG
+                log_level=Logger.DEBUG
             ),
             connect_core.TargetUnit(
                 [
                     '動畫播放中',
                 ],
                 '互動式動畫播放中',
-                response=command.Ctrl_C,
-                log_level=log.level.DEBUG
+                response=command.ctrl_c,
+                log_level=Logger.DEBUG
             ),
             connect_core.TargetUnit(
                 [
@@ -1925,7 +1845,7 @@ class API:
                 ],
                 screens.Target.InBoard,
                 break_detect=True,
-                log_level=log.level.DEBUG
+                log_level=Logger.DEBUG
             ),
         ]
 
@@ -1942,7 +1862,7 @@ class API:
         if end:
             cmd_list = list()
             cmd_list.append('1')
-            cmd_list.append(command.Enter)
+            cmd_list.append(command.enter)
             cmd_list.append('$')
             cmd = ''.join(cmd_list)
 
@@ -1951,7 +1871,7 @@ class API:
                     '',
                     screens.Target.InBoard,
                     break_detect=True,
-                    log_level=log.level.DEBUG
+                    log_level=Logger.DEBUG
                 ),
             ]
 

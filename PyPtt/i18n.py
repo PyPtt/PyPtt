@@ -17,193 +17,15 @@ languageList = [
     language.ENGLISH,
 ]
 
-Connect = None
-Start = None
-ConnectMode = None
-ConnectMode_Telnet = None
-ConnectMode_WebSocket = None
-Active = None
-ErrorParameter = None
-connect_core = None
-PTT = None
-PTT2 = None
-Localhost = None
-Init = None
-Done = None
-i18n = None
-Library = None
-Fail = None
-Success = None
-Prepare = None
-Info = None
-OutSide = None
-Debug = None
-Again = None
-ErrorIDPW = None
-ErrorPW = None
-ScreenNoMatchTarget = None
-SigningUnPleaseWait = None
-Msg = None
-SigningUpdate = None
-SendMsg = None
-kick_other_login = None
-Notkick_other_login = None
-AnyKeyContinue = None
-login = None
-loginSuccess = None
-loginFail = None
-MailBoxFull = None
-PostNotFinish = None
-SystemBusyTryLater = None
-DelWrongPWRecord = None
-logout = None
-SpendTime = None
-GetPTTTime = None
-LoginTooOften = None
-MustBe = None
-String = None
-Integer = None
-Boolean = None
-ID = None
-Password = None
-InputOriginPassword = None
-InputNewPassword = None
-CheckNewPassword = None
-Board = None
-IntoBoard = None
-ReadingBoardInfo = None
-BothInput = None
-NoInput = None
-CatchPost = None
-PostDeleted = None
-BrowsePost = None
-CatchIP = None
-GetPush = None
-Update = None
-Push = None
-Date = None
-Content = None
-Author = None
-Title = None
-UnknownError = None
-Requirelogin = None
-HasPushPermission = None
-HasPostPermission = None
-NoPermission = None
-SaveFile = None
-SelectSignature = None
-FindNewestIndex = None
-OutOfRange = None
-MustSmallOrEqual = None
-VotePost = None
-SubstandardPost = None
-DoNothing = None
-NoFastPush = None
-OnlyArrow = None
-GetUser = None
-NoSuchUser = None
-WaterBall = None
-UserOffline = None
-SetCallStatus = None
-Throw = None
-NoWaterball = None
-BrowseWaterball = None
-languageModule = None
-English = None
-ChineseTranditional = None
-GetCallStatus = None
-NoMoney = None
-InputID = None
-InputMoney = None
-AuthenticationHasNotExpired = None
-VerifyID = None
-TradingInProgress = None
-Transaction = None
-MoneyTooFew = None
-TransactionCancelled = None
-ConstantRedBag = None
-SendMail = None
-Select = None
-SignatureFile = None
-NoSignatureFile = None
-SelfSaveDraft = None
-NotSelfSaveDraft = None
-MailBox = None
-NoSuchBoard = None
-HideSensitiveInfor = None
-PostFormatError = None
-log_handler = None
-NewCursor = None
-OldCursor = None
-PostNoContent = None
-ConnectionClosed = None
-BoardList = None
-UnregisteredUserCantUseAllAPI = None
-UnregisteredUserCantUseThisAPI = None
-MultiThreadOperate = None
-HasNewMailGotoMainMenu = None
-UseTooManyResources = None
-host = None
-PTT2NotSupport = None
-AnimationPost = None
-RestoreConnection = None
-NoPush = None
-NoResponse = None
-ReplyBoard = None
-ReplyMail = None
-ReplyBoard_Mail = None
-UseTheOriginalTitle = None
-QuoteOriginal = None
-EditPost = None
-RespondSuccess = None
-ForcedWrite = None
-NoPost = None
-NeedModeratorPermission = None
-NewSettingsHaveBeenSaved = None
-NoChanges = None
-Mark = None
-MarkPost = None
-DelAllMarkPost = None
-NoSuchPost = None
-GoMainMenu = None
-ErrorLoginRichPeopleGoMainMenu = None
-CanNotUseSearchPostCodeF = None
-FavouriteBoardList = None
-bucket = None
-UserHasPreviouslyBeenBanned = None
-InputBucketDays_Reason = None
-UnconfirmedPost = None
-Reading = None
-ReadComplete = None
-QuitUserProfile = None
-NoMail = None
-UseMailboxAPIWillLogoutAfterExecution = None
-PicksInRegister = None
-RegisterInProcessing = None
-record_ip = None
-not_record_ip = None
-push_aligned = None
-not_push_aligned = None
-confirm = None
-timeout = None
-NoSearchResult = None
-SkipRegistrationForm = None
-url = None
-OnlySecureConnection = None
-CatchBottomPostSuccess = None
-ConfirmDelete = None
-DeleteSuccess = None
-DeletedPost = None
-
 
 def specific_load(input_language, lang_list):
     global languageList
 
     if len(languageList) != len(lang_list):
-        raise ValueError('SpecificLoad LangList legnth error')
+        raise ValueError('SpecificLoad LangList length error')
 
     if input_language not in languageList:
-        raise ValueError('SpecificLoad Unknow language', input_language)
+        raise ValueError('SpecificLoad unknown language', input_language)
     return lang_list[languageList.index(input_language)]
 
 
@@ -215,1071 +37,444 @@ def replace(string, *args):
     return string
 
 
-def load(input_lang):
-    if not lib_util.check_range(language, input_lang):
-        raise ValueError('Language', input_lang)
-
-    global Connect
-    Connect = specific_load(input_lang, [
-        '連線',
-        'Connect',
-    ])
-
-    global Start
-    Start = specific_load(input_lang, [
-        '開始',
-        'Start',
-    ])
-
-    global ConnectMode
-    ConnectMode = specific_load(input_lang, [
-        Connect + '模式',
-        Connect + 'mode',
-    ])
-
-    global ConnectMode_Telnet
-    ConnectMode_Telnet = specific_load(input_lang, [
-        'Telnet',
-        'Telnet',
-    ])
-
-    global ConnectMode_WebSocket
-    ConnectMode_WebSocket = specific_load(input_lang, [
-        'WebSocket',
-        'WebSocket',
-    ])
-
-    global Active
-    Active = specific_load(input_lang, [
-        '啟動',
-        'Active',
-    ])
-
-    global ErrorParameter
-    ErrorParameter = specific_load(input_lang, [
-        '參數錯誤',
-        'Wrong parameter',
-    ])
-
-    global connect_core
-    connect_core = specific_load(input_lang, [
-        '連線核心',
-        'Connect Core',
-    ])
-
-    global PTT
-    PTT = specific_load(input_lang, [
-        '批踢踢',
-        'PTT',
-    ])
-
-    global PTT2
-    PTT2 = specific_load(input_lang, [
-        '批踢踢兔',
-        'PTT2',
-    ])
-
-    global Localhost
-    Localhost = specific_load(input_lang, [
-        '本機',
-        'localhost',
-    ])
-
-    global Init
-    Init = specific_load(input_lang, [
-        '初始化',
-        'initialize',
-    ])
-
-    global Done
-    Done = specific_load(input_lang, [
-        '完成',
-        'Done',
-    ])
-
-    global i18n
-    i18n = specific_load(input_lang, [
-        '多國語系',
-        'i18n',
-    ])
-
-    global Library
-    Library = specific_load(input_lang, [
-        'PyPtt',
-        'PyPtt',
-    ])
-
-    global Fail
-    Fail = specific_load(input_lang, [
-        '失敗',
-        'Fail',
-    ])
-
-    global Success
-    Success = specific_load(input_lang, [
-        '成功',
-        'Success',
-    ])
-
-    global Prepare
-    Prepare = specific_load(input_lang, [
-        '準備',
-        'Prepare',
-    ])
-
-    global Info
-    Info = specific_load(input_lang, [
-        '資訊',
-        'INFO',
-    ])
-
-    global OutSide
-    OutSide = specific_load(input_lang, [
-        '外部',
-        'OUTS',
-    ])
-
-    global Debug
-    Debug = specific_load(input_lang, [
-        '除錯',
-        'DBUG',
-    ])
-
-    global Again
-    Again = specific_load(input_lang, [
-        '重新',
-        'Re',
-    ])
-
-    global ErrorIDPW
-    ErrorIDPW = specific_load(input_lang, [
-        '密碼不對或無此帳號',
-        'Wrong password or no such id',
-    ])
-
-    global ErrorPW
-    ErrorPW = specific_load(input_lang, [
-        '密碼不正確',
-        'Wrong password',
-    ])
-
-    global ScreenNoMatchTarget
-    ScreenNoMatchTarget = specific_load(input_lang, [
-        '畫面無法辨識',
-        'This screen is not recognized',
-    ])
-
-    global SigningUnPleaseWait
-    SigningUnPleaseWait = specific_load(input_lang, [
-        '登入中，請稍候',
-        'Signing in, please wait',
-    ])
-
-    global Msg
-    Msg = specific_load(input_lang, [
-        '訊息',
-        'Message',
-    ])
-
-    global SigningUpdate
-    SigningUpdate = specific_load(input_lang, [
-        '更新與同步線上使用者及好友名單',
-        'Updating and synchronizing online users and friends list',
-    ])
-
-    global SendMsg
-    SendMsg = specific_load(input_lang, [
-        '送出訊息',
-        'Send Msg',
-    ])
-
-    global kick_other_login
-    kick_other_login = specific_load(input_lang, [
-        '剔除其他登入',
-        'Kick other login',
-    ])
-
-    global Notkick_other_login
-    Notkick_other_login = specific_load(input_lang, [
-        '不剔除其他登入',
-        'Not kick other login',
-    ])
-
-    global AnyKeyContinue
-    AnyKeyContinue = specific_load(input_lang, [
-        '請按任意鍵繼續',
-        'Any key to continue',
-    ])
-
-    global login
-    login = specific_load(input_lang, [
-        '登入',
-        'login',
-    ])
-
-    global loginSuccess
-    loginSuccess = specific_load(input_lang, [
-        '登入成功',
-        'login Success',
-    ])
-
-    global loginFail
-    loginFail = specific_load(input_lang, [
-        login + Fail,
-        login + ' ' + Fail,
-    ])
-
-    global MailBoxFull
-    MailBoxFull = specific_load(input_lang, [
-        '郵件已滿',
-        'Mail box is full',
-    ])
-
-    global PostNotFinish
-    PostNotFinish = specific_load(input_lang, [
-        '文章尚未完成',
-        'Post is not finish',
-    ])
-
-    global SystemBusyTryLater
-    SystemBusyTryLater = specific_load(input_lang, [
-        '系統負荷過重, 請稍後再試',
-        'System is overloaded, please try again later',
-    ])
-
-    global DelWrongPWRecord
-    DelWrongPWRecord = specific_load(input_lang, [
-        '刪除以上錯誤嘗試的記錄',
-        'Delete the record of the wrong password',
-    ])
-
-    global logout
-    logout = specific_load(input_lang, [
-        '登出',
-        'logout',
-    ])
-
-    global SpendTime
-    SpendTime = specific_load(input_lang, [
-        '花費時間',
-        'Spend time',
-    ])
-
-    global GetPTTTime
-    GetPTTTime = specific_load(input_lang, [
-        '取得批踢踢時間',
-        'Get PTT time',
-    ])
-
-    global LoginTooOften
-    LoginTooOften = specific_load(input_lang, [
-        '登入太頻繁',
-        'login too often',
-    ])
-
-    global MustBe
-    MustBe = specific_load(input_lang, [
-        '必須是',
-        'must be',
-    ])
-
-    global String
-    String = specific_load(input_lang, [
-        '字串',
-        'String',
-    ])
-
-    global Integer
-    Integer = specific_load(input_lang, [
-        '整數',
-        'Integer',
-    ])
-
-    global Boolean
-    Boolean = specific_load(input_lang, [
-        '布林值',
-        'Boolean',
-    ])
-
-    global ID
-    ID = specific_load(input_lang, [
-        '帳號',
-        'ID',
-    ])
-
-    global Password
-    Password = specific_load(input_lang, [
-        '密碼',
-        'Password',
-    ])
-
-    global InputOriginPassword
-    InputOriginPassword = specific_load(input_lang, [
-        '輸入原密碼',
-        'Input Origin Password',
-    ])
-
-    global InputNewPassword
-    InputNewPassword = specific_load(input_lang, [
-        '設定新密碼',
-        'Input New Password',
-    ])
-
-    global CheckNewPassword
-    CheckNewPassword = specific_load(input_lang, [
-        '檢查新密碼',
-        'CheckNewPassword',
-    ])
-
-    global Board
-    Board = specific_load(input_lang, [
-        '看板',
-        'Board',
-    ])
-
-    global IntoBoard
-    IntoBoard = specific_load(input_lang, [
-        '進入看板',
-        'Into Board',
-    ])
-
-    global ReadingBoardInfo
-    ReadingBoardInfo = specific_load(input_lang, [
-        '讀取看板資訊',
-        'Reading Board Info',
-    ])
-
-    global BothInput
-    BothInput = specific_load(input_lang, [
-        '同時輸入',
-        'Both input',
-    ])
-
-    global NoInput
-    NoInput = specific_load(input_lang, [
-        '沒有輸入',
-        'No input',
-    ])
-
-    global CatchPost
-    CatchPost = specific_load(input_lang, [
-        '取得文章',
-        'Catch post',
-    ])
-
-    global PostDeleted
-    PostDeleted = specific_load(input_lang, [
-        '文章已經被刪除',
-        'Post has been deleted',
-    ])
-
-    global BrowsePost
-    BrowsePost = specific_load(input_lang, [
-        '瀏覽文章',
-        'Browse post',
-    ])
-
-    global CatchIP
-    CatchIP = specific_load(input_lang, [
-        '取得 IP',
-        'Catch IP',
-    ])
-
-    global GetPush
-    GetPush = specific_load(input_lang, [
-        '取得推文',
-        'Get push',
-    ])
-
-    global Update
-    Update = specific_load(input_lang, [
-        '更新',
-        'Update',
-    ])
-
-    global Push
-    Push = specific_load(input_lang, [
-        '推文',
-        'Push',
-    ])
-
-    global Date
-    Date = specific_load(input_lang, [
-        '日期',
-        'Date',
-    ])
-
-    global Content
-    Content = specific_load(input_lang, [
-        '內文',
-        'Content',
-    ])
-
-    global Author
-    Author = specific_load(input_lang, [
-        '作者',
-        'Author',
-    ])
-
-    global Title
-    Title = specific_load(input_lang, [
-        '標題',
-        'Title',
-    ])
-
-    global UnknownError
-    UnknownError = specific_load(input_lang, [
-        '未知錯誤',
-        'Unknow Error',
-    ])
-
-    global Requirelogin
-    Requirelogin = specific_load(input_lang, [
-        '請先' + login,
-        'Please ' + login + ' first',
-    ])
-
-    global HasPushPermission
-    HasPushPermission = specific_load(input_lang, [
-        '使用者擁有推文權限',
-        'User Has Push Permission',
-    ])
-
-    global HasPostPermission
-    HasPostPermission = specific_load(input_lang, [
-        '使用者擁有貼文權限',
-        'User Has Post Permission',
-    ])
-
-    global NoPermission
-    NoPermission = specific_load(input_lang, [
-        '使用者沒有權限',
-        'User Has No Permission',
-    ])
-
-    global SaveFile
-    SaveFile = specific_load(input_lang, [
-        '儲存檔案',
-        'Save File',
-    ])
-
-    global SelectSignature
-    SelectSignature = specific_load(input_lang, [
-        '選擇簽名檔',
-        'Select Signature',
-    ])
-
-    global FindNewestIndex
-    FindNewestIndex = specific_load(input_lang, [
+chinese_traditional_module = None
+english_module = None
+init = None
+connect_host = None
+PTT = None
+PTT2 = None
+localhost = None
+must_be_a_string = None
+must_be_a_integer = None
+must_be_a_boolean = None
+unknown = None
+must_bigger_than = None
+must_small_than = None
+must_between = None
+connect_core = None
+use_too_many_resources = None
+prepare_connect_again = None
+active = None
+connect_mode = None
+connect_mode_TELNET = None
+connect_mode_WEBSOCKET = None
+fail = None
+connect = None
+hide_sensitive_info = None
+send_msg = None
+ptt_msg = None
+spend_time = None
+kick_other_login = None
+not_kick_other_login = None
+login_id = None
+mail_box = None
+login_success = None
+go_main_menu = None
+wrong_id_pw = None
+login_too_often = None
+system_busy_try_later = None
+del_wrong_pw_record = None
+post_not_finish = None
+in_login_process_please_wait = None
+any_key_continue = None
+update_sync_online_user_friend_list = None
+error_login_rich_people_go_main_menu = None
+skip_registration_form = None
+only_secure_connection = None
+debug = None
+info = None
+out_side = None
+new_cursor = None
+old_cursor = None
+logout_success = None
+logout = None
+complete = None
+query_ptt_time_success = None
+has_new_mail_goto_main_menu = None
+mail_box_full = None
+use_mailbox_api_will_logout_after_execution = None
+unregistered_user_cant_use_all_api = None
+picks_in_register = None
+reading_board_info = None
+no_permission = None
+no_post = None
+set_connect_mail_first = None
+no_such_board = None
+no_mail = None
+find_newest_index = None
+
+
+def load(lang):
+    if not lib_util.check_range(language, lang):
+        raise ValueError('Language', lang)
+
+    global find_newest_index
+    find_newest_index = specific_load(lang, [
         '找到最新編號',
         'Find Newest Index',
     ])
 
-    global OutOfRange
-    OutOfRange = specific_load(input_lang, [
-        '超出範圍',
-        'Out Of Range',
-    ])
-
-    global MustSmallOrEqual
-    MustSmallOrEqual = specific_load(input_lang, [
-        '必須小於等於',
-        'Must be less than or equal',
-    ])
-
-    global VotePost
-    VotePost = specific_load(input_lang, [
-        '投票文章',
-        'Vote Post',
-    ])
-
-    global SubstandardPost
-    SubstandardPost = specific_load(input_lang, [
-        '不合規範文章',
-        'Substandard Post',
-    ])
-
-    global DoNothing
-    DoNothing = specific_load(input_lang, [
-        '不處理',
-        'Do Nothing',
-    ])
-
-    global NoFastPush
-    NoFastPush = specific_load(input_lang, [
-        '禁止快速連續推文',
-        'No Fast Push',
-    ])
-
-    global OnlyArrow
-    OnlyArrow = specific_load(input_lang, [
-        '使用加註方式',
-        'Arrow Only in Push',
-    ])
-
-    global GetUser
-    GetUser = specific_load(input_lang, [
-        '取得使用者',
-        'Get User',
-    ])
-
-    global NoSuchUser
-    NoSuchUser = specific_load(input_lang, [
-        '無該使用者',
-        'No such user',
-    ])
-
-    global WaterBall
-    WaterBall = specific_load(input_lang, [
-        '水球',
-        'Water Ball',
-    ])
-
-    global UserOffline
-    UserOffline = specific_load(input_lang, [
-        '使用者離線',
-        'User Offline',
-    ])
-
-    global SetCallStatus
-    SetCallStatus = specific_load(input_lang, [
-        '設定呼叫器狀態',
-        'Set Call Status',
-    ])
-
-    global Throw
-    Throw = specific_load(input_lang, [
-        '丟',
-        'Throw',
-    ])
-
-    global NoWaterball
-    NoWaterball = specific_load(input_lang, [
-        '無訊息記錄',
-        'No Waterball',
-    ])
-
-    global BrowseWaterball
-    BrowseWaterball = specific_load(input_lang, [
-        '瀏覽水球紀錄',
-        'Browse Waterball',
-    ])
-
-    global languageModule
-    languageModule = specific_load(input_lang, [
-        '語言模組',
-        'language Module',
-    ])
-
-    global English
-    English = specific_load(input_lang, [
-        '英文',
-        'English',
-    ])
-
-    global ChineseTranditional
-    ChineseTranditional = specific_load(input_lang, [
-        '繁體中文',
-        'Chinese Tranditional',
-    ])
-
-    global GetCallStatus
-    GetCallStatus = specific_load(input_lang, [
-        '取得呼叫器狀態',
-        'Get BBCall Status',
-    ])
-
-    global NoMoney
-    NoMoney = specific_load(input_lang, [
-        'P 幣不足',
-        'No Money',
-    ])
-
-    global InputID
-    InputID = specific_load(input_lang, [
-        '輸入帳號',
-        'Input ID',
-    ])
-
-    global InputMoney
-    InputMoney = specific_load(input_lang, [
-        '輸入金額',
-        'Input Money',
-    ])
-
-    global AuthenticationHasNotExpired
-    AuthenticationHasNotExpired = specific_load(input_lang, [
-        '認證尚未過期',
-        'Authentication has not expired',
-    ])
-
-    global VerifyID
-    VerifyID = specific_load(input_lang, [
-        '確認身分',
-        'Verify ID',
-    ])
-
-    global TradingInProgress
-    TradingInProgress = specific_load(input_lang, [
-        '交易正在進行中',
-        'Trading is in progress',
-    ])
-
-    global Transaction
-    Transaction = specific_load(input_lang, [
-        '交易',
-        'Transaction',
-    ])
-
-    global MoneyTooFew
-    MoneyTooFew = specific_load(input_lang, [
-        '金額過少，交易取消!',
-        'The amount is too small, the transaction is cancelled!',
-    ])
-
-    global TransactionCancelled
-    TransactionCancelled = specific_load(input_lang, [
-        '交易取消!',
-        'The transaction is cancelled!',
-    ])
-
-    global ConstantRedBag
-    ConstantRedBag = specific_load(input_lang, [
-        '不修改紅包袋',
-        'Constant the red bag',
-    ])
-
-    global SendMail
-    SendMail = specific_load(input_lang, [
-        '寄信',
-        'Send Mail',
-    ])
-
-    global Select
-    Select = specific_load(input_lang, [
-        '選擇',
-        'Select',
-    ])
-
-    global SignatureFile
-    SignatureFile = specific_load(input_lang, [
-        '簽名檔',
-        'Signature File',
-    ])
-
-    global NoSignatureFile
-    NoSignatureFile = specific_load(input_lang, [
-        '不加簽名檔',
-        'No Signature File',
-    ])
-
-    global SelfSaveDraft
-    SelfSaveDraft = specific_load(input_lang, [
-        '自存底稿',
-        'Self-Save Draft',
-    ])
-
-    global NotSelfSaveDraft
-    NotSelfSaveDraft = specific_load(input_lang, [
-        '放棄自存底稿',
-        'Not Self-Save Draft',
-    ])
-
-    global MailBox
-    MailBox = specific_load(input_lang, [
-        '郵件選單',
-        'Mail Box',
-    ])
-
-    global NoSuchBoard
-    NoSuchBoard = specific_load(input_lang, [
-        '無該板面',
-        'No Such Board',
-    ])
-
-    global HideSensitiveInfor
-    HideSensitiveInfor = specific_load(input_lang, [
-        '隱藏敏感資訊',
-        'Hide Sensitive Information',
-    ])
-
-    global PostFormatError
-    PostFormatError = specific_load(input_lang, [
-        '文章格式錯誤',
-        'Post Format Error',
-    ])
-
-    global log_handler
-    log_handler = specific_load(input_lang, [
-        '紀錄額取器',
-        'log Handler',
-    ])
-
-    global NewCursor
-    NewCursor = specific_load(input_lang, [
-        '新式游標',
-        'New Type Cursor',
-    ])
-
-    global OldCursor
-    OldCursor = specific_load(input_lang, [
-        '舊式游標',
-        'Old Type Cursor',
-    ])
-
-    global PostNoContent
-    PostNoContent = specific_load(input_lang, [
-        '此文章無內容',
-        'Post has no content',
-    ])
-
-    global ConnectionClosed
-    ConnectionClosed = specific_load(input_lang, [
-        '連線已經被關閉',
-        'Connection Closed',
-    ])
-
-    global BoardList
-    BoardList = specific_load(input_lang, [
-        '看板列表',
-        'Board List',
-    ])
-
-    global UnregisteredUserCantUseAllAPI
-    UnregisteredUserCantUseAllAPI = specific_load(input_lang, [
-        '未註冊使用者，將無法使用全部功能',
-        'Unregistered User Can\'t Use All API',
-    ])
-
-    global UnregisteredUserCantUseThisAPI
-    UnregisteredUserCantUseThisAPI = specific_load(input_lang, [
-        '未註冊使用者，無法使用此功能',
-        'Unregistered User Can\'t Use This API',
-    ])
-
-    global MultiThreadOperate
-    MultiThreadOperate = specific_load(input_lang, [
-        '請勿使用多線程同時操作一個 PyPtt 物件',
-        'Do not use a multi-thread to operate a PyPtt object',
-    ])
-
-    global HasNewMailGotoMainMenu
-    HasNewMailGotoMainMenu = specific_load(input_lang, [
-        '有新信，回到主選單',
-        'Have a new letter, return to the main menu',
-    ])
-
-    global UseTooManyResources
-    UseTooManyResources = specific_load(input_lang, [
-        '耗用太多資源',
-        'Use too many resources of PTT',
-    ])
-
-    global host
-    host = specific_load(input_lang, [
-        '主機',
-        'host',
-    ])
-
-    global PTT2NotSupport
-    PTT2NotSupport = specific_load(input_lang, [
-        f'{PTT2}不支援',
-        f'{PTT2} Not Support',
-    ])
-
-    global AnimationPost
-    AnimationPost = specific_load(input_lang, [
-        '動畫文章',
-        'Animation Post',
-    ])
-
-    global RestoreConnection
-    RestoreConnection = specific_load(input_lang, [
-        '恢復連線',
-        'Restore Connection',
-    ])
-
-    global NoPush
-    NoPush = specific_load(input_lang, [
-        '禁止推薦',
-        'No Push',
-    ])
-
-    global NoResponse
-    NoResponse = specific_load(input_lang, [
-        '很抱歉, 此文章已結案並標記, 不得回應',
-        'This Post has been closed and marked, no response',
-    ])
-
-    global ReplyBoard
-    ReplyBoard = specific_load(input_lang, [
-        '回應至看板',
-        'Respond to the Board',
-    ])
-
-    global ReplyMail
-    ReplyMail = specific_load(input_lang, [
-        '回應至作者信箱',
-        'Respond to the mailbox of author',
-    ])
-
-    global ReplyBoard_Mail
-    ReplyBoard_Mail = specific_load(input_lang, [
-        '回應至看板與作者信箱',
-        'Respond to the Board and the mailbox of author',
-    ])
-
-    global UseTheOriginalTitle
-    UseTheOriginalTitle = specific_load(input_lang, [
-        '採用原標題',
-        'Use the original title',
-    ])
-
-    global QuoteOriginal
-    QuoteOriginal = specific_load(input_lang, [
-        '引用原文',
-        'Quote original',
-    ])
-
-    global EditPost
-    EditPost = specific_load(input_lang, [
-        '編輯文章',
-        'Edit Post',
-    ])
-
-    global RespondSuccess
-    RespondSuccess = specific_load(input_lang, [
-        '回應成功',
-        'Respond Success',
-    ])
-
-    global ForcedWrite
-    ForcedWrite = specific_load(input_lang, [
-        '強制寫入',
-        'Forced Write',
-    ])
-
-    global NoPost
-    NoPost = specific_load(input_lang, [
-        '沒有文章',
-        'No Post',
-    ])
-
-    global NeedModeratorPermission
-    NeedModeratorPermission = specific_load(input_lang, [
-        '需要板主權限',
-        'Need Moderator Permission',
-    ])
-
-    global NewSettingsHaveBeenSaved
-    NewSettingsHaveBeenSaved = specific_load(input_lang, [
-        '已儲存新設定',
-        'New settings have been saved',
-    ])
-
-    global NoChanges
-    NoChanges = specific_load(input_lang, [
-        '未改變任何設定',
-        'No changes have been made to any settings',
-    ])
-
-    global Mark
-    Mark = specific_load(input_lang, [
-        '標記',
-        'Mark',
-    ])
-
-    global MarkPost
-    MarkPost = specific_load(input_lang, [
-        '標記文章',
-        'Mark Post',
-    ])
-
-    global DelAllMarkPost
-    DelAllMarkPost = specific_load(input_lang, [
-        '刪除所有標記文章',
-        'Del All Mark Post',
-    ])
-
-    global NoSuchPost
-    NoSuchPost = specific_load(input_lang, [
-        '{Target0} 板找不到這個文章代碼 {Target1}',
-        'In {Target0}, the post code is not exist {Target1}',
-    ])
-
-    global GoMainMenu
-    GoMainMenu = specific_load(input_lang, [
-        '回到主選單',
-        'Back to main memu',
-    ])
-
-    global ErrorLoginRichPeopleGoMainMenu
-    ErrorLoginRichPeopleGoMainMenu = specific_load(input_lang, [
-        '誤入大富翁區，回到主選單',
-        'Stray into the Monopoly area and return to the main menu',
-    ])
-
-    global CanNotUseSearchPostCodeF
-    CanNotUseSearchPostCodeF = specific_load(input_lang, [
-        '此狀態下無法使用搜尋文章代碼(AID)功能',
-        'This status can not use the search Post code function',
-    ])
-
-    global FavouriteBoardList
-    FavouriteBoardList = specific_load(input_lang, [
-        '我的最愛',
-        'Favourite Board List',
-    ])
-
-    global bucket
-    bucket = specific_load(input_lang, [
-        '水桶',
-        'Bucket',
-    ])
-
-    global UserHasPreviouslyBeenBanned
-    UserHasPreviouslyBeenBanned = specific_load(input_lang, [
-        '使用者之前已被禁言',
-        'User has previously been banned',
-    ])
-
-    global InputBucketDays_Reason
-    InputBucketDays_Reason = specific_load(input_lang, [
-        '輸入水桶天數與理由',
-        'Input bucket days and reason',
-    ])
-
-    global UnconfirmedPost
-    UnconfirmedPost = specific_load(input_lang, [
-        '待證實文章',
-        'Post To Be Confirmed',
-    ])
-
-    global Reading
-    Reading = specific_load(input_lang, [
-        '讀取中',
-        'Reading',
-    ])
-
-    global ReadComplete
-    ReadComplete = specific_load(input_lang, [
-        f'讀取{Done}',
-        f'Read {Done}',
-    ])
-
-    global QuitUserProfile
-    QuitUserProfile = specific_load(input_lang, [
-        f'退出使用者檔案',
-        f'Quit User Profile',
-    ])
-
-    global NoMail
-    NoMail = specific_load(input_lang, [
+    global no_mail
+    no_mail = specific_load(lang, [
         f'沒有信件',
         f'You have no mail',
     ])
 
-    global UseMailboxAPIWillLogoutAfterExecution
-    UseMailboxAPIWillLogoutAfterExecution = specific_load(input_lang, [
-        f'如果使用信箱相關功能，將執行後自動登出',
-        f'If you use mailbox related functions, you will be logged out automatically after execution',
+    global no_such_board
+    no_such_board = specific_load(lang, [
+        '無該板面',
+        'No Such Board',
     ])
 
-    global PicksInRegister
-    PicksInRegister = specific_load(input_lang, [
+    global no_post
+    no_post = specific_load(lang, [
+        '沒有文章',
+        'No Post',
+    ])
+
+    global set_connect_mail_first
+    set_connect_mail_first = specific_load(lang, [
+        '設定聯絡信箱後才能修改密碼',
+        'Password can only be changed after setting the contact mailbox',
+    ])
+
+    global no_permission
+    no_permission = specific_load(lang, [
+        '使用者沒有權限',
+        'User Has No Permission',
+    ])
+
+    global reading_board_info
+    reading_board_info = specific_load(lang, [
+        '讀取看板資訊',
+        'Reading Board Info',
+    ])
+
+    global picks_in_register
+    picks_in_register = specific_load(lang, [
         '註冊申請單處理順位',
         'Registration application processing order',
     ])
 
-    global RegisterInProcessing
-    RegisterInProcessing = specific_load(input_lang, [
-        '註冊申請單尚在處理中',
-        'Register is in processing',
+    global unregistered_user_cant_use_all_api
+    unregistered_user_cant_use_all_api = specific_load(lang, [
+        '未註冊使用者，將無法使用全部功能',
+        'Unregistered User Can\'t Use All API',
     ])
 
-    global record_ip
-    record_ip = specific_load(input_lang, [
-        '紀錄 IP',
-        'Record ip',
+    global use_mailbox_api_will_logout_after_execution
+    use_mailbox_api_will_logout_after_execution = specific_load(lang, [
+        f'如果使用信箱相關功能，將執行後自動登出',
+        f'If you use mailbox related functions, you will be logged out automatically after execution',
     ])
 
-    global not_record_ip
-    not_record_ip = specific_load(input_lang, [
-        '不紀錄 IP',
-        'Not record ip',
+    global mail_box_full
+    mail_box_full = specific_load(lang, [
+        '郵件已滿',
+        'Mail box is full',
     ])
 
-    global push_aligned
-    push_aligned = specific_load(input_lang, [
-        '推文對齊',
-        'Push aligned',
+    global has_new_mail_goto_main_menu
+    has_new_mail_goto_main_menu = specific_load(lang, [
+        '有新信，回到主選單',
+        'New mail! Back to main menu',
     ])
 
-    global not_push_aligned
-    not_push_aligned = specific_load(input_lang, [
-        '無推文對齊',
-        'No push aligned',
+    global query_ptt_time_success
+    query_ptt_time_success = specific_load(lang, [
+        '取得批踢踢時間成功',
+        'query ptt time success',
     ])
 
-    global confirm
-    confirm = specific_load(input_lang, [
-        '確認',
-        'Confirm',
+    global complete
+    complete = specific_load(lang, [
+        '完成',
+        'complete',
     ])
 
-    global timeout
-    timeout = specific_load(input_lang, [
-        '超時',
-        'Timeout',
+    global logout
+    logout = specific_load(lang, [
+        '登出',
+        'logout',
     ])
 
-    global NoSearchResult
-    NoSearchResult = specific_load(input_lang, [
-        '沒有搜尋結果',
-        'No Search Result',
+    global logout_success
+    logout_success = specific_load(lang, [
+        '登出成功',
+        'logout success',
     ])
 
-    global SkipRegistrationForm
-    SkipRegistrationForm = specific_load(input_lang, [
+    global new_cursor
+    new_cursor = specific_load(lang, [
+        '新式游標',
+        'new cursor',
+    ])
+
+    global old_cursor
+    old_cursor = specific_load(lang, [
+        '舊式游標',
+        'old cursor',
+    ])
+
+    global debug
+    debug = specific_load(lang, [
+        '除錯',
+        'dbug',
+    ])
+
+    global info
+    info = specific_load(lang, [
+        '資訊',
+        'Info',
+    ])
+
+    global out_side
+    out_side = specific_load(lang, [
+        '外部',
+        'out',
+    ])
+
+    global only_secure_connection
+    only_secure_connection = specific_load(lang, [
         '跳過填寫註冊單',
-        'Skip Registration Form',
+        'skip registration form',
     ])
 
-    global url
-    url = specific_load(input_lang, [
-        '網址',
-        'url',
+    global skip_registration_form
+    skip_registration_form = specific_load(lang, [
+        '跳過填寫註冊單',
+        'skip registration form',
     ])
 
-    global OnlySecureConnection
-    OnlySecureConnection = specific_load(input_lang, [
-        '已設定為只能使用安全連線',
-        'Secure connections only',
+    global error_login_rich_people_go_main_menu
+    error_login_rich_people_go_main_menu = specific_load(lang, [
+        '錯誤登入到大富翁排行榜，回到主選單',
+        'error login rich people, go main menu',
     ])
 
-    global CatchBottomPostSuccess
-    CatchBottomPostSuccess = specific_load(input_lang, [
-        '取得置底文章成功',
-        'Catch bottom post success',
+    global update_sync_online_user_friend_list
+    update_sync_online_user_friend_list = specific_load(lang, [
+        '正在更新與同步線上使用者及好友名單',
+        'update sync online user friend list',
     ])
 
-    global ConfirmDelete
-    ConfirmDelete = specific_load(input_lang, [
-        '確定刪除',
-        'Confirm delete',
+    global any_key_continue
+    any_key_continue = specific_load(lang, [
+        '任意鍵繼續',
+        'any key to continue',
     ])
 
-    global DeleteSuccess
-    DeleteSuccess = specific_load(input_lang, [
-        '刪除成功',
-        'Delete Success',
+    global in_login_process_please_wait
+    in_login_process_please_wait = specific_load(lang, [
+        '登入中，請稍候',
+        'in login process, please wait',
     ])
 
-    global DeletedPost
-    DeletedPost = specific_load(input_lang, [
-        '已刪除文章',
-        'Deleted Post',
+    global post_not_finish
+    post_not_finish = specific_load(lang, [
+        '文章尚未完成',
+        'post is not finish',
     ])
+
+    global del_wrong_pw_record
+    del_wrong_pw_record = specific_load(lang, [
+        '刪除錯誤密碼嘗試紀錄',
+        'delete error password record',
+    ])
+
+    global system_busy_try_later
+    system_busy_try_later = specific_load(lang, [
+        '系統繁忙，請稍後再試',
+        'system busy, try later',
+    ])
+
+    global login_too_often
+    login_too_often = specific_load(lang, [
+        '登入太頻繁',
+        'login too often',
+    ])
+
+    global wrong_id_pw
+    wrong_id_pw = specific_load(lang, [
+        '帳號密碼錯誤',
+        'wrong id or pw',
+    ])
+
+    global go_main_menu
+    go_main_menu = specific_load(lang, [
+        '回到主選單',
+        'go to main menu',
+    ])
+
+    global login_success
+    login_success = specific_load(lang, [
+        '登入成功',
+        'login success',
+    ])
+
+    global mail_box
+    mail_box = specific_load(lang, [
+        '郵件信箱',
+        'mail box',
+    ])
+
+    global login_id
+    login_id = specific_load(lang, [
+        '登入帳號',
+        'login id',
+    ])
+
+    global not_kick_other_login
+    not_kick_other_login = specific_load(lang, [
+        '不剔除其他登入',
+        'not kick other login',
+    ])
+
+    global kick_other_login
+    kick_other_login = specific_load(lang, [
+        '剔除其他登入',
+        'kick other login',
+    ])
+
+    global spend_time
+    spend_time = specific_load(lang, [
+        '花費時間',
+        'spend time',
+    ])
+
+    global ptt_msg
+    ptt_msg = specific_load(lang, [
+        '批踢踢訊息',
+        'ptt msg',
+    ])
+
+    global send_msg
+    send_msg = specific_load(lang, [
+        '送出訊息',
+        'send msg',
+    ])
+
+    global hide_sensitive_info
+    hide_sensitive_info = specific_load(lang, [
+        '隱藏敏感資訊',
+        'hide sensitive info'])
+
+    global connect
+    connect = specific_load(lang, [
+        '連線',
+        'connect'])
+
+    global fail
+    fail = specific_load(lang, [
+        '失敗',
+        'fail'])
+
+    global connect_mode_WEBSOCKET
+    connect_mode_WEBSOCKET = specific_load(lang, [
+        'WebSocket',
+        'WebSocket'])
+
+    global connect_mode_TELNET
+    connect_mode_TELNET = specific_load(lang, [
+        'Telnet',
+        'Telnet'])
+
+    global connect_mode
+    connect_mode = specific_load(lang, [
+        '連線模式',
+        'connect mode'])
+
+    global active
+    active = specific_load(lang, [
+        '啟動',
+        'active'])
+
+    global prepare_connect_again
+    prepare_connect_again = specific_load(lang, [
+        '準備再次連線',
+        'prepare connect again'])
+
+    global use_too_many_resources
+    use_too_many_resources = specific_load(lang, [
+        '耗用過多資源',
+        'use too many resources'])
+
+    global connect_core
+    connect_core = specific_load(lang, [
+        '連線核心',
+        'connect core'])
+
+    global must_small_than
+    must_small_than = specific_load(lang, [
+        '必須小於',
+        'must smaller than'])
+
+    global must_between
+    must_between = specific_load(lang, [
+        '必須介於',
+        'must between'])
+
+    global must_bigger_than
+    must_bigger_than = specific_load(lang, [
+        '必須大於',
+        'must bigger than'])
+
+    global unknown
+    unknown = specific_load(lang, [
+        '不明的',
+        'unknown'])
+
+    global must_be_a_boolean
+    must_be_a_boolean = specific_load(lang, [
+        '必須為布林值',
+        'must be a boolean'])
+
+    global must_be_a_integer
+    must_be_a_integer = specific_load(lang, [
+        '必須為數字',
+        'must be a integer'])
+
+    global must_be_a_string
+    must_be_a_string = specific_load(lang, [
+        '必須為字串',
+        'must be a string'])
+
+    global chinese_traditional_module
+    chinese_traditional_module = specific_load(lang, [
+        '繁體中文語言模組',
+        'Traditional Chinese language module'])
+
+    global english_module
+    english_module = specific_load(lang, [
+        '英文語言模組',
+        'English language module'])
+
+    global init
+    init = specific_load(lang, [
+        '初始化',
+        'Init'])
+
+    global connect_host
+    connect_host = specific_load(lang, [
+        '連線主機',
+        'Connect host'])
+
+    global PTT
+    PTT = specific_load(lang, [
+        '批踢踢',
+        'PTT'])
+
+    global PTT2
+    PTT2 = specific_load(lang, [
+        '批踢踢兔',
+        'PTT2'])
+
+    global localhost
+    localhost = specific_load(lang, [
+        '本機',
+        'Localhost'])
+
+    ##############################################
 
     # No changes have been made to any settings
 

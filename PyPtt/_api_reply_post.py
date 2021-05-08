@@ -24,7 +24,7 @@ def reply_post(
         post_index: int) -> None:
     # log.showValue(
     #     api.config,
-    #     log.level.INFO,
+    #     Logger.INFO,
     #     [
     #         i18n.PTT,
     #         i18n.Msg
@@ -40,84 +40,84 @@ def reply_post(
         cmd_list.append('#' + post_aid)
     elif post_index != 0:
         cmd_list.append(str(post_index))
-    cmd_list.append(command.Enter * 2)
+    cmd_list.append(command.enter * 2)
     cmd_list.append('r')
 
     if reply_type == data_type.reply_type.BOARD:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyBoard,
             '▲ 回應至',
-            log_level=log.level.INFO,
-            response='F' + command.Enter
+            log_level=Logger.INFO,
+            response='F' + command.enter
         )
     elif reply_type == data_type.reply_type.MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyMail,
             '▲ 回應至',
-            log_level=log.level.INFO,
-            response='M' + command.Enter
+            log_level=Logger.INFO,
+            response='M' + command.enter
         )
     elif reply_type == data_type.reply_type.BOARD_MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.ReplyBoard_Mail,
             '▲ 回應至',
-            log_level=log.level.INFO,
-            response='B' + command.Enter
+            log_level=Logger.INFO,
+            response='B' + command.enter
         )
 
     cmd = ''.join(cmd_list)
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵繼續',
             break_detect=True,
         ),
         connect_core.TargetUnit(
             i18n.NoResponse,
             '◆ 很抱歉, 此文章已結案並標記, 不得回應',
-            log_level=log.level.INFO,
+            log_level=Logger.INFO,
             exceptions_=exceptions.NoResponse()
         ),
         connect_core.TargetUnit(
             i18n.ForcedWrite,
             '(E)繼續編輯 (W)強制寫入',
-            log_level=log.level.INFO,
-            response='W' + command.Enter
+            log_level=Logger.INFO,
+            response='W' + command.enter
         ),
         connect_core.TargetUnit(
             i18n.SelectSignature,
             '請選擇簽名檔',
-            response=str(sign_file) + command.Enter,
+            response=str(sign_file) + command.enter,
         ),
         connect_core.TargetUnit(
             i18n.SaveFile,
             '確定要儲存檔案嗎',
-            response='s' + command.Enter,
+            response='s' + command.enter,
         ),
         connect_core.TargetUnit(
             i18n.EditPost,
             '編輯文章',
-            log_level=log.level.INFO,
-            response=str(content) + command.Enter + command.Ctrl_X
+            log_level=Logger.INFO,
+            response=str(content) + command.enter + command.ctrl_x
         ),
         connect_core.TargetUnit(
             i18n.QuoteOriginal,
             '請問要引用原文嗎',
-            log_level=log.level.DEBUG,
-            response='Y' + command.Enter
+            log_level=Logger.DEBUG,
+            response='Y' + command.enter
         ),
         connect_core.TargetUnit(
             i18n.UseTheOriginalTitle,
             '採用原標題[Y/n]?',
-            log_level=log.level.DEBUG,
-            response='Y' + command.Enter
+            log_level=Logger.DEBUG,
+            response='Y' + command.enter
         ),
         reply_target_unit,
         connect_core.TargetUnit(
             i18n.SelfSaveDraft,
             '已順利寄出，是否自存底稿',
-            log_level=log.level.DEBUG,
-            response='Y' + command.Enter
+            log_level=Logger.DEBUG,
+            response='Y' + command.enter
         ),
     ]
 
@@ -128,5 +128,5 @@ def reply_post(
 
     log.log(
         api.config,
-        log.level.INFO,
+        Logger.INFO,
         i18n.RespondSuccess)
