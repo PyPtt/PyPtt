@@ -55,8 +55,12 @@ pip install PyPtt
 ####
 #### [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 ####
-#### XMR
-##### 448CUe2q4Ecf9tx6rwanrqM9kfCwqpNbhJ5jtrTf9FHqHNq7Lvv9uBoQ74SEaAu9FFceNBr6p3W1yhqPcxPPSSTv2ctufnQ
+#### BTC
+##### 1MiCSgTczPKzXbfsAH61gxXTLKoH4SsdMU
+#### ETH
+##### 0x60a23bf221cc6c7293134e7d11200c5c0e099fa4
+#### ADA (recommend)
+##### addr1qyzn7h06yp3ru6yncjq9mkrx4tn6fq566h3suph784wfd9q7vvtm9xvw3jqjrw9fsap8j6gkv3eywcdnvpd6c5fjxngspgqkry
 
 ## 贊助清單
 
