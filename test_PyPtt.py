@@ -18,11 +18,11 @@ def get_password(password_file):
     try:
         with open(password_file) as AccountFile:
             account = json.load(AccountFile)
-            ptt_id = account['ID']
-            password = account['Password']
+            ptt_id = account['id']
+            password = account['pw']
     except FileNotFoundError:
-        log(f'Please note PTT ID and Password in {password_file}')
-        log('{"ID":"YourID", "Password":"YourPassword"}')
+        print(f'Please write PTT ID and Password in {password_file}')
+        print('{"id":"your ptt id", "pw":"your ptt pw"}')
         sys.exit()
 
     return ptt_id, password
@@ -210,10 +210,10 @@ def test_init():
         load_from_file = True
 
     if load_from_file:
-        ptt_id_0, ptt_pw_0 = get_password('test_account_0.txt')
-        ptt_id_1, ptt_pw_1 = get_password('test_account_1.txt')
-        ptt2_id_0, ptt2_pw_0 = get_password('test_account_2.txt')
-        ptt2_id_1, ptt2_pw_1 = get_password('test_account_3.txt')
+        ptt_id_0, ptt_pw_0 = get_password('account_ptt_0.json')
+        ptt_id_1, ptt_pw_1 = get_password('account_ptt_1.json')
+        ptt2_id_0, ptt2_pw_0 = get_password('account_ptt2_0.json')
+        ptt2_id_1, ptt2_pw_1 = get_password('account_ptt2_1.json')
 
     current_py_version = os.getenv('PYTHON_VERSION')
     if current_py_version is None:
