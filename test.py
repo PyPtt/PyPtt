@@ -13,11 +13,11 @@ def get_password(password_file):
     try:
         with open(password_file) as AccountFile:
             account = json.load(AccountFile)
-            ptt_id = account['ID']
-            password = account['Password']
+            ptt_id = account['id']
+            password = account['pw']
     except FileNotFoundError:
-        print(f'Please note PTT ID and Password in {password_file}')
-        print('{"ID":"YourID", "Password":"YourPassword"}')
+        print(f'Please write PTT ID and Password in {password_file}')
+        print('{"id":"your ptt id", "pw":"your ptt pw"}')
         sys.exit()
 
     return ptt_id, password
@@ -1465,9 +1465,9 @@ if __name__ == '__main__':
         )
 
         if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-            ptt_id, password = get_password('test_account_1.txt')
+            ptt_id, password = get_password('account_ptt_0.json')
         else:
-            ptt_id, password = get_password('test_account_2.txt')
+            ptt_id, password = get_password('account_ptt2.json')
         try:
             ptt_bot.login(
                 ptt_id,
