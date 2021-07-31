@@ -154,11 +154,60 @@ has_push_permission = None
 only_arrow = None
 error_parameter = None
 wait_for_no_fast_comment = None
+require_login = None
+reading = None
+quit_user_profile = None
+read_complete = None
+get_user = None
+get_user_success = None
+get_user_fail = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global get_user
+    get_user = specific_load(lang, [
+        '取得使用者',
+        'get user',
+    ])
+
+    global get_user_success
+    get_user_success = specific_load(lang, [
+        '取得使用者成功',
+        'get user success',
+    ])
+
+    global get_user_fail
+    get_user_fail = specific_load(lang, [
+        '取得使用者失敗',
+        'get user fail',
+    ])
+
+    global read_complete
+    read_complete = specific_load(lang, [
+        f'讀取完成',
+        f'read complete',
+    ])
+
+    global quit_user_profile
+    quit_user_profile = specific_load(lang, [
+        f'退出使用者檔案',
+        f'Quit User Profile',
+    ])
+
+    global reading
+    reading = specific_load(lang, [
+        '讀取中',
+        'reading',
+    ])
+
+    global require_login
+    require_login = specific_load(lang, [
+        '請先登入',
+        'please login first',
+    ])
 
     global error_parameter
     error_parameter = specific_load(lang, [

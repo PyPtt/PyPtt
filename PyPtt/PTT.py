@@ -245,7 +245,7 @@ class API:
     def get_time(self) -> str:
         self._one_thread()
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -263,7 +263,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -494,7 +494,7 @@ class API:
 
         if index_type == data_type.index_type.BBS or index_type == data_type.index_type.MAIL:
             if not self._login_status:
-                raise exceptions.Requirelogin(i18n.Requirelogin)
+                raise exceptions.Requirelogin(i18n.require_login)
 
         if index_type == data_type.index_type.BBS:
             check_value.check(
@@ -567,7 +567,7 @@ class API:
 
         if crawl_type == data_type.crawl_type.BBS:
             if not self._login_status:
-                raise exceptions.Requirelogin(i18n.Requirelogin)
+                raise exceptions.Requirelogin(i18n.require_login)
 
             check_value.check(self.config, int, 'SearchType', search_type)
             if search_condition is not None:
@@ -899,7 +899,7 @@ class API:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -940,7 +940,7 @@ class API:
             post_type,
             sign_file)
 
-    def push(
+    def comment(
             self,
             board: str,
             push_type: int,
@@ -953,7 +953,7 @@ class API:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1030,7 +1030,7 @@ class API:
 
             for _ in range(2):
                 try:
-                    self._push(
+                    self._comment(
                         board,
                         push_type,
                         comment,
@@ -1042,7 +1042,7 @@ class API:
                     self.logger.info(i18n.wait_for_no_fast_comment)
                     time.sleep(5.2)
 
-    def _push(
+    def _comment(
             self,
             board: str,
             push_type: int,
@@ -1086,7 +1086,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1099,7 +1099,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1133,7 +1133,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1155,7 +1155,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1179,7 +1179,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1201,7 +1201,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1230,7 +1230,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1281,7 +1281,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.get_newest_index(data_type.index_type.MAIL) == 0:
             return 0
@@ -1299,7 +1299,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1321,7 +1321,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1386,7 +1386,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1419,7 +1419,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1445,7 +1445,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1461,7 +1461,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1496,7 +1496,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1508,14 +1508,12 @@ class API:
             check_value.check_index(
                 self.config,
                 'min_page',
-                min_page
-            )
+                min_page)
         if max_page is not None:
             check_value.check_index(
                 self.config,
                 'max_page',
-                max_page
-            )
+                max_page)
         if min_page is not None and max_page is not None:
             check_value.check_index_range(
                 self.config,
@@ -1537,7 +1535,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1564,7 +1562,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1592,7 +1590,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1613,7 +1611,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1679,7 +1677,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1704,7 +1702,7 @@ class API:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 

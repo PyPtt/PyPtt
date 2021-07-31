@@ -1,17 +1,20 @@
+from SingleLog.log import Logger
+
 try:
     from . import i18n
     from . import connect_core
-    from . import log
     from . import command
 except ModuleNotFoundError:
     import i18n
     import connect_core
-    import log
     import command
 
 
 def search_user(
         api: object, ptt_id: str, min_page: int, max_page: int) -> list:
+
+    logger = Logger('search_user', Logger.INFO)
+
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
@@ -43,23 +46,18 @@ def search_user(
 
         api.connect_core.send(
             cmdtemp,
-            target_list
-        )
+            target_list)
         ori_screen = api.connect_core.get_screen_queue()[-1]
-        log.log(
-            api.config,
-            Logger.INFO,
-            i18n.Reading
-        )
+        logger.info(i18n.reading)
         # print(OriScreen)
         # print(len(OriScreen.split('\n')))
 
         if len(ori_screen.split('\n')) == 2:
-            resultid = ori_screen.split('\n')[1]
-            resultid = resultid[resultid.find(' ') + 1:].strip()
-            # print(resultid)
+            result_id = ori_screen.split('\n')[1]
+            result_id = result_id[result_id.find(' ') + 1:].strip()
+            # print(result_id)
 
-            resultlist.append(resultid)
+            resultlist.append(result_id)
             break
         else:
 
@@ -87,18 +85,14 @@ def search_user(
 
             cmdtemp = ' '
 
-    log.log(
-        api.config,
-        Logger.INFO,
-        i18n.ReadComplete
-    )
+    logger.info(i18n.read_complete)
 
     api.connect_core.send(
         command.enter,
         [
             # 《ＩＤ暱稱》
             connect_core.TargetUnit(
-                i18n.QuitUserProfile,
+                i18n.quit_user_profile,
                 '《ＩＤ暱稱》',
                 response=command.enter,
                 # log_level=Logger.DEBUG

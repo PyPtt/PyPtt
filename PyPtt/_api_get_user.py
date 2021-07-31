@@ -1,5 +1,7 @@
 import re
 
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
@@ -60,6 +62,9 @@ def parse_user_page(screen):
 
 
 def get_user(api, ptt_id: str) -> data_type.UserInfo:
+    
+    logger = Logger('get_user', Logger.INFO)
+    
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
@@ -73,17 +78,11 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.GetUser,
-                i18n.success,
-            ],
+            i18n.get_user_success,
             screens.Target.AnyKey,
             break_detect=True),
         connect_core.TargetUnit(
-            [
-                i18n.GetUser,
-                i18n.Fail,
-            ],
+            i18n.get_user_fail,
             screens.Target.InTalk,
             break_detect=True),
     ]
@@ -150,19 +149,18 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
 
     signature_file = '\n'.join(ori_screen.split('\n')[6:-1])
 
-    log.show_value(api.config, Logger.DEBUG, 'ptt_id', ptt_id)
-    log.show_value(api.config, Logger.DEBUG, 'money', money)
-    log.show_value(api.config, Logger.DEBUG, 'login_time', login_time)
-    log.show_value(api.config, Logger.DEBUG, 'legal_post', legal_post)
-    log.show_value(api.config, Logger.DEBUG, 'illegal_post', illegal_post)
-    log.show_value(api.config, Logger.DEBUG, 'status', status)
-    log.show_value(api.config, Logger.DEBUG, 'mail', mail)
-    log.show_value(api.config, Logger.DEBUG, 'last_login', last_login)
-    log.show_value(api.config, Logger.DEBUG, 'last_ip', last_ip)
-    log.show_value(api.config, Logger.DEBUG, 'five_chess', five_chess)
-    log.show_value(api.config, Logger.DEBUG, 'chess', chess)
-    log.show_value(api.config, Logger.DEBUG,
-                   'signature_file', signature_file)
+    logger.debug('ptt_id', ptt_id)
+    logger.debug('money', money)
+    logger.debug('login_time', login_time)
+    logger.debug('legal_post', legal_post)
+    logger.debug('illegal_post', illegal_post)
+    logger.debug('status', status)
+    logger.debug('mail', mail)
+    logger.debug('last_login', last_login)
+    logger.debug('last_ip', last_ip)
+    logger.debug('five_chess', five_chess)
+    logger.debug('chess', chess)
+    logger.debug('signature_file', signature_file)
 
     user = data_type.UserInfo(
         ptt_id,
