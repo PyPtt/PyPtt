@@ -1,14 +1,13 @@
 import asyncio
-import websockets
-import websockets.http
-import websockets.exceptions
-import telnetlib
 import re
+import telnetlib
 import threading
 import time
 import traceback
 
 import websockets
+import websockets.exceptions
+import websockets.http
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 from uao import register_uao

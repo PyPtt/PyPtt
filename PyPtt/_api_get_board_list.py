@@ -1,4 +1,5 @@
 import progressbar
+
 try:
     from . import i18n
     from . import connect_core
@@ -14,7 +15,6 @@ except ModuleNotFoundError:
 
 
 def get_board_list(api) -> list:
-
     # log.showValue(
     #     api.config,
     #     Logger.INFO,

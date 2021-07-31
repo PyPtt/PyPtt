@@ -1,5 +1,6 @@
 import re
 import time
+
 try:
     from . import data_type
     from . import i18n
@@ -18,8 +19,7 @@ except ModuleNotFoundError:
     import command
 
 
-def get_waterball(api, operate_type:int) -> list:
-
+def get_waterball(api, operate_type: int) -> list:
     if operate_type == data_type.waterball_operate_type.NOTHING:
         water_ball_operate_type = 'R'
     elif operate_type == data_type.waterball_operate_type.CLEAR:

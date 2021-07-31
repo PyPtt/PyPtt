@@ -1,5 +1,7 @@
 import re
+
 from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
@@ -23,7 +25,6 @@ except ModuleNotFoundError:
 
 
 def _get_newest_index(api) -> int:
-
     logger = Logger('get_newest_index', Logger.INFO)
     last_screen = api.connect_core.get_screen_queue()[-1]
     # print(last_screen)
@@ -55,7 +56,6 @@ def _get_newest_index(api) -> int:
                 need_continue = False
                 break
         if need_continue:
-
             logger.debug(i18n.find_newest_index, index_temp)
             newest_index = index_temp
             break

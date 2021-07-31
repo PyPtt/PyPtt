@@ -17,7 +17,6 @@ except ModuleNotFoundError:
 
 
 def get_content(api, post_mode: bool = True):
-
     logger = Logger('get_content', Logger.INFO)
     api.Unconfirmed = False
 

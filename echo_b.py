@@ -1,8 +1,10 @@
-﻿import sys
+﻿import json
+import sys
 import time
-import json
 import traceback
+
 import PTTLibrary
+
 from PyPtt import PTT
 
 
