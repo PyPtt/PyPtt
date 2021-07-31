@@ -57,8 +57,8 @@ def check_index_range(
     check(config, int, start_name, start_index)
     check(config, int, end_name, end_index)
 
-    if start_index <= 1:
-        raise ValueError(f'{start_name} {start_index} {i18n.must_bigger_than} 1')
+    if start_index < 1:
+        raise ValueError(f'{start_name} {start_index} {i18n.must_bigger_than} 0')
 
     if end_index <= 1:
         raise ValueError(f'{end_name} {end_index} {i18n.must_bigger_than} 1')

@@ -245,7 +245,7 @@ class API:
     def get_time(self) -> str:
         self._one_thread()
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -263,7 +263,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -286,7 +286,7 @@ class API:
                 self.config,
                 [
                     i18n.board,
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     board
                 ]))
 
@@ -296,7 +296,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput
                 ]))
 
@@ -306,7 +306,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter
+                    i18n.error_parameter
                 ]))
 
         if search_condition is not None and search_type == 0:
@@ -314,7 +314,7 @@ class API:
                 self.config,
                 [
                     'SearchType',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                 ]))
 
         if search_type == data_type.post_search_type.PUSH:
@@ -325,7 +325,7 @@ class API:
                     self.config,
                     [
                         'SearchCondition',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                     ]))
 
             if not (-100 <= S <= 110):
@@ -333,7 +333,7 @@ class API:
                     self.config,
                     [
                         'SearchCondition',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                     ]))
 
         if post_aid is not None and search_condition is not None:
@@ -342,7 +342,7 @@ class API:
                 [
                     'PostAID',
                     'SearchCondition',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput,
                 ]))
 
@@ -359,7 +359,7 @@ class API:
                     self.config,
                     [
                         'PostIndex',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         i18n.OutOfRange,
                         f'0 ~ {newest_index} but get {post_index}'
                     ]))
@@ -418,7 +418,7 @@ class API:
             check_moderator: bool = False) -> data_type.BoardInfo:
 
         if board.lower() not in self._exist_board_list:
-            board_info = self._get_board_info(board, False)
+            board_info = self._get_board_info(board, False, False)
             self._exist_board_list.append(board.lower())
             self._board_info_list[board.lower()] = board_info
 
@@ -494,7 +494,7 @@ class API:
 
         if index_type == data_type.index_type.BBS or index_type == data_type.index_type.MAIL:
             if not self._login_status:
-                raise exceptions.Requirelogin(i18n.Requirelogin)
+                raise exceptions.Requirelogin(i18n.require_login)
 
         if index_type == data_type.index_type.BBS:
             check_value.check(
@@ -561,13 +561,13 @@ class API:
                 self.config,
                 [
                     i18n.board,
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     board
                 ]))
 
         if crawl_type == data_type.crawl_type.BBS:
             if not self._login_status:
-                raise exceptions.Requirelogin(i18n.Requirelogin)
+                raise exceptions.Requirelogin(i18n.require_login)
 
             check_value.check(self.config, int, 'SearchType', search_type)
             if search_condition is not None:
@@ -590,7 +590,7 @@ class API:
                     [
                         'AID',
                         'Index',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         i18n.BothInput
                     ]))
 
@@ -601,7 +601,7 @@ class API:
                     [
                         'AID',
                         'SearchCondition',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         i18n.BothInput
                     ]))
 
@@ -613,7 +613,7 @@ class API:
                         self.config,
                         [
                             'SearchCondition',
-                            i18n.ErrorParameter,
+                            i18n.error_parameter,
                         ]))
 
                 if not (-100 <= S <= 110):
@@ -621,7 +621,7 @@ class API:
                         self.config,
                         [
                             'SearchCondition',
-                            i18n.ErrorParameter,
+                            i18n.error_parameter,
                         ]))
 
             if start_index != 0:
@@ -661,7 +661,7 @@ class API:
                 raise ValueError(log.merge(
                     self.config,
                     [
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         i18n.NoInput
                     ]))
 
@@ -899,7 +899,7 @@ class API:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -923,7 +923,7 @@ class API:
                     self.config,
                     [
                         'SignFile',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         sign_file
                     ]))
 
@@ -942,7 +942,7 @@ class API:
             post_type,
             sign_file)
 
-    def push(
+    def comment(
             self,
             board: str,
             push_type: int,
@@ -955,7 +955,7 @@ class API:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -968,79 +968,40 @@ class API:
         check_value.check(self.config, int, 'PostIndex', post_index)
 
         if len(board) == 0:
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    i18n.board,
-                    i18n.ErrorParameter,
-                    board
-                ]))
+            raise ValueError(f'wrong parameter board: {board}')
 
         if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.ErrorParameter,
-                    i18n.BothInput
-                ]))
+            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
 
         if post_index == 0 and post_aid is None:
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.ErrorParameter,
-                    i18n.NoInput
-                ]))
+            raise ValueError('wrong parameter post_index or post_aid must input')
 
         if post_index != 0:
             newest_index = self._get_newest_index(
                 data_type.index_type.BBS,
                 board=board)
-            check_value.check_index(self.config, 'PostIndex',
-                                    post_index, newest_index)
+            check_value.check_index(self.config, 'post_index', post_index, newest_index)
 
         self._check_board(board)
 
         board_info = self._board_info_list[board.lower()]
 
         if board_info.is_push_record_ip:
-            log.log(
-                self.config,
-                Logger.INFO,
-                i18n.record_ip)
+            self.logger.info(i18n.record_ip)
             if board_info.is_push_aligned:
-                log.log(
-                    self.config,
-                    Logger.INFO,
-                    i18n.push_aligned)
+                self.logger.info(i18n.push_aligned)
                 max_push_length = 32
             else:
-                log.log(
-                    self.config,
-                    Logger.INFO,
-                    i18n.not_push_aligned)
+                self.logger.info(i18n.not_push_aligned)
                 max_push_length = 43 - len(self._ID)
         else:
-            log.log(
-                self.config,
-                Logger.INFO,
-                i18n.not_record_ip)
+            self.logger.info(i18n.not_record_ip)
             #     推文對齊
             if board_info.is_push_aligned:
-                log.log(
-                    self.config,
-                    Logger.INFO,
-                    i18n.push_aligned)
+                self.logger.info(i18n.push_aligned)
                 max_push_length = 46
             else:
-                log.log(
-                    self.config,
-                    Logger.INFO,
-                    i18n.not_push_aligned)
+                self.logger.info(i18n.not_push_aligned)
                 max_push_length = 58 - len(self._ID)
 
         push_content = push_content.strip()
@@ -1065,31 +1026,25 @@ class API:
 
         push_list = filter(None, push_list)
 
-        for push in push_list:
-            log.show_value(
-                self.config,
-                Logger.INFO,
-                i18n.comment,
-                push)
+        for comment in push_list:
+
+            self.logger.info(i18n.comment, comment)
 
             for _ in range(2):
                 try:
-                    self._push(
+                    self._comment(
                         board,
                         push_type,
-                        push,
+                        comment,
                         post_aid=post_aid,
                         post_index=post_index)
                     break
                 except exceptions.NoFastComment:
                     # screens.show(self.config, self.connect_core.getScreenQueue())
-                    log.log(
-                        self.config,
-                        Logger.INFO,
-                        '等待快速推文')
+                    self.logger.info(i18n.wait_for_no_fast_comment)
                     time.sleep(5.2)
 
-    def _push(
+    def _comment(
             self,
             board: str,
             push_type: int,
@@ -1118,7 +1073,7 @@ class API:
                 self.config,
                 [
                     'UserID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     user_id
                 ]))
 
@@ -1133,7 +1088,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1146,7 +1101,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1161,7 +1116,7 @@ class API:
                 self.config,
                 [
                     'ptt_id',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     ptt_id
                 ]))
 
@@ -1180,7 +1135,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1202,7 +1157,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1226,7 +1181,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1248,7 +1203,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1277,7 +1232,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1303,7 +1258,7 @@ class API:
                     self.config,
                     [
                         'SignFile',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         sign_file
                     ]))
 
@@ -1328,7 +1283,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.get_newest_index(data_type.index_type.MAIL) == 0:
             return 0
@@ -1346,7 +1301,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1368,7 +1323,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1396,7 +1351,7 @@ class API:
                 self.config,
                 [
                     'SignFile',
-                    i18n.ErrorParameter
+                    i18n.error_parameter
                 ]))
 
         if post_aid is not None and post_index != 0:
@@ -1405,7 +1360,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput
                 ]))
 
@@ -1433,7 +1388,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1466,7 +1421,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1492,7 +1447,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1508,7 +1463,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1543,7 +1498,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1555,14 +1510,12 @@ class API:
             check_value.check_index(
                 self.config,
                 'min_page',
-                min_page
-            )
+                min_page)
         if max_page is not None:
             check_value.check_index(
                 self.config,
                 'max_page',
-                max_page
-            )
+                max_page)
         if min_page is not None and max_page is not None:
             check_value.check_index_range(
                 self.config,
@@ -1584,7 +1537,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1611,7 +1564,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1639,7 +1592,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -1660,7 +1613,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1685,7 +1638,7 @@ class API:
             raise ValueError(log.merge(
                 self.config,
                 [
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     'url must be www.ptt.cc article url'
                 ]))
 
@@ -1726,7 +1679,7 @@ class API:
         self._one_thread()
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1751,7 +1704,7 @@ class API:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if not self._login_status:
-            raise exceptions.Requirelogin(i18n.Requirelogin)
+            raise exceptions.Requirelogin(i18n.require_login)
 
         self.config.log_last_value = None
 
@@ -1765,7 +1718,7 @@ class API:
                 self.config,
                 [
                     i18n.board,
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     board
                 ]))
 
@@ -1775,7 +1728,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput
                 ]))
 
@@ -1785,7 +1738,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.NoInput
                 ]))
 

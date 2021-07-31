@@ -53,7 +53,7 @@ def mark_post(
     if len(board) == 0:
         raise ValueError(log.merge([
             i18n.board,
-            i18n.ErrorParameter,
+            i18n.error_parameter,
             board
         ]))
 
@@ -64,7 +64,7 @@ def mark_post(
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput
                 ]))
 
@@ -74,7 +74,7 @@ def mark_post(
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter
+                    i18n.error_parameter
                 ]))
 
     if search_condition is not None and search_type == 0:
@@ -82,7 +82,7 @@ def mark_post(
             api.config,
             [
                 'SearchType',
-                i18n.ErrorParameter,
+                i18n.error_parameter,
             ]))
 
     if search_type == data_type.post_search_type.PUSH:
@@ -93,7 +93,7 @@ def mark_post(
                 api.config,
                 [
                     'SearchCondition',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                 ]))
 
         if not (-100 <= S <= 110):
@@ -101,7 +101,7 @@ def mark_post(
                 api.config,
                 [
                     'SearchCondition',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                 ]))
 
     if post_aid is not None and search_condition is not None:
@@ -109,7 +109,7 @@ def mark_post(
             api.config, [
                 'PostAID',
                 'SearchCondition',
-                i18n.ErrorParameter,
+                i18n.error_parameter,
                 i18n.BothInput,
             ]))
 

@@ -85,12 +85,12 @@ def reply_post(
             response='W' + command.enter
         ),
         connect_core.TargetUnit(
-            i18n.SelectSignature,
+            i18n.select_signature,
             '請選擇簽名檔',
             response=str(sign_file) + command.enter,
         ),
         connect_core.TargetUnit(
-            i18n.SaveFile,
+            i18n.save_file,
             '確定要儲存檔案嗎',
             response='s' + command.enter,
         ),
