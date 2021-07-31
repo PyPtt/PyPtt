@@ -553,12 +553,12 @@ def get_newest_index():
     index = ptt_bot.get_newest_index(
         PTT.data_type.index_type.MAIL,
         search_type=PTT.data_type.mail_search_type.KEYWORD,
-        search_condition='uPtt system')
+        search_condition='請益')
     print(f'最新郵件編號 {index}')
 
     search_list = [
-        (PTT.data_type.mail_search_type.KEYWORD, 'uPtt'),
-        (PTT.data_type.mail_search_type.KEYWORD, 'key')
+        (PTT.data_type.mail_search_type.KEYWORD, '你好'),
+        (PTT.data_type.mail_search_type.KEYWORD, 'AI Labs')
     ]
 
     index = ptt_bot.get_newest_index(
@@ -672,8 +672,7 @@ def crawl_board():
                         board=TestBoard)
                     start_index = newest_index - test_range + 1
 
-                    print(
-                        f'預備爬行 {TestBoard} 編號 {start_index} ~ {newest_index} 文章')
+                    print(f'預備爬行 {TestBoard} 編號 {start_index} ~ {newest_index} 文章')
 
                     print(f'TestBoard [{TestBoard}]')
                     error_post_list, del_post_list = ptt_bot.crawl_board(
@@ -803,7 +802,7 @@ def crawl_board_with_condition():
 
     newest_index = ptt_bot.get_newest_index(
         PTT.data_type.index_type.BBS,
-        'Gossiping',
+        board='Gossiping',
         search_list=search_list)
     print(f'Gossiping 最新文章編號 {newest_index}')
 
@@ -862,7 +861,7 @@ def push():
     test_post_list = [
         # ('Gossiping', 95692),
         # ('Test', 'QQQQQQ'),
-        ('Test', 383),
+        ('Test', 2286),
         # ('Wanted', '1Teyovc3')
     ]
 
@@ -1505,7 +1504,7 @@ if __name__ == '__main__':
         # get_newest_index()
         # crawl_board()
         # crawl_board_with_condition()
-        # comment()
+        push()
         # get_user()
         # throw_waterball()
         # get_waterball()
