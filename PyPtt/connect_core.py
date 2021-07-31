@@ -1,6 +1,9 @@
 import asyncio
-import re
+import websockets
+import websockets.http
+import websockets.exceptions
 import telnetlib
+import re
 import threading
 import time
 import traceback
