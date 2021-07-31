@@ -161,11 +161,39 @@ read_complete = None
 get_user = None
 get_user_success = None
 get_user_fail = None
+water_ball = None
+set_call_status = None
+throw_waterball = None
+throw_waterball_success = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global throw_waterball_success
+    throw_waterball_success = specific_load(lang, [
+        '丟水球成功',
+        'throw waterball success',
+    ])
+
+    global throw_waterball
+    throw_waterball = specific_load(lang, [
+        '丟 {Target0} 水球',
+        'throw {Target0} waterball',
+    ])
+
+    global set_call_status
+    set_call_status = specific_load(lang, [
+        '設定呼叫器狀態',
+        'set call status',
+    ])
+
+    global water_ball
+    water_ball = specific_load(lang, [
+        '水球',
+        'water Ball',
+    ])
 
     global get_user
     get_user = specific_load(lang, [
