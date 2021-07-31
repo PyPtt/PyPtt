@@ -1,8 +1,8 @@
-﻿import time
-import progressbar
+﻿import re
 import threading
-import re
+import time
 
+import progressbar
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
@@ -1081,7 +1081,7 @@ class API:
                         post_aid=post_aid,
                         post_index=post_index)
                     break
-                except exceptions.NoFastPush:
+                except exceptions.NoFastComment:
                     # screens.show(self.config, self.connect_core.getScreenQueue())
                     log.log(
                         self.config,

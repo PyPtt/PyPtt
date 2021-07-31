@@ -1,10 +1,9 @@
-﻿import sys
-import os
-import time
-import json
+﻿import json
 import random
-import traceback
+import sys
 import threading
+import time
+import traceback
 
 from PyPtt import PTT
 

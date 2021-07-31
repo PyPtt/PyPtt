@@ -29,7 +29,7 @@ def change_pw(
             '設定聯絡信箱後才能修改密碼',
             exceptions_=exceptions.set_connect_mail_first()),
         connect_core.TargetUnit(
-            i18n.ErrorPW,
+            i18n.error_pw,
             '您輸入的密碼不正確',
             exceptions_=exceptions.WrongPassword()),
         connect_core.TargetUnit(

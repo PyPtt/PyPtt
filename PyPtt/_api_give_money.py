@@ -12,7 +12,6 @@ except ModuleNotFoundError:
 
 def give_money(
         api, ptt_id: str, money: int) -> None:
-
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('P')
@@ -26,13 +25,13 @@ def give_money(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.NoMoney,
+            i18n.no_money,
             '你沒有那麼多Ptt幣喔!',
             break_detect=True,
             exceptions_=exceptions.NoMoney()
         ),
         connect_core.TargetUnit(
-            i18n.NoMoney,
+            i18n.no_money,
             '金額過少，交易取消!',
             break_detect=True,
             exceptions_=exceptions.MoneyTooFew()

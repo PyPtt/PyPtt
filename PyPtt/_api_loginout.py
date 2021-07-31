@@ -1,4 +1,5 @@
 import re
+
 from SingleLog.log import Logger
 
 try:

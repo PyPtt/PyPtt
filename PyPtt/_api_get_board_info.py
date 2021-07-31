@@ -1,5 +1,7 @@
 import re
+
 from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n

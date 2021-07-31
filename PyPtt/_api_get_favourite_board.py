@@ -11,7 +11,6 @@ except ModuleNotFoundError:
 
 
 def get_favourite_board(api) -> list:
-
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('F')
@@ -54,7 +53,7 @@ def get_favourite_board(api) -> list:
             if len(screen_buf[i]) <= min_len:
                 # print(f'[{ScreenBuf[i]}]')
                 screen_buf[i] = screen_buf[i] + \
-                    (' ' * ((min_len + 1) - len(screen_buf[i])))
+                                (' ' * ((min_len + 1) - len(screen_buf[i])))
         screen_buf = [x[10:min_len - len(x)].strip() for x in screen_buf]
         screen_buf = list(filter(None, screen_buf))
 

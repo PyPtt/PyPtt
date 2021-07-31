@@ -1,5 +1,3 @@
-import re
-
 try:
     from . import data_type
     from . import i18n

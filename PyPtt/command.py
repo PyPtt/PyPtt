@@ -1,5 +1,3 @@
-
-
 # http://www.physics.udel.edu/~watson/scen103/ascii.html
 enter = '\r'
 tab = '\t'

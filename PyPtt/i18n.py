@@ -121,10 +121,159 @@ done = None
 browse_post_done = None
 post_no_content = None
 animation_post = None
+login_fail = None
+no_fast_comment = None
+no_such_user = None
+user_offline = None
+no_money = None
+money_too_few = None
+connection_closed = None
+unregistered_user_cant_use_this_api = None
+multi_thread_operate = None
+error_pw = None
+ptt2_not_support = None
+no_comment = None
+no_response = None
+need_moderator_permission = None
+connect_fail = None
+no_such_post = None
+screen_no_match_target = None
+can_not_use_search_post_code_f = None
+user_has_previously_been_banned = None
+no_search_result = None
+timeout = None
+deleted_post = None
+
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global deleted_post
+    deleted_post = specific_load(lang, [
+        '已刪除文章',
+        'Deleted Post',
+    ])
+
+    global timeout
+    timeout = specific_load(lang, [
+        '等待過久',
+        'timeout',
+    ])
+
+    global no_search_result
+    no_search_result = specific_load(lang, [
+        '沒有搜尋結果',
+        'No Search Result',
+    ])
+
+    global user_has_previously_been_banned
+    user_has_previously_been_banned = specific_load(lang, [
+        '使用者之前已被禁言',
+        'user has previously been banned',
+    ])
+
+    global can_not_use_search_post_code_f
+    can_not_use_search_post_code_f = specific_load(lang, [
+        '此狀態下無法使用搜尋文章代碼(AID)功能',
+        'This status can not use the search Post code function',
+    ])
+
+    global screen_no_match_target
+    screen_no_match_target = specific_load(lang, [
+        '畫面無法辨識',
+        'this screen is not recognized',
+    ])
+
+    global no_such_post
+    no_such_post = specific_load(lang, [
+        '{Target0} 板找不到這個文章代碼 {Target1}',
+        'in {Target0}, the post code is not exist {Target1}',
+    ])
+
+    global connect_fail
+    connect_fail = specific_load(lang, [
+        '連線失敗',
+        'connect fail',
+    ])
+
+    global need_moderator_permission
+    need_moderator_permission = specific_load(lang, [
+        '需要板主權限',
+        'need moderator permission',
+    ])
+
+    global no_response
+    no_response = specific_load(lang, [
+        '很抱歉, 此文章已結案並標記, 不得回應',
+        'this post has been closed and marked, no response',
+    ])
+
+    global no_comment
+    no_comment = specific_load(lang, [
+        '禁止推薦',
+        'no comment',
+    ])
+
+    global error_pw
+    error_pw = specific_load(lang, [
+        '密碼不正確',
+        'wrong password',
+    ])
+
+    global multi_thread_operate
+    multi_thread_operate = specific_load(lang, [
+        '請勿使用多線程同時操作一個 PyPtt 物件',
+        'do not use a multi-thread to operate a PyPtt object',
+    ])
+
+    global unregistered_user_cant_use_this_api
+    unregistered_user_cant_use_this_api = specific_load(lang, [
+        '未註冊使用者，無法使用此功能',
+        'unregistered User Can\'t Use This API',
+    ])
+
+    global connection_closed
+    connection_closed = specific_load(lang, [
+        '連線已經被關閉',
+        'connection Closed',
+    ])
+
+    global money_too_few
+    money_too_few = specific_load(lang, [
+        '金額過少，交易取消!',
+        'the amount is too small, the transaction is cancelled!',
+    ])
+
+    global no_money
+    no_money = specific_load(lang, [
+        'PTT 幣不足',
+        'not enough PTT coins',
+    ])
+
+    global user_offline
+    user_offline = specific_load(lang, [
+        '使用者離線',
+        'user offline',
+    ])
+
+    global no_such_user
+    no_such_user = specific_load(lang, [
+        '無該使用者',
+        'no such user',
+    ])
+
+    global no_fast_comment
+    no_fast_comment = specific_load(lang, [
+        '禁止快速連續推文',
+        'no fast comment',
+    ])
+
+    global login_fail
+    login_fail = specific_load(lang, [
+        '登入失敗',
+        'login fail'
+    ])
 
     global animation_post
     animation_post = specific_load(lang, [
@@ -605,6 +754,12 @@ def load(lang):
     localhost = specific_load(lang, [
         '本機',
         'localhost'])
+
+    global ptt2_not_support
+    ptt2_not_support = specific_load(lang, [
+        f'{PTT2}不支援此功能',
+        f'{PTT2} not support this api',
+    ])
 
     ##############################################
 
