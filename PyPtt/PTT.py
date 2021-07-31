@@ -286,7 +286,7 @@ class API:
                 self.config,
                 [
                     i18n.board,
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     board
                 ]))
 
@@ -296,7 +296,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput
                 ]))
 
@@ -306,7 +306,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter
+                    i18n.error_parameter
                 ]))
 
         if search_condition is not None and search_type == 0:
@@ -314,7 +314,7 @@ class API:
                 self.config,
                 [
                     'SearchType',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                 ]))
 
         if search_type == data_type.post_search_type.PUSH:
@@ -325,7 +325,7 @@ class API:
                     self.config,
                     [
                         'SearchCondition',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                     ]))
 
             if not (-100 <= S <= 110):
@@ -333,7 +333,7 @@ class API:
                     self.config,
                     [
                         'SearchCondition',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                     ]))
 
         if post_aid is not None and search_condition is not None:
@@ -342,7 +342,7 @@ class API:
                 [
                     'PostAID',
                     'SearchCondition',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput,
                 ]))
 
@@ -359,7 +359,7 @@ class API:
                     self.config,
                     [
                         'PostIndex',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         i18n.OutOfRange,
                         f'0 ~ {newest_index} but get {post_index}'
                     ]))
@@ -561,7 +561,7 @@ class API:
                 self.config,
                 [
                     i18n.board,
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     board
                 ]))
 
@@ -590,7 +590,7 @@ class API:
                     [
                         'AID',
                         'Index',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         i18n.BothInput
                     ]))
 
@@ -601,7 +601,7 @@ class API:
                     [
                         'AID',
                         'SearchCondition',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         i18n.BothInput
                     ]))
 
@@ -613,7 +613,7 @@ class API:
                         self.config,
                         [
                             'SearchCondition',
-                            i18n.ErrorParameter,
+                            i18n.error_parameter,
                         ]))
 
                 if not (-100 <= S <= 110):
@@ -621,7 +621,7 @@ class API:
                         self.config,
                         [
                             'SearchCondition',
-                            i18n.ErrorParameter,
+                            i18n.error_parameter,
                         ]))
 
             if start_index != 0:
@@ -661,7 +661,7 @@ class API:
                 raise ValueError(log.merge(
                     self.config,
                     [
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         i18n.NoInput
                     ]))
 
@@ -921,7 +921,7 @@ class API:
                     self.config,
                     [
                         'SignFile',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         sign_file
                     ]))
 
@@ -966,79 +966,40 @@ class API:
         check_value.check(self.config, int, 'PostIndex', post_index)
 
         if len(board) == 0:
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    i18n.board,
-                    i18n.ErrorParameter,
-                    board
-                ]))
+            raise ValueError(f'wrong parameter board: {board}')
 
         if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.ErrorParameter,
-                    i18n.BothInput
-                ]))
+            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
 
         if post_index == 0 and post_aid is None:
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.ErrorParameter,
-                    i18n.NoInput
-                ]))
+            raise ValueError('wrong parameter post_index or post_aid must input')
 
         if post_index != 0:
             newest_index = self._get_newest_index(
                 data_type.index_type.BBS,
                 board=board)
-            check_value.check_index(self.config, 'PostIndex',
-                                    post_index, newest_index)
+            check_value.check_index(self.config, 'post_index', post_index, newest_index)
 
         self._check_board(board)
 
         board_info = self._board_info_list[board.lower()]
 
         if board_info.is_push_record_ip:
-            log.log(
-                self.config,
-                Logger.INFO,
-                i18n.record_ip)
+            self.logger.info(i18n.record_ip)
             if board_info.is_push_aligned:
-                log.log(
-                    self.config,
-                    Logger.INFO,
-                    i18n.push_aligned)
+                self.logger.info(i18n.push_aligned)
                 max_push_length = 32
             else:
-                log.log(
-                    self.config,
-                    Logger.INFO,
-                    i18n.not_push_aligned)
+                self.logger.info(i18n.not_push_aligned)
                 max_push_length = 43 - len(self._ID)
         else:
-            log.log(
-                self.config,
-                Logger.INFO,
-                i18n.not_record_ip)
+            self.logger.info(i18n.not_record_ip)
             #     推文對齊
             if board_info.is_push_aligned:
-                log.log(
-                    self.config,
-                    Logger.INFO,
-                    i18n.push_aligned)
+                self.logger.info(i18n.push_aligned)
                 max_push_length = 46
             else:
-                log.log(
-                    self.config,
-                    Logger.INFO,
-                    i18n.not_push_aligned)
+                self.logger.info(i18n.not_push_aligned)
                 max_push_length = 58 - len(self._ID)
 
         push_content = push_content.strip()
@@ -1078,10 +1039,7 @@ class API:
                     break
                 except exceptions.NoFastComment:
                     # screens.show(self.config, self.connect_core.getScreenQueue())
-                    log.log(
-                        self.config,
-                        Logger.INFO,
-                        '等待快速推文')
+                    self.logger.info(i18n.wait_for_no_fast_comment)
                     time.sleep(5.2)
 
     def _push(
@@ -1113,7 +1071,7 @@ class API:
                 self.config,
                 [
                     'UserID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     user_id
                 ]))
 
@@ -1156,7 +1114,7 @@ class API:
                 self.config,
                 [
                     'ptt_id',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     ptt_id
                 ]))
 
@@ -1298,7 +1256,7 @@ class API:
                     self.config,
                     [
                         'SignFile',
-                        i18n.ErrorParameter,
+                        i18n.error_parameter,
                         sign_file
                     ]))
 
@@ -1391,7 +1349,7 @@ class API:
                 self.config,
                 [
                     'SignFile',
-                    i18n.ErrorParameter
+                    i18n.error_parameter
                 ]))
 
         if post_aid is not None and post_index != 0:
@@ -1400,7 +1358,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput
                 ]))
 
@@ -1680,7 +1638,7 @@ class API:
             raise ValueError(log.merge(
                 self.config,
                 [
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     'url must be www.ptt.cc article url'
                 ]))
 
@@ -1760,7 +1718,7 @@ class API:
                 self.config,
                 [
                     i18n.board,
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     board
                 ]))
 
@@ -1770,7 +1728,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.BothInput
                 ]))
 
@@ -1780,7 +1738,7 @@ class API:
                 [
                     'PostIndex',
                     'PostAID',
-                    i18n.ErrorParameter,
+                    i18n.error_parameter,
                     i18n.NoInput
                 ]))
 
