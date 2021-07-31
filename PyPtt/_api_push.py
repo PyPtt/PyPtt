@@ -1,8 +1,9 @@
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import exceptions
     from . import command
@@ -10,7 +11,6 @@ except ModuleNotFoundError:
     import data_type
     import i18n
     import connect_core
-    import log
     import screens
     import exceptions
     import command
@@ -25,6 +25,8 @@ def push(
         post_index: int) -> None:
     api._goto_board(board)
 
+    logger = Logger('push', Logger.INFO)
+
     cmd_list = list()
 
     if post_aid is not None:
@@ -32,19 +34,19 @@ def push(
     elif post_index != 0:
         cmd_list.append(str(post_index))
     cmd_list.append(command.enter)
-    cmd_list.append(command.push)
+    cmd_list.append(command.comment)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.HasPushPermission,
+            i18n.has_push_permission,
             '您覺得這篇',
             log_level=Logger.DEBUG,
             break_detect=True
         ),
         connect_core.TargetUnit(
-            i18n.OnlyArrow,
+            i18n.only_arrow,
             '加註方式',
             log_level=Logger.DEBUG,
             break_detect=True
@@ -94,16 +96,16 @@ def push(
     if index == 0:
         push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
-        log.show_value(api.config, Logger.DEBUG,
-                       'comment option line', push_option_line)
+        
+        logger.debug('comment option line', push_option_line)
 
         enable_push = '值得推薦' in push_option_line
         enable_boo = '給它噓聲' in push_option_line
         enable_arrow = '只加→註解' in push_option_line
 
-        log.show_value(api.config, Logger.DEBUG, 'comment', enable_push)
-        log.show_value(api.config, Logger.DEBUG, 'Boo', enable_boo)
-        log.show_value(api.config, Logger.DEBUG, 'Arrow', enable_arrow)
+        logger.debug('comment', enable_push)
+        logger.debug('Boo', enable_boo)
+        logger.debug('Arrow', enable_arrow)
 
         if push_type == data_type.push_type.PUSH and not enable_push:
             push_type = data_type.push_type.ARROW

@@ -113,7 +113,7 @@ def set_call_status(api, call_status) -> None:
     target_list = [
         connect_core.TargetUnit(
             [
-                i18n.SetCallStatus,
+                i18n.set_call_status,
                 i18n.success
             ],
             screens.Target.InUserList,

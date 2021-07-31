@@ -143,11 +143,179 @@ user_has_previously_been_banned = None
 no_search_result = None
 timeout = None
 deleted_post = None
-
+has_post_permission = None
+save_file = None
+select_signature = None
+not_record_ip = None
+record_ip = None
+push_aligned = None
+not_push_aligned = None
+has_push_permission = None
+only_arrow = None
+error_parameter = None
+wait_for_no_fast_comment = None
+require_login = None
+reading = None
+quit_user_profile = None
+read_complete = None
+get_user = None
+get_user_success = None
+get_user_fail = None
+water_ball = None
+set_call_status = None
+throw_waterball = None
+throw_waterball_success = None
+no_waterball = None
+browse_waterball = None
+browse_waterball_done = None
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global browse_waterball
+    browse_waterball = specific_load(lang, [
+        '瀏覽水球紀錄',
+        'browse waterball',
+    ])
+
+    global browse_waterball_done
+    browse_waterball_done = specific_load(lang, [
+        '瀏覽水球紀錄完成',
+        'browse waterball complete',
+    ])
+
+    global no_waterball
+    no_waterball = specific_load(lang, [
+        '無訊息記錄',
+        'no waterball',
+    ])
+
+    global throw_waterball_success
+    throw_waterball_success = specific_load(lang, [
+        '丟水球成功',
+        'throw waterball success',
+    ])
+
+    global throw_waterball
+    throw_waterball = specific_load(lang, [
+        '丟 {Target0} 水球',
+        'throw {Target0} waterball',
+    ])
+
+    global set_call_status
+    set_call_status = specific_load(lang, [
+        '設定呼叫器狀態',
+        'set call status',
+    ])
+
+    global water_ball
+    water_ball = specific_load(lang, [
+        '水球',
+        'water Ball',
+    ])
+
+    global get_user
+    get_user = specific_load(lang, [
+        '取得使用者',
+        'get user',
+    ])
+
+    global get_user_success
+    get_user_success = specific_load(lang, [
+        '取得使用者成功',
+        'get user success',
+    ])
+
+    global get_user_fail
+    get_user_fail = specific_load(lang, [
+        '取得使用者失敗',
+        'get user fail',
+    ])
+
+    global read_complete
+    read_complete = specific_load(lang, [
+        f'讀取完成',
+        f'read complete',
+    ])
+
+    global quit_user_profile
+    quit_user_profile = specific_load(lang, [
+        f'退出使用者檔案',
+        f'Quit User Profile',
+    ])
+
+    global reading
+    reading = specific_load(lang, [
+        '讀取中',
+        'reading',
+    ])
+
+    global require_login
+    require_login = specific_load(lang, [
+        '請先登入',
+        'please login first',
+    ])
+
+    global error_parameter
+    error_parameter = specific_load(lang, [
+        '參數錯誤',
+        'wrong parameter',
+    ])
+
+    global only_arrow
+    only_arrow = specific_load(lang, [
+        '使用加註方式',
+        'Arrow Only in Push',
+    ])
+
+    global has_push_permission
+    has_push_permission = specific_load(lang, [
+        '使用者擁有推文權限',
+        'user has comment permission',
+    ])
+
+    global push_aligned
+    push_aligned = specific_load(lang, [
+        '推文對齊',
+        'Push aligned',
+    ])
+
+    global not_push_aligned
+    not_push_aligned = specific_load(lang, [
+        '無推文對齊',
+        'No push aligned',
+    ])
+
+    global not_record_ip
+    not_record_ip = specific_load(lang, [
+        '不紀錄 IP',
+        'not record IP',
+    ])
+
+    global record_ip
+    record_ip = specific_load(lang, [
+        '紀錄 IP',
+        'Record ip',
+    ])
+
+    global select_signature
+    select_signature = specific_load(lang, [
+        '選擇簽名檔',
+        'Select Signature',
+    ])
+
+    global save_file
+    save_file = specific_load(lang, [
+        '儲存檔案',
+        'Save File',
+    ])
+
+    global has_post_permission
+    has_post_permission = specific_load(lang, [
+        '使用者擁有貼文權限',
+        'User Has Post Permission',
+    ])
 
     global deleted_post
     deleted_post = specific_load(lang, [
@@ -267,6 +435,12 @@ def load(lang):
     no_fast_comment = specific_load(lang, [
         '禁止快速連續推文',
         'no fast comment',
+    ])
+
+    global wait_for_no_fast_comment
+    wait_for_no_fast_comment = specific_load(lang, [
+        f'因{no_fast_comment}，所以等待五秒',
+        f'because {no_fast_comment}, wait 5 sec',
     ])
 
     global login_fail
