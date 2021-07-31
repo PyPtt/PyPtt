@@ -36,7 +36,7 @@ def get_waterball(api, operate_type:int) -> list:
         connect_core.TargetUnit(
             [
                 i18n.BrowseWaterball,
-                i18n.Done,
+                i18n.done,
             ],
             screens.Target.WaterBallListEnd,
             response=command.left + water_ball_operate_type +
@@ -360,7 +360,7 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
                 [
                     i18n.Throw,
                     i18n.WaterBall,
-                    i18n.Success
+                    i18n.success
                 ],
                 screens.Target.MainMenu,
                 break_detect=True)

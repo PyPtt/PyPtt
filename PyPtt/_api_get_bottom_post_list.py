@@ -43,8 +43,8 @@ def get_bottom_post_list(api, board):
     target_list = [
         connect_core.TargetUnit(
             [
-                i18n.CatchPost,
-                i18n.Success,
+                i18n.catch_post,
+                i18n.success,
             ],
             screens.Target.QueryPost,
             break_detect=True,
@@ -52,8 +52,8 @@ def get_bottom_post_list(api, board):
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
-                i18n.PostDeleted,
-                i18n.Success,
+                i18n.post_deleted,
+                i18n.success,
             ],
             screens.Target.InBoard,
             break_detect=True,

@@ -72,7 +72,7 @@ def get_favourite_board(api) -> list:
             board_title = line[17:].strip()
             # print(line)
             # print('\t' + Type)
-            # print('\t' + Board)
+            # print('\t' + board)
             # print('\t' + BoardTitle)
 
             if board in board_list:

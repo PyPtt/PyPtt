@@ -49,13 +49,13 @@ def get_post_index(
             exceptions_=exceptions.NoSuchPost(board, aid)
         ),
         connect_core.TargetUnit(
-            i18n.Success,
+            i18n.success,
             screens.Target.InBoard,
             break_detect=True,
             log_level=Logger.DEBUG
         ),
         connect_core.TargetUnit(
-            i18n.Success,
+            i18n.success,
             screens.Target.InBoardWithCursor,
             break_detect=True,
             log_level=Logger.DEBUG
@@ -79,7 +79,7 @@ def get_post_index(
 
     # if index == 5:
     #     print(OriScreen)
-    #     raise exceptions.NoSuchBoard(api.config, Board)
+    #     raise exceptions.NoSuchBoard(api.config, board)
 
     # print(index)
     # print(OriScreen)

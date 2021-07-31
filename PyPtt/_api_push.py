@@ -95,13 +95,13 @@ def push(
         push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
         log.show_value(api.config, Logger.DEBUG,
-                       'Push option line', push_option_line)
+                       'comment option line', push_option_line)
 
         enable_push = '值得推薦' in push_option_line
         enable_boo = '給它噓聲' in push_option_line
         enable_arrow = '只加→註解' in push_option_line
 
-        log.show_value(api.config, Logger.DEBUG, 'Push', enable_push)
+        log.show_value(api.config, Logger.DEBUG, 'comment', enable_push)
         log.show_value(api.config, Logger.DEBUG, 'Boo', enable_boo)
         log.show_value(api.config, Logger.DEBUG, 'Arrow', enable_arrow)
 
@@ -126,8 +126,8 @@ def push(
     target_list = [
         connect_core.TargetUnit(
             [
-                i18n.Push,
-                i18n.Success,
+                i18n.comment,
+                i18n.success,
             ],
             screens.Target.InBoard,
             break_detect=True,
