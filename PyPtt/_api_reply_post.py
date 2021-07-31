@@ -73,7 +73,7 @@ def reply_post(
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoResponse,
+            i18n.no_response,
             '◆ 很抱歉, 此文章已結案並標記, 不得回應',
             log_level=Logger.INFO,
             exceptions_=exceptions.NoResponse()

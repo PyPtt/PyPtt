@@ -40,7 +40,7 @@ pip install PyPtt==VERSION
     使用此 API 前請先登入
 ###### PTT.exceptions.NoPermission
     無權限，你可能被水桶或者帳號資格不符
-###### PTT.exceptions.NoFastPush
+###### PTT.exceptions.NoFastComment
     此看板不支援快速推文，推文 API 會幫你重推
 ###### PTT.exceptions.UserOffline
     使用者離線
@@ -793,7 +793,7 @@ try:
     ptt_bot.log('象棋戰績:' + user.chess)
     ptt_bot.log('簽名檔:' + user.signature_file)
 
-except PTT.exceptions.NoSuchUser:
+except PTT.exceptions.no_such_user:
     print('無此使用者')
 ```
 
@@ -858,9 +858,9 @@ ptt_id = 'SampleUser'
 content = '水球測試 :D'
 try:
     ptt_bot.throw_waterball(ptt_id, content)
-except PTT.exceptions.NoSuchUser:
+except PTT.exceptions.no_such_user:
     print('無此使用者')
-except PTT.exceptions.UserOffline:
+except PTT.exceptions.user_offline:
     print('使用者離線')
 ```
 
@@ -932,7 +932,7 @@ try:
         content,
         # 簽名檔
         0)
-except PTT.exceptions.NoSuchUser:
+except PTT.exceptions.no_such_user:
     print('No Such User')
 ```
 
@@ -1245,9 +1245,9 @@ try:
     ptt_bot.log(f'Test {index} 刪除成功')
 except PTT.exceptions.no_permission:
     ptt_bot.log(f'Test {index} 無刪除權限')
-except PTT.exceptions.DeletedPost:
+except PTT.exceptions.deleted_post:
     ptt_bot.log(f'Test {index} 已經被刪除')
-except PTT.exceptions.NoSuchPost:
+except PTT.exceptions.no_such_post:
     ptt_bot.log(f'Test {index} 無此文章')
 ```
 
@@ -1272,7 +1272,7 @@ while True:
             test_board,
             f'現在時間 {time_format}'
         )
-    except PTT.exceptions.ConnectionClosed:
+    except PTT.exceptions.connection_closed:
         while True:
             try:
                 ptt_bot.login(

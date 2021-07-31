@@ -1,9 +1,10 @@
-import os
-import sys
 import json
-import traceback
+import os
 import random
+import sys
 import time
+import traceback
+
 from PyPtt import PTT
 
 
@@ -119,7 +120,6 @@ def test_init():
     except:
         log('沒通過: 跳出其他例外')
         assert False
-
 
     try:
         PTT.API(connect_mode=PTT.connect_core.connect_mode.TELNET)

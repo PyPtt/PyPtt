@@ -17,7 +17,6 @@ except ModuleNotFoundError:
 
 
 def has_new_mail(api) -> int:
-
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append(command.ctrl_z)

@@ -50,18 +50,18 @@ def push(
             break_detect=True
         ),
         connect_core.TargetUnit(
-            i18n.NoFastPush,
+            i18n.no_fast_comment,
             '禁止快速連續推文',
             log_level=Logger.INFO,
             break_detect=True,
-            exceptions_=exceptions.NoFastPush()
+            exceptions_=exceptions.NoFastComment()
         ),
         connect_core.TargetUnit(
-            i18n.NoFastPush,
+            i18n.no_fast_comment,
             '禁止短時間內大量推文',
             log_level=Logger.INFO,
             break_detect=True,
-            exceptions_=exceptions.NoFastPush()
+            exceptions_=exceptions.NoFastComment()
         ),
         connect_core.TargetUnit(
             i18n.no_permission,
@@ -71,7 +71,7 @@ def push(
             exceptions_=exceptions.NoPermission(i18n.no_permission)
         ),
         connect_core.TargetUnit(
-            i18n.NoPush,
+            i18n.no_comment,
             '◆ 抱歉, 禁止推薦',
             log_level=Logger.INFO,
             break_detect=True,

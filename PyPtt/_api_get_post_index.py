@@ -27,7 +27,7 @@ def get_post_index(
 
     cmd = ''.join(cmd_list)
 
-    no_such_post = i18n.NoSuchPost
+    no_such_post = i18n.no_such_post
     no_such_post = i18n.replace(no_such_post, board, aid)
 
     target_list = [
@@ -39,7 +39,7 @@ def get_post_index(
         ),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
         connect_core.TargetUnit(
-            i18n.CanNotUseSearchPostCodeF,
+            i18n.can_not_use_search_post_code_f,
             '此狀態下無法使用搜尋文章代碼(AID)功能',
             exceptions_=exceptions.CanNotUseSearchPostCode()
         ),

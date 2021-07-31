@@ -1,4 +1,3 @@
-
 from SingleLog.log import Logger
 
 try:
