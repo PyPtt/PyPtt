@@ -119,7 +119,7 @@ def get_board_list(api) -> list:
             log.show_value(
                 api.config,
                 Logger.DEBUG,
-                'Board NO',
+                'board NO',
                 no)
 
             board_name = front_part_list[1]
@@ -129,7 +129,7 @@ def get_board_list(api) -> list:
             log.show_value(
                 api.config,
                 Logger.DEBUG,
-                'Board Name',
+                'board Name',
                 board_name)
 
             board_list.append(board_name)

@@ -52,7 +52,7 @@ def change_pw(
             response=api._Password + command.enter,
             max_match=1),
         connect_core.TargetUnit(
-            i18n.Done,
+            i18n.done,
             '設定個人資料與密碼',
             break_detect=True)
     ]

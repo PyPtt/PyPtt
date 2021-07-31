@@ -41,7 +41,7 @@ def mark_post(
 
     check_value.check(api.config, int, 'mark_type', mark_type,
                       value_class=data_type.mark_type)
-    check_value.check(api.config, str, 'Board', board)
+    check_value.check(api.config, str, 'board', board)
     if post_aid is not None:
         check_value.check(api.config, str, 'PostAID', post_aid)
     check_value.check(api.config, int, 'PostIndex', post_index)
@@ -53,7 +53,7 @@ def mark_post(
 
     if len(board) == 0:
         raise ValueError(log.merge([
-            i18n.Board,
+            i18n.board,
             i18n.ErrorParameter,
             board
         ]))
@@ -183,7 +183,7 @@ def mark_post(
         connect_core.TargetUnit(
             [
                 i18n.Mark,
-                i18n.Success,
+                i18n.success,
             ],
             screens.Target.InBoard,
             break_detect=True,

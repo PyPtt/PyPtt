@@ -315,18 +315,18 @@ if not post_info.pass_format_check:
     print('[不合格式]')
     sys.exit()
 
-print('Board: ' + post_info.board)
+print('board: ' + post_info.board)
 print('AID: ' + post_info.aid)
 print('index:' + str(post_info.index))
-print('Author: ' + post_info.author)
-print('Date: ' + post_info.date)
-print('Title: ' + post_info.title)
+print('author: ' + post_info.author)
+print('date: ' + post_info.date)
+print('title: ' + post_info.title)
 print('content: ' + post_info.content)
 print('Money: ' + str(post_info.money))
 print('URL: ' + post_info.web_url)
 print('IP: ' + post_info.ip)
 # 在文章列表上的日期
-print('List Date: ' + post_info.list_date)
+print('List date: ' + post_info.list_date)
 print('地區: ' + post_info.location)
 # Since 0.8.19
 # 有可能為 None，因為不是每篇文在文章列表都有推文數
@@ -756,10 +756,10 @@ print(f'{test_board} 最新文章編號 {index}')
 
 content = '''
 What is Ptt?
-批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
+批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-ptt_bot.push(test_board, PTT.data_type.push_type.PUSH, content, post_index=test_index)
+ptt_bot.comment(test_board, PTT.data_type.push_type.PUSH, content, post_index=test_index)
 ```
 執行結果
 
