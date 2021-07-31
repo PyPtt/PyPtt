@@ -1,6 +1,8 @@
 import re
 import time
 
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
@@ -293,6 +295,9 @@ def get_waterball(api, operate_type: int) -> list:
 
 
 def throw_waterball(api: object, target_id: str, content: str) -> None:
+
+    logger = Logger('throw_waterball', Logger.INFO)
+
     max_length = 50
 
     water_ball_list = list()
@@ -331,37 +336,25 @@ def throw_waterball(api: object, target_id: str, content: str) -> None:
                 time.sleep(0.1)
                 current_time = time.time()
 
-        log.show_value(
-            api.config,
-            Logger.INFO,
-            i18n.WaterBall,
-            waterball)
+        logger.info(i18n.water_ball, waterball)
 
         target_list = [
             connect_core.TargetUnit(
-                i18n.SetCallStatus,
+                i18n.set_call_status,
                 '您的呼叫器目前設定為關閉',
                 response='y' + command.enter),
             # 對方已落跑了
             connect_core.TargetUnit(
-                i18n.SetCallStatus,
+                i18n.set_call_status,
                 '◆ 糟糕! 對方已落跑了',
                 exceptions_=exceptions.UserOffline(target_id)),
             connect_core.TargetUnit(
-                [
-                    i18n.Throw,
-                    target_id,
-                    i18n.WaterBall
-                ],
-                '丟 ' + target_id + ' 水球:',
+                i18n.replace(i18n.throw_waterball, target_id),
+                f'丟 {target_id} 水球:',
                 response=waterball + command.enter * 2 +
                          command.go_main_menu),
             connect_core.TargetUnit(
-                [
-                    i18n.Throw,
-                    i18n.WaterBall,
-                    i18n.success
-                ],
+                i18n.throw_waterball_success,
                 screens.Target.MainMenu,
                 break_detect=True)
         ]
