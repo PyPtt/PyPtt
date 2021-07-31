@@ -881,9 +881,9 @@ def push():
     for (board, index) in test_post_list:
         for i in range(testround):
             if isinstance(index, int):
-                ptt_bot.push(board, PTT.data_type.push_type.PUSH, content, post_index=index)
+                ptt_bot.comment(board, PTT.data_type.push_type.PUSH, content, post_index=index)
             else:
-                ptt_bot.push(board, PTT.data_type.push_type.PUSH, content, post_aid=index)
+                ptt_bot.comment(board, PTT.data_type.push_type.PUSH, content, post_aid=index)
 
     # Index = PTTBot.getNewestIndex(
     #     PTT.data_type.index_type.BBS,
@@ -1504,8 +1504,8 @@ if __name__ == '__main__':
         # get_newest_index()
         # crawl_board()
         # crawl_board_with_condition()
-        push()
-        # get_user()
+        # push()
+        get_user()
         # throw_waterball()
         # get_waterball()
         # call_status()
