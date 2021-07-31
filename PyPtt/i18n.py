@@ -146,11 +146,46 @@ deleted_post = None
 has_post_permission = None
 save_file = None
 select_signature = None
+not_record_ip = None
+push_aligned = None
+not_push_aligned = None
+has_push_permission = None
+only_arrow = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global only_arrow
+    only_arrow = specific_load(lang, [
+        '使用加註方式',
+        'Arrow Only in Push',
+    ])
+
+    global has_push_permission
+    has_push_permission = specific_load(lang, [
+        '使用者擁有推文權限',
+        'user has comment permission',
+    ])
+
+    global push_aligned
+    push_aligned = specific_load(lang, [
+        '推文對齊',
+        'Push aligned',
+    ])
+
+    global not_push_aligned
+    not_push_aligned = specific_load(lang, [
+        '無推文對齊',
+        'No push aligned',
+    ])
+
+    global not_record_ip
+    not_record_ip = specific_load(lang, [
+        '不紀錄 IP',
+        'not record IP',
+    ])
 
     global select_signature
     select_signature = specific_load(lang, [

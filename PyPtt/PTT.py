@@ -1063,19 +1063,16 @@ class API:
 
         push_list = filter(None, push_list)
 
-        for push in push_list:
-            log.show_value(
-                self.config,
-                Logger.INFO,
-                i18n.comment,
-                push)
+        for comment in push_list:
+
+            self.logger.info(i18n.comment, comment)
 
             for _ in range(2):
                 try:
                     self._push(
                         board,
                         push_type,
-                        push,
+                        comment,
                         post_aid=post_aid,
                         post_index=post_index)
                     break
