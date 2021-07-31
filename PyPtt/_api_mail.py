@@ -53,7 +53,7 @@ def mail(
             '主題：',
             break_detect=True),
         connect_core.TargetUnit(
-            i18n.NoSuchUser,
+            i18n.no_such_user,
             '【電子郵件】',
             exceptions_=exceptions.NoSuchUser(ptt_id))
     ]

@@ -1,13 +1,12 @@
-import os
+# Always prefer setuptools over distlib_utils
+from setuptools import setup
+
 from PyPtt import version
 
 # A setuptools based setup module.
 # See:
 # https://packaging.python.org/en/latest/distributing.html
 # https://github.com/pypa/sampleproject
-
-# Always prefer setuptools over distlib_utils
-from setuptools import setup
 
 long_description = '''PyPtt (PTT Library) 是一套 Pure Python PTT API。具備大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，你都可以在這裡找到完整的使用範例
 可自由選擇 WebSocket 或者 Telnet 來連線，並支援繁體中文與英文顯示

@@ -22,7 +22,6 @@ def del_post(
         board,
         post_aid: str = None,
         post_index: int = 0) -> None:
-
     check_author = True
     for moderator in board_info.moderators:
         if api._ID.lower() == moderator.lower():

@@ -28,7 +28,6 @@ def mark_post(
         post_index: int,
         search_type: int,
         search_condition: str) -> None:
-
     log.show_value(
         api.config,
         Logger.INFO,
