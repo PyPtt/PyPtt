@@ -22,6 +22,8 @@ except ModuleNotFoundError:
 
 
 def get_waterball(api, operate_type: int) -> list:
+    logger = Logger('get_waterball', Logger.INFO)
+
     if operate_type == data_type.waterball_operate_type.NOTHING:
         water_ball_operate_type = 'R'
     elif operate_type == data_type.waterball_operate_type.CLEAR:
@@ -31,24 +33,19 @@ def get_waterball(api, operate_type: int) -> list:
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.NoWaterball,
+            i18n.no_waterball,
             '◆ 暫無訊息記錄',
             break_detect=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.BrowseWaterball,
-                i18n.done,
-            ],
+            i18n.browse_waterball_done,
             screens.Target.WaterBallListEnd,
             response=command.left + water_ball_operate_type +
                      command.enter + command.go_main_menu,
             break_detect_after_send=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.BrowseWaterball,
-            ],
+            i18n.browse_waterball,
             screens.Target.InWaterBallList,
             break_detect=True,
             log_level=Logger.DEBUG),
@@ -89,17 +86,10 @@ def get_waterball(api, operate_type: int) -> list:
         # print(OriScreen)
         # print('=' * 50)
         # ScreenTemp = OriScreen
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'OriScreen',
-            ori_screen)
 
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'LastLine',
-            last_line)
+        logger.debug('ori_screen', ori_screen)
+        logger.debug('last_line', last_line)
+
         if last_line.startswith('★'):
             continue
 
@@ -178,11 +168,7 @@ def get_waterball(api, operate_type: int) -> list:
                     new_content_part = '\n'.join(lines)
 
             all_waterball.append(new_content_part)
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                'NewContentPart',
-                new_content_part)
+            logger.debug('new_content_part', new_content_part)
 
         if index == 1:
             break
@@ -202,11 +188,7 @@ def get_waterball(api, operate_type: int) -> list:
             ']==PTTWaterBallNewLine==', ']\n')
     else:
         all_waterball = all_waterball.replace('\\\n', '')
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        'AllWaterball',
-        all_waterball)
+    logger.debug('logger.debug(', all_waterball)
     # print('=' * 20)
     # print(AllWaterball)
     # print('=' * 20)
@@ -215,24 +197,12 @@ def get_waterball(api, operate_type: int) -> list:
     for line in all_waterball.split('\n'):
 
         if (not line.startswith('To')) and (not line.startswith('★')):
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                'Discard waterball',
-                line)
+            logger.debug('Discard waterball', line)
             continue
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'Ready to parse waterball',
-            line)
+        logger.debug('Ready to parse waterball', line)
 
         if line.startswith('To'):
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                'Waterball Type',
-                'Send')
+            logger.debug('Waterball Type', 'Send')
             waterball_type = data_type.waterball_type.SEND
 
             pattern_result = to_water_ball_target_pattern.search(line)
@@ -248,11 +218,7 @@ def get_waterball(api, operate_type: int) -> list:
             content = content.strip()
 
         elif line.startswith('★'):
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                'Waterball Type',
-                'Catch')
+            logger.debug('Waterball Type', 'Catch')
             waterball_type = data_type.waterball_type.CATCH
 
             pattern_result = from_water_ball_target_pattern.search(line)
@@ -267,21 +233,9 @@ def get_waterball(api, operate_type: int) -> list:
             content = content[:content.rfind(date) - 1]
             content = content.strip()
 
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'Waterball target',
-            target)
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'Waterball content',
-            content)
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'Waterball date',
-            date)
+        logger.debug('Waterball target', target)
+        logger.debug('Waterball content', content)
+        logger.debug('Waterball date', date)
 
         current_waterball = data_type.WaterballInfo(
             waterball_type,
@@ -295,7 +249,6 @@ def get_waterball(api, operate_type: int) -> list:
 
 
 def throw_waterball(api: object, target_id: str, content: str) -> None:
-
     logger = Logger('throw_waterball', Logger.INFO)
 
     max_length = 50
