@@ -126,7 +126,7 @@ setup(
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
         'progressbar2',
-        'websockets==8.1',
+        'websockets',
         'uao',
         'SingleLog'
     ],
