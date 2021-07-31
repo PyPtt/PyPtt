@@ -165,11 +165,31 @@ water_ball = None
 set_call_status = None
 throw_waterball = None
 throw_waterball_success = None
-
+no_waterball = None
+browse_waterball = None
+browse_waterball_done = None
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global browse_waterball
+    browse_waterball = specific_load(lang, [
+        '瀏覽水球紀錄',
+        'browse waterball',
+    ])
+
+    global browse_waterball_done
+    browse_waterball_done = specific_load(lang, [
+        '瀏覽水球紀錄完成',
+        'browse waterball complete',
+    ])
+
+    global no_waterball
+    no_waterball = specific_load(lang, [
+        '無訊息記錄',
+        'no waterball',
+    ])
 
     global throw_waterball_success
     throw_waterball_success = specific_load(lang, [
