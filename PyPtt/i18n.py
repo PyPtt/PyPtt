@@ -147,15 +147,24 @@ has_post_permission = None
 save_file = None
 select_signature = None
 not_record_ip = None
+record_ip = None
 push_aligned = None
 not_push_aligned = None
 has_push_permission = None
 only_arrow = None
+error_parameter = None
+wait_for_no_fast_comment = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global error_parameter
+    error_parameter = specific_load(lang, [
+        '參數錯誤',
+        'wrong parameter',
+    ])
 
     global only_arrow
     only_arrow = specific_load(lang, [
@@ -185,6 +194,12 @@ def load(lang):
     not_record_ip = specific_load(lang, [
         '不紀錄 IP',
         'not record IP',
+    ])
+
+    global record_ip
+    record_ip = specific_load(lang, [
+        '紀錄 IP',
+        'Record ip',
     ])
 
     global select_signature
@@ -323,6 +338,12 @@ def load(lang):
     no_fast_comment = specific_load(lang, [
         '禁止快速連續推文',
         'no fast comment',
+    ])
+
+    global wait_for_no_fast_comment
+    wait_for_no_fast_comment = specific_load(lang, [
+        f'因{no_fast_comment}，所以等待五秒',
+        f'because {no_fast_comment}, wait 5 sec',
     ])
 
     global login_fail
