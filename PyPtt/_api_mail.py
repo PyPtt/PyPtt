@@ -116,7 +116,7 @@ def mail(
         api.config,
         Logger.INFO,
         i18n.SendMail,
-        i18n.Success)
+        i18n.success)
 
 
 # --
@@ -199,7 +199,7 @@ def get_mail(
     log.show_value(
         api.config,
         Logger.DEBUG,
-        i18n.Author,
+        i18n.author,
         mail_author)
 
     # 使用表示式分析信件標題
@@ -212,7 +212,7 @@ def get_mail(
     log.show_value(
         api.config,
         Logger.DEBUG,
-        i18n.Title,
+        i18n.title,
         mail_title)
 
     # 使用表示式分析信件日期
@@ -224,7 +224,7 @@ def get_mail(
     log.show_value(
         api.config,
         Logger.DEBUG,
-        i18n.Date,
+        i18n.date,
         mail_date)
 
     # 從全文拿掉信件開頭作為信件內文
@@ -245,7 +245,7 @@ def get_mail(
     log.show_value(
         api.config,
         Logger.DEBUG,
-        i18n.Content,
+        i18n.content,
         mail_content)
 
     if red_envelope:

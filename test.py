@@ -124,7 +124,7 @@ def get_post():
             # ('LAW', 1),
             # # 辦刪除文章
             # ('Test', 347),
-            # # push number parse error
+            # # comment number parse error
             # ('Ptt25sign', '1VppdKLW'),
         ]
     else:
@@ -185,14 +185,14 @@ def get_post():
             if not query:
                 print('Origin Post\n' + post_info.origin_post)
                 print('=' * 30 + ' Origin Post Finish')
-            show('Board', post_info.board)
+            show('board', post_info.board)
             show('AID', post_info.aid)
-            show('push num', post_info.push_number)
+            show('comment num', post_info.push_number)
             show('index', post_info.index)
-            show('Author', post_info.author)
+            show('author', post_info.author)
             show('push_number', post_info.push_number)
-            show('List Date', post_info.list_date)
-            show('Title', post_info.title)
+            show('List date', post_info.list_date)
+            show('title', post_info.title)
             show('Money', post_info.money)
             show('URL', post_info.web_url)
 
@@ -200,8 +200,8 @@ def get_post():
                 print('待證實文章')
 
             if not query:
-                show('Date', post_info.date)
-                show('Content', post_info.content)
+                show('date', post_info.date)
+                show('content', post_info.content)
                 show('IP', post_info.ip)
                 show('Location', post_info.location)
 
@@ -212,11 +212,11 @@ def get_post():
                 arrow_count = 0
 
                 for push_obj in post_info.push_list:
-                    #     print(Push.getType())
-                    #     print(Push.getAuthor())
-                    #     print(Push.getContent())
-                    #     print(Push.getIP())
-                    #     print(Push.time)
+                    #     print(comment.getType())
+                    #     print(comment.getAuthor())
+                    #     print(comment.getContent())
+                    #     print(comment.getIP())
+                    #     print(comment.time)
 
                     if push_obj.type == PTT.data_type.push_type.PUSH:
                         push_count += 1
@@ -231,10 +231,10 @@ def get_post():
                     author = push_obj.author
                     content = push_obj.content
 
-                    # Buffer = f'[{Author}] 給了一個{Type} 說 [{Content}]'
-                    # if Push.getIP() is not None:
-                    #     Buffer += f' 來自 [{Push.getIP()}]'
-                    # Buffer += f' 時間是 [{Push.time}]'
+                    # Buffer = f'[{author}] 給了一個{Type} 說 [{content}]'
+                    # if comment.getIP() is not None:
+                    #     Buffer += f' 來自 [{comment.getIP()}]'
+                    # Buffer += f' 時間是 [{comment.time}]'
 
                     if push_obj.ip is not None:
                         buffer = f'{push_type} {author}: {content} {push_obj.ip} {push_obj.time}'
@@ -449,17 +449,17 @@ def get_post_with_condition():
     #     ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]')
     # ]
 
-    # for (Board, SearchType, Condition) in TestList:
+    # for (board, SearchType, Condition) in TestList:
     #     index = PTTBot.getNewestIndex(
     #         PTT.data_type.index_type.BBS,
-    #         Board,
+    #         board,
     #         SearchType=SearchType,
     #         SearchCondition=Condition,
     #     )
-    #     print(f'{Board} 最新文章編號 {index}')
+    #     print(f'{board} 最新文章編號 {index}')
 
     #     Post = PTTBot.getPost(
-    #         Board,
+    #         board,
     #         PostIndex=index,
     #         SearchType=SearchType,
     #         SearchCondition=Condition,
@@ -617,15 +617,15 @@ def crawlHandler(Post):
 
     detectNone('標題', Post.title)
     # detectNone('AID', Post.aid)
-    detectNone('Author', Post.author)
+    detectNone('author', Post.author)
     # detectNone('Money', Post.getMoney())
 
     # detectNone('WebUrl', Post.web_url)
     # detectNone('ListDate', Post.getListDate())
 
     # if not Query:
-    # detectNone('Date', Post.getDate())
-    # detectNone('Content', Post.getContent())
+    # detectNone('date', Post.getDate())
+    # detectNone('content', Post.getContent())
     # detectNone('IP', Post.getIP())
 
     # time.sleep(0.2)
@@ -730,22 +730,22 @@ def crawl_board():
 def crawl_board_with_condition():
     # TestRange = 10
 
-    # for (Board, SearchType, Condition) in TestList:
+    # for (board, SearchType, Condition) in TestList:
     #     try:
-    #         showCondition(Board, SearchType, Condition)
+    #         showCondition(board, SearchType, Condition)
     #         NewestIndex = PTTBot.getNewestIndex(
     #             PTT.data_type.index_type.BBS,
-    #             Board,
+    #             board,
     #             SearchType=SearchType,
     #             SearchCondition=Condition,
     #         )
-    #         print(f'{Board} 最新文章編號 {NewestIndex}')
+    #         print(f'{board} 最新文章編號 {NewestIndex}')
 
     #         StartIndex = NewestIndex - TestRange + 1
 
     #         ErrorPostList, DelPostList = PTTBot.crawlBoard(
     #             crawlHandler,
-    #             Board,
+    #             board,
     #             StartIndex=StartIndex,
     #             EndIndex=NewestIndex,
     #             SearchType=SearchType,
@@ -888,9 +888,9 @@ def push():
 
     # Index = PTTBot.getNewestIndex(
     #     PTT.data_type.index_type.BBS,
-    #     Board='Test'
+    #     board='Test'
     # )
-    # PTTBot.push('Test', PTT.data_type.push_type.PUSH, Content, PostIndex=Index + 1)
+    # PTTBot.comment('Test', PTT.data_type.push_type.PUSH, content, PostIndex=Index + 1)
 
 
 def throw_waterball():
@@ -1505,7 +1505,7 @@ if __name__ == '__main__':
         # get_newest_index()
         # crawl_board()
         # crawl_board_with_condition()
-        # push()
+        # comment()
         # get_user()
         # throw_waterball()
         # get_waterball()

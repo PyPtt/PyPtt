@@ -267,7 +267,7 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'board', board)
         if post_aid is not None:
             check_value.check(self.config, str, 'PostAID', post_aid)
         check_value.check(self.config, int, 'PostIndex', post_index)
@@ -285,7 +285,7 @@ class API:
             raise ValueError(log.merge(
                 self.config,
                 [
-                    i18n.Board,
+                    i18n.board,
                     i18n.ErrorParameter,
                     board
                 ]))
@@ -554,13 +554,13 @@ class API:
         check_value.check(
             self.config, int, 'crawl_type',
             crawl_type, value_class=data_type.crawl_type)
-        check_value.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'board', board)
 
         if len(board) == 0:
             raise ValueError(log.merge(
                 self.config,
                 [
-                    i18n.Board,
+                    i18n.board,
                     i18n.ErrorParameter,
                     board
                 ]))
@@ -903,9 +903,9 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'Board', board)
-        check_value.check(self.config, str, 'Title', title)
-        check_value.check(self.config, str, 'Content', content)
+        check_value.check(self.config, str, 'board', board)
+        check_value.check(self.config, str, 'title', title)
+        check_value.check(self.config, str, 'content', content)
         check_value.check(self.config, int, 'PostType', post_type)
 
         content = content.replace('\n', '\r\n')
@@ -959,7 +959,7 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'board', board)
         check_value.check(self.config, int, 'push_type',
                           push_type, value_class=data_type.push_type)
         check_value.check(self.config, str, 'PushContent', push_content)
@@ -971,7 +971,7 @@ class API:
             raise ValueError(log.merge(
                 self.config,
                 [
-                    i18n.Board,
+                    i18n.board,
                     i18n.ErrorParameter,
                     board
                 ]))
@@ -1069,7 +1069,7 @@ class API:
             log.show_value(
                 self.config,
                 Logger.INFO,
-                i18n.Push,
+                i18n.comment,
                 push)
 
             for _ in range(2):
@@ -1375,8 +1375,8 @@ class API:
         check_value.check(
             self.config, int, 'reply_type', reply_type,
             value_class=data_type.reply_type)
-        check_value.check(self.config, str, 'Board', board)
-        check_value.check(self.config, str, 'Content', content)
+        check_value.check(self.config, str, 'board', board)
+        check_value.check(self.config, str, 'content', content)
         if post_aid is not None:
             check_value.check(self.config, str, 'PostAID', post_aid)
 
@@ -1755,7 +1755,7 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'Board', board)
+        check_value.check(self.config, str, 'board', board)
         if post_aid is not None:
             check_value.check(self.config, str, 'PostAID', post_aid)
         check_value.check(self.config, int, 'PostIndex', post_index)
@@ -1764,7 +1764,7 @@ class API:
             raise ValueError(log.merge(
                 self.config,
                 [
-                    i18n.Board,
+                    i18n.board,
                     i18n.ErrorParameter,
                     board
                 ]))

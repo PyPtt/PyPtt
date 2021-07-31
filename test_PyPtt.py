@@ -438,8 +438,8 @@ PyPtt 程式貼文基準測試內文
 
     try:
         content1 = '編號推文基準文字123'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.PUSH,
-                       content1, post_aid='QQQQQQQ')
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.PUSH,
+                          content1, post_aid='QQQQQQQ')
         ptt_bot_0.log('推文反向測試失敗')
         ptt_bot_0.logout()
         assert False
@@ -451,8 +451,8 @@ PyPtt 程式貼文基準測試內文
             PTT.data_type.index_type.BBS,
             board=basic_board)
         content1 = '編號推文基準文字123'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.PUSH,
-                       content1, post_index=index + 100)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.PUSH,
+                          content1, post_index=index + 100)
         ptt_bot_0.log('推文反向測試失敗')
         ptt_bot_0.logout()
         assert False
@@ -467,11 +467,11 @@ PyPtt 程式貼文基準測試內文
 
     for push_content, post_index_aid in test_push_list:
         if isinstance(post_index_aid, int):
-            ptt_bot_0.push(basic_board, PTT.data_type.push_type.PUSH,
-                           push_content, post_index=basic_post_index)
+            ptt_bot_0.comment(basic_board, PTT.data_type.push_type.PUSH,
+                              push_content, post_index=basic_post_index)
         else:
-            ptt_bot_0.push(basic_board, PTT.data_type.push_type.PUSH,
-                           push_content, post_aid=basic_post_aid)
+            ptt_bot_0.comment(basic_board, PTT.data_type.push_type.PUSH,
+                              push_content, post_aid=basic_post_aid)
 
     post_info = ptt_bot_0.get_post(
         basic_board,
@@ -492,8 +492,8 @@ PyPtt 程式貼文基準測試內文
     ptt_bot_0.log('代碼推文基準測試成功')
 
     content = '===推文基準測試全部通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -560,12 +560,12 @@ PyPtt 程式貼文基準測試內文
             ptt_bot_0.log('=' * 20)
 
         content = f'{test_board} 取得文章測試完成'
-        ptt_bot_0.push('Test', PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment('Test', PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
 
     content = '===取得文章測試全部通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -610,15 +610,15 @@ PyPtt 程式貼文基準測試內文
 
         detect_none('標題', post.title)
         # detect_none('AID', post.aid)
-        detect_none('Author', post.author)
+        detect_none('author', post.author)
         # detect_none('Money', post.getMoney())
 
         # detect_none('WebUrl', post.web_url)
         # detect_none('ListDate', post.getListDate())
 
         # if not Query:
-        # detect_none('Date', post.getDate())
-        # detect_none('Content', post.getContent())
+        # detect_none('date', post.getDate())
+        # detect_none('content', post.getContent())
         # detect_none('IP', post.getIP())
 
         # time.sleep(0.2)
@@ -689,12 +689,12 @@ PyPtt 程式貼文基準測試內文
             start_aid=start_post.aid,
             end_aid=end_post.aid)
         content = f'{test_board} 爬板測試完成'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
 
     content = '===爬板測試全部通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -713,16 +713,16 @@ PyPtt 程式貼文基準測試內文
         ptt_bot_0.log('取得使用者反向測試通過')
 
     content = '===取得使用者測試全部通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
     new_mail1 = ptt_bot_0.has_new_mail()
     ptt_bot_0.log(f'有 {new_mail1} 封新信')
     content = '取得幾封新信測試通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     mail_title = '程式寄信標題'
 
@@ -735,15 +735,15 @@ PyPtt 程式貼文基準測試內文
             backup=False)
 
         content = '寄信反向測試失敗'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
         ptt_bot_0.logout()
         assert False
 
     except PTT.exceptions.NoSuchUser:
         content = '寄信反向測試成功'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
 
     content = '''如有誤寄，對..對不起
 PyPtt 程式寄信測試內容
@@ -760,15 +760,15 @@ PyPtt 程式寄信測試內容
     ptt_bot_0.log(f'有 {new_mail2} 封新信')
     if new_mail2 > new_mail1:
         content = '寄信測試通過'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
     else:
         ptt_bot_0.logout()
         assert False
 
     content = '===寄信測試全部通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -777,8 +777,8 @@ PyPtt 程式寄信測試內容
     ptt_bot_0.log(f'總共有 {len(set(board_list))} 個不重複板名')
 
     content = '===取得全站看板清單測試全部通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -788,12 +788,12 @@ PyPtt 程式寄信測試內容
         content = f'PTT1 主機時間 {ptt_time}'
     else:
         content = f'PTT2 主機時間 {ptt_time}'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     content = '===取得主機時間測試全部通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -807,8 +807,8 @@ PyPtt 程式寄信測試內容
     except PTT.exceptions.NoSuchBoard:
         ptt_bot_0.log('取得看板資訊反向測試成功')
         content = '取得看板資訊反向測試成功'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
 
     if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
         test_board_list = [
@@ -854,8 +854,8 @@ PyPtt 程式寄信測試內容
         ptt_bot_0.log('=' * 20)
 
     content = '===取得看板資訊全部通過'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -867,8 +867,8 @@ PyPtt 程式寄信測試內容
             assert False
 
     content = '===取得我的最愛測試成功'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -879,8 +879,8 @@ PyPtt 程式寄信測試內容
         assert False
 
     content = '===查詢網友測試成功'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -888,8 +888,8 @@ PyPtt 程式寄信測試內容
     ptt_bot_0.change_pw(current_pw_0)
 
     content = '===變更密碼測試成功'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -919,8 +919,8 @@ PyPtt 程式寄信測試內容
             assert False
         else:
             content = '=== get_aid_from_url 測試成功'
-            ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                           content, post_aid=basic_post_aid)
+            ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                              content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -949,8 +949,8 @@ PyPtt 程式寄信測試內容
                 ptt_bot_0.log(post.title)
 
     content = '===取得置底文章測試成功'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -976,7 +976,7 @@ PyPtt 程式寄信測試內容
         if current_id_0 in post_info.author and content in post_info.content:
             test_pass = True
             content = f'{content}成功'
-            ptt_bot_0.push(
+            ptt_bot_0.comment(
                 basic_board, PTT.data_type.push_type.ARROW,
                 content, post_aid=basic_post_aid)
             break
@@ -1007,7 +1007,7 @@ PyPtt 程式寄信測試內容
         if current_id_0 in post_info.author and content in post_info.content:
             test_pass = True
             content = f'{content}成功'
-            ptt_bot_0.push(
+            ptt_bot_0.comment(
                 basic_board, PTT.data_type.push_type.ARROW,
                 content, post_aid=basic_post_aid)
             break
@@ -1017,8 +1017,8 @@ PyPtt 程式寄信測試內容
         assert False
 
     content = '===回覆文章測試成功'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -1061,8 +1061,8 @@ PyPtt 程式寄信測試內容
         assert False
     else:
         content = '===設定呼叫器測試通過'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
 
     ################################################
 
@@ -1116,19 +1116,19 @@ PyPtt 程式寄信測試內容
         assert False
 
     content = '===水球測試基準測試成功'
-    ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                   content, post_aid=basic_post_aid)
+    ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                      content, post_aid=basic_post_aid)
 
     ################################################
 
     if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
         content = '===PTT 1 測試全部通過'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
     else:
         content = '===PTT 2 測試全部通過'
-        ptt_bot_0.push(basic_board, PTT.data_type.push_type.ARROW,
-                       content, post_aid=basic_post_aid)
+        ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
+                          content, post_aid=basic_post_aid)
 
     ################################################
 

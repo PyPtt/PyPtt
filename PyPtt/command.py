@@ -22,7 +22,7 @@ left = '\x1b\x4fD'
 
 space = ' '
 query_post = 'Q'
-push = 'X'
+comment = 'X'
 go_main_menu = ' ' + left * 5
 go_main_menu_type_q = 'q' * 5
 refresh = ctrl_l

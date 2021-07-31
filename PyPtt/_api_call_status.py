@@ -30,7 +30,7 @@ def get_call_status(api) -> None:
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
-                i18n.Success,
+                i18n.success,
             ],
             '[呼叫器]打開',
             break_detect=True,
@@ -38,7 +38,7 @@ def get_call_status(api) -> None:
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
-                i18n.Success,
+                i18n.success,
             ],
             '[呼叫器]拔掉',
             break_detect=True,
@@ -46,7 +46,7 @@ def get_call_status(api) -> None:
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
-                i18n.Success,
+                i18n.success,
             ],
             '[呼叫器]防水',
             break_detect=True,
@@ -54,7 +54,7 @@ def get_call_status(api) -> None:
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
-                i18n.Success,
+                i18n.success,
             ],
             '[呼叫器]好友',
             break_detect=True,
@@ -62,7 +62,7 @@ def get_call_status(api) -> None:
         connect_core.TargetUnit(
             [
                 i18n.GetCallStatus,
-                i18n.Success,
+                i18n.success,
             ],
             '[呼叫器]關閉',
             break_detect=True,
@@ -115,7 +115,7 @@ def set_call_status(api, call_status) -> None:
         connect_core.TargetUnit(
             [
                 i18n.SetCallStatus,
-                i18n.Success
+                i18n.success
             ],
             screens.Target.InUserList,
             break_detect=True)
