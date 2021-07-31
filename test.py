@@ -1499,7 +1499,7 @@ if __name__ == '__main__':
 
         # performance_test()
 
-        get_post()
+        # get_post()
         # get_post_with_condition()
         # post()
         # get_newest_index()

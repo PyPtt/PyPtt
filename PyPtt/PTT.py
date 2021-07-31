@@ -418,7 +418,7 @@ class API:
             check_moderator: bool = False) -> data_type.BoardInfo:
 
         if board.lower() not in self._exist_board_list:
-            board_info = self._get_board_info(board, False)
+            board_info = self._get_board_info(board, False, False)
             self._exist_board_list.append(board.lower())
             self._board_info_list[board.lower()] = board_info
 
