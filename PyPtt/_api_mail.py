@@ -89,7 +89,7 @@ def mail(
             break_detect_after_send=True,
             response=command.enter),
         connect_core.TargetUnit(
-            i18n.SaveFile,
+            i18n.save_file,
             '確定要儲存檔案嗎',
             response='s' + command.enter, ),
         connect_core.TargetUnit(

@@ -1,3 +1,5 @@
+from SingleLog.log import Logger
+
 try:
     from . import i18n
     from . import connect_core
@@ -33,7 +35,7 @@ def fast_post_step0(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.HasPostPermission,
+            i18n.has_post_permission,
             '發表文章於【',
             break_detect=True,
         ),
@@ -53,7 +55,7 @@ def fast_post_step0(
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.SaveFile,
+            i18n.save_file,
             '確定要儲存檔案嗎',
             break_detect=True,
         )
@@ -71,7 +73,7 @@ def fast_post_step1(api: object, sign_file) -> None:
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.HasPostPermission,
+            i18n.has_post_permission,
             '發表文章於【',
             break_detect=True,
         ),
@@ -91,12 +93,12 @@ def fast_post_step1(api: object, sign_file) -> None:
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.SaveFile,
+            i18n.save_file,
             '確定要儲存檔案嗎',
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.SelectSignature,
+            i18n.select_signature,
             'x=隨機',
             response=str(sign_file) + '\r',
         ),
@@ -128,7 +130,7 @@ def fast_post(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.HasPostPermission,
+            i18n.has_post_permission,
             '發表文章於【',
             break_detect=True,
         ),
@@ -148,12 +150,12 @@ def fast_post(
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.SaveFile,
+            i18n.save_file,
             '確定要儲存檔案嗎',
             response='s' + command.enter,
         ),
         connect_core.TargetUnit(
-            i18n.SelectSignature,
+            i18n.select_signature,
             'x=隨機',
             response=str(sign_file) + command.enter,
         ),
@@ -175,6 +177,8 @@ def post(
         sign_file) -> None:
     api._goto_board(board)
 
+    # logger = Logger('post', Logger.INFO)
+
     cmd_list = list()
     cmd_list.append(command.ctrl_p)
 
@@ -182,7 +186,7 @@ def post(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.HasPostPermission,
+            i18n.has_post_permission,
             '發表文章於【',
             break_detect=True,
         ),
@@ -223,18 +227,17 @@ def post(
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.SaveFile,
+            i18n.save_file,
             '確定要儲存檔案嗎',
             response='s' + command.enter,
         ),
         connect_core.TargetUnit(
-            i18n.SelectSignature,
+            i18n.select_signature,
             'x=隨機',
             response=str(sign_file) + command.enter,
         ),
     ]
-    index = api.connect_core.send(
+    api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.config.screen_post_timeout
-    )
+        screen_timeout=api.config.screen_post_timeout)

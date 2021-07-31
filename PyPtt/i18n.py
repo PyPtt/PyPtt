@@ -143,11 +143,32 @@ user_has_previously_been_banned = None
 no_search_result = None
 timeout = None
 deleted_post = None
+has_post_permission = None
+save_file = None
+select_signature = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global select_signature
+    select_signature = specific_load(lang, [
+        '選擇簽名檔',
+        'Select Signature',
+    ])
+
+    global save_file
+    save_file = specific_load(lang, [
+        '儲存檔案',
+        'Save File',
+    ])
+
+    global has_post_permission
+    has_post_permission = specific_load(lang, [
+        '使用者擁有貼文權限',
+        'User Has Post Permission',
+    ])
 
     global deleted_post
     deleted_post = specific_load(lang, [
