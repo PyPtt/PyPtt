@@ -52,7 +52,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) 
         connect_core.TargetUnit(
             [
                 i18n.bucket,
-                i18n.Success,
+                i18n.success,
             ],
             '其它鍵結束',
             response=command.enter,
@@ -60,7 +60,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) 
         connect_core.TargetUnit(
             [
                 i18n.bucket,
-                i18n.Success,
+                i18n.success,
             ],
             '權限設定系統',
             response=command.enter,
@@ -68,7 +68,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) 
         connect_core.TargetUnit(
             [
                 i18n.bucket,
-                i18n.Success,
+                i18n.success,
             ],
             '任意鍵',
             response=command.space,
@@ -76,7 +76,7 @@ def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) 
         connect_core.TargetUnit(
             [
                 i18n.bucket,
-                i18n.Success,
+                i18n.success,
             ],
             screens.Target.InBoard,
             break_detect=True

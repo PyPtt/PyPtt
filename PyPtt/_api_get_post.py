@@ -1,10 +1,11 @@
 import re
 
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import exceptions
     from . import command
@@ -13,7 +14,6 @@ except ModuleNotFoundError:
     import data_type
     import i18n
     import connect_core
-    import log
     import screens
     import exceptions
     import command
@@ -30,6 +30,8 @@ def get_post(
         search_list: list = None,
         query: bool = False) -> data_type.PostInfo:
     api._goto_board(board)
+
+    logger = Logger('get_post', Logger.INFO)
 
     cmd_list = list()
 
@@ -81,8 +83,8 @@ def get_post(
     target_list = [
         connect_core.TargetUnit(
             [
-                i18n.CatchPost,
-                i18n.Success,
+                i18n.catch_post,
+                i18n.success,
             ],
             screens.Target.QueryPost,
             break_detect=True,
@@ -90,8 +92,8 @@ def get_post(
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
             [
-                i18n.PostDeleted,
-                i18n.Success,
+                i18n.post_deleted,
+                i18n.success,
             ],
             screens.Target.InBoard,
             break_detect=True,
@@ -109,13 +111,8 @@ def get_post(
     post_title = None
     if index < 0 or index == 1:
         # 文章被刪除
-        log.log(api.config, Logger.DEBUG, i18n.PostDeleted)
-
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'OriScreen',
-            ori_screen)
+        logger.debug(i18n.post_deleted)
+        logger.debug('OriScreen', ori_screen)
 
         cursor_line = [line for line in ori_screen.split(
             '\n') if line.startswith(api.cursor)]
@@ -124,11 +121,7 @@ def get_post(
             raise exceptions.UnknownError(ori_screen)
 
         cursor_line = cursor_line[0]
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'CursorLine',
-            cursor_line)
+        logger.debug('CursorLine', cursor_line)
 
         pattern = re.compile('[\d]+\/[\d]+')
         pattern_result = pattern.search(cursor_line)
@@ -156,11 +149,9 @@ def get_post(
             post_author = None
             post_del_status = data_type.post_delete_status.UNKNOWN
 
-        log.show_value(api.config, Logger.DEBUG, 'ListDate', list_date)
-        log.show_value(api.config, Logger.DEBUG,
-                       'PostAuthor', post_author)
-        log.show_value(api.config, Logger.DEBUG,
-                       'post_del_status', post_del_status)
+        logger.debug('ListDate', list_date)
+        logger.debug('PostAuthor', post_author)
+        logger.debug('post_del_status', post_del_status)
 
         return data_type.PostInfo(
             board=board,
@@ -257,12 +248,8 @@ def get_post(
             board_temp = board_temp[2:].strip()
             if len(board_temp) > 0:
                 board = board_temp
-                log.show_value(
-                    api.config,
-                    Logger.DEBUG,
-                    i18n.Board,
-                    board
-                )
+                logger.debug(i18n.board, board)
+
     pattern_result = post_author_pattern_new.search(author_line)
     if pattern_result is not None:
         post_author = pattern_result.group(0)
@@ -270,12 +257,8 @@ def get_post(
     else:
         pattern_result = post_author_pattern_old.search(author_line)
         if pattern_result is None:
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                i18n.SubstandardPost,
-                i18n.Author
-            )
+            logger.debug(i18n.substandard_post, i18n.author)
+
             post = data_type.PostInfo(
                 board=board,
                 aid=post_aid,
@@ -301,22 +284,14 @@ def get_post(
         post_author = post_author[:post_author.rfind(')') + 1]
     post_author = post_author[4:].strip()
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        i18n.Author,
-        post_author)
+    logger.debug(i18n.author, post_author)
 
     post_title_pattern = re.compile('標題  (.+)')
 
     title_line = origin_post_lines[1]
     pattern_result = post_title_pattern.search(title_line)
     if pattern_result is None:
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            i18n.SubstandardPost,
-            i18n.Title)
+        logger.debug(i18n.substandard_post, i18n.title)
 
         post = data_type.PostInfo(
             board=board,
@@ -341,22 +316,14 @@ def get_post(
     post_title = pattern_result.group(0)
     post_title = post_title[4:].strip()
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        i18n.Title,
-        post_title)
+    logger.debug(i18n.title, post_title)
 
     post_date_pattern = re.compile('時間  .{24}')
     date_line = origin_post_lines[2]
     pattern_result = post_date_pattern.search(date_line)
     if pattern_result is None:
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            i18n.SubstandardPost,
-            i18n.Date
-        )
+        logger.debug(i18n.substandard_post, i18n.date)
+
         post = data_type.PostInfo(
             board=board,
             aid=post_aid,
@@ -381,12 +348,7 @@ def get_post(
     post_date = pattern_result.group(0)
     post_date = post_date[4:].strip()
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        i18n.Date,
-        post_date
-    )
+    logger.debug(i18n.date, post_date)
 
     content_fail = True
     if content_start not in origin_post:
@@ -415,12 +377,8 @@ def get_post(
                 break
 
     if content_fail:
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            i18n.SubstandardPost,
-            i18n.Content
-        )
+        logger.debug(i18n.substandard_post, i18n.content)
+
         post = data_type.PostInfo(
             board=board,
             aid=post_aid,
@@ -443,12 +401,7 @@ def get_post(
         )
         return post
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        i18n.Content,
-        post_content
-    )
+    logger.debug(i18n.content, post_content)
 
     info_lines = [
         line for line in origin_post_lines if line.startswith('※') or
@@ -458,12 +411,8 @@ def get_post(
     pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
     pattern_p2 = re.compile('[\d]+-[\d]+-[\d]+-[\d]+')
     for line in reversed(info_lines):
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'IP Line',
-            line
-        )
+
+        logger.debug('IP Line', line)
 
         # type 1
         # ※ 編輯: CodingMan (111.243.146.98 臺灣)
@@ -489,8 +438,8 @@ def get_post(
             # print(f'=>[{LocationTemp}]')
             if ' ' not in location_temp and len(location_temp) > 0:
                 location = location_temp
-                log.show_value(api.config, Logger.DEBUG,
-                               'Location', location)
+
+                logger.debug('Location', location)
             break
 
         pattern_result = pattern_p2.search(line)
@@ -501,12 +450,8 @@ def get_post(
             break
     if api.config.host == data_type.host_type.PTT1:
         if ip is None:
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                i18n.SubstandardPost,
-                'IP'
-            )
+            logger.debug(i18n.substandard_post, ip)
+
             post = data_type.PostInfo(
                 board=board,
                 aid=post_aid,
@@ -528,7 +473,7 @@ def get_post(
                 unconfirmed=api.Unconfirmed,
             )
             return post
-    log.show_value(api.config, Logger.DEBUG, 'IP', ip)
+    logger.debug('IP', ip)
 
     push_author_pattern = re.compile('[推|噓|→] [\w| ]+:')
     push_date_pattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
@@ -538,11 +483,11 @@ def get_post(
 
     for line in origin_post_lines:
         if line.startswith('推'):
-            push_type = data_type.push_type.PUSH
+            comment_type = data_type.push_type.PUSH
         elif line.startswith('噓 '):
-            push_type = data_type.push_type.BOO
+            comment_type = data_type.push_type.BOO
         elif line.startswith('→ '):
-            push_type = data_type.push_type.ARROW
+            comment_type = data_type.push_type.ARROW
         else:
             continue
 
@@ -551,37 +496,20 @@ def get_post(
             # 不符合推文格式
             continue
         push_author = result.group(0)[2:-1].strip()
-        log.show_value(api.config, Logger.DEBUG, [
-            i18n.Push,
-            i18n.ID,
-        ],
-                       push_author
-                       )
+
+        logger.debug(i18n.comment_id, push_author)
 
         result = push_date_pattern.search(line)
         if result is None:
             continue
         push_date = result.group(0)
-        log.show_value(api.config, Logger.DEBUG, [
-            i18n.Push,
-            i18n.Date,
-        ],
-                       push_date
-                       )
+        logger.debug(i18n.comment_date, push_date)
 
-        push_ip = None
+        comment_ip = None
         result = push_ip_pattern.search(line)
         if result is not None:
-            push_ip = result.group(0)
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                [
-                    i18n.Push,
-                    'IP',
-                ],
-                push_ip
-            )
+            comment_ip = result.group(0)
+            logger.debug(f'{i18n.comment} ip', comment_ip)
 
         push_content = line[
                        line.find(push_author) + len(push_author):
@@ -597,27 +525,20 @@ def get_post(
             push_content = push_content[
                            :push_content.rfind(push_date) - 2
                            ]
-        if push_ip is not None:
-            push_content = push_content.replace(push_ip, '')
+        if comment_ip is not None:
+            push_content = push_content.replace(comment_ip, '')
         push_content = push_content[
                        push_content.find(':') + 1:
                        ].strip()
-        log.show_value(
-            api.config,
-            Logger.DEBUG, [
-                i18n.Push,
-                i18n.Content,
-            ],
-            push_content
-        )
+
+        logger.debug(i18n.comment_content, push_content)
 
         current_push = data_type.PushInfo(
-            push_type,
+            comment_type,
             push_author,
             push_content,
-            push_ip,
-            push_date
-        )
+            comment_ip,
+            push_date)
         push_list.append(current_push)
 
     post = data_type.PostInfo(

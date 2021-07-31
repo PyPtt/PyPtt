@@ -51,7 +51,7 @@ def give_money(
         connect_core.TargetUnit(
             [
                 i18n.Transaction,
-                i18n.Success
+                i18n.success
             ],
             '按任意鍵繼續',
             break_detect=True

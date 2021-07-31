@@ -75,7 +75,7 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
         connect_core.TargetUnit(
             [
                 i18n.GetUser,
-                i18n.Success,
+                i18n.success,
             ],
             screens.Target.AnyKey,
             break_detect=True),

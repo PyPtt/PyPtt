@@ -102,82 +102,214 @@ set_connect_mail_first = None
 no_such_board = None
 no_mail = None
 find_newest_index = None
-
+catch_post = None
+success = None
+post_deleted = None
+board = None
+substandard_post = None
+author = None
+title = None
+date = None
+content = None
+comment_id = None
+comment_date = None
+comment = None
+comment_content = None
+unconfirmed_post = None
+browse_post = None
+done = None
+browse_post_done = None
+post_no_content = None
+animation_post = None
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
 
+    global animation_post
+    animation_post = specific_load(lang, [
+        '動畫文章',
+        'Animation Post',
+    ])
+
+    global post_no_content
+    post_no_content = specific_load(lang, [
+        '此文章無內容',
+        'post has no content',
+    ])
+
+    global done
+    done = specific_load(lang, [
+        '完成',
+        'done',
+    ])
+
+    global browse_post
+    browse_post = specific_load(lang, [
+        '瀏覽文章',
+        'browse post',
+    ])
+
+    global browse_post_done
+    browse_post_done = specific_load(lang, [
+        f'{browse_post}{done}',
+        f'{browse_post} {done}',
+    ])
+
+    global unconfirmed_post
+    unconfirmed_post = specific_load(lang, [
+        '待證實文章',
+        'Post To Be Confirmed',
+    ])
+
+    global comment
+    comment = specific_load(lang, [
+        '推文',
+        'comment',
+    ])
+
+    global comment_date
+    comment_date = specific_load(lang, [
+        '推文日期',
+        'comment date',
+    ])
+
+    global comment_id
+    comment_id = specific_load(lang, [
+        '推文帳號',
+        'comment id',
+    ])
+
+    global content
+    content = specific_load(lang, [
+        '內文',
+        'content',
+    ])
+
+    global comment_content
+    comment_content = specific_load(lang, [
+        f'{comment}{content}',
+        f'{comment} {content}',
+    ])
+
+    global date
+    date = specific_load(lang, [
+        '日期',
+        'date',
+    ])
+
+    global title
+    title = specific_load(lang, [
+        '標題',
+        'title',
+    ])
+
+    global author
+    author = specific_load(lang, [
+        '作者',
+        'author',
+    ])
+
+    global substandard_post
+    substandard_post = specific_load(lang, [
+        '不合規範文章',
+        'substandard post',
+    ])
+
+    global board
+    board = specific_load(lang, [
+        '看板',
+        'board',
+    ])
+
+    global post_deleted
+    post_deleted = specific_load(lang, [
+        '文章已經被刪除',
+        'post has been deleted',
+    ])
+
+    global success
+    success = specific_load(lang, [
+        '成功',
+        'success',
+    ])
+
+    global catch_post
+    catch_post = specific_load(lang, [
+        '取得文章',
+        'catch post',
+    ])
+
     global find_newest_index
     find_newest_index = specific_load(lang, [
         '找到最新編號',
-        'Find Newest Index',
+        'find newest index',
     ])
 
     global no_mail
     no_mail = specific_load(lang, [
         f'沒有信件',
-        f'You have no mail',
+        f'you have no mail',
     ])
 
     global no_such_board
     no_such_board = specific_load(lang, [
         '無該板面',
-        'No Such Board',
+        'no such board',
     ])
 
     global no_post
     no_post = specific_load(lang, [
         '沒有文章',
-        'No Post',
+        'no post',
     ])
 
     global set_connect_mail_first
     set_connect_mail_first = specific_load(lang, [
         '設定聯絡信箱後才能修改密碼',
-        'Password can only be changed after setting the contact mailbox',
+        'password can only be changed after setting the contact mailbox',
     ])
 
     global no_permission
     no_permission = specific_load(lang, [
         '使用者沒有權限',
-        'User Has No Permission',
+        'user Has No Permission',
     ])
 
     global reading_board_info
     reading_board_info = specific_load(lang, [
         '讀取看板資訊',
-        'Reading Board Info',
+        'reading board Info',
     ])
 
     global picks_in_register
     picks_in_register = specific_load(lang, [
         '註冊申請單處理順位',
-        'Registration application processing order',
+        'registration application processing order',
     ])
 
     global unregistered_user_cant_use_all_api
     unregistered_user_cant_use_all_api = specific_load(lang, [
         '未註冊使用者，將無法使用全部功能',
-        'Unregistered User Can\'t Use All API',
+        'unregistered User Can\'t Use All API',
     ])
 
     global use_mailbox_api_will_logout_after_execution
     use_mailbox_api_will_logout_after_execution = specific_load(lang, [
         f'如果使用信箱相關功能，將執行後自動登出',
-        f'If you use mailbox related functions, you will be logged out automatically after execution',
+        f'if you use mailbox related functions, you will be logged out automatically after execution',
     ])
 
     global mail_box_full
     mail_box_full = specific_load(lang, [
         '郵件已滿',
-        'Mail box is full',
+        'mail box is full',
     ])
 
     global has_new_mail_goto_main_menu
     has_new_mail_goto_main_menu = specific_load(lang, [
         '有新信，回到主選單',
-        'New mail! Back to main menu',
+        'new mail! Back to main menu',
     ])
 
     global query_ptt_time_success
@@ -225,7 +357,7 @@ def load(lang):
     global info
     info = specific_load(lang, [
         '資訊',
-        'Info',
+        'info',
     ])
 
     global out_side
@@ -442,22 +574,22 @@ def load(lang):
     global chinese_traditional_module
     chinese_traditional_module = specific_load(lang, [
         '繁體中文語言模組',
-        'Traditional Chinese language module'])
+        'traditional Chinese language module'])
 
     global english_module
     english_module = specific_load(lang, [
         '英文語言模組',
-        'English language module'])
+        'english language module'])
 
     global init
     init = specific_load(lang, [
         '初始化',
-        'Init'])
+        'init'])
 
     global connect_host
     connect_host = specific_load(lang, [
         '連線主機',
-        'Connect host'])
+        'connect host'])
 
     global PTT
     PTT = specific_load(lang, [
@@ -472,7 +604,7 @@ def load(lang):
     global localhost
     localhost = specific_load(lang, [
         '本機',
-        'Localhost'])
+        'localhost'])
 
     ##############################################
 

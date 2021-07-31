@@ -78,7 +78,7 @@ def get_newest_index(
         board: str = None) -> int:
     if index_type == data_type.index_type.BBS:
 
-        check_value.check(api.config, str, 'Board', board)
+        check_value.check(api.config, str, 'board', board)
 
         api._check_board(board)
         api._goto_board(board)

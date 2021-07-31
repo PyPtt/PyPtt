@@ -1,22 +1,24 @@
 import re
 
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import command
 except ModuleNotFoundError:
     import data_type
     import i18n
     import connect_core
-    import log
     import screens
     import command
 
 
 def get_content(api, post_mode: bool = True):
+
+    logger = Logger('get_content', Logger.INFO)
     api.Unconfirmed = False
 
     def is_unconfirmed_handler(screen):
@@ -30,41 +32,32 @@ def get_content(api, post_mode: bool = True):
     target_list = [
         # 待證實文章
         connect_core.TargetUnit(
-            i18n.UnconfirmedPost,
+            i18n.unconfirmed_post,
             '本篇文章內容經站方授權之板務管理人員判斷有尚待證實之處',
             response=' ',
             handler=is_unconfirmed_handler
         ),
         connect_core.TargetUnit(
-            [
-                i18n.BrowsePost,
-                i18n.Done,
-            ],
+            i18n.browse_post_done,
             screens.Target.PostEnd,
             break_detect=True,
             log_level=Logger.DEBUG
         ),
         connect_core.TargetUnit(
-            [
-                i18n.BrowsePost,
-            ],
+            i18n.browse_post,
             screens.Target.InPost,
             break_detect=True,
             log_level=Logger.DEBUG
         ),
         connect_core.TargetUnit(
-            [
-                i18n.PostNoContent,
-            ],
+            i18n.post_no_content,
             screens.Target.PostNoContent,
             break_detect=True,
             log_level=Logger.DEBUG
         ),
         # 動畫文章
         connect_core.TargetUnit(
-            [
-                i18n.AnimationPost,
-            ],
+            i18n.animation_post,
             screens.Target.Animation,
             response=command.go_main_menu_type_q,
             break_detect_after_send=True
@@ -184,12 +177,8 @@ def get_content(api, post_mode: bool = True):
                 new_content_part = lines[-1]
 
             origin_post.append(new_content_part)
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                'NewContentPart',
-                new_content_part
-            )
+
+            logger.debug('NewContentPart', new_content_part)
 
         if index == 1:
             if content_start_jump and len(new_content_part) == 0:
@@ -220,12 +209,7 @@ def get_content(api, post_mode: bool = True):
     # OriginPost = [line.strip() for line in OriginPost.split('\n')]
     # OriginPost = '\n'.join(OriginPost)
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        'OriginPost',
-        origin_post
-    )
+    logger.debug('OriginPost', origin_post)
 
     return origin_post, has_control_code
 
@@ -233,34 +217,25 @@ def get_content(api, post_mode: bool = True):
 def get_mailbox_capacity(api):
     last_screen = api.connect_core.get_screen_queue()[-1]
     capacity_line = last_screen.split('\n')[2]
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        'capacity_line',
-        capacity_line)
+
+    logger = Logger('get_mailbox_capacity', Logger.INFO)
+    logger.debug('capacity_line', capacity_line)
 
     pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
     if pattern_result is not None:
         # print(pattern_result.group(0))
         current_capacity = int(pattern_result.group(0).split('/')[0])
         max_capacity = int(pattern_result.group(0).split('/')[1])
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'current_capacity',
-            current_capacity)
 
-        log.show_value(
-            api.config,
-            Logger.DEBUG,
-            'max_capacity',
-            max_capacity)
+        logger.debug('current_capacity', current_capacity)
+        logger.debug('max_capacity', max_capacity)
 
         return current_capacity, max_capacity
     return 0, 0
 
 
 def parse_query_post(api, ori_screen):
+    logger = Logger('parse_query_post', Logger.INFO)
     lock_post = False
     try:
         cursor_line = [line for line in ori_screen.split(
@@ -380,15 +355,16 @@ def parse_query_post(api, ori_screen):
             push_number = None
 
     # print(PushNumber)
-    log.show_value(api.config, Logger.DEBUG,
-                   'PostAuthor', post_author)
-    log.show_value(api.config, Logger.DEBUG, 'PostTitle', post_title)
-    log.show_value(api.config, Logger.DEBUG, 'PostAID', post_aid)
-    log.show_value(api.config, Logger.DEBUG, 'PostWeb', post_web)
-    log.show_value(api.config, Logger.DEBUG, 'PostMoney', post_money)
-    log.show_value(api.config, Logger.DEBUG, 'ListDate', list_date)
-    log.show_value(api.config, Logger.DEBUG,
-                   'PushNumber', push_number)
+
+    logger.debug()
+
+    logger.debug('PostAuthor', post_author)
+    logger.debug('PostTitle', post_title)
+    logger.debug('PostAID', post_aid)
+    logger.debug('PostWeb', post_web)
+    logger.debug('PostMoney', post_money)
+    logger.debug('ListDate', list_date)
+    logger.debug('PushNumber', push_number)
 
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
 
@@ -401,6 +377,7 @@ def get_search_condition_cmd(
         search_list: list = None,
         # BBS
         board: str = None):
+    # logger = Logger('get_search_condition_cmd', Logger.INFO)
     cmd_list = list()
 
     normal_newest_index = -1

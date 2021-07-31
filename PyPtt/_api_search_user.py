@@ -104,7 +104,7 @@ def search_user(
                 # log_level=Logger.DEBUG
             ),
             connect_core.TargetUnit(
-                i18n.Done,
+                i18n.done,
                 '查詢網友',
                 break_detect=True,
                 # log_level=Logger.DEBUG
