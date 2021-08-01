@@ -1,5 +1,7 @@
 import re
 
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
@@ -28,6 +30,9 @@ def mail(
         content: str,
         sign_file,
         backup: bool = True) -> None:
+
+    logger = Logger('main', Logger.INFO)
+
     cmd_list = list()
     # 回到主選單
     cmd_list.append(command.go_main_menu)
@@ -46,10 +51,7 @@ def mail(
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.Start,
-                i18n.SendMail
-            ],
+            i18n.send_mail,
             '主題：',
             break_detect=True),
         connect_core.TargetUnit(
@@ -77,10 +79,9 @@ def mail(
 
     # 根據簽名檔調整顯示訊息
     if sign_file == 0:
-        sing_file_selection = i18n.NoSignatureFile
+        sing_file_selection = i18n.no_signature_file
     else:
-        sing_file_selection = i18n.Select + ' ' + \
-                              str(sign_file) + 'th ' + i18n.SignatureFile
+        sing_file_selection = i18n.replace(i18n.select_sign_file, str(sign_file))
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
@@ -93,7 +94,7 @@ def mail(
             '確定要儲存檔案嗎',
             response='s' + command.enter, ),
         connect_core.TargetUnit(
-            i18n.SelfSaveDraft if backup else i18n.NotSelfSaveDraft,
+            i18n.self_save_draft if backup else i18n.not_self_save_draft,
             '是否自存底稿',
             response=('y' if backup else 'n') + command.enter),
         connect_core.TargetUnit(
@@ -112,11 +113,7 @@ def mail(
         target_list,
         screen_timeout=api.config.screen_post_timeout)
 
-    log.show_value(
-        api.config,
-        Logger.INFO,
-        i18n.SendMail,
-        i18n.success)
+    logger.info(i18n.send_mail, i18n.success)
 
 
 # --
@@ -138,6 +135,8 @@ def get_mail(
         search_type: int = 0,
         search_condition: str = None,
         search_list: list = None) -> data_type.MailInfo:
+
+    logger = Logger('get_mail', Logger.INFO)
     cmd_list = list()
     # 回到主選單
     cmd_list.append(command.go_main_menu)
@@ -170,12 +169,12 @@ def get_mail(
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             fast_target,
             break_detect=True,
             log_level=Logger.DEBUG)
@@ -196,11 +195,7 @@ def get_mail(
     else:
         mail_author = pattern_result.group(0)[2:].strip()
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        i18n.author,
-        mail_author)
+    logger.debug(i18n.author, mail_author)
 
     # 使用表示式分析信件標題
     pattern_result = mail_title_pattern.search(origin_mail)
@@ -209,11 +204,7 @@ def get_mail(
     else:
         mail_title = pattern_result.group(0)[2:].strip()
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        i18n.title,
-        mail_title)
+    logger.debug(i18n.title, mail_title)
 
     # 使用表示式分析信件日期
     pattern_result = mail_date_pattern.search(origin_mail)
@@ -221,11 +212,7 @@ def get_mail(
         mail_date = None
     else:
         mail_date = pattern_result.group(0)[2:].strip()
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        i18n.date,
-        mail_date)
+    logger.debug(i18n.date, mail_date)
 
     # 從全文拿掉信件開頭作為信件內文
     mail_content = origin_mail[
@@ -242,11 +229,7 @@ def get_mail(
         mail_content = mail_content[
                        :mail_content.rfind(content_end) + 3]
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        i18n.content,
-        mail_content)
+    logger.debug(i18n.content, mail_content)
 
     if red_envelope:
         mail_ip = None
@@ -280,14 +263,7 @@ def get_mail(
             else:
                 mail_ip = result.group(0)
 
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                [
-                    i18n.MailBox,
-                    'IP',
-                ],
-                mail_ip)
+            logger.debug('IP', mail_ip)
 
             location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
             if len(location) == 0:
@@ -296,14 +272,7 @@ def get_mail(
                 # print(location)
                 mail_location = location[1:-1]
 
-                log.show_value(
-                    api.config,
-                    Logger.DEBUG,
-                    [
-                        i18n.MailBox,
-                        'location',
-                    ],
-                    mail_location)
+                logger.debug('location', mail_location)
 
     mail_result = data_type.MailInfo(
         origin_mail=origin_mail,
@@ -341,7 +310,7 @@ def del_mail(api, index) -> None:
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
             log_level=Logger.DEBUG)

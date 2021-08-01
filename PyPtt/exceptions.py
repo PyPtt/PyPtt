@@ -293,9 +293,17 @@ class DeletedPost(Exception):
         return self.message
 
 
-class set_connect_mail_first(Exception):
+class SetConnectMailFirst(Exception):
     def __init__(self):
         self.message = i18n.set_connect_mail_first
 
     def __str__(self):
         return self.message
+
+
+# class SystemOverload(Exception):
+#     def __init__(self):
+#         self.message = i18n.system_busy_try_later
+#
+#     def __str__(self):
+#         return self.message

@@ -1,16 +1,16 @@
 import re
 
+from SingleLog.log import Logger
+
 try:
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import command
     from . import _api_util
 except ModuleNotFoundError:
     import i18n
     import connect_core
-    import log
     import screens
     import command
     import _api_util
@@ -22,7 +22,7 @@ def has_new_mail(api) -> int:
     cmd_list.append(command.ctrl_z)
     cmd_list.append('m')
     # cmd_list.append('1')
-    # cmd_list.append(command.Enter)
+    # cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
     current_capacity = None
     plus_count = 0
@@ -32,7 +32,7 @@ def has_new_mail(api) -> int:
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
             log_level=Logger.DEBUG

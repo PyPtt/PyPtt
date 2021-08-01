@@ -1086,13 +1086,13 @@ def threading_test():
 
 def get_board_list():
     board_list = ptt_bot.get_board_list()
-    # print(' '.join(BoardList))
+    # print(' '.join(board_list))
     print(f'總共有 {len(board_list)} 個板名')
     print(f'總共有 {len(set(board_list))} 個不重複板名')
 
 
 def reply_post():
-    reply_post_index = 383
+    reply_post_index = 1709
 
     ptt_bot.reply_post(
         PTT.data_type.reply_type.BOARD,
@@ -1376,7 +1376,7 @@ def get_mail():
     mail_index = ptt_bot.get_newest_index(
         PTT.data_type.index_type.MAIL,
         search_type=PTT.data_type.mail_search_type.KEYWORD,
-        search_condition='uPtt system')
+        search_condition='AI Labs')
 
     ptt_bot.log(
         '最新信件編號',
@@ -1395,8 +1395,8 @@ def get_mail():
         print(mail_info.title)
 
     search_list = [
-        (PTT.data_type.mail_search_type.KEYWORD, 'uPtt'),
-        (PTT.data_type.mail_search_type.KEYWORD, 'key')
+        (PTT.data_type.mail_search_type.KEYWORD, 'AI Labs'),
+        (PTT.data_type.mail_search_type.KEYWORD, '新聞組')
     ]
 
     mail_index = ptt_bot.get_newest_index(
@@ -1507,7 +1507,7 @@ if __name__ == '__main__':
         # push()
         # get_user()
         # throw_waterball()
-        get_waterball()
+        # get_waterball()
         # call_status()
         # give_money()
         # mail()
@@ -1518,7 +1518,7 @@ if __name__ == '__main__':
         # get_favourite_board()
         # search_user()
         # get_mail()
-        # mail_recviver()
+        mail_recviver()
         # change_pw()
         # get_aid_from_url()
         # get_bottom_post_list()
