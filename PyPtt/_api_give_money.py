@@ -37,56 +37,53 @@ def give_money(
             exceptions_=exceptions.MoneyTooFew()
         ),
         connect_core.TargetUnit(
-            i18n.TransactionCancelled,
+            i18n.transaction_cancelled,
             '交易取消!',
             break_detect=True,
-            exceptions_=exceptions.UnknownError(i18n.TransactionCancelled)
+            exceptions_=exceptions.UnknownError(i18n.transaction_cancelled)
         ),
         connect_core.TargetUnit(
-            i18n.Transaction,
+            i18n.transaction,
             '確定進行交易嗎？',
             response='y' + command.enter
         ),
         connect_core.TargetUnit(
-            [
-                i18n.Transaction,
-                i18n.success
-            ],
+            i18n.transaction_success,
             '按任意鍵繼續',
             break_detect=True
         ),
         connect_core.TargetUnit(
-            i18n.ConstantRedBag,
+            i18n.constant_red_bag,
             '要修改紅包袋嗎',
             response=command.enter
         ),
         connect_core.TargetUnit(
-            i18n.VerifyID,
+            i18n.verify_id,
             '完成交易前要重新確認您的身份',
             response=api._Password + command.enter
         ),
         connect_core.TargetUnit(
-            i18n.AnonymousTransaction,
+            i18n.anonymous_transaction,
             '他是你的小主人，是否匿名？',
-            response='n' + command.Enter
+            response='n' + command.enter
         ),
         connect_core.TargetUnit(
-            i18n.InputMoney,
+            i18n.input_money,
             '要給他多少Ptt幣呢?',
             response=command.tab + str(money) + command.enter
         ),
         connect_core.TargetUnit(
-            i18n.InputID,
+            i18n.input_id,
             '這位幸運兒的id',
             response=ptt_id + command.enter
         ),
         connect_core.TargetUnit(
-            i18n.AuthenticationHasNotExpired,
+            i18n.authentication_has_not_expired,
             '認證尚未過期',
             response='y' + command.enter
         ),
         connect_core.TargetUnit(
-            i18n.TradingInProgress,
+            i18n.trading_in_progress,
             '交易正在進行中',
             response=command.space
         )

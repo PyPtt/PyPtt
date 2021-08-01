@@ -266,8 +266,10 @@ def login(
             secret=True)
         ori_screen = api.connect_core.get_screen_queue()[-1]
 
-    if target_list[index].get_display_msg() != i18n.login_success:
+    login_result = target_list[index].get_display_msg()
+    if login_result != i18n.login_success:
         print(ori_screen)
+        logger.info('reason', login_result)
         raise exceptions.LoginError()
 
     if '> (' in ori_screen:

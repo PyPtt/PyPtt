@@ -168,10 +168,207 @@ throw_waterball_success = None
 no_waterball = None
 browse_waterball = None
 browse_waterball_done = None
+get_call_status = None
+get_call_status_success = None
+set_call_status_success = None
+transaction_cancelled = None
+transaction = None
+transaction_success = None
+constant_red_bag = None
+verify_id = None
+anonymous_transaction = None
+input_money = None
+input_id = None
+authentication_has_not_expired = None
+trading_in_progress = None
+send_mail = None
+no_signature_file = None
+select_sign_file = None
+not_self_save_draft = None
+self_save_draft = None
+board_list = None
+reply_board = None
+reply_mail = None
+reply_board_mail = None
+forced_write = None
+edit_post = None
+use_the_original_title = None
+quote_original = None
+respond_success = None
+favourite_board_list = None
+
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global favourite_board_list
+    favourite_board_list = specific_load(lang, [
+        '我的最愛',
+        'Favourite Board List',
+    ])
+
+    global respond_success
+    respond_success = specific_load(lang, [
+        '回應成功',
+        'respond success',
+    ])
+
+    global use_the_original_title
+    use_the_original_title = specific_load(lang, [
+        '採用原標題',
+        'use the original title',
+    ])
+
+    global quote_original
+    quote_original = specific_load(lang, [
+        '引用原文',
+        'quote original',
+    ])
+
+    global edit_post
+    edit_post = specific_load(lang, [
+        '編輯文章',
+        'edit post',
+    ])
+
+    global forced_write
+    forced_write = specific_load(lang, [
+        '強制寫入',
+        'Forced Write',
+    ])
+
+    global reply_board
+    reply_board = specific_load(lang, [
+        '回應至看板',
+        'respond to the Board',
+    ])
+
+    global reply_mail
+    reply_mail = specific_load(lang, [
+        '回應至作者信箱',
+        'respond to the mailbox of author',
+    ])
+
+    global reply_board_mail
+    reply_board_mail = specific_load(lang, [
+        '回應至看板與作者信箱',
+        'respond to the board and the mailbox of author',
+    ])
+
+    global board_list
+    board_list = specific_load(lang, [
+        '看板列表',
+        'board list',
+    ])
+
+    global self_save_draft
+    self_save_draft = specific_load(lang, [
+        '自存底稿',
+        'self-save draft',
+    ])
+
+    global not_self_save_draft
+    not_self_save_draft = specific_load(lang, [
+        '放棄自存底稿',
+        'not self-save draft',
+    ])
+
+    global select_sign_file
+    select_sign_file = specific_load(lang, [
+        '選擇第 {Target0} 簽名檔',
+        'select {Target0}th signature file',
+    ])
+
+    global no_signature_file
+    no_signature_file = specific_load(lang, [
+        '不加簽名檔',
+        'no Signature File',
+    ])
+
+    global send_mail
+    send_mail = specific_load(lang, [
+        '寄信',
+        'send mail',
+    ])
+
+    global trading_in_progress
+    trading_in_progress = specific_load(lang, [
+        '交易正在進行中',
+        'trading is in progress',
+    ])
+
+    global authentication_has_not_expired
+    authentication_has_not_expired = specific_load(lang, [
+        '認證尚未過期',
+        'authentication has not expired',
+    ])
+
+    global input_id
+    input_id = specific_load(lang, [
+        '輸入帳號',
+        'input ID',
+    ])
+
+    global input_money
+    input_money = specific_load(lang, [
+        '輸入金額',
+        'input money',
+    ])
+
+    global anonymous_transaction
+    anonymous_transaction = specific_load(lang, [
+        '不使用匿名交易',
+        'transaction without anomalous',
+    ])
+
+    global verify_id
+    verify_id = specific_load(lang, [
+        '確認身分',
+        'verify ID',
+    ])
+
+    global constant_red_bag
+    constant_red_bag = specific_load(lang, [
+        '不修改紅包袋',
+        'constant the red bag',
+    ])
+
+    global transaction_success
+    transaction_success = specific_load(lang, [
+        '交易成功',
+        'transaction success',
+    ])
+
+    global transaction
+    transaction = specific_load(lang, [
+        '交易',
+        'transaction',
+    ])
+
+    global transaction_cancelled
+    transaction_cancelled = specific_load(lang, [
+        '交易取消!',
+        'the transaction is cancelled!',
+    ])
+
+    global set_call_status_success
+    set_call_status_success = specific_load(lang, [
+        '設定呼叫器狀態成功',
+        'set BBCall status success',
+    ])
+
+    global get_call_status
+    get_call_status = specific_load(lang, [
+        '取得呼叫器狀態',
+        'get BBCall status',
+    ])
+
+    global get_call_status_success
+    get_call_status_success = specific_load(lang, [
+        '取得呼叫器狀態成功',
+        'get BBCall status success',
+    ])
 
     global browse_waterball
     browse_waterball = specific_load(lang, [
