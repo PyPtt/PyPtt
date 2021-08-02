@@ -1,29 +1,20 @@
 import progressbar
+from SingleLog.log import Logger
 
 try:
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import command
 except ModuleNotFoundError:
     import i18n
     import connect_core
-    import log
     import screens
     import command
 
 
 def get_board_list(api) -> list:
-    # log.showValue(
-    #     api.config,
-    #     Logger.INFO,
-    #     [
-    #         i18n.PTT,
-    #         i18n.Msg
-    #     ],
-    #     i18n.MarkPost
-    # )
+    logger = Logger('get_board_list', Logger.INFO)
 
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
@@ -35,7 +26,7 @@ def get_board_list(api) -> list:
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.BoardList,
+            i18n.board_list,
             screens.Target.InBoardList,
             break_detect=True)
     ]
@@ -64,11 +55,7 @@ def get_board_list(api) -> list:
         # print(f'FrontPartList =>{FrontPartList}<=')
         max_no = int(front_part_list[0].rstrip(')'))
 
-    log.show_value(
-        api.config,
-        Logger.DEBUG,
-        'MaxNo',
-        max_no)
+    logger.debug('max_no', max_no)
 
     if api.config.log_level == Logger.INFO:
         pb = progressbar.ProgressBar(
@@ -116,21 +103,13 @@ def get_board_list(api) -> list:
             # print(f'No  =>{no}<=')
             # print(f'LastNo =>{LastNo}<=')
 
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                'board NO',
-                no)
+            logger.debug('board NO', no)
 
             board_name = front_part_list[1]
             if board_name.startswith('ˇ'):
                 board_name = board_name[1:]
 
-            log.show_value(
-                api.config,
-                Logger.DEBUG,
-                'board Name',
-                board_name)
+            logger.debug('board Name', board_name)
 
             board_list.append(board_name)
 

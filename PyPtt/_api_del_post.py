@@ -63,13 +63,13 @@ def del_post(
             '請按任意鍵繼續',
             response=' '),
         connect_core.TargetUnit(
-            i18n.ConfirmDelete,
+            i18n.confirm_delete,
             '請確定刪除(Y/N)?[N]',
             response='y' + command.enter,
             max_match=1,
             handler=confirm_delete_handler),
         connect_core.TargetUnit(
-            i18n.DeleteSuccess,
+            i18n.delete_success,
             screens.Target.InBoard,
             break_detect=True),
     ]

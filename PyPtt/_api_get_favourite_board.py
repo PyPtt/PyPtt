@@ -20,7 +20,7 @@ def get_favourite_board(api) -> list:
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.FavouriteBoardList,
+            i18n.favourite_board_list,
             '選擇看板',
             break_detect=True
         )
@@ -89,7 +89,7 @@ def get_favourite_board(api) -> list:
             )
             favourite_board_list.append(f_board)
 
-        # print(len(FavouriteBoardList))
+        # print(len(favourite_board_list))
         # print(len(screen_buf))
         if len(screen_buf) < 20:
             break
@@ -98,5 +98,5 @@ def get_favourite_board(api) -> list:
 
     # ScreenBuf = '\n'.join(ScreenBuf)
     # print(ScreenBuf)
-    # print(len(FavouriteBoardList))
+    # print(len(favourite_board_list))
     return favourite_board_list

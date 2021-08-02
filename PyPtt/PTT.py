@@ -1210,8 +1210,8 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'ID', ptt_id)
-        check_value.check(self.config, int, 'Money', money)
+        check_value.check(self.config, str, 'ptt_id', ptt_id)
+        check_value.check(self.config, int, 'money', money)
         # Check user
         self.get_user(ptt_id)
 
@@ -1574,6 +1574,7 @@ class API:
         if index == 0:
             return None
         current_index = self.get_newest_index(data_type.index_type.MAIL)
+        self.logger.info('current_index', current_index)
         check_value.check_index(self.config, 'index', index, current_index)
 
         try:
