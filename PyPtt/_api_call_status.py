@@ -1,8 +1,9 @@
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import exceptions
     from . import command
@@ -10,13 +11,14 @@ except ModuleNotFoundError:
     import data_type
     import i18n
     import connect_core
-    import log
     import screens
     import exceptions
     import command
 
 
 def get_call_status(api) -> None:
+    # logger = Logger('get_call_status', Logger.INFO)
+
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('A')
@@ -27,49 +29,32 @@ def get_call_status(api) -> None:
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]打開',
             break_detect=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]拔掉',
             break_detect=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]防水',
             break_detect=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]好友',
             break_detect=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]關閉',
             break_detect=True,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-            ],
+            i18n.get_call_status,
             '★',
             response=cmd,
             log_level=Logger.DEBUG),
@@ -112,10 +97,7 @@ def set_call_status(api, call_status) -> None:
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.set_call_status,
-                i18n.success
-            ],
+            i18n.set_call_status_success,
             screens.Target.InUserList,
             break_detect=True)
     ]
