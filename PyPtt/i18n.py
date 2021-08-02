@@ -196,16 +196,70 @@ use_the_original_title = None
 quote_original = None
 respond_success = None
 favourite_board_list = None
-
+confirm = None
+input_origin_password = None
+input_new_password = None
+check_new_password = None
+catch_bottom_post_success = None
+confirm_delete = None
+delete_success = None
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
 
+    global confirm_delete
+    confirm_delete = specific_load(lang, [
+        '確定刪除',
+        'confirm delete',
+    ])
+
+    global delete_success
+    delete_success = specific_load(lang, [
+        '刪除成功',
+        'delete Success',
+    ])
+
+    global catch_bottom_post_success
+    catch_bottom_post_success = specific_load(lang, [
+        '取得置底文章成功',
+        'catch bottom post success',
+    ])
+
+    global catch_post_success
+    catch_post_success = specific_load(lang, [
+        '取得文章成功',
+        'get post success',
+    ])
+
+    global input_origin_password
+    input_origin_password = specific_load(lang, [
+        '輸入原密碼',
+        'input Origin Password',
+    ])
+
+    global input_new_password
+    input_new_password = specific_load(lang, [
+        '設定新密碼',
+        'input new password',
+    ])
+
+    global check_new_password
+    check_new_password = specific_load(lang, [
+        '檢查新密碼',
+        'check new password',
+    ])
+
+    global confirm
+    confirm = specific_load(lang, [
+        '確認',
+        'confirm',
+    ])
+
     global favourite_board_list
     favourite_board_list = specific_load(lang, [
         '我的最愛',
-        'Favourite Board List',
+        'favourite board list',
     ])
 
     global respond_success

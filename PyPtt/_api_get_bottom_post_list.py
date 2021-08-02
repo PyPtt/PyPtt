@@ -1,8 +1,9 @@
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import exceptions
     from . import command
@@ -11,7 +12,6 @@ except ModuleNotFoundError:
     import data_type
     import i18n
     import connect_core
-    import log
     import screens
     import exceptions
     import command
@@ -21,9 +21,9 @@ except ModuleNotFoundError:
 def get_bottom_post_list(api, board):
     api._goto_board(board, end=True)
 
-    last_screen = api.connect_core.get_screen_queue()[-1]
+    logger = Logger('get_bottom_post_list', Logger.INFO)
 
-    # print(last_screen)
+    last_screen = api.connect_core.get_screen_queue()[-1]
 
     bottom_screen = [line for line in last_screen.split('\n') if '★' in line[:8]]
     bottom_length = len(bottom_screen)
@@ -31,7 +31,7 @@ def get_bottom_post_list(api, board):
     # print(bottom_screen)
 
     if bottom_length == 0:
-        log.log(api.config, Logger.INFO, i18n.CatchBottomPostSuccess)
+        logger.info(i18n.catch_bottom_post_success)
         return list()
 
     cmd_list = list()
@@ -40,19 +40,13 @@ def get_bottom_post_list(api, board):
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.catch_post,
-                i18n.success,
-            ],
+            i18n.catch_post_success,
             screens.Target.QueryPost,
             break_detect=True,
             refresh=False,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.post_deleted,
-                i18n.success,
-            ],
+            i18n.post_deleted,
             screens.Target.InBoard,
             break_detect=True,
             log_level=Logger.DEBUG),
@@ -87,6 +81,6 @@ def get_bottom_post_list(api, board):
         cmd_list.append(command.query_post)
         cmd = ''.join(cmd_list)
 
-    log.log(api.config, Logger.INFO, i18n.CatchBottomPostSuccess)
+    logger.info(i18n.catch_bottom_post_success)
 
     return list(reversed(result))
