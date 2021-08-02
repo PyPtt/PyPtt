@@ -37,17 +37,17 @@ def change_pw(
             '請您確定(Y/N)？',
             response='Y' + command.enter),
         connect_core.TargetUnit(
-            i18n.CheckNewPassword,
+            i18n.check_new_password,
             '檢查新密碼',
             response=new_password + command.enter,
             max_match=1),
         connect_core.TargetUnit(
-            i18n.InputNewPassword,
+            i18n.input_new_password,
             '設定新密碼',
             response=new_password + command.enter,
             max_match=1),
         connect_core.TargetUnit(
-            i18n.InputOriginPassword,
+            i18n.input_origin_password,
             '輸入原密碼',
             response=api._Password + command.enter,
             max_match=1),

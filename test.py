@@ -321,7 +321,7 @@ def get_aid_from_url():
         newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
         print(f'{test_board} newest_index {newest_index}')
 
-        test_range = 5000
+        test_range = 10
 
         start_index = random.randrange(1, newest_index + 1 - test_range)
         print(start_index)
@@ -1009,17 +1009,37 @@ def mail():
     except PTT.exceptions.NoSuchUser:
         pass
 
-    ptt_bot.mail(
-        ptt_id,
-        '程式寄信標題',
-        content,
-        0,
-        False)
+    test_mail_range = 3
+
+    last_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL)
+    print(f'目前郵件編號 {last_index}')
+
+    for _ in range(test_mail_range):
+        ptt_bot.mail(
+            ptt_id,
+            '程式寄信標題',
+            content,
+            0,
+            backup=False)
 
     newest_index = ptt_bot.get_newest_index(
         PTT.data_type.index_type.MAIL)
     print(f'最新郵件編號 {newest_index}')
-    # ptt_bot.del_mail(newest_index)
+    if newest_index - last_index != test_mail_range:
+        print('mail test fail')
+        return
+    print('mail test ok')
+
+    for i in range(test_mail_range):
+        ptt_bot.del_mail(newest_index - i)
+
+    del_index = ptt_bot.get_newest_index(
+        PTT.data_type.index_type.MAIL)
+    if newest_index - del_index != test_mail_range:
+        print('del mail test fail')
+        return
+    print('del mail test ok')
 
 
 def has_new_mail():
@@ -1415,26 +1435,6 @@ def get_mail():
         print(mail_info.title)
 
 
-def mail_recviver():
-    while True:
-        # ptt_bot.config.log_level = PTT.Logger.TRACE
-        newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
-        # ptt_bot.config.log_level = PTT.Logger.INFO
-        ptt_bot.log(f'最新信箱編號 {newest_index}')
-        #
-        # user = ptt_bot.get_user(ptt_id)
-        # ptt_bot.log(f'信箱狀態: {user.mail_status}')
-
-        for index in range(1, newest_index + 1):
-            mail_info = ptt_bot.get_mail(newest_index)
-            print(mail_info.author)
-            print(mail_info.content)
-            ptt_bot.del_mail(index)
-
-        print('完成休息')
-        time.sleep(3)
-
-
 def change_pw():
     ptt_bot.change_pw(password)
 
@@ -1518,11 +1518,10 @@ if __name__ == '__main__':
         # get_favourite_board()
         # search_user()
         # get_mail()
-        mail_recviver()
         # change_pw()
         # get_aid_from_url()
         # get_bottom_post_list()
-        # del_post()
+        del_post()
 
         # bucket()
         # set_board_title()
