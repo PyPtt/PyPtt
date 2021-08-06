@@ -1,8 +1,9 @@
+from SingleLog.log import Logger
+
 try:
     from . import data_type
     from . import i18n
     from . import connect_core
-    from . import log
     from . import screens
     from . import command
     from . import check_value
@@ -12,7 +13,6 @@ except ModuleNotFoundError:
     import data_type
     import i18n
     import connect_core
-    import log
     import screens
     import command
     import check_value
@@ -28,100 +28,55 @@ def mark_post(
         post_index: int,
         search_type: int,
         search_condition: str) -> None:
-    log.show_value(
-        api.config,
-        Logger.INFO,
-        [
-            i18n.PTT,
-            i18n.Msg
-        ],
-        i18n.MarkPost
-    )
+    logger = Logger('mark_post', Logger.INFO)
 
-    check_value.check(api.config, int, 'mark_type', mark_type,
+    check_value.check(int, 'mark_type', mark_type,
                       value_class=data_type.mark_type)
-    check_value.check(api.config, str, 'board', board)
+    check_value.check(str, 'board', board)
     if post_aid is not None:
-        check_value.check(api.config, str, 'PostAID', post_aid)
-    check_value.check(api.config, int, 'PostIndex', post_index)
-    check_value.check(api.config, int, 'SearchType', search_type,
+        check_value.check(str, 'PostAID', post_aid)
+    check_value.check(int, 'PostIndex', post_index)
+    check_value.check(int, 'SearchType', search_type,
                       value_class=data_type.post_search_type)
     if search_condition is not None:
-        check_value.check(api.config, str,
+        check_value.check(str,
                           'SearchCondition', search_condition)
 
     if len(board) == 0:
-        raise ValueError(log.merge([
-            i18n.board,
-            i18n.error_parameter,
-            board
-        ]))
+        raise ValueError(f'board error parameter: {board}')
 
     if mark_type != data_type.mark_type.DeleteD:
         if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError(log.merge(
-                api.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.error_parameter,
-                    i18n.BothInput
-                ]))
+            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
 
         if post_index == 0 and post_aid is None:
-            raise ValueError(log.merge(
-                api.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.error_parameter
-                ]))
+            raise ValueError('wrong parameter post_index or post_aid must input')
 
     if search_condition is not None and search_type == 0:
-        raise ValueError(log.merge(
-            api.config,
-            [
-                'SearchType',
-                i18n.error_parameter,
-            ]))
+        raise ValueError('wrong parameter post_index or post_aid must input')
 
     if search_type == data_type.post_search_type.PUSH:
         try:
             S = int(search_condition)
         except ValueError:
-            raise ValueError(log.merge(
-                api.config,
-                [
-                    'SearchCondition',
-                    i18n.error_parameter,
-                ]))
+            raise ValueError(f'wrong parameter search_condition: {search_condition}')
 
         if not (-100 <= S <= 110):
-            raise ValueError(log.merge(
-                api.config,
-                [
-                    'SearchCondition',
-                    i18n.error_parameter,
-                ]))
+            raise ValueError(f'wrong parameter search_condition must between -100 ~ 100')
 
     if post_aid is not None and search_condition is not None:
-        raise ValueError(log.merge(
-            api.config, [
-                'PostAID',
-                'SearchCondition',
-                i18n.error_parameter,
-                i18n.BothInput,
-            ]))
+        raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
 
     if post_index != 0:
         newest_index = api._get_newest_index(
             data_type.index_type.BBS,
             board=board,
             search_type=search_type,
-            search_condition=search_condition
-        )
-        check_value.check_index(api.config, 'PostIndex',
-                                post_index, max_value=newest_index)
+            search_condition=search_condition)
+        check_value.check_index(
+            'post_index',
+            post_index,
+            max_value=newest_index)
 
     if mark_type == data_type.mark_type.UNCONFIRMED:
         # 批踢踢兔沒有待證文章功能 QQ

@@ -133,7 +133,7 @@ class API:
             connect_core.connect_mode.min_value = connect_core.connect_mode.TELNET
             connect_core.connect_mode.max_value = connect_core.connect_mode.WEBSOCKET
 
-        check_value.check(self.config, int, 'connect_mode', connect_mode)
+        check_value.check(int, 'connect_mode', connect_mode)
         if connect_mode == 0:
             connect_mode = self.config.connect_mode
         elif not lib_util.check_range(connect_core.connect_mode, connect_mode):
@@ -141,7 +141,7 @@ class API:
         else:
             self.config.connect_mode = connect_mode
 
-        check_value.check(self.config, int, 'port', port)
+        check_value.check(int, 'port', port)
         if port == 0:
             port = self.config.port
         elif not 0 < port < 65535:
@@ -209,9 +209,9 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'ID', ptt_id)
-        check_value.check(self.config, str, 'Password', password)
-        check_value.check(self.config, bool, 'kick_other_login', kick_other_login)
+        check_value.check(str, 'ID', ptt_id)
+        check_value.check(str, 'Password', password)
+        check_value.check(bool, 'kick_other_login', kick_other_login)
 
         try:
             return self._login(
@@ -267,18 +267,18 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'board', board)
+        check_value.check(str, 'board', board)
         if post_aid is not None:
-            check_value.check(self.config, str, 'PostAID', post_aid)
-        check_value.check(self.config, int, 'PostIndex', post_index)
-        check_value.check(self.config, int, 'SearchType', search_type,
+            check_value.check(str, 'PostAID', post_aid)
+        check_value.check(int, 'PostIndex', post_index)
+        check_value.check(int, 'SearchType', search_type,
                           value_class=data_type.post_search_type)
         if search_condition is not None:
-            check_value.check(self.config, str,
+            check_value.check(str,
                               'SearchCondition', search_condition)
 
         if search_list is not None:
-            check_value.check(self.config, list,
+            check_value.check(list,
                               'search_list', search_condition)
 
         if len(board) == 0:
@@ -291,23 +291,10 @@ class API:
                 ]))
 
         if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.error_parameter,
-                    i18n.BothInput
-                ]))
+            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
 
         if post_index == 0 and post_aid is None:
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.error_parameter
-                ]))
+            raise ValueError('wrong parameter post_index or post_aid must input')
 
         if search_condition is not None and search_type == 0:
             raise ValueError(log.merge(
@@ -466,9 +453,7 @@ class API:
             search_list: list = None,
             board: str = None) -> int:
 
-        check_value.check(
-            self.config, int, 'index_type',
-            index_type, value_class=data_type.index_type)
+        check_value.check(int, 'index_type', index_type, value_class=data_type.index_type)
 
         try:
             from . import _api_get_newest_index
@@ -497,30 +482,22 @@ class API:
                 raise exceptions.Requirelogin(i18n.require_login)
 
         if index_type == data_type.index_type.BBS:
-            check_value.check(
-                self.config, int, 'SearchType', search_type,
-                value_class=data_type.post_search_type)
+            check_value.check(int, 'SearchType', search_type, value_class=data_type.post_search_type)
 
         if index_type == data_type.index_type.MAIL:
             if self.unregistered_user:
                 raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-            check_value.check(
-                self.config, int, 'SearchType', search_type,
-                value_class=data_type.mail_search_type)
+            check_value.check(int, 'SearchType', search_type, value_class=data_type.mail_search_type)
 
         self.config.log_last_value = None
 
         if search_condition is not None:
-            check_value.check(
-                self.config, str,
-                'SearchCondition', search_condition)
+            check_value.check(str, 'search_condition', search_condition)
 
         if search_list is not None:
-            check_value.check(
-                self.config, list,
-                'search_list', search_list)
-        check_value.check(self.config, int, 'SearchType', search_type)
+            check_value.check(self.config, list, 'search_list', search_list)
+        check_value.check(int, 'SearchType', search_type)
 
         return self._get_newest_index(
             index_type,
@@ -551,10 +528,8 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(
-            self.config, int, 'crawl_type',
-            crawl_type, value_class=data_type.crawl_type)
-        check_value.check(self.config, str, 'board', board)
+        check_value.check(int, 'crawl_type', crawl_type, value_class=data_type.crawl_type)
+        check_value.check(str, 'board', board)
 
         if len(board) == 0:
             raise ValueError(log.merge(
@@ -569,19 +544,19 @@ class API:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.require_login)
 
-            check_value.check(self.config, int, 'SearchType', search_type)
+            check_value.check(int, 'SearchType', search_type)
             if search_condition is not None:
-                check_value.check(self.config, str,
+                check_value.check(str,
                                   'SearchCondition', search_condition)
 
             if search_list is not None:
-                check_value.check(self.config, list,
+                check_value.check(list,
                                   'search_list', search_list)
 
             if start_aid is not None:
-                check_value.check(self.config, str, 'StartAID', start_aid)
+                check_value.check(str, 'StartAID', start_aid)
             if end_aid is not None:
-                check_value.check(self.config, str, 'EndAID', end_aid)
+                check_value.check(str, 'EndAID', end_aid)
 
             if (start_aid is not None or end_aid is not None) and \
                     (start_index != 0 or end_index != 0):
@@ -632,7 +607,6 @@ class API:
                     search_condition=search_condition)
 
                 check_value.check_index_range(
-                    self.config,
                     'start_index',
                     start_index,
                     'end_index',
@@ -651,7 +625,6 @@ class API:
                 ).index
 
                 check_value.check_index_range(
-                    self.config,
                     'start_index',
                     start_index,
                     'end_index',
@@ -903,10 +876,10 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'board', board)
-        check_value.check(self.config, str, 'title', title)
-        check_value.check(self.config, str, 'content', content)
-        check_value.check(self.config, int, 'PostType', post_type)
+        check_value.check(str, 'board', board)
+        check_value.check(str, 'title', title)
+        check_value.check(str, 'content', content)
+        check_value.check(int, 'PostType', post_type)
 
         content = content.replace('\n', '\r\n')
 
@@ -959,13 +932,13 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'board', board)
-        check_value.check(self.config, int, 'push_type',
+        check_value.check(str, 'board', board)
+        check_value.check(int, 'push_type',
                           push_type, value_class=data_type.push_type)
-        check_value.check(self.config, str, 'PushContent', push_content)
+        check_value.check(str, 'PushContent', push_content)
         if post_aid is not None:
-            check_value.check(self.config, str, 'PostAID', post_aid)
-        check_value.check(self.config, int, 'PostIndex', post_index)
+            check_value.check(str, 'PostAID', post_aid)
+        check_value.check(int, 'PostIndex', post_index)
 
         if len(board) == 0:
             raise ValueError(f'wrong parameter board: {board}')
@@ -980,7 +953,7 @@ class API:
             newest_index = self._get_newest_index(
                 data_type.index_type.BBS,
                 board=board)
-            check_value.check_index(self.config, 'post_index', post_index, newest_index)
+            check_value.check_index('post_index', post_index, newest_index)
 
         self._check_board(board)
 
@@ -1067,7 +1040,7 @@ class API:
 
     def _get_user(self, user_id) -> data_type.UserInfo:
 
-        check_value.check(self.config, str, 'UserID', user_id)
+        check_value.check(str, 'UserID', user_id)
         if len(user_id) < 2:
             raise ValueError(log.merge(
                 self.config,
@@ -1108,8 +1081,8 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'ptt_id', ptt_id)
-        check_value.check(self.config, str, 'content', content)
+        check_value.check(str, 'ptt_id', ptt_id)
+        check_value.check(str, 'content', content)
 
         if len(ptt_id) <= 2:
             raise ValueError(log.merge(
@@ -1142,9 +1115,7 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(
-            self.config, int, 'OperateType', operate_type,
-            value_class=data_type.waterball_operate_type)
+        check_value.check(int, 'OperateType', operate_type, value_class=data_type.waterball_operate_type)
 
         try:
             from . import _api_waterball
@@ -1188,9 +1159,7 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(
-            self.config, int, 'call_status', call_status,
-            value_class=data_type.call_status)
+        check_value.check(int, 'call_status', call_status, value_class=data_type.call_status)
 
         try:
             from . import _api_call_status
@@ -1210,8 +1179,8 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'ptt_id', ptt_id)
-        check_value.check(self.config, int, 'money', money)
+        check_value.check(str, 'ptt_id', ptt_id)
+        check_value.check(int, 'money', money)
         # Check user
         self.get_user(ptt_id)
 
@@ -1239,9 +1208,9 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'ptt_id', ptt_id)
-        check_value.check(self.config, str, 'title', title)
-        check_value.check(self.config, str, 'content', content)
+        check_value.check(str, 'ptt_id', ptt_id)
+        check_value.check(str, 'title', title)
+        check_value.check(str, 'content', content)
 
         self.get_user(ptt_id)
 
@@ -1327,21 +1296,20 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(
-            self.config, int, 'reply_type', reply_type,
-            value_class=data_type.reply_type)
-        check_value.check(self.config, str, 'board', board)
-        check_value.check(self.config, str, 'content', content)
+        check_value.check(int, 'reply_type', reply_type, value_class=data_type.reply_type)
+        check_value.check(str, 'board', board)
+        check_value.check(str, 'content', content)
         if post_aid is not None:
-            check_value.check(self.config, str, 'PostAID', post_aid)
+            check_value.check(str, 'PostAID', post_aid)
 
         if post_index != 0:
             newest_index = self._get_newest_index(
                 data_type.index_type.BBS,
                 board=board)
             check_value.check_index(
-                self.config, 'PostIndex',
-                post_index, max_value=newest_index)
+                'PostIndex',
+                post_index,
+                max_value=newest_index)
 
         sign_file_list = [str(x) for x in range(0, 10)]
         sign_file_list.append('x')
@@ -1395,8 +1363,8 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'board', board)
-        check_value.check(self.config, str, 'new_title', new_title)
+        check_value.check(str, 'board', board)
+        check_value.check(str, 'new_title', new_title)
 
         self._check_board(
             board,
@@ -1440,8 +1408,7 @@ class API:
             post_aid,
             post_index,
             search_type,
-            search_condition
-        )
+            search_condition)
 
     def get_favourite_board(self) -> list:
         self._one_thread()
@@ -1470,10 +1437,10 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'board', board)
-        check_value.check(self.config, int, 'bucket_days', bucket_days)
-        check_value.check(self.config, str, 'reason', reason)
-        check_value.check(self.config, str, 'ptt_id', ptt_id)
+        check_value.check(str, 'board', board)
+        check_value.check(int, 'bucket_days', bucket_days)
+        check_value.check(str, 'reason', reason)
+        check_value.check(str, 'ptt_id', ptt_id)
 
         self._get_user(ptt_id)
 
@@ -1505,25 +1472,21 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'ptt_id', ptt_id)
+        check_value.check(str, 'ptt_id', ptt_id)
         if min_page is not None:
             check_value.check_index(
-                self.config,
                 'min_page',
                 min_page)
         if max_page is not None:
             check_value.check_index(
-                self.config,
                 'max_page',
                 max_page)
         if min_page is not None and max_page is not None:
             check_value.check_index_range(
-                self.config,
                 'min_page',
                 min_page,
                 'max_page',
-                max_page
-            )
+                max_page)
 
         try:
             from . import _api_search_user
@@ -1541,7 +1504,7 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'board', board)
+        check_value.check(str, 'board', board)
 
         return self._get_board_info(board, get_post_kind, call_by_others=False)
 
@@ -1575,7 +1538,7 @@ class API:
             return None
         current_index = self.get_newest_index(data_type.index_type.MAIL)
         self.logger.info('current_index', current_index)
-        check_value.check_index(self.config, 'index', index, current_index)
+        check_value.check_index('index', index, current_index)
 
         try:
             from . import _api_mail
@@ -1601,7 +1564,7 @@ class API:
         self.config.log_last_value = None
 
         current_index = self.get_newest_index(data_type.index_type.MAIL)
-        check_value.check_index(self.config, index, current_index)
+        check_value.check_index(index, current_index)
 
         try:
             from . import _api_mail
@@ -1630,7 +1593,7 @@ class API:
     def get_aid_from_url(self, url: str) -> (str, str):
 
         # 檢查是否為字串
-        check_value.check(self.config, str, 'url', url)
+        check_value.check(str, 'url', url)
 
         # 檢查是否符合 PTT BBS 文章網址格式
         pattern = re.compile('https://www.ptt.cc/bbs/[-.\w]+/M.[\d]+.A[.\w]*.html')
@@ -1684,7 +1647,7 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'board', board)
+        check_value.check(str, 'board', board)
         self._check_board(board)
 
         try:
@@ -1709,10 +1672,10 @@ class API:
 
         self.config.log_last_value = None
 
-        check_value.check(self.config, str, 'board', board)
+        check_value.check(str, 'board', board)
         if post_aid is not None:
-            check_value.check(self.config, str, 'PostAID', post_aid)
-        check_value.check(self.config, int, 'PostIndex', post_index)
+            check_value.check(str, 'PostAID', post_aid)
+        check_value.check(int, 'PostIndex', post_index)
 
         if len(board) == 0:
             raise ValueError(log.merge(
@@ -1724,31 +1687,16 @@ class API:
                 ]))
 
         if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.error_parameter,
-                    i18n.BothInput
-                ]))
+            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
 
         if post_index == 0 and post_aid is None:
-            raise ValueError(log.merge(
-                self.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.error_parameter,
-                    i18n.NoInput
-                ]))
+            raise ValueError('wrong parameter post_index or post_aid must input')
 
         if post_index != 0:
             newest_index = self._get_newest_index(
                 data_type.index_type.BBS,
                 board=board)
             check_value.check_index(
-                self.config,
                 'PostIndex',
                 post_index,
                 newest_index)

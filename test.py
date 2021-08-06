@@ -1520,7 +1520,7 @@ if __name__ == '__main__':
         # change_pw()
         # get_aid_from_url()
         # get_bottom_post_list()
-        del_post()
+        # del_post()
 
         # bucket()
         # set_board_title()

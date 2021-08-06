@@ -203,10 +203,48 @@ check_new_password = None
 catch_bottom_post_success = None
 confirm_delete = None
 delete_success = None
+bucket_fail = None
+bucket_success = None
+input_bucket_days_reason = None
+new_settings_have_been_saved = None
+no_changes = None
+
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+
+
+    global no_changes
+    no_changes = specific_load(lang, [
+        '未改變任何設定',
+        'no changes have been made to any settings',
+    ])
+
+    global new_settings_have_been_saved
+    new_settings_have_been_saved = specific_load(lang, [
+        '已儲存新設定',
+        'new settings have been saved',
+    ])
+
+    global input_bucket_days_reason
+    input_bucket_days_reason = specific_load(lang, [
+        '輸入水桶天數與理由',
+        'input bucket days and reason',
+    ])
+
+    global bucket_success
+    bucket_success = specific_load(lang, [
+        '水桶成功',
+        'bucket success',
+    ])
+
+    global bucket_fail
+    bucket_fail = specific_load(lang, [
+        '水桶失敗',
+        'bucket fail',
+    ])
 
     global confirm_delete
     confirm_delete = specific_load(lang, [
