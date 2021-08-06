@@ -208,13 +208,18 @@ bucket_success = None
 input_bucket_days_reason = None
 new_settings_have_been_saved = None
 no_changes = None
+restore_connection = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
 
-
+    global restore_connection
+    restore_connection = specific_load(lang, [
+        '恢復連線',
+        'restore Connection',
+    ])
 
     global no_changes
     no_changes = specific_load(lang, [

@@ -30,16 +30,16 @@ def mark_post(
         search_condition: str) -> None:
     logger = Logger('mark_post', Logger.INFO)
 
-    check_value.check(int, 'mark_type', mark_type,
-                      value_class=data_type.mark_type)
-    check_value.check(str, 'board', board)
+    check_value.check_type(int, 'mark_type', mark_type,
+                           value_class=data_type.mark_type)
+    check_value.check_type(str, 'board', board)
     if post_aid is not None:
-        check_value.check(str, 'PostAID', post_aid)
-    check_value.check(int, 'PostIndex', post_index)
-    check_value.check(int, 'SearchType', search_type,
-                      value_class=data_type.post_search_type)
+        check_value.check_type(str, 'PostAID', post_aid)
+    check_value.check_type(int, 'PostIndex', post_index)
+    check_value.check_type(int, 'SearchType', search_type,
+                           value_class=data_type.post_search_type)
     if search_condition is not None:
-        check_value.check(str,
+        check_value.check_type(str,
                           'SearchCondition', search_condition)
 
     if len(board) == 0:
@@ -61,8 +61,7 @@ def mark_post(
         except ValueError:
             raise ValueError(f'wrong parameter search_condition: {search_condition}')
 
-        if not (-100 <= S <= 110):
-            raise ValueError(f'wrong parameter search_condition must between -100 ~ 100')
+        check_value.check_range('search_condition', S, -100, 100)
 
     if post_aid is not None and search_condition is not None:
         raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
