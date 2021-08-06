@@ -13,7 +13,6 @@ logger = Logger('check value', Logger.INFO)
 
 
 def check(
-        config,
         value_type,
         name,
         value,
@@ -32,11 +31,10 @@ def check(
 
 
 def check_index(
-        config,
         name,
         index,
         max_value=None) -> None:
-    check(config, int, name, index)
+    check(int, name, index)
     if index < 1:
         raise ValueError(f'{name} {i18n.must_bigger_than} 0')
 
@@ -48,14 +46,13 @@ def check_index(
 
 
 def check_index_range(
-        config,
         start_name,
         start_index,
         end_name,
         end_index,
         max_value=None) -> None:
-    check(config, int, start_name, start_index)
-    check(config, int, end_name, end_index)
+    check(int, start_name, start_index)
+    check(int, end_name, end_index)
 
     if start_index < 1:
         raise ValueError(f'{start_name} {start_index} {i18n.must_bigger_than} 0')
