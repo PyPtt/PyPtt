@@ -26,12 +26,12 @@ def set_board_title(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.NewSettingsHaveBeenSaved,
+            i18n.new_settings_have_been_saved,
             '◆ 已儲存新設定',
             break_detect=True,
         ),
         connect_core.TargetUnit(
-            i18n.NoChanges,
+            i18n.no_changes,
             '◆ 未改變任何設定',
             break_detect=True,
         ),
@@ -40,5 +40,4 @@ def set_board_title(
     api.connect_core.send(
         cmd,
         target_list,
-        screen_timeout=api.config.screen_long_timeout
-    )
+        screen_timeout=api.config.screen_long_timeout)
