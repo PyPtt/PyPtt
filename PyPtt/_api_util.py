@@ -334,6 +334,8 @@ def parse_query_post(api, ori_screen):
     else:
         push_number = push_number[-1]
         # print(PushNumber)
+        if push_number.startswith('爆'):
+            push_number = '爆'
 
         if push_number.startswith('+') or push_number.startswith('~'):
             push_number = push_number[1:]

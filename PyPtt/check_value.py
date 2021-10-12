@@ -12,7 +12,7 @@ except ModuleNotFoundError:
 logger = Logger('check value', Logger.INFO)
 
 
-def check(
+def check_type(
         value_type,
         name,
         value,
@@ -30,11 +30,25 @@ def check(
             raise ValueError(f'Unknown {name}', value)
 
 
+def check_range(
+        name,
+        value,
+        min_value,
+        max_value) -> None:
+    check_type(int, name, value)
+    check_type(int, 'min_value', min_value)
+    check_type(int, 'max_value', max_value)
+
+    if min_value <= value <= max_value:
+        return
+    raise ValueError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
+
+
 def check_index(
         name,
         index,
         max_value=None) -> None:
-    check(int, name, index)
+    check_type(int, name, index)
     if index < 1:
         raise ValueError(f'{name} {i18n.must_bigger_than} 0')
 
@@ -51,8 +65,8 @@ def check_index_range(
         end_name,
         end_index,
         max_value=None) -> None:
-    check(int, start_name, start_index)
-    check(int, end_name, end_index)
+    check_type(int, start_name, start_index)
+    check_type(int, end_name, end_index)
 
     if start_index < 1:
         raise ValueError(f'{start_name} {start_index} {i18n.must_bigger_than} 0')
