@@ -207,17 +207,13 @@ class API(object):
 
             try:
                 if self.config.connect_mode == connect_mode.TELNET:
-
                     self._core = telnetlib.Telnet(telnet_host, self.config.port)
-
                 else:
-
                     if not threading.current_thread() is threading.main_thread():
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
                     self.logger.debug('USER_AGENT', websockets.http.USER_AGENT)
-
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             websocket_host,
