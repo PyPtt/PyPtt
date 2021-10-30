@@ -2,11 +2,9 @@ from SingleLog.log import Logger
 
 try:
     from . import i18n
-    from . import log
     from . import lib_util
 except ModuleNotFoundError:
     import i18n
-    import log
     import lib_util
 
 logger = Logger('check value', Logger.INFO)

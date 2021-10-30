@@ -5,11 +5,8 @@ from SingleLog.log import Logger
 
 try:
     from . import lib_util
-    from . import log
 except ModuleNotFoundError:
     import lib_util
-    import log
-
 
 class Target(object):
     MainMenu = [
