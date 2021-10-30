@@ -160,6 +160,11 @@ class API(object):
         self.logger = Logger('connector', config.log_level)
         self.logger.info(i18n.connect_core, i18n.init)
 
+        if self.config.connect_mode == connect_mode.TELNET:
+            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
+        elif self.config.connect_mode == connect_mode.WEBSOCKET:
+            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+
     def connect(self) -> None:
         def _wait():
             for i in range(self.config.retry_wait_time):
@@ -193,11 +198,6 @@ class API(object):
             telnet_host = self.config.host
             websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
-
-        if self.config.connect_mode == connect_mode.TELNET:
-            self.logger.info(i18n.connect_mode, i18n.connect_mode_TELNET)
-        elif self.config.connect_mode == connect_mode.WEBSOCKET:
-            self.logger.info(i18n.connect_mode, i18n.connect_mode_WEBSOCKET)
 
         connect_success = False
 
