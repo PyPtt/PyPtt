@@ -8,13 +8,10 @@ register_uao()
 
 try:
     from . import lib_util
-    from . import log
 except ModuleNotFoundError:
     import lib_util
-    import log
 except ImportError:
     from PyPtt import lib_util
-    from PyPtt import log
 
 
 class Target(object):
