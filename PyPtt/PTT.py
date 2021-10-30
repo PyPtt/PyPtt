@@ -114,13 +114,13 @@ class API:
         self.config.host = host
 
         if self.config.host == data_type.host_type.PTT1:
-            self.logger.info(i18n.connect_host, i18n.PTT)
+            self.logger.info(i18n.set_connect_host, i18n.PTT)
         elif self.config.host == data_type.host_type.PTT2:
-            self.logger.info(i18n.connect_host, i18n.PTT2)
+            self.logger.info(i18n.set_connect_host, i18n.PTT2)
         elif self.config.host == data_type.host_type.LOCALHOST:
-            self.logger.info(i18n.connect_host, i18n.localhost)
+            self.logger.info(i18n.set_connect_host, i18n.localhost)
         else:
-            self.logger.info(i18n.connect_host, self.config.host)
+            self.logger.info(i18n.set_connect_host, self.config.host)
 
         ##################
 
