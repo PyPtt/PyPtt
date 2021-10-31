@@ -6,34 +6,18 @@ import progressbar
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-try:
-    from . import data_type
-    from . import config
-    from . import lib_util
-    from . import i18n
-    from . import connect_core
-    from . import screens
-    from . import exceptions
-    from . import command
-    from . import check_value
-    from . import version
-
-    from . import _api_post
-    from . import _api_get_time
-except ModuleNotFoundError:
-    import data_type
-    import config
-    import lib_util
-    import i18n
-    import connect_core
-    import screens
-    import exceptions
-    import command
-    import check_value
-    import version
-
-    import _api_post
-    import _api_get_time
+from . import data_type
+from . import config
+from . import lib_util
+from . import i18n
+from . import connect_core
+from . import screens
+from . import exceptions
+from . import command
+from . import check_value
+from . import version
+from . import _api_post
+from . import _api_get_time
 
 logger_level = Logger
 
@@ -59,8 +43,7 @@ class API:
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
 
-        self.logger.info('PyPtt', version.V)
-        self.logger.info('Developed by CodingMan')
+        self.logger.info(f'PyPtt v {version.V} developed by CoidngMan')
 
         self._login_status = False
         self.unregistered_user = True

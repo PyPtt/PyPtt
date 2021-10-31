@@ -1,23 +1,13 @@
 from SingleLog.log import Logger
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import screens
-    from . import command
-    from . import check_value
-    from . import exceptions
-    from . import lib_util
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import screens
-    import command
-    import check_value
-    import exceptions
-    import lib_util
+from . import data_type
+from . import i18n
+from . import connect_core
+from . import screens
+from . import command
+from . import check_value
+from . import exceptions
+from . import lib_util
 
 
 def mark_post(

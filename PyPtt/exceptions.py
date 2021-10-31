@@ -1,9 +1,5 @@
-try:
-    from . import data_type
-    from . import i18n
-except ModuleNotFoundError:
-    import data_type
-    import i18n
+from . import data_type
+from . import i18n
 
 
 class Error(Exception):

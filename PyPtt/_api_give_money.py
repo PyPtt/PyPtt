@@ -1,13 +1,7 @@
-try:
-    from . import i18n
-    from . import connect_core
-    from . import exceptions
-    from . import command
-except ModuleNotFoundError:
-    import i18n
-    import connect_core
-    import exceptions
-    import command
+from . import i18n
+from . import connect_core
+from . import exceptions
+from . import command
 
 
 def give_money(

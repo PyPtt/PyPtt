@@ -1,13 +1,8 @@
 from SingleLog.log import Logger
 
-try:
-    from . import i18n
-    from . import connect_core
-    from . import command
-except ModuleNotFoundError:
-    import i18n
-    import connect_core
-    import command
+from . import i18n
+from . import connect_core
+from . import command
 
 
 def search_user(
