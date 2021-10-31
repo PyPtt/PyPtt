@@ -1,8 +1,8 @@
 #!/bin/sh
 
-echo PyPtt uploader v 1.0.1
+echo PyPtt uploader v 1.0.2
 
-rm dist/*
+rm -r dist build
 python3 setup.py sdist bdist_wheel --universal
 
 case $1 in
