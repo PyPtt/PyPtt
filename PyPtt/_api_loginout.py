@@ -62,7 +62,7 @@ def login(
             return i18n.kick_other_login
         return i18n.not_kick_other_login
 
-    def kick_other_loginResponse(screen):
+    def kick_other_login_response(screen):
         if api.config.kick_other_login:
             return 'y' + command.enter
         return 'n' + command.enter
@@ -153,7 +153,7 @@ def login(
         connect_core.TargetUnit(
             kick_other_loginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
-            response=kick_other_loginResponse),
+            response=kick_other_login_response),
         connect_core.TargetUnit(
             i18n.any_key_continue,
             '◆ 您的註冊申請單尚在處理中',
@@ -296,3 +296,4 @@ def login(
         logger.info(i18n.picks_in_register, api.process_picks)
 
     api._login_status = True
+    logger.info(i18n.login_success)
