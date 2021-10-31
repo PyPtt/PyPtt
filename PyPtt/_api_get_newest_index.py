@@ -2,26 +2,14 @@ import re
 
 from SingleLog.log import Logger
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    # from . import log
-    from . import screens
-    from . import exceptions
-    from . import command
-    from . import check_value
-    from . import _api_util
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    # import log
-    import screens
-    import exceptions
-    import command
-    import check_value
-    import _api_util
+from . import data_type
+from . import i18n
+from . import connect_core
+from . import screens
+from . import exceptions
+from . import command
+from . import check_value
+from . import _api_util
 
 
 def _get_newest_index(api) -> int:

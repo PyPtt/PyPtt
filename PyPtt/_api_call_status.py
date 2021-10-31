@@ -1,19 +1,11 @@
 from SingleLog.log import Logger
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import screens
-    from . import exceptions
-    from . import command
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import screens
-    import exceptions
-    import command
+from . import data_type
+from . import i18n
+from . import connect_core
+from . import screens
+from . import exceptions
+from . import command
 
 
 def get_call_status(api) -> None:
@@ -99,8 +91,7 @@ def set_call_status(api, call_status) -> None:
         connect_core.TargetUnit(
             i18n.set_call_status_success,
             screens.Target.InUserList,
-            break_detect=True)
-    ]
+            break_detect=True)]
 
     while current_call_status != call_status:
         api.connect_core.send(

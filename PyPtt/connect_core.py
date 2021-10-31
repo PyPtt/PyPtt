@@ -12,23 +12,14 @@ from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 from uao import register_uao
 
+from . import data_type
+from . import i18n
+from . import screens
+from . import command
+from . import exceptions
+from . import version
+
 register_uao()
-
-try:
-    from . import data_type
-    from . import i18n
-    from . import screens
-    from . import command
-    from . import exceptions
-    from . import version
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import screens
-    import command
-    import exceptions
-    import version
-
 websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 
 
@@ -161,6 +152,11 @@ class API(object):
         self.logger = Logger('connector', config.log_level)
         self.logger.info(i18n.connect_core, i18n.init)
 
+        if self.config.connect_mode == connect_mode.TELNET:
+            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
+        elif self.config.connect_mode == connect_mode.WEBSOCKET:
+            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+
     def connect(self) -> None:
         def _wait():
             for i in range(self.config.retry_wait_time):
@@ -195,11 +191,6 @@ class API(object):
             telnet_host = self.config.host
             websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
-
-        if self.config.connect_mode == connect_mode.TELNET:
-            self.logger.info(i18n.connect_mode, i18n.connect_mode_TELNET)
-        elif self.config.connect_mode == connect_mode.WEBSOCKET:
-            self.logger.info(i18n.connect_mode, i18n.connect_mode_WEBSOCKET)
 
         connect_success = False
 

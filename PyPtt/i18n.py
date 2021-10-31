@@ -1,7 +1,4 @@
-try:
-    from . import lib_util
-except ModuleNotFoundError:
-    import lib_util
+from . import lib_util
 
 
 class language(object):
@@ -41,6 +38,7 @@ chinese_traditional_module = None
 english_module = None
 init = None
 connect_host = None
+set_connect_host = None
 PTT = None
 PTT2 = None
 localhost = None
@@ -58,6 +56,7 @@ active = None
 connect_mode = None
 connect_mode_TELNET = None
 connect_mode_WEBSOCKET = None
+set_connect_mode = None
 fail = None
 connect = None
 hide_sensitive_info = None
@@ -1131,7 +1130,12 @@ def load(lang):
     global connect_mode
     connect_mode = specific_load(lang, [
         '連線模式',
-        'connect mode'])
+        'the connect mode'])
+
+    global set_connect_mode
+    set_connect_mode = specific_load(lang, [
+        '設定連線模式',
+        'set up the connect mode'])
 
     global active
     active = specific_load(lang, [
@@ -1206,7 +1210,12 @@ def load(lang):
     global connect_host
     connect_host = specific_load(lang, [
         '連線主機',
-        'connect host'])
+        'the connection host'])
+
+    global set_connect_host
+    set_connect_host = specific_load(lang, [
+        '設定連線主機',
+        'set up the connection host'])
 
     global PTT
     PTT = specific_load(lang, [

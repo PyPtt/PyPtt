@@ -3,18 +3,12 @@ import sys
 
 from SingleLog.log import Logger
 from uao import register_uao
+from . import lib_util
 
 register_uao()
 
-try:
-    from . import lib_util
-except ModuleNotFoundError:
-    import lib_util
-except ImportError:
-    from PyPtt import lib_util
 
-
-class Target(object):
+class Target:
     MainMenu = [
         '離開，再見',
         '人, 我是',

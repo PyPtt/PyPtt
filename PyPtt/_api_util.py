@@ -2,18 +2,11 @@ import re
 
 from SingleLog.log import Logger
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import screens
-    from . import command
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import screens
-    import command
+from . import data_type
+from . import i18n
+from . import connect_core
+from . import screens
+from . import command
 
 
 def get_content(api, post_mode: bool = True):
