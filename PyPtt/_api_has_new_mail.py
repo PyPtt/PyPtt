@@ -2,18 +2,11 @@ import re
 
 from SingleLog.log import Logger
 
-try:
-    from . import i18n
-    from . import connect_core
-    from . import screens
-    from . import command
-    from . import _api_util
-except ModuleNotFoundError:
-    import i18n
-    import connect_core
-    import screens
-    import command
-    import _api_util
+from . import i18n
+from . import connect_core
+from . import screens
+from . import command
+from . import _api_util
 
 
 def has_new_mail(api) -> int:

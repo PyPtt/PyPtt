@@ -2,26 +2,17 @@ import re
 
 from SingleLog.log import Logger
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import screens
-    from . import exceptions
-    from . import command
-    from . import _api_util
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import screens
-    import exceptions
-    import command
-    import _api_util
+from . import data_type
+from . import i18n
+from . import connect_core
+from . import screens
+from . import exceptions
+from . import command
+from . import _api_util
 
 
 def logout(api) -> None:
-    logger = Logger('api_logout', api.config.log_level)
+    logger = Logger('api.logout', api.config.log_level)
 
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
@@ -59,7 +50,7 @@ def login(
         ptt_id,
         password,
         kick_other_login):
-    logger = Logger('api_login', api.config.log_level)
+    logger = Logger('api.login', api.config.log_level)
 
     if api._login_status:
         api.logout()
