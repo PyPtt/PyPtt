@@ -1,7 +1,4 @@
-try:
-    from . import lib_util
-except ModuleNotFoundError:
-    import lib_util
+from . import lib_util
 
 
 class language(object):

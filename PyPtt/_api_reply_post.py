@@ -1,17 +1,10 @@
 from SingleLog.log import Logger
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import exceptions
-    from . import command
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import exceptions
-    import command
+from . import data_type
+from . import i18n
+from . import connect_core
+from . import exceptions
+from . import command
 
 
 def reply_post(

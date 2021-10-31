@@ -1,15 +1,8 @@
-try:
-    from . import i18n
-    from . import connect_core
-    from . import screens
-    from . import exceptions
-    from . import command
-except ModuleNotFoundError:
-    import i18n
-    import connect_core
-    import screens
-    import exceptions
-    import command
+from . import i18n
+from . import connect_core
+from . import screens
+from . import exceptions
+from . import command
 
 
 def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:

@@ -3,12 +3,10 @@ import sys
 
 from SingleLog.log import Logger
 
-try:
-    from . import lib_util
-except ModuleNotFoundError:
-    import lib_util
+from . import lib_util
 
-class Target(object):
+
+class Target:
     MainMenu = [
         '離開，再見…',
         '人, 我是',

@@ -12,23 +12,14 @@ from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 from uao import register_uao
 
+from . import data_type
+from . import i18n
+from . import screens
+from . import command
+from . import exceptions
+from . import version
+
 register_uao()
-
-try:
-    from . import data_type
-    from . import i18n
-    from . import screens
-    from . import command
-    from . import exceptions
-    from . import version
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import screens
-    import command
-    import exceptions
-    import version
-
 websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 
 
