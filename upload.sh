@@ -1,8 +1,8 @@
 #!/bin/sh
 
-echo PTT Library uploader v 1.0.0
+echo PTT Library uploader v 1.0.1
 
-rm dist/*
+rm -r dist build
 
 python3 setup.py sdist
 twine upload dist/*
