@@ -5,6 +5,8 @@ import threading
 import time
 import traceback
 
+from SingleLog.log import Logger
+
 from PyPtt import PTT
 
 
@@ -62,7 +64,7 @@ def init():
 
     ptt_bot = PTT.API(
         log_handler=handler)
-    ptt_bot.log('Test log')
+    logger.info('Test log')
 
 
 def performance_test():
@@ -828,25 +830,25 @@ def get_user():
 
     for user in test_user:
         try:
-            ptt_bot.log(user)
+            logger.info(user)
             user = ptt_bot.get_user(user)
             if user is None:
                 return
 
-            ptt_bot.log('使用者ID: ' + user.id)
-            ptt_bot.log('使用者經濟狀況: ' + str(user.money))
-            ptt_bot.log('登入次數: ' + str(user.login_time))
-            ptt_bot.log('有效文章數: ' + str(user.legal_post))
-            ptt_bot.log('退文文章數: ' + str(user.illegal_post))
-            ptt_bot.log('目前動態: ' + user.status)
-            ptt_bot.log('信箱狀態: ' + user.mail_status)
-            ptt_bot.log('最後登入時間: ' + user.last_login)
-            ptt_bot.log('上次故鄉: ' + user.last_ip)
-            ptt_bot.log('五子棋戰績: ' + user.five_chess)
-            ptt_bot.log('象棋戰績:' + user.chess)
-            ptt_bot.log('簽名檔:' + user.signature_file)
+            logger.info('使用者ID: ' + user.id)
+            logger.info('使用者經濟狀況: ' + str(user.money))
+            logger.info('登入次數: ' + str(user.login_time))
+            logger.info('有效文章數: ' + str(user.legal_post))
+            logger.info('退文文章數: ' + str(user.illegal_post))
+            logger.info('目前動態: ' + user.status)
+            logger.info('信箱狀態: ' + user.mail_status)
+            logger.info('最後登入時間: ' + user.last_login)
+            logger.info('上次故鄉: ' + user.last_ip)
+            logger.info('五子棋戰績: ' + user.five_chess)
+            logger.info('象棋戰績:' + user.chess)
+            logger.info('簽名檔:' + user.signature_file)
 
-            ptt_bot.log('=====================')
+            logger.info('=====================')
 
         except PTT.exceptions.NoSuchUser:
             print('無此使用者')
@@ -1044,10 +1046,10 @@ def mail():
 
 def has_new_mail():
     result = ptt_bot.has_new_mail()
-    ptt_bot.log(f'{result} 封新信')
+    logger.info(f'{result} 封新信')
 
     result = ptt_bot.has_new_mail()
-    ptt_bot.log(f'{result} 封新信')
+    logger.info(f'{result} 封新信')
 
 
 ThreadBot = None
@@ -1154,10 +1156,10 @@ def set_board_title():
                     )
                     break
                 except PTT.exceptions.LoginError:
-                    ptt_bot.log('登入失敗')
+                    logger.info('登入失敗')
                     time.sleep(1)
                 except PTT.exceptions.ConnectError:
-                    ptt_bot.log('登入失敗')
+                    logger.info('登入失敗')
                     time.sleep(1)
         print('已經更新時間 ' + time_format, end='\r')
         try:
@@ -1338,13 +1340,13 @@ github: https://github.com/PttCodingMan/PyPtt
         current_index = index - int(i)
         try:
             ptt_bot.del_post('Test', post_index=current_index)
-            ptt_bot.log(f'Test {current_index} 刪除成功')
+            logger.info(f'Test {current_index} 刪除成功')
         except PTT.exceptions.NoPermission:
-            ptt_bot.log(f'Test {current_index} 無刪除權限')
+            logger.info(f'Test {current_index} 無刪除權限')
         except PTT.exceptions.DeletedPost:
-            ptt_bot.log(f'Test {current_index} 已經被刪除')
+            logger.info(f'Test {current_index} 已經被刪除')
         except PTT.exceptions.NoSuchPost:
-            ptt_bot.log(f'Test {current_index} 無此文章')
+            logger.info(f'Test {current_index} 無此文章')
 
 
 def bucket():
@@ -1372,12 +1374,12 @@ def search_user():
 
 def get_mail():
     mail_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
-    ptt_bot.log(
+    logger.info(
         '最新信件編號',
         mail_index)
 
     for i in reversed(range(1, mail_index + 1)):
-        ptt_bot.log(
+        logger.info(
             '檢查信件編號',
             i)
 
@@ -1398,12 +1400,12 @@ def get_mail():
         search_type=PTT.data_type.mail_search_type.KEYWORD,
         search_condition='AI Labs')
 
-    ptt_bot.log(
+    logger.info(
         '最新信件編號',
         mail_index)
 
     for i in reversed(range(1, mail_index + 1)):
-        ptt_bot.log(
+        logger.info(
             '檢查信件編號',
             i)
 
@@ -1424,7 +1426,7 @@ def get_mail():
         search_list=search_list)
 
     for i in reversed(range(1, mail_index + 1)):
-        ptt_bot.log(
+        logger.info(
             '檢查信件編號',
             i)
 
@@ -1441,6 +1443,8 @@ def change_pw():
 
 if __name__ == '__main__':
     print('Welcome to PyPtt v ' + PTT.version.V + ' test case')
+    
+    logger = Logger('test case', Logger.INFO)
 
     try:
         # init()
@@ -1474,23 +1478,23 @@ if __name__ == '__main__':
                 # kick_other_login=True
             )
         except PTT.exceptions.LoginError:
-            ptt_bot.log('登入失敗')
+            logger.info('登入失敗')
             sys.exit()
         except PTT.exceptions.WrongIDorPassword:
-            ptt_bot.log('帳號密碼錯誤')
+            logger.info('帳號密碼錯誤')
             sys.exit()
         except PTT.exceptions.LoginTooOften:
-            ptt_bot.log('請稍等一下再登入')
+            logger.info('請稍等一下再登入')
             sys.exit()
 
         if ptt_bot.unregistered_user:
-            ptt_bot.log('未註冊使用者')
+            logger.info('未註冊使用者')
 
             if ptt_bot.process_picks != 0:
-                ptt_bot.log(f'註冊單處理順位 {ptt_bot.process_picks}')
+                logger.info(f'註冊單處理順位 {ptt_bot.process_picks}')
 
         if ptt_bot.registered_user:
-            ptt_bot.log('已註冊使用者')
+            logger.info('已註冊使用者')
 
         ###################################
 
