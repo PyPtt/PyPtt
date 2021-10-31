@@ -109,7 +109,7 @@ setup(
     #
     # py_modules=["PTTLibrary.py"],
     #
-    packages=['PyPtt'],  # Required
+    packages=['PyPtt', 'PyPtt_0_9'],  # Required
 
     # package_dir={'PTTLibrary': 'PTT'},
     # This field lists other packages that your project depends on to run.
