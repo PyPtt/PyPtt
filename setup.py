@@ -9,7 +9,6 @@ from PyPtt import version
 # https://github.com/pypa/sampleproject
 
 long_description = '''PyPtt (PTT Library) 是一套 Pure Python PTT API。具備大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號，你都可以在這裡找到完整的使用範例
-可自由選擇 WebSocket 或者 Telnet 來連線，並支援繁體中文與英文顯示
 詳情請洽 https://github.com/PttCodingMan/PyPtt
 '''
 
@@ -72,11 +71,8 @@ setup(
     # For a list of valid classifiers, see
     # https://pypi.org/classifiers/
     classifiers=[  # Optional
-        # How mature is this project? Common values are
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
-        'Development Status :: 4 - Beta',
+
+        'Development Status :: 5 - Production/Stable',
 
         'Operating System :: OS Independent',
 
@@ -85,7 +81,6 @@ setup(
         'Topic :: Communications :: BBS',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
-        'Topic :: Terminals :: Telnet',
         # Pick your license as you wish
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
 
@@ -102,7 +97,7 @@ setup(
     # project page. What does your project relate to?
     #
     # Note that this is a string of words separated by whitespace, not a list.
-    keywords=['PTT', 'crawler', 'bot', 'library', 'telnet', 'websocket'],  # Optional
+    keywords=['PTT', 'crawler', 'bot', 'library', 'websocket'],  # Optional
 
     python_requires='>=3.6',
     # You can just specify package directories manually here if your project is
