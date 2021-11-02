@@ -122,7 +122,7 @@ def test_init():
         assert False
 
     try:
-        PTT.API(connect_mode=PTT.connect_core.connect_mode.TELNET)
+        PTT.API(connect_mode=PTT.connect_core.ConnectMode.TELNET)
         assert False
     except ValueError:
         log('TELNET 測試通過')
@@ -131,7 +131,7 @@ def test_init():
         assert False
 
     try:
-        PTT.API(connect_mode=PTT.connect_core.connect_mode.WEBSOCKET)
+        PTT.API(connect_mode=PTT.connect_core.ConnectMode.WEBSOCKET)
         log('WEBSOCKET 測試通過')
     except ValueError:
         assert False
