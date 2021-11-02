@@ -23,7 +23,7 @@ register_uao()
 websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 
 
-class connect_mode(object):
+class ConnectMode(object):
     TELNET = 1
     WEBSOCKET = 2
 
@@ -152,9 +152,9 @@ class API(object):
         self.logger = Logger('connector', config.log_level)
         self.logger.info(i18n.connect_core, i18n.init)
 
-        if self.config.connect_mode == connect_mode.TELNET:
+        if self.config.ConnectMode == ConnectMode.TELNET:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
-        elif self.config.connect_mode == connect_mode.WEBSOCKET:
+        elif self.config.ConnectMode == ConnectMode.WEBSOCKET:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
 
     def connect(self) -> None:
@@ -197,7 +197,7 @@ class API(object):
         for _ in range(2):
 
             try:
-                if self.config.connect_mode == connect_mode.TELNET:
+                if self.config.ConnectMode == ConnectMode.TELNET:
                     self._core = telnetlib.Telnet(telnet_host, self.config.port)
                 else:
                     if not threading.current_thread() is threading.main_thread():
@@ -423,7 +423,7 @@ class API(object):
             else:
                 self.logger.debug(i18n.send_msg, msg)
 
-            if self.config.connect_mode == connect_mode.TELNET:
+            if self.config.ConnectMode == ConnectMode.TELNET:
                 try:
                     self._core.read_very_eager()
                     self._core.write(msg)
@@ -453,7 +453,7 @@ class API(object):
 
                 recv_data_obj = RecvData()
 
-                if self.config.connect_mode == connect_mode.TELNET:
+                if self.config.ConnectMode == ConnectMode.TELNET:
                     try:
                         recv_data_obj.data = self._core.read_very_eager()
                     except EOFError:
@@ -558,7 +558,7 @@ class API(object):
         return -1
 
     def close(self):
-        if self.config.connect_mode == connect_mode.WEBSOCKET:
+        if self.config.ConnectMode == ConnectMode.WEBSOCKET:
             asyncio.get_event_loop().run_until_complete(self._core.close())
         else:
             self._core.close()

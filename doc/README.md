@@ -187,10 +187,11 @@ Since 0.9.1
 
 ```python
 from PyPtt import PTT
+
 ptt_bot = PTT.API(
     # (預設值) WEBSOCKET
-    # connect_mode=PTT.connect_core.connect_mode.WEBSOCKET,
-    connect_mode=PTT.connect_core.connect_mode.TELNET,
+    # connect_mode=PTT.connect_core.ConnectMode.WEBSOCKET,
+    connect_mode=PTT.connect_core.ConnectMode.TELNET,
     # (預設值) 23
     port=8888)
 ```

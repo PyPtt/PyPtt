@@ -57,7 +57,7 @@ def login(
 
     api.config.kick_other_login = kick_other_login
 
-    def kick_other_loginDisplayMsg():
+    def kick_other_login_display_msg():
         if api.config.kick_other_login:
             return i18n.kick_other_login
         return i18n.not_kick_other_login
@@ -96,10 +96,7 @@ def login(
     logger.info(i18n.login_id, ptt_id)
 
     def switch_to_utf8(_):
-        log.log(
-            api.config,
-            log.level.DEBUG,
-            '密碼正確，轉換至 utf-8')
+        logger.info('密碼正確，轉換至 utf-8')
         api.connect_core.encoding = 'utf-8'
 
     target_list = [
@@ -154,17 +151,17 @@ def login(
             i18n.post_not_finish,
             '有一篇文章尚未完成',
             response='Q' + command.enter),
+        # connect_core.TargetUnit(
+        #     i18n.in_login_process_please_wait,
+        #     '登入中，請稍候'),
         connect_core.TargetUnit(
             i18n.in_login_process_please_wait,
-            '登入中，請稍候'),
-        connect_core.TargetUnit(
-            i18n.SigningUnPleaseWait,
             '密碼正確',
             handler=switch_to_utf8
         ),
         # 密碼正確
         connect_core.TargetUnit(
-            kick_other_loginDisplayMsg,
+            kick_other_login_display_msg,
             '您想刪除其他重複登入的連線嗎',
             response=kick_other_login_response),
         connect_core.TargetUnit(
@@ -227,7 +224,7 @@ def login(
     cmd_list = list()
     # cmd_list.append(IAC + WILL + NAWS)
     cmd_list.append(ptt_id + ',')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(password)
     cmd_list.append(command.enter)
 

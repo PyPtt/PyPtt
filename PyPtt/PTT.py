@@ -108,16 +108,16 @@ class API:
         ##################
 
         if isinstance(host, int):
-            connect_core.connect_mode.min_value = connect_core.connect_mode.WEBSOCKET
-            connect_core.connect_mode.max_value = connect_core.connect_mode.WEBSOCKET
+            connect_core.ConnectMode.min_value = connect_core.ConnectMode.WEBSOCKET
+            connect_core.ConnectMode.max_value = connect_core.ConnectMode.WEBSOCKET
         elif isinstance(host, str):
-            connect_core.connect_mode.min_value = connect_core.connect_mode.TELNET
-            connect_core.connect_mode.max_value = connect_core.connect_mode.WEBSOCKET
+            connect_core.ConnectMode.min_value = connect_core.ConnectMode.TELNET
+            connect_core.ConnectMode.max_value = connect_core.ConnectMode.WEBSOCKET
 
         check_value.check_type(int, 'connect_mode', connect_mode)
         if connect_mode == 0:
             connect_mode = self.config.connect_mode
-        elif not lib_util.check_range(connect_core.connect_mode, connect_mode):
+        elif not lib_util.check_range(connect_core.ConnectMode, connect_mode):
             raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
         else:
             self.config.connect_mode = connect_mode
