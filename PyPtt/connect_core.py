@@ -1,9 +1,9 @@
 import asyncio
-import re
 import telnetlib
 import threading
 import time
 import traceback
+from enum import Enum, auto, unique
 
 import websockets
 import websockets.exceptions
@@ -12,26 +12,29 @@ from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 from uao import register_uao
 
+from . import command
 from . import data_type
+from . import exceptions
 from . import i18n
 from . import screens
-from . import command
-from . import exceptions
 from . import version
 
 register_uao()
 websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 
 
-class ConnectMode(object):
-    TELNET = 1
-    WEBSOCKET = 2
-
-    min_value = TELNET
-    max_value = WEBSOCKET
+class AutoName(Enum):
+    def _generate_next_value_(name, start, count, last_values):
+        return name
 
 
-class TargetUnit(object):
+@unique
+class ConnectMode(AutoName):
+    TELNET = auto()
+    WEBSOCKET = auto()
+
+
+class TargetUnit:
     def __init__(
             self,
             display_msg,
@@ -152,9 +155,9 @@ class API(object):
         self.logger = Logger('connector', config.log_level)
         self.logger.info(i18n.connect_core, i18n.init)
 
-        if self.config.ConnectMode == ConnectMode.TELNET:
+        if self.config.connect_mode == ConnectMode.TELNET:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
-        elif self.config.ConnectMode == ConnectMode.WEBSOCKET:
+        elif self.config.connect_mode == ConnectMode.WEBSOCKET:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
 
     def connect(self) -> None:
@@ -197,7 +200,7 @@ class API(object):
         for _ in range(2):
 
             try:
-                if self.config.ConnectMode == ConnectMode.TELNET:
+                if self.config.connect_mode == ConnectMode.TELNET:
                     self._core = telnetlib.Telnet(telnet_host, self.config.port)
                 else:
                     if not threading.current_thread() is threading.main_thread():
@@ -423,7 +426,7 @@ class API(object):
             else:
                 self.logger.debug(i18n.send_msg, msg)
 
-            if self.config.ConnectMode == ConnectMode.TELNET:
+            if self.config.connect_mode == ConnectMode.TELNET:
                 try:
                     self._core.read_very_eager()
                     self._core.write(msg)
@@ -453,7 +456,7 @@ class API(object):
 
                 recv_data_obj = RecvData()
 
-                if self.config.ConnectMode == ConnectMode.TELNET:
+                if self.config.connect_mode == ConnectMode.TELNET:
                     try:
                         recv_data_obj.data = self._core.read_very_eager()
                     except EOFError:
@@ -558,7 +561,7 @@ class API(object):
         return -1
 
     def close(self):
-        if self.config.ConnectMode == ConnectMode.WEBSOCKET:
+        if self.config.connect_mode == ConnectMode.WEBSOCKET:
             asyncio.get_event_loop().run_until_complete(self._core.close())
         else:
             self._core.close()

@@ -1,9 +1,9 @@
 from SingleLog.log import Logger
 
-from . import version
+from . import connect_core
 from . import data_type
 from . import i18n
-from . import connect_core
+from . import version
 
 
 class Config:
