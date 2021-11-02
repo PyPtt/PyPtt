@@ -141,6 +141,7 @@ class ReceiveDataQueue(object):
 class API(object):
     def __init__(self, config):
 
+        self.encoding = 'big5-uao'
         self.config = config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
@@ -171,6 +172,7 @@ class API(object):
 
                 time.sleep(1)
 
+        self.encoding = 'big5-uao'
         self.logger.info(i18n.connect_core, i18n.active)
 
         if self.config.host == data_type.host_type.PTT1:
@@ -375,16 +377,12 @@ class API(object):
 
             # screen = re.sub('\[[\d+;]*m', '', screen)
 
-            recv_screen = re.sub(r'[\r]', '', recv_screen)
-            # recv_screen = re.sub(r'[\x00-\x08]', '', recv_screen)
-            recv_screen = re.sub(r'[\x00-\x07]', '', recv_screen)
-            # print(recv_screen)
-            recv_screen = re.sub(r'[\x0b\x0c]', '', recv_screen)
-            # screen = re.sub(r'[\x0e-\x1f]', '', screen)
-
-            recv_screen = re.sub(r'[\x0e-\x1A]', '', recv_screen)
-            recv_screen = re.sub(r'[\x1C-\x1F]', '', recv_screen)
-            recv_screen = re.sub(r'[\x7f-\xff]', '', recv_screen)
+            # recv_screen = re.sub(r'[\r]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x00-\x07]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x0b\x0c]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x0e-\x1A]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x1C-\x1F]', '', recv_screen)
+            # recv_screen = re.sub(r'[\x7f-\xff]', '', recv_screen)
 
             recv_screen = screens.vt100(recv_screen)
 
@@ -483,19 +481,12 @@ class API(object):
                         raise exceptions.ConnectionClosed()
 
                 receive_data_buffer += recv_data_obj.data
-                receive_data_temp = receive_data_buffer.decode(
-                    'big5uao', errors='replace')
-                screen = clean_screen(receive_data_temp)
+                # receive_data_temp = receive_data_buffer.decode(
+                #     'utf-8', errors='replace')
+                # screen = clean_screen(receive_data_temp)
 
-                # qq = receive_data_temp.encode('utf-8')
-                # b = None
-                # for q in qq:
-                #     if not b:
-                #         b = f'bytes([{q}'
-                #     else:
-                #         b += f', {q}'
-                # b += f'])'
-                # print(b)
+                vt100_p = screens.VT100Parser(receive_data_buffer, self.encoding)
+                screen = vt100_p.screen
 
                 find_target = False
                 for target in target_list:
