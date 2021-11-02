@@ -95,6 +95,13 @@ def login(
 
     logger.info(i18n.login_id, ptt_id)
 
+    def switch_to_utf8(_):
+        log.log(
+            api.config,
+            log.level.DEBUG,
+            '密碼正確，轉換至 utf-8')
+        api.connect_core.encoding = 'utf-8'
+
     target_list = [
         connect_core.TargetUnit(
             # i18n.HasNewMailGotoMainMenu,
@@ -150,6 +157,12 @@ def login(
         connect_core.TargetUnit(
             i18n.in_login_process_please_wait,
             '登入中，請稍候'),
+        connect_core.TargetUnit(
+            i18n.SigningUnPleaseWait,
+            '密碼正確',
+            handler=switch_to_utf8
+        ),
+        # 密碼正確
         connect_core.TargetUnit(
             kick_other_loginDisplayMsg,
             '您想刪除其他重複登入的連線嗎',
@@ -213,8 +226,8 @@ def login(
 
     cmd_list = list()
     # cmd_list.append(IAC + WILL + NAWS)
-    cmd_list.append(ptt_id)
-    cmd_list.append(command.enter)
+    cmd_list.append(ptt_id + ',')
+    cmd_list.append(command.Enter)
     cmd_list.append(password)
     cmd_list.append(command.enter)
 
