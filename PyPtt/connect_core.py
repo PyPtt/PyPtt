@@ -234,6 +234,65 @@ class API(object):
         if not connect_success:
             raise exceptions.ConnectError(self.config)
 
+    def _decode_screen(self, receive_data_buffer, start_time, target_list, is_secret, refresh, msg):
+
+        break_detect_after_send = False
+        use_too_many_res = False
+
+        vt100_p = screens.VT100Parser(receive_data_buffer, self.encoding)
+        screen = vt100_p.screen
+
+        find_target = False
+        target_index = -1
+        for target in target_list:
+            condition = target.is_match(screen)
+            if condition:
+                if target._Handler is not None:
+                    target._Handler(screen)
+                if len(screen) > 0:
+                    screens.show(self.config, screen)
+                    self._RDQ.add(screen)
+                    # self._ReceiveDataQueue.append(screen)
+                    if target == self._UseTooManyResources:
+                        # print('!!!!!!!!!!!!!!!')
+                        use_too_many_res = True
+                        # print(f'1 {use_too_many_res}')
+                        break
+                    target.raise_exception()
+
+                find_target = True
+
+                self.logger.debug(
+                    i18n.ptt_msg,
+                    target.get_display_msg())
+
+                end_time = time.time()
+                self.logger.debug(i18n.spend_time, round(end_time - start_time, 3))
+
+                if target.is_break():
+                    target_index = target_list.index(target)
+                    break
+
+                msg = target.get_response(screen)
+
+                add_refresh = False
+                if target.is_refresh():
+                    add_refresh = True
+                elif refresh:
+                    add_refresh = True
+
+                if add_refresh:
+                    if not msg.endswith(command.refresh):
+                        msg = msg + command.refresh
+
+                is_secret = target.is_secret()
+
+                if target.is_break_after_send():
+                    # break_index = target_list.index(target)
+                    break_detect_after_send = True
+                break
+        return screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index
+
     def send(
             self,
             msg: str,
@@ -273,7 +332,6 @@ class API(object):
             current_screen_timeout = screen_timeout
 
         break_detect_after_send = False
-        break_index = -1
         is_secret = secret
 
         use_too_many_res = False
@@ -314,7 +372,7 @@ class API(object):
                     raise exceptions.ConnectionClosed()
 
                 if break_detect_after_send:
-                    return break_index
+                    return -1
 
             msg = ''
             receive_data_buffer = bytes()
@@ -358,56 +416,16 @@ class API(object):
                 #     'utf-8', errors='replace')
                 # screen = clean_screen(receive_data_temp)
 
-                vt100_p = screens.VT100Parser(receive_data_buffer, self.encoding)
-                screen = vt100_p.screen
+                screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
+                    self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
-                find_target = False
-                for target in target_list:
-                    condition = target.is_match(screen)
-                    if condition:
-                        if target._Handler is not None:
-                            target._Handler(screen)
-                        if len(screen) > 0:
-                            screens.show(self.config, screen)
-                            self._RDQ.add(screen)
-                            # self._ReceiveDataQueue.append(screen)
-                            if target == self._UseTooManyResources:
-                                # print('!!!!!!!!!!!!!!!')
-                                use_too_many_res = True
-                                # print(f'1 {use_too_many_res}')
-                                break
-                            target.raise_exception()
+                if self.encoding == 'big5-uao' and not find_target:
+                    self.encoding = 'utf-8'
+                    screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
+                        self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
-                        find_target = True
-
-                        self.logger.debug(
-                            i18n.ptt_msg,
-                            target.get_display_msg())
-
-                        end_time = time.time()
-                        self.logger.debug(i18n.spend_time, round(end_time - start_time, 3))
-
-                        if target.is_break():
-                            return target_list.index(target)
-
-                        msg = target.get_response(screen)
-
-                        add_refresh = False
-                        if target.is_refresh():
-                            add_refresh = True
-                        elif refresh:
-                            add_refresh = True
-
-                        if add_refresh:
-                            if not msg.endswith(command.refresh):
-                                msg = msg + command.refresh
-
-                        is_secret = target.is_secret()
-
-                        if target.is_break_after_send():
-                            break_index = target_list.index(target)
-                            break_detect_after_send = True
-                        break
+                if target_index != -1:
+                    return target_index
 
                 # print(f'2 {use_too_many_res}')
                 if use_too_many_res:
