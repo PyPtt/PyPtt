@@ -143,7 +143,7 @@ class ReceiveDataQueue(object):
 class API(object):
     def __init__(self, config):
 
-        self.encoding = 'big5-uao'
+        self.current_encoding = 'big5-uao'
         self.config = config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
@@ -174,7 +174,7 @@ class API(object):
 
                 time.sleep(1)
 
-        self.encoding = 'big5-uao'
+        self.current_encoding = 'big5-uao'
         self.logger.info(i18n.connect_core, i18n.active)
 
         if self.config.host == data_type.host_type.PTT1:
@@ -239,7 +239,7 @@ class API(object):
         break_detect_after_send = False
         use_too_many_res = False
 
-        vt100_p = screens.VT100Parser(receive_data_buffer, self.encoding)
+        vt100_p = screens.VT100Parser(receive_data_buffer, self.current_encoding)
         screen = vt100_p.screen
 
         find_target = False
@@ -419,22 +419,19 @@ class API(object):
                 screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                     self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
-                if self.encoding == 'big5-uao' and not find_target:
-                    self.encoding = 'utf-8'
+                if self.current_encoding == 'big5-uao' and not find_target:
+                    self.current_encoding = 'utf-8'
                     screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                         self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
                     if not find_target:
-                        self.encoding = 'big5-uao'
+                        self.current_encoding = 'big5-uao'
 
                 if target_index != -1:
                     return target_index
 
-                # print(f'2 {use_too_many_res}')
                 if use_too_many_res:
-                    # print(f'3 {use_too_many_res}')
                     continue
-                # print(f'4 {use_too_many_res}')
 
                 if find_target:
                     break

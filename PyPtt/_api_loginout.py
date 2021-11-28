@@ -95,10 +95,6 @@ def login(
 
     logger.info(i18n.login_id, ptt_id)
 
-    def switch_to_utf8(_):
-        logger.info('密碼正確，轉換至 utf-8')
-        api.connect_core.encoding = 'utf-8'
-
     target_list = [
         connect_core.TargetUnit(
             # i18n.HasNewMailGotoMainMenu,
@@ -156,8 +152,7 @@ def login(
         #     '登入中，請稍候'),
         connect_core.TargetUnit(
             i18n.in_login_process_please_wait,
-            '密碼正確',
-            handler=switch_to_utf8
+            '密碼正確'
         ),
         # 密碼正確
         connect_core.TargetUnit(
