@@ -424,6 +424,9 @@ class API(object):
                     screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                         self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
+                    if not find_target:
+                        self.encoding = 'big5-uao'
+
                 if target_index != -1:
                     return target_index
 
