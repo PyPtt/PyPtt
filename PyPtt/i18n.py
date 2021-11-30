@@ -219,7 +219,7 @@ def load(lang):
 
     global latest_version
     latest_version = specific_load(lang, [
-        '正在執行最新版本',
+        '已經是最新版本',
         'Running the latest version',
     ])
 
