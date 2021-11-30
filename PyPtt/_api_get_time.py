@@ -2,10 +2,12 @@ import re
 
 from SingleLog.log import Logger
 
-from . import i18n
-from . import connect_core
-from . import screens
 from . import command
+from . import connect_core
+from . import i18n
+from . import screens
+
+pattern = re.compile('[\d]+:[\d][\d]')
 
 
 def get_time(api) -> str:
@@ -31,7 +33,6 @@ def get_time(api) -> str:
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     line_list = ori_screen.split('\n')
-    pattern = re.compile('[\d]+:[\d][\d]')
 
     line_list = line_list[-3:]
 
