@@ -32,9 +32,7 @@ def get_time(api) -> str:
         return None
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
-    line_list = ori_screen.split('\n')
-
-    line_list = line_list[-3:]
+    line_list = ori_screen.split('\n')[-3:]
 
     # 0:00
 
