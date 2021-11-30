@@ -208,11 +208,32 @@ input_bucket_days_reason = None
 new_settings_have_been_saved = None
 no_changes = None
 restore_connection = None
+new_version = None
+development_version = None
+latest_version = None
 
 
 def load(lang):
     if not lib_util.check_range(language, lang):
         raise ValueError('Language', lang)
+
+    global latest_version
+    latest_version = specific_load(lang, [
+        '正在執行最新版本',
+        'Running the latest version',
+    ])
+
+    global development_version
+    development_version = specific_load(lang, [
+        '正在執行開發版本',
+        'Running development version',
+    ])
+
+    global new_version
+    new_version = specific_load(lang, [
+        '有新版本',
+        'There is a new version',
+    ])
 
     global restore_connection
     restore_connection = specific_load(lang, [

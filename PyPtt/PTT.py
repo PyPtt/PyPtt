@@ -3,21 +3,22 @@ import threading
 import time
 
 import progressbar
+import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import data_type
-from . import config
-from . import lib_util
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
-from . import command
-from . import check_value
-from . import version
-from . import _api_post
 from . import _api_get_time
+from . import _api_post
+from . import check_value
+from . import command
+from . import config
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import lib_util
+from . import screens
+from . import version
 
 logger_level = Logger
 
@@ -86,14 +87,13 @@ class API:
             self.logger.info(i18n.english_module, i18n.init)
 
         self.outside_logger = Logger('logger', Logger.INFO, handler=log_handler)
-        ##################
+
         if isinstance(host, int):
             if host == 0:
                 host = self.config.host
             elif not lib_util.check_range(data_type.host_type, host):
                 raise ValueError('[PyPtt] Unknown host', host)
-        # elif isinstance(host, str):
-        #     pass
+
         self.config.host = host
 
         if self.config.host == data_type.host_type.PTT1:
@@ -104,8 +104,6 @@ class API:
             self.logger.info(i18n.set_connect_host, i18n.localhost)
         else:
             self.logger.info(i18n.set_connect_host, self.config.host)
-
-        ##################
 
         if isinstance(host, int):
             connect_core.ConnectMode.min_value = connect_core.ConnectMode.WEBSOCKET
@@ -141,6 +139,33 @@ class API:
 
         self.logger.debug('ThreadID', self._thread_id)
         self.logger.info('PyPtt', i18n.init)
+
+        r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/PyPtt/version.py')
+        remote_version = r.text
+        remote_version = remote_version[remote_version.find("'") + 1:]
+        remote_version = remote_version[:remote_version.find("'")]
+
+        self.logger.debug('new version', remote_version)
+
+        version_list = version.V.split('.')
+        new_version_list = remote_version.split('.')
+
+        update = False
+        develop_version = False
+        for i in range(len(remote_version)):
+            if new_version_list[i] < version_list[i]:
+                develop_version = True
+                break
+            if new_version_list[i] > version_list[i]:
+                update = True
+                break
+
+        if update:
+            self.logger.info(i18n.new_version, remote_version)
+        elif develop_version:
+            self.logger.info(i18n.development_version, version.V)
+        else:
+            self.logger.info(i18n.latest_version, version.V)
 
     def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
@@ -248,11 +273,11 @@ class API:
                                value_class=data_type.post_search_type)
         if search_condition is not None:
             check_value.check_type(str,
-                              'SearchCondition', search_condition)
+                                   'SearchCondition', search_condition)
 
         if search_list is not None:
             check_value.check_type(list,
-                              'search_list', search_condition)
+                                   'search_list', search_condition)
 
         if len(board) == 0:
             raise ValueError(f'board error parameter: {board}')
