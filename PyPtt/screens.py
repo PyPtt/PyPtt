@@ -465,7 +465,7 @@ class VT100Parser:
                 current_index = min(next_newline, next_esc)
 
                 current_data = data[:current_index]
-                current_data_length = len(current_data.encode('big5-uao', 'replace'))
+                current_data_length = len(current_data.encode(encoding, 'replace'))
 
                 # print('=', current_data, '=', current_data_length)
                 if replace_mode:
