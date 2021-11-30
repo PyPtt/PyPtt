@@ -252,9 +252,7 @@ class API(object):
                 if len(screen) > 0:
                     screens.show(self.config, screen)
                     self._RDQ.add(screen)
-                    # self._ReceiveDataQueue.append(screen)
                     if target == self._UseTooManyResources:
-                        # print('!!!!!!!!!!!!!!!')
                         use_too_many_res = True
                         # print(f'1 {use_too_many_res}')
                         break
@@ -265,6 +263,10 @@ class API(object):
                 self.logger.debug(
                     i18n.ptt_msg,
                     target.get_display_msg())
+
+                # if target.get_display_msg() == '登入成功':
+                #     print(type(receive_data_buffer), receive_data_buffer)
+                #     print(receive_data_buffer == temp)
 
                 end_time = time.time()
                 self.logger.debug(i18n.spend_time, round(end_time - start_time, 3))

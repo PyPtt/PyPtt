@@ -205,8 +205,6 @@ class API:
             kick_other_login: bool = False) -> None:
         self._one_thread()
 
-        self.config.log_last_value = None
-
         check_value.check_type(str, 'ID', ptt_id)
         check_value.check_type(str, 'Password', password)
         check_value.check_type(bool, 'kick_other_login', kick_other_login)
@@ -228,8 +226,6 @@ class API:
         if not self._login_status:
             return
 
-        self.config.log_last_value = None
-
         try:
             from . import _api_loginout
         except ModuleNotFoundError:
@@ -244,8 +240,6 @@ class API:
         self._one_thread()
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
-
-        self.config.log_last_value = None
 
         return _api_get_time.get_time(self)
 
@@ -262,8 +256,6 @@ class API:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
-
-        self.config.log_last_value = None
 
         check_value.check_type(str, 'board', board)
         if post_aid is not None:
@@ -448,8 +440,6 @@ class API:
 
             check_value.check_type(int, 'SearchType', search_type, value_class=data_type.mail_search_type)
 
-        self.config.log_last_value = None
-
         if search_condition is not None:
             check_value.check_type(str, 'search_condition', search_condition)
 
@@ -483,8 +473,6 @@ class API:
             end_page: int = 0) -> list:
 
         self._one_thread()
-
-        self.config.log_last_value = None
 
         check_value.check_type(int, 'crawl_type', crawl_type, value_class=data_type.crawl_type)
         check_value.check_type(str, 'board', board)
@@ -768,8 +756,6 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
 
-        self.config.log_last_value = None
-
         check_value.check_type(str, 'board', board)
         check_value.check_type(str, 'title', title)
         check_value.check_type(str, 'content', content)
@@ -808,8 +794,6 @@ class API:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
-
-        self.config.log_last_value = None
 
         check_value.check_type(str, 'board', board)
         check_value.check_type(int, 'push_type',
@@ -939,8 +923,6 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        self.config.log_last_value = None
-
         return self._get_user(user_id)
 
     def throw_waterball(self, ptt_id, content) -> None:
@@ -951,8 +933,6 @@ class API:
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        self.config.log_last_value = None
 
         check_value.check_type(str, 'ptt_id', ptt_id)
         check_value.check_type(str, 'content', content)
@@ -980,8 +960,6 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        self.config.log_last_value = None
-
         check_value.check_type(int, 'OperateType', operate_type, value_class=data_type.waterball_operate_type)
 
         try:
@@ -999,8 +977,6 @@ class API:
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        self.config.log_last_value = None
 
         return self._get_call_status()
 
@@ -1024,8 +1000,6 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        self.config.log_last_value = None
-
         check_value.check_type(int, 'call_status', call_status, value_class=data_type.call_status)
 
         try:
@@ -1043,8 +1017,6 @@ class API:
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        self.config.log_last_value = None
 
         check_value.check_type(str, 'ptt_id', ptt_id)
         check_value.check_type(int, 'money', money)
@@ -1072,8 +1044,6 @@ class API:
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        self.config.log_last_value = None
 
         check_value.check_type(str, 'ptt_id', ptt_id)
         check_value.check_type(str, 'title', title)
@@ -1117,8 +1087,6 @@ class API:
         if self.get_newest_index(data_type.index_type.MAIL) == 0:
             return 0
 
-        self.config.log_last_value = None
-
         try:
             from . import _api_has_new_mail
         except ModuleNotFoundError:
@@ -1131,8 +1099,6 @@ class API:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
-
-        self.config.log_last_value = None
 
         try:
             from . import _api_get_board_list
@@ -1153,8 +1119,6 @@ class API:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
-
-        self.config.log_last_value = None
 
         check_value.check_type(int, 'reply_type', reply_type, value_class=data_type.reply_type)
         check_value.check_type(str, 'board', board)
@@ -1207,8 +1171,6 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        self.config.log_last_value = None
-
         check_value.check_type(str, 'board', board)
         check_value.check_type(str, 'new_title', new_title)
 
@@ -1240,8 +1202,6 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        self.config.log_last_value = None
-
         try:
             from . import _api_mark_post
         except ModuleNotFoundError:
@@ -1262,8 +1222,6 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
 
-        self.config.log_last_value = None
-
         try:
             from . import _api_get_favourite_board
         except ModuleNotFoundError:
@@ -1280,8 +1238,6 @@ class API:
 
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        self.config.log_last_value = None
 
         check_value.check_type(str, 'board', board)
         check_value.check_type(int, 'bucket_days', bucket_days)
@@ -1316,8 +1272,6 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        self.config.log_last_value = None
-
         check_value.check_type(str, 'ptt_id', ptt_id)
         if min_page is not None:
             check_value.check_index(
@@ -1348,8 +1302,6 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
 
-        self.config.log_last_value = None
-
         check_value.check_type(str, 'board', board)
 
         return self._get_board_info(board, get_post_kind, call_by_others=False)
@@ -1378,8 +1330,6 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        self.config.log_last_value = None
-
         if index == 0:
             return None
         current_index = self.get_newest_index(data_type.index_type.MAIL)
@@ -1407,8 +1357,6 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        self.config.log_last_value = None
-
         current_index = self.get_newest_index(data_type.index_type.MAIL)
         check_value.check_index(index, current_index)
 
@@ -1424,8 +1372,6 @@ class API:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
-
-        self.config.log_last_value = None
 
         new_password = new_password[:8]
 
@@ -1486,8 +1432,6 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
 
-        self.config.log_last_value = None
-
         check_value.check_type(str, 'board', board)
         self._check_board(board)
 
@@ -1510,8 +1454,6 @@ class API:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
-
-        self.config.log_last_value = None
 
         check_value.check_type(str, 'board', board)
         if post_aid is not None:

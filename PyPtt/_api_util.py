@@ -429,3 +429,4 @@ def get_search_condition_cmd(
             cmd_list.append(command.enter)
 
     return cmd_list, normal_newest_index
+
