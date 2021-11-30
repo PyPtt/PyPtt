@@ -2,5 +2,6 @@ progressbar2
 websockets
 uao
 SingleLog
+requests
 twine
 wheel
