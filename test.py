@@ -80,8 +80,8 @@ def performance_test():
             break
         # print(ptt_time)
     end_time = time.time()
-    print('Performance Test get_time ' + str(
-        round(end_time - start_time, 2)) + ' s')
+    print('Performance Test get_time ' +
+          str(round(end_time - start_time, 2)) + ' s')
 
     ptt_bot.logout()
 
@@ -1500,7 +1500,8 @@ if __name__ == '__main__':
 
         ###################################
 
-        # performance_test()
+        # print(ptt_bot.get_time())
+        performance_test()
 
         # get_post()
         # get_post_with_condition()

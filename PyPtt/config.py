@@ -36,7 +36,7 @@ class Config:
     # 預設登入 PTT1
     host = data_type.host_type.PTT1
 
-    # 預設採用 websocket
+    # 預設採用 websockets
     connect_mode = connect_core.ConnectMode.WEBSOCKET
 
     # 預設使用 23
