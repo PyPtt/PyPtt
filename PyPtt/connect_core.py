@@ -143,7 +143,7 @@ class ReceiveDataQueue(object):
 class API(object):
     def __init__(self, config):
 
-        self.current_encoding = 'big5-uao'
+        self.current_encoding = 'big5uao'
         self.config = config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
@@ -174,7 +174,7 @@ class API(object):
 
                 time.sleep(1)
 
-        self.current_encoding = 'big5-uao'
+        self.current_encoding = 'big5uao'
         self.logger.info(i18n.connect_core, i18n.active)
 
         if self.config.host == data_type.host_type.PTT1:
@@ -421,7 +421,7 @@ class API(object):
                 screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                     self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
-                if self.current_encoding == 'big5-uao' and not find_target:
+                if self.current_encoding == 'big5uao' and not find_target:
                     self.current_encoding = 'utf-8'
                     screen_, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                         self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
@@ -429,7 +429,7 @@ class API(object):
                     if find_target:
                         screen = screen_
                     else:
-                        self.current_encoding = 'big5-uao'
+                        self.current_encoding = 'big5uao'
 
                 if target_index != -1:
                     return target_index
