@@ -16,10 +16,10 @@ if __name__ == '__main__':
     for host in host_list:
         ptt_bot = PTT.API(
             host=host,
-            log_level=PTT.logger_level.TRACE,
+            # log_level=PTT.logger_level.TRACE,
         )
         util.login(ptt_bot, host)
 
-        time.sleep(2)
+        # time.sleep(2)
 
         ptt_bot.logout()
