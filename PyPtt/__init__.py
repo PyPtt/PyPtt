@@ -1,6 +1,8 @@
+from SingleLog.log import Logger
+
+LOG_LEVEL = Logger
 
 from .PTT import API
-from .PTT import LOG_LEVEL
 
 from .data_type import HOST
 from .exceptions import *
