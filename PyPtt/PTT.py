@@ -34,7 +34,7 @@ class API:
             connect_mode: int = 0,
             port: int = 0,
             log_handler=None,
-            host=None):
+            host=data_type.HOST.PTT1):
 
         self._mailbox_full = False
         self._ID = None
