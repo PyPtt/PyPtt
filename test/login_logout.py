@@ -14,7 +14,7 @@ if __name__ == '__main__':
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PTT.logger_level.TRACE,
+            # log_level=PyPtt.LOG_LEVEL.TRACE,
         )
         util.login(ptt_bot, host)
 
