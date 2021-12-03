@@ -29,7 +29,7 @@ def func():
         logger.info('通過')
     except:
         logger.info('沒通過')
-        sys.exit(-1)
+        assert False
     logger.info('===語言放字串===')
     try:
         PyPtt.API(language='PyPtt.i18n.language.ENGLISH')
@@ -37,7 +37,7 @@ def func():
         logger.info('通過')
     except:
         logger.info('沒通過')
-        sys.exit(-1)
+        assert False
 
     # def handler(msg):
     #     with open('log.txt', 'a', encoding='utf-8') as f:

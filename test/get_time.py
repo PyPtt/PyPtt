@@ -1,18 +1,37 @@
-import sys
+import time
 
 from SingleLog.log import Logger
 
-from PyPtt import PTT
+import PyPtt
 import util
+
+
+def test(ptt_bot: PyPtt.API):
+    result = []
+    for _ in range(3):
+        result.append(ptt_bot.get_time())
+        time.sleep(1)
+
+    logger.info('get time result', result)
+
+
+def func():
+    host_list = [
+        PyPtt.HOST.PTT1,
+        PyPtt.HOST.PTT2]
+
+    for host in host_list:
+        ptt_bot = PyPtt.API(
+            host=host,
+            # log_level=PyPtt.LOG_LEVEL.TRACE,
+        )
+        util.login(ptt_bot, host)
+
+        test(ptt_bot)
+
+        ptt_bot.logout()
+
 
 if __name__ == '__main__':
     logger = Logger('TEST')
-
-    ptt_bot = PTT.API()
-
-    if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
-        ptt_id, ptt_pw = util.get_id_pw('account_ptt_0.json')
-    else:
-        ptt_id, ptt_pw = util.get_id_pw('account_ptt2_0.json')
-
-
+    func()
