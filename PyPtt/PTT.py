@@ -20,8 +20,6 @@ from . import lib_util
 from . import screens
 from . import version
 
-LOG_LEVEL = Logger
-
 
 class API:
     def __init__(
