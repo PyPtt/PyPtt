@@ -89,14 +89,6 @@ def performance_test():
     sys.exit()
 
 
-#             for _ in range(1000):
-#             ptt_time = ptt_bot.fast_get_time()
-#             if len(ptt_time) != 5:
-#                 print('error!', ptt_time)
-#                 break
-#             # print(ptt_time)
-
-
 def get_post():
     def show(name, value):
         if value is not None:

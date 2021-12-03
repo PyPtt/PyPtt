@@ -4,9 +4,8 @@ from SingleLog.log import Logger
 
 import PyPtt
 
-if __name__ == '__main__':
-    logger = Logger('TEST INIT')
 
+def func():
     logger.info('===正向===')
     logger.info('===預設值===')
     PyPtt.API()
@@ -40,7 +39,6 @@ if __name__ == '__main__':
         logger.info('沒通過')
         sys.exit(-1)
 
-
     # def handler(msg):
     #     with open('log.txt', 'a', encoding='utf-8') as f:
     #         f.write(msg + '\n')
@@ -51,3 +49,8 @@ if __name__ == '__main__':
     # logger.info('Test log')
 
     logger.info('complete')
+
+
+if __name__ == '__main__':
+    logger = Logger('TEST INIT')
+    func()

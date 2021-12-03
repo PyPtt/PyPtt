@@ -1,11 +1,10 @@
 from SingleLog.log import Logger
 
-import util
 import PyPtt
+import util
 
-if __name__ == '__main__':
-    logger = Logger('TEST')
 
+def func():
     host_list = [
         PyPtt.HOST.PTT1,
         PyPtt.HOST.PTT2
@@ -18,6 +17,9 @@ if __name__ == '__main__':
         )
         util.login(ptt_bot, host)
 
-        # time.sleep(2)
-
         ptt_bot.logout()
+
+
+if __name__ == '__main__':
+    logger = Logger('TEST')
+    func()
