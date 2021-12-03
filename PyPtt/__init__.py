@@ -4,3 +4,4 @@ from .PTT import LOG_LEVEL
 
 from .data_type import HOST
 from .exceptions import *
+from .i18n import Lang
