@@ -1,17 +1,16 @@
+from enum import auto
+
 from . import lib_util
 
 
-class language(object):
-    CHINESE: int = 1
-    ENGLISH: int = 2
-
-    min_value = CHINESE
-    max_value = ENGLISH
+class Lang(lib_util.AutoName):
+    CHINESE = auto()
+    ENGLISH = auto()
 
 
 languageList = [
-    language.CHINESE,
-    language.ENGLISH,
+    Lang.CHINESE,
+    Lang.ENGLISH,
 ]
 
 
@@ -214,8 +213,8 @@ latest_version = None
 
 
 def load(lang):
-    if not lib_util.check_range(language, lang):
-        raise ValueError('Language', lang)
+    if not isinstance(lang, Lang):
+        raise ValueError('Unknown language', lang)
 
     global latest_version
     latest_version = specific_load(lang, [
@@ -1294,5 +1293,5 @@ def _createlist():
 
 
 if __name__ == '__main__':
-    load(language.CHINESE)
+    load(Lang.CHINESE)
     _createlist()

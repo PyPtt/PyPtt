@@ -1,5 +1,7 @@
 from enum import Enum, auto
 
+from PyPtt.lib_util import AutoName
+
 
 def parse_para(value_type, parameter):
     if parameter is None:
@@ -10,11 +12,6 @@ def parse_para(value_type, parameter):
     if isinstance(result, str):
         result = result.rstrip()
     return result
-
-
-class AutoName(Enum):
-    def _generate_next_value_(name, start, count, last_values):
-        return name
 
 
 class call_status:

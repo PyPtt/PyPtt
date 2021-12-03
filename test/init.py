@@ -11,9 +11,9 @@ if __name__ == '__main__':
     logger.info('===預設值===')
     PyPtt.API()
     logger.info('===中文顯示===')
-    PyPtt.API(language=PyPtt.i18n.language.CHINESE)
+    PyPtt.API(language=PyPtt.i18n.Lang.CHINESE)
     logger.info('===英文顯示===')
-    PyPtt.API(language=PyPtt.i18n.language.ENGLISH)
+    PyPtt.API(language=PyPtt.i18n.Lang.ENGLISH)
     logger.info('===log DEBUG===')
     PyPtt.API(log_level=PyPtt.LOG_LEVEL.DEBUG)
     logger.info('===log INFO===')
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     try:
         logger.info('===語言 99===')
         PyPtt.API(language=99)
-    except ValueError:
+    except TypeError:
         logger.info('通過')
     except:
         logger.info('沒通過')
@@ -41,11 +41,13 @@ if __name__ == '__main__':
         sys.exit(-1)
 
 
-    def handler(msg):
-        with open('log.txt', 'a', encoding='utf-8') as f:
-            f.write(msg + '\n')
+    # def handler(msg):
+    #     with open('log.txt', 'a', encoding='utf-8') as f:
+    #         f.write(msg + '\n')
+    #
+    #
+    # ptt_bot = PyPtt.API(
+    #     log_handler=handler)
+    # logger.info('Test log')
 
-
-    ptt_bot = PyPtt.API(
-        log_handler=handler)
-    logger.info('Test log')
+    logger.info('complete')

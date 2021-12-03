@@ -1,5 +1,6 @@
 import os
 import traceback
+from enum import Enum
 
 
 def check_range(define_obj, value):
@@ -23,3 +24,8 @@ def findnth(haystack, needle, n):
     if len(parts) <= n + 1:
         return -1
     return len(haystack) - len(parts[-1]) - len(needle)
+
+
+class AutoName(Enum):
+    def _generate_next_value_(name, start, count, last_values):
+        return name
