@@ -34,7 +34,7 @@ class Config:
     kick_other_login = False
 
     # 預設登入 PTT1
-    host = data_type.host_type.PTT1
+    host = data_type.HOST.PTT1
 
     # 預設採用 websockets
     connect_mode = connect_core.ConnectMode.WEBSOCKET

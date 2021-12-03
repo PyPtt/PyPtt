@@ -163,11 +163,11 @@ class API(object):
         def _wait():
             for i in range(self.config.retry_wait_time):
 
-                if self.config.host == data_type.host_type.PTT1:
+                if self.config.host == data_type.HOST.PTT1:
                     self.logger.info(i18n.prepare_connect_again, i18n.PTT, str(self.config.retry_wait_time - i))
-                elif self.config.host == data_type.host_type.PTT2:
+                elif self.config.host == data_type.HOST.PTT2:
                     self.logger.info(i18n.prepare_connect_again, i18n.PTT2, str(self.config.retry_wait_time - i))
-                elif self.config.host == data_type.host_type.LOCALHOST:
+                elif self.config.host == data_type.HOST.LOCALHOST:
                     self.logger.info(i18n.prepare_connect_again, i18n.localhost, str(self.config.retry_wait_time - i))
                 else:
                     self.logger.info(i18n.prepare_connect_again, self.config.host, str(self.config.retry_wait_time - i))
@@ -177,15 +177,15 @@ class API(object):
         self.current_encoding = 'big5uao'
         self.logger.info(i18n.connect_core, i18n.active)
 
-        if self.config.host == data_type.host_type.PTT1:
+        if self.config.host == data_type.HOST.PTT1:
             telnet_host = 'ptt.cc'
             websocket_host = 'wss://ws.ptt.cc/bbs/'
             websocket_origin = 'https://term.ptt.cc'
-        elif self.config.host == data_type.host_type.PTT2:
+        elif self.config.host == data_type.HOST.PTT2:
             telnet_host = 'ptt2.cc'
             websocket_host = 'wss://ws.ptt2.cc/bbs/'
             websocket_origin = 'https://term.ptt2.cc'
-        elif self.config.host == data_type.host_type.LOCALHOST:
+        elif self.config.host == data_type.HOST.LOCALHOST:
             telnet_host = 'localhost'
             websocket_host = 'wss://localhost'
             websocket_origin = 'https://term.ptt.cc'
@@ -217,11 +217,11 @@ class API(object):
                 traceback.print_tb(e.__traceback__)
                 print(e)
 
-                if self.config.host == data_type.host_type.PTT1:
+                if self.config.host == data_type.HOST.PTT1:
                     self.logger.info(i18n.connect, i18n.PTT, i18n.fail)
-                elif self.config.host == data_type.host_type.PTT2:
+                elif self.config.host == data_type.HOST.PTT2:
                     self.logger.info(i18n.connect, i18n.PTT2, i18n.fail)
-                elif self.config.host == data_type.host_type.LOCALHOST:
+                elif self.config.host == data_type.HOST.LOCALHOST:
                     self.logger.info(i18n.connect, i18n.localhost, i18n.fail)
                 else:
                     self.logger.info(i18n.connect, self.config.host, i18n.fail)

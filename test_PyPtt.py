@@ -155,7 +155,7 @@ def test_init():
     log('===log SLIENT===')
     PTT.API(log_level=PTT.Logger.SILENT)
     log('===log SLIENT======')
-    PTT.API(host=PTT.data_type.host_type.LOCALHOST)
+    PTT.API(host=PTT.data_type.HOST.LOCALHOST)
 
     ################################################
     def handler(msg):
@@ -221,7 +221,7 @@ def test_init():
 
 
 def case(ptt_bot_0, ptt_bot_1):
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         ptt_bot_0.log('開始測試 PTT1')
 
         current_id_0 = ptt_id_0
@@ -311,7 +311,7 @@ def case(ptt_bot_0, ptt_bot_1):
 
         ptt_bot_0.log(f'{board} 板 文章{"編號" if isinstance(index_aid, int) else " aid"} {index_aid} 測試通過')
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         test_post_list = [
             ('Python', 1, None, False, '總算可以來想想板的走向了..XD'),
             ('NotExitBoard', 1, PTT.exceptions.NoSuchBoard, False, None),
@@ -335,7 +335,7 @@ def case(ptt_bot_0, ptt_bot_1):
 
     ptt_bot_0.log('取得文章基準測試全部通過')
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         test_board_list = [
             'Wanted',
             'Gossiping',
@@ -511,7 +511,7 @@ PyPtt 程式貼文基準測試內文
 
         ptt_bot_0.log(f'{test_board} 使用 {type_str} 搜尋 {condition}')
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         test_list = [
             ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
             ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Wanted)'),
@@ -625,7 +625,7 @@ PyPtt 程式貼文基準測試內文
 
     query_mode = False
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         test_board_list = [
             'Wanted',
             'joke',
@@ -784,7 +784,7 @@ PyPtt 程式寄信測試內容
 
     ptt_time = ptt_bot_0.get_time()
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         content = f'PTT1 主機時間 {ptt_time}'
     else:
         content = f'PTT2 主機時間 {ptt_time}'
@@ -810,7 +810,7 @@ PyPtt 程式寄信測試內容
         ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
                           content, post_aid=basic_post_aid)
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         test_board_list = [
             'Wanted',
             'Gossiping',
@@ -893,7 +893,7 @@ PyPtt 程式寄信測試內容
 
     ################################################
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
 
         url_list = [
             'https://www.ptt.cc/bbs/Gossiping/M.1119417691.A.BAD.html',
@@ -924,7 +924,7 @@ PyPtt 程式寄信測試內容
 
     ################################################
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         test_board_list = [
             'Wanted',
             'Python',
@@ -1121,7 +1121,7 @@ PyPtt 程式寄信測試內容
 
     ################################################
 
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         content = '===PTT 1 測試全部通過'
         ptt_bot_0.comment(basic_board, PTT.data_type.push_type.ARROW,
                           content, post_aid=basic_post_aid)
@@ -1202,7 +1202,7 @@ PyPtt 程式寄信測試內容
 
 
 def single_case(ptt_bot_0, ptt_bot_1):
-    if ptt_bot_0.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         ptt_bot_0.log('開始測試 PTT1')
 
         current_id_0 = ptt_id_0
@@ -1232,11 +1232,11 @@ def single_case(ptt_bot_0, ptt_bot_1):
 
 def run_on_ptt_1():
     ptt_bot_0 = PTT.API(
-        host=PTT.data_type.host_type.PTT1,
+        host=PTT.data_type.HOST.PTT1,
         log_handler=log)
 
     ptt_bot_1 = PTT.API(
-        host=PTT.data_type.host_type.PTT1,
+        host=PTT.data_type.HOST.PTT1,
         log_handler=log)
     case(ptt_bot_0, ptt_bot_1)
     # single_case(ptt_bot_0, ptt_bot_1)
@@ -1244,10 +1244,10 @@ def run_on_ptt_1():
 
 def run_on_ptt_2():
     ptt_bot_0 = PTT.API(
-        host=PTT.data_type.host_type.PTT2,
+        host=PTT.data_type.HOST.PTT2,
         log_handler=log)
     ptt_bot_1 = PTT.API(
-        host=PTT.data_type.host_type.PTT2,
+        host=PTT.data_type.HOST.PTT2,
         log_handler=log)
     case(ptt_bot_0, ptt_bot_1)
     # single_case(ptt_bot_0, ptt_bot_1)

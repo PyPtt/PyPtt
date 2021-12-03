@@ -34,7 +34,7 @@ class API:
             connect_mode: int = 0,
             port: int = 0,
             log_handler=None,
-            host: int = 0):
+            host=None):
 
         self._mailbox_full = False
         self._ID = None
@@ -61,8 +61,8 @@ class API:
             raise TypeError('[PyPtt] screen_timeout must be integer')
         if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
-        if (not isinstance(host, int)) and (not isinstance(host, str)):
-            raise TypeError('[PyPtt] host must be integer or string')
+        if (not isinstance(host, data_type.HOST)) and (not isinstance(host, str)):
+            raise TypeError('[PyPtt] host must be a data_type.HOST or a string')
 
         if screen_timeout != 0:
             self.config.screen_timeout = screen_timeout
@@ -88,29 +88,19 @@ class API:
 
         self.outside_logger = Logger('logger', Logger.INFO, handler=log_handler)
 
-        if isinstance(host, int):
-            if host == 0:
-                host = self.config.host
-            elif not lib_util.check_range(data_type.host_type, host):
-                raise ValueError('[PyPtt] Unknown host', host)
+        if host is None:
+            host = self.config.host
 
         self.config.host = host
 
-        if self.config.host == data_type.host_type.PTT1:
+        if self.config.host == data_type.HOST.PTT1:
             self.logger.info(i18n.set_connect_host, i18n.PTT)
-        elif self.config.host == data_type.host_type.PTT2:
+        elif self.config.host == data_type.HOST.PTT2:
             self.logger.info(i18n.set_connect_host, i18n.PTT2)
-        elif self.config.host == data_type.host_type.LOCALHOST:
+        elif self.config.host == data_type.HOST.LOCALHOST:
             self.logger.info(i18n.set_connect_host, i18n.localhost)
         else:
             self.logger.info(i18n.set_connect_host, self.config.host)
-
-        if isinstance(host, int):
-            connect_core.ConnectMode.min_value = connect_core.ConnectMode.WEBSOCKET
-            connect_core.ConnectMode.max_value = connect_core.ConnectMode.WEBSOCKET
-        elif isinstance(host, str):
-            connect_core.ConnectMode.min_value = connect_core.ConnectMode.TELNET
-            connect_core.ConnectMode.max_value = connect_core.ConnectMode.WEBSOCKET
 
         check_value.check_type(int, 'connect_mode', connect_mode)
         if connect_mode == 0:

@@ -3,7 +3,7 @@ import sys
 
 from SingleLog.log import Logger
 
-from PyPtt import PTT
+import PyPtt
 
 logger = Logger('TEST_UTIL')
 
@@ -22,21 +22,21 @@ def get_id_pw(password_file):
     return ptt_id, password
 
 
-def login(ptt_bot: PTT.API, host):
-    if host == PTT.data_type.host_type.PTT1:
+def login(ptt_bot: PyPtt.API, host: PyPtt.HOST):
+    if host == PyPtt.HOST.PTT1:
         ptt_id, ptt_pw = get_id_pw('account_ptt_0.json')
     else:
         ptt_id, ptt_pw = get_id_pw('account_ptt2_0.json')
 
     try:
         ptt_bot.login(ptt_id, ptt_pw)
-    except PTT.exceptions.LoginError:
+    except PyPtt.LoginError:
         logger.info('登入失敗')
         sys.exit()
-    except PTT.exceptions.WrongIDorPassword:
+    except PyPtt.WrongIDorPassword:
         logger.info('帳號密碼錯誤')
         sys.exit()
-    except PTT.exceptions.LoginTooOften:
+    except PyPtt.LoginTooOften:
         logger.info('請稍等一下再登入')
         sys.exit()
 
