@@ -17,7 +17,7 @@ def get_id_pw(password_file):
     except FileNotFoundError:
         print(f'Please write PTT ID and Password in {password_file}')
         print('{"id":"your ptt id", "pw":"your ptt pw"}')
-        sys.exit()
+        assert False
 
     return ptt_id, password
 
@@ -32,13 +32,13 @@ def login(ptt_bot: PyPtt.API, host: PyPtt.HOST = PyPtt.HOST.PTT1):
         ptt_bot.login(ptt_id, ptt_pw)
     except PyPtt.LoginError:
         logger.info('登入失敗')
-        sys.exit()
+        assert False
     except PyPtt.WrongIDorPassword:
         logger.info('帳號密碼錯誤')
-        sys.exit()
+        assert False
     except PyPtt.LoginTooOften:
         logger.info('請稍等一下再登入')
-        sys.exit()
+        assert False
 
     if ptt_bot.unregistered_user:
         logger.info('未註冊使用者')

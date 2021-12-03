@@ -341,9 +341,9 @@ class API(object):
 
             if refresh and not msg.endswith(command.refresh):
                 msg = msg + command.refresh
+
             try:
                 msg = msg.encode('big5uao', 'replace')
-
             except AttributeError:
                 pass
             except Exception as e:
@@ -354,7 +354,7 @@ class API(object):
             if is_secret:
                 self.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
             else:
-                self.logger.debug(i18n.send_msg, msg)
+                self.logger.debug(i18n.send_msg, str(msg))
 
             if self.config.connect_mode == ConnectMode.TELNET:
                 try:
