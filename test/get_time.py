@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     ptt_bot = PTT.API()
 
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
         ptt_id, ptt_pw = util.get_id_pw('account_ptt_0.json')
     else:
         ptt_id, ptt_pw = util.get_id_pw('account_ptt2_0.json')

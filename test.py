@@ -104,7 +104,7 @@ def get_post():
         else:
             print(f'無{name}')
 
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
         test_post_list = [
             ('Python', 1),
             # ('NotExitBoard', 1),
@@ -394,7 +394,7 @@ def show_condition(test_board, search_type, condition):
 def get_post_with_condition():
     # PTT1
 
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
         test_list = [
             ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
             ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Wanted)'),
@@ -524,7 +524,7 @@ github: https://github.com/PttCodingMan/PyPtt
 
 
 def get_newest_index():
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
         test_board_list = [
             'Wanted',
             'Gossiping',
@@ -635,7 +635,7 @@ def crawlHandler(Post):
 
 def crawl_board():
     global query
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
         test_board_list = [
             'Test',
             'Wanted',
@@ -1250,7 +1250,7 @@ def get_board_info():
     #     # break
     # return
 
-    if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+    if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
         test_board_list = [
             'Python',
             'L_LifePlan',
@@ -1467,7 +1467,7 @@ if __name__ == '__main__':
             # language=PTT.i18n.language.ENGLISH
         )
 
-        if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
+        if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
             ptt_id, password = get_password('account_ptt_0.json')
         else:
             ptt_id, password = get_password('account_ptt2.json')

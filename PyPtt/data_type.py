@@ -1,3 +1,6 @@
+from enum import Enum, auto
+
+
 def parse_para(value_type, parameter):
     if parameter is None:
         if value_type is list:
@@ -7,6 +10,11 @@ def parse_para(value_type, parameter):
     if isinstance(result, str):
         result = result.rstrip()
     return result
+
+
+class AutoName(Enum):
+    def _generate_next_value_(name, start, count, last_values):
+        return name
 
 
 class call_status:
@@ -268,16 +276,13 @@ class crawl_type:
     max_value = BBS
 
 
-class host_type:
+class HOST(AutoName):
     # 批踢踢萬
-    PTT1: int = 1
+    PTT1 = auto()
     # 批踢踢兔
-    PTT2: int = 2
+    PTT2 = auto()
     # 本機測試用
-    LOCALHOST: int = 3
-
-    min_value = PTT1
-    max_value = LOCALHOST
+    LOCALHOST = auto()
 
 
 class mark_type:

@@ -439,7 +439,7 @@ def get_post(
             ip = ip.replace('-', '.')
             # print(f'IP -> [{IP}]')
             break
-    if api.config.host == data_type.host_type.PTT1:
+    if api.config.host == data_type.HOST.PTT1:
         if ip is None:
             logger.debug(i18n.substandard_post, ip)
 
@@ -507,7 +507,7 @@ def get_post(
                        ]
         # PushContent = PushContent.replace(PushDate, '')
 
-        if api.config.host == data_type.host_type.PTT1:
+        if api.config.host == data_type.HOST.PTT1:
             push_content = push_content[
                            :push_content.rfind(push_date)
                            ]

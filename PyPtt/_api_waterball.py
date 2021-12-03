@@ -170,7 +170,7 @@ def get_waterball(api, operate_type: int) -> list:
 
     all_waterball = '\n'.join(all_waterball)
 
-    if api.config.host == data_type.host_type.PTT1:
+    if api.config.host == data_type.HOST.PTT1:
         all_waterball = all_waterball.replace(
             ']\n', ']==PTTWaterBallNewLine==')
         all_waterball = all_waterball.replace('\n', '')
