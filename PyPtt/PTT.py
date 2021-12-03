@@ -26,7 +26,7 @@ LOG_LEVEL = Logger
 class API:
     def __init__(
             self,
-            language: int = 0,
+            language: i18n.Lang = i18n.Lang.CHINESE,
             log_level: int = 0,
             screen_timeout: int = 0,
             screen_long_timeout: int = 0,
@@ -53,8 +53,8 @@ class API:
 
         self.config = config.Config()
 
-        if not isinstance(language, int):
-            raise TypeError('[PyPtt] language must be integer')
+        if not isinstance(language, i18n.Lang):
+            raise TypeError('[PyPtt] language must be i18n.Lang')
         if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
         if not isinstance(screen_timeout, int):
@@ -62,7 +62,7 @@ class API:
         if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
         if (not isinstance(host, data_type.HOST)) and (not isinstance(host, str)):
-            raise TypeError('[PyPtt] host must be a data_type.HOST or a string')
+            raise TypeError('[PyPtt] host must be data_type.HOST or a string')
 
         if screen_timeout != 0:
             self.config.screen_timeout = screen_timeout
@@ -73,17 +73,12 @@ class API:
 
         self.config.log_level = log_level
 
-        if language == 0:
-            language = self.config.language
-        elif not lib_util.check_range(i18n.language, language):
-            raise ValueError('[PyPtt] Unknown language', language)
-        else:
-            self.config.language = language
+        self.config.language = language
         i18n.load(self.config.language)
 
-        if self.config.language == i18n.language.CHINESE:
+        if self.config.language == i18n.Lang.CHINESE:
             self.logger.info(i18n.chinese_traditional_module, i18n.init)
-        elif self.config.language == i18n.language.ENGLISH:
+        elif self.config.language == i18n.Lang.ENGLISH:
             self.logger.info(i18n.english_module, i18n.init)
 
         self.outside_logger = Logger('logger', Logger.INFO, handler=log_handler)

@@ -103,7 +103,7 @@ class NoSuchBoard(Exception):
                 i18n.no_such_board
             ]
 
-        if config.language == i18n.language.CHINESE:
+        if config.Lang == i18n.Lang.CHINESE:
             self.message = ''.join(self.message) + ': ' + board
         else:
             self.message = ' '.join(self.message) + ': ' + board
