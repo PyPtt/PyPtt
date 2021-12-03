@@ -15,10 +15,15 @@ def func():
             # log_level=PyPtt.LOG_LEVEL.TRACE,
         )
         util.login(ptt_bot, host)
-
         ptt_bot.logout()
+
+        util.login(ptt_bot, host)
+        ptt_bot.logout()
+
+    logger.info('login logout test ok')
 
 
 if __name__ == '__main__':
+
     logger = Logger('TEST')
     func()

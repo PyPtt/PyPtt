@@ -2,9 +2,9 @@ import time
 
 from SingleLog.log import Logger
 
-import PyPtt
 import util
 
+import PyPtt
 from PyPtt_0_9 import PTT
 
 
