@@ -20,7 +20,7 @@ from . import lib_util
 from . import screens
 from . import version
 
-logger_level = Logger
+LOG_LEVEL = Logger
 
 
 class API:
