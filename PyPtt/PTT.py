@@ -226,7 +226,7 @@ class API:
 
         return _api_get_time.get_time(self)
 
-    def get_post(
+    def get_article(
             self,
             board: str,
             post_aid: str = None,
@@ -509,12 +509,12 @@ class API:
                     end_index,
                     max_value=newest_index)
             elif start_aid is not None and end_aid is not None:
-                start_index = self.get_post(
+                start_index = self.get_article(
                     board,
                     post_aid=start_aid,
                     query=True
                 ).index
-                end_index = self.get_post(
+                end_index = self.get_article(
                     board,
                     post_aid=end_aid,
                     query=True

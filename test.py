@@ -145,14 +145,14 @@ def get_post():
 
             print('看板', board, index)
             if isinstance(index, int):
-                post_info = ptt_bot.get_post(
+                post_info = ptt_bot.get_article(
                     board,
                     post_index=index,
                     # SearchType=PTT.data_type.post_search_type.KEYWORD,
                     # SearchCondition='公告',
                     query=query)
             else:
-                post_info = ptt_bot.get_post(
+                post_info = ptt_bot.get_article(
                     board,
                     post_aid=index,
                     # SearchType=PTT.data_type.post_search_type.KEYWORD,
@@ -281,7 +281,7 @@ def get_aid_from_url():
                 current_index = random.randrange(1, newest_index + 1)
                 print(current_index)
 
-                post_info = ptt_bot.get_post(test_board, post_index=current_index, query=True)
+                post_info = ptt_bot.get_article(test_board, post_index=current_index, query=True)
                 if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
                     continue
 
@@ -322,7 +322,7 @@ def get_aid_from_url():
 
         for current_index in range(start_index, start_index + test_range):
             print(current_index)
-            post_info = ptt_bot.get_post(test_board, post_index=current_index, query=True)
+            post_info = ptt_bot.get_article(test_board, post_index=current_index, query=True)
             if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
                 continue
 
@@ -413,7 +413,7 @@ def get_post_with_condition():
         print(f'{board} 最新文章編號 {index}')
 
         for i in range(test_range):
-            post = ptt_bot.get_post(
+            post = ptt_bot.get_article(
                 board,
                 post_index=index - i,
                 # PostIndex=611,
@@ -475,7 +475,7 @@ def get_post_with_condition():
     print(f'Gossiping 最新文章編號 {index}')
 
     for current_index in range(1, index + 1):
-        post_info = ptt_bot.get_post(
+        post_info = ptt_bot.get_article(
             'Gossiping',
             post_index=current_index,
             search_type=PTT.data_type.post_search_type.KEYWORD,
