@@ -24,8 +24,6 @@ def performance_test(ptt_bot):
     logger.info('Performance Test get_time ' +
                 str(round(end_time - start_time, 2)) + ' s')
 
-    ptt_bot.logout()
-
     logger.info('Performance Test finish')
 
 
