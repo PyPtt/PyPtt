@@ -1,10 +1,8 @@
 from SingleLog.log import Logger
 
 LOG_LEVEL = Logger
-
-from .config import Config
-
-version = Config.version
+version = '1.0.0'
+host = None
 
 from .PTT import API
 

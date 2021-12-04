@@ -12,16 +12,15 @@ from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 from uao import register_uao
 
-from . import command
+from . import command, version
 from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
-from .config import Config
 from .lib_util import AutoName
 
 register_uao()
-websockets.http.USER_AGENT += f' PyPtt/{Config.version}'
+websockets.http.USER_AGENT += f' PyPtt/{version}'
 
 
 @unique
