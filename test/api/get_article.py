@@ -32,7 +32,6 @@ def test_no_condition(ptt_bot: PyPtt.API):
         # ('Ptt25sign', '1VppdKLW'),
     ]
 
-
     for board, index in test_post_list:
         if isinstance(index, int):
             article = ptt_bot.get_article(
@@ -78,4 +77,5 @@ def func():
 
 if __name__ == '__main__':
     logger = Logger('TEST')
+    logger.info('PyPtt version', PyPtt.version)
     func()

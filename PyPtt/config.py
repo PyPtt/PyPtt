@@ -1,13 +1,11 @@
 from SingleLog.log import Logger
 
-from . import connect_core
 from . import data_type
 from . import i18n
-from . import version
 
 
 class Config:
-    Version = version.V
+    version = '1.0.0 beta'
 
     # retry_wait_time 秒後重新連線
     retry_wait_time = 3
@@ -37,7 +35,7 @@ class Config:
     host = data_type.HOST.PTT1
 
     # 預設採用 websockets
-    connect_mode = connect_core.ConnectMode.WEBSOCKETS
+    connect_mode = None
 
     # 預設使用 23
     port = 23

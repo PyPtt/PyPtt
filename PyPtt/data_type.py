@@ -180,7 +180,7 @@ class Comment:
     time = 'time'
 
 
-class ArticleDeleteStatus:
+class ArticleDelStatus:
     exist = 'exist'
     deleted_by_author = 'deleted_by_author'
     deleted_by_moderator = 'deleted_by_moderator'

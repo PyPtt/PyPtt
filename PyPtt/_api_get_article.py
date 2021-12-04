@@ -105,7 +105,7 @@ def get_article(
         Article.url: None,
         Article.ip: None,
         Article.push_list: [],
-        Article.delete_status: data_type.ArticleDeleteStatus.exist,
+        Article.delete_status: data_type.ArticleDelStatus.exist,
         Article.list_date: None,
         Article.has_control_code: False,
         Article.pass_format_check: False,
@@ -142,11 +142,11 @@ def get_article(
         pattern = re.compile('\[[\w]+\]')
         pattern_result = pattern.search(cursor_line)
         if pattern_result is not None:
-            post_del_status = data_type.ArticleDeleteStatus.deleted_by_author
+            post_del_status = data_type.ArticleDelStatus.deleted_by_author
         else:
             pattern = re.compile('<[\w]+>')
             pattern_result = pattern.search(cursor_line)
-            post_del_status = data_type.ArticleDeleteStatus.deleted_by_moderator
+            post_del_status = data_type.ArticleDelStatus.deleted_by_moderator
 
         # > 79843     9/11 -             □ (本文已被吃掉)<
         # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
@@ -155,7 +155,7 @@ def get_article(
             post_author = pattern_result.group(0)[1:-1]
         else:
             post_author = None
-            post_del_status = data_type.ArticleDeleteStatus.deleted_by_unknown
+            post_del_status = data_type.ArticleDelStatus.deleted_by_unknown
 
         logger.debug('ListDate', list_date)
         logger.debug('PostAuthor', post_author)

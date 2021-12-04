@@ -17,11 +17,11 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
-from . import version
+from .config import Config
 from .lib_util import AutoName
 
 register_uao()
-websockets.http.USER_AGENT += f' PyPtt/{version.V}'
+websockets.http.USER_AGENT += f' PyPtt/{Config.version}'
 
 
 @unique

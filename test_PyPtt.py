@@ -549,13 +549,13 @@ PyPtt 程式貼文基準測試內文
             ptt_bot_0.log(f'作者: [{post_info.author}]')
             ptt_bot_0.log(f'標題: [{post_info.title}]')
 
-            if post_info.delete_status == PTT.data_type.ArticleDeleteStatus.exist:
+            if post_info.delete_status == PTT.data_type.ArticleDelStatus.exist:
                 if not query_mode:
                     ptt_bot_0.log('內文:')
                     ptt_bot_0.log(post_info.content)
-            elif post_info.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_author:
+            elif post_info.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_author:
                 ptt_bot_0.log('文章被作者刪除')
-            elif post_info.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_moderator:
+            elif post_info.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_moderator:
                 ptt_bot_0.log('文章被版主刪除')
             ptt_bot_0.log('=' * 20)
 
@@ -575,14 +575,14 @@ PyPtt 程式貼文基準測試內文
             if Obj is None and Enable:
                 raise ValueError(Name + ' is None')
 
-        if post.delete_status != PTT.data_type.ArticleDeleteStatus.exist:
-            if post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_moderator:
+        if post.delete_status != PTT.data_type.ArticleDelStatus.exist:
+            if post.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_moderator:
                 # print(f'[版主刪除][{post.getAuthor()}]')
                 pass
-            elif post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_author:
+            elif post.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_author:
                 # print(f'[作者刪除][{post.getAuthor()}]')
                 pass
-            elif post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_unknown:
+            elif post.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_unknown:
                 # print(f'[不明刪除]')
                 pass
             return

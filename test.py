@@ -170,7 +170,7 @@ def get_post():
                 print('鎖文狀態')
                 continue
 
-            if post_info.delete_status != PTT.data_type.ArticleDeleteStatus.exist:
+            if post_info.delete_status != PTT.data_type.ArticleDelStatus.exist:
                 print('文章已經被刪除')
                 continue
 
@@ -282,7 +282,7 @@ def get_aid_from_url():
                 print(current_index)
 
                 post_info = ptt_bot.get_article(test_board, index=current_index, query=True)
-                if post_info.delete_status != PTT.data_type.ArticleDeleteStatus.exist:
+                if post_info.delete_status != PTT.data_type.ArticleDelStatus.exist:
                     continue
 
                 if post_info.web_url is None:
@@ -323,7 +323,7 @@ def get_aid_from_url():
         for current_index in range(start_index, start_index + test_range):
             print(current_index)
             post_info = ptt_bot.get_article(test_board, index=current_index, query=True)
-            if post_info.delete_status != PTT.data_type.ArticleDeleteStatus.exist:
+            if post_info.delete_status != PTT.data_type.ArticleDelStatus.exist:
                 continue
 
             if post_info.web_url is None:
@@ -428,13 +428,13 @@ def get_post_with_condition():
             print('標題:')
             print(post.title)
 
-            if post.delete_status == PTT.data_type.ArticleDeleteStatus.exist:
+            if post.delete_status == PTT.data_type.ArticleDelStatus.exist:
                 if not query:
                     print('內文:')
                     print(post.content)
-            elif post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_author:
+            elif post.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_author:
                 print('文章被作者刪除')
-            elif post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_moderator:
+            elif post.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_moderator:
                 print('文章被版主刪除')
             print('=' * 50)
 
@@ -576,14 +576,14 @@ query = False
 def crawlHandler(Post):
     global query
 
-    if Post.delete_status != PTT.data_type.ArticleDeleteStatus.exist:
-        if Post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_moderator:
+    if Post.delete_status != PTT.data_type.ArticleDelStatus.exist:
+        if Post.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_moderator:
             # print(f'[版主刪除][{Post.getAuthor()}]')
             pass
-        elif Post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_author:
+        elif Post.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_author:
             # print(f'[作者刪除][{Post.getAuthor()}]')
             pass
-        elif Post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_unknown:
+        elif Post.delete_status == PTT.data_type.ArticleDelStatus.deleted_by_unknown:
             # print(f'[不明刪除]')
             pass
         return
