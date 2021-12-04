@@ -7,8 +7,6 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_time
-from . import _api_post
 from . import check_value
 from . import command
 from . import config
@@ -19,6 +17,9 @@ from . import i18n
 from . import lib_util
 from . import screens
 from . import version
+from . import _api_get_time
+from . import _api_post
+from . import _api_get_post
 
 
 class API:
@@ -324,12 +325,12 @@ class API:
             elif not post.pass_format_check:
                 need_continue = True
 
-            if need_continue:
-                self.logger.debug('Wait for retry repost')
-                time.sleep(0.1)
-                continue
+            if not need_continue:
+                break
 
-            break
+            self.logger.debug('Wait for retry repost')
+            time.sleep(0.1)
+
         return post
 
     def _check_board(
@@ -362,11 +363,6 @@ class API:
             search_condition: str = None,
             search_list: list = None,
             query: bool = False) -> data_type.PostInfo:
-
-        try:
-            from . import _api_get_post
-        except ModuleNotFoundError:
-            import _api_get_post
 
         return _api_get_post.get_post(
             self,

@@ -23,7 +23,7 @@ class Target:
 
     QueryPost = [
         '請按任意鍵繼續',
-        '───────┘',
+        '這一篇文章值',
     ]
 
     InBoard = [

@@ -2,13 +2,13 @@ import re
 
 from SingleLog.log import Logger
 
-from . import data_type
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
-from . import command
 from . import _api_util
+from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def get_post(
@@ -73,19 +73,13 @@ def get_post(
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.catch_post,
-                i18n.success,
-            ],
+            i18n.query_post_success,
             screens.Target.QueryPost,
             break_detect=True,
             refresh=False,
             log_level=Logger.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.post_deleted,
-                i18n.success,
-            ],
+            i18n.post_deleted,
             screens.Target.InBoard,
             break_detect=True,
             log_level=Logger.DEBUG),

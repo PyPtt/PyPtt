@@ -101,6 +101,8 @@ no_such_board = None
 no_mail = None
 find_newest_index = None
 catch_post = None
+catch_post_success = None
+query_post_success = None
 success = None
 post_deleted = None
 board = None
@@ -292,6 +294,12 @@ def load(lang):
     catch_post_success = specific_load(lang, [
         '取得文章成功',
         'get post success',
+    ])
+
+    global query_post_success
+    query_post_success = specific_load(lang, [
+        '查詢文章成功',
+        'query post success',
     ])
 
     global input_origin_password
