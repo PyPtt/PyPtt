@@ -898,7 +898,7 @@ def load(lang):
 
     global no_such_board
     no_such_board = specific_load(lang, [
-        '無該板面',
+        '無該看板',
         'no such board',
     ])
 

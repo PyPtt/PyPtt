@@ -6,12 +6,11 @@ import PyPtt
 import util
 
 test_post_list = [
-    ('Python', 1),
+    # ('Python', 1),
     # ('NotExitBoard', 1),
     # ('Python', '1TJH_XY0'),
+    # ('Python', '1TJdL7L8'),
     # # 文章格式錯誤
-    # ('Steam', 4444),
-    # ('Stock', 92324),
     # ('Stock', '1TVnEivO'),
     # # 文章格式錯誤
     # ('movie', 457),
@@ -31,14 +30,20 @@ test_post_list = [
 
 
 def test(ptt_bot: PyPtt.API):
-    result = {}
+    result = []
     for board, index in test_post_list:
-        article = ptt_bot.get_article(
-            board,
-            post_index=index,)
+        if isinstance(index, int):
+            article = ptt_bot.get_article(
+                board,
+                post_index=index)
+        else:
+            article = ptt_bot.get_article(
+                board,
+                post_aid=index)
 
-        result = article
-        # print(article['origin_post'])
+        result.append(article)
+        print('+==+' * 10)
+        print(article['content'])
 
     return result
 
@@ -55,15 +60,14 @@ def func():
         PyPtt.HOST.PTT1,
         PyPtt.HOST.PTT2]
 
-    result = []
     for ptt_bot in ptt_bot_list:
         util.login(ptt_bot)
 
-        result.append(test(ptt_bot))
+        result = test(ptt_bot)
 
         ptt_bot.logout()
 
-    print(json.dumps(result, ensure_ascii=False, indent=4))
+        print(json.dumps(result, ensure_ascii=False, indent=4))
     # assert (result[0] == result[1])
 
 
