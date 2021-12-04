@@ -1,8 +1,9 @@
+import json
+
 from SingleLog.log import Logger
 
 import PyPtt
 import util
-from PyPtt_0_9 import PTT
 
 test_post_list = [
     ('Python', 1),
@@ -34,9 +35,10 @@ def test(ptt_bot: PyPtt.API):
     for board, index in test_post_list:
         article = ptt_bot.get_article(
             board,
-            post_index=index)
+            post_index=index,
+            query=True)
 
-        result['title'] = article.title
+        result = article
 
     return result
 
@@ -44,7 +46,7 @@ def test(ptt_bot: PyPtt.API):
 def func():
     ptt_bot_list = [
         PyPtt.API(
-            log_level=PyPtt.LOG_LEVEL.TRACE
+            # log_level=PyPtt.LOG_LEVEL.TRACE
         ),
         # PTT.API()
     ]
@@ -61,7 +63,7 @@ def func():
 
         ptt_bot.logout()
 
-    logger.info(result)
+    print(json.dumps(result, ensure_ascii=False, indent=4))
     # assert (result[0] == result[1])
 
 
