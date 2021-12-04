@@ -236,27 +236,27 @@ class PostInfo:
         self.is_unconfirmed: bool = parse_para(bool, unconfirmed)
 
 
-class Article(AutoName):
-    board = auto().__str__()
-    aid = auto()
-    index = auto()
-    author = auto()
-    date = auto()
-    title = auto()
-    content = auto()
-    money = auto()
-    web_url = auto()
-    ip = auto()
-    push_list = auto()
-    delete_status = auto()
-    list_date = auto()
-    is_control_code = auto()
-    pass_format_check = auto()
-    location = auto()
-    push_number = auto()
-    is_lock = auto()
-    origin_post = auto()
-    is_unconfirmed = auto()
+class Article:
+    board = 'board'
+    aid = 'aid'
+    index = 'index'
+    author = 'author'
+    date = 'date'
+    title = 'title'
+    content = 'content'
+    money = 'money'
+    web_url = 'web_url'
+    ip = 'ip'
+    push_list = 'push_list'
+    delete_status = 'delete_status'
+    list_date = 'list_date'
+    is_control_code = 'is_control_code'
+    pass_format_check = 'pass_format_check'
+    location = 'location'
+    push_number = 'push_number'
+    is_lock = 'is_lock'
+    origin_post = 'origin_post'
+    is_unconfirmed = 'is_unconfirmed'
 
 
 class WaterballInfo:
