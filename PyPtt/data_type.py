@@ -181,6 +181,14 @@ class PushInfo:
         self.time = parse_para(str, push_time)
 
 
+class Comment:
+    type = 'type'
+    author = 'author'
+    content = 'content'
+    ip = 'ip'
+    time = 'time'
+
+
 class post_delete_status:
     NOT_DELETED: int = 0
     AUTHOR: int = 1
