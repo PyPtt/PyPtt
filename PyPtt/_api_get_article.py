@@ -94,26 +94,26 @@ def get_article(
     ori_screen = api.connect_core.get_screen_queue()[-1]
 
     article = {
-        Article.board.name: None,
-        Article.aid.name: None,
-        Article.index.name: None,
-        Article.author.name: None,
-        Article.date.name: None,
-        Article.title.name: None,
-        Article.content.name: None,
-        Article.money.name: None,
-        Article.web_url.name: None,
-        Article.ip.name: None,
-        Article.push_list.name: [],
-        Article.delete_status.name: None,
-        Article.list_date.name: None,
-        Article.is_control_code.name: None,
-        Article.pass_format_check.name: None,
-        Article.location.name: None,
-        Article.push_number.name: None,
-        Article.is_lock.name: None,
-        Article.origin_post.name: None,
-        Article.is_unconfirmed.name: None}
+        Article.board: None,
+        Article.aid: None,
+        Article.index: None,
+        Article.author: None,
+        Article.date: None,
+        Article.title: None,
+        Article.content: None,
+        Article.money: None,
+        Article.web_url: None,
+        Article.ip: None,
+        Article.push_list: [],
+        Article.delete_status: None,
+        Article.list_date: None,
+        Article.is_control_code: None,
+        Article.pass_format_check: None,
+        Article.location: None,
+        Article.push_number: None,
+        Article.is_lock: None,
+        Article.origin_post: None,
+        Article.is_unconfirmed: None}
 
     print(Article.board, type(Article.board))
 
@@ -165,11 +165,11 @@ def get_article(
         logger.debug('post_del_status', post_del_status)
 
         article.update({
-            Article.board.name: board,
-            Article.author.name: post_author,
-            Article.list_date.name: list_date,
-            Article.delete_status.name: post_del_status,
-            Article.pass_format_check.name: True
+            Article.board: board,
+            Article.author: post_author,
+            Article.list_date: list_date,
+            Article.delete_status: post_del_status,
+            Article.pass_format_check: True
         })
 
         return article
@@ -183,49 +183,49 @@ def get_article(
 
         if lock_post:
             article.update({
-                Article.board.name: board,
-                Article.aid.name: post_aid,
-                Article.index.name: post_index,
-                Article.author.name: post_author,
-                Article.title.name: post_title,
-                Article.web_url.name: post_web,
-                Article.money.name: post_money,
-                Article.list_date.name: list_date,
-                Article.pass_format_check.name: True,
-                Article.push_number.name: push_number,
-                Article.lock.name: True})
+                Article.board: board,
+                Article.aid: post_aid,
+                Article.index: post_index,
+                Article.author: post_author,
+                Article.title: post_title,
+                Article.web_url: post_web,
+                Article.money: post_money,
+                Article.list_date: list_date,
+                Article.pass_format_check: True,
+                Article.push_number: push_number,
+                Article.lock: True})
             return article
 
     if query:
         article.update({
-            Article.board.name: board,
-            Article.aid.name: post_aid,
-            Article.index.name: post_index,
-            Article.author.name: post_author,
-            Article.title.name: post_title,
-            Article.web_url.name: post_web,
-            Article.money.name: post_money,
-            Article.list_date.name: list_date,
-            Article.pass_format_check.name: True,
-            Article.push_number.name: push_number})
+            Article.board: board,
+            Article.aid: post_aid,
+            Article.index: post_index,
+            Article.author: post_author,
+            Article.title: post_title,
+            Article.web_url: post_web,
+            Article.money: post_money,
+            Article.list_date: list_date,
+            Article.pass_format_check: True,
+            Article.push_number: push_number})
         return article
 
     origin_post, has_control_code = _api_util.get_content(api)
 
     if origin_post is None:
         article.update({
-            Article.board.name: board,
-            Article.aid.name: post_aid,
-            Article.index.name: post_index,
-            Article.author.name: post_author,
-            Article.title.name: post_title,
-            Article.web_url.name: post_web,
-            Article.money.name: post_money,
-            Article.list_date.name: list_date,
-            Article.is_control_code.name: has_control_code,
-            Article.pass_format_check.name: False,
-            Article.push_number.name: push_number,
-            Article.is_unconfirmed.name: api.Unconfirmed
+            Article.board: board,
+            Article.aid: post_aid,
+            Article.index: post_index,
+            Article.author: post_author,
+            Article.title: post_title,
+            Article.web_url: post_web,
+            Article.money: post_money,
+            Article.list_date: list_date,
+            Article.is_control_code: has_control_code,
+            Article.pass_format_check: False,
+            Article.push_number: push_number,
+            Article.is_unconfirmed: api.Unconfirmed
         })
         return article
 
@@ -274,24 +274,24 @@ def get_article(
             logger.debug(i18n.substandard_post, i18n.author)
 
             article.update({
-                board.name: board,
-                Article.aid.name: post_aid,
-                Article.index.name: post_index,
-                Article.author.name: post_author,
-                Article.date.name: post_date,
-                Article.title.name: post_title,
-                Article.web_url.name: post_web,
-                Article.money.name: post_money,
-                Article.content.name: post_content,
-                Article.ip.name: ip,
-                Article.push_list.name: push_list,
-                Article.list_date.name: list_date,
-                Article.is_control_code.name: has_control_code,
-                Article.pass_format_check.name: False,
-                Article.location.name: location,
-                Article.push_number.name: push_number,
-                Article.origin_post.name: origin_post,
-                Article.is_unconfirmed.name: api.Unconfirmed, })
+                board: board,
+                Article.aid: post_aid,
+                Article.index: post_index,
+                Article.author: post_author,
+                Article.date: post_date,
+                Article.title: post_title,
+                Article.web_url: post_web,
+                Article.money: post_money,
+                Article.content: post_content,
+                Article.ip: ip,
+                Article.push_list: push_list,
+                Article.list_date: list_date,
+                Article.is_control_code: has_control_code,
+                Article.pass_format_check: False,
+                Article.location: location,
+                Article.push_number: push_number,
+                Article.origin_post: origin_post,
+                Article.is_unconfirmed: api.Unconfirmed, })
 
             return article
         post_author = pattern_result.group(0)
@@ -308,24 +308,24 @@ def get_article(
         logger.debug(i18n.substandard_post, i18n.title)
 
         article.update({
-            Article.board.name: board,
-            Article.aid.name: post_aid,
-            Article.index.name: post_index,
-            Article.author.name: post_author,
-            Article.date.name: post_date,
-            Article.title.name: post_title,
-            Article.web_url.name: post_web,
-            Article.money.name: post_money,
-            Article.content.name: post_content,
-            Article.ip.name: ip,
-            Article.push_list.name: push_list,
-            Article.list_date.name: list_date,
-            Article.is_control_code.name: has_control_code,
-            Article.pass_format_check.name: False,
-            Article.location.name: location,
-            Article.push_number.name: push_number,
-            Article.origin_post.name: origin_post,
-            Article.is_unconfirmed.name: api.Unconfirmed, })
+            Article.board: board,
+            Article.aid: post_aid,
+            Article.index: post_index,
+            Article.author: post_author,
+            Article.date: post_date,
+            Article.title: post_title,
+            Article.web_url: post_web,
+            Article.money: post_money,
+            Article.content: post_content,
+            Article.ip: ip,
+            Article.push_list: push_list,
+            Article.list_date: list_date,
+            Article.is_control_code: has_control_code,
+            Article.pass_format_check: False,
+            Article.location: location,
+            Article.push_number: push_number,
+            Article.origin_post: origin_post,
+            Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
     post_title = pattern_result.group(0)
@@ -340,24 +340,24 @@ def get_article(
         logger.debug(i18n.substandard_post, i18n.date)
 
         article.update({
-            Article.board.name: board,
-            Article.aid.name: post_aid,
-            Article.index.name: post_index,
-            Article.author.name: post_author,
-            Article.date.name: post_date,
-            Article.title.name: post_title,
-            Article.web_url.name: post_web,
-            Article.money.name: post_money,
-            Article.content.name: post_content,
-            Article.ip.name: ip,
-            Article.push_list.name: push_list,
-            Article.list_date.name: list_date,
-            Article.is_control_code.name: has_control_code,
-            Article.pass_format_check.name: False,
-            Article.location.name: location,
-            Article.push_number.name: push_number,
-            Article.origin_post.name: origin_post,
-            Article.is_unconfirmed.name: api.Unconfirmed, })
+            Article.board: board,
+            Article.aid: post_aid,
+            Article.index: post_index,
+            Article.author: post_author,
+            Article.date: post_date,
+            Article.title: post_title,
+            Article.web_url: post_web,
+            Article.money: post_money,
+            Article.content: post_content,
+            Article.ip: ip,
+            Article.push_list: push_list,
+            Article.list_date: list_date,
+            Article.is_control_code: has_control_code,
+            Article.pass_format_check: False,
+            Article.location: location,
+            Article.push_number: push_number,
+            Article.origin_post: origin_post,
+            Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
     post_date = pattern_result.group(0)
@@ -395,24 +395,24 @@ def get_article(
         logger.debug(i18n.substandard_post, i18n.content)
 
         article.update({
-            Article.board.name: board,
-            Article.aid.name: post_aid,
-            Article.index.name: post_index,
-            Article.author.name: post_author,
-            Article.date.name: post_date,
-            Article.title.name: post_title,
-            Article.web_url.name: post_web,
-            Article.money.name: post_money,
-            Article.content.name: post_content,
-            Article.ip.name: ip,
-            Article.push_list.name: push_list,
-            Article.list_date.name: list_date,
-            Article.is_control_code.name: has_control_code,
-            Article.pass_format_check.name: False,
-            Article.location.name: location,
-            Article.push_number.name: push_number,
-            Article.origin_post.name: origin_post,
-            Article.is_unconfirmed.name: api.Unconfirmed, })
+            Article.board: board,
+            Article.aid: post_aid,
+            Article.index: post_index,
+            Article.author: post_author,
+            Article.date: post_date,
+            Article.title: post_title,
+            Article.web_url: post_web,
+            Article.money: post_money,
+            Article.content: post_content,
+            Article.ip: ip,
+            Article.push_list: push_list,
+            Article.list_date: list_date,
+            Article.is_control_code: has_control_code,
+            Article.pass_format_check: False,
+            Article.location: location,
+            Article.push_number: push_number,
+            Article.origin_post: origin_post,
+            Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
 
@@ -468,24 +468,24 @@ def get_article(
             logger.debug(i18n.substandard_post, ip)
 
             article.update({
-                Article.board.name: board,
-                Article.aid.name: post_aid,
-                Article.index.name: post_index,
-                Article.author.name: post_author,
-                Article.date.name: post_date,
-                Article.title.name: post_title,
-                Article.web_url.name: post_web,
-                Article.money.name: post_money,
-                Article.content.name: post_content,
-                Article.ip.name: ip,
-                Article.push_list.name: push_list,
-                Article.list_date.name: list_date,
-                Article.is_control_code.name: has_control_code,
-                Article.pass_format_check.name: False,
-                Article.location.name: location,
-                Article.push_number.name: push_number,
-                Article.origin_post.name: origin_post,
-                Article.is_unconfirmed.name: api.Unconfirmed, })
+                Article.board: board,
+                Article.aid: post_aid,
+                Article.index: post_index,
+                Article.author: post_author,
+                Article.date: post_date,
+                Article.title: post_title,
+                Article.web_url: post_web,
+                Article.money: post_money,
+                Article.content: post_content,
+                Article.ip: ip,
+                Article.push_list: push_list,
+                Article.list_date: list_date,
+                Article.is_control_code: has_control_code,
+                Article.pass_format_check: False,
+                Article.location: location,
+                Article.push_number: push_number,
+                Article.origin_post: origin_post,
+                Article.is_unconfirmed: api.Unconfirmed, })
 
             return article
     logger.debug('IP', ip)
@@ -557,23 +557,23 @@ def get_article(
         push_list.append(current_push)
 
     article.update({
-        Article.board.name: board,
-        Article.aid.name: post_aid,
-        Article.index.name: post_index,
-        Article.author.name: post_author,
-        Article.date.name: post_date,
-        Article.title.name: post_title,
-        Article.web_url.name: post_web,
-        Article.money.name: post_money,
-        Article.content.name: post_content,
-        Article.ip.name: ip,
-        Article.push_list.name: push_list,
-        Article.list_date.name: list_date,
-        Article.is_control_code.name: has_control_code,
-        Article.pass_format_check.name: True,
-        Article.location.name: location,
-        Article.push_number.name: push_number,
-        Article.origin_post.name: origin_post,
-        Article.is_unconfirmed.name: api.Unconfirmed, })
+        Article.board: board,
+        Article.aid: post_aid,
+        Article.index: post_index,
+        Article.author: post_author,
+        Article.date: post_date,
+        Article.title: post_title,
+        Article.web_url: post_web,
+        Article.money: post_money,
+        Article.content: post_content,
+        Article.ip: ip,
+        Article.push_list: push_list,
+        Article.list_date: list_date,
+        Article.is_control_code: has_control_code,
+        Article.pass_format_check: True,
+        Article.location: location,
+        Article.push_number: push_number,
+        Article.origin_post: origin_post,
+        Article.is_unconfirmed: api.Unconfirmed, })
 
     return article

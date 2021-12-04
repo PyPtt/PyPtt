@@ -323,7 +323,7 @@ class API:
 
             if article is None:
                 need_continue = True
-            elif not article[Article.pass_format_check.name]:
+            elif not article[Article.pass_format_check]:
                 need_continue = True
 
             if not need_continue:
