@@ -35,10 +35,10 @@ def test(ptt_bot: PyPtt.API):
     for board, index in test_post_list:
         article = ptt_bot.get_article(
             board,
-            post_index=index,
-            query=True)
+            post_index=index,)
 
         result = article
+        # print(article['origin_post'])
 
     return result
 
