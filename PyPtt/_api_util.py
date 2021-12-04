@@ -234,7 +234,7 @@ def get_mailbox_capacity(api):
 # └── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┘
 
 def parse_query_post(api, ori_screen):
-    logger = Logger('parse_query_post', Logger.DEBUG)
+    logger = Logger('parse_query_post')
     lock_post = False
     try:
         cursor_line = [line for line in ori_screen.split(

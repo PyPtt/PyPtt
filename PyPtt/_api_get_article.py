@@ -9,7 +9,7 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
-from .data_type import Article
+from .data_type import Article, Comment
 
 
 def get_article(
@@ -23,7 +23,7 @@ def get_article(
         query: bool = False) -> dict:
     api._goto_board(board)
 
-    logger = Logger('get_post', Logger.INFO)
+    logger = Logger('get_article', Logger.DEBUG)
 
     cmd_list = list()
 
@@ -107,16 +107,13 @@ def get_article(
         Article.push_list: [],
         Article.delete_status: None,
         Article.list_date: None,
-        Article.is_control_code: None,
-        Article.pass_format_check: None,
+        Article.is_control_code: False,
+        Article.pass_format_check: False,
         Article.location: None,
         Article.push_number: None,
-        Article.is_lock: None,
+        Article.is_lock: False,
         Article.origin_post: None,
-        Article.is_unconfirmed: None}
-
-    print(Article.board, type(Article.board))
-
+        Article.is_unconfirmed: False}
 
     post_author = None
     post_title = None
@@ -210,9 +207,9 @@ def get_article(
             Article.push_number: push_number})
         return article
 
-    origin_post, has_control_code = _api_util.get_content(api)
+    origin_article, has_control_code = _api_util.get_content(api)
 
-    if origin_post is None:
+    if origin_article is None:
         article.update({
             Article.board: board,
             Article.aid: post_aid,
@@ -230,10 +227,10 @@ def get_article(
         return article
 
     # print('=' * 20)
-    # print(origin_post)
+    # print(origin_article)
     # print('=' * 20)
 
-    content_start = '───────────────────────────────────────'
+    content_start = '─── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──'
     content_end = list()
     content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
@@ -250,7 +247,7 @@ def get_article(
     push_list = list()
 
     # 格式確認，亂改的我也沒辦法Q_Q
-    origin_post_lines = origin_post.split('\n')
+    origin_post_lines = origin_article.split('\n')
 
     author_line = origin_post_lines[0]
 
@@ -290,7 +287,7 @@ def get_article(
                 Article.pass_format_check: False,
                 Article.location: location,
                 Article.push_number: push_number,
-                Article.origin_post: origin_post,
+                Article.origin_post: origin_article,
                 Article.is_unconfirmed: api.Unconfirmed, })
 
             return article
@@ -324,7 +321,7 @@ def get_article(
             Article.pass_format_check: False,
             Article.location: location,
             Article.push_number: push_number,
-            Article.origin_post: origin_post,
+            Article.origin_post: origin_article,
             Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
@@ -356,7 +353,7 @@ def get_article(
             Article.pass_format_check: False,
             Article.location: location,
             Article.push_number: push_number,
-            Article.origin_post: origin_post,
+            Article.origin_post: origin_article,
             Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
@@ -366,11 +363,11 @@ def get_article(
     logger.debug(i18n.date, post_date)
 
     content_fail = True
-    if content_start not in origin_post:
+    if content_start not in origin_article:
         # print('Type 1')
         content_fail = True
     else:
-        post_content = origin_post
+        post_content = origin_article
         post_content = post_content[
                        post_content.find(content_start) +
                        len(content_start) + 1:
@@ -386,7 +383,7 @@ def get_article(
                 post_content = post_content[
                                :post_content.rfind(EC) + 3
                                ]
-                origin_post_lines = origin_post[origin_post.find(EC):]
+                origin_post_lines = origin_article[origin_article.find(EC):]
                 # post_content = post_content.strip()
                 origin_post_lines = origin_post_lines.split('\n')
                 break
@@ -411,7 +408,7 @@ def get_article(
             Article.pass_format_check: False,
             Article.location: location,
             Article.push_number: push_number,
-            Article.origin_post: origin_post,
+            Article.origin_post: origin_article,
             Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
@@ -484,7 +481,7 @@ def get_article(
                 Article.pass_format_check: False,
                 Article.location: location,
                 Article.push_number: push_number,
-                Article.origin_post: origin_post,
+                Article.origin_post: origin_article,
                 Article.is_unconfirmed: api.Unconfirmed, })
 
             return article
@@ -548,12 +545,12 @@ def get_article(
 
         logger.debug(i18n.comment_content, push_content)
 
-        current_push = data_type.PushInfo(
-            comment_type,
-            push_author,
-            push_content,
-            comment_ip,
-            push_date)
+        current_push = {
+            Comment.type: comment_type,
+            Comment.author: push_author,
+            Comment.content: push_content,
+            Comment.ip: comment_ip,
+            Comment.time: push_date}
         push_list.append(current_push)
 
     article.update({
@@ -573,7 +570,7 @@ def get_article(
         Article.pass_format_check: True,
         Article.location: location,
         Article.push_number: push_number,
-        Article.origin_post: origin_post,
-        Article.is_unconfirmed: api.Unconfirmed, })
+        Article.origin_post: origin_article,
+        Article.is_unconfirmed: api.Unconfirmed})
 
     return article
