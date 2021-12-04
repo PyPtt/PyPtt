@@ -2,11 +2,11 @@ import re
 
 from SingleLog.log import Logger
 
+from . import command
+from . import connect_core
 from . import data_type
 from . import i18n
-from . import connect_core
 from . import screens
-from . import command
 
 
 def get_content(api, post_mode: bool = True):
@@ -226,8 +226,15 @@ def get_mailbox_capacity(api):
     return 0, 0
 
 
+# >     1   112/09 ericsk       □ [心得] 終於開板了
+# ┌── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┐
+# │ 文章代碼(AID): #13cPSYOX (Python) [ptt.cc] [心得] 終於開板了  │
+# │ 文章網址: https://www.ptt.cc/bbs/Python/M.1134139170.A.621.html      │
+# │ 這一篇文章值 2 Ptt幣                                              │
+# └── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┘
+
 def parse_query_post(api, ori_screen):
-    logger = Logger('parse_query_post', Logger.INFO)
+    logger = Logger('parse_query_post', Logger.DEBUG)
     lock_post = False
     try:
         cursor_line = [line for line in ori_screen.split(
@@ -262,10 +269,8 @@ def parse_query_post(api, ori_screen):
     elif ' 鎖 ' in post_title:
         post_title = post_title[post_title.find('鎖') + 1:].strip()
 
-    ori_screen_temp = ori_screen[ori_screen.find('┌──────────'):]
-    ori_screen_temp = ori_screen_temp[:ori_screen_temp.find(
-        '└─────────────')
-                      ]
+    ori_screen_temp = ori_screen[ori_screen.find('┌──'):]
+    ori_screen_temp = ori_screen_temp[:ori_screen_temp.find('└──')]
 
     aid_line = [line for line in ori_screen.split(
         '\n') if line.startswith('│ 文章代碼(AID)')]
@@ -279,6 +284,7 @@ def parse_query_post(api, ori_screen):
 
     pattern = re.compile('文章網址: https:[\S]+html')
     pattern_result = pattern.search(ori_screen_temp)
+
     if pattern_result is None:
         post_web = None
     else:
@@ -348,8 +354,6 @@ def parse_query_post(api, ori_screen):
             push_number = None
 
     # print(PushNumber)
-
-    logger.debug()
 
     logger.debug('PostAuthor', post_author)
     logger.debug('PostTitle', post_title)
@@ -429,4 +433,3 @@ def get_search_condition_cmd(
             cmd_list.append(command.enter)
 
     return cmd_list, normal_newest_index
-

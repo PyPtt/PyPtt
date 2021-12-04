@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import auto
 
 from PyPtt.lib_util import AutoName
 
@@ -234,6 +234,29 @@ class PostInfo:
         self.is_lock: bool = parse_para(bool, lock)
         self.origin_post: str = parse_para(str, origin_post)
         self.is_unconfirmed: bool = parse_para(bool, unconfirmed)
+
+
+class Article(AutoName):
+    board = auto().__str__()
+    aid = auto()
+    index = auto()
+    author = auto()
+    date = auto()
+    title = auto()
+    content = auto()
+    money = auto()
+    web_url = auto()
+    ip = auto()
+    push_list = auto()
+    delete_status = auto()
+    list_date = auto()
+    is_control_code = auto()
+    pass_format_check = auto()
+    location = auto()
+    push_number = auto()
+    is_lock = auto()
+    origin_post = auto()
+    is_unconfirmed = auto()
 
 
 class WaterballInfo:

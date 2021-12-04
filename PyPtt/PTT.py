@@ -7,6 +7,9 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
+from PyPtt.data_type import Article
+from . import _api_get_time, _api_get_article
+from . import _api_post
 from . import check_value
 from . import command
 from . import config
@@ -17,9 +20,6 @@ from . import i18n
 from . import lib_util
 from . import screens
 from . import version
-from . import _api_get_time
-from . import _api_post
-from . import _api_get_post
 
 
 class API:
@@ -293,9 +293,10 @@ class API:
         for i in range(2):
 
             need_continue = False
-            post = None
+            article = None
             try:
-                post = self._get_post(
+                article = _api_get_article.get_article(
+                    self,
                     board,
                     post_aid,
                     post_index,
@@ -320,9 +321,9 @@ class API:
                     raise e
                 need_continue = True
 
-            if post is None:
+            if article is None:
                 need_continue = True
-            elif not post.pass_format_check:
+            elif not article[Article.pass_format_check.name]:
                 need_continue = True
 
             if not need_continue:
@@ -331,7 +332,7 @@ class API:
             self.logger.debug('Wait for retry repost')
             time.sleep(0.1)
 
-        return post
+        return article
 
     def _check_board(
             self,
@@ -353,26 +354,6 @@ class API:
                 raise exceptions.NeedModeratorPermission(board)
 
         return self._board_info_list[board.lower()]
-
-    def _get_post(
-            self,
-            board: str,
-            post_aid: str = None,
-            post_index: int = 0,
-            search_type: int = 0,
-            search_condition: str = None,
-            search_list: list = None,
-            query: bool = False) -> data_type.PostInfo:
-
-        return _api_get_post.get_post(
-            self,
-            board,
-            post_aid,
-            post_index,
-            search_type,
-            search_condition,
-            search_list,
-            query)
 
     def _get_newest_index(
             self,
