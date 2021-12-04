@@ -37,7 +37,7 @@ class Config:
     host = data_type.HOST.PTT1
 
     # 預設採用 websockets
-    connect_mode = connect_core.ConnectMode.WEBSOCKET
+    connect_mode = connect_core.ConnectMode.WEBSOCKETS
 
     # 預設使用 23
     port = 23

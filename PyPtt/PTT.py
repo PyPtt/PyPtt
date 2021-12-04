@@ -7,7 +7,6 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from PyPtt.data_type import Article
 from . import _api_get_time, _api_get_article
 from . import _api_post
 from . import check_value
@@ -20,31 +19,32 @@ from . import i18n
 from . import lib_util
 from . import screens
 from . import version
+from .connect_core import ConnectMode
+from .data_type import Article, HOST
 
 
 class API:
     def __init__(
             self,
             language: i18n.Lang = i18n.Lang.CHINESE,
-            log_level: int = 0,
+            log_level: LoggerLevel = Logger.INFO,
             screen_timeout: int = 0,
             screen_long_timeout: int = 0,
             screen_post_timeout: int = 0,
-            connect_mode: int = 0,
+            connect_mode=ConnectMode.WEBSOCKETS,
             port: int = 0,
             log_handler=None,
-            host=data_type.HOST.PTT1):
+            host=HOST.PTT1):
 
-        self._mailbox_full = False
-        self._ID = None
-
-        if log_level == 0:
-            log_level = Logger.INFO
+        if not isinstance(log_level, LoggerLevel):
+            raise TypeError('[PyPtt] log_level must be integer')
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
 
         self.logger.info(f'PyPtt v {version.V} developed by CoidngMan')
 
+        self._mailbox_full = False
+        self._ID = None
         self._login_status = False
         self.unregistered_user = True
         self.registered_user = False
@@ -54,8 +54,6 @@ class API:
 
         if not isinstance(language, i18n.Lang):
             raise TypeError('[PyPtt] language must be i18n.Lang')
-        if not isinstance(log_level, LoggerLevel):
-            raise TypeError('[PyPtt] log_level must be integer')
         if not isinstance(screen_timeout, int):
             raise TypeError('[PyPtt] screen_timeout must be integer')
         if not isinstance(screen_long_timeout, int):
@@ -80,11 +78,6 @@ class API:
         elif self.config.language == i18n.Lang.ENGLISH:
             self.logger.info(i18n.english_module, i18n.init)
 
-        self.outside_logger = Logger('logger', Logger.INFO, handler=log_handler)
-
-        if host is None:
-            host = self.config.host
-
         self.config.host = host
 
         if self.config.host == data_type.HOST.PTT1:
@@ -96,13 +89,10 @@ class API:
         else:
             self.logger.info(i18n.set_connect_host, self.config.host)
 
-        check_value.check_type(int, 'connect_mode', connect_mode)
-        if connect_mode == 0:
-            connect_mode = self.config.connect_mode
-        elif not lib_util.check_range(connect_core.ConnectMode, connect_mode):
-            raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
-        else:
+        if isinstance(connect_mode, ConnectMode):
             self.config.connect_mode = connect_mode
+        else:
+            raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
 
         check_value.check_type(int, 'port', port)
         if port == 0:
@@ -189,8 +179,8 @@ class API:
             kick_other_login: bool = False) -> None:
         self._one_thread()
 
-        check_value.check_type(str, 'ID', ptt_id)
-        check_value.check_type(str, 'Password', password)
+        check_value.check_type(str, 'ptt_id', ptt_id)
+        check_value.check_type(str, 'password', password)
         check_value.check_type(bool, 'kick_other_login', kick_other_login)
 
         try:
@@ -217,9 +207,6 @@ class API:
 
         return _api_loginout.logout(self)
 
-    def log(self, *msg) -> None:
-        self.outside_logger.info(*msg)
-
     def get_time(self) -> str:
         self._one_thread()
         if not self._login_status:
@@ -230,21 +217,21 @@ class API:
     def get_article(
             self,
             board: str,
-            post_aid: str = None,
-            post_index: int = 0,
+            aid: str = None,
+            index: int = 0,
             search_type: int = 0,
             search_condition: str = None,
             search_list: list = None,
-            query: bool = False) -> data_type.PostInfo:
+            query: bool = False) -> dict:
         self._one_thread()
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
 
         check_value.check_type(str, 'board', board)
-        if post_aid is not None:
-            check_value.check_type(str, 'post_aid', post_aid)
-        check_value.check_type(int, 'post_index', post_index)
+        if aid is not None:
+            check_value.check_type(str, 'post_aid', aid)
+        check_value.check_type(int, 'post_index', index)
         check_value.check_type(int, 'search_type', search_type,
                                value_class=data_type.post_search_type)
         if search_condition is not None:
@@ -258,10 +245,10 @@ class API:
         if len(board) == 0:
             raise ValueError(f'board error parameter: {board}')
 
-        if post_index != 0 and isinstance(post_aid, str):
+        if index != 0 and isinstance(aid, str):
             raise ValueError('wrong parameter post_index and post_aid can\'t both input')
 
-        if post_index == 0 and post_aid is None:
+        if index == 0 and aid is None:
             raise ValueError('wrong parameter post_index or post_aid must input')
 
         if search_condition is not None and search_type == 0:
@@ -275,10 +262,10 @@ class API:
 
             check_value.check_range('search_condition', S, -100, 100)
 
-        if post_aid is not None and search_condition is not None:
+        if aid is not None and search_condition is not None:
             raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
 
-        if post_index != 0:
+        if index != 0:
             newest_index = self._get_newest_index(
                 data_type.index_type.BBS,
                 board=board,
@@ -286,7 +273,7 @@ class API:
                 search_condition=search_condition,
                 search_list=search_list)
 
-            check_value.check_index('post_index', post_index, newest_index)
+            check_value.check_index('post_index', index, newest_index)
 
         self._check_board(board)
 
@@ -298,8 +285,8 @@ class API:
                 article = _api_get_article.get_article(
                     self,
                     board,
-                    post_aid,
-                    post_index,
+                    aid,
+                    index,
                     search_type,
                     search_condition,
                     search_list,
@@ -486,16 +473,14 @@ class API:
                     end_index,
                     max_value=newest_index)
             elif start_aid is not None and end_aid is not None:
-                start_index = self.get_article(
+                start_index = _api_get_article.get_article(
                     board,
-                    post_aid=start_aid,
-                    query=True
-                ).index
-                end_index = self.get_article(
+                    aid=start_aid,
+                    query=True)[Article.index]
+                end_index = _api_get_article.get_article(
                     board,
-                    post_aid=end_aid,
-                    query=True
-                ).index
+                    aid=end_aid,
+                    query=True)[Article.index]
 
                 check_value.check_index_range(
                     'start_index',
@@ -518,9 +503,9 @@ class API:
 
                 for i in range(2):
                     need_continue = False
-                    post = None
+                    article = None
                     try:
-                        post = self._get_post(
+                        article = _api_get_article.get_article(
                             board,
                             post_index=index,
                             search_type=search_type,
@@ -564,9 +549,9 @@ class API:
                             self.config.kick_other_login)
                         need_continue = True
 
-                    if post is None:
+                    if article is None:
                         need_continue = True
-                    elif not post.pass_format_check:
+                    elif not article[Article.pass_format_check]:
                         need_continue = True
 
                     if need_continue:
@@ -578,18 +563,18 @@ class API:
 
                 if self.config.log_level == Logger.INFO:
                     PB.update(index - start_index)
-                if post is None:
+                if article is None:
                     error_post_list.append(index)
                     continue
-                if not post.pass_format_check:
-                    if post.aid is not None:
-                        error_post_list.append(post.aid)
+                if not article.pass_format_check:
+                    if article.aid is not None:
+                        error_post_list.append(article.aid)
                     else:
                         error_post_list.append(index)
                     continue
-                if post.delete_status != data_type.post_delete_status.NOT_DELETED:
+                if article.delete_status != data_type.ArticleDeleteStatus.exist:
                     del_post_list.append(index)
-                post_handler(post)
+                post_handler(article)
             if self.config.log_level == Logger.INFO:
                 PB.finish()
 

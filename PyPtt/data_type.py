@@ -1,4 +1,4 @@
-from enum import auto
+from enum import auto, IntEnum
 
 from PyPtt.lib_util import AutoName
 
@@ -172,15 +172,6 @@ class UserInfo:
         self.signature_file: str = parse_para(str, signature_file)
 
 
-class PushInfo:
-    def __init__(self, push_type, author, push_content, push_ip, push_time):
-        self.type = parse_para(int, push_type)
-        self.author = parse_para(str, author)
-        self.content = parse_para(str, push_content)
-        self.ip = parse_para(str, push_ip)
-        self.time = parse_para(str, push_time)
-
-
 class Comment:
     type = 'type'
     author = 'author'
@@ -189,59 +180,11 @@ class Comment:
     time = 'time'
 
 
-class post_delete_status:
-    NOT_DELETED: int = 0
-    AUTHOR: int = 1
-    MODERATOR: int = 2
-    UNKNOWN: int = 3
-
-    min_value = NOT_DELETED
-    max_value = UNKNOWN
-
-
-class PostInfo:
-    def __init__(
-            self,
-            board=None,
-            aid=None,
-            index=None,
-            author=None,
-            date=None,
-            title=None,
-            web_url=None,
-            money=None,
-            content=None,
-            ip=None,
-            push_list=None,
-            list_date=None,
-            delete_status=0,
-            control_code=False,
-            format_check=False,
-            location=None,
-            push_number=None,
-            lock=False,
-            origin_post=None,
-            unconfirmed=False):
-        self.board: str = parse_para(str, board)
-        self.aid: str = parse_para(str, aid)
-        self.index: int = parse_para(int, index)
-        self.author: str = parse_para(str, author)
-        self.date: str = parse_para(str, date)
-        self.title: str = parse_para(str, title)
-        self.content: str = parse_para(str, content)
-        self.money: int = parse_para(int, money)
-        self.web_url: str = parse_para(str, web_url)
-        self.ip: str = parse_para(str, ip)
-        self.push_list: list = parse_para(list, push_list)
-        self.delete_status: int = parse_para(int, delete_status)
-        self.list_date: str = parse_para(str, list_date)
-        self.is_control_code: bool = parse_para(bool, control_code)
-        self.pass_format_check: bool = parse_para(bool, format_check)
-        self.location: str = parse_para(str, location)
-        self.push_number: str = parse_para(str, push_number)
-        self.is_lock: bool = parse_para(bool, lock)
-        self.origin_post: str = parse_para(str, origin_post)
-        self.is_unconfirmed: bool = parse_para(bool, unconfirmed)
+class ArticleDeleteStatus:
+    exist = 'exist'
+    deleted_by_author = 'deleted_by_author'
+    deleted_by_moderator = 'deleted_by_moderator'
+    deleted_by_unknown = 'deleted_by_unknown'
 
 
 class Article:
@@ -253,17 +196,17 @@ class Article:
     title = 'title'
     content = 'content'
     money = 'money'
-    web_url = 'web_url'
+    url = 'url'
     ip = 'ip'
     push_list = 'push_list'
     delete_status = 'delete_status'
     list_date = 'list_date'
-    is_control_code = 'is_control_code'
+    has_control_code = 'has_control_code'
     pass_format_check = 'pass_format_check'
     location = 'location'
     push_number = 'push_number'
     is_lock = 'is_lock'
-    origin_post = 'origin_post'
+    full_content = 'full_content'
     is_unconfirmed = 'is_unconfirmed'
 
 

@@ -102,17 +102,17 @@ def get_article(
         Article.title: None,
         Article.content: None,
         Article.money: None,
-        Article.web_url: None,
+        Article.url: None,
         Article.ip: None,
         Article.push_list: [],
-        Article.delete_status: None,
+        Article.delete_status: data_type.ArticleDeleteStatus.exist,
         Article.list_date: None,
-        Article.is_control_code: False,
+        Article.has_control_code: False,
         Article.pass_format_check: False,
         Article.location: None,
         Article.push_number: None,
         Article.is_lock: False,
-        Article.origin_post: None,
+        Article.full_content: None,
         Article.is_unconfirmed: False}
 
     post_author = None
@@ -142,11 +142,11 @@ def get_article(
         pattern = re.compile('\[[\w]+\]')
         pattern_result = pattern.search(cursor_line)
         if pattern_result is not None:
-            post_del_status = data_type.post_delete_status.AUTHOR
+            post_del_status = data_type.ArticleDeleteStatus.deleted_by_author
         else:
             pattern = re.compile('<[\w]+>')
             pattern_result = pattern.search(cursor_line)
-            post_del_status = data_type.post_delete_status.MODERATOR
+            post_del_status = data_type.ArticleDeleteStatus.deleted_by_moderator
 
         # > 79843     9/11 -             □ (本文已被吃掉)<
         # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
@@ -155,7 +155,7 @@ def get_article(
             post_author = pattern_result.group(0)[1:-1]
         else:
             post_author = None
-            post_del_status = data_type.post_delete_status.UNKNOWN
+            post_del_status = data_type.ArticleDeleteStatus.deleted_by_unknown
 
         logger.debug('ListDate', list_date)
         logger.debug('PostAuthor', post_author)
@@ -185,7 +185,7 @@ def get_article(
                 Article.index: post_index,
                 Article.author: post_author,
                 Article.title: post_title,
-                Article.web_url: post_web,
+                Article.url: post_web,
                 Article.money: post_money,
                 Article.list_date: list_date,
                 Article.pass_format_check: True,
@@ -200,7 +200,7 @@ def get_article(
             Article.index: post_index,
             Article.author: post_author,
             Article.title: post_title,
-            Article.web_url: post_web,
+            Article.url: post_web,
             Article.money: post_money,
             Article.list_date: list_date,
             Article.pass_format_check: True,
@@ -216,10 +216,10 @@ def get_article(
             Article.index: post_index,
             Article.author: post_author,
             Article.title: post_title,
-            Article.web_url: post_web,
+            Article.url: post_web,
             Article.money: post_money,
             Article.list_date: list_date,
-            Article.is_control_code: has_control_code,
+            Article.has_control_code: has_control_code,
             Article.pass_format_check: False,
             Article.push_number: push_number,
             Article.is_unconfirmed: api.Unconfirmed
@@ -277,17 +277,17 @@ def get_article(
                 Article.author: post_author,
                 Article.date: post_date,
                 Article.title: post_title,
-                Article.web_url: post_web,
+                Article.url: post_web,
                 Article.money: post_money,
                 Article.content: post_content,
                 Article.ip: ip,
                 Article.push_list: push_list,
                 Article.list_date: list_date,
-                Article.is_control_code: has_control_code,
+                Article.has_control_code: has_control_code,
                 Article.pass_format_check: False,
                 Article.location: location,
                 Article.push_number: push_number,
-                Article.origin_post: origin_article,
+                Article.full_content: origin_article,
                 Article.is_unconfirmed: api.Unconfirmed, })
 
             return article
@@ -311,17 +311,17 @@ def get_article(
             Article.author: post_author,
             Article.date: post_date,
             Article.title: post_title,
-            Article.web_url: post_web,
+            Article.url: post_web,
             Article.money: post_money,
             Article.content: post_content,
             Article.ip: ip,
             Article.push_list: push_list,
             Article.list_date: list_date,
-            Article.is_control_code: has_control_code,
+            Article.has_control_code: has_control_code,
             Article.pass_format_check: False,
             Article.location: location,
             Article.push_number: push_number,
-            Article.origin_post: origin_article,
+            Article.full_content: origin_article,
             Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
@@ -343,17 +343,17 @@ def get_article(
             Article.author: post_author,
             Article.date: post_date,
             Article.title: post_title,
-            Article.web_url: post_web,
+            Article.url: post_web,
             Article.money: post_money,
             Article.content: post_content,
             Article.ip: ip,
             Article.push_list: push_list,
             Article.list_date: list_date,
-            Article.is_control_code: has_control_code,
+            Article.has_control_code: has_control_code,
             Article.pass_format_check: False,
             Article.location: location,
             Article.push_number: push_number,
-            Article.origin_post: origin_article,
+            Article.full_content: origin_article,
             Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
@@ -398,17 +398,17 @@ def get_article(
             Article.author: post_author,
             Article.date: post_date,
             Article.title: post_title,
-            Article.web_url: post_web,
+            Article.url: post_web,
             Article.money: post_money,
             Article.content: post_content,
             Article.ip: ip,
             Article.push_list: push_list,
             Article.list_date: list_date,
-            Article.is_control_code: has_control_code,
+            Article.has_control_code: has_control_code,
             Article.pass_format_check: False,
             Article.location: location,
             Article.push_number: push_number,
-            Article.origin_post: origin_article,
+            Article.full_content: origin_article,
             Article.is_unconfirmed: api.Unconfirmed, })
 
         return article
@@ -471,17 +471,17 @@ def get_article(
                 Article.author: post_author,
                 Article.date: post_date,
                 Article.title: post_title,
-                Article.web_url: post_web,
+                Article.url: post_web,
                 Article.money: post_money,
                 Article.content: post_content,
                 Article.ip: ip,
                 Article.push_list: push_list,
                 Article.list_date: list_date,
-                Article.is_control_code: has_control_code,
+                Article.has_control_code: has_control_code,
                 Article.pass_format_check: False,
                 Article.location: location,
                 Article.push_number: push_number,
-                Article.origin_post: origin_article,
+                Article.full_content: origin_article,
                 Article.is_unconfirmed: api.Unconfirmed, })
 
             return article
@@ -560,17 +560,17 @@ def get_article(
         Article.author: post_author,
         Article.date: post_date,
         Article.title: post_title,
-        Article.web_url: post_web,
+        Article.url: post_web,
         Article.money: post_money,
         Article.content: post_content,
         Article.ip: ip,
         Article.push_list: push_list,
         Article.list_date: list_date,
-        Article.is_control_code: has_control_code,
+        Article.has_control_code: has_control_code,
         Article.pass_format_check: True,
         Article.location: location,
         Article.push_number: push_number,
-        Article.origin_post: origin_article,
+        Article.full_content: origin_article,
         Article.is_unconfirmed: api.Unconfirmed})
 
     return article

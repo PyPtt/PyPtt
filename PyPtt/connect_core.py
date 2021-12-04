@@ -3,7 +3,7 @@ import telnetlib
 import threading
 import time
 import traceback
-from enum import Enum, auto, unique
+from enum import auto, unique
 
 import websockets
 import websockets.exceptions
@@ -18,35 +18,32 @@ from . import exceptions
 from . import i18n
 from . import screens
 from . import version
+from .lib_util import AutoName
 
 register_uao()
 websockets.http.USER_AGENT += f' PyPtt/{version.V}'
 
 
-class AutoName(Enum):
-    def _generate_next_value_(name, start, count, last_values):
-        return name
-
-
 @unique
 class ConnectMode(AutoName):
     TELNET = auto()
-    WEBSOCKET = auto()
+    WEBSOCKETS = auto()
 
 
 class TargetUnit:
-    def __init__(self,
-                 display_msg,
-                 detect_target,
-                 log_level: LoggerLevel = None,
-                 response: str = '',
-                 break_detect=False,
-                 break_detect_after_send=False,
-                 exceptions_=None,
-                 refresh=True,
-                 secret=False,
-                 handler=None,
-                 max_match: int = 0):
+    def __init__(
+            self,
+            display_msg,
+            detect_target,
+            log_level: LoggerLevel = None,
+            response: str = '',
+            break_detect=False,
+            break_detect_after_send=False,
+            exceptions_=None,
+            refresh=True,
+            secret=False,
+            handler=None,
+            max_match: int = 0):
 
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
@@ -156,7 +153,7 @@ class API(object):
 
         if self.config.connect_mode == ConnectMode.TELNET:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
-        elif self.config.connect_mode == ConnectMode.WEBSOCKET:
+        elif self.config.connect_mode == ConnectMode.WEBSOCKETS:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
 
     def connect(self) -> None:
@@ -453,7 +450,7 @@ class API(object):
         return -1
 
     def close(self):
-        if self.config.connect_mode == ConnectMode.WEBSOCKET:
+        if self.config.connect_mode == ConnectMode.WEBSOCKETS:
             asyncio.get_event_loop().run_until_complete(self._core.close())
         else:
             self._core.close()
