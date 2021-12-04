@@ -7,18 +7,18 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_time, _api_get_article
+import PyPtt
+from . import _api_get_time, _api_get_article, version
 from . import _api_post
 from . import check_value
 from . import command
-from . import config
+from . import _config
 from . import connect_core
 from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
-from . import Config
 
 from .connect_core import ConnectMode
 from .data_type import Article, HOST
@@ -42,7 +42,7 @@ class API:
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
 
-        self.logger.info(f'PyPtt v {Config.version} developed by CoidngMan')
+        self.logger.info(f'PyPtt v {version} developed by CoidngMan')
 
         self._mailbox_full = False
         self._ID = None
@@ -51,7 +51,7 @@ class API:
         self.registered_user = False
         self.process_picks = 0
 
-        self.config = config.Config()
+        self.config = _config._Config()
 
         if not isinstance(language, i18n.Lang):
             raise TypeError('[PyPtt] language must be i18n.Lang')
@@ -80,6 +80,7 @@ class API:
             self.logger.info(i18n.english_module, i18n.init)
 
         self.config.host = host
+        PyPtt.host = host
 
         if self.config.host == data_type.HOST.PTT1:
             self.logger.info(i18n.set_connect_host, i18n.PTT)
@@ -122,7 +123,7 @@ class API:
 
         self.logger.debug('new version', remote_version)
 
-        version_list = Config.version.split('.')
+        version_list = version.split('.')
         new_version_list = remote_version.split('.')
 
         update = False
@@ -138,9 +139,9 @@ class API:
         if update:
             self.logger.info(i18n.new_version, remote_version)
         elif develop_version:
-            self.logger.info(i18n.development_version, Config.version)
+            self.logger.info(i18n.development_version, version)
         else:
-            self.logger.info(i18n.latest_version, Config.version)
+            self.logger.info(i18n.latest_version, version)
 
     def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
@@ -1518,6 +1519,6 @@ class API:
 
 
 if __name__ == '__main__':
-    print('PyPtt v ' + Config.version)
+    print('PyPtt v ' + version)
     print('Developed by CodingMan')
     print('Github: PttCodingMan')

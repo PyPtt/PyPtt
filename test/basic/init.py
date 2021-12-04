@@ -6,7 +6,6 @@ import PyPtt
 
 
 def func():
-    logger.info('===正向===')
     logger.info('===預設值===')
     PyPtt.API()
     logger.info('===中文顯示===')
@@ -21,7 +20,12 @@ def func():
     PyPtt.API(log_level=PyPtt.LOG_LEVEL.SILENT)
     logger.info('===log SLIENT======')
 
-    logger.info('===負向===')
+    PyPtt.API(host=PyPtt.HOST.PTT1)
+    logger.info('host', PyPtt.host)
+
+    PyPtt.API(host=PyPtt.HOST.PTT2)
+    logger.info('host', PyPtt.host)
+
     try:
         logger.info('===語言 99===')
         PyPtt.API(language=99)
@@ -38,6 +42,8 @@ def func():
     except:
         logger.info('沒通過')
         assert False
+
+
 
     # def handler(msg):
     #     with open('log.txt', 'a', encoding='utf-8') as f:

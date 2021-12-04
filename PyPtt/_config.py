@@ -4,8 +4,7 @@ from . import data_type
 from . import i18n
 
 
-class Config:
-    version = '1.0.0 beta'
+class _Config:
 
     # retry_wait_time 秒後重新連線
     retry_wait_time = 3
