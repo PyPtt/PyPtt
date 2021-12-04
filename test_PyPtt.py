@@ -131,7 +131,7 @@ def test_init():
         assert False
 
     try:
-        PTT.API(connect_mode=PTT.connect_core.ConnectMode.WEBSOCKET)
+        PTT.API(connect_mode=PTT.connect_core.ConnectMode.WEBSOCKETS)
         log('WEBSOCKET 測試通過')
     except ValueError:
         assert False
@@ -280,11 +280,11 @@ def case(ptt_bot_0, ptt_bot_1):
             if isinstance(index_aid, int):
                 post_info = ptt_bot_0.get_article(
                     board,
-                    post_index=index_aid)
+                    index=index_aid)
             else:
                 post_info = ptt_bot_0.get_article(
                     board,
-                    post_aid=index_aid)
+                    aid=index_aid)
         except Exception as e:
             if target_ex is not None and isinstance(e, target_ex):
                 show_test_result(board, index_aid, True)
@@ -411,14 +411,14 @@ PyPtt 程式貼文基準測試內文
 
         post_info = ptt_bot_0.get_article(
             basic_board,
-            post_index=index - i)
+            index=index - i)
 
         if current_id_0 in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                 title in post_info.title:
             ptt_bot_0.log('使用文章編號取得基準文章成功')
             post_info = ptt_bot_0.get_article(
                 basic_board,
-                post_aid=post_info.aid)
+                aid=post_info.aid)
             if current_id_0 in post_info.author and 'PyPtt 程式貼文基準測試內文' in post_info.content and \
                     title in post_info.title:
                 ptt_bot_0.log('使用文章代碼取得基準文章成功')
@@ -475,7 +475,7 @@ PyPtt 程式貼文基準測試內文
 
     post_info = ptt_bot_0.get_article(
         basic_board,
-        post_aid=basic_post_aid)
+        aid=basic_post_aid)
 
     push_success_count = 0
     for push in post_info.push_list:
@@ -540,7 +540,7 @@ PyPtt 程式貼文基準測試內文
         for i in range(test_range):
             post_info = ptt_bot_0.get_article(
                 test_board,
-                post_index=index - i,
+                index=index - i,
                 search_type=search_type,
                 search_condition=condition,
                 query=query_mode)
@@ -549,13 +549,13 @@ PyPtt 程式貼文基準測試內文
             ptt_bot_0.log(f'作者: [{post_info.author}]')
             ptt_bot_0.log(f'標題: [{post_info.title}]')
 
-            if post_info.delete_status == PTT.data_type.post_delete_status.NOT_DELETED:
+            if post_info.delete_status == PTT.data_type.ArticleDeleteStatus.exist:
                 if not query_mode:
                     ptt_bot_0.log('內文:')
                     ptt_bot_0.log(post_info.content)
-            elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
+            elif post_info.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_author:
                 ptt_bot_0.log('文章被作者刪除')
-            elif post_info.delete_status == PTT.data_type.post_delete_status.MODERATOR:
+            elif post_info.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_moderator:
                 ptt_bot_0.log('文章被版主刪除')
             ptt_bot_0.log('=' * 20)
 
@@ -575,14 +575,14 @@ PyPtt 程式貼文基準測試內文
             if Obj is None and Enable:
                 raise ValueError(Name + ' is None')
 
-        if post.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
-            if post.delete_status == PTT.data_type.post_delete_status.MODERATOR:
+        if post.delete_status != PTT.data_type.ArticleDeleteStatus.exist:
+            if post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_moderator:
                 # print(f'[版主刪除][{post.getAuthor()}]')
                 pass
-            elif post.delete_status == PTT.data_type.post_delete_status.AUTHOR:
+            elif post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_author:
                 # print(f'[作者刪除][{post.getAuthor()}]')
                 pass
-            elif post.delete_status == PTT.data_type.post_delete_status.UNKNOWN:
+            elif post.delete_status == PTT.data_type.ArticleDeleteStatus.deleted_by_unknown:
                 # print(f'[不明刪除]')
                 pass
             return
@@ -657,7 +657,7 @@ PyPtt 程式貼文基準測試內文
         while True:
             start_post = ptt_bot_0.get_article(
                 test_board,
-                post_index=newest_index - test_range + 1 - offset)
+                index=newest_index - test_range + 1 - offset)
             offset += 1
             if start_post is None:
                 continue
@@ -670,7 +670,7 @@ PyPtt 程式貼文基準測試內文
         while True:
             end_post = ptt_bot_0.get_article(
                 test_board,
-                post_index=newest_index + offset)
+                index=newest_index + offset)
             offset += 1
             if end_post is None:
                 continue
@@ -908,7 +908,7 @@ PyPtt 程式寄信測試內容
                 check_result = False
                 break
 
-            post_info = ptt_bot_0.get_article(board, post_aid=aid, query=True)
+            post_info = ptt_bot_0.get_article(board, aid=aid, query=True)
             if post_info.aid != aid:
                 check_result = False
                 break
@@ -971,7 +971,7 @@ PyPtt 程式寄信測試內容
 
         post_info = ptt_bot_0.get_article(
             basic_board,
-            post_index=index - i)
+            index=index - i)
 
         if current_id_0 in post_info.author and content in post_info.content:
             test_pass = True
@@ -1002,7 +1002,7 @@ PyPtt 程式寄信測試內容
 
         post_info = ptt_bot_0.get_article(
             basic_board,
-            post_index=index - i)
+            index=index - i)
 
         if current_id_0 in post_info.author and content in post_info.content:
             test_pass = True
