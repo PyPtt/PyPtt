@@ -18,7 +18,8 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
-from . import version
+from . import Config
+
 from .connect_core import ConnectMode
 from .data_type import Article, HOST
 
@@ -41,7 +42,7 @@ class API:
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
 
-        self.logger.info(f'PyPtt v {version.V} developed by CoidngMan')
+        self.logger.info(f'PyPtt v {Config.version} developed by CoidngMan')
 
         self._mailbox_full = False
         self._ID = None
@@ -121,7 +122,7 @@ class API:
 
         self.logger.debug('new version', remote_version)
 
-        version_list = version.V.split('.')
+        version_list = Config.version.split('.')
         new_version_list = remote_version.split('.')
 
         update = False
@@ -137,9 +138,9 @@ class API:
         if update:
             self.logger.info(i18n.new_version, remote_version)
         elif develop_version:
-            self.logger.info(i18n.development_version, version.V)
+            self.logger.info(i18n.development_version, Config.version)
         else:
-            self.logger.info(i18n.latest_version, version.V)
+            self.logger.info(i18n.latest_version, Config.version)
 
     def _one_thread(self) -> None:
         current_thread_id = threading.get_ident()
@@ -150,10 +151,6 @@ class API:
         self.logger.debug('current_thread_id', current_thread_id)
 
         raise exceptions.MultiThreadOperated()
-
-    def get_version(self) -> str:
-        self._one_thread()
-        return self.config.Version
 
     def _login(
             self,
@@ -572,7 +569,7 @@ class API:
                     else:
                         error_post_list.append(index)
                     continue
-                if article.delete_status != data_type.ArticleDeleteStatus.exist:
+                if article.delete_status != data_type.ArticleDelStatus.exist:
                     del_post_list.append(index)
                 post_handler(article)
             if self.config.log_level == Logger.INFO:
@@ -1521,6 +1518,6 @@ class API:
 
 
 if __name__ == '__main__':
-    print('PyPtt v ' + version.V)
+    print('PyPtt v ' + Config.version)
     print('Developed by CodingMan')
     print('Github: PttCodingMan')
