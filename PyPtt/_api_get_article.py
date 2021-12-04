@@ -23,7 +23,7 @@ def get_article(
         query: bool = False) -> dict:
     api._goto_board(board)
 
-    logger = Logger('get_article', Logger.DEBUG)
+    logger = Logger('get_article', Logger.INFO)
 
     cmd_list = list()
 
