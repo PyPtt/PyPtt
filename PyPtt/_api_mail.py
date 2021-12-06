@@ -136,7 +136,7 @@ def get_mail(
     # 處理條件整理出指令
     _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
         api,
-        data_type.index_type.MAIL,
+        data_type.NewIndex.MAIL,
         search_type,
         search_condition,
         search_list,

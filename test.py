@@ -273,7 +273,7 @@ def get_aid_from_url():
 
             print(test_board)
 
-            newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
+            newest_index = ptt_bot.get_newest_index(PTT.data_type.NewIndex.BBS, board=test_board)
             print(f'newest_index {newest_index}')
             if newest_index == 0:
                 continue
@@ -312,7 +312,7 @@ def get_aid_from_url():
 
     def random_post_test():
         test_board = 'Gossiping'
-        newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
+        newest_index = ptt_bot.get_newest_index(PTT.data_type.NewIndex.BBS, board=test_board)
         print(f'{test_board} newest_index {newest_index}')
 
         test_range = 10
@@ -352,32 +352,32 @@ def get_aid_from_url():
 
 
 test_list = {
-    ('Wanted', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
-    ('Wanted', PTT.data_type.post_search_type.AUTHOR, 'gogin'),
-    ('Wanted', PTT.data_type.post_search_type.PUSH, '10'),
-    ('Wanted', PTT.data_type.post_search_type.MARK, 'm'),
-    ('Wanted', PTT.data_type.post_search_type.MONEY, '5'),
-    ('Gossiping', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
-    ('Gossiping', PTT.data_type.post_search_type.AUTHOR, 'ReDmango'),
-    ('Gossiping', PTT.data_type.post_search_type.PUSH, '10'),
-    ('Gossiping', PTT.data_type.post_search_type.MARK, 'm'),
-    ('Gossiping', PTT.data_type.post_search_type.MONEY, '5'),
+    ('Wanted', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
+    ('Wanted', PTT.data_type.ArticleSearchType.AUTHOR, 'gogin'),
+    ('Wanted', PTT.data_type.ArticleSearchType.PUSH, '10'),
+    ('Wanted', PTT.data_type.ArticleSearchType.MARK, 'm'),
+    ('Wanted', PTT.data_type.ArticleSearchType.MONEY, '5'),
+    ('Gossiping', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
+    ('Gossiping', PTT.data_type.ArticleSearchType.AUTHOR, 'ReDmango'),
+    ('Gossiping', PTT.data_type.ArticleSearchType.PUSH, '10'),
+    ('Gossiping', PTT.data_type.ArticleSearchType.MARK, 'm'),
+    ('Gossiping', PTT.data_type.ArticleSearchType.MONEY, '5'),
 
-    ('Gossiping', PTT.data_type.post_search_type.PUSH, '-100'),
-    ('Gossiping', PTT.data_type.post_search_type.PUSH, '150'),
+    ('Gossiping', PTT.data_type.ArticleSearchType.PUSH, '-100'),
+    ('Gossiping', PTT.data_type.ArticleSearchType.PUSH, '150'),
 }
 
 
 def show_condition(test_board, search_type, condition):
-    if search_type == PTT.data_type.post_search_type.KEYWORD:
+    if search_type == PTT.data_type.ArticleSearchType.KEYWORD:
         type_str = '關鍵字'
-    if search_type == PTT.data_type.post_search_type.AUTHOR:
+    if search_type == PTT.data_type.ArticleSearchType.AUTHOR:
         type_str = '作者'
-    if search_type == PTT.data_type.post_search_type.PUSH:
+    if search_type == PTT.data_type.ArticleSearchType.PUSH:
         type_str = '推文數'
-    if search_type == PTT.data_type.post_search_type.MARK:
+    if search_type == PTT.data_type.ArticleSearchType.MARK:
         type_str = '標記'
-    if search_type == PTT.data_type.post_search_type.MONEY:
+    if search_type == PTT.data_type.ArticleSearchType.MONEY:
         type_str = '稿酬'
 
     print(f'{test_board} 使用 {type_str} 搜尋 {condition}')
@@ -388,16 +388,16 @@ def get_post_with_condition():
 
     if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
         test_list = [
-            ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
-            ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Wanted)'),
-            ('Wanted', PTT.data_type.post_search_type.KEYWORD, '(本文已被刪除)'),
-            ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Gossiping)'),
-            ('Gossiping', PTT.data_type.post_search_type.KEYWORD, '普悠瑪'),
+            ('Python', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
+            ('ALLPOST', PTT.data_type.ArticleSearchType.KEYWORD, '(Wanted)'),
+            ('Wanted', PTT.data_type.ArticleSearchType.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PTT.data_type.ArticleSearchType.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PTT.data_type.ArticleSearchType.KEYWORD, '普悠瑪'),
         ]
     else:
         test_list = [
-            ('PttSuggest', PTT.data_type.post_search_type.KEYWORD, '[問題]'),
-            ('PttSuggest', PTT.data_type.post_search_type.PUSH, '10'),
+            ('PttSuggest', PTT.data_type.ArticleSearchType.KEYWORD, '[問題]'),
+            ('PttSuggest', PTT.data_type.ArticleSearchType.PUSH, '10'),
         ]
 
     test_range = 1
@@ -406,7 +406,7 @@ def get_post_with_condition():
     for (board, search_type, condition) in test_list:
         show_condition(board, search_type, condition)
         index = ptt_bot.get_newest_index(
-            PTT.data_type.index_type.BBS,
+            PTT.data_type.NewIndex.BBS,
             board,
             search_type=search_type,
             search_condition=condition)
@@ -462,14 +462,14 @@ def get_post_with_condition():
     #     print('=' * 50)
 
     search_list = [
-        (PTT.data_type.post_search_type.KEYWORD, '新聞'),
-        (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+        (PTT.data_type.ArticleSearchType.KEYWORD, '新聞'),
+        (PTT.data_type.ArticleSearchType.AUTHOR, 'Code'),
     ]
 
     index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.NewIndex.BBS,
         'Gossiping',
-        search_type=PTT.data_type.post_search_type.KEYWORD,
+        search_type=PTT.data_type.ArticleSearchType.KEYWORD,
         search_condition='新聞',
         search_list=search_list)
     print(f'Gossiping 最新文章編號 {index}')
@@ -478,7 +478,7 @@ def get_post_with_condition():
         post_info = ptt_bot.get_article(
             'Gossiping',
             index=current_index,
-            search_type=PTT.data_type.post_search_type.KEYWORD,
+            search_type=PTT.data_type.ArticleSearchType.KEYWORD,
             search_condition='新聞',
             search_list=search_list,
             query=True)
@@ -536,16 +536,16 @@ def get_newest_index():
 
     for board in test_board_list:
         for _ in range(test_range):
-            index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=board)
+            index = ptt_bot.get_newest_index(PTT.data_type.NewIndex.BBS, board=board)
             print(f'{board} 最新文章編號 {index}')
 
     ###############################################
 
-    index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+    index = ptt_bot.get_newest_index(PTT.data_type.NewIndex.MAIL)
     print(f'最新郵件編號 {index}')
 
     index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.MAIL,
+        PTT.data_type.NewIndex.MAIL,
         search_type=PTT.data_type.mail_search_type.KEYWORD,
         search_condition='請益')
     print(f'最新郵件編號 {index}')
@@ -556,7 +556,7 @@ def get_newest_index():
     ]
 
     index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.MAIL,
+        PTT.data_type.NewIndex.MAIL,
         search_list=search_list)
     print(f'最新郵件編號 {index}')
 
@@ -647,7 +647,7 @@ def crawl_board():
         ]
 
     # crawl_type = PTT.data_type.index_type.WEB
-    crawl_type = PTT.data_type.index_type.BBS
+    crawl_type = PTT.data_type.NewIndex.BBS
 
     index_type = 'Index'
 
@@ -658,11 +658,11 @@ def crawl_board():
 
         for TestBoard in test_board_list:
 
-            if crawl_type == PTT.data_type.index_type.BBS:
+            if crawl_type == PTT.data_type.NewIndex.BBS:
 
                 if index_type == 'Index':
                     newest_index = ptt_bot.get_newest_index(
-                        PTT.data_type.index_type.BBS,
+                        PTT.data_type.NewIndex.BBS,
                         board=TestBoard)
                     start_index = newest_index - test_range + 1
 
@@ -696,10 +696,10 @@ def crawl_board():
                 if len(del_post_list) > 0:
                     print(f'共有 {len(del_post_list)} 篇文章被刪除')
 
-            elif crawl_type == PTT.data_type.index_type.WEB:
+            elif crawl_type == PTT.data_type.NewIndex.WEB:
 
                 newest_index = ptt_bot.get_newest_index(
-                    PTT.data_type.index_type.WEB,
+                    PTT.data_type.NewIndex.WEB,
                     board=TestBoard)
                 end_page = newest_index
 
@@ -790,12 +790,12 @@ def crawl_board_with_condition():
     #     print('=' * 50)
 
     search_list = [
-        (PTT.data_type.post_search_type.KEYWORD, '新聞'),
-        (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+        (PTT.data_type.ArticleSearchType.KEYWORD, '新聞'),
+        (PTT.data_type.ArticleSearchType.AUTHOR, 'Code'),
     ]
 
     newest_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.NewIndex.BBS,
         board='Gossiping',
         search_list=search_list)
     print(f'Gossiping 最新文章編號 {newest_index}')
@@ -904,7 +904,7 @@ def get_waterball():
     operate_type = PTT.data_type.waterball_operate_type.CLEAR
 
     while True:
-        newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+        newest_index = ptt_bot.get_newest_index(PTT.data_type.NewIndex.MAIL)
         waterball_list = ptt_bot.get_waterball(operate_type)
 
         if waterball_list is None:
@@ -1006,7 +1006,7 @@ def mail():
     test_mail_range = 3
 
     last_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.MAIL)
+        PTT.data_type.NewIndex.MAIL)
     print(f'目前郵件編號 {last_index}')
 
     for _ in range(test_mail_range):
@@ -1018,7 +1018,7 @@ def mail():
             backup=False)
 
     newest_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.MAIL)
+        PTT.data_type.NewIndex.MAIL)
     print(f'最新郵件編號 {newest_index}')
     if newest_index - last_index != test_mail_range:
         print('mail test fail')
@@ -1029,7 +1029,7 @@ def mail():
         ptt_bot.del_mail(newest_index - i)
 
     del_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.MAIL)
+        PTT.data_type.NewIndex.MAIL)
     if newest_index - del_index != test_mail_range:
         print('del mail test fail')
         return
@@ -1326,7 +1326,7 @@ github: https://github.com/PttCodingMan/PyPtt
             # 簽名檔
             0)
 
-    index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, 'Test')
+    index = ptt_bot.get_newest_index(PTT.data_type.NewIndex.BBS, 'Test')
 
     for i in range(5):
         current_index = index - int(i)
@@ -1365,7 +1365,7 @@ def search_user():
 
 
 def get_mail():
-    mail_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+    mail_index = ptt_bot.get_newest_index(PTT.data_type.NewIndex.MAIL)
     logger.info(
         '最新信件編號',
         mail_index)
@@ -1380,7 +1380,7 @@ def get_mail():
         print(mail_info.title)
 
     for _ in range(3):
-        newest_index = ptt_bot.get_newest_index(PTT.data_type.index_type.MAIL)
+        newest_index = ptt_bot.get_newest_index(PTT.data_type.NewIndex.MAIL)
         print(f'最新信箱編號 {newest_index}')
         mail_info = ptt_bot.get_mail(newest_index)
 
@@ -1388,7 +1388,7 @@ def get_mail():
             print(mail_info.author)
 
     mail_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.MAIL,
+        PTT.data_type.NewIndex.MAIL,
         search_type=PTT.data_type.mail_search_type.KEYWORD,
         search_condition='AI Labs')
 
@@ -1414,7 +1414,7 @@ def get_mail():
     ]
 
     mail_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.MAIL,
+        PTT.data_type.NewIndex.MAIL,
         search_list=search_list)
 
     for i in reversed(range(1, mail_index + 1)):
