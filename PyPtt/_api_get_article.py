@@ -32,15 +32,15 @@ def get_article(
 
     elif post_index != 0:
         if search_condition is not None:
-            if search_type == data_type.ArticleSearchType.KEYWORD:
+            if search_type == data_type.SearchType.KEYWORD:
                 cmd_list.append('/')
-            elif search_type == data_type.ArticleSearchType.AUTHOR:
+            elif search_type == data_type.SearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.ArticleSearchType.PUSH:
+            elif search_type == data_type.SearchType.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.ArticleSearchType.MARK:
+            elif search_type == data_type.SearchType.MARK:
                 cmd_list.append('G')
-            elif search_type == data_type.ArticleSearchType.MONEY:
+            elif search_type == data_type.SearchType.MONEY:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
@@ -49,15 +49,15 @@ def get_article(
         if search_list is not None:
             for search_type_, search_condition_ in search_list:
 
-                if search_type_ == data_type.ArticleSearchType.KEYWORD:
+                if search_type_ == data_type.SearchType.KEYWORD:
                     cmd_list.append('/')
-                elif search_type_ == data_type.ArticleSearchType.AUTHOR:
+                elif search_type_ == data_type.SearchType.AUTHOR:
                     cmd_list.append('a')
-                elif search_type_ == data_type.ArticleSearchType.PUSH:
+                elif search_type_ == data_type.SearchType.PUSH:
                     cmd_list.append('Z')
-                elif search_type_ == data_type.ArticleSearchType.MARK:
+                elif search_type_ == data_type.SearchType.MARK:
                     cmd_list.append('G')
-                elif search_type_ == data_type.ArticleSearchType.MONEY:
+                elif search_type_ == data_type.SearchType.MONEY:
                     cmd_list.append('A')
 
                 cmd_list.append(search_condition_)

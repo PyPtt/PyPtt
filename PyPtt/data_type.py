@@ -32,7 +32,7 @@ class call_status:
     max_value = OFF
 
 
-class ArticleSearchType(IntEnum):
+class SearchType(IntEnum):
     """文章搜尋類型"""
 
     NOPE = auto()
@@ -48,19 +48,16 @@ class ArticleSearchType(IntEnum):
     MONEY = auto()
 
 
-class mail_search_type:
-    # 文章搜尋類型
-
-    NOPE: int = 0
-    # 搜尋關鍵字    / ?
-    KEYWORD: int = 1
-    # 搜尋作者      a
-    AUTHOR: int = 2
-    # 搜尋標記      G
-    MARK: int = 3
-
-    min_value = NOPE
-    max_value = MARK
+# class MailSearchType(IntEnum):
+#     """信件搜尋類型"""
+#
+#     NOPE = auto()
+#     # 搜尋關鍵字    / ?
+#     KEYWORD = auto()
+#     # 搜尋作者      a
+#     AUTHOR = auto()
+#     # 搜尋標記      G
+#     MARK = auto()
 
 
 class waterball_type:
@@ -228,7 +225,7 @@ class NewIndex(IntEnum):
     # 信箱
     MAIL = auto()
     # 網頁，尚不支援
-    WEB = auto()
+    # WEB = auto()
 
 
 class crawl_type:

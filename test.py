@@ -352,32 +352,32 @@ def get_aid_from_url():
 
 
 test_list = {
-    ('Wanted', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
-    ('Wanted', PTT.data_type.ArticleSearchType.AUTHOR, 'gogin'),
-    ('Wanted', PTT.data_type.ArticleSearchType.PUSH, '10'),
-    ('Wanted', PTT.data_type.ArticleSearchType.MARK, 'm'),
-    ('Wanted', PTT.data_type.ArticleSearchType.MONEY, '5'),
-    ('Gossiping', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
-    ('Gossiping', PTT.data_type.ArticleSearchType.AUTHOR, 'ReDmango'),
-    ('Gossiping', PTT.data_type.ArticleSearchType.PUSH, '10'),
-    ('Gossiping', PTT.data_type.ArticleSearchType.MARK, 'm'),
-    ('Gossiping', PTT.data_type.ArticleSearchType.MONEY, '5'),
+    ('Wanted', PTT.data_type.SearchType.KEYWORD, '[公告]'),
+    ('Wanted', PTT.data_type.SearchType.AUTHOR, 'gogin'),
+    ('Wanted', PTT.data_type.SearchType.PUSH, '10'),
+    ('Wanted', PTT.data_type.SearchType.MARK, 'm'),
+    ('Wanted', PTT.data_type.SearchType.MONEY, '5'),
+    ('Gossiping', PTT.data_type.SearchType.KEYWORD, '[公告]'),
+    ('Gossiping', PTT.data_type.SearchType.AUTHOR, 'ReDmango'),
+    ('Gossiping', PTT.data_type.SearchType.PUSH, '10'),
+    ('Gossiping', PTT.data_type.SearchType.MARK, 'm'),
+    ('Gossiping', PTT.data_type.SearchType.MONEY, '5'),
 
-    ('Gossiping', PTT.data_type.ArticleSearchType.PUSH, '-100'),
-    ('Gossiping', PTT.data_type.ArticleSearchType.PUSH, '150'),
+    ('Gossiping', PTT.data_type.SearchType.PUSH, '-100'),
+    ('Gossiping', PTT.data_type.SearchType.PUSH, '150'),
 }
 
 
 def show_condition(test_board, search_type, condition):
-    if search_type == PTT.data_type.ArticleSearchType.KEYWORD:
+    if search_type == PTT.data_type.SearchType.KEYWORD:
         type_str = '關鍵字'
-    if search_type == PTT.data_type.ArticleSearchType.AUTHOR:
+    if search_type == PTT.data_type.SearchType.AUTHOR:
         type_str = '作者'
-    if search_type == PTT.data_type.ArticleSearchType.PUSH:
+    if search_type == PTT.data_type.SearchType.PUSH:
         type_str = '推文數'
-    if search_type == PTT.data_type.ArticleSearchType.MARK:
+    if search_type == PTT.data_type.SearchType.MARK:
         type_str = '標記'
-    if search_type == PTT.data_type.ArticleSearchType.MONEY:
+    if search_type == PTT.data_type.SearchType.MONEY:
         type_str = '稿酬'
 
     print(f'{test_board} 使用 {type_str} 搜尋 {condition}')
@@ -388,16 +388,16 @@ def get_post_with_condition():
 
     if ptt_bot.config.host == PTT.data_type.HOST.PTT1:
         test_list = [
-            ('Python', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
-            ('ALLPOST', PTT.data_type.ArticleSearchType.KEYWORD, '(Wanted)'),
-            ('Wanted', PTT.data_type.ArticleSearchType.KEYWORD, '(本文已被刪除)'),
-            ('ALLPOST', PTT.data_type.ArticleSearchType.KEYWORD, '(Gossiping)'),
-            ('Gossiping', PTT.data_type.ArticleSearchType.KEYWORD, '普悠瑪'),
+            ('Python', PTT.data_type.SearchType.KEYWORD, '[公告]'),
+            ('ALLPOST', PTT.data_type.SearchType.KEYWORD, '(Wanted)'),
+            ('Wanted', PTT.data_type.SearchType.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PTT.data_type.SearchType.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PTT.data_type.SearchType.KEYWORD, '普悠瑪'),
         ]
     else:
         test_list = [
-            ('PttSuggest', PTT.data_type.ArticleSearchType.KEYWORD, '[問題]'),
-            ('PttSuggest', PTT.data_type.ArticleSearchType.PUSH, '10'),
+            ('PttSuggest', PTT.data_type.SearchType.KEYWORD, '[問題]'),
+            ('PttSuggest', PTT.data_type.SearchType.PUSH, '10'),
         ]
 
     test_range = 1
@@ -462,14 +462,14 @@ def get_post_with_condition():
     #     print('=' * 50)
 
     search_list = [
-        (PTT.data_type.ArticleSearchType.KEYWORD, '新聞'),
-        (PTT.data_type.ArticleSearchType.AUTHOR, 'Code'),
+        (PTT.data_type.SearchType.KEYWORD, '新聞'),
+        (PTT.data_type.SearchType.AUTHOR, 'Code'),
     ]
 
     index = ptt_bot.get_newest_index(
         PTT.data_type.NewIndex.BBS,
         'Gossiping',
-        search_type=PTT.data_type.ArticleSearchType.KEYWORD,
+        search_type=PTT.data_type.SearchType.KEYWORD,
         search_condition='新聞',
         search_list=search_list)
     print(f'Gossiping 最新文章編號 {index}')
@@ -478,7 +478,7 @@ def get_post_with_condition():
         post_info = ptt_bot.get_article(
             'Gossiping',
             index=current_index,
-            search_type=PTT.data_type.ArticleSearchType.KEYWORD,
+            search_type=PTT.data_type.SearchType.KEYWORD,
             search_condition='新聞',
             search_list=search_list,
             query=True)
@@ -546,13 +546,13 @@ def get_newest_index():
 
     index = ptt_bot.get_newest_index(
         PTT.data_type.NewIndex.MAIL,
-        search_type=PTT.data_type.mail_search_type.KEYWORD,
+        search_type=PTT.data_type.MailSearchType.KEYWORD,
         search_condition='請益')
     print(f'最新郵件編號 {index}')
 
     search_list = [
-        (PTT.data_type.mail_search_type.KEYWORD, '你好'),
-        (PTT.data_type.mail_search_type.KEYWORD, 'AI Labs')
+        (PTT.data_type.MailSearchType.KEYWORD, '你好'),
+        (PTT.data_type.MailSearchType.KEYWORD, 'AI Labs')
     ]
 
     index = ptt_bot.get_newest_index(
@@ -790,8 +790,8 @@ def crawl_board_with_condition():
     #     print('=' * 50)
 
     search_list = [
-        (PTT.data_type.ArticleSearchType.KEYWORD, '新聞'),
-        (PTT.data_type.ArticleSearchType.AUTHOR, 'Code'),
+        (PTT.data_type.SearchType.KEYWORD, '新聞'),
+        (PTT.data_type.SearchType.AUTHOR, 'Code'),
     ]
 
     newest_index = ptt_bot.get_newest_index(
@@ -1389,7 +1389,7 @@ def get_mail():
 
     mail_index = ptt_bot.get_newest_index(
         PTT.data_type.NewIndex.MAIL,
-        search_type=PTT.data_type.mail_search_type.KEYWORD,
+        search_type=PTT.data_type.MailSearchType.KEYWORD,
         search_condition='AI Labs')
 
     logger.info(
@@ -1403,14 +1403,14 @@ def get_mail():
 
         mail_info = ptt_bot.get_mail(
             i,
-            search_type=PTT.data_type.mail_search_type.KEYWORD,
+            search_type=PTT.data_type.MailSearchType.KEYWORD,
             search_condition='uPtt system')
 
         print(mail_info.title)
 
     search_list = [
-        (PTT.data_type.mail_search_type.KEYWORD, 'AI Labs'),
-        (PTT.data_type.mail_search_type.KEYWORD, '新聞組')
+        (PTT.data_type.MailSearchType.KEYWORD, 'AI Labs'),
+        (PTT.data_type.MailSearchType.KEYWORD, '新聞組')
     ]
 
     mail_index = ptt_bot.get_newest_index(

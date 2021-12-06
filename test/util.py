@@ -28,17 +28,19 @@ def login(ptt_bot: PyPtt.API, host: PyPtt.HOST = PyPtt.HOST.PTT1):
     else:
         ptt_id, ptt_pw = get_id_pw('account_ptt2_0.json')
 
-    try:
-        ptt_bot.login(ptt_id, ptt_pw)
-    except PyPtt.LoginError:
-        logger.info('登入失敗')
-        assert False
-    except PyPtt.WrongIDorPassword:
-        logger.info('帳號密碼錯誤')
-        assert False
-    except PyPtt.LoginTooOften:
-        logger.info('請稍等一下再登入')
-        assert False
+    for _ in range(3):
+        try:
+            ptt_bot.login(ptt_id, ptt_pw)
+            break
+        except PyPtt.LoginError:
+            logger.info('登入失敗')
+            assert False
+        except PyPtt.WrongIDorPassword:
+            logger.info('帳號密碼錯誤')
+            assert False
+        except PyPtt.LoginTooOften:
+            logger.info('請稍等一下再登入')
+            assert False
 
     if ptt_bot.unregistered_user:
         logger.info('未註冊使用者')
