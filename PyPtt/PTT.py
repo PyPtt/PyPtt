@@ -7,7 +7,6 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-import PyPtt
 from . import _api_get_time, _api_get_article, version
 from . import _api_post
 from . import check_value
@@ -19,9 +18,8 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
-
 from .connect_core import ConnectMode
-from .data_type import Article, HOST, ArticleSearchType
+from .data_type import Article, HOST, SearchType
 
 
 class API:
@@ -217,7 +215,7 @@ class API:
             board: str,
             aid: str = None,
             index: int = 0,
-            search_type: ArticleSearchType = None,
+            search_type: SearchType = None,
             search_condition: str = None,
             search_list: list = None,
             query: bool = False) -> dict:
@@ -231,8 +229,8 @@ class API:
             check_value.check_type(str, 'post_aid', aid)
         check_value.check_type(int, 'post_index', index)
 
-        if search_type is not None and not isinstance(search_type, ArticleSearchType):
-            raise TypeError(f'search_type must be ArticleSearchType, but {search_type}')
+        if search_type is not None and not isinstance(search_type, SearchType):
+            raise TypeError(f'search_type must be SearchType, but {search_type}')
         if search_condition is not None:
             check_value.check_type(str,
                                    'SearchCondition', search_condition)
@@ -253,7 +251,7 @@ class API:
         if search_condition is not None and search_type == 0:
             raise ValueError('wrong parameter search_type must input')
 
-        if search_type == data_type.ArticleSearchType.PUSH:
+        if search_type == data_type.SearchType.PUSH:
             try:
                 S = int(search_condition)
             except ValueError:
@@ -369,24 +367,32 @@ class API:
             self,
             index_type: data_type.NewIndex,
             board: str = None,
-            search_type: ArticleSearchType = ArticleSearchType.NOPE,
+            search_type: SearchType = SearchType.NOPE,
             search_condition: str = None,
             search_list: list = None) -> int:
         self._one_thread()
 
-        if index_type == data_type.NewIndex.BBS or index_type == data_type.NewIndex.MAIL:
-            if not self._login_status:
-                raise exceptions.Requirelogin(i18n.require_login)
+        if not self._login_status:
+            raise exceptions.Requirelogin(i18n.require_login)
 
-        if index_type == data_type.NewIndex.BBS:
-            if not isinstance(search_type, data_type.ArticleSearchType):
-                raise TypeError(f'search_type must be ArticleSearchType, but {search_type}')
+        if not isinstance(search_type, data_type.SearchType):
+            raise TypeError(f'search_type must be SearchType, but {search_type}')
 
         if index_type == data_type.NewIndex.MAIL:
             if self.unregistered_user:
                 raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-            check_value.check_type(int, 'SearchType', search_type, value_class=data_type.mail_search_type)
+            if board is not None:
+                raise ValueError('board should not input in mail mode')
+
+            mail_search_options = [
+                data_type.SearchType.KEYWORD,
+                data_type.SearchType.AUTHOR,
+                data_type.SearchType.MARK,
+                data_type.SearchType.NOPE,
+            ]
+            if search_type not in mail_search_options:
+                ValueError(f'search type must in {mail_search_options} in mail mode')
 
         if search_condition is not None:
             check_value.check_type(str, 'search_condition', search_condition)
@@ -452,7 +458,7 @@ class API:
                     (search_condition is not None):
                 raise ValueError('wrong parameter aid and search_condition can\'t both input')
 
-            if search_type == data_type.ArticleSearchType.PUSH:
+            if search_type == data_type.SearchType.PUSH:
                 try:
                     S = int(search_condition)
                 except ValueError:

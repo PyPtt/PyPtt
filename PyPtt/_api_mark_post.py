@@ -27,7 +27,7 @@ def mark_post(
         check_value.check_type(str, 'PostAID', post_aid)
     check_value.check_type(int, 'PostIndex', post_index)
     check_value.check_type(int, 'SearchType', search_type,
-                           value_class=data_type.ArticleSearchType)
+                           value_class=data_type.SearchType)
     if search_condition is not None:
         check_value.check_type(str,
                           'SearchCondition', search_condition)
@@ -45,7 +45,7 @@ def mark_post(
     if search_condition is not None and search_type == 0:
         raise ValueError('wrong parameter post_index or post_aid must input')
 
-    if search_type == data_type.ArticleSearchType.PUSH:
+    if search_type == data_type.SearchType.PUSH:
         try:
             S = int(search_condition)
         except ValueError:
@@ -86,15 +86,15 @@ def mark_post(
 
     elif post_index != 0:
         if search_condition is not None:
-            if search_type == data_type.ArticleSearchType.KEYWORD:
+            if search_type == data_type.SearchType.KEYWORD:
                 cmd_list.append('/')
-            elif search_type == data_type.ArticleSearchType.AUTHOR:
+            elif search_type == data_type.SearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.ArticleSearchType.PUSH:
+            elif search_type == data_type.SearchType.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.ArticleSearchType.MARK:
+            elif search_type == data_type.SearchType.MARK:
                 cmd_list.append('G')
-            elif search_type == data_type.ArticleSearchType.MONEY:
+            elif search_type == data_type.SearchType.MONEY:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)

@@ -22,7 +22,10 @@ def test(ptt_bot: PyPtt.API):
                 PyPtt.NewIndex.BBS,
                 board)
             logger.info(f'{board} newest index', index)
-            # time.sleep(1)
+
+    for _ in range(3):
+        index = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL)
+        logger.info(f'mail newest index', index)
 
 
 def func():

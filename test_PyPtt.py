@@ -498,31 +498,31 @@ PyPtt 程式貼文基準測試內文
     ################################################
 
     def show_condition(test_board, search_type, condition):
-        if search_type == PTT.data_type.ArticleSearchType.KEYWORD:
+        if search_type == PTT.data_type.SearchType.KEYWORD:
             type_str = '關鍵字'
-        if search_type == PTT.data_type.ArticleSearchType.AUTHOR:
+        if search_type == PTT.data_type.SearchType.AUTHOR:
             type_str = '作者'
-        if search_type == PTT.data_type.ArticleSearchType.PUSH:
+        if search_type == PTT.data_type.SearchType.PUSH:
             type_str = '推文數'
-        if search_type == PTT.data_type.ArticleSearchType.MARK:
+        if search_type == PTT.data_type.SearchType.MARK:
             type_str = '標記'
-        if search_type == PTT.data_type.ArticleSearchType.MONEY:
+        if search_type == PTT.data_type.SearchType.MONEY:
             type_str = '稿酬'
 
         ptt_bot_0.log(f'{test_board} 使用 {type_str} 搜尋 {condition}')
 
     if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         test_list = [
-            ('Python', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
-            ('ALLPOST', PTT.data_type.ArticleSearchType.KEYWORD, '(Wanted)'),
-            ('Wanted', PTT.data_type.ArticleSearchType.KEYWORD, '(本文已被刪除)'),
-            ('ALLPOST', PTT.data_type.ArticleSearchType.KEYWORD, '(Gossiping)'),
-            ('Gossiping', PTT.data_type.ArticleSearchType.KEYWORD, '普悠瑪'),
+            ('Python', PTT.data_type.SearchType.KEYWORD, '[公告]'),
+            ('ALLPOST', PTT.data_type.SearchType.KEYWORD, '(Wanted)'),
+            ('Wanted', PTT.data_type.SearchType.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PTT.data_type.SearchType.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PTT.data_type.SearchType.KEYWORD, '普悠瑪'),
         ]
     else:
         test_list = [
-            ('WhoAmI', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
-            ('Test', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
+            ('WhoAmI', PTT.data_type.SearchType.KEYWORD, '[公告]'),
+            ('Test', PTT.data_type.SearchType.KEYWORD, '[公告]'),
         ]
 
     test_range = 1

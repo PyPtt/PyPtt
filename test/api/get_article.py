@@ -54,31 +54,31 @@ def test_no_condition(ptt_bot: PyPtt.API):
 
 def get_post_with_condition(ptt_bot: PyPtt.API):
     def show_condition(test_board, search_type, condition):
-        if search_type == PyPtt.ArticleSearchType.KEYWORD:
+        if search_type == PyPtt.SearchType.KEYWORD:
             type_str = '關鍵字'
-        if search_type == PyPtt.ArticleSearchType.AUTHOR:
+        if search_type == PyPtt.SearchType.AUTHOR:
             type_str = '作者'
-        if search_type == PyPtt.ArticleSearchType.PUSH:
+        if search_type == PyPtt.SearchType.PUSH:
             type_str = '推文數'
-        if search_type == PyPtt.ArticleSearchType.MARK:
+        if search_type == PyPtt.SearchType.MARK:
             type_str = '標記'
-        if search_type == PyPtt.ArticleSearchType.MONEY:
+        if search_type == PyPtt.SearchType.MONEY:
             type_str = '稿酬'
 
         print(f'{test_board} 使用 {type_str} 搜尋 {condition}')
 
     if ptt_bot.config.host == PyPtt.HOST.PTT1:
         test_list = [
-            ('Python', PyPtt.ArticleSearchType.KEYWORD, '[公告]'),
-            ('ALLPOST', PyPtt.ArticleSearchType.KEYWORD, '(Wanted)'),
-            ('Wanted', PyPtt.ArticleSearchType.KEYWORD, '(本文已被刪除)'),
-            ('ALLPOST', PyPtt.ArticleSearchType.KEYWORD, '(Gossiping)'),
-            ('Gossiping', PyPtt.ArticleSearchType.KEYWORD, '普悠瑪'),
+            ('Python', PyPtt.SearchType.KEYWORD, '[公告]'),
+            ('ALLPOST', PyPtt.SearchType.KEYWORD, '(Wanted)'),
+            ('Wanted', PyPtt.SearchType.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PyPtt.SearchType.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PyPtt.SearchType.KEYWORD, '普悠瑪'),
         ]
     else:
         test_list = [
-            ('PttSuggest', PyPtt.ArticleSearchType.KEYWORD, '[問題]'),
-            ('PttSuggest', PyPtt.ArticleSearchType.PUSH, '10'),
+            ('PttSuggest', PyPtt.SearchType.KEYWORD, '[問題]'),
+            ('PttSuggest', PyPtt.SearchType.PUSH, '10'),
         ]
 
     test_range = 1
@@ -143,14 +143,14 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
     #     print('=' * 50)
 
     search_list = [
-        (PyPtt.ArticleSearchType.KEYWORD, '新聞'),
-        (PyPtt.ArticleSearchType.AUTHOR, 'Code'),
+        (PyPtt.SearchType.KEYWORD, '新聞'),
+        (PyPtt.SearchType.AUTHOR, 'Code'),
     ]
 
     index = ptt_bot.get_newest_index(
         PyPtt.NewIndex.BBS,
         'Gossiping',
-        search_type=PyPtt.ArticleSearchType.KEYWORD,
+        search_type=PyPtt.SearchType.KEYWORD,
         search_condition='新聞',
         search_list=search_list)
     print(f'Gossiping 最新文章編號 {index}')
@@ -159,7 +159,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
         post_info = ptt_bot.get_article(
             'Gossiping',
             index=current_index,
-            search_type=PyPtt.ArticleSearchType.KEYWORD,
+            search_type=PyPtt.SearchType.KEYWORD,
             search_condition='新聞',
             search_list=search_list,
             query=True)
