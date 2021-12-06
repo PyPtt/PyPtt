@@ -7,7 +7,7 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_time, _api_get_article, version
+from . import _api_get_time, _api_get_article, version, _api_get_newest_index
 from . import _api_post
 from . import check_value
 from . import command
@@ -263,7 +263,7 @@ class API:
             raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
 
         if index != 0:
-            newest_index = self._get_newest_index(
+            newest_index = self.get_newest_index(
                 data_type.NewIndex.BBS,
                 board=board,
                 search_type=search_type,
@@ -339,30 +339,6 @@ class API:
 
         return self._board_info_list[board.lower()]
 
-    def _get_newest_index(
-            self,
-            index_type: int,
-            search_type: int = 0,
-            search_condition: str = None,
-            search_list: list = None,
-            board: str = None) -> int:
-
-        # check_value.check_type(int, 'index_type', index_type, value_class=data_type.NewIndex)
-        if not isinstance(index_type, data_type.NewIndex):
-            TypeError('index_type must be NewIndex')
-        try:
-            from . import _api_get_newest_index
-        except ModuleNotFoundError:
-            import _api_get_newest_index
-
-        return _api_get_newest_index.get_newest_index(
-            self,
-            index_type,
-            search_type,
-            search_condition,
-            search_list,
-            board)
-
     def get_newest_index(
             self,
             index_type: data_type.NewIndex,
@@ -374,6 +350,9 @@ class API:
 
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
+
+        if not isinstance(index_type, data_type.NewIndex):
+            TypeError('index_type must be NewIndex')
 
         if not isinstance(search_type, data_type.SearchType):
             raise TypeError(f'search_type must be SearchType, but {search_type}')
@@ -401,7 +380,8 @@ class API:
             check_value.check_type(self.config, list, 'search_list', search_list)
         check_value.check_type(int, 'SearchType', search_type)
 
-        return self._get_newest_index(
+        return _api_get_newest_index.get_newest_index(
+            self,
             index_type,
             search_type,
             search_condition,
@@ -467,7 +447,7 @@ class API:
                 check_value.check_range('search_condition', S, -100, 100)
 
             if start_index != 0:
-                newest_index = self._get_newest_index(
+                newest_index = self.get_newest_index(
                     data_type.NewIndex.BBS,
                     board=board,
                     search_type=search_type,
@@ -596,7 +576,7 @@ class API:
             # # https://www.ptt.cc/bbs/index.html
             #
             # # 1. 取得總共有幾頁 MaxPage
-            # newest_index = self._get_newest_index(
+            # newest_index = self.get_newest_index(
             #     data_type.index_type.WEB,
             #     board=board)
             # # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
@@ -765,7 +745,7 @@ class API:
             raise ValueError('wrong parameter post_index or post_aid must input')
 
         if post_index != 0:
-            newest_index = self._get_newest_index(
+            newest_index = self.get_newest_index(
                 data_type.NewIndex.BBS,
                 board=board)
             check_value.check_index('post_index', post_index, newest_index)
@@ -1079,7 +1059,7 @@ class API:
             check_value.check_type(str, 'PostAID', post_aid)
 
         if post_index != 0:
-            newest_index = self._get_newest_index(
+            newest_index = self.get_newest_index(
                 data_type.NewIndex.BBS,
                 board=board)
             check_value.check_index(
@@ -1422,7 +1402,7 @@ class API:
             raise ValueError('wrong parameter post_index or post_aid must input')
 
         if post_index != 0:
-            newest_index = self._get_newest_index(
+            newest_index = self.get_newest_index(
                 data_type.NewIndex.BBS,
                 board=board)
             check_value.check_index(
