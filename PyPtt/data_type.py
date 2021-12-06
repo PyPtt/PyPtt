@@ -32,23 +32,20 @@ class call_status:
     max_value = OFF
 
 
-class post_search_type:
-    # 文章搜尋類型
+class ArticleSearchType(IntEnum):
+    """文章搜尋類型"""
 
-    NOPE: int = 0
+    NOPE = auto()
     # 搜尋關鍵字    / ?
-    KEYWORD: int = 1
+    KEYWORD = auto()
     # 搜尋作者      a
-    AUTHOR: int = 2
+    AUTHOR = auto()
     # 搜尋推文數    Z
-    PUSH: int = 3
+    PUSH = auto()
     # 搜尋標記      G
-    MARK: int = 4
+    MARK = auto()
     # 搜尋稿酬      A
-    MONEY: int = 5
-
-    min_value = NOPE
-    max_value = MONEY
+    MONEY = auto()
 
 
 class mail_search_type:
@@ -225,16 +222,13 @@ class Cursor:
     NEW: str = '>'
 
 
-class index_type:
-    # 板
-    BBS: int = 1
+class NewIndex(IntEnum):
+    # 看板
+    BBS = auto()
     # 信箱
-    MAIL: int = 2
-    #
-    WEB: int = 3
-
-    min_value = BBS
-    max_value = MAIL
+    MAIL = auto()
+    # 網頁，尚不支援
+    WEB = auto()
 
 
 class crawl_type:

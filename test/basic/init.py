@@ -20,11 +20,11 @@ def func():
     PyPtt.API(log_level=PyPtt.LOG_LEVEL.SILENT)
     logger.info('===log SLIENT======')
 
-    PyPtt.API(host=PyPtt.HOST.PTT1)
-    logger.info('host', PyPtt.host)
+    ptt_bot = PyPtt.API(host=PyPtt.HOST.PTT1)
+    logger.info('host', ptt_bot.host)
 
-    PyPtt.API(host=PyPtt.HOST.PTT2)
-    logger.info('host', PyPtt.host)
+    ptt_bot = PyPtt.API(host=PyPtt.HOST.PTT2)
+    logger.info('host', ptt_bot.host)
 
     try:
         logger.info('===語言 99===')

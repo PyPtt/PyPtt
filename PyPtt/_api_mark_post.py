@@ -27,7 +27,7 @@ def mark_post(
         check_value.check_type(str, 'PostAID', post_aid)
     check_value.check_type(int, 'PostIndex', post_index)
     check_value.check_type(int, 'SearchType', search_type,
-                           value_class=data_type.post_search_type)
+                           value_class=data_type.ArticleSearchType)
     if search_condition is not None:
         check_value.check_type(str,
                           'SearchCondition', search_condition)
@@ -45,7 +45,7 @@ def mark_post(
     if search_condition is not None and search_type == 0:
         raise ValueError('wrong parameter post_index or post_aid must input')
 
-    if search_type == data_type.post_search_type.PUSH:
+    if search_type == data_type.ArticleSearchType.PUSH:
         try:
             S = int(search_condition)
         except ValueError:
@@ -58,7 +58,7 @@ def mark_post(
 
     if post_index != 0:
         newest_index = api._get_newest_index(
-            data_type.index_type.BBS,
+            data_type.NewIndex.BBS,
             board=board,
             search_type=search_type,
             search_condition=search_condition)
@@ -86,15 +86,15 @@ def mark_post(
 
     elif post_index != 0:
         if search_condition is not None:
-            if search_type == data_type.post_search_type.KEYWORD:
+            if search_type == data_type.ArticleSearchType.KEYWORD:
                 cmd_list.append('/')
-            elif search_type == data_type.post_search_type.AUTHOR:
+            elif search_type == data_type.ArticleSearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.post_search_type.PUSH:
+            elif search_type == data_type.ArticleSearchType.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.post_search_type.MARK:
+            elif search_type == data_type.ArticleSearchType.MARK:
                 cmd_list.append('G')
-            elif search_type == data_type.post_search_type.MONEY:
+            elif search_type == data_type.ArticleSearchType.MONEY:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)

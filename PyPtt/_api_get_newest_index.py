@@ -64,7 +64,7 @@ def get_newest_index(
         search_list: list = None,
         # BBS
         board: str = None) -> int:
-    if index_type == data_type.index_type.BBS:
+    if index_type == data_type.NewIndex.BBS:
 
         check_value.check_type(str, 'board', board)
 
@@ -120,7 +120,7 @@ def get_newest_index(
         if normal_newest_index == newest_index:
             raise exceptions.NoSearchResult()
 
-    elif index_type == data_type.index_type.MAIL:
+    elif index_type == data_type.NewIndex.MAIL:
 
         cmd_list = list()
         cmd_list.append(command.go_main_menu)

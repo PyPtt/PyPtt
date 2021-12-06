@@ -380,22 +380,22 @@ def get_search_condition_cmd(
     normal_newest_index = -1
     if search_condition is not None:
 
-        if index_type == data_type.index_type.BBS:
+        if index_type == data_type.NewIndex.BBS:
             normal_newest_index = api.get_newest_index(index_type, board=board)
         else:
             normal_newest_index = api.get_newest_index(index_type)
 
-        if search_type == data_type.post_search_type.KEYWORD:
+        if search_type == data_type.ArticleSearchType.KEYWORD:
             cmd_list.append('/')
-        elif search_type == data_type.post_search_type.AUTHOR:
+        elif search_type == data_type.ArticleSearchType.AUTHOR:
             cmd_list.append('a')
-        elif search_type == data_type.post_search_type.MARK:
+        elif search_type == data_type.ArticleSearchType.MARK:
             cmd_list.append('G')
 
-        if index_type == data_type.index_type.BBS:
-            if search_type == data_type.post_search_type.PUSH:
+        if index_type == data_type.NewIndex.BBS:
+            if search_type == data_type.ArticleSearchType.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.post_search_type.MONEY:
+            elif search_type == data_type.ArticleSearchType.MONEY:
                 cmd_list.append('A')
 
         cmd_list.append(search_condition)
@@ -404,7 +404,7 @@ def get_search_condition_cmd(
     if search_list is not None:
 
         if normal_newest_index == -1:
-            if index_type == data_type.index_type.BBS:
+            if index_type == data_type.NewIndex.BBS:
                 normal_newest_index = api.get_newest_index(index_type, board=board)
             else:
                 normal_newest_index = api.get_newest_index(index_type)
@@ -413,16 +413,16 @@ def get_search_condition_cmd(
 
             # print('==>', search_type_, search_condition_)
 
-            if search_type_ == data_type.post_search_type.KEYWORD:
+            if search_type_ == data_type.ArticleSearchType.KEYWORD:
                 cmd_list.append('/')
-            elif search_type_ == data_type.post_search_type.AUTHOR:
+            elif search_type_ == data_type.ArticleSearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type_ == data_type.post_search_type.MARK:
+            elif search_type_ == data_type.ArticleSearchType.MARK:
                 cmd_list.append('G')
-            elif index_type == data_type.index_type.BBS:
-                if search_type_ == data_type.post_search_type.PUSH:
+            elif index_type == data_type.NewIndex.BBS:
+                if search_type_ == data_type.ArticleSearchType.PUSH:
                     cmd_list.append('Z')
-                elif search_type_ == data_type.post_search_type.MONEY:
+                elif search_type_ == data_type.ArticleSearchType.MONEY:
                     cmd_list.append('A')
                 else:
                     continue

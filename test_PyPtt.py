@@ -352,7 +352,7 @@ def case(ptt_bot_0, ptt_bot_1):
         basic_index = 0
         for _ in range(50):
             index = ptt_bot_0.get_newest_index(
-                PTT.data_type.index_type.BBS,
+                PTT.data_type.NewIndex.BBS,
                 board=test_board)
 
             if basic_index == 0:
@@ -401,7 +401,7 @@ PyPtt 程式貼文基準測試內文
 
     # 取得 Test 最新文章編號
     index = ptt_bot_0.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.NewIndex.BBS,
         board=basic_board)
 
     # 搜尋基準文章
@@ -448,7 +448,7 @@ PyPtt 程式貼文基準測試內文
 
     try:
         index = ptt_bot_0.get_newest_index(
-            PTT.data_type.index_type.BBS,
+            PTT.data_type.NewIndex.BBS,
             board=basic_board)
         content1 = '編號推文基準文字123'
         ptt_bot_0.comment(basic_board, PTT.data_type.push_type.PUSH,
@@ -498,31 +498,31 @@ PyPtt 程式貼文基準測試內文
     ################################################
 
     def show_condition(test_board, search_type, condition):
-        if search_type == PTT.data_type.post_search_type.KEYWORD:
+        if search_type == PTT.data_type.ArticleSearchType.KEYWORD:
             type_str = '關鍵字'
-        if search_type == PTT.data_type.post_search_type.AUTHOR:
+        if search_type == PTT.data_type.ArticleSearchType.AUTHOR:
             type_str = '作者'
-        if search_type == PTT.data_type.post_search_type.PUSH:
+        if search_type == PTT.data_type.ArticleSearchType.PUSH:
             type_str = '推文數'
-        if search_type == PTT.data_type.post_search_type.MARK:
+        if search_type == PTT.data_type.ArticleSearchType.MARK:
             type_str = '標記'
-        if search_type == PTT.data_type.post_search_type.MONEY:
+        if search_type == PTT.data_type.ArticleSearchType.MONEY:
             type_str = '稿酬'
 
         ptt_bot_0.log(f'{test_board} 使用 {type_str} 搜尋 {condition}')
 
     if ptt_bot_0.config.host == PTT.data_type.HOST.PTT1:
         test_list = [
-            ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
-            ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Wanted)'),
-            ('Wanted', PTT.data_type.post_search_type.KEYWORD, '(本文已被刪除)'),
-            ('ALLPOST', PTT.data_type.post_search_type.KEYWORD, '(Gossiping)'),
-            ('Gossiping', PTT.data_type.post_search_type.KEYWORD, '普悠瑪'),
+            ('Python', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
+            ('ALLPOST', PTT.data_type.ArticleSearchType.KEYWORD, '(Wanted)'),
+            ('Wanted', PTT.data_type.ArticleSearchType.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PTT.data_type.ArticleSearchType.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PTT.data_type.ArticleSearchType.KEYWORD, '普悠瑪'),
         ]
     else:
         test_list = [
-            ('WhoAmI', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
-            ('Test', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
+            ('WhoAmI', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
+            ('Test', PTT.data_type.ArticleSearchType.KEYWORD, '[公告]'),
         ]
 
     test_range = 1
@@ -531,7 +531,7 @@ PyPtt 程式貼文基準測試內文
     for (test_board, search_type, condition) in test_list:
         show_condition(test_board, search_type, condition)
         index = ptt_bot_0.get_newest_index(
-            PTT.data_type.index_type.BBS,
+            PTT.data_type.NewIndex.BBS,
             test_board,
             search_type=search_type,
             search_condition=condition)
@@ -639,7 +639,7 @@ PyPtt 程式貼文基準測試內文
     test_range = 5
     for test_board in test_board_list:
         newest_index = ptt_bot_0.get_newest_index(
-            PTT.data_type.index_type.BBS,
+            PTT.data_type.NewIndex.BBS,
             board=test_board
         ) - 10000
         # 到很久之前的文章去才不會撞到被刪掉的文章
@@ -963,7 +963,7 @@ PyPtt 程式寄信測試內容
         post_index=basic_post_index)
 
     index = ptt_bot_0.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.NewIndex.BBS,
         board=basic_board)
 
     test_pass = False
@@ -994,7 +994,7 @@ PyPtt 程式寄信測試內容
         post_aid=basic_post_aid)
 
     index = ptt_bot_0.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.NewIndex.BBS,
         board=basic_board)
 
     test_pass = False
@@ -1133,7 +1133,7 @@ PyPtt 程式寄信測試內容
     ################################################
 
     index = ptt_bot_0.get_newest_index(
-        PTT.data_type.index_type.MAIL)
+        PTT.data_type.NewIndex.MAIL)
     # 往前搜尋 50 封刪除
     for i in range(50):
         current_index = index - i
@@ -1152,7 +1152,7 @@ PyPtt 程式寄信測試內容
     ################################################
 
     index = ptt_bot_0.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.NewIndex.BBS,
         board=basic_board)
     # 往前搜尋 50 篇刪除
     for i in range(50):

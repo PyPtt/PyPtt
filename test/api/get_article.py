@@ -52,6 +52,121 @@ def test_no_condition(ptt_bot: PyPtt.API):
     return result
 
 
+def get_post_with_condition(ptt_bot: PyPtt.API):
+    def show_condition(test_board, search_type, condition):
+        if search_type == PyPtt.ArticleSearchType.KEYWORD:
+            type_str = '關鍵字'
+        if search_type == PyPtt.ArticleSearchType.AUTHOR:
+            type_str = '作者'
+        if search_type == PyPtt.ArticleSearchType.PUSH:
+            type_str = '推文數'
+        if search_type == PyPtt.ArticleSearchType.MARK:
+            type_str = '標記'
+        if search_type == PyPtt.ArticleSearchType.MONEY:
+            type_str = '稿酬'
+
+        print(f'{test_board} 使用 {type_str} 搜尋 {condition}')
+
+    if ptt_bot.config.host == PyPtt.HOST.PTT1:
+        test_list = [
+            ('Python', PyPtt.ArticleSearchType.KEYWORD, '[公告]'),
+            ('ALLPOST', PyPtt.ArticleSearchType.KEYWORD, '(Wanted)'),
+            ('Wanted', PyPtt.ArticleSearchType.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PyPtt.ArticleSearchType.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PyPtt.ArticleSearchType.KEYWORD, '普悠瑪'),
+        ]
+    else:
+        test_list = [
+            ('PttSuggest', PyPtt.ArticleSearchType.KEYWORD, '[問題]'),
+            ('PttSuggest', PyPtt.ArticleSearchType.PUSH, '10'),
+        ]
+
+    test_range = 1
+    query = False
+
+    for (board, search_type, condition) in test_list:
+        show_condition(board, search_type, condition)
+        index = ptt_bot.get_newest_index(
+            PyPtt.NewIndex.BBS,
+            board,
+            search_type=search_type,
+            search_condition=condition)
+        print(f'{board} 最新文章編號 {index}')
+
+        for i in range(test_range):
+            post = ptt_bot.get_article(
+                board,
+                index=index - i,
+                # PostIndex=611,
+                search_type=search_type,
+                search_condition=condition,
+                query=query)
+
+            print('列表日期:')
+            print(post.list_date)
+            print('作者:')
+            print(post.author)
+            print('標題:')
+            print(post.title)
+
+            if post.delete_status == PyPtt.ArticleDelStatus.exist:
+                if not query:
+                    print('內文:')
+                    print(post.content)
+            elif post.delete_status == PyPtt.ArticleDelStatus.deleted_by_author:
+                print('文章被作者刪除')
+            elif post.delete_status == PyPtt.ArticleDelStatus.deleted_by_moderator:
+                print('文章被版主刪除')
+            print('=' * 50)
+
+    # TestList = [
+    #     ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]')
+    # ]
+
+    # for (board, SearchType, Condition) in TestList:
+    #     index = PTTBot.getNewestIndex(
+    #         PTT.data_type.index_type.BBS,
+    #         board,
+    #         SearchType=SearchType,
+    #         SearchCondition=Condition,
+    #     )
+    #     print(f'{board} 最新文章編號 {index}')
+
+    #     Post = PTTBot.getPost(
+    #         board,
+    #         PostIndex=index,
+    #         SearchType=SearchType,
+    #         SearchCondition=Condition,
+    #     )
+
+    #     print('標題: ' + Post.getTitle())
+    #     print('=' * 50)
+
+    search_list = [
+        (PyPtt.ArticleSearchType.KEYWORD, '新聞'),
+        (PyPtt.ArticleSearchType.AUTHOR, 'Code'),
+    ]
+
+    index = ptt_bot.get_newest_index(
+        PyPtt.NewIndex.BBS,
+        'Gossiping',
+        search_type=PyPtt.ArticleSearchType.KEYWORD,
+        search_condition='新聞',
+        search_list=search_list)
+    print(f'Gossiping 最新文章編號 {index}')
+
+    for current_index in range(1, index + 1):
+        post_info = ptt_bot.get_article(
+            'Gossiping',
+            index=current_index,
+            search_type=PyPtt.ArticleSearchType.KEYWORD,
+            search_condition='新聞',
+            search_list=search_list,
+            query=True)
+
+        print(current_index, post_info.title)
+
+
 def func():
     ptt_bot_list = [
         PyPtt.API(
