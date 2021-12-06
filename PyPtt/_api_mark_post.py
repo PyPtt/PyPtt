@@ -57,7 +57,7 @@ def mark_post(
         raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
 
     if post_index != 0:
-        newest_index = api._get_newest_index(
+        newest_index = api.get_newest_index(
             data_type.NewIndex.BBS,
             board=board,
             search_type=search_type,
