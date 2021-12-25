@@ -1,5 +1,3 @@
-import sys
-
 from SingleLog.log import Logger
 
 import PyPtt
@@ -43,8 +41,6 @@ def func():
         logger.info('沒通過')
         assert False
 
-
-
     # def handler(msg):
     #     with open('log.txt', 'a', encoding='utf-8') as f:
     #         f.write(msg + '\n')
@@ -57,6 +53,6 @@ def func():
     logger.info('complete')
 
 
+logger = Logger('TEST INIT')
 if __name__ == '__main__':
-    logger = Logger('TEST INIT')
     func()

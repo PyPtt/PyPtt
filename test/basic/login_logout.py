@@ -23,7 +23,6 @@ def func():
     logger.info('login logout test ok')
 
 
+logger = Logger('TEST')
 if __name__ == '__main__':
-
-    logger = Logger('TEST')
     func()
