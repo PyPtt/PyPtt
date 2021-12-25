@@ -47,7 +47,7 @@ def test_no_condition(ptt_bot: PyPtt.API):
 
         result.append(article)
         print('+==+' * 10)
-        print(article[PyPtt.Article.content])
+        print(article[PyPtt.Post.content])
 
     return result
 
@@ -109,13 +109,13 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             print('標題:')
             print(post.title)
 
-            if post.delete_status == PyPtt.ArticleDelStatus.exist:
+            if post.delete_status == PyPtt.PostDelStatus.exist:
                 if not query:
                     print('內文:')
                     print(post.content)
-            elif post.delete_status == PyPtt.ArticleDelStatus.deleted_by_author:
+            elif post.delete_status == PyPtt.PostDelStatus.deleted_by_author:
                 print('文章被作者刪除')
-            elif post.delete_status == PyPtt.ArticleDelStatus.deleted_by_moderator:
+            elif post.delete_status == PyPtt.PostDelStatus.deleted_by_moderator:
                 print('文章被版主刪除')
             print('=' * 50)
 
