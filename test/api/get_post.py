@@ -34,11 +34,11 @@ def test_no_condition(ptt_bot: PyPtt.API):
 
     for board, index in test_post_list:
         if isinstance(index, int):
-            article = ptt_bot.get_article(
+            article = ptt_bot.get_post(
                 board,
                 index=index)
         else:
-            article = ptt_bot.get_article(
+            article = ptt_bot.get_post(
                 board,
                 aid=index)
         # if article[PyPtt.Article.delete_status] != PyPtt.ArticleDeleteStatus.exist:
@@ -94,7 +94,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
         print(f'{board} 最新文章編號 {index}')
 
         for i in range(test_range):
-            post = ptt_bot.get_article(
+            post = ptt_bot.get_post(
                 board,
                 index=index - i,
                 # PostIndex=611,
@@ -156,7 +156,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
     print(f'Gossiping 最新文章編號 {index}')
 
     for current_index in range(1, index + 1):
-        post_info = ptt_bot.get_article(
+        post_info = ptt_bot.get_post(
             'Gossiping',
             index=current_index,
             search_type=PyPtt.SearchType.KEYWORD,

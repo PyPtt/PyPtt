@@ -18,7 +18,7 @@ from . import i18n
 from . import lib_util
 from . import screens
 from .connect_core import ConnectMode
-from .data_type import Article, HOST, SearchType, Board, NewIndex
+from .data_type import Post, HOST, SearchType, Board, NewIndex
 
 
 class API:
@@ -209,12 +209,12 @@ class API:
 
         return _api_get_time.get_time(self)
 
-    def get_article(
+    def get_post(
             self,
             board: str,
             aid: str = None,
             index: int = 0,
-            search_type: SearchType = None,
+            search_type: SearchType = SearchType.NOPE,
             search_condition: str = None,
             search_list: list = None,
             query: bool = False) -> dict:
@@ -306,7 +306,7 @@ class API:
 
             if article is None:
                 need_continue = True
-            elif not article[Article.pass_format_check]:
+            elif not article[Post.pass_format_check]:
                 need_continue = True
 
             if not need_continue:
@@ -462,11 +462,11 @@ class API:
                 start_index = _api_get_article.get_article(
                     board,
                     aid=start_aid,
-                    query=True)[Article.index]
+                    query=True)[Post.index]
                 end_index = _api_get_article.get_article(
                     board,
                     aid=end_aid,
-                    query=True)[Article.index]
+                    query=True)[Post.index]
 
                 check_value.check_index_range(
                     'start_index',
@@ -537,7 +537,7 @@ class API:
 
                     if article is None:
                         need_continue = True
-                    elif not article[Article.pass_format_check]:
+                    elif not article[Post.pass_format_check]:
                         need_continue = True
 
                     if need_continue:

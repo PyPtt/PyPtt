@@ -58,7 +58,7 @@ def get_bottom_post_list(api, board):
                 api,
                 last_screen)
 
-        current_post = api.get_article(board, aid=post_aid, query=True)
+        current_post = api.get_post(board, aid=post_aid, query=True)
 
         # print(current_post.aid)
         # print(current_post.title)
