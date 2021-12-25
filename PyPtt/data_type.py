@@ -166,6 +166,21 @@ class UserInfo:
         self.signature_file: str = parse_para(str, signature_file)
 
 
+class User:
+    ptt_id = 'ptt_id',
+    money = 'money',
+    login_time = 'login_time',
+    legal_post = 'legal_post',
+    illegal_post = 'illegal_post',
+    status = 'status',
+    mail = 'mail',
+    last_login = 'last_login',
+    last_ip = 'last_ip',
+    five_chess = 'five_chess',
+    chess = 'chess',
+    signature_file = 'signature_file'
+
+
 class Comment:
     type = 'type'
     author = 'author'
@@ -270,52 +285,27 @@ class FavouriteBoard:
         self.title: str = parse_para(str, board_title)
 
 
-class BoardInfo:
-    def __init__(
-            self,
-            board,
-            online_user,
-            chinese_des=None,
-            moderators=None,
-            open_status=None,
-            into_top_ten_when_hide=None,
-            non_board_members_post=None,
-            reply_post=None,
-            self_del_post=None,
-            push_post=None,
-            boo_post=None,
-            fast_push=None,
-            min_interval=None,
-            push_record_ip=None,
-            push_aligned=None,
-            moderator_can_del_illegal_content=None,
-            tran_post_auto_recorded_and_require_post_permissions=None,
-            cool_mode=None,
-            require18=None,
-            require_login_time=None,
-            require_illegal_post=None,
-            post_kind=None):
-        self.board: str = parse_para(str, board)
-        self.online_user: int = parse_para(int, online_user)
-        self.chinese_des: str = parse_para(str, chinese_des)
-        self.moderators: list = parse_para(list, moderators)
-        self.is_open: bool = parse_para(bool, open_status)
-        self.is_into_top_ten_when_hide: bool = parse_para(bool, into_top_ten_when_hide)
-        self.can_non_board_members_post: bool = parse_para(bool, non_board_members_post)
-        self.can_reply_post: bool = parse_para(bool, reply_post)
-        self.can_self_del_post: bool = parse_para(bool, self_del_post)
-        self.can_push_post: bool = parse_para(bool, push_post)
-        self.can_boo_post: bool = parse_para(bool, boo_post)
-        self.can_fast_push: bool = parse_para(bool, fast_push)
-        self.min_interval: int = parse_para(int, min_interval)
-        self.is_push_record_ip: bool = parse_para(bool, push_record_ip)
-        self.is_push_aligned: bool = parse_para(bool, push_aligned)
-        self.can_moderator_del_illegal_content: bool = parse_para(
-            bool, moderator_can_del_illegal_content)
-        self.is_tran_post_auto_recorded_and_require_post_permissions: bool = parse_para(
-            bool, tran_post_auto_recorded_and_require_post_permissions)
-        self.is_cool_mode: bool = parse_para(bool, cool_mode)
-        self.is_require18: bool = parse_para(bool, require18)
-        self.require_login_time: int = parse_para(int, require_login_time)
-        self.require_illegal_post: int = parse_para(int, require_illegal_post)
-        self.post_kind: list = parse_para(list, post_kind)
+class Board:
+    board = 'board'
+    online_user = 'online_user'
+    chinese_des = 'chinese_des'
+    moderators = 'moderators'
+    open_status = 'open_status'
+    into_top_ten_when_hide = 'into_top_ten_when_hide'
+    non_board_members_post = 'non_board_members_post'
+    reply_post = 'reply_post'
+    self_del_post = 'self_del_post'
+    push_post = 'push_post'
+    boo_post = 'boo_post'
+    fast_push = 'fast_push'
+    min_interval = 'min_interval'
+    push_record_ip = 'push_record_ip'
+    push_aligned = 'push_aligned'
+    moderator_can_del_illegal_content = 'moderator_can_del_illegal_content'
+    tran_post_auto_recorded_and_require_post_permissions = 'tran_post_auto_recorded_and_require_post_permissions'
+    cool_mode = 'cool_mode'
+    require18 = 'require18'
+    require_login_time = 'require_login_time'
+    require_illegal_post = 'require_illegal_post'
+    post_kind = 'post_kind'
+    kind_list = 'kind_list'

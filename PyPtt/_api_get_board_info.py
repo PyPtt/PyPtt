@@ -2,12 +2,13 @@ import re
 
 from SingleLog.log import Logger
 
-from . import data_type
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
 from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import screens
+from .data_type import Board
 
 
 def get_board_info(
@@ -253,27 +254,50 @@ def get_board_info(
             cmd,
             target_list)
 
-    board_info = data_type.BoardInfo(
-        boardname,
-        online_user,
-        chinese_des,
-        moderators,
-        open_status,
-        into_top_ten_when_hide,
-        non_board_members_post,
-        reply_post,
-        self_del_post,
-        push_post,
-        boo_post,
-        fast_push,
-        min_interval,
-        push_record_ip,
-        push_aligned,
-        moderator_can_del_illegal_content,
-        tran_post_auto_recorded_and_require_post_permissions,
-        cool_mode,
-        require18,
-        require_login_time,
-        require_illegal_post,
-        kind_list)
-    return board_info
+    # board_info = data_type.BoardInfo(
+    #     boardname,
+    #     online_user,
+    #     chinese_des,
+    #     moderators,
+    #     open_status,
+    #     into_top_ten_when_hide,
+    #     non_board_members_post,
+    #     reply_post,
+    #     self_del_post,
+    #     push_post,
+    #     boo_post,
+    #     fast_push,
+    #     min_interval,
+    #     push_record_ip,
+    #     push_aligned,
+    #     moderator_can_del_illegal_content,
+    #     tran_post_auto_recorded_and_require_post_permissions,
+    #     cool_mode,
+    #     require18,
+    #     require_login_time,
+    #     require_illegal_post,
+    #     kind_list)
+    return {
+        Board.board: boardname,
+        Board.online_user: online_user,
+        Board.chinese_des: chinese_des,
+        Board.moderators: moderators,
+        Board.open_status: open_status,
+        Board.into_top_ten_when_hide: into_top_ten_when_hide,
+        Board.non_board_members_post: non_board_members_post,
+        Board.reply_post: reply_post,
+        Board.self_del_post: self_del_post,
+        Board.push_post: push_post,
+        Board.boo_post: boo_post,
+        Board.fast_push: fast_push,
+        Board.min_interval: min_interval,
+        Board.push_record_ip: push_record_ip,
+        Board.push_aligned: push_aligned,
+        Board.moderator_can_del_illegal_content: moderator_can_del_illegal_content,
+        Board.tran_post_auto_recorded_and_require_post_permissions: tran_post_auto_recorded_and_require_post_permissions,
+        Board.cool_mode: cool_mode,
+        Board.require18: require18,
+        Board.require_login_time: require_login_time,
+        Board.require_illegal_post: require_illegal_post,
+        Board.kind_list: kind_list
+    }

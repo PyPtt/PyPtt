@@ -13,13 +13,12 @@ from . import check_value
 from . import command
 from . import config
 from . import connect_core
-from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
 from .connect_core import ConnectMode
-from .data_type import Article, HOST, SearchType
+from .data_type import Article, HOST, SearchType, Board, NewIndex
 
 
 class API:
@@ -57,8 +56,8 @@ class API:
             raise TypeError('[PyPtt] screen_timeout must be integer')
         if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
-        if (not isinstance(host, data_type.HOST)) and (not isinstance(host, str)):
-            raise TypeError('[PyPtt] host must be data_type.HOST or a string')
+        if (not isinstance(host, HOST)) and (not isinstance(host, str)):
+            raise TypeError('[PyPtt] host must be HOST or a string')
 
         if screen_timeout != 0:
             self.config.screen_timeout = screen_timeout
@@ -80,11 +79,11 @@ class API:
         self.config.host = host
         self.host = host
 
-        if self.config.host == data_type.HOST.PTT1:
+        if self.config.host == HOST.PTT1:
             self.logger.info(i18n.set_connect_host, i18n.PTT)
-        elif self.config.host == data_type.HOST.PTT2:
+        elif self.config.host == HOST.PTT2:
             self.logger.info(i18n.set_connect_host, i18n.PTT2)
-        elif self.config.host == data_type.HOST.LOCALHOST:
+        elif self.config.host == HOST.LOCALHOST:
             self.logger.info(i18n.set_connect_host, i18n.localhost)
         else:
             self.logger.info(i18n.set_connect_host, self.config.host)
@@ -251,7 +250,7 @@ class API:
         if search_condition is not None and search_type == 0:
             raise ValueError('wrong parameter search_type must input')
 
-        if search_type == data_type.SearchType.PUSH:
+        if search_type == SearchType.PUSH:
             try:
                 S = int(search_condition)
             except ValueError:
@@ -264,7 +263,7 @@ class API:
 
         if index != 0:
             newest_index = self.get_newest_index(
-                data_type.NewIndex.BBS,
+                NewIndex.BBS,
                 board=board,
                 search_type=search_type,
                 search_condition=search_condition,
@@ -321,14 +320,14 @@ class API:
     def _check_board(
             self,
             board: str,
-            check_moderator: bool = False) -> data_type.BoardInfo:
+            check_moderator: bool = False) -> Board:
 
         if board.lower() not in self._exist_board_list:
             board_info = self._get_board_info(board, False, False)
             self._exist_board_list.append(board.lower())
             self._board_info_list[board.lower()] = board_info
 
-            moderators = board_info.moderators
+            moderators = board_info[Board.moderators]
             moderators = [x.lower() for x in moderators]
             self._ModeratorList[board.lower()] = moderators
             self._board_info_list[board.lower()] = board_info
@@ -341,7 +340,7 @@ class API:
 
     def get_newest_index(
             self,
-            index_type: data_type.NewIndex,
+            index_type: NewIndex,
             board: str = None,
             search_type: SearchType = SearchType.NOPE,
             search_condition: str = None,
@@ -351,13 +350,13 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
 
-        if not isinstance(index_type, data_type.NewIndex):
+        if not isinstance(index_type, NewIndex):
             TypeError('index_type must be NewIndex')
 
-        if not isinstance(search_type, data_type.SearchType):
+        if not isinstance(search_type, SearchType):
             raise TypeError(f'search_type must be SearchType, but {search_type}')
 
-        if index_type == data_type.NewIndex.MAIL:
+        if index_type == NewIndex.MAIL:
             if self.unregistered_user:
                 raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
@@ -365,10 +364,10 @@ class API:
                 raise ValueError('board should not input in mail mode')
 
             mail_search_options = [
-                data_type.SearchType.KEYWORD,
-                data_type.SearchType.AUTHOR,
-                data_type.SearchType.MARK,
-                data_type.SearchType.NOPE,
+                SearchType.KEYWORD,
+                SearchType.AUTHOR,
+                SearchType.MARK,
+                SearchType.NOPE,
             ]
             if search_type not in mail_search_options:
                 ValueError(f'search type must in {mail_search_options} in mail mode')
@@ -408,13 +407,13 @@ class API:
 
         self._one_thread()
 
-        check_value.check_type(int, 'crawl_type', crawl_type, value_class=data_type.crawl_type)
+        check_value.check_type(int, 'crawl_type', crawl_type, value_class=crawl_type)
         check_value.check_type(str, 'board', board)
 
         if len(board) == 0:
             raise ValueError(f'board error parameter: {board}')
 
-        if crawl_type == data_type.crawl_type.BBS:
+        if crawl_type == crawl_type.BBS:
             if not self._login_status:
                 raise exceptions.Requirelogin(i18n.require_login)
 
@@ -438,7 +437,7 @@ class API:
                     (search_condition is not None):
                 raise ValueError('wrong parameter aid and search_condition can\'t both input')
 
-            if search_type == data_type.SearchType.PUSH:
+            if search_type == SearchType.PUSH:
                 try:
                     S = int(search_condition)
                 except ValueError:
@@ -448,7 +447,7 @@ class API:
 
             if start_index != 0:
                 newest_index = self.get_newest_index(
-                    data_type.NewIndex.BBS,
+                    NewIndex.BBS,
                     board=board,
                     search_type=search_type,
                     search_condition=search_condition)
@@ -559,7 +558,7 @@ class API:
                     else:
                         error_post_list.append(index)
                     continue
-                if article.delete_status != data_type.ArticleDelStatus.exist:
+                if article.delete_status != ArticleDelStatus.exist:
                     del_post_list.append(index)
                 post_handler(article)
             if self.config.log_level == Logger.INFO:
@@ -569,7 +568,7 @@ class API:
 
         else:
             pass
-            # if self.config.host == data_type.host_type.PTT2:
+            # if self.config.host == host_type.PTT2:
             #     raise exceptions.HostNotSupport(lib_util.get_current_func_name())
             #
             # # 網頁版本爬蟲
@@ -577,7 +576,7 @@ class API:
             #
             # # 1. 取得總共有幾頁 MaxPage
             # newest_index = self.get_newest_index(
-            #     data_type.index_type.WEB,
+            #     index_type.WEB,
             #     board=board)
             # # 2. 檢查 StartPage 跟 EndPage 有沒有在 1 ~ MaxPage 之間
             #
@@ -590,7 +589,7 @@ class API:
             #     max_value=newest_index
             # )
             #
-            # # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 data_type.PostInfo
+            # # 3. 把每篇文章(包括被刪除文章)欄位解析出來組合成 PostInfo
             # error_post_list = list()
             # del_post_list = list()
             # # PostAID = ""
@@ -605,13 +604,13 @@ class API:
             # def deleted_post(post_title):
             #     if post_title.startswith('('):
             #         if '本文' in post_title:
-            #             return data_type.post_delete_status.AUTHOR
+            #             return post_delete_status.AUTHOR
             #         elif post_title.startswith('(已被'):
-            #             return data_type.post_delete_status.MODERATOR
+            #             return post_delete_status.MODERATOR
             #         else:
-            #             return data_type.post_delete_status.UNKNOWN
+            #             return post_delete_status.UNKNOWN
             #     else:
-            #         return data_type.post_delete_status.NOT_DELETED
+            #         return post_delete_status.NOT_DELETED
             #
             # for index in range(start_page, newest_index + 1):
             #     log.show_value(
@@ -646,7 +645,7 @@ class API:
             #                 post['author'] = post['title'].split('<')[
             #                     1].split('>')[0]
             #
-            #         post = data_type.PostInfo(
+            #         post = PostInfo(
             #             board=board,
             #             author=post['author'],
             #             title=post['title'],
@@ -729,7 +728,7 @@ class API:
 
         check_value.check_type(str, 'board', board)
         check_value.check_type(int, 'push_type',
-                               push_type, value_class=data_type.push_type)
+                               push_type, value_class=push_type)
         check_value.check_type(str, 'push_content', push_content)
         if post_aid is not None:
             check_value.check_type(str, 'post_aid', post_aid)
@@ -746,7 +745,7 @@ class API:
 
         if post_index != 0:
             newest_index = self.get_newest_index(
-                data_type.NewIndex.BBS,
+                NewIndex.BBS,
                 board=board)
             check_value.check_index('post_index', post_index, newest_index)
 
@@ -833,7 +832,7 @@ class API:
             post_aid,
             post_index)
 
-    def _get_user(self, user_id) -> data_type.UserInfo:
+    def _get_user(self, user_id) -> dict:
 
         check_value.check_type(str, 'UserID', user_id)
         if len(user_id) < 2:
@@ -846,7 +845,7 @@ class API:
 
         return _api_get_user.get_user(self, user_id)
 
-    def get_user(self, user_id) -> data_type.UserInfo:
+    def get_user(self, user_id) -> dict:
         self._one_thread()
 
         if not self._login_status:
@@ -892,7 +891,7 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        check_value.check_type(int, 'OperateType', operate_type, value_class=data_type.waterball_operate_type)
+        check_value.check_type(int, 'OperateType', operate_type, value_class=waterball_operate_type)
 
         try:
             from . import _api_waterball
@@ -932,7 +931,7 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        check_value.check_type(int, 'call_status', call_status, value_class=data_type.call_status)
+        check_value.check_type(int, 'call_status', call_status, value_class=call_status)
 
         try:
             from . import _api_call_status
@@ -1016,7 +1015,7 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
 
-        if self.get_newest_index(data_type.NewIndex.MAIL) == 0:
+        if self.get_newest_index(NewIndex.MAIL) == 0:
             return 0
 
         try:
@@ -1052,7 +1051,7 @@ class API:
         if not self._login_status:
             raise exceptions.Requirelogin(i18n.require_login)
 
-        check_value.check_type(int, 'reply_type', reply_type, value_class=data_type.reply_type)
+        check_value.check_type(int, 'reply_type', reply_type, value_class=reply_type)
         check_value.check_type(str, 'board', board)
         check_value.check_type(str, 'content', content)
         if post_aid is not None:
@@ -1060,7 +1059,7 @@ class API:
 
         if post_index != 0:
             newest_index = self.get_newest_index(
-                data_type.NewIndex.BBS,
+                NewIndex.BBS,
                 board=board)
             check_value.check_index(
                 'post_index',
@@ -1227,7 +1226,7 @@ class API:
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
-    def get_board_info(self, board: str, get_post_kind: bool = False) -> data_type.BoardInfo:
+    def get_board_info(self, board: str, get_post_kind: bool = False) -> dict:
 
         self._one_thread()
 
@@ -1238,7 +1237,7 @@ class API:
 
         return self._get_board_info(board, get_post_kind, call_by_others=False)
 
-    def _get_board_info(self, board: str, get_post_kind, call_by_others: bool = True) -> data_type.BoardInfo:
+    def _get_board_info(self, board: str, get_post_kind, call_by_others: bool = True) -> dict:
 
         try:
             from . import _api_get_board_info
@@ -1264,7 +1263,7 @@ class API:
 
         if index == 0:
             return None
-        current_index = self.get_newest_index(data_type.NewIndex.MAIL)
+        current_index = self.get_newest_index(NewIndex.MAIL)
         self.logger.info('current_index', current_index)
         check_value.check_index('index', index, current_index)
 
@@ -1289,7 +1288,7 @@ class API:
         if self.unregistered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-        current_index = self.get_newest_index(data_type.NewIndex.MAIL)
+        current_index = self.get_newest_index(NewIndex.MAIL)
         check_value.check_index(index, current_index)
 
         try:
@@ -1403,7 +1402,7 @@ class API:
 
         if post_index != 0:
             newest_index = self.get_newest_index(
-                data_type.NewIndex.BBS,
+                NewIndex.BBS,
                 board=board)
             check_value.check_index(
                 'PostIndex',
