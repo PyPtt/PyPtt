@@ -850,6 +850,7 @@ def get_user():
             ptt_bot.log('使用者ID: ' + user.id)
             ptt_bot.log('使用者經濟狀況: ' + str(user.money))
             ptt_bot.log('登入次數: ' + str(user.login_time))
+            ptt_bot.log('帳戶通過認證: ' + str(user.account_verified))
             ptt_bot.log('有效文章數: ' + str(user.legal_post))
             ptt_bot.log('退文文章數: ' + str(user.illegal_post))
             ptt_bot.log('目前動態: ' + user.status)
