@@ -189,14 +189,14 @@ class Comment:
     time = 'time'
 
 
-class ArticleDelStatus:
+class PostDelStatus:
     exist = 'exist'
     deleted_by_author = 'deleted_by_author'
     deleted_by_moderator = 'deleted_by_moderator'
     deleted_by_unknown = 'deleted_by_unknown'
 
 
-class Article:
+class Post:
     board = 'board'
     aid = 'aid'
     index = 'index'

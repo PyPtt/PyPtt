@@ -19,8 +19,8 @@ def del_post(
             check_author = False
             break
 
-    post_info = api.get_article(board, aid=post_aid, index=post_index, query=True)
-    if post_info.delete_status != data_type.ArticleDelStatus.exist:
+    post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
+    if post_info.delete_status != data_type.PostDelStatus.exist:
         if post_aid is not None:
             raise exceptions.DeletedPost(board, post_aid)
         else:
