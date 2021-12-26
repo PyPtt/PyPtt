@@ -122,8 +122,8 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
 
     # data = lib_util.get_sub_string_list(ori_screen, '》', ['《', '\n'])
     data = parse_user_page(ori_screen)
-    if len(data) < 10:
-        print('\n'.join(data))
+    if len(data) < 11:
+        print('\n'.join([str(d) for d in data]))
         print(len(data))
         raise exceptions.ParseError(ori_screen)
 
