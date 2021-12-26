@@ -33,6 +33,7 @@ def parse_user_page(screen):
             buffer = result_buffer.split(' ')[0]
             # print(f' ==> [{buffer}]')
             result.append(buffer)
+            result.append('同天內只計一次' in result_buffer)
             line = line[line.find(result_buffer) + len(result_buffer):].strip()
             result_buffer = line[6:]
             # print(f' ==> [{result_buffer}]')
@@ -120,8 +121,9 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
     ptt_id = data[0]
     money = data[1]
     login_time = int(data[2])
+    account_verified = data[3]
 
-    temp = re.findall(r'\d+', data[3])
+    temp = re.findall(r'\d+', data[4])
     legal_post = int(temp[0])
 
     # PTT2 沒有退文
@@ -130,18 +132,19 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
     else:
         illegal_post = -1
 
-    status = data[4]
-    mail = data[5]
-    last_login = data[6]
-    last_ip = data[7]
-    five_chess = data[8]
-    chess = data[9]
+    status = data[5]
+    mail = data[6]
+    last_login = data[7]
+    last_ip = data[8]
+    five_chess = data[9]
+    chess = data[10]
 
     signature_file = '\n'.join(ori_screen.split('\n')[6:-1])
 
     logger.debug('ptt_id', ptt_id)
     logger.debug('money', money)
     logger.debug('login_time', login_time)
+    logger.debug('account_verified', account_verified)
     logger.debug('legal_post', legal_post)
     logger.debug('illegal_post', illegal_post)
     logger.debug('status', status)
@@ -156,6 +159,7 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
         ptt_id,
         money,
         login_time,
+        account_verified,
         legal_post,
         illegal_post,
         status,
