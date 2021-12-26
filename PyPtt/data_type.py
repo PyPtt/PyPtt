@@ -143,6 +143,7 @@ class UserInfo:
             ptt_id,
             money,
             login_time,
+            account_verified,
             legal_post,
             illegal_post,
             status,
@@ -155,6 +156,7 @@ class UserInfo:
         self.id: str = parse_para(str, ptt_id)
         self.money: str = parse_para(str, money)
         self.login_time: int = parse_para(int, login_time)
+        self.account_verified: bool = parse_para(bool, account_verified)
         self.legal_post: int = parse_para(int, legal_post)
         self.illegal_post: int = parse_para(int, illegal_post)
         self.status: str = parse_para(str, status)
