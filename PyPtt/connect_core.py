@@ -23,8 +23,6 @@ from .lib_util import AutoName
 register_uao()
 websockets.http.USER_AGENT += f' PyPtt/{version}'
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
 
 @unique
 class ConnectMode(AutoName):
@@ -173,6 +171,8 @@ class API(object):
 
                 time.sleep(1)
 
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+
         self.current_encoding = 'big5uao'
         self.logger.info(i18n.connect_core, i18n.active)
 
@@ -192,13 +192,6 @@ class API(object):
             telnet_host = self.config.host
             websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
-
-        try:
-            asyncio.get_event_loop()
-        except DeprecationWarning:
-            print(11111)
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
 
         connect_success = False
 
