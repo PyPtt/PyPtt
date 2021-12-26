@@ -22,8 +22,8 @@ def get_id_pw(password_file):
     return ptt_id, password
 
 
-def login(ptt_bot: PyPtt.API, host: PyPtt.HOST = PyPtt.HOST.PTT1):
-    if host == PyPtt.HOST.PTT1:
+def login(ptt_bot: PyPtt.API):
+    if ptt_bot.host == PyPtt.HOST.PTT1:
         ptt_id, ptt_pw = get_id_pw('account_ptt_0.json')
     else:
         ptt_id, ptt_pw = get_id_pw('account_ptt2_0.json')

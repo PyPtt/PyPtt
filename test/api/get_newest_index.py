@@ -1,7 +1,5 @@
 import time
 
-from SingleLog.log import Logger
-
 import PyPtt
 import util
 
@@ -21,11 +19,11 @@ def test(ptt_bot: PyPtt.API):
             index = ptt_bot.get_newest_index(
                 PyPtt.NewIndex.BBS,
                 board)
-            logger.info(f'{board} newest index', index)
+            util.logger.info(f'{board} newest index', index)
 
     for _ in range(3):
         index = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL)
-        logger.info(f'mail newest index', index)
+        util.logger.info(f'mail newest index', index)
 
 
 def func():
@@ -38,7 +36,7 @@ def func():
             host=host,
             # log_level=PyPtt.LOG_LEVEL.TRACE,
         )
-        util.login(ptt_bot, host)
+        util.login(ptt_bot)
 
         test(ptt_bot)
 
@@ -46,5 +44,4 @@ def func():
 
 
 if __name__ == '__main__':
-    logger = Logger('TEST')
     func()
