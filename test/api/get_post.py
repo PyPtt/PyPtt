@@ -1,7 +1,5 @@
 import json
 
-from SingleLog.log import Logger
-
 import PyPtt
 import util
 
@@ -9,28 +7,33 @@ import util
 def test_no_condition(ptt_bot: PyPtt.API):
     result = []
 
-    test_post_list = [
-        ('Python', 1),
-        # ('NotExitBoard', 1),
-        ('Python', '1TJH_XY0'),
-        # ('Python', '1TJdL7L8'),
-        # # 文章格式錯誤
-        # ('Stock', '1TVnEivO'),
-        # # 文章格式錯誤
-        # ('movie', 457),
-        # ('Gossiping', '1UDnXefr'),
-        # ('joke', '1Tc6G9eQ'),
-        # # 135193
-        # ('Test', 575),
-        # # 待證文章
-        # ('Test', '1U3pLzi0'),
-        # # 古早文章
-        # ('LAW', 1),
-        # # 辦刪除文章
-        # ('Test', 347),
-        # # comment number parse error
-        # ('Ptt25sign', '1VppdKLW'),
-    ]
+    if ptt_bot.host == PyPtt.HOST.PTT1:
+        test_post_list = [
+            ('Python', 1),
+            # ('NotExitBoard', 1),
+            ('Python', '1TJH_XY0'),
+            # ('Python', '1TJdL7L8'),
+            # # 文章格式錯誤
+            # ('Stock', '1TVnEivO'),
+            # # 文章格式錯誤
+            # ('movie', 457),
+            # ('Gossiping', '1UDnXefr'),
+            # ('joke', '1Tc6G9eQ'),
+            # # 135193
+            # ('Test', 575),
+            # # 待證文章
+            # ('Test', '1U3pLzi0'),
+            # # 古早文章
+            # ('LAW', 1),
+            # # 辦刪除文章
+            # ('Test', 347),
+            # # comment number parse error
+            # ('Ptt25sign', '1VppdKLW'),
+        ]
+    else:
+        test_post_list = [
+            ('WhoAmI', 1),
+        ]
 
     for board, index in test_post_list:
         if isinstance(index, int):
@@ -41,13 +44,10 @@ def test_no_condition(ptt_bot: PyPtt.API):
             article = ptt_bot.get_post(
                 board,
                 aid=index)
-        # if article[PyPtt.Article.delete_status] != PyPtt.ArticleDeleteStatus.exist:
-        #     logger.info(f'{board} {index}', 'deleted')
-        #     continue
 
         result.append(article)
-        print('+==+' * 10)
-        print(article[PyPtt.Post.content])
+        # util.logger.info('+==+' * 10)
+        # util.logger.info(article[PyPtt.Post.content])
 
     return result
 
@@ -65,7 +65,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
         if search_type == PyPtt.SearchType.MONEY:
             type_str = '稿酬'
 
-        print(f'{test_board} 使用 {type_str} 搜尋 {condition}')
+        util.logger.info(f'{test_board} 使用 {type_str} 搜尋 {condition}')
 
     if ptt_bot.config.host == PyPtt.HOST.PTT1:
         test_list = [
@@ -91,7 +91,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             board,
             search_type=search_type,
             search_condition=condition)
-        print(f'{board} 最新文章編號 {index}')
+        util.logger.info(f'{board} 最新文章編號 {index}')
 
         for i in range(test_range):
             post = ptt_bot.get_post(
@@ -102,22 +102,22 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
                 search_condition=condition,
                 query=query)
 
-            print('列表日期:')
-            print(post.list_date)
-            print('作者:')
-            print(post.author)
-            print('標題:')
-            print(post.title)
+            util.logger.info('列表日期:')
+            util.logger.info(post.list_date)
+            util.logger.info('作者:')
+            util.logger.info(post.author)
+            util.logger.info('標題:')
+            util.logger.info(post.title)
 
             if post.delete_status == PyPtt.PostDelStatus.exist:
                 if not query:
-                    print('內文:')
-                    print(post.content)
+                    util.logger.info('內文:')
+                    util.logger.info(post.content)
             elif post.delete_status == PyPtt.PostDelStatus.deleted_by_author:
-                print('文章被作者刪除')
+                util.logger.info('文章被作者刪除')
             elif post.delete_status == PyPtt.PostDelStatus.deleted_by_moderator:
-                print('文章被版主刪除')
-            print('=' * 50)
+                util.logger.info('文章被版主刪除')
+            util.logger.info('=' * 50)
 
     # TestList = [
     #     ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]')
@@ -130,7 +130,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
     #         SearchType=SearchType,
     #         SearchCondition=Condition,
     #     )
-    #     print(f'{board} 最新文章編號 {index}')
+    #     util.logger.info(f'{board} 最新文章編號 {index}')
 
     #     Post = PTTBot.getPost(
     #         board,
@@ -139,8 +139,8 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
     #         SearchCondition=Condition,
     #     )
 
-    #     print('標題: ' + Post.getTitle())
-    #     print('=' * 50)
+    #     util.logger.info('標題: ' + Post.getTitle())
+    #     util.logger.info('=' * 50)
 
     search_list = [
         (PyPtt.SearchType.KEYWORD, '新聞'),
@@ -153,7 +153,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
         search_type=PyPtt.SearchType.KEYWORD,
         search_condition='新聞',
         search_list=search_list)
-    print(f'Gossiping 最新文章編號 {index}')
+    util.logger.info(f'Gossiping 最新文章編號 {index}')
 
     for current_index in range(1, index + 1):
         post_info = ptt_bot.get_post(
@@ -164,7 +164,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             search_list=search_list,
             query=True)
 
-        print(current_index, post_info.title)
+        util.logger.info(current_index, post_info.title)
 
 
 def func():
@@ -186,11 +186,10 @@ def func():
 
         ptt_bot.logout()
 
-        print(json.dumps(result, ensure_ascii=False, indent=4))
+        util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
     # assert (result[0] == result[1])
 
 
 if __name__ == '__main__':
-    logger = Logger('TEST')
-    logger.info('PyPtt version', PyPtt.version)
+    util.logger.info('PyPtt version', PyPtt.version)
     func()

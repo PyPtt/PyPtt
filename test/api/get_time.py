@@ -1,18 +1,16 @@
 import time
 
-from SingleLog.log import Logger
-
 import PyPtt
 import util
 
 
 def test(ptt_bot: PyPtt.API):
     result = []
-    for _ in range(3):
+    for _ in range(10):
         result.append(ptt_bot.get_time())
-        time.sleep(1)
+        # time.sleep(1)
 
-    logger.info('get time result', result)
+    util.logger.info('get time result', result)
 
 
 def func():
@@ -25,7 +23,7 @@ def func():
             host=host,
             # log_level=PyPtt.LOG_LEVEL.TRACE,
         )
-        util.login(ptt_bot, host)
+        util.login(ptt_bot)
 
         test(ptt_bot)
 
@@ -33,5 +31,4 @@ def func():
 
 
 if __name__ == '__main__':
-    logger = Logger('TEST')
     func()

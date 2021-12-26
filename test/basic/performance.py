@@ -1,7 +1,4 @@
 import time
-
-from SingleLog.log import Logger
-
 import util
 
 import PyPtt
@@ -10,21 +7,21 @@ from PyPtt_0_9 import PTT
 
 def performance_test(ptt_bot):
     test_time = 500
-    logger.info(f'效能測試 get_time {test_time} 次')
+    util.logger.info(f'效能測試 get_time {test_time} 次')
 
     start_time = time.time()
     for _ in range(test_time):
         ptt_time = ptt_bot.get_time()
 
         # if ptt_time is None:
-        #     logger.info('PTT_TIME is None')
+        #     util.logger.info('PTT_TIME is None')
         #     break
-        # logger.info(ptt_time)
+        # util.logger.info(ptt_time)
     end_time = time.time()
-    logger.info('Performance Test get_time ' +
+    util.logger.info('Performance Test get_time ' +
                 str(round(end_time - start_time, 2)) + ' s')
 
-    logger.info('Performance Test finish')
+    util.logger.info('Performance Test finish')
 
 
 def func():
@@ -42,5 +39,4 @@ def func():
 
 
 if __name__ == '__main__':
-    logger = Logger('TEST')
     func()
