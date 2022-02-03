@@ -7,7 +7,7 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_time, _api_get_article, version, _api_get_newest_index
+from . import _api_get_time, _api_get_post, version, _api_get_newest_index
 from . import _api_post
 from . import check_value
 from . import command
@@ -277,9 +277,9 @@ class API:
         for i in range(max_retry):
 
             need_continue = False
-            article = None
+            post = None
             try:
-                article = _api_get_article.get_article(
+                post = _api_get_post.get_post(
                     self,
                     board,
                     aid,
@@ -305,9 +305,9 @@ class API:
                     raise e
                 need_continue = True
 
-            if article is None:
+            if post is None:
                 need_continue = True
-            elif not article[Post.pass_format_check]:
+            elif not post[Post.pass_format_check]:
                 need_continue = True
 
             if not need_continue:
@@ -316,7 +316,7 @@ class API:
             self.logger.debug('Wait for retry repost')
             time.sleep(0.1)
 
-        return article
+        return post
 
     def _check_board(
             self,
@@ -437,11 +437,11 @@ class API:
                     end_index,
                     max_value=newest_index)
             elif start_aid is not None and end_aid is not None:
-                start_index = _api_get_article.get_article(
+                start_index = _api_get_post.get_post(
                     board,
                     aid=start_aid,
                     query=True)[Post.index]
-                end_index = _api_get_article.get_article(
+                end_index = _api_get_post.get_post(
                     board,
                     aid=end_aid,
                     query=True)[Post.index]
@@ -467,9 +467,9 @@ class API:
 
                 for i in range(2):
                     need_continue = False
-                    article = None
+                    post = None
                     try:
-                        article = _api_get_article.get_article(
+                        post = _api_get_post.get_post(
                             board,
                             post_index=index,
                             search_type=search_type,
@@ -513,9 +513,9 @@ class API:
                             self.config.kick_other_login)
                         need_continue = True
 
-                    if article is None:
+                    if post is None:
                         need_continue = True
-                    elif not article[Post.pass_format_check]:
+                    elif not post[Post.pass_format_check]:
                         need_continue = True
 
                     if need_continue:
@@ -527,18 +527,18 @@ class API:
 
                 if self.config.log_level == Logger.INFO:
                     PB.update(index - start_index)
-                if article is None:
+                if post is None:
                     error_post_list.append(index)
                     continue
-                if not article.pass_format_check:
-                    if article.aid is not None:
-                        error_post_list.append(article.aid)
+                if not post.pass_format_check:
+                    if post.aid is not None:
+                        error_post_list.append(post.aid)
                     else:
                         error_post_list.append(index)
                     continue
-                if article.delete_status != ArticleDelStatus.exist:
+                if post.delete_status != postDelStatus.exist:
                     del_post_list.append(index)
-                post_handler(article)
+                post_handler(post)
             if self.config.log_level == Logger.INFO:
                 PB.finish()
 
@@ -1300,7 +1300,7 @@ class API:
         pattern = re.compile('https://www.ptt.cc/bbs/[-.\w]+/M.[\d]+.A[.\w]*.html')
         r = pattern.search(url)
         if r is None:
-            raise ValueError('wrong parameter url must be www.ptt.cc article url')
+            raise ValueError('wrong parameter url must be www.ptt.cc post url')
 
         # 演算法參考 https://www.ptt.cc/man/C_Chat/DE98/DFF5/DB61/M.1419434423.A.DF0.html
         # aid 字元表

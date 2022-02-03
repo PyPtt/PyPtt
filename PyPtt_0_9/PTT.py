@@ -1764,7 +1764,7 @@ class API:
                 self.config,
                 [
                     i18n.ErrorParameter,
-                    'url must be www.ptt.cc article url'
+                    'url must be www.ptt.cc post url'
                 ]))
 
         # 演算法參考 https://www.ptt.cc/man/C_Chat/DE98/DFF5/DB61/M.1419434423.A.DF0.html
