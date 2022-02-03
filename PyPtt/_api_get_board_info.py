@@ -4,7 +4,6 @@ from SingleLog.log import Logger
 
 from . import command
 from . import connect_core
-from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
@@ -81,7 +80,7 @@ def get_board_info(
     if r is not None:
         boardname = r.group(0)[1:-5].strip()
 
-    logger.debug('看板名稱', boardname)
+    logger.debug('看板名稱', boardname, board)
 
     if boardname.lower() != board.lower():
         raise exceptions.NoSuchBoard(api.config, board)

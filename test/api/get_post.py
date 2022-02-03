@@ -81,6 +81,8 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             ('PttSuggest', PyPtt.SearchType.PUSH, '10'),
         ]
 
+    result = []
+
     test_range = 1
     query = False
 
@@ -170,7 +172,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
 def func():
     ptt_bot_list = [
         PyPtt.API(
-            # log_level=PyPtt.LOG_LEVEL.TRACE
+            log_level=PyPtt.LOG_LEVEL.TRACE
         ),
         # PTT.API()
     ]
@@ -182,11 +184,14 @@ def func():
     for ptt_bot in ptt_bot_list:
         util.login(ptt_bot)
 
-        result = test_no_condition(ptt_bot)
+        # result = test_no_condition(ptt_bot)
+        # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
+
+        result = get_post_with_condition(ptt_bot)
+        util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
 
         ptt_bot.logout()
 
-        util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
     # assert (result[0] == result[1])
 
 
