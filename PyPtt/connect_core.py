@@ -342,13 +342,13 @@ class API(object):
                 msg = msg + command.refresh
 
             try:
-                msg = msg.encode('big5uao', 'replace')
+                msg = msg.encode('utf-8', 'replace')
             except AttributeError:
                 pass
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                msg = msg.encode('big5', 'replace')
+                msg = msg.encode('utf-8', 'replace')
 
             if is_secret:
                 self.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
