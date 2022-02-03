@@ -37,17 +37,17 @@ def test_no_condition(ptt_bot: PyPtt.API):
 
     for board, index in test_post_list:
         if isinstance(index, int):
-            article = ptt_bot.get_post(
+            post = ptt_bot.get_post(
                 board,
                 index=index)
         else:
-            article = ptt_bot.get_post(
+            post = ptt_bot.get_post(
                 board,
                 aid=index)
 
-        result.append(article)
+        result.append(post)
         # util.logger.info('+==+' * 10)
-        # util.logger.info(article[PyPtt.Post.content])
+        # util.logger.info(post[PyPtt.Post.content])
 
     return result
 
@@ -137,7 +137,7 @@ def func():
         )
         util.login(ptt_bot)
 
-        # result = test_no_condition(ptt_bot)
+        result = test_no_condition(ptt_bot)
         # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
 
         result = get_post_with_condition(ptt_bot)

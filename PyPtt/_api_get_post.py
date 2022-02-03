@@ -12,7 +12,7 @@ from . import screens
 from .data_type import Post, Comment
 
 
-def get_article(
+def get_post(
         api,
         board: str,
         post_aid: str = None,
@@ -23,7 +23,7 @@ def get_article(
         query: bool = False) -> dict:
     api._goto_board(board)
 
-    logger = Logger('get_article', Logger.INFO)
+    logger = Logger('get_post', Logger.INFO)
 
     cmd_list = list()
 
@@ -93,7 +93,7 @@ def get_article(
     index = api.connect_core.send(cmd, target_list)
     ori_screen = api.connect_core.get_screen_queue()[-1]
 
-    article = {
+    post = {
         Post.board: None,
         Post.aid: None,
         Post.index: None,
@@ -161,7 +161,7 @@ def get_article(
         logger.debug('PostAuthor', post_author)
         logger.debug('post_del_status', post_del_status)
 
-        article.update({
+        post.update({
             Post.board: board,
             Post.author: post_author,
             Post.list_date: list_date,
@@ -169,7 +169,7 @@ def get_article(
             Post.pass_format_check: True
         })
 
-        return article
+        return post
 
     elif index == 0:
 
@@ -179,7 +179,7 @@ def get_article(
                 ori_screen)
 
         if lock_post:
-            article.update({
+            post.update({
                 Post.board: board,
                 Post.aid: post_aid,
                 Post.index: post_index,
@@ -191,10 +191,10 @@ def get_article(
                 Post.pass_format_check: True,
                 Post.push_number: push_number,
                 Post.lock: True})
-            return article
+            return post
 
     if query:
-        article.update({
+        post.update({
             Post.board: board,
             Post.aid: post_aid,
             Post.index: post_index,
@@ -205,12 +205,12 @@ def get_article(
             Post.list_date: list_date,
             Post.pass_format_check: True,
             Post.push_number: push_number})
-        return article
+        return post
 
-    origin_article, has_control_code = _api_util.get_content(api)
+    origin_post, has_control_code = _api_util.get_content(api)
 
-    if origin_article is None:
-        article.update({
+    if origin_post is None:
+        post.update({
             Post.board: board,
             Post.aid: post_aid,
             Post.index: post_index,
@@ -224,10 +224,10 @@ def get_article(
             Post.push_number: push_number,
             Post.is_unconfirmed: api.Unconfirmed
         })
-        return article
+        return post
 
     # print('=' * 20)
-    # print(origin_article)
+    # print(origin_post)
     # print('=' * 20)
 
     content_start = '─── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──'
@@ -247,7 +247,7 @@ def get_article(
     push_list = list()
 
     # 格式確認，亂改的我也沒辦法Q_Q
-    origin_post_lines = origin_article.split('\n')
+    origin_post_lines = origin_post.split('\n')
 
     author_line = origin_post_lines[0]
 
@@ -270,7 +270,7 @@ def get_article(
         if pattern_result is None:
             logger.debug(i18n.substandard_post, i18n.author)
 
-            article.update({
+            post.update({
                 board: board,
                 Post.aid: post_aid,
                 Post.index: post_index,
@@ -287,10 +287,10 @@ def get_article(
                 Post.pass_format_check: False,
                 Post.location: location,
                 Post.push_number: push_number,
-                Post.full_content: origin_article,
+                Post.full_content: origin_post,
                 Post.is_unconfirmed: api.Unconfirmed, })
 
-            return article
+            return post
         post_author = pattern_result.group(0)
         post_author = post_author[:post_author.rfind(')') + 1]
     post_author = post_author[4:].strip()
@@ -304,7 +304,7 @@ def get_article(
     if pattern_result is None:
         logger.debug(i18n.substandard_post, i18n.title)
 
-        article.update({
+        post.update({
             Post.board: board,
             Post.aid: post_aid,
             Post.index: post_index,
@@ -321,10 +321,10 @@ def get_article(
             Post.pass_format_check: False,
             Post.location: location,
             Post.push_number: push_number,
-            Post.full_content: origin_article,
+            Post.full_content: origin_post,
             Post.is_unconfirmed: api.Unconfirmed, })
 
-        return article
+        return post
     post_title = pattern_result.group(0)
     post_title = post_title[4:].strip()
 
@@ -336,7 +336,7 @@ def get_article(
     if pattern_result is None:
         logger.debug(i18n.substandard_post, i18n.date)
 
-        article.update({
+        post.update({
             Post.board: board,
             Post.aid: post_aid,
             Post.index: post_index,
@@ -353,21 +353,21 @@ def get_article(
             Post.pass_format_check: False,
             Post.location: location,
             Post.push_number: push_number,
-            Post.full_content: origin_article,
+            Post.full_content: origin_post,
             Post.is_unconfirmed: api.Unconfirmed, })
 
-        return article
+        return post
     post_date = pattern_result.group(0)
     post_date = post_date[4:].strip()
 
     logger.debug(i18n.date, post_date)
 
     content_fail = True
-    if content_start not in origin_article:
+    if content_start not in origin_post:
         # print('Type 1')
         content_fail = True
     else:
-        post_content = origin_article
+        post_content = origin_post
         post_content = post_content[
                        post_content.find(content_start) +
                        len(content_start) + 1:
@@ -383,7 +383,7 @@ def get_article(
                 post_content = post_content[
                                :post_content.rfind(EC) + 3
                                ]
-                origin_post_lines = origin_article[origin_article.find(EC):]
+                origin_post_lines = origin_post[origin_post.find(EC):]
                 # post_content = post_content.strip()
                 origin_post_lines = origin_post_lines.split('\n')
                 break
@@ -391,7 +391,7 @@ def get_article(
     if content_fail:
         logger.debug(i18n.substandard_post, i18n.content)
 
-        article.update({
+        post.update({
             Post.board: board,
             Post.aid: post_aid,
             Post.index: post_index,
@@ -408,10 +408,10 @@ def get_article(
             Post.pass_format_check: False,
             Post.location: location,
             Post.push_number: push_number,
-            Post.full_content: origin_article,
+            Post.full_content: origin_post,
             Post.is_unconfirmed: api.Unconfirmed, })
 
-        return article
+        return post
 
     logger.debug(i18n.content, post_content)
 
@@ -464,7 +464,7 @@ def get_article(
         if ip is None:
             logger.debug(i18n.substandard_post, ip)
 
-            article.update({
+            post.update({
                 Post.board: board,
                 Post.aid: post_aid,
                 Post.index: post_index,
@@ -481,10 +481,10 @@ def get_article(
                 Post.pass_format_check: False,
                 Post.location: location,
                 Post.push_number: push_number,
-                Post.full_content: origin_article,
+                Post.full_content: origin_post,
                 Post.is_unconfirmed: api.Unconfirmed, })
 
-            return article
+            return post
     logger.debug('IP', ip)
 
     push_author_pattern = re.compile('[推|噓|→] [\w| ]+:')
@@ -553,7 +553,7 @@ def get_article(
             Comment.time: push_date}
         push_list.append(current_push)
 
-    article.update({
+    post.update({
         Post.board: board,
         Post.aid: post_aid,
         Post.index: post_index,
@@ -570,7 +570,7 @@ def get_article(
         Post.pass_format_check: True,
         Post.location: location,
         Post.push_number: push_number,
-        Post.full_content: origin_article,
+        Post.full_content: origin_post,
         Post.is_unconfirmed: api.Unconfirmed})
 
-    return article
+    return post
