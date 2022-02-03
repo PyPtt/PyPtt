@@ -104,91 +104,44 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
                 search_condition=condition,
                 query=query)
 
-            util.logger.info('列表日期:')
-            util.logger.info(post.list_date)
-            util.logger.info('作者:')
-            util.logger.info(post.author)
-            util.logger.info('標題:')
-            util.logger.info(post.title)
+            # print(json.dumps(post, indent=4))
 
-            if post.delete_status == PyPtt.PostDelStatus.exist:
+            util.logger.info('列表日期', post.get('list_date'))
+            util.logger.info('作者', post.get('author'))
+            util.logger.info('標題', post.get('title'))
+
+            if post.get('delete_status') == PyPtt.PostDelStatus.exist:
                 if not query:
-                    util.logger.info('內文:')
-                    util.logger.info(post.content)
-            elif post.delete_status == PyPtt.PostDelStatus.deleted_by_author:
+                    util.logger.info('內文', post.get('content'))
+            elif post.get('delete_status') == PyPtt.PostDelStatus.deleted_by_author:
                 util.logger.info('文章被作者刪除')
-            elif post.delete_status == PyPtt.PostDelStatus.deleted_by_moderator:
+            elif post.get('delete_status') == PyPtt.PostDelStatus.deleted_by_moderator:
                 util.logger.info('文章被版主刪除')
             util.logger.info('=' * 50)
 
-    # TestList = [
-    #     ('Python', PTT.data_type.post_search_type.KEYWORD, '[公告]')
-    # ]
+            result.append(post)
 
-    # for (board, SearchType, Condition) in TestList:
-    #     index = PTTBot.getNewestIndex(
-    #         PTT.data_type.index_type.BBS,
-    #         board,
-    #         SearchType=SearchType,
-    #         SearchCondition=Condition,
-    #     )
-    #     util.logger.info(f'{board} 最新文章編號 {index}')
-
-    #     Post = PTTBot.getPost(
-    #         board,
-    #         PostIndex=index,
-    #         SearchType=SearchType,
-    #         SearchCondition=Condition,
-    #     )
-
-    #     util.logger.info('標題: ' + Post.getTitle())
-    #     util.logger.info('=' * 50)
-
-    search_list = [
-        (PyPtt.SearchType.KEYWORD, '新聞'),
-        (PyPtt.SearchType.AUTHOR, 'Code'),
-    ]
-
-    index = ptt_bot.get_newest_index(
-        PyPtt.NewIndex.BBS,
-        'Gossiping',
-        search_type=PyPtt.SearchType.KEYWORD,
-        search_condition='新聞',
-        search_list=search_list)
-    util.logger.info(f'Gossiping 最新文章編號 {index}')
-
-    for current_index in range(1, index + 1):
-        post_info = ptt_bot.get_post(
-            'Gossiping',
-            index=current_index,
-            search_type=PyPtt.SearchType.KEYWORD,
-            search_condition='新聞',
-            search_list=search_list,
-            query=True)
-
-        util.logger.info(current_index, post_info.title)
+    return result
 
 
 def func():
-    ptt_bot_list = [
-        PyPtt.API(
-            log_level=PyPtt.LOG_LEVEL.TRACE
-        ),
-        # PTT.API()
-    ]
 
     host_list = [
         PyPtt.HOST.PTT1,
         PyPtt.HOST.PTT2]
 
-    for ptt_bot in ptt_bot_list:
+    for host in host_list:
+        ptt_bot = PyPtt.API(
+            host=host,
+            # log_level=PyPtt.LOG_LEVEL.TRACE,
+        )
         util.login(ptt_bot)
 
         # result = test_no_condition(ptt_bot)
         # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
 
         result = get_post_with_condition(ptt_bot)
-        util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
+        # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
 
         ptt_bot.logout()
 
