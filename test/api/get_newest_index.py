@@ -14,7 +14,7 @@ def test(ptt_bot: PyPtt.API):
     else:
         test_list = [
             ('PttSuggest', PyPtt.SearchType.KEYWORD, '[問題]'),
-            ('PttSuggest', PyPtt.SearchType.PUSH, '10'),
+            # ('PttSuggest', PyPtt.SearchType.PUSH, '10'),
         ]
 
     for board, search_type, search_condition in test_list:
@@ -31,15 +31,11 @@ def test(ptt_bot: PyPtt.API):
                 search_condition=search_condition)
             util.logger.info(f'{board} newest index with search', index)
 
-    # for _ in range(3):
-    #     index = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL)
-    #     util.logger.info(f'mail newest index', index)
-
 
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
-        # PyPtt.HOST.PTT2
+        PyPtt.HOST.PTT2
     ]
 
     for host in host_list:
