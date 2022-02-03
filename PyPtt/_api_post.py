@@ -1,10 +1,8 @@
-from SingleLog.log import Logger
-
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
 from . import command
+from . import connect_core
+from . import exceptions
+from . import i18n, check_value, lib_util
+from . import screens
 
 
 def fast_post_step0(
@@ -161,13 +159,41 @@ def fast_post(
         raise exceptions.NoPermission(i18n.no_permission)
 
 
+sign_file_list = [str(x) for x in range(0, 10)]
+sign_file_list.append('x')
+
+
 def post(
         api: object,
         board: str,
         title: str,
         content: str,
-        post_type: int,
+        title_index: int,
         sign_file) -> None:
+    api._one_thread()
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    check_value.check_type(str, 'board', board)
+    check_value.check_type(int, 'title_index', title_index)
+    check_value.check_type(str, 'title', title)
+    check_value.check_type(str, 'content', content)
+
+    if str(sign_file).lower() not in sign_file_list:
+        raise ValueError(f'wrong parameter sign_file: {sign_file}')
+
+    random_tag = lib_util.get_random_str(10)
+
+    content = content.replace('\r\n', random_tag)
+    content = content.replace('\n', '\r\n')
+    content = content.replace(random_tag, '\r\n')
+
+    api._check_board(board)
+
     api._goto_board(board)
 
     # logger = Logger('post', Logger.INFO)
@@ -204,7 +230,7 @@ def post(
     screens.show(api.config, api.connect_core.get_screen_queue())
 
     cmd_list = list()
-    cmd_list.append(str(post_type))
+    cmd_list.append(str(title_index))
     cmd_list.append(command.enter)
     cmd_list.append(str(title))
     cmd_list.append(command.enter)
