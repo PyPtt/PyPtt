@@ -653,40 +653,26 @@ class API:
     def post(
             self,
             board: str,
+            title_index: int,
             title: str,
             content: str,
-            post_type: int,
             sign_file) -> None:
-        self._one_thread()
+        """
 
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        check_value.check_type(str, 'board', board)
-        check_value.check_type(str, 'title', title)
-        check_value.check_type(str, 'content', content)
-        check_value.check_type(int, 'PostType', post_type)
-
-        sign_file_list = [str(x) for x in range(0, 10)].append('x')
-        if str(sign_file).lower() not in sign_file_list:
-            raise ValueError(f'wrong parameter sign_file: {sign_file}')
-
-        self._check_board(board)
-
-        try:
-            from . import _api_post
-        except ModuleNotFoundError:
-            import _api_post
+        :param board:
+        :param title_index:
+        :param title:
+        :param content:
+        :param sign_file:
+        :return:
+        """
 
         return _api_post.post(
             self,
             board,
             title,
             content,
-            post_type,
+            title_index,
             sign_file)
 
     def comment(
@@ -834,89 +820,89 @@ class API:
 
         return self._get_user(user_id)
 
-    def throw_waterball(self, ptt_id, content) -> None:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        check_value.check_type(str, 'ptt_id', ptt_id)
-        check_value.check_type(str, 'content', content)
-
-        if len(ptt_id) <= 2:
-            raise ValueError(f'wrong parameter ptt_id: {ptt_id}')
-
-        user = self._get_user(ptt_id)
-        if '不在站上' in user.status:
-            raise exceptions.UserOffline(ptt_id)
-
-        try:
-            from . import _api_waterball
-        except ModuleNotFoundError:
-            import _api_waterball
-
-        return _api_waterball.throw_waterball(self, ptt_id, content)
-
-    def get_waterball(self, operate_type: int) -> list:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        check_value.check_type(int, 'OperateType', operate_type, value_class=waterball_operate_type)
-
-        try:
-            from . import _api_waterball
-        except ModuleNotFoundError:
-            import _api_waterball
-
-        return _api_waterball.get_waterball(self, operate_type)
-
-    def get_call_status(self) -> int:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        return self._get_call_status()
-
-    def _get_call_status(self) -> int:
-
-        try:
-            from . import _api_call_status
-        except ModuleNotFoundError:
-            import _api_call_status
-
-        return _api_call_status.get_call_status(self)
-
-    def set_call_status(
-            self,
-            call_status) -> None:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        check_value.check_type(int, 'call_status', call_status, value_class=call_status)
-
-        try:
-            from . import _api_call_status
-        except ModuleNotFoundError:
-            import _api_call_status
-
-        return _api_call_status.set_call_status(self, call_status)
+    # def throw_waterball(self, ptt_id, content) -> None:
+    #     self._one_thread()
+    #
+    #     if not self._login_status:
+    #         raise exceptions.Requirelogin(i18n.require_login)
+    #
+    #     if self.unregistered_user:
+    #         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+    #
+    #     check_value.check_type(str, 'ptt_id', ptt_id)
+    #     check_value.check_type(str, 'content', content)
+    #
+    #     if len(ptt_id) <= 2:
+    #         raise ValueError(f'wrong parameter ptt_id: {ptt_id}')
+    #
+    #     user = self._get_user(ptt_id)
+    #     if '不在站上' in user.status:
+    #         raise exceptions.UserOffline(ptt_id)
+    #
+    #     try:
+    #         from . import _api_waterball
+    #     except ModuleNotFoundError:
+    #         import _api_waterball
+    #
+    #     return _api_waterball.throw_waterball(self, ptt_id, content)
+    #
+    # def get_waterball(self, operate_type: int) -> list:
+    #     self._one_thread()
+    #
+    #     if not self._login_status:
+    #         raise exceptions.Requirelogin(i18n.require_login)
+    #
+    #     if self.unregistered_user:
+    #         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+    #
+    #     check_value.check_type(int, 'OperateType', operate_type, value_class=waterball_operate_type)
+    #
+    #     try:
+    #         from . import _api_waterball
+    #     except ModuleNotFoundError:
+    #         import _api_waterball
+    #
+    #     return _api_waterball.get_waterball(self, operate_type)
+    #
+    # def get_call_status(self) -> int:
+    #     self._one_thread()
+    #
+    #     if not self._login_status:
+    #         raise exceptions.Requirelogin(i18n.require_login)
+    #
+    #     if self.unregistered_user:
+    #         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+    #
+    #     return self._get_call_status()
+    #
+    # def _get_call_status(self) -> int:
+    #
+    #     try:
+    #         from . import _api_call_status
+    #     except ModuleNotFoundError:
+    #         import _api_call_status
+    #
+    #     return _api_call_status.get_call_status(self)
+    #
+    # def set_call_status(
+    #         self,
+    #         call_status) -> None:
+    #     self._one_thread()
+    #
+    #     if not self._login_status:
+    #         raise exceptions.Requirelogin(i18n.require_login)
+    #
+    #     if self.unregistered_user:
+    #         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+    #
+    #     check_value.check_type(int, 'call_status', call_status, value_class=call_status)
+    #
+    #     try:
+    #         from . import _api_call_status
+    #     except ModuleNotFoundError:
+    #         import _api_call_status
+    #
+    #     return _api_call_status.set_call_status(self, call_status)
 
     def give_money(self, ptt_id: str, money: int) -> None:
         self._one_thread()
