@@ -1,4 +1,6 @@
 import os
+import random
+import string
 import traceback
 from enum import Enum
 
@@ -29,3 +31,12 @@ def findnth(haystack, needle, n):
 class AutoName(Enum):
     def _generate_next_value_(name, start, count, last_values):
         return name
+
+
+def get_random_str(length):
+    return ''.join(random.choices(string.hexdigits, k=length))
+
+
+if __name__ == '__main__':
+    for _ in range(5):
+        print(get_random_str(10))
