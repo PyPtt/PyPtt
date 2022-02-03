@@ -273,7 +273,8 @@ class API:
 
         self._check_board(board)
 
-        for i in range(2):
+        max_retry = 2
+        for i in range(max_retry):
 
             need_continue = False
             article = None
@@ -288,19 +289,19 @@ class API:
                     search_list,
                     query)
             except exceptions.ParseError as e:
-                if i == 1:
+                if i == max_retry - 1:
                     raise e
                 need_continue = True
             except exceptions.UnknownError as e:
-                if i == 1:
+                if i == max_retry - 1:
                     raise e
                 need_continue = True
             except exceptions.NoSuchBoard as e:
-                if i == 1:
+                if i == max_retry - 1:
                     raise e
                 need_continue = True
             except exceptions.NoMatchTargetError as e:
-                if i == 1:
+                if i == max_retry - 1:
                     raise e
                 need_continue = True
 
@@ -345,39 +346,16 @@ class API:
             search_type: SearchType = SearchType.NOPE,
             search_condition: str = None,
             search_list: list = None) -> int:
-        self._one_thread()
 
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if not isinstance(index_type, NewIndex):
-            TypeError('index_type must be NewIndex')
-
-        if not isinstance(search_type, SearchType):
-            raise TypeError(f'search_type must be SearchType, but {search_type}')
-
-        if index_type == NewIndex.MAIL:
-            if self.unregistered_user:
-                raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-            if board is not None:
-                raise ValueError('board should not input in mail mode')
-
-            mail_search_options = [
-                SearchType.KEYWORD,
-                SearchType.AUTHOR,
-                SearchType.MARK,
-                SearchType.NOPE,
-            ]
-            if search_type not in mail_search_options:
-                ValueError(f'search type must in {mail_search_options} in mail mode')
-
-        if search_condition is not None:
-            check_value.check_type(str, 'search_condition', search_condition)
-
-        if search_list is not None:
-            check_value.check_type(self.config, list, 'search_list', search_list)
-        check_value.check_type(int, 'SearchType', search_type)
+        """
+        Get the index from board or mailbox.
+        :param index_type:
+        :param board:
+        :param search_type:
+        :param search_condition:
+        :param search_list:
+        :return: the index from board or mailbox.
+        """
 
         return _api_get_newest_index.get_newest_index(
             self,
