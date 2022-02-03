@@ -11,7 +11,6 @@ import websockets.exceptions
 import websockets.http
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
-from uao import register_uao
 
 from . import command, version
 from . import data_type
@@ -20,7 +19,6 @@ from . import i18n
 from . import screens
 from .lib_util import AutoName
 
-register_uao()
 websockets.http.USER_AGENT += f' PyPtt/{version}'
 
 
