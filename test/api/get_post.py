@@ -40,10 +40,20 @@ def test_no_condition(ptt_bot: PyPtt.API):
             post = ptt_bot.get_post(
                 board,
                 index=index)
+
+            ptt_bot.get_post(
+                board,
+                index=index,
+                query=True)
         else:
             post = ptt_bot.get_post(
                 board,
                 aid=index)
+
+            ptt_bot.get_post(
+                board,
+                aid=index,
+                query=True)
 
         result.append(post)
         # util.logger.info('+==+' * 10)
@@ -111,8 +121,9 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             util.logger.info('標題', post.get('title'))
 
             if post.get('delete_status') == PyPtt.PostDelStatus.exist:
-                if not query:
-                    util.logger.info('內文', post.get('content'))
+                pass
+                # if not query:
+                #     util.logger.info('內文', post.get('content'))
             elif post.get('delete_status') == PyPtt.PostDelStatus.deleted_by_author:
                 util.logger.info('文章被作者刪除')
             elif post.get('delete_status') == PyPtt.PostDelStatus.deleted_by_moderator:
