@@ -1,3 +1,6 @@
+
+from SingleLog.log import Logger
+
 from . import i18n
 from . import connect_core
 from . import screens
