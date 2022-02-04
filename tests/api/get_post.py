@@ -1,7 +1,7 @@
 import json
 
 import PyPtt
-import util
+from .. import util
 
 
 def test_no_condition(ptt_bot: PyPtt.API):

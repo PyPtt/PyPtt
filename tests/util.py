@@ -1,9 +1,10 @@
 import json
-import sys
 
 from SingleLog.log import Logger
 
 import PyPtt
+
+from . import config
 
 logger = Logger('TEST_UTIL')
 
@@ -24,9 +25,9 @@ def get_id_pw(password_file):
 
 def login(ptt_bot: PyPtt.API):
     if ptt_bot.host == PyPtt.HOST.PTT1:
-        ptt_id, ptt_pw = get_id_pw('account_ptt_0.json')
+        ptt_id, ptt_pw = config.PTT1_ID, config.PTT1_PW
     else:
-        ptt_id, ptt_pw = get_id_pw('account_ptt2_0.json')
+        ptt_id, ptt_pw = config.PTT2_ID, config.PTT2_PW
 
     for _ in range(3):
         try:
