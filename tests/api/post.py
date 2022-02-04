@@ -1,7 +1,7 @@
 import time
 
 import PyPtt
-import util
+from .. import util
 
 
 def test(ptt_bot: PyPtt.API):
