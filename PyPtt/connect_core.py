@@ -1,4 +1,5 @@
 import asyncio
+import ssl
 import telnetlib
 import threading
 import time
@@ -21,6 +22,7 @@ from .lib_util import AutoName
 
 websockets.http.USER_AGENT += f' PyPtt/{version}'
 
+ssl_context = ssl.create_default_context()
 
 @unique
 class ConnectMode(AutoName):
@@ -207,7 +209,8 @@ class API(object):
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             websocket_host,
-                            origin=websocket_origin))
+                            origin=websocket_origin,
+                            ssl=ssl_context))
 
                 connect_success = True
             except Exception as e:
