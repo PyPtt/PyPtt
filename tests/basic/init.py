@@ -1,8 +1,8 @@
 import PyPtt
-import util
+from .. import util
 
 
-def func():
+def test():
     util.logger.info('===預設值===')
     PyPtt.API()
     util.logger.info('===中文顯示===')
