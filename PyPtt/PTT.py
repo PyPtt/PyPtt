@@ -1322,7 +1322,12 @@ class API:
 
         return _api_call_status.set_call_status(self, call_status)
 
-    def give_money(self, ptt_id: str, money: int) -> None:
+    def give_money(
+        self,
+        ptt_id: str,
+        money: int,
+        title: str = '',
+        content: str = '') -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -1343,7 +1348,7 @@ class API:
         except ModuleNotFoundError:
             import _api_give_money
 
-        return _api_give_money.give_money(self, ptt_id, money)
+        return _api_give_money.give_money(self, ptt_id, money, title, content)
 
     def mail(
             self,
