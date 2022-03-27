@@ -11,7 +11,11 @@ except ModuleNotFoundError:
 
 
 def give_money(
-        api, ptt_id: str, money: int) -> None:
+        api,
+        ptt_id: str,
+        money: int,
+        title: str,
+        content: str) -> None:
 
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
@@ -23,6 +27,37 @@ def give_money(
     cmd_list.append(command.Enter)
 
     cmd = ''.join(cmd_list)
+
+    edit_red_bag_cmd_list = list()
+
+    edit_red_bag_target = connect_core.TargetUnit(
+        i18n.ConstantRedBagNoEdition,
+        '要修改紅包袋嗎',
+        response='n' + command.Enter
+    )
+    if (title != '' or content != ''):
+        edit_red_bag_cmd_list.append('y')
+        edit_red_bag_cmd_list.append(command.Enter)
+        if title != '':
+            edit_red_bag_cmd_list.append(command.Down)
+            edit_red_bag_cmd_list.append(command.Ctrl_Y) # remove the title
+            edit_red_bag_cmd_list.append(command.Enter)
+            edit_red_bag_cmd_list.append(command.Up)
+            edit_red_bag_cmd_list.append(f'標題: {title}')
+            # reset cursor to original position
+            edit_red_bag_cmd_list.append(command.Up * 2)
+        if content != '':
+            edit_red_bag_cmd_list.append(command.Down * 4)
+            edit_red_bag_cmd_list.append(command.Ctrl_Y * 8) # remove original content
+            edit_red_bag_cmd_list.append(content)
+        edit_red_bag_cmd_list.append(command.Ctrl_X)
+
+        edit_red_bag_cmd = ''.join(edit_red_bag_cmd_list)
+        edit_red_bag_target = connect_core.TargetUnit(
+            i18n.ConstantEditRedBag,
+            '要修改紅包袋嗎',
+            response=edit_red_bag_cmd
+        )
 
     target_list = [
         connect_core.TargetUnit(
@@ -56,10 +91,11 @@ def give_money(
             '按任意鍵繼續',
             break_detect=True
         ),
+        edit_red_bag_target,
         connect_core.TargetUnit(
-            i18n.ConstantRedBag,
-            '要修改紅包袋嗎',
-            response=command.Enter
+            i18n.SaveFile,
+            '確定要儲存檔案嗎',
+            response='s' + command.Enter,
         ),
         connect_core.TargetUnit(
             i18n.VerifyID,
