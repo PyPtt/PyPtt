@@ -1002,8 +1002,10 @@ def call_status():
 
 
 def give_money():
-    for _ in range(3):
-        ptt_bot.give_money('DeepLearning', 1)
+    ptt_bot.give_money('DeepLearning', 1)
+    ptt_bot.give_money('DeepLearning', 1, title='紅包袋標題')
+    ptt_bot.give_money('DeepLearning', 1, title='紅包袋標題', content='紅包袋內文')
+    ptt_bot.give_money('DeepLearning', 1, content='紅包袋內文')
 
 
 def mail():

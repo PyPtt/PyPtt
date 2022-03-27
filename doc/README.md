@@ -906,6 +906,13 @@ while True:
 ptt_bot.give_money('CodingMan', 100)
 ```
 
+給予 P 幣的同時也可以修改紅包袋的標題或內容
+```python
+ptt_bot.give_money('CodingMan', 100, title='紅包袋標題')
+ptt_bot.give_money('CodingMan', 100, content='紅包袋內文')
+ptt_bot.give_money('CodingMan', 100, title='紅包袋標題', content='紅包袋內文')
+```
+
 ---
 
 ### 寄信 取得信件 刪除信件

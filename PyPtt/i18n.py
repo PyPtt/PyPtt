@@ -121,7 +121,8 @@ TradingInProgress = None
 Transaction = None
 MoneyTooFew = None
 TransactionCancelled = None
-ConstantRedBag = None
+ConstantRedBagNoEdition = None
+ConstantRedBagNoEdition = None
 SendMail = None
 Select = None
 SignatureFile = None
@@ -852,10 +853,16 @@ def load(input_lang):
         'The transaction is cancelled!',
     ])
 
-    global ConstantRedBag
-    ConstantRedBag = specific_load(input_lang, [
+    global ConstantRedBagNoEdition
+    ConstantRedBagNoEdition = specific_load(input_lang, [
         '不修改紅包袋',
-        'Constant the red bag',
+        'Not editing the red bag',
+    ])
+
+    global ConstantEditRedBag
+    ConstantEditRedBag = specific_load(input_lang, [
+        '修改紅包袋',
+        'Edits the red bag',
     ])
 
     global SendMail
