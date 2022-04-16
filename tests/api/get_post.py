@@ -135,6 +135,14 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
     return result
 
 
+def test(ptt_bot: PyPtt.API):
+    result = test_no_condition(ptt_bot)
+    util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
+
+    # result = get_post_with_condition(ptt_bot)
+    # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
+
+
 def func():
 
     host_list = [
@@ -148,11 +156,7 @@ def func():
         )
         util.login(ptt_bot)
 
-        result = test_no_condition(ptt_bot)
-        # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
-
-        result = get_post_with_condition(ptt_bot)
-        # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
+        test(ptt_bot)
 
         ptt_bot.logout()
 
