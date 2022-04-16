@@ -3,10 +3,15 @@ import json
 from SingleLog.log import Logger
 
 import PyPtt
-
 from . import config
 
-logger = Logger('TEST_UTIL')
+
+def log_to_file(msg: str):
+    with open('single_log.txt', 'a', encoding='utf8') as f:
+        f.write(f'{msg}\n')
+
+
+logger = Logger('TEST_UTIL', handler=log_to_file)
 
 
 def get_id_pw(password_file):
