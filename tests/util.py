@@ -36,7 +36,7 @@ def login(ptt_bot: PyPtt.API):
 
     for _ in range(3):
         try:
-            ptt_bot.login(ptt_id, ptt_pw)
+            ptt_bot.login(ptt_id=ptt_id, ptt_pw=ptt_pw)
             break
         except PyPtt.LoginError:
             logger.info('登入失敗')

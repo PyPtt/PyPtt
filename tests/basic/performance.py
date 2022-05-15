@@ -1,5 +1,5 @@
 import time
-from tests import util
+from api import util
 
 import PyPtt
 from PyPtt_0_9 import PTT

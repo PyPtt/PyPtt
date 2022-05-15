@@ -1,5 +1,5 @@
 import PyPtt
-from tests import util
+from api import util
 
 
 def test(ptt_bot: PyPtt.API):
