@@ -12,6 +12,11 @@ from . import screens
 
 
 def logout(api) -> None:
+    api._one_thread()
+
+    if not api._login_status:
+        return
+
     logger = Logger('api_logout', api.config.log_level)
 
     cmd_list = list()

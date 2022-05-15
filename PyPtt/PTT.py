@@ -142,6 +142,8 @@ class API:
     def login(self, ptt_id: str, ptt_pw: str, kick_other_login: bool = False) -> None:
 
         """
+        Login PTT.
+
         :param ptt_id: PTT id.
         :param ptt_pw: PTT password.
         :param kick_other_login: kick other session or not while login.
@@ -151,22 +153,21 @@ class API:
         _api_loginout.login(self, ptt_id, ptt_pw, kick_other_login)
 
     def logout(self) -> None:
-        self._one_thread()
+        """
+        Logout PTT.
 
-        if not self._login_status:
-            return
-
-        try:
-            from . import _api_loginout
-        except ModuleNotFoundError:
-            import _api_loginout
+        :return: None
+        """
 
         return _api_loginout.logout(self)
 
     def get_time(self) -> str:
-        self._one_thread()
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
+
+        """
+        Get time of PTT.
+
+        :return: None
+        """
 
         return _api_get_time.get_time(self)
 
