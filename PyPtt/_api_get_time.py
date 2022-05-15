@@ -2,7 +2,7 @@ import re
 
 from SingleLog.log import Logger
 
-from . import command
+from . import command, exceptions
 from . import connect_core
 from . import i18n
 from . import screens
@@ -11,6 +11,10 @@ pattern = re.compile('[\d]+:[\d][\d]')
 
 
 def get_time(api) -> str:
+    api._one_thread()
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('A')
