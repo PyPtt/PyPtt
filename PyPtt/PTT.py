@@ -6,7 +6,7 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_time, _api_get_post, version, _api_get_newest_index
+from . import _api_get_time, _api_get_post, version, _api_get_newest_index, _api_loginout
 from . import _api_post
 from . import check_value
 from . import command
@@ -149,44 +149,16 @@ class API:
 
         raise exceptions.MultiThreadOperated()
 
-    def _login(
-            self,
-            ptt_id: str,
-            password: str,
-            kick_other_login: bool = False) -> None:
+    def login(self, ptt_id: str, ptt_pw: str, kick_other_login: bool = False) -> None:
 
-        try:
-            from . import _api_loginout
-        except ModuleNotFoundError:
-            import _api_loginout
+        """
+        :param ptt_id: PTT id.
+        :param ptt_pw: PTT password.
+        :param kick_other_login: kick other session or not while login.
+        :return: None
+        """
 
-        return _api_loginout.login(
-            self,
-            ptt_id,
-            password,
-            kick_other_login)
-
-    def login(
-            self,
-            ptt_id: str,
-            password: str,
-            kick_other_login: bool = False) -> None:
-        self._one_thread()
-
-        check_value.check_type(str, 'ptt_id', ptt_id)
-        check_value.check_type(str, 'password', password)
-        check_value.check_type(bool, 'kick_other_login', kick_other_login)
-
-        try:
-            return self._login(
-                ptt_id,
-                password,
-                kick_other_login=kick_other_login)
-        except exceptions.LoginError:
-            return self._login(
-                ptt_id,
-                password,
-                kick_other_login=kick_other_login)
+        _api_loginout.login(self, ptt_id, ptt_pw, kick_other_login)
 
     def logout(self) -> None:
         self._one_thread()
