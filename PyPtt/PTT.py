@@ -139,16 +139,6 @@ class API:
         else:
             self.logger.info(i18n.latest_version, version)
 
-    def _one_thread(self) -> None:
-        current_thread_id = threading.get_ident()
-        if current_thread_id == self._thread_id:
-            return
-
-        self.logger.debug('thread id', self._thread_id)
-        self.logger.debug('current_thread_id', current_thread_id)
-
-        raise exceptions.MultiThreadOperated()
-
     def login(self, ptt_id: str, ptt_pw: str, kick_other_login: bool = False) -> None:
 
         """
@@ -1154,6 +1144,16 @@ class API:
             self,
             sign_file):
         _api_post.fast_post_step1(self, sign_file)
+
+    def _one_thread(self) -> None:
+        current_thread_id = threading.get_ident()
+        if current_thread_id == self._thread_id:
+            return
+
+        self.logger.debug('thread id', self._thread_id)
+        self.logger.debug('current_thread_id', current_thread_id)
+
+        raise exceptions.MultiThreadOperated()
 
 
 if __name__ == '__main__':
