@@ -2,13 +2,13 @@ import re
 
 from SingleLog.log import Logger
 
-from . import data_type
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
-from . import command
 from . import _api_util
+from . import command
+from . import connect_core
+from . import data_type, check_value
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def logout(api) -> None:
@@ -45,12 +45,14 @@ def logout(api) -> None:
     logger.info(i18n.logout, i18n.complete)
 
 
-def login(
-        api,
-        ptt_id,
-        password,
-        kick_other_login):
+def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
     logger = Logger('api_login', api.config.log_level)
+
+    api._one_thread()
+
+    check_value.check_type(str, 'ptt_id', ptt_id)
+    check_value.check_type(str, 'password', ptt_pw)
+    check_value.check_type(bool, 'kick_other_login', kick_other_login)
 
     if api._login_status:
         api.logout()
@@ -80,14 +82,14 @@ def login(
         pattern = re.compile('[\d]+')
         api.process_picks = int(pattern.search(screen).group(0))
 
-    if len(password) > 8:
-        password = password[:8]
+    if len(ptt_pw) > 8:
+        ptt_pw = ptt_pw[:8]
 
     ptt_id = ptt_id.strip()
-    password = password.strip()
+    ptt_pw = ptt_pw.strip()
 
     api._ID = ptt_id
-    api._Password = password
+    api._Password = ptt_pw
 
     api.config.kick_other_login = kick_other_login
 
@@ -220,7 +222,7 @@ def login(
     # cmd_list.append(IAC + WILL + NAWS)
     cmd_list.append(ptt_id + ',')
     cmd_list.append(command.enter)
-    cmd_list.append(password)
+    cmd_list.append(ptt_pw)
     cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
