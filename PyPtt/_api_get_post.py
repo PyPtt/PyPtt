@@ -1,15 +1,17 @@
 import re
+import time
 
 from SingleLog.log import Logger
 
-from . import _api_util
+from . import _api_util, check_value
 from . import command
 from . import connect_core
 from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
-from .data_type import Post, Comment
+from .data_type import Post, Comment, NewIndex
+from .data_type import SearchType as st
 
 
 def get_post(
@@ -21,6 +23,115 @@ def get_post(
         search_condition: str = None,
         search_list: list = None,
         query: bool = False) -> dict:
+    max_retry = 2
+    for i in range(max_retry):
+
+        need_continue = False
+        post = None
+        try:
+            post = _get_post(
+                api,
+                board,
+                post_aid,
+                post_index,
+                search_type,
+                search_condition,
+                search_list,
+                query)
+        except exceptions.ParseError:
+            if i == max_retry - 1:
+                raise
+            need_continue = True
+        except exceptions.UnknownError:
+            if i == max_retry - 1:
+                raise
+            need_continue = True
+        except exceptions.NoSuchBoard:
+            if i == max_retry - 1:
+                raise
+            need_continue = True
+        except exceptions.NoMatchTargetError:
+            if i == max_retry - 1:
+                raise
+            need_continue = True
+
+        if post is None:
+            need_continue = True
+        elif not post[Post.pass_format_check]:
+            need_continue = True
+
+        if not need_continue:
+            break
+
+        api.logger.debug('Wait for retry repost')
+        time.sleep(0.1)
+
+    return post
+
+
+def _get_post(
+        api,
+        board: str,
+        post_aid: str = None,
+        post_index: int = 0,
+        search_type: int = 0,
+        search_condition: str = None,
+        search_list: list = None,
+        query: bool = False) -> dict:
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    check_value.check_type(str, 'board', board)
+    if post_aid is not None:
+        check_value.check_type(str, 'post_aid', post_aid)
+    check_value.check_type(int, 'post_index', post_index)
+
+    if search_type is not None and not isinstance(search_type, st):
+        raise TypeError(f'search_type must be SearchType, but {search_type}')
+    if search_condition is not None:
+        check_value.check_type(str,
+                               'SearchCondition', search_condition)
+
+    if search_list is not None:
+        check_value.check_type(list,
+                               'search_list', search_condition)
+
+    if len(board) == 0:
+        raise ValueError(f'board error parameter: {board}')
+
+    if post_index != 0 and isinstance(post_aid, str):
+        raise ValueError('wrong parameter post_index and post_aid can\'t both input')
+
+    if post_index == 0 and post_aid is None:
+        raise ValueError('wrong parameter post_index or post_aid must input')
+
+    if search_condition is not None and search_type == 0:
+        raise ValueError('wrong parameter search_type must input')
+
+    if search_type == st.PUSH:
+        try:
+            S = int(search_condition)
+        except ValueError:
+            raise ValueError(f'wrong parameter search_condition: {search_condition}')
+
+        check_value.check_range('search_condition', S, -100, 100)
+
+    if post_aid is not None and search_condition is not None:
+        raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
+
+    if post_index != 0:
+        newest_index = api.get_newest_index(
+            NewIndex.BBS,
+            board=board,
+            search_type=search_type,
+            search_condition=search_condition,
+            search_list=search_list)
+
+        check_value.check_index('post_index', post_index, newest_index)
+
+    api._check_board(board)
     api._goto_board(board)
 
     logger = Logger('get_post', Logger.INFO)

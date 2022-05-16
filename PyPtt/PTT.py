@@ -17,7 +17,9 @@ from . import i18n
 from . import lib_util
 from . import screens
 from .connect_core import ConnectMode
-from .data_type import Post, HOST, SearchType, Board, NewIndex
+from .data_type import Post, HOST, Board, NewIndex
+
+from .data_type import SearchType as st
 
 
 class API:
@@ -159,7 +161,7 @@ class API:
         :return: None
         """
 
-        return _api_loginout.logout(self)
+        _api_loginout.logout(self)
 
     def get_time(self) -> str:
 
@@ -176,109 +178,22 @@ class API:
             board: str,
             aid: str = None,
             index: int = 0,
-            search_type: SearchType = SearchType.NOPE,
+            search_type: st = st.NOPE,
             search_condition: str = None,
             search_list: list = None,
             query: bool = False) -> dict:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        check_value.check_type(str, 'board', board)
-        if aid is not None:
-            check_value.check_type(str, 'post_aid', aid)
-        check_value.check_type(int, 'post_index', index)
-
-        if search_type is not None and not isinstance(search_type, SearchType):
-            raise TypeError(f'search_type must be SearchType, but {search_type}')
-        if search_condition is not None:
-            check_value.check_type(str,
-                                   'SearchCondition', search_condition)
-
-        if search_list is not None:
-            check_value.check_type(list,
-                                   'search_list', search_condition)
-
-        if len(board) == 0:
-            raise ValueError(f'board error parameter: {board}')
-
-        if index != 0 and isinstance(aid, str):
-            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
-
-        if index == 0 and aid is None:
-            raise ValueError('wrong parameter post_index or post_aid must input')
-
-        if search_condition is not None and search_type == 0:
-            raise ValueError('wrong parameter search_type must input')
-
-        if search_type == SearchType.PUSH:
-            try:
-                S = int(search_condition)
-            except ValueError:
-                raise ValueError(f'wrong parameter search_condition: {search_condition}')
-
-            check_value.check_range('search_condition', S, -100, 100)
-
-        if aid is not None and search_condition is not None:
-            raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
-
-        if index != 0:
-            newest_index = self.get_newest_index(
-                NewIndex.BBS,
-                board=board,
-                search_type=search_type,
-                search_condition=search_condition,
-                search_list=search_list)
-
-            check_value.check_index('post_index', index, newest_index)
-
-        self._check_board(board)
-
-        max_retry = 2
-        for i in range(max_retry):
-
-            need_continue = False
-            post = None
-            try:
-                post = _api_get_post.get_post(
-                    self,
-                    board,
-                    aid,
-                    index,
-                    search_type,
-                    search_condition,
-                    search_list,
-                    query)
-            except exceptions.ParseError as e:
-                if i == max_retry - 1:
-                    raise e
-                need_continue = True
-            except exceptions.UnknownError as e:
-                if i == max_retry - 1:
-                    raise e
-                need_continue = True
-            except exceptions.NoSuchBoard as e:
-                if i == max_retry - 1:
-                    raise e
-                need_continue = True
-            except exceptions.NoMatchTargetError as e:
-                if i == max_retry - 1:
-                    raise e
-                need_continue = True
-
-            if post is None:
-                need_continue = True
-            elif not post[Post.pass_format_check]:
-                need_continue = True
-
-            if not need_continue:
-                break
-
-            self.logger.debug('Wait for retry repost')
-            time.sleep(0.1)
-
-        return post
+        """
+        Get the post of PTT.
+        :param board: the board name of PTT.
+        :param aid: the aid of the PTT post.
+        :param index: the index of the PTT post.
+        :param search_type: the search type.
+        :param search_condition:
+        :param search_list:
+        :param query:
+        :return:
+        """
+        return _api_get_post.get_post(self, board, aid, index, search_type, search_condition, search_list, query)
 
     def _check_board(
             self,
@@ -305,7 +220,7 @@ class API:
             self,
             index_type: NewIndex,
             board: str = None,
-            search_type: SearchType = SearchType.NOPE,
+            search_type: st = st.NOPE,
             search_condition: str = None,
             search_list: list = None) -> int:
 
