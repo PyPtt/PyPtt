@@ -17,9 +17,7 @@ from . import i18n
 from . import lib_util
 from . import screens
 from .connect_core import ConnectMode
-from .data_type import Post, HOST, Board, NewIndex
-
-from .data_type import SearchType as st
+from .data_type import HOST, Board, NewIndex, SearchType
 
 
 class API:
@@ -178,49 +176,28 @@ class API:
             board: str,
             aid: str = None,
             index: int = 0,
-            search_type: st = st.NOPE,
+            search_type: SearchType = SearchType.NOPE,
             search_condition: str = None,
             search_list: list = None,
             query: bool = False) -> dict:
         """
         Get the post of PTT.
         :param board: the board name of PTT.
-        :param aid: the aid of the PTT post.
-        :param index: the index of the PTT post.
-        :param search_type: the search type.
-        :param search_condition:
-        :param search_list:
-        :param query:
-        :return:
+        :param aid: (Choose between aid and index) the aid of the PTT post.
+        :param index: (Choose between aid and index) the index of the PTT post.
+        :param search_type: (Optional) the search type. Check SearchType
+        :param search_condition: (Optional) the search condition.
+        :param search_list: (Optional) the search list including search type and search condition.
+        :param query: (Optional) Enable query or not.
+        :return: the dict of post.
         """
         return _api_get_post.get_post(self, board, aid, index, search_type, search_condition, search_list, query)
-
-    def _check_board(
-            self,
-            board: str,
-            check_moderator: bool = False) -> Board:
-
-        if board.lower() not in self._exist_board_list:
-            board_info = self._get_board_info(board, False, False)
-            self._exist_board_list.append(board.lower())
-            self._board_info_list[board.lower()] = board_info
-
-            moderators = board_info[Board.moderators]
-            moderators = [x.lower() for x in moderators]
-            self._ModeratorList[board.lower()] = moderators
-            self._board_info_list[board.lower()] = board_info
-
-        if check_moderator:
-            if self._ID.lower() not in self._ModeratorList[board.lower()]:
-                raise exceptions.NeedModeratorPermission(board)
-
-        return self._board_info_list[board.lower()]
 
     def get_newest_index(
             self,
             index_type: NewIndex,
             board: str = None,
-            search_type: st = st.NOPE,
+            search_type: SearchType = SearchType.NOPE,
             search_condition: str = None,
             search_list: list = None) -> int:
 
@@ -1070,6 +1047,27 @@ class API:
         self.logger.debug('current_thread_id', current_thread_id)
 
         raise exceptions.MultiThreadOperated()
+
+    def _check_board(
+            self,
+            board: str,
+            check_moderator: bool = False) -> Board:
+
+        if board.lower() not in self._exist_board_list:
+            board_info = self._get_board_info(board, False, False)
+            self._exist_board_list.append(board.lower())
+            self._board_info_list[board.lower()] = board_info
+
+            moderators = board_info[Board.moderators]
+            moderators = [x.lower() for x in moderators]
+            self._ModeratorList[board.lower()] = moderators
+            self._board_info_list[board.lower()] = board_info
+
+        if check_moderator:
+            if self._ID.lower() not in self._ModeratorList[board.lower()]:
+                raise exceptions.NeedModeratorPermission(board)
+
+        return self._board_info_list[board.lower()]
 
 
 if __name__ == '__main__':
