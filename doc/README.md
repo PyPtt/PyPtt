@@ -1326,7 +1326,7 @@ ptt_bot.mark_post(
     'YourBoad',
     # AID 與 index 擇一使用
     post_aid='QQaid',
-    # Postindex 可搭配 SearchType and SearchCondition 使用
+    # Postindex 可搭配 search_type and SearchCondition 使用
     post_index=10,
     # Optional
     search_type=search_type,

@@ -25,9 +25,8 @@
 ## 版本
 #### [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)
 
-## 取得
-#### 安裝
-#### Windows 使用 pip, Linux and Mac 使用 pip3
+## 安裝
+Pypi: [https://pypi.org/project/PyPtt/](https://pypi.org/project/PyPtt/)
 ```bash
 pip install PyPtt
 ```
@@ -35,16 +34,10 @@ pip install PyPtt
 ## 回報問題
 #### 1. 請先閱讀 [PyPtt 文件](https://github.com/PttCodingMan/PyPtt/tree/master/doc) 確認使用方法無誤並確認你所使用的版本為 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt) 如果是舊版本請更新後複測
 #### 2. 如果問題還是存在，請參考文件中的 [初始設定](https://github.com/PttCodingMan/PyPtt/tree/master/doc#%E5%88%9D%E5%A7%8B%E8%A8%AD%E5%AE%9A) 將 log_level 調整成 PTT.Logger.TRACE 後截圖並附上使用 PyPtt 的相關程式碼
-#### 3. 請使用友善的態度開個 [issue](https://github.com/PttCodingMan/PyPtt/issues/new) 追蹤問題，或者直接在 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt) 上面描述你的問題，如何問問題可以參考[提問的藝術](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way)
+#### 3. 請使用友善的態度開個 [issue](https://github.com/PttCodingMan/PyPtt/issues/new) 追蹤問題，如何問問題可以參考[提問的藝術](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way)
 
 ## 需求
-#### Python ≥ 3.6
-
-## 相依函式庫
-#### progressbar2
-#### websockets
-#### uao
-#### [SingleLog](https://github.com/PttCodingMan/SingleLog)
+#### Python ≥ 3.8
 
 ## 立場聲明
 #### 本專案意旨在提供 PTT 自動化機器人函式庫，並無意違反任何 PTT 站方規範。

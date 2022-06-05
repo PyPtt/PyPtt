@@ -1,7 +1,7 @@
 import json
 
 import PyPtt
-from .. import util
+from tests import util
 
 
 def test_no_condition(ptt_bot: PyPtt.API):
@@ -64,31 +64,31 @@ def test_no_condition(ptt_bot: PyPtt.API):
 
 def get_post_with_condition(ptt_bot: PyPtt.API):
     def show_condition(test_board, search_type, condition):
-        if search_type == PyPtt.SearchType.KEYWORD:
+        if search_type == PyPtt.search_type.KEYWORD:
             type_str = '關鍵字'
-        if search_type == PyPtt.SearchType.AUTHOR:
+        if search_type == PyPtt.search_type.AUTHOR:
             type_str = '作者'
-        if search_type == PyPtt.SearchType.PUSH:
+        if search_type == PyPtt.search_type.PUSH:
             type_str = '推文數'
-        if search_type == PyPtt.SearchType.MARK:
+        if search_type == PyPtt.search_type.MARK:
             type_str = '標記'
-        if search_type == PyPtt.SearchType.MONEY:
+        if search_type == PyPtt.search_type.MONEY:
             type_str = '稿酬'
 
         util.logger.info(f'{test_board} 使用 {type_str} 搜尋 {condition}')
 
     if ptt_bot.config.host == PyPtt.HOST.PTT1:
         test_list = [
-            ('Python', PyPtt.SearchType.KEYWORD, '[公告]'),
-            ('ALLPOST', PyPtt.SearchType.KEYWORD, '(Wanted)'),
-            ('Wanted', PyPtt.SearchType.KEYWORD, '(本文已被刪除)'),
-            ('ALLPOST', PyPtt.SearchType.KEYWORD, '(Gossiping)'),
-            ('Gossiping', PyPtt.SearchType.KEYWORD, '普悠瑪'),
+            ('Python', PyPtt.search_type.KEYWORD, '[公告]'),
+            ('ALLPOST', PyPtt.search_type.KEYWORD, '(Wanted)'),
+            ('Wanted', PyPtt.search_type.KEYWORD, '(本文已被刪除)'),
+            ('ALLPOST', PyPtt.search_type.KEYWORD, '(Gossiping)'),
+            ('Gossiping', PyPtt.search_type.KEYWORD, '普悠瑪'),
         ]
     else:
         test_list = [
-            ('PttSuggest', PyPtt.SearchType.KEYWORD, '[問題]'),
-            ('PttSuggest', PyPtt.SearchType.PUSH, '10'),
+            ('PttSuggest', PyPtt.search_type.KEYWORD, '[問題]'),
+            ('PttSuggest', PyPtt.search_type.PUSH, '10'),
         ]
 
     result = []

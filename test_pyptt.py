@@ -1,9 +1,7 @@
-import sys
-
 import PyPtt
 from tests import util
-from tests.api import get_time, get_post, get_newest_index, post
-from tests.basic import init, login_logout, performance
+from tests.api import get_time
+from tests.basic import init
 
 
 def test():
@@ -23,10 +21,10 @@ def test():
         # performance.test(ptt_bot)
 
         get_time.test(ptt_bot)
-        post.test(ptt_bot)
+        # post.test(ptt_bot)
 
         ptt_bot.logout()
 
 
 # if __name__ == '__main__':
-#     test()
+    # import
