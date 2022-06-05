@@ -350,7 +350,8 @@ def get_post(
     post_date_pattern = re.compile('時間  .{24}')
     date_line = origin_post_lines[2]
     pattern_result = post_date_pattern.search(date_line)
-    if pattern_result is None:
+    date_line = date_line[3:].strip()
+    if pattern_result is None or len(date_line) != 24:
         log.show_value(
             api.config,
             log.level.DEBUG,
