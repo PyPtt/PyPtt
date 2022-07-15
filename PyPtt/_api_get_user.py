@@ -2,7 +2,7 @@ import re
 
 from SingleLog.log import Logger
 
-from . import data_type
+from . import data_type, lib_util, check_value
 from . import i18n
 from . import connect_core
 from . import screens
@@ -10,52 +10,21 @@ from . import exceptions
 from . import command
 
 
-def parse_user_page(screen):
-    lines = screen.split('\n')[1:]
-    # print(' =>' + '\n =>'.join(lines))
-
-    result = list()
-    for i, line in enumerate(lines):
-        if i == 0:
-            line = line[6:]
-            # print(f' ==> [{line}]')
-            result_buffer = line[:26].strip()
-            result.append(result_buffer)
-            # print(f' ==> [{result_buffer}]')
-            line = line[line.find(result_buffer) + len(result_buffer):].strip()
-            result_buffer = line[6:]
-            result.append(result_buffer)
-            # print(f' ==> [{result_buffer}]')
-        elif i == 1:
-            line = line[6:]
-            # print(f' ==> [{line}]')
-            result_buffer = line[:line.find('《')].strip()
-            buffer = result_buffer.split(' ')[0]
-            # print(f' ==> [{buffer}]')
-            result.append(buffer)
-            result.append('同天內只計一次' in result_buffer)
-            line = line[line.find(result_buffer) + len(result_buffer):].strip()
-            result_buffer = line[6:]
-            # print(f' ==> [{result_buffer}]')
-            result.append(result_buffer)
-        elif i == 2 or i == 3 or i == 4:
-            line = line[line.find('》') + 1:]
-            # print(f' ==> [{line}]')
-            result_buffer = line[:line.find('《')].strip()
-            result.append(result_buffer)
-            line = line[line.find(result_buffer) + len(result_buffer):].strip()
-            # print(f' ==> [{line}]')
-            result_buffer = line[6:].strip()
-            # print(f' ==> [{result_buffer}]')
-            result.append(result_buffer)
-
-    return result
-
-
 def get_user(api, ptt_id: str) -> data_type.UserInfo:
-    
     logger = Logger('get_user', Logger.INFO)
-    
+
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    check_value.check_type(str, 'UserID', ptt_id)
+    if len(ptt_id) < 2:
+        raise ValueError(f'wrong parameter user_id: {ptt_id}')
+
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
@@ -107,66 +76,63 @@ def get_user(api, ptt_id: str) -> data_type.UserInfo:
 
     # 《個人名片》CodingMan 目前沒有名片
 
-    # print(ori_screen)
+    lines = ori_screen.split('\n')[1:]
 
-    # data = lib_util.get_sub_string_list(ori_screen, '》', ['《', '\n'])
-    data = parse_user_page(ori_screen)
-    if len(data) < 10:
-        print('\n'.join(data))
-        print(len(data))
-        raise exceptions.ParseError(ori_screen)
+    def parse_user_info_from_line(line: str) -> (str, str):
+        part_0 = line[line.find('》') + 1:]
+        part_0 = part_0[:part_0.find('《')].strip()
 
-    # print('\n=> '.join(data))
+        part_1 = line[line.rfind('》') + 1:].strip()
 
-    ptt_id = data[0]
-    money = data[1]
-    login_time = int(data[2])
-    account_verified = data[3]
+        return part_0, part_1
 
-    temp = re.findall(r'\d+', data[4])
-    legal_post = int(temp[0])
+    ptt_id, buff_1 = parse_user_info_from_line(lines[0])
+    money = int(int_list[0]) if len(int_list := re.findall(r'\d+', buff_1)) > 0 else buff_1
+    buff_0, buff_1 = parse_user_info_from_line(lines[1])
+
+    login_count = int(re.findall(r'\d+', buff_0)[0])
+    account_verified = ('同天內只計一次' in buff_0)
+    legal_post = int(re.findall(r'\d+', buff_1)[0])
 
     # PTT2 沒有退文
     if api.config.host == data_type.HOST.PTT1:
-        illegal_post = int(temp[1])
+        illegal_post = int(re.findall(r'\d+', buff_1)[1])
     else:
-        illegal_post = -1
+        illegal_post = None
 
-    status = data[5]
-    mail = data[6]
-    last_login = data[7]
-    last_ip = data[8]
-    five_chess = data[9]
-    chess = data[10]
+    status, mail = parse_user_info_from_line(lines[2])
+    last_login_date, last_login_ip = parse_user_info_from_line(lines[3])
+    five_chess, chess = parse_user_info_from_line(lines[4])
 
-    signature_file = '\n'.join(ori_screen.split('\n')[6:-1])
+    signature_file = '\n'.join(lines[5:-1]).strip('\n')
 
     logger.debug('ptt_id', ptt_id)
     logger.debug('money', money)
-    logger.debug('login_time', login_time)
+    logger.debug('login_count', login_count)
     logger.debug('account_verified', account_verified)
     logger.debug('legal_post', legal_post)
     logger.debug('illegal_post', illegal_post)
     logger.debug('status', status)
     logger.debug('mail', mail)
-    logger.debug('last_login', last_login)
-    logger.debug('last_ip', last_ip)
+    logger.debug('last_login_date', last_login_date)
+    logger.debug('last_login_ip', last_login_ip)
     logger.debug('five_chess', five_chess)
     logger.debug('chess', chess)
     logger.debug('signature_file', signature_file)
 
-    user = data_type.UserInfo(
-        ptt_id,
-        money,
-        login_time,
-        account_verified,
-        legal_post,
-        illegal_post,
-        status,
-        mail,
-        last_login,
-        last_ip,
-        five_chess,
-        chess,
-        signature_file)
+    user = {
+        'ptt_id': ptt_id,
+        'money': money,
+        'login_count': login_count,
+        'account_verified': account_verified,
+        'legal_post': legal_post,
+        'illegal_post': illegal_post,
+        'status': status,
+        'mail': mail,
+        'last_login_date': last_login_date,
+        'last_login_ip': last_login_ip,
+        'five_chess': five_chess,
+        'chess': chess,
+        'signature_file': signature_file,
+    }
     return user

@@ -6,7 +6,7 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_time, _api_get_post, version, _api_get_newest_index, _api_loginout
+from . import _api_get_time, _api_get_post, version, _api_get_newest_index, _api_loginout, _api_get_user
 from . import _api_post
 from . import check_value
 from . import command
@@ -365,29 +365,15 @@ class API:
             post_aid,
             post_index)
 
-    def _get_user(self, user_id) -> dict:
+    def get_user(self, user_id) -> dict:
 
-        check_value.check_type(str, 'UserID', user_id)
-        if len(user_id) < 2:
-            raise ValueError(f'wrong parameter user_id: {user_id}')
-
-        try:
-            from . import _api_get_user
-        except ModuleNotFoundError:
-            import _api_get_user
+        """
+        Get the information of the PTT user.
+        :param user_id:
+        :return: the user info in dict.
+        """
 
         return _api_get_user.get_user(self, user_id)
-
-    def get_user(self, user_id) -> dict:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        return self._get_user(user_id)
 
     # def throw_waterball(self, ptt_id, content) -> None:
     #     self._one_thread()
