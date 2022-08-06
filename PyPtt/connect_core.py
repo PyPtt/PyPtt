@@ -148,13 +148,7 @@ class API(object):
             screens.Target.use_too_many_resources,
             exceptions_=exceptions.use_too_many_resources())
 
-        self.logger = Logger('connector', config.log_level)
-        self.logger.info(i18n.connect_core, i18n.init)
-
-        if self.config.connect_mode == ConnectMode.TELNET:
-            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
-        elif self.config.connect_mode == ConnectMode.WEBSOCKETS:
-            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+        self.logger = Logger('connector', Logger.SILENT)
 
     def connect(self) -> None:
         def _wait():

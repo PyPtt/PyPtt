@@ -100,6 +100,11 @@ class API:
         else:
             self.config.port = port
 
+        if self.config.connect_mode == ConnectMode.TELNET:
+            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
+        elif self.config.connect_mode == ConnectMode.WEBSOCKETS:
+            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+
         self.connect_core = connect_core.API(self.config)
         self._exist_board_list = list()
         self._board_info_list = dict()
