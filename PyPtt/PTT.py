@@ -116,7 +116,7 @@ class API:
         self.logger.debug('ThreadID', self._thread_id)
         self.logger.info('PyPtt', i18n.init)
 
-        r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/PyPtt/version.py')
+        r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/PyPtt/version.py', timeout=3)
         remote_version = r.text
         remote_version = remote_version[remote_version.find("'") + 1:]
         remote_version = remote_version[:remote_version.find("'")]
@@ -210,20 +210,10 @@ class API:
         :return the index:
         """
 
-        return _api_get_newest_index.get_newest_index(
-            self,
-            index_type,
-            search_type,
-            search_condition,
-            search_list,
-            board)
+        return _api_get_newest_index.get_newest_index(self, index_type, search_type, search_condition, search_list,
+                                                      board)
 
-    def post(self,
-             board: str,
-             title_index: int,
-             title: str,
-             content: str,
-             sign_file) -> None:
+    def post(self, board: str, title_index: int, title: str, content: str, sign_file) -> None:
         """
         Post on PTT.
 
