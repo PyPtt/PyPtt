@@ -21,7 +21,7 @@ class Config:
     screen_post_timeout = 60.0
 
     # 預設語言
-    language = i18n.Lang.CHINESE
+    language = i18n.Lang.MANDARIN
 
     # 預設 log 等級
     log_level = Logger.INFO

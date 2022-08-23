@@ -4,12 +4,12 @@ from . import lib_util
 
 
 class Lang(lib_util.AutoName):
-    CHINESE = auto()
+    MANDARIN = auto()
     ENGLISH = auto()
 
 
 languageList = [
-    Lang.CHINESE,
+    Lang.MANDARIN,
     Lang.ENGLISH,
 ]
 
@@ -1301,5 +1301,5 @@ def _createlist():
 
 
 if __name__ == '__main__':
-    load(Lang.CHINESE)
+    load(Lang.MANDARIN)
     _createlist()
