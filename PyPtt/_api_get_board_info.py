@@ -121,8 +121,7 @@ def get_board_info(
     open_status = ('公開狀態(是否隱形): 公開' in ori_screen)
     logger.debug('公開狀態', open_status)
 
-    into_top_ten_when_hide = (
-            '隱板時 可以 進入十大排行榜' in ori_screen)
+    into_top_ten_when_hide = ('隱板時 可以 進入十大排行榜' in ori_screen)
     logger.debug('隱板時可以進入十大排行榜', into_top_ten_when_hide)
 
     non_board_members_post = ('開放 非看板會員發文' in ori_screen)
@@ -169,21 +168,17 @@ def get_board_info(
     logger.debug('對齊開頭', push_aligned)
 
     # 板主 可 刪除部份違規文字
-    moderator_can_del_illegal_content = (
-            '板主 可 刪除部份違規文字' in ori_screen)
+    moderator_can_del_illegal_content = ('板主 可 刪除部份違規文字' in ori_screen)
     logger.debug('板主可刪除部份違規文字', moderator_can_del_illegal_content)
 
     # 轉錄文章 會 自動記錄，且 需要 發文權限
-    tran_post_auto_recorded_and_require_post_permissions = (
-            '轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen)
+    tran_post_auto_recorded_and_require_post_permissions = ('轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen)
     logger.debug('轉錄文章 會 自動記錄，且 需要 發文權限', tran_post_auto_recorded_and_require_post_permissions)
 
-    cool_mode = (
-            '未 設為冷靜模式' not in ori_screen)
+    cool_mode = ('未 設為冷靜模式' not in ori_screen)
     logger.debug('冷靜模式', cool_mode)
 
-    require18 = (
-            '禁止 未滿十八歲進入' in ori_screen)
+    require18 = ('禁止 未滿十八歲進入' in ori_screen)
     logger.debug('禁止未滿十八歲進入', require18)
 
     p = re.compile('登入次數 [\d]+ 次以上')

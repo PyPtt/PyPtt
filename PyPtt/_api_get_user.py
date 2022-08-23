@@ -3,6 +3,7 @@ from typing import Dict
 
 from SingleLog.log import Logger
 
+import PyPtt
 from . import command
 from . import connect_core
 from . import data_type, lib_util, check_value

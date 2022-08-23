@@ -242,9 +242,7 @@ def get_mail(
     logger.debug(i18n.date, mail_date)
 
     # 從全文拿掉信件開頭作為信件內文
-    mail_content = origin_mail[
-                   origin_mail.find(content_start) +
-                   len(content_start) + 1:]
+    mail_content = origin_mail[origin_mail.find(content_start) + len(content_start) + 1:]
 
     # 紅包偵測
     red_envelope = False
@@ -253,8 +251,7 @@ def get_mail(
         red_envelope = True
     else:
 
-        mail_content = mail_content[
-                       :mail_content.rfind(content_end) + 3]
+        mail_content = mail_content[:mail_content.rfind(content_end) + 3]
 
     logger.debug(i18n.content, mail_content)
 
