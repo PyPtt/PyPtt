@@ -1,6 +1,6 @@
-from . import i18n
-from . import connect_core
 from . import command
+from . import connect_core
+from . import i18n
 
 
 def set_board_title(

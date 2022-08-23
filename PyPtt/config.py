@@ -5,7 +5,6 @@ from . import i18n
 
 
 class Config:
-
     # retry_wait_time 秒後重新連線
     retry_wait_time = 3
 

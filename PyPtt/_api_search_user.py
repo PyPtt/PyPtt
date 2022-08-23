@@ -1,13 +1,12 @@
 from SingleLog.log import Logger
 
-from . import i18n
-from . import connect_core
 from . import command
+from . import connect_core
+from . import i18n
 
 
 def search_user(
         api: object, ptt_id: str, min_page: int, max_page: int) -> list:
-
     logger = Logger('search_user', Logger.INFO)
 
     cmd_list = list()

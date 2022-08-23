@@ -1,8 +1,8 @@
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
 from . import command
+from . import connect_core
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:

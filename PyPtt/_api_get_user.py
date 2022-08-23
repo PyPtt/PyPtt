@@ -2,12 +2,12 @@ import re
 
 from SingleLog.log import Logger
 
-from . import data_type, lib_util, check_value
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
 from . import command
+from . import connect_core
+from . import data_type, lib_util, check_value
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def get_user(api, ptt_id: str) -> data_type.UserInfo:

@@ -1,13 +1,13 @@
 from SingleLog.log import Logger
 
-from . import data_type
-from . import i18n
-from . import connect_core
-from . import screens
-from . import command
 from . import check_value
+from . import command
+from . import connect_core
+from . import data_type
 from . import exceptions
+from . import i18n
 from . import lib_util
+from . import screens
 
 
 def mark_post(
@@ -30,7 +30,7 @@ def mark_post(
                            value_class=data_type.SearchType)
     if search_condition is not None:
         check_value.check_type(str,
-                          'SearchCondition', search_condition)
+                               'SearchCondition', search_condition)
 
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')

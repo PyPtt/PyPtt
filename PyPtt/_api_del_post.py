@@ -1,10 +1,9 @@
-
-from . import data_type
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
 from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def del_post(
