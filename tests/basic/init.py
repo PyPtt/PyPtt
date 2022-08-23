@@ -6,7 +6,7 @@ def test():
     util.logger.info('===預設值===')
     PyPtt.API()
     util.logger.info('===中文顯示===')
-    PyPtt.API(language=PyPtt.Lang.CHINESE)
+    PyPtt.API(language=PyPtt.Lang.MANDARIN)
     util.logger.info('===英文顯示===')
     PyPtt.API(language=PyPtt.Lang.ENGLISH)
     util.logger.info('===log DEBUG===')

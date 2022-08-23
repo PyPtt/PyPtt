@@ -28,7 +28,7 @@ from .data_type import HOST, Board, NewIndex, SearchType
 
 
 class API:
-    def __init__(self, language: i18n.Lang = i18n.Lang.CHINESE, log_level: LoggerLevel = Logger.INFO,
+    def __init__(self, language: i18n.Lang = i18n.Lang.MANDARIN, log_level: LoggerLevel = Logger.INFO,
                  screen_timeout: int = 0, screen_long_timeout: int = 0, screen_post_timeout: int = 0,
                  connect_mode=ConnectMode.WEBSOCKETS, port: int = 0, log_handler=None, host=HOST.PTT1):
 
@@ -69,7 +69,7 @@ class API:
         self.config.language = language
         i18n.load(self.config.language)
 
-        if self.config.language == i18n.Lang.CHINESE:
+        if self.config.language == i18n.Lang.MANDARIN:
             self.logger.info(i18n.chinese_traditional_module, i18n.init)
         elif self.config.language == i18n.Lang.ENGLISH:
             self.logger.info(i18n.english_module, i18n.init)
