@@ -2,13 +2,13 @@ import re
 
 from SingleLog.log import Logger
 
-from . import data_type
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
-from . import command
 from . import _api_util
+from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 # 寄信
@@ -19,7 +19,6 @@ def mail(
         content: str,
         sign_file,
         backup: bool = True) -> None:
-
     logger = Logger('main', Logger.INFO)
 
     cmd_list = list()
@@ -124,7 +123,6 @@ def get_mail(
         search_type: int = 0,
         search_condition: str = None,
         search_list: list = None) -> data_type.MailInfo:
-
     logger = Logger('get_mail', Logger.INFO)
     cmd_list = list()
     # 回到主選單

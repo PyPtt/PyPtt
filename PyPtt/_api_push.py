@@ -1,11 +1,11 @@
 from SingleLog.log import Logger
 
-from . import data_type
-from . import i18n
-from . import connect_core
-from . import screens
-from . import exceptions
 from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def push(
@@ -88,7 +88,7 @@ def push(
     if index == 0:
         push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
-        
+
         logger.debug('comment option line', push_option_line)
 
         enable_push = '值得推薦' in push_option_line

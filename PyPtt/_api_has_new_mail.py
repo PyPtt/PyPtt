@@ -2,11 +2,11 @@ import re
 
 from SingleLog.log import Logger
 
-from . import i18n
-from . import connect_core
-from . import screens
-from . import command
 from . import _api_util
+from . import command
+from . import connect_core
+from . import i18n
+from . import screens
 
 
 def has_new_mail(api) -> int:

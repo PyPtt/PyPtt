@@ -332,4 +332,3 @@ if __name__ == '__main__':
 
     p = VT100Parser(screen, 'utf-8')
     print(p.screen)
-

@@ -24,6 +24,7 @@ websockets.http.USER_AGENT += f' PyPtt/{version}'
 
 ssl_context = ssl.create_default_context()
 
+
 @unique
 class ConnectMode(AutoName):
     TELNET = auto()

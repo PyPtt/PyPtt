@@ -296,7 +296,6 @@ class SetConnectMailFirst(Exception):
     def __str__(self):
         return self.message
 
-
 # class SystemOverload(Exception):
 #     def __init__(self):
 #         self.message = i18n.system_busy_try_later

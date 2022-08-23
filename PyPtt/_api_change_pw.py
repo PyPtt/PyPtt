@@ -1,7 +1,7 @@
-from . import i18n
+from . import command
 from . import connect_core
 from . import exceptions
-from . import command
+from . import i18n
 
 
 def change_pw(
