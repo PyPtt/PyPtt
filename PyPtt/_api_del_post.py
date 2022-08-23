@@ -1,4 +1,5 @@
-from . import command
+import PyPtt
+from . import command, lib_util, check_value, NewIndex
 from . import connect_core
 from . import data_type
 from . import exceptions
@@ -7,11 +8,43 @@ from . import screens
 
 
 def del_post(
-        api,
-        board_info,
+        api: PyPtt.API,
         board,
         post_aid: str = None,
         post_index: int = 0) -> None:
+    api._one_thread()
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    check_value.check_type(str, 'board', board)
+    if post_aid is not None:
+        check_value.check_type(str, 'PostAID', post_aid)
+    check_value.check_type(int, 'PostIndex', post_index)
+
+    if len(board) == 0:
+        raise ValueError(f'board error parameter: {board}')
+
+    if post_index != 0 and isinstance(post_aid, str):
+        raise ValueError('wrong parameter post_index and post_aid can\'t both input')
+
+    if post_index == 0 and post_aid is None:
+        raise ValueError('wrong parameter post_index or post_aid must input')
+
+    if post_index != 0:
+        newest_index = api.get_newest_index(
+            NewIndex.BBS,
+            board=board)
+        check_value.check_index(
+            'PostIndex',
+            post_index,
+            newest_index)
+
+    board_info = api._check_board(board)
+
     check_author = True
     for moderator in board_info.moderators:
         if api._ID.lower() == moderator.lower():
@@ -19,14 +52,14 @@ def del_post(
             break
 
     post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
-    if post_info.delete_status != data_type.PostDelStatus.exist:
+    if post_info['delete_status'] != data_type.PostDelStatus.exist:
         if post_aid is not None:
             raise exceptions.DeletedPost(board, post_aid)
         else:
             raise exceptions.DeletedPost(board, post_index)
 
     if check_author:
-        if api._ID.lower() != post_info.author.lower():
+        if api._ID.lower() != post_info['author'].lower():
             raise exceptions.NoPermission(i18n.no_permission)
 
     api._goto_board(board)

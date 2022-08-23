@@ -606,11 +606,11 @@ def _get_post(
 
     for line in origin_post_lines:
         if line.startswith('推'):
-            comment_type = data_type.push_type.PUSH
+            comment_type = data_type.CommentType.PUSH
         elif line.startswith('噓 '):
-            comment_type = data_type.push_type.BOO
+            comment_type = data_type.CommentType.BOO
         elif line.startswith('→ '):
-            comment_type = data_type.push_type.ARROW
+            comment_type = data_type.CommentType.ARROW
         else:
             continue
 

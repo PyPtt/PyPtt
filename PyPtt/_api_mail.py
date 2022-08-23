@@ -1,8 +1,10 @@
 import re
+from typing import Dict
 
 from SingleLog.log import Logger
 
-from . import _api_util
+import PyPtt
+from . import _api_util, lib_util, check_value, NewIndex
 from . import command
 from . import connect_core
 from . import data_type
@@ -12,14 +14,37 @@ from . import screens
 
 
 # 寄信
-def mail(
-        api,
-        ptt_id: str,
-        title: str,
-        content: str,
-        sign_file,
-        backup: bool = True) -> None:
+def mail(api: PyPtt.API,
+         ptt_id: str,
+         title: str,
+         content: str,
+         sign_file,
+         backup: bool = True) -> None:
     logger = Logger('main', Logger.INFO)
+
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    check_value.check_type(str, 'ptt_id', ptt_id)
+    check_value.check_type(str, 'title', title)
+    check_value.check_type(str, 'content', content)
+
+    api.get_user(ptt_id)
+
+    check_sign_file = False
+    for i in range(0, 10):
+        if str(i) == sign_file or i == sign_file:
+            check_sign_file = True
+            break
+
+    if not check_sign_file:
+        if sign_file.lower() != 'x':
+            raise ValueError(f'wrong parameter sign_file: {sign_file}')
 
     cmd_list = list()
     # 回到主選單
@@ -82,7 +107,7 @@ def mail(
             '確定要儲存檔案嗎',
             response='s' + command.enter, ),
         connect_core.TargetUnit(
-            i18n.self_save_draft if backup else i18n.not_self_save_draft,
+            i18n.api_save_draft if backup else i18n.not_api_save_draft,
             '是否自存底稿',
             response=('y' if backup else 'n') + command.enter),
         connect_core.TargetUnit(
@@ -118,12 +143,27 @@ ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 
 def get_mail(
-        api,
+        api: PyPtt.API,
         index,
         search_type: int = 0,
         search_condition: str = None,
-        search_list: list = None) -> data_type.MailInfo:
+        search_list: list = None) -> Dict:
     logger = Logger('get_mail', Logger.INFO)
+
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    if index == 0:
+        return {}
+    current_index = api.get_newest_index(NewIndex.MAIL)
+    api.logger.info('current_index', current_index)
+    check_value.check_index('index', index, current_index)
+
     cmd_list = list()
     # 回到主選單
     cmd_list.append(command.go_main_menu)
@@ -173,7 +213,7 @@ def get_mail(
         target_list)
 
     # 取得信件全文
-    origin_mail, _ = _api_util.get_content(api: PyPtt.API, post_mode = False)
+    origin_mail, _ = _api_util.get_content(api, post_mode=False)
 
     # 使用表示式分析信件作者
     pattern_result = mail_author_pattern.search(origin_mail)
@@ -261,20 +301,29 @@ def get_mail(
 
                 logger.debug('location', mail_location)
 
-    mail_result = data_type.MailInfo(
-        origin_mail=origin_mail,
-        author=mail_author,
-        title=mail_title,
-        date=mail_date,
-        content=mail_content,
-        ip=mail_ip,
-        location=mail_location,
-        is_red_envelope=red_envelope)
-
-    return mail_result
+    return {
+        'origin_mail': origin_mail,
+        'author': mail_author,
+        'title': mail_title,
+        'date': mail_date,
+        'content': mail_content,
+        'ip': mail_ip,
+        'location': mail_location,
+        'is_red_envelope': red_envelope}
 
 
 def del_mail(api: PyPtt.API, index) -> None:
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    current_index = api.get_newest_index(NewIndex.MAIL)
+    check_value.check_index(index, current_index)
+
     cmd_list = list()
     # 進入主選單
     cmd_list.append(command.go_main_menu)
@@ -307,3 +356,7 @@ def del_mail(api: PyPtt.API, index) -> None:
     api.connect_core.send(
         cmd,
         target_list)
+
+    if api._mailbox_full:
+        api.logout()
+        raise exceptions.MailboxFull()

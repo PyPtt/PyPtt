@@ -1,11 +1,24 @@
-from . import command
+import PyPtt
+from . import command, lib_util, check_value
 from . import connect_core
 from . import exceptions
 from . import i18n
 
 
-def give_money(
-        api, ptt_id: str, money: int) -> None:
+def give_money(api: PyPtt.API, ptt_id: str, money: int) -> None:
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    check_value.check_type(str, 'ptt_id', ptt_id)
+    check_value.check_type(int, 'money', money)
+    # Check user
+    api.get_user(ptt_id)
+
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('P')

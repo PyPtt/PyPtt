@@ -1,21 +1,50 @@
 from SingleLog.log import Logger
 
-from . import command
+import PyPtt
+from . import command, check_value, NewIndex
 from . import connect_core
 from . import data_type
 from . import exceptions
 from . import i18n
 
 
-def reply_post(
-        api,
-        reply_type: int,
-        board: str,
-        content: str,
-        sign_file,
-        post_aid: str,
-        post_index: int) -> None:
+def reply_post(api: PyPtt.API,
+               reply_type: int,
+               board: str,
+               content: str,
+               sign_file,
+               post_aid: str,
+               post_index: int) -> None:
     logger = Logger('reply_post', Logger.INFO)
+
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    check_value.check_type(int, 'reply_type', reply_type, value_class=reply_type)
+    check_value.check_type(str, 'board', board)
+    check_value.check_type(str, 'content', content)
+    if post_aid is not None:
+        check_value.check_type(str, 'PostAID', post_aid)
+
+    if post_index != 0:
+        newest_index = api.get_newest_index(
+            NewIndex.BBS,
+            board=board)
+        check_value.check_index(
+            'post_index',
+            post_index,
+            max_value=newest_index)
+
+    sign_file_list = [str(x) for x in range(0, 10)].append('x')
+    if str(sign_file).lower() not in sign_file_list:
+        raise ValueError(f'wrong parameter sign_file: {sign_file}')
+
+    if post_aid is not None and post_index != 0:
+        raise ValueError('wrong parameter post_aid and post_index can\'t both input')
+
+    api._check_board(board)
 
     api._goto_board(board)
 
@@ -99,7 +128,7 @@ def reply_post(
         ),
         reply_target_unit,
         connect_core.TargetUnit(
-            i18n.self_save_draft,
+            i18n.api_save_draft,
             '已順利寄出，是否自存底稿',
             log_level=Logger.DEBUG,
             response='Y' + command.enter

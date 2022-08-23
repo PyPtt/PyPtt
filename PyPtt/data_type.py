@@ -107,34 +107,10 @@ class reply_type:
     max_value = BOARD_MAIL
 
 
-class push_type:
-    PUSH: int = 1
-    BOO: int = 2
-    ARROW: int = 3
-
-    min_value = PUSH
-    max_value = ARROW
-
-
-class MailInfo:
-    def __init__(
-            self,
-            origin_mail: str = None,
-            author: str = None,
-            title: str = None,
-            date: str = None,
-            content: str = None,
-            ip: str = None,
-            location: str = None,
-            is_red_envelope: bool = False):
-        self.origin_mail: str = parse_para(str, origin_mail)
-        self.author: str = parse_para(str, author)
-        self.title: str = parse_para(str, title)
-        self.date: str = parse_para(str, date)
-        self.content: str = parse_para(str, content)
-        self.ip: str = parse_para(str, ip)
-        self.location: str = parse_para(str, location)
-        self.is_red_envelope = parse_para(bool, is_red_envelope)
+class CommentType(IntEnum):
+    PUSH: int = auto()
+    BOO: int = auto()
+    ARROW: int = auto()
 
 
 class UserInfo:

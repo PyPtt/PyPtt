@@ -1,13 +1,14 @@
 ﻿import re
 import threading
-import time
-from typing import Dict
+from typing import Dict, Tuple
 
 import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_newest_index
+from . import _api_get_newest_index, _api_give_money, _api_mail, _api_get_board_list, _api_reply_post, \
+    _api_set_board_title, _api_mark_post, _api_get_favourite_board, _api_bucket, _api_search_user, _api_get_board_info, \
+    _api_change_pw, _api_get_bottom_post_list, _api_del_post
 from . import _api_get_post
 from . import _api_get_time
 from . import _api_get_user
@@ -20,7 +21,6 @@ from . import config
 from . import connect_core
 from . import exceptions
 from . import i18n
-from . import lib_util
 from . import screens
 from . import version
 from .connect_core import ConnectMode
@@ -183,7 +183,7 @@ class API:
         :param board: the board name of PTT.
         :param aid: (Choose between aid and index) the aid of the PTT post.
         :param index: (Choose between aid and index) the index of the PTT post.
-        :param search_type: (Optional) the search type. Check SearchType
+        :param search_type: (Optional) the search type. Check SearchType.
         :param search_condition: (Optional) the search condition.
         :param search_list: (Optional) the search list including search type and search condition.
         :param query: (Optional) Enable query or not.
@@ -227,110 +227,27 @@ class API:
 
         return _api_post.post(self, board, title, content, title_index, sign_file)
 
-    def comment(self, board: str, push_type: int, push_content: str, post_aid: str = None, post_index: int = 0) -> None:
-        self._one_thread()
+    def comment(self, board: str, comment_type: int, comment_content: str, post_aid: str = None,
+                post_index: int = 0) -> None:
+        """
+        Comment.
 
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+        :param board: The name of PTT board.
+        :param comment_type: The comment type. Check CommentType.
+        :param comment_content: The comment content.
+        :param post_aid: The aid of post you want to comment. Choose one between post_index.
+        :param post_index: The index of post you want to comment. Choose one between post_aid.
+        :return: None
+        """
 
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        check_value.check_type(str, 'board', board)
-        check_value.check_type(int, 'push_type',
-                               push_type, value_class=push_type)
-        check_value.check_type(str, 'push_content', push_content)
-        if post_aid is not None:
-            check_value.check_type(str, 'post_aid', post_aid)
-        check_value.check_type(int, 'post_index', post_index)
-
-        if len(board) == 0:
-            raise ValueError(f'wrong parameter board: {board}')
-
-        if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
-
-        if post_index == 0 and post_aid is None:
-            raise ValueError('wrong parameter post_index or post_aid must input')
-
-        if post_index != 0:
-            newest_index = self.get_newest_index(
-                NewIndex.BBS,
-                board=board)
-            check_value.check_index('post_index', post_index, newest_index)
-
-        self._check_board(board)
-
-        board_info = self._board_info_list[board.lower()]
-
-        if board_info.is_push_record_ip:
-            self.logger.info(i18n.record_ip)
-            if board_info.is_push_aligned:
-                self.logger.info(i18n.push_aligned)
-                max_push_length = 32
-            else:
-                self.logger.info(i18n.not_push_aligned)
-                max_push_length = 43 - len(self._ID)
-        else:
-            self.logger.info(i18n.not_record_ip)
-            #     推文對齊
-            if board_info.is_push_aligned:
-                self.logger.info(i18n.push_aligned)
-                max_push_length = 46
-            else:
-                self.logger.info(i18n.not_push_aligned)
-                max_push_length = 58 - len(self._ID)
-
-        push_content = push_content.strip()
-
-        push_list = list()
-        while push_content:
-            index = 0
-            jump = 0
-
-            while len(push_content[:index].encode('big5uao', 'replace')) < max_push_length:
-
-                if index == len(push_content):
-                    break
-                if push_content[index] == '\n':
-                    jump = 1
-                    break
-
-                index += 1
-
-            push_list.append(push_content[:index])
-            push_content = push_content[index + jump:]
-
-        push_list = filter(None, push_list)
-
-        for comment in push_list:
-
-            self.logger.info(i18n.comment, comment)
-
-            for _ in range(2):
-                try:
-                    self._comment(
-                        board,
-                        push_type,
-                        comment,
-                        post_aid=post_aid,
-                        post_index=post_index)
-                    break
-                except exceptions.NoFastComment:
-                    # screens.show(self.config, self.connect_core.getScreenQueue())
-                    self.logger.info(i18n.wait_for_no_fast_comment)
-                    time.sleep(5.2)
-
-    def _comment(self, board: str, push_type: int, push_content: str, post_aid: str = None,
-                 post_index: int = 0) -> None:
-
-        return _api_push.push(self, board, push_type, push_content, post_aid, post_index)
+        _api_push.push(self, board, comment_type, comment_content, post_aid, post_index)
 
     def get_user(self, user_id) -> Dict:
 
         """
         Get the information of the PTT user.
-        param user_id:
+
+        :param user_id:
         :return: the user info in dict.
         """
 
@@ -421,178 +338,50 @@ class API:
     #     return _api_call_status.set_call_status(self, call_status)
 
     def give_money(self, ptt_id: str, money: int) -> None:
-        self._one_thread()
 
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
+        """
+        Give money to ptt user.
 
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        check_value.check_type(str, 'ptt_id', ptt_id)
-        check_value.check_type(int, 'money', money)
-        # Check user
-        self.get_user(ptt_id)
-
-        try:
-            from . import _api_give_money
-        except ModuleNotFoundError:
-            import _api_give_money
+        :param ptt_id: The PTT user you want give money.
+        :param money: The number of money you want to give.
+        :return: None
+        """
 
         return _api_give_money.give_money(self, ptt_id, money)
 
-    def mail(
-            self,
-            ptt_id: str,
-            title: str,
-            content: str,
-            sign_file,
-            backup: bool = True) -> None:
-        self._one_thread()
+    def mail(self, ptt_id: str, title: str, content: str, sign_file, backup: bool = True) -> None:
 
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
+        _api_mail.mail(self, ptt_id, title, content, sign_file, backup)
 
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        check_value.check_type(str, 'ptt_id', ptt_id)
-        check_value.check_type(str, 'title', title)
-        check_value.check_type(str, 'content', content)
-
-        self.get_user(ptt_id)
-
-        check_sign_file = False
-        for i in range(0, 10):
-            if str(i) == sign_file or i == sign_file:
-                check_sign_file = True
-                break
-
-        if not check_sign_file:
-            if sign_file.lower() != 'x':
-                raise ValueError(f'wrong parameter sign_file: {sign_file}')
-
-        try:
-            from . import _api_mail
-        except ModuleNotFoundError:
-            import _api_mail
-
-        _api_mail.mail(
-            self,
-            ptt_id,
-            title,
-            content,
-            sign_file,
-            backup)
-
-        if self._mailbox_full:
-            self.logout()
-            raise exceptions.MailboxFull()
-
-    def has_new_mail(self) -> int:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.get_newest_index(NewIndex.MAIL) == 0:
-            return 0
-
-        try:
-            from . import _api_has_new_mail
-        except ModuleNotFoundError:
-            import _api_has_new_mail
-
-        return _api_has_new_mail.has_new_mail(self)
+    # def has_new_mail(self) -> int:
+    #     self._one_thread()
+    #
+    #     if not self._login_status:
+    #         raise exceptions.Requirelogin(i18n.require_login)
+    #
+    #     if self.get_newest_index(NewIndex.MAIL) == 0:
+    #         return 0
+    #
+    #     try:
+    #         from . import _api_has_new_mail
+    #     except ModuleNotFoundError:
+    #         import _api_has_new_mail
+    #
+    #     return _api_has_new_mail.has_new_mail(self)
 
     def get_board_list(self) -> list:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        try:
-            from . import _api_get_board_list
-        except ModuleNotFoundError:
-            import _api_get_board_list
 
         return _api_get_board_list.get_board_list(self)
 
-    def reply_post(
-            self,
-            reply_type: int,
-            board: str,
-            content: str,
-            sign_file=0,
-            post_aid: str = None,
-            post_index: int = 0) -> None:
-        self._one_thread()
+    def reply_post(self, reply_type: int, board: str, content: str, sign_file=0, post_aid: str = None,
+                   post_index: int = 0) -> None:
 
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        check_value.check_type(int, 'reply_type', reply_type, value_class=reply_type)
-        check_value.check_type(str, 'board', board)
-        check_value.check_type(str, 'content', content)
-        if post_aid is not None:
-            check_value.check_type(str, 'PostAID', post_aid)
-
-        if post_index != 0:
-            newest_index = self.get_newest_index(
-                NewIndex.BBS,
-                board=board)
-            check_value.check_index(
-                'post_index',
-                post_index,
-                max_value=newest_index)
-
-        sign_file_list = [str(x) for x in range(0, 10)].append('x')
-        if str(sign_file).lower() not in sign_file_list:
-            raise ValueError(f'wrong parameter sign_file: {sign_file}')
-
-        if post_aid is not None and post_index != 0:
-            raise ValueError('wrong parameter post_aid and post_index can\'t both input')
-
-        self._check_board(board)
-
-        try:
-            from . import _api_reply_post
-        except ModuleNotFoundError:
-            import _api_reply_post
-
-        _api_reply_post.reply_post(
-            self,
-            reply_type,
-            board,
-            content,
-            sign_file,
-            post_aid,
-            post_index)
+        _api_reply_post.reply_post(self, reply_type, board, content, sign_file, post_aid, post_index)
 
     def set_board_title(
             self,
             board: str,
             new_title: str) -> None:
-        # 第一支板主專用 API
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        check_value.check_type(str, 'board', board)
-        check_value.check_type(str, 'new_title', new_title)
-
-        self._check_board(
-            board,
-            check_moderator=True)
-
-        try:
-            from . import _api_set_board_title
-        except ModuleNotFoundError:
-            import _api_set_board_title
 
         _api_set_board_title.set_board_title(self, board, new_title)
 
@@ -604,196 +393,43 @@ class API:
             post_index: int = 0,
             search_type: int = 0,
             search_condition: str = None) -> None:
-        # 標記文章
-        self._one_thread()
 
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        try:
-            from . import _api_mark_post
-        except ModuleNotFoundError:
-            import _api_mark_post
-
-        _api_mark_post.mark_post(
-            self,
-            mark_type,
-            board,
-            post_aid,
-            post_index,
-            search_type,
-            search_condition)
+        _api_mark_post.mark_post(self, mark_type, board, post_aid, post_index, search_type, search_condition)
 
     def get_favourite_board(self) -> list:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        try:
-            from . import _api_get_favourite_board
-        except ModuleNotFoundError:
-            import _api_get_favourite_board
 
         return _api_get_favourite_board.get_favourite_board(self)
 
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
 
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        check_value.check_type(str, 'board', board)
-        check_value.check_type(int, 'bucket_days', bucket_days)
-        check_value.check_type(str, 'reason', reason)
-        check_value.check_type(str, 'ptt_id', ptt_id)
-
-        self._get_user(ptt_id)
-
-        self._check_board(
-            board,
-            check_moderator=True)
-
-        try:
-            from . import _api_bucket
-        except ModuleNotFoundError:
-            import _api_bucket
-
         _api_bucket.bucket(
             self, board, bucket_days, reason, ptt_id)
 
-    def search_user(
-            self,
-            ptt_id: str,
-            min_page: int = None,
-            max_page: int = None) -> list:
-
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        check_value.check_type(str, 'ptt_id', ptt_id)
-        if min_page is not None:
-            check_value.check_index(
-                'min_page',
-                min_page)
-        if max_page is not None:
-            check_value.check_index(
-                'max_page',
-                max_page)
-        if min_page is not None and max_page is not None:
-            check_value.check_index_range(
-                'min_page',
-                min_page,
-                'max_page',
-                max_page)
-
-        try:
-            from . import _api_search_user
-        except ModuleNotFoundError:
-            import _api_search_user
+    def search_user(self, ptt_id: str, min_page: int = None, max_page: int = None) -> list:
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
     def get_board_info(self, board: str, get_post_kind: bool = False) -> Dict:
 
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        check_value.check_type(str, 'board', board)
-
         return self._get_board_info(board, get_post_kind, call_by_others=False)
 
     def _get_board_info(self, board: str, get_post_kind, call_by_others: bool = True) -> Dict:
 
-        try:
-            from . import _api_get_board_info
-        except ModuleNotFoundError:
-            import _api_get_board_info
-
         return _api_get_board_info.get_board_info(self, board, get_post_kind, call_by_others)
 
-    def get_mail(
-            self,
-            index: int,
-            search_type: int = 0,
-            search_condition: str = None,
-            search_list: list = None):
+    def get_mail(self, index: int, search_type: int = 0, search_condition: str = None, search_list: list = None):
 
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        if index == 0:
-            return None
-        current_index = self.get_newest_index(NewIndex.MAIL)
-        self.logger.info('current_index', current_index)
-        check_value.check_index('index', index, current_index)
-
-        try:
-            from . import _api_mail
-        except ModuleNotFoundError:
-            import _api_mail
-
-        return _api_mail.get_mail(
-            self,
-            index,
-            search_type,
-            search_condition,
-            search_list)
+        return _api_mail.get_mail(self, index, search_type, search_condition, search_list)
 
     def del_mail(self, index):
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        current_index = self.get_newest_index(NewIndex.MAIL)
-        check_value.check_index(index, current_index)
-
-        try:
-            from . import _api_mail
-        except ModuleNotFoundError:
-            import _api_mail
 
         return _api_mail.del_mail(self, index)
 
     def change_pw(self, new_password) -> None:
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        new_password = new_password[:8]
-
-        try:
-            from . import _api_change_pw
-        except ModuleNotFoundError:
-            import _api_change_pw
 
         _api_change_pw.change_pw(self, new_password)
 
-    def get_aid_from_url(self, url: str) -> (str, str):
+    def get_aid_from_url(self, url: str) -> Tuple[str, str]:
 
         # 檢查是否為字串
         check_value.check_type(str, 'url', url)
@@ -836,72 +472,13 @@ class API:
 
         return board, aid
 
-    def get_bottom_post_list(self, board) -> list:
-
-        self._one_thread()
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        check_value.check_type(str, 'board', board)
-        self._check_board(board)
-
-        try:
-            from . import _api_get_bottom_post_list
-        except ModuleNotFoundError:
-            import _api_get_bottom_post_list
+    def get_bottom_post_list(self, board: str) -> list:
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
-    def del_post(
-            self,
-            board,
-            post_aid: str = None,
-            post_index: int = 0) -> None:
-        self._one_thread()
+    def del_post(self, board, post_aid: str = None, post_index: int = 0) -> None:
 
-        if self.unregistered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        if not self._login_status:
-            raise exceptions.Requirelogin(i18n.require_login)
-
-        check_value.check_type(str, 'board', board)
-        if post_aid is not None:
-            check_value.check_type(str, 'PostAID', post_aid)
-        check_value.check_type(int, 'PostIndex', post_index)
-
-        if len(board) == 0:
-            raise ValueError(f'board error parameter: {board}')
-
-        if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
-
-        if post_index == 0 and post_aid is None:
-            raise ValueError('wrong parameter post_index or post_aid must input')
-
-        if post_index != 0:
-            newest_index = self.get_newest_index(
-                NewIndex.BBS,
-                board=board)
-            check_value.check_index(
-                'PostIndex',
-                post_index,
-                newest_index)
-
-        board_info = self._check_board(board)
-
-        try:
-            from . import _api_del_post
-        except ModuleNotFoundError:
-            import _api_del_post
-
-        return _api_del_post.del_post(
-            self,
-            board_info,
-            board,
-            post_aid,
-            post_index)
+        return _api_del_post.del_post(self, board, post_aid, post_index)
 
     def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
 

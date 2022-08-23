@@ -1,10 +1,16 @@
-from . import command
+import PyPtt
+from . import command, exceptions
 from . import connect_core
 from . import data_type
 from . import i18n
 
 
-def get_favourite_board(api) -> list:
+def get_favourite_board(api: PyPtt.API, ) -> list:
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('F')
