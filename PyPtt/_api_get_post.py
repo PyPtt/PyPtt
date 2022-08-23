@@ -479,10 +479,7 @@ def _get_post(
         content_fail = True
     else:
         post_content = origin_post
-        post_content = post_content[
-                       post_content.find(content_start) +
-                       len(content_start) + 1:
-                       ]
+        post_content = post_content[post_content.find(content_start) + len(content_start) + 1:]
         # print('Type 2')
         # print(f'PostContent [{PostContent}]')
         for EC in content_end:
@@ -491,9 +488,7 @@ def _get_post(
             if EC in post_content:
                 content_fail = False
 
-                post_content = post_content[
-                               :post_content.rfind(EC) + 3
-                               ]
+                post_content = post_content[:post_content.rfind(EC) + 3]
                 origin_post_lines = origin_post[origin_post.find(EC):]
                 # post_content = post_content.strip()
                 origin_post_lines = origin_post_lines.split('\n')
@@ -526,10 +521,7 @@ def _get_post(
 
     logger.debug(i18n.content, post_content)
 
-    info_lines = [
-        line for line in origin_post_lines if line.startswith('※') or
-                                              line.startswith('◆')
-    ]
+    info_lines = [line for line in origin_post_lines if line.startswith('※') or line.startswith('◆')]
 
     pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
     pattern_p2 = re.compile('[\d]+-[\d]+-[\d]+-[\d]+')
@@ -634,25 +626,17 @@ def _get_post(
             comment_ip = result.group(0)
             logger.debug(f'{i18n.comment} ip', comment_ip)
 
-        push_content = line[
-                       line.find(push_author) + len(push_author):
-                       ]
+        push_content = line[line.find(push_author) + len(push_author):]
         # PushContent = PushContent.replace(PushDate, '')
 
         if api.config.host == data_type.HOST.PTT1:
-            push_content = push_content[
-                           :push_content.rfind(push_date)
-                           ]
+            push_content = push_content[:push_content.rfind(push_date)]
         else:
             # → CodingMan:What is Ptt?                                       推 10/04 13:25
-            push_content = push_content[
-                           :push_content.rfind(push_date) - 2
-                           ]
+            push_content = push_content[:push_content.rfind(push_date) - 2]
         if comment_ip is not None:
             push_content = push_content.replace(comment_ip, '')
-        push_content = push_content[
-                       push_content.find(':') + 1:
-                       ].strip()
+        push_content = push_content[push_content.find(':') + 1:].strip()
 
         logger.debug(i18n.comment_content, push_content)
 

@@ -52,8 +52,7 @@ def get_favourite_board(api: PyPtt.API, ) -> list:
                 continue
             if len(screen_buf[i]) <= min_len:
                 # print(f'[{ScreenBuf[i]}]')
-                screen_buf[i] = screen_buf[i] + \
-                                (' ' * ((min_len + 1) - len(screen_buf[i])))
+                screen_buf[i] = screen_buf[i] + (' ' * ((min_len + 1) - len(screen_buf[i])))
         screen_buf = [x[10:min_len - len(x)].strip() for x in screen_buf]
         screen_buf = list(filter(None, screen_buf))
 

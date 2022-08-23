@@ -597,4 +597,4 @@ class API:
 if __name__ == '__main__':
     print('PyPtt v ' + version)
     print('Developed by CodingMan')
-    print('Github: PttCodingMan')
+    print('Github: @PttCodingMan')

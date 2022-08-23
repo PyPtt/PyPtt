@@ -19,7 +19,7 @@ def mark_post(
         post_index: int,
         search_type: int,
         search_condition: str) -> None:
-    logger = Logger('mark_post', Logger.INFO)
+    # logger = Logger('mark_post', Logger.INFO)
 
     api._one_thread()
 
