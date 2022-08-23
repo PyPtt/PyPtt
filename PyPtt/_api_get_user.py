@@ -11,7 +11,7 @@ from . import i18n
 from . import screens
 
 
-def get_user(api, ptt_id: str) -> Dict:
+def get_user(api: PyPtt.API, ptt_id: str) -> Dict:
     logger = Logger('get_user', Logger.INFO)
 
     api._one_thread()

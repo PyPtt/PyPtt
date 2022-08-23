@@ -50,7 +50,7 @@ def logout(api) -> None:
     logger.info(i18n.logout, i18n.complete)
 
 
-def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
+def login(api: PyPtt.API, ptt_id: str, ptt_pw: str, kick_other_login: bool):
     logger = Logger('api_login', api.config.log_level)
 
     api._one_thread()

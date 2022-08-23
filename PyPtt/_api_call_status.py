@@ -75,7 +75,7 @@ def get_call_status(api) -> None:
     raise exceptions.UnknownError(ori_screen)
 
 
-def set_call_status(api, call_status) -> None:
+def set_call_status(api: PyPtt.API, call_status) -> None:
     # 打開 -> 拔掉 -> 防水 -> 好友 -> 關閉
 
     current_call_status = api._get_call_status()
