@@ -173,7 +173,7 @@ def get_mail(
         target_list)
 
     # 取得信件全文
-    origin_mail, _ = _api_util.get_content(api, post_mode=False)
+    origin_mail, _ = _api_util.get_content(api: PyPtt.API, post_mode = False)
 
     # 使用表示式分析信件作者
     pattern_result = mail_author_pattern.search(origin_mail)
@@ -274,7 +274,7 @@ def get_mail(
     return mail_result
 
 
-def del_mail(api, index) -> None:
+def del_mail(api: PyPtt.API, index) -> None:
     cmd_list = list()
     # 進入主選單
     cmd_list.append(command.go_main_menu)

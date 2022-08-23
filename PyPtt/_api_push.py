@@ -1,5 +1,6 @@
 from SingleLog.log import Logger
 
+import PyPtt
 from . import command
 from . import connect_core
 from . import data_type
@@ -8,13 +9,12 @@ from . import i18n
 from . import screens
 
 
-def push(
-        api,
-        board: str,
-        push_type: int,
-        push_content: str,
-        post_aid: str,
-        post_index: int) -> None:
+def push(api: PyPtt.API,
+         board: str,
+         push_type: int,
+         push_content: str,
+         post_aid: str,
+         post_index: int) -> None:
     api._goto_board(board)
 
     logger = Logger('push', Logger.INFO)

@@ -8,7 +8,7 @@ from . import i18n
 from . import screens
 
 
-def get_bottom_post_list(api, board):
+def get_bottom_post_list(api: PyPtt.API, board):
     api._goto_board(board, end=True)
 
     logger = Logger('get_bottom_post_list', Logger.INFO)

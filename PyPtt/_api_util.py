@@ -9,7 +9,7 @@ from . import i18n
 from . import screens
 
 
-def get_content(api, post_mode: bool = True):
+def get_content(api: PyPtt.API, post_mode: bool = True):
     logger = Logger('get_content', Logger.INFO)
     api.Unconfirmed = False
 
@@ -233,7 +233,7 @@ def get_mailbox_capacity(api):
 # │ 這一篇文章值 2 Ptt幣                                              │
 # └── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┘
 
-def parse_query_post(api, ori_screen):
+def parse_query_post(api: PyPtt.API, ori_screen):
     logger = Logger('parse_query_post')
     lock_post = False
     try:
