@@ -1,13 +1,19 @@
 ﻿import re
 import threading
 import time
+from typing import Dict
 
 import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_time, _api_get_post, version, _api_get_newest_index, _api_loginout, _api_get_user
+from . import _api_get_newest_index
+from . import _api_get_post
+from . import _api_get_time
+from . import _api_get_user
+from . import _api_loginout
 from . import _api_post
+from . import _api_push
 from . import check_value
 from . import command
 from . import config
@@ -16,22 +22,15 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
+from . import version
 from .connect_core import ConnectMode
 from .data_type import HOST, Board, NewIndex, SearchType
 
 
 class API:
-    def __init__(
-            self,
-            language: i18n.Lang = i18n.Lang.CHINESE,
-            log_level: LoggerLevel = Logger.INFO,
-            screen_timeout: int = 0,
-            screen_long_timeout: int = 0,
-            screen_post_timeout: int = 0,
-            connect_mode=ConnectMode.WEBSOCKETS,
-            port: int = 0,
-            log_handler=None,
-            host=HOST.PTT1):
+    def __init__(self, language: i18n.Lang = i18n.Lang.CHINESE, log_level: LoggerLevel = Logger.INFO,
+                 screen_timeout: int = 0, screen_long_timeout: int = 0, screen_post_timeout: int = 0,
+                 connect_mode=ConnectMode.WEBSOCKETS, port: int = 0, log_handler=None, host=HOST.PTT1):
 
         if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
@@ -176,17 +175,11 @@ class API:
 
         return _api_get_time.get_time(self)
 
-    def get_post(
-            self,
-            board: str,
-            aid: str = None,
-            index: int = 0,
-            search_type: SearchType = SearchType.NOPE,
-            search_condition: str = None,
-            search_list: list = None,
-            query: bool = False) -> dict:
+    def get_post(self, board: str, aid: str = None, index: int = 0, search_type: SearchType = SearchType.NOPE,
+                 search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
         """
         Get the post of PTT.
+
         :param board: the board name of PTT.
         :param aid: (Choose between aid and index) the aid of the PTT post.
         :param index: (Choose between aid and index) the index of the PTT post.
@@ -208,12 +201,13 @@ class API:
 
         """
         Get the index from board or mailbox.
+
         :param index_type:
         :param board:
         :param search_type:
         :param search_condition:
         :param search_list:
-        :return: the index from board or mailbox.
+        :return the index:
         """
 
         return _api_get_newest_index.get_newest_index(
@@ -224,16 +218,16 @@ class API:
             search_list,
             board)
 
-    def post(
-            self,
-            board: str,
-            title_index: int,
-            title: str,
-            content: str,
-            sign_file) -> None:
+    def post(self,
+             board: str,
+             title_index: int,
+             title: str,
+             content: str,
+             sign_file) -> None:
         """
+        Post on PTT.
 
-        :param board:
+        :param board: The name of PTT board.
         :param title_index:
         :param title:
         :param content:
@@ -241,21 +235,9 @@ class API:
         :return:
         """
 
-        return _api_post.post(
-            self,
-            board,
-            title,
-            content,
-            title_index,
-            sign_file)
+        return _api_post.post(self, board, title, content, title_index, sign_file)
 
-    def comment(
-            self,
-            board: str,
-            push_type: int,
-            push_content: str,
-            post_aid: str = None,
-            post_index: int = 0) -> None:
+    def comment(self, board: str, push_type: int, push_content: str, post_aid: str = None, post_index: int = 0) -> None:
         self._one_thread()
 
         if self.unregistered_user:
@@ -349,32 +331,16 @@ class API:
                     self.logger.info(i18n.wait_for_no_fast_comment)
                     time.sleep(5.2)
 
-    def _comment(
-            self,
-            board: str,
-            push_type: int,
-            push_content: str,
-            post_aid: str = None,
-            post_index: int = 0) -> None:
+    def _comment(self, board: str, push_type: int, push_content: str, post_aid: str = None,
+                 post_index: int = 0) -> None:
 
-        try:
-            from . import _api_push
-        except ModuleNotFoundError:
-            import _api_push
+        return _api_push.push(self, board, push_type, push_content, post_aid, post_index)
 
-        return _api_push.push(
-            self,
-            board,
-            push_type,
-            push_content,
-            post_aid,
-            post_index)
-
-    def get_user(self, user_id) -> dict:
+    def get_user(self, user_id) -> Dict:
 
         """
         Get the information of the PTT user.
-        :param user_id:
+        param user_id:
         :return: the user info in dict.
         """
 
@@ -750,7 +716,7 @@ class API:
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
-    def get_board_info(self, board: str, get_post_kind: bool = False) -> dict:
+    def get_board_info(self, board: str, get_post_kind: bool = False) -> Dict:
 
         self._one_thread()
 
@@ -761,7 +727,7 @@ class API:
 
         return self._get_board_info(board, get_post_kind, call_by_others=False)
 
-    def _get_board_info(self, board: str, get_post_kind, call_by_others: bool = True) -> dict:
+    def _get_board_info(self, board: str, get_post_kind, call_by_others: bool = True) -> Dict:
 
         try:
             from . import _api_get_board_info

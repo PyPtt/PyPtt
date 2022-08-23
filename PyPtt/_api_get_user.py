@@ -1,4 +1,5 @@
 import re
+from typing import Dict
 
 from SingleLog.log import Logger
 
@@ -10,7 +11,7 @@ from . import i18n
 from . import screens
 
 
-def get_user(api, ptt_id: str) -> data_type.UserInfo:
+def get_user(api, ptt_id: str) -> Dict:
     logger = Logger('get_user', Logger.INFO)
 
     api._one_thread()
