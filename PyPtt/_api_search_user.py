@@ -1,13 +1,38 @@
 from SingleLog.log import Logger
 
-from . import command
+import PyPtt
+from . import command, exceptions, lib_util, check_value
 from . import connect_core
 from . import i18n
 
 
 def search_user(
-        api: object, ptt_id: str, min_page: int, max_page: int) -> list:
+        api: PyPtt.API, ptt_id: str, min_page: int, max_page: int) -> list:
     logger = Logger('search_user', Logger.INFO)
+
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    check_value.check_type(str, 'ptt_id', ptt_id)
+    if min_page is not None:
+        check_value.check_index(
+            'min_page',
+            min_page)
+    if max_page is not None:
+        check_value.check_index(
+            'max_page',
+            max_page)
+    if min_page is not None and max_page is not None:
+        check_value.check_index_range(
+            'min_page',
+            min_page,
+            'max_page',
+            max_page)
 
     cmd_list = list()
     cmd_list.append(command.go_main_menu)

@@ -1,8 +1,10 @@
 import re
+from typing import Dict
 
 from SingleLog.log import Logger
 
-from . import command
+import PyPtt
+from . import command, check_value
 from . import connect_core
 from . import exceptions
 from . import i18n
@@ -11,16 +13,23 @@ from .data_type import Board
 
 
 def get_board_info(
-        api,
+        api: PyPtt.API,
         board: str,
         get_post_kind: bool,
-        call_by_others: bool) -> None:
+        call_by_others: bool) -> Dict:
     if call_by_others:
         log_level = Logger.DEBUG
     else:
         log_level = Logger.INFO
 
     logger = Logger('get_board_info', log_level)
+
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    check_value.check_type(str, 'board', board)
 
     api._goto_board(board, refresh=True)
 

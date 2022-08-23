@@ -1,6 +1,7 @@
 from SingleLog.log import Logger
 
-from . import _api_util
+import PyPtt
+from . import _api_util, check_value
 from . import command
 from . import connect_core
 from . import exceptions
@@ -9,6 +10,14 @@ from . import screens
 
 
 def get_bottom_post_list(api: PyPtt.API, board):
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    check_value.check_type(str, 'board', board)
+    api._check_board(board)
+
     api._goto_board(board, end=True)
 
     logger = Logger('get_bottom_post_list', Logger.INFO)

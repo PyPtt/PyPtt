@@ -1,13 +1,29 @@
-from . import command
+import PyPtt
+from . import command, exceptions, lib_util, check_value
 from . import connect_core
 from . import i18n
 
 
-def set_board_title(
-        api,
-        board: str,
-        new_title: str) -> None:
+def set_board_title(api: PyPtt.api,
+                    board: str,
+                    new_title: str) -> None:
+    # 第一支板主專用 api
+    api._one_thread()
+
     api._goto_board(board)
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    check_value.check_type(str, 'board', board)
+    check_value.check_type(str, 'new_title', new_title)
+
+    api._check_board(
+        board,
+        check_moderator=True)
 
     cmd_list = list()
     cmd_list.append('I')

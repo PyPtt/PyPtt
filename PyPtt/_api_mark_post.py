@@ -1,5 +1,6 @@
 from SingleLog.log import Logger
 
+import PyPtt
 from . import check_value
 from . import command
 from . import connect_core
@@ -11,7 +12,7 @@ from . import screens
 
 
 def mark_post(
-        api,
+        api: PyPtt.API,
         mark_type: int,
         board: str,
         post_aid: str,
@@ -19,6 +20,14 @@ def mark_post(
         search_type: int,
         search_condition: str) -> None:
     logger = Logger('mark_post', Logger.INFO)
+
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     check_value.check_type(int, 'mark_type', mark_type,
                            value_class=data_type.mark_type)

@@ -1,7 +1,9 @@
+import time
+
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command
+from . import command, lib_util, check_value, NewIndex
 from . import connect_core
 from . import data_type
 from . import exceptions
@@ -9,14 +11,12 @@ from . import i18n
 from . import screens
 
 
-def push(api: PyPtt.API,
-         board: str,
-         push_type: int,
-         push_content: str,
-         post_aid: str,
-         post_index: int) -> None:
-    api._goto_board(board)
-
+def _push(api: PyPtt.API,
+          board: str,
+          push_type: int,
+          push_content: str,
+          post_aid: str,
+          post_index: int) -> None:
     logger = Logger('push', Logger.INFO)
 
     cmd_list = list()
@@ -99,12 +99,12 @@ def push(api: PyPtt.API,
         logger.debug('Boo', enable_boo)
         logger.debug('Arrow', enable_arrow)
 
-        if push_type == data_type.push_type.PUSH and not enable_push:
-            push_type = data_type.push_type.ARROW
-        elif push_type == data_type.push_type.BOO and not enable_boo:
-            push_type = data_type.push_type.ARROW
-        elif push_type == data_type.push_type.ARROW and not enable_arrow:
-            push_type = data_type.push_type.PUSH
+        if push_type == data_type.CommentType.PUSH and not enable_push:
+            push_type = data_type.CommentType.ARROW
+        elif push_type == data_type.CommentType.BOO and not enable_boo:
+            push_type = data_type.CommentType.ARROW
+        elif push_type == data_type.CommentType.ARROW and not enable_arrow:
+            push_type = data_type.CommentType.PUSH
 
         cmd_list.append(str(push_type))
     # elif index == 1:
@@ -132,3 +132,103 @@ def push(api: PyPtt.API,
     api.connect_core.send(
         cmd,
         target_list)
+
+
+def push(api: PyPtt.API,
+         board: str,
+         push_type: int,
+         push_content: str,
+         post_aid: str,
+         post_index: int) -> None:
+    api._goto_board(board)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    check_value.check_type(str, 'board', board)
+    check_value.check_type(int, 'push_type',
+                           push_type, value_class=push_type)
+    check_value.check_type(str, 'push_content', push_content)
+    if post_aid is not None:
+        check_value.check_type(str, 'post_aid', post_aid)
+    check_value.check_type(int, 'post_index', post_index)
+
+    if len(board) == 0:
+        raise ValueError(f'wrong parameter board: {board}')
+
+    if post_index != 0 and isinstance(post_aid, str):
+        raise ValueError('wrong parameter post_index and post_aid can\'t both input')
+
+    if post_index == 0 and post_aid is None:
+        raise ValueError('wrong parameter post_index or post_aid must input')
+
+    if post_index != 0:
+        newest_index = api.get_newest_index(
+            NewIndex.BBS,
+            board=board)
+        check_value.check_index('post_index', post_index, newest_index)
+
+    api._check_board(board)
+
+    board_info = api._board_info_list[board.lower()]
+
+    if board_info.is_push_record_ip:
+        api.logger.info(i18n.record_ip)
+        if board_info.is_push_aligned:
+            api.logger.info(i18n.push_aligned)
+            max_push_length = 32
+        else:
+            api.logger.info(i18n.not_push_aligned)
+            max_push_length = 43 - len(api._ID)
+    else:
+        api.logger.info(i18n.not_record_ip)
+        #     推文對齊
+        if board_info.is_push_aligned:
+            api.logger.info(i18n.push_aligned)
+            max_push_length = 46
+        else:
+            api.logger.info(i18n.not_push_aligned)
+            max_push_length = 58 - len(api._ID)
+
+    push_content = push_content.strip()
+
+    push_list = list()
+    while push_content:
+        index = 0
+        jump = 0
+
+        while len(push_content[:index].encode('big5uao', 'replace')) < max_push_length:
+
+            if index == len(push_content):
+                break
+            if push_content[index] == '\n':
+                jump = 1
+                break
+
+            index += 1
+
+        push_list.append(push_content[:index])
+        push_content = push_content[index + jump:]
+
+    push_list = filter(None, push_list)
+
+    for comment in push_list:
+
+        api.logger.info(i18n.comment, comment)
+
+        for _ in range(2):
+            try:
+                _push(
+                    board,
+                    push_type,
+                    comment,
+                    post_aid=post_aid,
+                    post_index=post_index)
+                break
+            except exceptions.NoFastComment:
+                # screens.show(api.config, api.connect_core.getScreenQueue())
+                api.logger.info(i18n.wait_for_no_fast_comment)
+                time.sleep(5.2)

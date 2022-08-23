@@ -1,14 +1,20 @@
 import progressbar
 from SingleLog.log import Logger
 
-from . import command
+import PyPtt
+from . import command, exceptions
 from . import connect_core
 from . import i18n
 from . import screens
 
 
-def get_board_list(api) -> list:
+def get_board_list(api: PyPtt.API) -> list:
     logger = Logger('get_board_list', Logger.INFO)
+
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
 
     cmd_list = list()
     cmd_list.append(command.go_main_menu)

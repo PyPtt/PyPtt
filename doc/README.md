@@ -342,20 +342,20 @@ boo_count = 0
 arrow_count = 0
 
 for push_info in post_info.push_list:
-    if push_info.type == PTT.data_type.push_type.PUSH:
-        push_type = '推'
+    if push_info.type == PTT.data_type.CommentType.PUSH:
+        CommentType = '推'
         push_count += 1
-    if push_info.type == PTT.data_type.push_type.BOO:
-        push_type = '噓'
+    if push_info.type == PTT.data_type.CommentType.BOO:
+        CommentType = '噓'
         boo_count += 1
-    if push_info.type == PTT.data_type.push_type.ARROW:
-        push_type = '箭頭'
+    if push_info.type == PTT.data_type.CommentType.ARROW:
+        CommentType = '箭頭'
         arrow_count += 1
 
     author = push_info.author
     content = push_info.content
 
-    buffer = f'{author} 給了一個{push_type} 說 {content}'
+    buffer = f'{author} 給了一個{CommentType} 說 {content}'
     if push_info.ip is not None:
         buffer += f'來自 {push_info.ip}'
     buffer += f'時間是 {push_info.time}'
@@ -760,7 +760,7 @@ What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-ptt_bot.comment(test_board, PTT.data_type.push_type.PUSH, content, post_index=test_index)
+ptt_bot.comment(test_board, PTT.data_type.CommentType.PUSH, content, post_index=test_index)
 ```
 執行結果
 

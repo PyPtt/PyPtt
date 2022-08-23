@@ -1,11 +1,31 @@
-from . import command
+import PyPtt
+from . import command, check_value, lib_util
 from . import connect_core
 from . import exceptions
 from . import i18n
 from . import screens
 
 
-def bucket(api: object, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
+def bucket(api: PyPtt.API, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
+    api._one_thread()
+
+    if not api._login_status:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if api.unregistered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    check_value.check_type(str, 'board', board)
+    check_value.check_type(int, 'bucket_days', bucket_days)
+    check_value.check_type(str, 'reason', reason)
+    check_value.check_type(str, 'ptt_id', ptt_id)
+
+    api._get_user(ptt_id)
+
+    api._check_board(
+        board,
+        check_moderator=True)
+
     api._goto_board(board)
 
     cmd_list = list()
