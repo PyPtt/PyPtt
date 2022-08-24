@@ -12,6 +12,7 @@ def log_to_file(msg: str):
 
 
 logger = Logger('TEST_UTIL', handler=log_to_file)
+logger.info = print
 
 
 def get_id_pw(password_file):
