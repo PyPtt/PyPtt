@@ -96,7 +96,7 @@ def get_board_info(api: PyPtt.API, board: str, get_post_kind: bool, call_by_othe
     if r is not None:
         moderator_line = r.group(0)[5:].strip()
         if '(無)' in moderator_line:
-            moderators = list()
+            moderators = []
         else:
             moderators = moderator_line.split('/')
             for moderator in moderators.copy():
@@ -196,7 +196,7 @@ def get_board_info(api: PyPtt.API, board: str, get_post_kind: bool, call_by_othe
         _api_util.goto_board(api, board)
 
         # Go certain board, then post to get post type info
-        cmd_list = list()
+        cmd_list = []
         cmd_list.append(command.ctrl_p)
         cmd = ''.join(cmd_list)
 
@@ -232,7 +232,7 @@ def get_board_info(api: PyPtt.API, board: str, get_post_kind: bool, call_by_othe
                 break
 
         # Clear post status
-        cmd_list = list()
+        cmd_list = []
         cmd_list.append(command.ctrl_c)
         cmd_list.append(command.ctrl_c)
         cmd = ''.join(cmd_list)

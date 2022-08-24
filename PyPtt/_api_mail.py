@@ -46,7 +46,7 @@ def mail(api: PyPtt.API,
         if sign_file.lower() != 'x':
             raise ValueError(f'wrong parameter sign_file: {sign_file}')
 
-    cmd_list = list()
+    cmd_list = []
     # 回到主選單
     cmd_list.append(command.go_main_menu)
     # 私人信件區
@@ -79,7 +79,7 @@ def mail(api: PyPtt.API,
         screen_timeout=api.config.screen_long_timeout
     )
 
-    cmd_list = list()
+    cmd_list = []
     # 輸入標題
     cmd_list.append(title)
     cmd_list.append(command.enter)
@@ -164,7 +164,7 @@ def get_mail(
     api.logger.info('current_index', current_index)
     check_value.check_index('index', index, current_index)
 
-    cmd_list = list()
+    cmd_list = []
     # 回到主選單
     cmd_list.append(command.go_main_menu)
     # 進入信箱
@@ -321,7 +321,7 @@ def del_mail(api: PyPtt.API, index) -> None:
     current_index = api.get_newest_index(NewIndex.MAIL)
     check_value.check_index(index, current_index)
 
-    cmd_list = list()
+    cmd_list = []
     # 進入主選單
     cmd_list.append(command.go_main_menu)
     # 進入信箱

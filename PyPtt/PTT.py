@@ -102,12 +102,12 @@ class API:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
 
         self.connect_core = connect_core.API(self.config)
-        self._exist_board_list = list()
+        self._exist_board_list = []
         self._board_info_list = dict()
         self._ModeratorList = dict()
         self._LastThrowWaterBallTime = 0
         self._thread_id = threading.get_ident()
-        self._goto_board_list = list()
+        self._goto_board_list = []
         self._board_info_list = dict()
 
         self.logger.debug('ThreadID', self._thread_id)

@@ -128,7 +128,7 @@ async def websocket_receiver(core, screen_timeout, recv_data_obj):
 
 class ReceiveDataQueue(object):
     def __init__(self):
-        self._ReceiveDataQueue = list()
+        self._ReceiveDataQueue = []
 
     def add(self, screen):
         self._ReceiveDataQueue.append(screen)

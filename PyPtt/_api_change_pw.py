@@ -13,7 +13,7 @@ def change_pw(api: PyPtt.API, new_password: str) -> None:
 
     new_password = new_password[:8]
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('U')
     cmd_list.append(command.enter)

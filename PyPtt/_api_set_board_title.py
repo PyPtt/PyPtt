@@ -23,7 +23,7 @@ def set_board_title(api: PyPtt.API, board: str, new_title: str) -> None:
         board,
         check_moderator=True)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append('I')
     cmd_list.append(command.ctrl_p)
     cmd_list.append('b')

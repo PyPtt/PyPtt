@@ -12,7 +12,7 @@ from . import screens
 def get_call_status(api) -> None:
     # logger = Logger('get_call_status')
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('A')
     cmd_list.append(command.right)
@@ -81,7 +81,7 @@ def set_call_status(api: PyPtt.API, call_status) -> None:
 
     current_call_status = api._get_call_status()
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append(command.ctrl_u)
     cmd_list.append('p')

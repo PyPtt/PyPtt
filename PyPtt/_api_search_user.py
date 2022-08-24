@@ -25,7 +25,7 @@ def search_user(api: PyPtt.API, ptt_id: str, min_page: int, max_page: int) -> li
     if min_page is not None and max_page is not None:
         check_value.check_index_range('min_page', min_page, 'max_page', max_page)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
     cmd_list.append(command.enter)
@@ -49,7 +49,7 @@ def search_user(api: PyPtt.API, ptt_id: str, min_page: int, max_page: int) -> li
             break_detect=True,
         )]
 
-    resultlist = list()
+    resultlist = []
 
     while True:
 
