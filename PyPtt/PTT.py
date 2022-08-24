@@ -411,11 +411,7 @@ class API:
 
     def get_board_info(self, board: str, get_post_kind: bool = False) -> Dict:
 
-        return self._get_board_info(board, get_post_kind, call_by_others=False)
-
-    def _get_board_info(self, board: str, get_post_kind, call_by_others: bool = True) -> Dict:
-
-        return _api_get_board_info.get_board_info(self, board, get_post_kind, call_by_others)
+        return _api_get_board_info.get_board_info(self, board, get_post_kind, call_by_others=False)
 
     def get_mail(self, index: int, search_type: int = 0, search_condition: str = None, search_list: list = None):
 
@@ -578,7 +574,7 @@ class API:
             check_moderator: bool = False) -> Board:
 
         if board.lower() not in self._exist_board_list:
-            board_info = self._get_board_info(board, False, False)
+            board_info = _api_get_board_info.get_board_info(self, board, get_post_kind=False, call_by_others=False)
             self._exist_board_list.append(board.lower())
             self._board_info_list[board.lower()] = board_info
 
