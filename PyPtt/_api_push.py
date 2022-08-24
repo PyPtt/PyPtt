@@ -166,7 +166,7 @@ def push(api: PyPtt.API, board: str, push_type: int, push_content: str, post_aid
             board=board)
         check_value.check_index('post_index', post_index, newest_index)
 
-    api._check_board(board)
+    _api_util._check_board(api, board)
 
     board_info = api._board_info_list[board.lower()]
 

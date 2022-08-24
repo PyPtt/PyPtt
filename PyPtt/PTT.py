@@ -7,7 +7,7 @@ from SingleLog.log import LoggerLevel
 
 from . import _api_get_newest_index, _api_give_money, _api_mail, _api_get_board_list, _api_reply_post, \
     _api_set_board_title, _api_mark_post, _api_get_favourite_board, _api_bucket, _api_search_user, _api_get_board_info, \
-    _api_change_pw, _api_get_bottom_post_list, _api_del_post, _api_util
+    _api_change_pw, _api_get_bottom_post_list, _api_del_post
 from . import _api_get_post
 from . import _api_get_time
 from . import _api_get_user
@@ -17,12 +17,11 @@ from . import _api_push
 from . import check_value
 from . import config
 from . import connect_core
-from . import exceptions
 from . import i18n
 from . import lib_util
 from . import version
 from .connect_core import ConnectMode
-from .data_type import HOST, Board, NewIndex, SearchType
+from .data_type import HOST, NewIndex, SearchType
 
 
 class API:
@@ -330,24 +329,6 @@ class API:
 
     def fast_post_step1(self, sign_file):
         _api_post.fast_post_step1(self, sign_file)
-
-    def _check_board(self, board: str, check_moderator: bool = False) -> Board:
-
-        if board.lower() not in self._exist_board_list:
-            board_info = _api_get_board_info.get_board_info(self, board, get_post_kind=False, call_by_others=False)
-            self._exist_board_list.append(board.lower())
-            self._board_info_list[board.lower()] = board_info
-
-            moderators = board_info[Board.moderators]
-            moderators = [x.lower() for x in moderators]
-            self._ModeratorList[board.lower()] = moderators
-            self._board_info_list[board.lower()] = board_info
-
-        if check_moderator:
-            if self._ID.lower() not in self._ModeratorList[board.lower()]:
-                raise exceptions.NeedModeratorPermission(board)
-
-        return self._board_info_list[board.lower()]
 
 
 if __name__ == '__main__':

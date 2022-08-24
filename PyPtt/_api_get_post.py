@@ -64,15 +64,8 @@ def get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int =
     return post
 
 
-def _get_post(
-        api,
-        board: str,
-        post_aid: str = None,
-        post_index: int = 0,
-        search_type: int = 0,
-        search_condition: str = None,
-        search_list: list = None,
-        query: bool = False) -> Dict:
+def _get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
+              search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
     _api_util.one_thread(api)
 
     if not api._login_status:
@@ -126,7 +119,7 @@ def _get_post(
 
         check_value.check_index('post_index', post_index, newest_index)
 
-    api._check_board(board)
+    _api_util._check_board(api, board)
     _api_util.goto_board(api, board)
 
     logger = Logger('get_post')
