@@ -12,7 +12,7 @@ from . import lib_util
 from . import screens
 
 
-def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_index: int, search_type: int,
+def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, search_type: int,
               search_condition: str) -> None:
 
     _api_util.one_thread(api)

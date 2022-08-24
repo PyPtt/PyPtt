@@ -7,7 +7,7 @@ from . import exceptions
 from . import i18n
 
 
-def get_favourite_board(api: PyPtt.API, ) -> list:
+def get_favourite_board(api, ) -> list:
     _api_util.one_thread(api)
 
     if not api._login_status:

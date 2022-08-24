@@ -5,7 +5,7 @@ from . import exceptions
 from . import i18n
 
 
-def change_pw(api: PyPtt.API, new_password: str) -> None:
+def change_pw(api, new_password: str) -> None:
     _api_util.one_thread(api)
 
     if not api._login_status:

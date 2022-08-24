@@ -17,7 +17,7 @@ from .data_type import Post, Comment, NewIndex
 from .data_type import SearchType as st
 
 
-def get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
+def get_post(api, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
              search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
     max_retry = 2
     post = {}
@@ -65,7 +65,7 @@ def get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int =
     return post
 
 
-def _get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
+def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
               search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
     _api_util.one_thread(api)
 

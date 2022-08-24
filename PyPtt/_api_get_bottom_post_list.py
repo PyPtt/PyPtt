@@ -10,7 +10,7 @@ from . import i18n
 from . import screens
 
 
-def get_bottom_post_list(api: PyPtt.API, board):
+def get_bottom_post_list(api, board):
     _api_util.one_thread(api)
 
     if not api._login_status:

@@ -15,7 +15,7 @@ from . import screens
 from .data_type import Board
 
 
-def get_content(api: PyPtt.API, post_mode: bool = True):
+def get_content(api, post_mode: bool = True):
     logger = Logger('get_content')
     api.Unconfirmed = False
 
@@ -239,7 +239,7 @@ def get_mailbox_capacity(api):
 # │ 這一篇文章值 2 Ptt幣                                              │
 # └── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┘
 
-def parse_query_post(api: PyPtt.API, ori_screen):
+def parse_query_post(api, ori_screen):
     logger = Logger('parse_query_post')
     lock_post = False
     try:
@@ -441,7 +441,7 @@ def get_search_condition_cmd(
     return cmd_list, normal_newest_index
 
 
-def goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = False) -> None:
+def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> None:
     cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('qs')
@@ -505,7 +505,7 @@ def goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = Fa
         api.connect_core.send(cmd, target_list)
 
 
-def one_thread(api: PyPtt.API):
+def one_thread(api):
     current_thread_id = threading.get_ident()
     if current_thread_id == api._thread_id:
         return
@@ -513,7 +513,7 @@ def one_thread(api: PyPtt.API):
     raise exceptions.MultiThreadOperated()
 
 
-def _check_board(api: PyPtt.API, board: str, check_moderator: bool = False) -> Dict:
+def _check_board(api, board: str, check_moderator: bool = False) -> Dict:
     if board.lower() not in api._exist_board_list:
         board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)
         api._exist_board_list.append(board.lower())

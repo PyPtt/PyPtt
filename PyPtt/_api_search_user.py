@@ -10,7 +10,7 @@ from . import i18n
 from . import lib_util
 
 
-def search_user(api: PyPtt.API, ptt_id: str, min_page: int, max_page: int) -> list:
+def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
     logger = Logger('search_user')
 
     _api_util.one_thread(api)

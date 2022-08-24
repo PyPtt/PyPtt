@@ -14,7 +14,7 @@ from . import screens
 from .data_type import Board
 
 
-def get_board_info(api: PyPtt.API, board: str, get_post_kind: bool, call_by_others: bool) -> Dict:
+def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -> Dict:
     logger = Logger('get_board_info', Logger.DEBUG if call_by_others else Logger.INFO)
 
     _api_util.one_thread(api)

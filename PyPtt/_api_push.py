@@ -2,8 +2,7 @@ import time
 
 from SingleLog.log import Logger
 
-import PyPtt
-from . import NewIndex
+
 from . import _api_util
 from . import check_value
 from . import command
@@ -13,10 +12,9 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
-from .data_type import CommentType
 
 
-def _push(api: PyPtt.API,
+def _push(api,
           board: str,
           push_type: int,
           push_content: str,
@@ -139,7 +137,7 @@ def _push(api: PyPtt.API,
         target_list)
 
 
-def push(api: PyPtt.API, board: str, push_type: CommentType, push_content: str, post_aid: str, post_index: int) -> None:
+def push(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str, post_index: int) -> None:
     _api_util.goto_board(api, board)
 
     if api.unregistered_user:
@@ -169,7 +167,7 @@ def push(api: PyPtt.API, board: str, push_type: CommentType, push_content: str, 
 
     if post_index != 0:
         newest_index = api.get_newest_index(
-            NewIndex.BBS,
+            data_type.NewIndex.BBS,
             board=board)
         check_value.check_index('post_index', post_index, newest_index)
 

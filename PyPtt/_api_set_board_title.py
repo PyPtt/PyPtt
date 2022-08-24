@@ -8,7 +8,7 @@ from . import i18n
 from . import lib_util
 
 
-def set_board_title(api: PyPtt.API, board: str, new_title: str) -> None:
+def set_board_title(api, board: str, new_title: str) -> None:
     # 第一支板主專用 api
     _api_util.one_thread(api)
 

@@ -15,7 +15,7 @@ from . import lib_util
 from . import screens
 
 
-def get_user(api: PyPtt.API, ptt_id: str) -> Dict:
+def get_user(api, ptt_id: str) -> Dict:
     logger = Logger('get_user')
 
     _api_util.one_thread(api)

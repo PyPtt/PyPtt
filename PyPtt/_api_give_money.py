@@ -8,7 +8,7 @@ from . import i18n
 from . import lib_util
 
 
-def give_money(api: PyPtt.API, ptt_id: str, money: int) -> None:
+def give_money(api, ptt_id: str, money: int) -> None:
     _api_util.one_thread(api)
 
     if not api._login_status:

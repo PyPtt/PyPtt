@@ -3,8 +3,6 @@ from typing import Dict
 
 from SingleLog.log import Logger
 
-import PyPtt
-from . import NewIndex
 from . import _api_util
 from . import check_value
 from . import command
@@ -17,7 +15,7 @@ from . import screens
 
 
 # 寄信
-def mail(api: PyPtt.API,
+def mail(api,
          ptt_id: str,
          title: str,
          content: str,
@@ -145,7 +143,7 @@ mail_date_pattern = re.compile('時間  (.+)')
 ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 
-def get_mail(api: PyPtt.API, index: int, search_type: int = 0, search_condition: str = None,
+def get_mail(api, index: int, search_type: int = 0, search_condition: str = None,
              search_list: list = None) -> Dict:
     logger = Logger('get_mail')
 
@@ -159,7 +157,7 @@ def get_mail(api: PyPtt.API, index: int, search_type: int = 0, search_condition:
 
     if index == 0:
         return {}
-    current_index = api.get_newest_index(NewIndex.MAIL)
+    current_index = api.get_newest_index(data_type.NewIndex.MAIL)
     api.logger.info('current_index', current_index)
     check_value.check_index('index', index, current_index)
 
@@ -308,7 +306,7 @@ def get_mail(api: PyPtt.API, index: int, search_type: int = 0, search_condition:
         'is_red_envelope': red_envelope}
 
 
-def del_mail(api: PyPtt.API, index) -> None:
+def del_mail(api, index) -> None:
     _api_util.one_thread(api)
 
     if not api._login_status:
