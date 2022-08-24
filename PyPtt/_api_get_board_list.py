@@ -1,7 +1,6 @@
 import progressbar
 from SingleLog.log import Logger
 
-import PyPtt
 from . import _api_util
 from . import command
 from . import connect_core

@@ -230,7 +230,8 @@ class API:
 
         return _api_post.post(self, board, title, content, title_index, sign_file)
 
-    def comment(self, board: str, comment_type: CommentType, comment_content: str, aid: str = None, index: int = 0) -> None:
+    def comment(self, board: str, comment_type: CommentType, comment_content: str, aid: str = None,
+                index: int = 0) -> None:
         """
         Comment the post.
 
