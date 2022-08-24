@@ -13,14 +13,15 @@ import websockets.http
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import command, version
+import PyPtt
+from . import command
 from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
 from .lib_util import AutoName
 
-websockets.http.USER_AGENT += f' PyPtt/{version}'
+websockets.http.USER_AGENT += f' PyPtt/{PyPtt.version}'
 
 ssl_context = ssl.create_default_context()
 

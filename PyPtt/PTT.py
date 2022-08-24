@@ -32,7 +32,7 @@ from . import i18n
 from . import lib_util
 from . import version
 from .connect_core import ConnectMode
-from .data_type import HOST, NewIndex, SearchType, ReplyTo
+from .data_type import HOST, NewIndex, SearchType, ReplyTo, CommentType
 
 
 class API:
@@ -230,7 +230,7 @@ class API:
 
         return _api_post.post(self, board, title, content, title_index, sign_file)
 
-    def comment(self, board: str, comment_type: int, comment_content: str, aid: str = None, index: int = 0) -> None:
+    def comment(self, board: str, comment_type: CommentType, comment_content: str, aid: str = None, index: int = 0) -> None:
         """
         Comment the post.
 

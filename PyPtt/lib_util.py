@@ -6,14 +6,6 @@ import traceback
 from enum import Enum
 from typing import Tuple
 
-from PyPtt import check_value
-
-
-def check_range(define_obj, value) -> bool:
-    if value < define_obj.min_value or define_obj.max_value < value:
-        return False
-    return True
-
 
 def get_file_name(path_str: str) -> str:
     result = os.path.basename(path_str)

@@ -1,16 +1,11 @@
 from SingleLog.log import Logger
 
 from . import i18n
-from . import lib_util
 
 logger = Logger('check value')
 
 
-def check_type(
-        value_type,
-        name,
-        value,
-        value_class=None) -> None:
+def check_type(value_type, name, value) -> None:
     if not isinstance(value, value_type):
         if value_type is str:
             raise TypeError(f'{name} {i18n.must_be_a_string}')
@@ -19,16 +14,8 @@ def check_type(
         elif value_type is bool:
             raise TypeError(f'{name} {i18n.must_be_a_boolean}')
 
-    if value_class is not None:
-        if not lib_util.check_range(value_class, value):
-            raise ValueError(f'Unknown {name}', value)
 
-
-def check_range(
-        name,
-        value,
-        min_value,
-        max_value) -> None:
+def check_range(name, value, min_value, max_value) -> None:
     check_type(int, name, value)
     check_type(int, 'min_value', min_value)
     check_type(int, 'max_value', max_value)
@@ -38,10 +25,7 @@ def check_range(
     raise ValueError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
 
 
-def check_index(
-        name,
-        index,
-        max_value=None) -> None:
+def check_index(name, index, max_value=None) -> None:
     check_type(int, name, index)
     if index < 1:
         raise ValueError(f'{name} {i18n.must_bigger_than} 0')
