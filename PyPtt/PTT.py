@@ -102,7 +102,7 @@ class API:
         check_value.check_type(int, 'port', port)
         if port == 0:
             port = self.config.port
-        elif not 0 < port < 65535:
+        elif not (0 < port < 65535):
             raise ValueError('[PyPtt] Unknown port', port)
         else:
             self.config.port = port
@@ -203,13 +203,13 @@ class API:
                          search_condition: str = None, search_list: list = None) -> int:
 
         """
-        Get the index from board or mailbox.
+        Get the newest index from board or mailbox.
 
-        :param index_type:
-        :param board:
-        :param search_type:
-        :param search_condition:
-        :param search_list:
+        :param index_type: The index type. Check data_type.NewIndex.
+        :param board: The board name.
+        :param search_type: (Optional) the search type. Check data_type.SearchType.
+        :param search_condition: (Optional) the search condition.
+        :param search_list: (Optional) the search list including search type and search condition.
         :return the index:
         """
 
@@ -220,7 +220,7 @@ class API:
         """
         Post on PTT.
 
-        :param board: The name of PTT board.
+        :param board: The board name.
         :param title_index:
         :param title:
         :param content:
@@ -232,7 +232,7 @@ class API:
 
     def comment(self, board: str, comment_type: int, comment_content: str, aid: str = None, index: int = 0) -> None:
         """
-        Comment.
+        Comment the post.
 
         :param board: The name of PTT board.
         :param comment_type: The comment type. Check data_type.CommentType.
@@ -247,9 +247,9 @@ class API:
     def get_user(self, user_id) -> Dict:
 
         """
-        Get the information of the PTT user.
+        Get the information of The PTT user id.
 
-        :param user_id:
+        :param user_id: The PTT user id.
         :return: the user info in dict.
         """
 
@@ -258,9 +258,9 @@ class API:
     def give_money(self, ptt_id: str, money: int) -> None:
 
         """
-        Give money to ptt user.
+        Give money to The PTT user id.
 
-        :param ptt_id: The PTT user.
+        :param ptt_id: The PTT user id.
         :param money: The number of money.
         :return: None
         """
@@ -270,9 +270,9 @@ class API:
     def mail(self, ptt_id: str, title: str, content: str, sign_file, backup: bool = True) -> None:
 
         """
-        Mail to the PTT user.
+        Mail to The PTT user id.
 
-        :param ptt_id: The PTT user.
+        :param ptt_id: The PTT user id.
         :param title: The title of mail.
         :param content: The content of mail.
         :param sign_file: The sign file of mail.
@@ -347,7 +347,7 @@ class API:
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
 
         """
-        Bucket the PTT user.
+        Bucket The PTT user id.
 
         :param board: The board name.
         :param bucket_days: The days of bucket.
@@ -363,25 +363,25 @@ class API:
         """
         Search the PTT users.
 
-        :param ptt_id: All or part of the PTT id.
-        :param min_page:
-        :param max_page:
-        :return:
+        :param ptt_id: All or part of the PTT user id.
+        :param min_page: The min page of searching.
+        :param max_page: The max page of searching.
+        :return: The list of PTT users.
         """
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
-    def get_board_info(self, board: str, get_post_kind: bool = False) -> Dict:
+    def get_board_info(self, board: str, get_post_types: bool = False) -> Dict:
 
         """
         Get the board information.
 
         :param board: The board name.
-        :param get_post_kind: If ture this api will return all the post type.
+        :param get_post_types: If ture this api will return all the post types.
         :return: The dict of board information.
         """
 
-        return _api_get_board_info.get_board_info(self, board, get_post_kind, call_by_others=False)
+        return _api_get_board_info.get_board_info(self, board, get_post_types, call_by_others=False)
 
     def get_mail(self, index: int, search_type: int = 0, search_condition: str = None,
                  search_list: list = None) -> Dict:
@@ -463,4 +463,3 @@ class API:
 if __name__ == '__main__':
     print('PyPtt v ' + version)
     print('Developed by CodingMan')
-    print('Github: @PttCodingMan')
