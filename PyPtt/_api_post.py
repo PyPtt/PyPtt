@@ -9,7 +9,7 @@ from . import lib_util
 from . import screens
 
 
-def fast_post_step0(api: PyPtt.API, board: str, title: str, content: str, post_type: int) -> None:
+def fast_post_step0(api, board: str, title: str, content: str, post_type: int) -> None:
     _api_util.goto_board(api, board)
 
     cmd_list = []

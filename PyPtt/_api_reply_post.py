@@ -1,7 +1,6 @@
 from SingleLog.log import Logger
 
-import PyPtt
-from . import NewIndex
+
 from . import _api_util
 from . import check_value
 from . import command
@@ -11,7 +10,7 @@ from . import exceptions
 from . import i18n
 
 
-def reply_post(api: PyPtt.API, ReplyTo: int, board: str, content: str, sign_file, post_aid: str,
+def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid: str,
                post_index: int) -> None:
     logger = Logger('reply_post')
 
@@ -30,7 +29,7 @@ def reply_post(api: PyPtt.API, ReplyTo: int, board: str, content: str, sign_file
 
     if post_index != 0:
         newest_index = api.get_newest_index(
-            NewIndex.BBS,
+            data_type.NewIndex.BBS,
             board=board)
         check_value.check_index(
             'post_index',

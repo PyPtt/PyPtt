@@ -9,7 +9,7 @@ from . import i18n
 from . import screens
 
 
-def get_post_index(api: PyPtt.API, board: str, aid: str) -> int:
+def get_post_index(api, board: str, aid: str) -> int:
     _api_util.goto_board(api, board)
 
     cmd_list = []

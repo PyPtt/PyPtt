@@ -1,5 +1,4 @@
-import PyPtt
-from . import NewIndex
+
 from . import _api_util
 from . import check_value
 from . import command
@@ -11,7 +10,7 @@ from . import lib_util
 from . import screens
 
 
-def del_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int = 0) -> None:
+def del_post(api, board: str, post_aid: str = None, post_index: int = 0) -> None:
     _api_util.one_thread(api)
 
     if api.unregistered_user:
@@ -36,7 +35,7 @@ def del_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int =
 
     if post_index != 0:
         newest_index = api.get_newest_index(
-            NewIndex.BBS,
+            data_type.NewIndex.BBS,
             board=board)
         check_value.check_index(
             'PostIndex',
