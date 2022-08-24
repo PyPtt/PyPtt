@@ -433,14 +433,12 @@ class API:
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
     def del_post(self, board, post_aid: str = None, post_index: int = 0) -> None:
-        
         """
         Delete the post.
-        
         :param board: The board name.
         :param post_aid: The aid of post. Choose one between post_index.
         :param post_index: The index of post. Choose one between post_aid.
-        :return: 
+        :return: None
         """
 
         _api_del_post.del_post(self, board, post_aid, post_index)
