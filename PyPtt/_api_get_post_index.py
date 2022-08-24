@@ -1,6 +1,6 @@
 from SingleLog.log import Logger
 
-from . import command
+from . import command, _api_util
 from . import connect_core
 from . import exceptions
 from . import i18n
@@ -11,7 +11,7 @@ def get_post_index(
         api,
         board: str,
         aid: str) -> int:
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
     cmd_list = list()
     cmd_list.append('#')

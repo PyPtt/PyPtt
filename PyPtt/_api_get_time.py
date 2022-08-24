@@ -11,7 +11,7 @@ pattern = re.compile('[\d]+:[\d][\d]')
 
 
 def get_time(api) -> str:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 

@@ -6,7 +6,7 @@ from . import i18n
 
 
 def change_pw(api: PyPtt.API, new_password: str) -> None:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

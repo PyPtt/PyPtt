@@ -7,7 +7,7 @@ from . import screens
 
 
 def bucket(api: PyPtt.API, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -20,13 +20,13 @@ def bucket(api: PyPtt.API, board: str, bucket_days: int, reason: str, ptt_id: st
     check_value.check_type(str, 'reason', reason)
     check_value.check_type(str, 'ptt_id', ptt_id)
 
-    api._get_user(ptt_id)
+    api.get_user(ptt_id)
 
     api._check_board(
         board,
         check_moderator=True)
 
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
     cmd_list = list()
     cmd_list.append('i')

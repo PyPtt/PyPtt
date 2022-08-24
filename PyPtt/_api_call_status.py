@@ -10,7 +10,7 @@ from . import screens
 
 
 def get_call_status(api) -> None:
-    # logger = Logger('get_call_status', Logger.INFO)
+    # logger = Logger('get_call_status')
 
     cmd_list = list()
     cmd_list.append(command.go_main_menu)

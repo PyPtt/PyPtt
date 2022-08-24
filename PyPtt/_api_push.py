@@ -3,7 +3,7 @@ import time
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, lib_util, check_value, NewIndex
+from . import command, lib_util, check_value, NewIndex, _api_util
 from . import connect_core
 from . import data_type
 from . import exceptions
@@ -17,7 +17,7 @@ def _push(api: PyPtt.API,
           push_content: str,
           post_aid: str,
           post_index: int) -> None:
-    logger = Logger('push', Logger.INFO)
+    logger = Logger('push')
 
     cmd_list = list()
 
@@ -134,13 +134,8 @@ def _push(api: PyPtt.API,
         target_list)
 
 
-def push(api: PyPtt.API,
-         board: str,
-         push_type: int,
-         push_content: str,
-         post_aid: str,
-         post_index: int) -> None:
-    api._goto_board(board)
+def push(api: PyPtt.API, board: str, push_type: int, push_content: str, post_aid: str, post_index: int) -> None:
+    _api_util.goto_board(api, board)
 
     if api.unregistered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())

@@ -10,7 +10,7 @@ from . import screens
 
 
 def get_bottom_post_list(api: PyPtt.API, board):
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -18,9 +18,9 @@ def get_bottom_post_list(api: PyPtt.API, board):
     check_value.check_type(str, 'board', board)
     api._check_board(board)
 
-    api._goto_board(board, end=True)
+    _api_util.goto_board(board, end=True)
 
-    logger = Logger('get_bottom_post_list', Logger.INFO)
+    logger = Logger('get_bottom_post_list')
 
     last_screen = api.connect_core.get_screen_queue()[-1]
 

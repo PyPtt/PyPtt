@@ -1,7 +1,7 @@
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, check_value, NewIndex
+from . import command, check_value, NewIndex, _api_util
 from . import connect_core
 from . import data_type
 from . import exceptions
@@ -15,9 +15,9 @@ def reply_post(api: PyPtt.API,
                sign_file,
                post_aid: str,
                post_index: int) -> None:
-    logger = Logger('reply_post', Logger.INFO)
+    logger = Logger('reply_post')
 
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -46,7 +46,7 @@ def reply_post(api: PyPtt.API,
 
     api._check_board(board)
 
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
     cmd_list = list()
 

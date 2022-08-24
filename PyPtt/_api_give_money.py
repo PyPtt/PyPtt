@@ -6,7 +6,7 @@ from . import i18n
 
 
 def give_money(api: PyPtt.API, ptt_id: str, money: int) -> None:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

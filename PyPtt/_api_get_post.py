@@ -73,7 +73,7 @@ def _get_post(
         search_condition: str = None,
         search_list: list = None,
         query: bool = False) -> Dict:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -127,9 +127,9 @@ def _get_post(
         check_value.check_index('post_index', post_index, newest_index)
 
     api._check_board(board)
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
-    logger = Logger('get_post', Logger.INFO)
+    logger = Logger('get_post')
 
     cmd_list = list()
 
