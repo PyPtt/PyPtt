@@ -1,6 +1,5 @@
 from SingleLog.log import Logger
 
-import PyPtt
 from . import _api_util
 from . import check_value
 from . import command
@@ -14,7 +13,6 @@ from . import screens
 
 def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, search_type: int,
               search_condition: str) -> None:
-
     _api_util.one_thread(api)
 
     if not api._login_status:

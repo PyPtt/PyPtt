@@ -1,4 +1,3 @@
-import PyPtt
 from . import command, _api_util
 from . import connect_core
 from . import exceptions
