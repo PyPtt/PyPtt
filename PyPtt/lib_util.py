@@ -6,6 +6,8 @@ import traceback
 from enum import Enum
 from typing import Tuple
 
+from . import check_value
+
 
 def get_file_name(path_str: str) -> str:
     result = os.path.basename(path_str)
