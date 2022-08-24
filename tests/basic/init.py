@@ -1,5 +1,5 @@
 import PyPtt
-from .. import util
+from tests import util
 
 
 def test():
@@ -53,4 +53,4 @@ def test():
 
 
 if __name__ == '__main__':
-    func()
+    test()
