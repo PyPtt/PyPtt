@@ -120,15 +120,12 @@ def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_in
 
     target_list = [
         connect_core.TargetUnit(
-            [i18n.DelAllMarkPost],
+            [i18n.del_all_mark_post],
             '刪除所有標記',
             response='y' + command.enter,
             log_level=Logger.INFO),
         connect_core.TargetUnit(
-            [
-                i18n.Mark,
-                i18n.success,
-            ],
+            [i18n.mark_success],
             screens.Target.InBoard,
             break_detect=True,
             log_level=Logger.INFO),
