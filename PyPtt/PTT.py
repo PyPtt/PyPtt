@@ -378,21 +378,12 @@ class API:
 
         _api_reply_post.reply_post(self, reply_type, board, content, sign_file, post_aid, post_index)
 
-    def set_board_title(
-            self,
-            board: str,
-            new_title: str) -> None:
+    def set_board_title(self, board: str, new_title: str) -> None:
 
         _api_set_board_title.set_board_title(self, board, new_title)
 
-    def mark_post(
-            self,
-            mark_type: int,
-            board: str,
-            post_aid: str = None,
-            post_index: int = 0,
-            search_type: int = 0,
-            search_condition: str = None) -> None:
+    def mark_post(self, mark_type: int, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
+                  search_condition: str = None) -> None:
 
         _api_mark_post.mark_post(self, mark_type, board, post_aid, post_index, search_type, search_condition)
 
@@ -402,8 +393,7 @@ class API:
 
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
 
-        _api_bucket.bucket(
-            self, board, bucket_days, reason, ptt_id)
+        _api_bucket.bucket(self, board, bucket_days, reason, ptt_id)
 
     def search_user(self, ptt_id: str, min_page: int = None, max_page: int = None) -> list:
 
@@ -419,7 +409,7 @@ class API:
 
     def del_mail(self, index):
 
-        return _api_mail.del_mail(self, index)
+        _api_mail.del_mail(self, index)
 
     def change_pw(self, new_password) -> None:
 
@@ -540,18 +530,8 @@ class API:
 
             self.connect_core.send(cmd, target_list)
 
-    def fast_post_step0(
-            self,
-            board: str,
-            title: str,
-            content: str,
-            post_type: int):
-        _api_post.fast_post_step0(
-            self,
-            board,
-            title,
-            content,
-            post_type)
+    def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
+        _api_post.fast_post_step0(self, board, title, content, post_type)
 
     def fast_post_step1(
             self,
@@ -568,10 +548,7 @@ class API:
 
         raise exceptions.MultiThreadOperated()
 
-    def _check_board(
-            self,
-            board: str,
-            check_moderator: bool = False) -> Board:
+    def _check_board(self, board: str, check_moderator: bool = False) -> Board:
 
         if board.lower() not in self._exist_board_list:
             board_info = _api_get_board_info.get_board_info(self, board, get_post_kind=False, call_by_others=False)
