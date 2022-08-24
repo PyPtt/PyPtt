@@ -16,7 +16,7 @@ def give_money(api: PyPtt.API, ptt_id: str, money: int) -> None:
 
     check_value.check_type(str, 'ptt_id', ptt_id)
     check_value.check_type(int, 'money', money)
-    # Check user
+    # Check data_type.user
     api.get_user(ptt_id)
 
     cmd_list = list()

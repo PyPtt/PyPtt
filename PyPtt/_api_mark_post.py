@@ -22,8 +22,8 @@ def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_in
     if api.unregistered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    check_value.check_type(int, 'mark_type', mark_type,
-                           value_class=data_type.mark_type)
+    check_value.check_type(int, 'MarkType', mark_type,
+                           value_class=data_type.MarkType)
     check_value.check_type(str, 'board', board)
     if post_aid is not None:
         check_value.check_type(str, 'PostAID', post_aid)
@@ -36,7 +36,7 @@ def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_in
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')
 
-    if mark_type != data_type.mark_type.DeleteD:
+    if mark_type != data_type.MarkType.DeleteD:
         if post_index != 0 and isinstance(post_aid, str):
             raise ValueError('wrong parameter post_index and post_aid can\'t both input')
 
@@ -68,7 +68,7 @@ def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_in
             post_index,
             max_value=newest_index)
 
-    if mark_type == data_type.mark_type.UNCONFIRMED:
+    if mark_type == data_type.MarkType.UNCONFIRMED:
         # 批踢踢兔沒有待證文章功能 QQ
         if api.config.host == data_type.HOST.PTT2:
             raise exceptions.HostNotSupport(lib_util.get_current_func_name())
@@ -105,15 +105,15 @@ def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_in
 
         cmd_list.append(command.enter)
 
-    if mark_type == data_type.mark_type.S:
+    if mark_type == data_type.MarkType.S:
         cmd_list.append('L')
-    elif mark_type == data_type.mark_type.D:
+    elif mark_type == data_type.MarkType.D:
         cmd_list.append('t')
-    elif mark_type == data_type.mark_type.DeleteD:
+    elif mark_type == data_type.MarkType.DeleteD:
         cmd_list.append(command.ctrl_d)
-    elif mark_type == data_type.mark_type.M:
+    elif mark_type == data_type.MarkType.M:
         cmd_list.append('m')
-    elif mark_type == data_type.mark_type.UNCONFIRMED:
+    elif mark_type == data_type.MarkType.UNCONFIRMED:
         cmd_list.append(command.ctrl_e + 'S')
 
     cmd = ''.join(cmd_list)

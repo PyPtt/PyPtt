@@ -1067,7 +1067,7 @@ print(f'總共有 {len(board_list)} 個看板')
 Since 0.8.28
 
 ```python
-favourite_board_list = ptt_bot.get_favourite_board()
+favourite_board_list = ptt_bot.get_favourite_boards()
 
 for board in favourite_board_list:
     # getBoard 板名
@@ -1176,19 +1176,19 @@ Since 0.8.26
 reply_post_index = 313
 
 ptt_bot.reply_post(
-    PTT.data_type.reply_type.BOARD,
+    PTT.data_type.ReplyTo.BOARD,
     'Test',
     '測試回應到板上，如有打擾抱歉',
     post_index=reply_post_index)
 
 ptt_bot.reply_post(
-    PTT.data_type.reply_type.MAIL,
+    PTT.data_type.ReplyTo.MAIL,
     'Test',
     '測試回應到信箱，如有打擾抱歉',
     post_index=reply_post_index)
 
 ptt_bot.reply_post(
-    PTT.data_type.reply_type.BOARD_MAIL,
+    PTT.data_type.ReplyTo.BOARD_MAIL,
     'Test',
     '測試回應到板上還有信箱，如有打擾抱歉',
     post_index=reply_post_index)
@@ -1309,20 +1309,20 @@ Since 0.8.26
 
 ```python
 # s 文章
-mark_type = PTT.data_type.mark_type.S
+MarkType = PTT.data_type.MarkType.S
 # 標記文章
-mark_type = PTT.data_type.mark_type.D
+MarkType = PTT.data_type.MarkType.D
 # 刪除標記文章
-mark_type = PTT.data_type.mark_type.DeleteD
+MarkType = PTT.data_type.MarkType.DeleteD
 # M 起來
 # Since 0.8.27
-mark_type = PTT.data_type.mark_type.M
+MarkType = PTT.data_type.MarkType.M
 # 待證實文章
 # Since 0.8.30
-mark_type = PTT.data_type.mark_type.UNCONFIRMED
+MarkType = PTT.data_type.MarkType.UNCONFIRMED
 
 ptt_bot.mark_post(
-    mark_type,
+    MarkType,
     'YourBoad',
     # AID 與 index 擇一使用
     post_aid='QQaid',
