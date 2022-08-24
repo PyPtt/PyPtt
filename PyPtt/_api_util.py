@@ -5,9 +5,11 @@ from typing import Dict
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, exceptions, _api_get_board_info
+from . import _api_get_board_info
+from . import command
 from . import connect_core
 from . import data_type
+from . import exceptions
 from . import i18n
 from . import screens
 from .data_type import Board

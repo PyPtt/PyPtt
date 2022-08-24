@@ -4,7 +4,9 @@ from typing import Dict
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, check_value, _api_util
+from . import _api_util
+from . import check_value
+from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n

@@ -5,15 +5,26 @@ import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
-from . import _api_get_newest_index, _api_give_money, _api_mail, _api_get_board_list, _api_reply_post, \
-    _api_set_board_title, _api_mark_post, _api_get_favourite_board, _api_bucket, _api_search_user, _api_get_board_info, \
-    _api_change_pw, _api_get_bottom_post_list, _api_del_post
+from . import _api_bucket
+from . import _api_change_pw
+from . import _api_del_post
+from . import _api_get_board_info
+from . import _api_get_board_list
+from . import _api_get_bottom_post_list
+from . import _api_get_favourite_board
+from . import _api_get_newest_index
 from . import _api_get_post
 from . import _api_get_time
 from . import _api_get_user
+from . import _api_give_money
 from . import _api_loginout
+from . import _api_mail
+from . import _api_mark_post
 from . import _api_post
 from . import _api_push
+from . import _api_reply_post
+from . import _api_search_user
+from . import _api_set_board_title
 from . import check_value
 from . import config
 from . import connect_core
@@ -34,7 +45,7 @@ class API:
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
 
-        self.logger.info(f'PyPtt v {version} developed by CoidngMan')
+        self.logger.info(f'PyPtt v {version} developed by CodingMan')
 
         self._mailbox_full = False
         self._ID = None

@@ -1,8 +1,11 @@
 import PyPtt
-from . import command, _api_util
+from . import _api_util
+from . import check_value
+from . import command
 from . import connect_core
 from . import exceptions
-from . import i18n, check_value, lib_util
+from . import i18n
+from . import lib_util
 from . import screens
 
 
