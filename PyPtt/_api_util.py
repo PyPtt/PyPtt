@@ -1,5 +1,6 @@
 import re
 import threading
+from typing import Dict
 
 from SingleLog.log import Logger
 
@@ -476,11 +477,11 @@ def goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = Fa
     if refresh:
         current_refresh = True
     else:
-        if board.lower() in _api_util._goto_board_list:
+        if board.lower() in api._goto_board_list:
             current_refresh = True
         else:
             current_refresh = False
-    _api_util._goto_board_list.append(board.lower())
+    api._goto_board_list.append(board.lower())
     api.connect_core.send(cmd, target_list, refresh=current_refresh)
 
     if end:
