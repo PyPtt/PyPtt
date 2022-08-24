@@ -1,12 +1,12 @@
 import PyPtt
-from . import command
+from . import command, _api_util
 from . import connect_core
 from . import exceptions
 from . import i18n
 
 
 def change_pw(api: PyPtt.API, new_password: str) -> None:
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

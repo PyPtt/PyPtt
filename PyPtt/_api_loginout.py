@@ -13,7 +13,7 @@ from . import screens
 
 
 def logout(api) -> None:
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         return
@@ -54,7 +54,7 @@ def logout(api) -> None:
 def login(api: PyPtt.API, ptt_id: str, ptt_pw: str, kick_other_login: bool):
     logger = Logger('api_login', api.config.log_level)
 
-    api._one_thread()
+    _api_util._one_thread(api)
 
     check_value.check_type(str, 'ptt_id', ptt_id)
     check_value.check_type(str, 'password', ptt_pw)

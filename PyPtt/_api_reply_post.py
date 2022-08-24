@@ -17,7 +17,7 @@ def reply_post(api: PyPtt.API,
                post_index: int) -> None:
     logger = Logger('reply_post', Logger.INFO)
 
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

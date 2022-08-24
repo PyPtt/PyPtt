@@ -1,7 +1,7 @@
 from SingleLog.log import Logger
 
 import PyPtt
-from . import check_value
+from . import check_value, _api_util
 from . import command
 from . import connect_core
 from . import data_type
@@ -11,17 +11,10 @@ from . import lib_util
 from . import screens
 
 
-def mark_post(
-        api: PyPtt.API,
-        mark_type: int,
-        board: str,
-        post_aid: str,
-        post_index: int,
-        search_type: int,
-        search_condition: str) -> None:
-    # logger = Logger('mark_post', Logger.INFO)
+def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_index: int, search_type: int,
+              search_condition: str) -> None:
 
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -38,8 +31,7 @@ def mark_post(
     check_value.check_type(int, 'SearchType', search_type,
                            value_class=data_type.SearchType)
     if search_condition is not None:
-        check_value.check_type(str,
-                               'SearchCondition', search_condition)
+        check_value.check_type(str, 'SearchCondition', search_condition)
 
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')

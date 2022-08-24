@@ -8,7 +8,7 @@ def set_board_title(api: PyPtt.api,
                     board: str,
                     new_title: str) -> None:
     # 第一支板主專用 api
-    api._one_thread()
+    _api_util._one_thread(api)
 
     api._goto_board(board)
 

@@ -2,7 +2,7 @@ import progressbar
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, exceptions
+from . import command, exceptions, _api_util
 from . import connect_core
 from . import i18n
 from . import screens
@@ -11,7 +11,7 @@ from . import screens
 def get_board_list(api: PyPtt.API) -> list:
     logger = Logger('get_board_list', Logger.INFO)
 
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
