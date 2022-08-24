@@ -13,7 +13,7 @@ def get_post_index(
         aid: str) -> int:
     _api_util.goto_board(api, board)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append('#')
     cmd_list.append(aid)
     cmd_list.append(command.enter)

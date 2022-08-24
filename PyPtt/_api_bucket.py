@@ -26,7 +26,7 @@ def bucket(api: PyPtt.API, board: str, bucket_days: int, reason: str, ptt_id: st
 
     _api_util.goto_board(api, board)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append('i')
     cmd_list.append(command.ctrl_p)
     cmd_list.append('w')
@@ -37,7 +37,7 @@ def bucket(api: PyPtt.API, board: str, bucket_days: int, reason: str, ptt_id: st
     cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(str(bucket_days))
     cmd_list.append(command.enter)
     cmd_list.append(reason)

@@ -19,7 +19,7 @@ def _push(api: PyPtt.API,
           post_index: int) -> None:
     logger = Logger('push')
 
-    cmd_list = list()
+    cmd_list = []
 
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
@@ -83,7 +83,7 @@ def _push(api: PyPtt.API,
         else:
             raise exceptions.NoSuchPost(board, post_index)
 
-    cmd_list = list()
+    cmd_list = []
 
     if index == 0:
         push_option_line = api.connect_core.get_screen_queue()[-1]
@@ -190,7 +190,7 @@ def push(api: PyPtt.API, board: str, push_type: int, push_content: str, post_aid
 
     push_content = push_content.strip()
 
-    push_list = list()
+    push_list = []
     while push_content:
         index = 0
         jump = 0

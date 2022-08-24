@@ -16,7 +16,7 @@ def get_board_list(api: PyPtt.API) -> list:
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('F')
     cmd_list.append(command.enter)
@@ -62,7 +62,7 @@ def get_board_list(api: PyPtt.API) -> list:
             max_value=max_no,
             redirect_stdout=True)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('F')
     cmd_list.append(command.enter)
@@ -70,7 +70,7 @@ def get_board_list(api: PyPtt.API) -> list:
     cmd_list.append('0')
     cmd = ''.join(cmd_list)
 
-    board_list = list()
+    board_list = []
     while True:
 
         api.connect_core.send(

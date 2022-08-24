@@ -62,7 +62,7 @@ def get_content(api: PyPtt.API, post_mode: bool = True):
     line_from_pattern = re.compile('[\d]+~[\d]+')
 
     content_start = '───────────────────────────────────────'
-    content_end = list()
+    content_end = []
     content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
@@ -75,7 +75,7 @@ def get_content(api: PyPtt.API, post_mode: bool = True):
     content_start_jump_set = False
 
     first_page = True
-    origin_post = list()
+    origin_post = []
     stop_dict = dict()
 
     while True:
@@ -378,7 +378,7 @@ def get_search_condition_cmd(
         # BBS
         board: str = None):
     # logger = Logger('get_search_condition_cmd')
-    cmd_list = list()
+    cmd_list = []
 
     normal_newest_index = -1
     if search_condition is not None:
@@ -439,7 +439,7 @@ def get_search_condition_cmd(
 
 
 def goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = False) -> None:
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('qs')
     cmd_list.append(board)
@@ -484,7 +484,7 @@ def goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = Fa
     api.connect_core.send(cmd, target_list, refresh=current_refresh)
 
     if end:
-        cmd_list = list()
+        cmd_list = []
         cmd_list.append('1')
         cmd_list.append(command.enter)
         cmd_list.append('$')

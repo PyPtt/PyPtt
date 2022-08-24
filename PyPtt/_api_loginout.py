@@ -20,7 +20,7 @@ def logout(api) -> None:
 
     logger = Logger('api_logout', api.config.log_level)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('g')
     cmd_list.append(command.enter)
@@ -224,7 +224,7 @@ def login(api: PyPtt.API, ptt_id: str, ptt_pw: str, kick_other_login: bool):
     # WILL = '\xfb'
     # NAWS = '\x1f'
 
-    cmd_list = list()
+    cmd_list = []
     # cmd_list.append(IAC + WILL + NAWS)
     cmd_list.append(ptt_id + ',')
     cmd_list.append(command.enter)

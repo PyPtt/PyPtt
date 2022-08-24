@@ -11,7 +11,7 @@ def get_favourite_board(api: PyPtt.API, ) -> list:
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('F')
     cmd_list.append(command.enter)
@@ -26,8 +26,8 @@ def get_favourite_board(api: PyPtt.API, ) -> list:
         )
     ]
 
-    board_list = list()
-    favourite_board_list = list()
+    board_list = []
+    favourite_board_list = []
     while True:
 
         api.connect_core.send(

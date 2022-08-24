@@ -33,7 +33,7 @@ def get_bottom_post_list(api: PyPtt.API, board):
         logger.info(i18n.catch_bottom_post_success)
         return list()
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.query_post)
     cmd = ''.join(cmd_list)
 
@@ -56,7 +56,7 @@ def get_bottom_post_list(api: PyPtt.API, board):
         ),
     ]
 
-    result = list()
+    result = []
     for _ in range(0, bottom_length):
         api.connect_core.send(cmd, target_list)
         last_screen = api.connect_core.get_screen_queue()[-1]
@@ -74,7 +74,7 @@ def get_bottom_post_list(api: PyPtt.API, board):
 
         result.append(current_post)
 
-        cmd_list = list()
+        cmd_list = []
         cmd_list.append(command.enter)
         cmd_list.append(command.up)
         cmd_list.append(command.query_post)

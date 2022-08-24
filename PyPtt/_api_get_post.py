@@ -124,7 +124,7 @@ def _get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int 
 
     logger = Logger('get_post')
 
-    cmd_list = list()
+    cmd_list = []
 
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
@@ -330,7 +330,7 @@ def _get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int 
     # print('=' * 20)
 
     content_start = '─── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──'
-    content_end = list()
+    content_end = []
     content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
@@ -343,7 +343,7 @@ def _get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int 
     post_content = None
     ip = None
     location = None
-    push_list = list()
+    push_list = []
 
     # 格式確認，亂改的我也沒辦法Q_Q
     origin_post_lines = origin_post.split('\n')
@@ -582,7 +582,7 @@ def _get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int 
     push_date_pattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
     push_ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
-    push_list = list()
+    push_list = []
 
     for line in origin_post_lines:
         if line.startswith('推'):

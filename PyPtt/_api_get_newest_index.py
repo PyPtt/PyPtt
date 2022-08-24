@@ -157,7 +157,7 @@ def get_newest_index(
 
     elif index_type == data_type.NewIndex.MAIL:
 
-        cmd_list = list()
+        cmd_list = []
         cmd_list.append(command.go_main_menu)
         cmd_list.append(command.ctrl_z)
         cmd_list.append('m')

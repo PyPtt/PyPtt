@@ -9,7 +9,7 @@ from . import screens
 def fast_post_step0(api: PyPtt.API, board: str, title: str, content: str, post_type: int) -> None:
     _api_util.goto_board(api, board)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.ctrl_p)
     cmd_list.append(str(post_type))
     cmd_list.append(command.enter)
@@ -105,7 +105,7 @@ def fast_post(
         sign_file) -> None:
     _api_util.goto_board(api, board)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.ctrl_p)
     cmd_list.append(str(post_type))
     cmd_list.append(command.enter)
@@ -194,7 +194,7 @@ def post(
 
     # logger = Logger('post')
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.ctrl_p)
 
     cmd = ''.join(cmd_list)
@@ -225,7 +225,7 @@ def post(
 
     screens.show(api.config, api.connect_core.get_screen_queue())
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(str(title_index))
     cmd_list.append(command.enter)
     cmd_list.append(str(title))

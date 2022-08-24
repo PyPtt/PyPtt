@@ -15,7 +15,7 @@ def get_time(api) -> str:
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('A')
     cmd_list.append(command.right)

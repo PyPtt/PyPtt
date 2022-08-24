@@ -27,7 +27,7 @@ def get_user(api: PyPtt.API, ptt_id: str) -> Dict:
     if len(ptt_id) < 2:
         raise ValueError(f'wrong parameter user_id: {ptt_id}')
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
     cmd_list.append(command.enter)

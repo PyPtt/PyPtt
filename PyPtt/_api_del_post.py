@@ -60,7 +60,7 @@ def del_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int =
 
     _api_util.goto_board(api, board)
 
-    cmd_list = list()
+    cmd_list = []
 
     if post_aid is not None:
         cmd_list.append('#' + post_aid)

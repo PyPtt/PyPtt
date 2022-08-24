@@ -19,7 +19,7 @@ def give_money(api: PyPtt.API, ptt_id: str, money: int) -> None:
     # Check data_type.user
     api.get_user(ptt_id)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('P')
     cmd_list.append(command.enter)

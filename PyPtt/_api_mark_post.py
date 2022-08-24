@@ -79,7 +79,7 @@ def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_in
 
     _api_util.goto_board(api, board)
 
-    cmd_list = list()
+    cmd_list = []
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
 
