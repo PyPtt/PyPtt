@@ -39,7 +39,7 @@ def del_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int =
             post_index,
             newest_index)
 
-    board_info = api._check_board(board)
+    board_info = _api_util._check_board(api, board)
 
     check_author = True
     for moderator in board_info.moderators:

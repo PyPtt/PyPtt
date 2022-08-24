@@ -22,9 +22,7 @@ def bucket(api: PyPtt.API, board: str, bucket_days: int, reason: str, ptt_id: st
 
     api.get_user(ptt_id)
 
-    api._check_board(
-        board,
-        check_moderator=True)
+    _api_util._check_board(api, board, check_moderator=True)
 
     _api_util.goto_board(api, board)
 

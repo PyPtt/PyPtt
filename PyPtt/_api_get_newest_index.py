@@ -103,7 +103,7 @@ def get_newest_index(
 
         check_value.check_type(str, 'board', board)
 
-        api._check_board(board)
+        _api_util._check_board(api, board)
         _api_util.goto_board(api, board)
 
         cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(

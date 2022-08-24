@@ -4,11 +4,12 @@ import threading
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, exceptions
+from . import command, exceptions, _api_get_board_info
 from . import connect_core
 from . import data_type
 from . import i18n
 from . import screens
+from .data_type import Board
 
 
 def get_content(api: PyPtt.API, post_mode: bool = True):
@@ -507,3 +508,21 @@ def one_thread(api: PyPtt.API):
         return
 
     raise exceptions.MultiThreadOperated()
+
+
+def _check_board(api: PyPtt.API, board: str, check_moderator: bool = False) -> Dict:
+    if board.lower() not in api._exist_board_list:
+        board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)
+        api._exist_board_list.append(board.lower())
+        api._board_info_list[board.lower()] = board_info
+
+        moderators = board_info[Board.moderators]
+        moderators = [x.lower() for x in moderators]
+        api._ModeratorList[board.lower()] = moderators
+        api._board_info_list[board.lower()] = board_info
+
+    if check_moderator:
+        if api._ID.lower() not in api._ModeratorList[board.lower()]:
+            raise exceptions.NeedModeratorPermission(board)
+
+    return api._board_info_list[board.lower()]

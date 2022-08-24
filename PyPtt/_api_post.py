@@ -188,7 +188,7 @@ def post(
     content = content.replace('\n', '\r\n')
     content = content.replace(random_tag, '\r\n')
 
-    api._check_board(board)
+    _api_util._check_board(api, board)
 
     _api_util.goto_board(api, board)
 

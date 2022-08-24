@@ -16,9 +16,9 @@ def get_bottom_post_list(api: PyPtt.API, board):
         raise exceptions.Requirelogin(i18n.require_login)
 
     check_value.check_type(str, 'board', board)
-    api._check_board(board)
+    _api_util._check_board(api, board)
 
-    _api_util.goto_board(board, end=True)
+    _api_util.goto_board(api, board, end=True)
 
     logger = Logger('get_bottom_post_list')
 

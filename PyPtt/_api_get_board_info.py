@@ -22,7 +22,7 @@ def get_board_info(api: PyPtt.API, board: str, get_post_kind: bool, call_by_othe
 
     check_value.check_type(str, 'board', board)
 
-    _api_util.goto_board(board, refresh=True)
+    _api_util.goto_board(api, board, refresh=True)
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)

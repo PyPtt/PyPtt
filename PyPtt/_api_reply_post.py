@@ -8,12 +8,7 @@ from . import exceptions
 from . import i18n
 
 
-def reply_post(api: PyPtt.API,
-               reply_type: int,
-               board: str,
-               content: str,
-               sign_file,
-               post_aid: str,
+def reply_post(api: PyPtt.API, reply_type: int, board: str, content: str, sign_file, post_aid: str,
                post_index: int) -> None:
     logger = Logger('reply_post')
 
@@ -44,7 +39,7 @@ def reply_post(api: PyPtt.API,
     if post_aid is not None and post_index != 0:
         raise ValueError('wrong parameter post_aid and post_index can\'t both input')
 
-    api._check_board(board)
+    _api_util._check_board(api, board)
 
     _api_util.goto_board(api, board)
 
