@@ -1,7 +1,10 @@
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, check_value, NewIndex, _api_util
+from . import NewIndex
+from . import _api_util
+from . import check_value
+from . import command
 from . import connect_core
 from . import data_type
 from . import exceptions

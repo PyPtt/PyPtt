@@ -4,11 +4,14 @@ from typing import Dict
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, _api_util
+from . import _api_util
+from . import check_value
+from . import command
 from . import connect_core
-from . import data_type, lib_util, check_value
+from . import data_type
 from . import exceptions
 from . import i18n
+from . import lib_util
 from . import screens
 
 

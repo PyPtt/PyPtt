@@ -1,16 +1,15 @@
 from SingleLog.log import Logger
 
-from . import command, _api_util
+import PyPtt
+from . import _api_util
+from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n
 from . import screens
 
 
-def get_post_index(
-        api,
-        board: str,
-        aid: str) -> int:
+def get_post_index(api: PyPtt.API, board: str, aid: str) -> int:
     _api_util.goto_board(api, board)
 
     cmd_list = []

@@ -2,8 +2,10 @@ import re
 
 from SingleLog.log import Logger
 
-from . import command, exceptions, _api_util
+from . import _api_util
+from . import command
 from . import connect_core
+from . import exceptions
 from . import i18n
 from . import screens
 

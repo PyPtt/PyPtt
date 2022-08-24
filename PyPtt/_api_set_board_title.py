@@ -1,7 +1,11 @@
 import PyPtt
-from . import command, exceptions, lib_util, check_value, _api_util
+from . import _api_util
+from . import check_value
+from . import command
 from . import connect_core
+from . import exceptions
 from . import i18n
+from . import lib_util
 
 
 def set_board_title(api: PyPtt.API, board: str, new_title: str) -> None:

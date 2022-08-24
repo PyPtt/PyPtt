@@ -1,7 +1,8 @@
 from SingleLog.log import Logger
 
 import PyPtt
-from . import check_value, _api_util
+from . import _api_util
+from . import check_value
 from . import command
 from . import connect_core
 from . import data_type

@@ -1,9 +1,13 @@
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, exceptions, lib_util, check_value, _api_util
+from . import _api_util
+from . import check_value
+from . import command
 from . import connect_core
+from . import exceptions
 from . import i18n
+from . import lib_util
 
 
 def search_user(api: PyPtt.API, ptt_id: str, min_page: int, max_page: int) -> list:
