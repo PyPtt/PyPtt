@@ -96,15 +96,12 @@ class waterball_operate_type:
 #     max_value = OtherSpecial
 
 
-class reply_type:
+class ReplyTo(IntEnum):
     # 回文類型
 
-    BOARD: int = 1
-    MAIL: int = 2
-    BOARD_MAIL: int = 3
-
-    min_value = BOARD
-    max_value = BOARD_MAIL
+    BOARD: int = auto()
+    MAIL: int = auto()
+    BOARD_MAIL: int = auto()
 
 
 class CommentType(IntEnum):
@@ -240,20 +237,17 @@ class HOST(AutoName):
     LOCALHOST = auto()
 
 
-class mark_type:
+class MarkType(IntEnum):
     # s 文章
-    S: int = 1
+    S: int = auto()
     # 標記文章
-    D: int = 2
+    D: int = auto()
     # 刪除標記文章
-    DeleteD: int = 3
+    DeleteD: int = auto()
     # M 起來
-    M: int = 4
+    M: int = auto()
     # 待證實文章
-    UNCONFIRMED: int = 5
-
-    min_value = S
-    max_value = UNCONFIRMED
+    UNCONFIRMED: int = auto()
 
 
 class FavouriteBoard:

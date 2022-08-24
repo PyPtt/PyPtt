@@ -6,8 +6,7 @@ from . import connect_core
 from . import i18n
 
 
-def search_user(
-        api: PyPtt.API, ptt_id: str, min_page: int, max_page: int) -> list:
+def search_user(api: PyPtt.API, ptt_id: str, min_page: int, max_page: int) -> list:
     logger = Logger('search_user')
 
     _api_util.one_thread(api)
@@ -20,19 +19,11 @@ def search_user(
 
     check_value.check_type(str, 'ptt_id', ptt_id)
     if min_page is not None:
-        check_value.check_index(
-            'min_page',
-            min_page)
+        check_value.check_index('min_page', min_page)
     if max_page is not None:
-        check_value.check_index(
-            'max_page',
-            max_page)
+        check_value.check_index('max_page', max_page)
     if min_page is not None and max_page is not None:
-        check_value.check_index_range(
-            'min_page',
-            min_page,
-            'max_page',
-            max_page)
+        check_value.check_index_range('min_page', min_page, 'max_page', max_page)
 
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
@@ -56,8 +47,7 @@ def search_user(
             i18n.any_key_continue,
             '任意鍵',
             break_detect=True,
-        ),
-    ]
+        )]
 
     resultlist = list()
 

@@ -21,7 +21,7 @@ from . import i18n
 from . import lib_util
 from . import version
 from .connect_core import ConnectMode
-from .data_type import HOST, NewIndex, SearchType
+from .data_type import HOST, NewIndex, SearchType, ReplyTo
 
 
 class API:
@@ -180,7 +180,7 @@ class API:
         :param board: the board name of PTT.
         :param aid: (Choose between aid and index) the aid of the PTT post.
         :param index: (Choose between aid and index) the index of the PTT post.
-        :param search_type: (Optional) the search type. Check SearchType.
+        :param search_type: (Optional) the search type. Check data_type.SearchType.
         :param search_condition: (Optional) the search condition.
         :param search_list: (Optional) the search list including search type and search condition.
         :param query: (Optional) Enable query or not.
@@ -230,10 +230,10 @@ class API:
         Comment.
 
         :param board: The name of PTT board.
-        :param comment_type: The comment type. Check CommentType.
+        :param comment_type: The comment type. Check data_type.CommentType.
         :param comment_content: The comment content.
-        :param post_aid: The aid of post you want to comment. Choose one between post_index.
-        :param post_index: The index of post you want to comment. Choose one between post_aid.
+        :param post_aid: The aid of post. Choose one between post_index.
+        :param post_index: The index of post. Choose one between post_aid.
         :return: None
         """
 
@@ -255,8 +255,8 @@ class API:
         """
         Give money to ptt user.
 
-        :param ptt_id: The PTT user you want give money.
-        :param money: The number of money you want to give.
+        :param ptt_id: The PTT user.
+        :param money: The number of money.
         :return: None
         """
 
@@ -264,35 +264,105 @@ class API:
 
     def mail(self, ptt_id: str, title: str, content: str, sign_file, backup: bool = True) -> None:
 
+        """
+        Mail to the PTT user.
+
+        :param ptt_id: The PTT user.
+        :param title: The title of mail.
+        :param content: The content of mail.
+        :param sign_file: The sign file of mail.
+        :param backup: If true the mail will store in your mailbox.
+        :return: None
+        """
+
         _api_mail.mail(self, ptt_id, title, content, sign_file, backup)
 
     def get_board_list(self) -> list:
 
+        """
+        Get the board list.
+        :return: The board list.
+        """
+
         return _api_get_board_list.get_board_list(self)
 
-    def reply_post(self, reply_type: int, board: str, content: str, sign_file=0, post_aid: str = None,
+    def reply_post(self, reply_to: ReplyTo, board: str, content: str, sign_file=0, post_aid: str = None,
                    post_index: int = 0) -> None:
 
-        _api_reply_post.reply_post(self, reply_type, board, content, sign_file, post_aid, post_index)
+        """
+        Replay the post.
+
+        :param reply_to: The place you want to reply to. (Check data_type.ReplyTo)
+        :param board: The board name.
+        :param content: The reply content.
+        :param sign_file: The sign file.
+        :param post_aid: The aid of the post.
+        :param post_index: The index of the post.
+        :return: None
+        """
+
+        _api_reply_post.reply_post(self, reply_to, board, content, sign_file, post_aid, post_index)
 
     def set_board_title(self, board: str, new_title: str) -> None:
+
+        """
+        Set the title of the board.
+        :param board: The board name.
+        :param new_title: The new title of the board.
+        :return: None
+        """
 
         _api_set_board_title.set_board_title(self, board, new_title)
 
     def mark_post(self, mark_type: int, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
                   search_condition: str = None) -> None:
 
+        """
+        Mark the post.
+
+        :param mark_type: The mark type. (Check data_type.MarkType)
+        :param board: The board name.
+        :param post_aid: The aid of the post.
+        :param post_index: The index of the post.
+        :param search_type: (Optional) the search type. Check data_type.SearchType.
+        :param search_condition: (Optional) the search condition.
+        :return: None
+        """
+
         _api_mark_post.mark_post(self, mark_type, board, post_aid, post_index, search_type, search_condition)
 
-    def get_favourite_board(self) -> list:
+    def get_favourite_boards(self) -> list:
+        """
+        Get the favourite boards.
+        :return: the list of favourite boards.
+        """
 
         return _api_get_favourite_board.get_favourite_board(self)
 
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
 
+        """
+        Bucket the PTT user.
+
+        :param board: The board name.
+        :param bucket_days: The days of bucket.
+        :param reason: The reason of bucket.
+        :param ptt_id: The bucket PTT user.
+        :return: None
+        """
+
         _api_bucket.bucket(self, board, bucket_days, reason, ptt_id)
 
     def search_user(self, ptt_id: str, min_page: int = None, max_page: int = None) -> list:
+
+        """
+        Search the PTT users.
+
+        :param ptt_id: All or part of the PTT id.
+        :param min_page:
+        :param max_page:
+        :return:
+        """
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
