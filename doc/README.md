@@ -1128,9 +1128,9 @@ Since 0.9.20
 get_post_kind = False
 
 if ptt_bot.config.host == PTT.data_type.host_type.PTT1:
-    board_info = ptt_bot.get_board_info('Gossiping', get_post_kind=get_post_kind)
+    board_info = ptt_bot.get_board_info('Gossiping', get_post_types=get_post_kind)
 else:
-    board_info = ptt_bot.get_board_info('WhoAmI', get_post_kind=get_post_kind)
+    board_info = ptt_bot.get_board_info('WhoAmI', get_post_types=get_post_kind)
 print('板名: ', board_info.board)
 print('線上人數: ', board_info.online_user)
 print('中文敘述: ', board_info.chinese_des)
