@@ -22,7 +22,7 @@ def mail(api: PyPtt.API,
          backup: bool = True) -> None:
     logger = Logger('main', Logger.INFO)
 
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -150,7 +150,7 @@ def get_mail(
         search_list: list = None) -> Dict:
     logger = Logger('get_mail', Logger.INFO)
 
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -310,7 +310,7 @@ def get_mail(
 
 
 def del_mail(api: PyPtt.API, index) -> None:
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

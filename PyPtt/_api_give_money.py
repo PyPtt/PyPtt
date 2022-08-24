@@ -1,12 +1,12 @@
 import PyPtt
-from . import command, lib_util, check_value
+from . import command, lib_util, check_value, _api_util
 from . import connect_core
 from . import exceptions
 from . import i18n
 
 
 def give_money(api: PyPtt.API, ptt_id: str, money: int) -> None:
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

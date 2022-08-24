@@ -1,5 +1,4 @@
-﻿import re
-import threading
+﻿import threading
 from typing import Dict, Tuple
 
 import requests
@@ -8,7 +7,7 @@ from SingleLog.log import LoggerLevel
 
 from . import _api_get_newest_index, _api_give_money, _api_mail, _api_get_board_list, _api_reply_post, \
     _api_set_board_title, _api_mark_post, _api_get_favourite_board, _api_bucket, _api_search_user, _api_get_board_info, \
-    _api_change_pw, _api_get_bottom_post_list, _api_del_post
+    _api_change_pw, _api_get_bottom_post_list, _api_del_post, _api_util
 from . import _api_get_post
 from . import _api_get_time
 from . import _api_get_user
@@ -16,12 +15,11 @@ from . import _api_loginout
 from . import _api_post
 from . import _api_push
 from . import check_value
-from . import command
 from . import config
 from . import connect_core
 from . import exceptions
 from . import i18n
-from . import screens
+from . import lib_util
 from . import version
 from .connect_core import ConnectMode
 from .data_type import HOST, Board, NewIndex, SearchType
@@ -253,90 +251,6 @@ class API:
 
         return _api_get_user.get_user(self, user_id)
 
-    # def throw_waterball(self, ptt_id, content) -> None:
-    #     self._one_thread()
-    #
-    #     if not self._login_status:
-    #         raise exceptions.Requirelogin(i18n.require_login)
-    #
-    #     if self.unregistered_user:
-    #         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-    #
-    #     check_value.check_type(str, 'ptt_id', ptt_id)
-    #     check_value.check_type(str, 'content', content)
-    #
-    #     if len(ptt_id) <= 2:
-    #         raise ValueError(f'wrong parameter ptt_id: {ptt_id}')
-    #
-    #     user = self._get_user(ptt_id)
-    #     if '不在站上' in user.status:
-    #         raise exceptions.UserOffline(ptt_id)
-    #
-    #     try:
-    #         from . import _api_waterball
-    #     except ModuleNotFoundError:
-    #         import _api_waterball
-    #
-    #     return _api_waterball.throw_waterball(self, ptt_id, content)
-    #
-    # def get_waterball(self, operate_type: int) -> list:
-    #     self._one_thread()
-    #
-    #     if not self._login_status:
-    #         raise exceptions.Requirelogin(i18n.require_login)
-    #
-    #     if self.unregistered_user:
-    #         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-    #
-    #     check_value.check_type(int, 'OperateType', operate_type, value_class=waterball_operate_type)
-    #
-    #     try:
-    #         from . import _api_waterball
-    #     except ModuleNotFoundError:
-    #         import _api_waterball
-    #
-    #     return _api_waterball.get_waterball(self, operate_type)
-    #
-    # def get_call_status(self) -> int:
-    #     self._one_thread()
-    #
-    #     if not self._login_status:
-    #         raise exceptions.Requirelogin(i18n.require_login)
-    #
-    #     if self.unregistered_user:
-    #         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-    #
-    #     return self._get_call_status()
-    #
-    # def _get_call_status(self) -> int:
-    #
-    #     try:
-    #         from . import _api_call_status
-    #     except ModuleNotFoundError:
-    #         import _api_call_status
-    #
-    #     return _api_call_status.get_call_status(self)
-    #
-    # def set_call_status(
-    #         self,
-    #         call_status) -> None:
-    #     self._one_thread()
-    #
-    #     if not self._login_status:
-    #         raise exceptions.Requirelogin(i18n.require_login)
-    #
-    #     if self.unregistered_user:
-    #         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-    #
-    #     check_value.check_type(int, 'call_status', call_status, value_class=call_status)
-    #
-    #     try:
-    #         from . import _api_call_status
-    #     except ModuleNotFoundError:
-    #         import _api_call_status
-    #
-    #     return _api_call_status.set_call_status(self, call_status)
-
     def give_money(self, ptt_id: str, money: int) -> None:
 
         """
@@ -352,22 +266,6 @@ class API:
     def mail(self, ptt_id: str, title: str, content: str, sign_file, backup: bool = True) -> None:
 
         _api_mail.mail(self, ptt_id, title, content, sign_file, backup)
-
-    # def has_new_mail(self) -> int:
-    #     self._one_thread()
-    #
-    #     if not self._login_status:
-    #         raise exceptions.Requirelogin(i18n.require_login)
-    #
-    #     if self.get_newest_index(NewIndex.MAIL) == 0:
-    #         return 0
-    #
-    #     try:
-    #         from . import _api_has_new_mail
-    #     except ModuleNotFoundError:
-    #         import _api_has_new_mail
-    #
-    #     return _api_has_new_mail.has_new_mail(self)
 
     def get_board_list(self) -> list:
 
@@ -407,7 +305,7 @@ class API:
 
         return _api_mail.get_mail(self, index, search_type, search_condition, search_list)
 
-    def del_mail(self, index):
+    def del_mail(self, index) -> None:
 
         _api_mail.del_mail(self, index)
 
@@ -417,46 +315,7 @@ class API:
 
     def get_aid_from_url(self, url: str) -> Tuple[str, str]:
 
-        # 檢查是否為字串
-        check_value.check_type(str, 'url', url)
-
-        # 檢查是否符合 PTT BBS 文章網址格式
-        pattern = re.compile('https://www.ptt.cc/bbs/[-.\w]+/M.[\d]+.A[.\w]*.html')
-        r = pattern.search(url)
-        if r is None:
-            raise ValueError('wrong parameter url must be www.ptt.cc post url')
-
-        # 演算法參考 https://www.ptt.cc/man/C_Chat/DE98/DFF5/DB61/M.1419434423.A.DF0.html
-        # aid 字元表
-        aid_table = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
-
-        board = url[23:]
-        board = board[:board.find('/')]
-
-        temp = url[url.rfind('/') + 1:].split('.')
-        # print(temp)
-
-        id_0 = int(temp[1])  # dec
-
-        aid_0 = ''
-        for _ in range(6):
-            index = id_0 % 64
-            aid_0 = f'{aid_table[index]}{aid_0}'
-            id_0 = int(id_0 / 64)
-
-        if temp[3] != 'html':
-            id_1 = int(temp[3], 16)  # hex
-            aid_1 = ''
-            for _ in range(2):
-                index = id_1 % 64
-                aid_1 = f'{aid_table[index]}{aid_1}'
-                id_1 = int(id_1 / 64)
-        else:
-            aid_1 = '00'
-
-        aid = f'{aid_0}{aid_1}'
-
-        return board, aid
+        return lib_util.get_aid_from_url(url)
 
     def get_bottom_post_list(self, board: str) -> list:
 
@@ -464,89 +323,17 @@ class API:
 
     def del_post(self, board, post_aid: str = None, post_index: int = 0) -> None:
 
-        return _api_del_post.del_post(self, board, post_aid, post_index)
+        _api_del_post.del_post(self, board, post_aid, post_index)
 
     def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
 
-        cmd_list = list()
-        cmd_list.append(command.go_main_menu)
-        cmd_list.append('qs')
-        cmd_list.append(board)
-        cmd_list.append(command.enter)
-        cmd_list.append(command.space)
-
-        cmd = ''.join(cmd_list)
-
-        target_list = [
-            connect_core.TargetUnit(
-                i18n.any_key_continue,
-                '任意鍵',
-                response=' ',
-                log_level=Logger.DEBUG
-            ),
-            connect_core.TargetUnit(
-                [
-                    '動畫播放中',
-                ],
-                '互動式動畫播放中',
-                response=command.ctrl_c,
-                log_level=Logger.DEBUG
-            ),
-            connect_core.TargetUnit(
-                [
-                    '進板成功',
-                ],
-                screens.Target.InBoard,
-                break_detect=True,
-                log_level=Logger.DEBUG
-            ),
-        ]
-
-        if refresh:
-            current_refresh = True
-        else:
-            if board.lower() in self._goto_board_list:
-                current_refresh = True
-            else:
-                current_refresh = False
-        self._goto_board_list.append(board.lower())
-        self.connect_core.send(cmd, target_list, refresh=current_refresh)
-
-        if end:
-            cmd_list = list()
-            cmd_list.append('1')
-            cmd_list.append(command.enter)
-            cmd_list.append('$')
-            cmd = ''.join(cmd_list)
-
-            target_list = [
-                connect_core.TargetUnit(
-                    '',
-                    screens.Target.InBoard,
-                    break_detect=True,
-                    log_level=Logger.DEBUG
-                ),
-            ]
-
-            self.connect_core.send(cmd, target_list)
+        _api_util._goto_board(self, board, refresh, end)
 
     def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
         _api_post.fast_post_step0(self, board, title, content, post_type)
 
-    def fast_post_step1(
-            self,
-            sign_file):
+    def fast_post_step1(self, sign_file):
         _api_post.fast_post_step1(self, sign_file)
-
-    def _one_thread(self) -> None:
-        current_thread_id = threading.get_ident()
-        if current_thread_id == self._thread_id:
-            return
-
-        self.logger.debug('thread id', self._thread_id)
-        self.logger.debug('current_thread_id', current_thread_id)
-
-        raise exceptions.MultiThreadOperated()
 
     def _check_board(self, board: str, check_moderator: bool = False) -> Board:
 

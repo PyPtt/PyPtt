@@ -1,8 +1,10 @@
 import re
 import time
+from typing import Dict
 
 from SingleLog.log import Logger
 
+import PyPtt
 from . import _api_util, check_value
 from . import command
 from . import connect_core
@@ -14,20 +16,13 @@ from .data_type import Post, Comment, NewIndex
 from .data_type import SearchType as st
 
 
-def get_post(
-        api,
-        board: str,
-        post_aid: str = None,
-        post_index: int = 0,
-        search_type: int = 0,
-        search_condition: str = None,
-        search_list: list = None,
-        query: bool = False) -> dict:
+def get_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
+             search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
     max_retry = 2
+    post = {}
     for i in range(max_retry):
 
         need_continue = False
-        post = None
         try:
             post = _get_post(
                 api,
@@ -55,7 +50,7 @@ def get_post(
                 raise
             need_continue = True
 
-        if post is None:
+        if not post:
             need_continue = True
         elif not post[Post.pass_format_check]:
             need_continue = True
@@ -77,8 +72,8 @@ def _get_post(
         search_type: int = 0,
         search_condition: str = None,
         search_list: list = None,
-        query: bool = False) -> dict:
-    api._one_thread()
+        query: bool = False) -> Dict:
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

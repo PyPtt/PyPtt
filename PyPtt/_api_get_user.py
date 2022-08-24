@@ -4,7 +4,7 @@ from typing import Dict
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command
+from . import command, _api_util
 from . import connect_core
 from . import data_type, lib_util, check_value
 from . import exceptions
@@ -15,7 +15,7 @@ from . import screens
 def get_user(api: PyPtt.API, ptt_id: str) -> Dict:
     logger = Logger('get_user', Logger.INFO)
 
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

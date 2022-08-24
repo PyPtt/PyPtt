@@ -1,12 +1,12 @@
 import PyPtt
-from . import command, exceptions
+from . import command, exceptions, _api_util
 from . import connect_core
 from . import data_type
 from . import i18n
 
 
 def get_favourite_board(api: PyPtt.API, ) -> list:
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

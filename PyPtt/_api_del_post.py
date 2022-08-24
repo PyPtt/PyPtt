@@ -1,5 +1,5 @@
 import PyPtt
-from . import command, lib_util, check_value, NewIndex
+from . import command, lib_util, check_value, NewIndex, _api_util
 from . import connect_core
 from . import data_type
 from . import exceptions
@@ -7,12 +7,8 @@ from . import i18n
 from . import screens
 
 
-def del_post(
-        api: PyPtt.API,
-        board,
-        post_aid: str = None,
-        post_index: int = 0) -> None:
-    api._one_thread()
+def del_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int = 0) -> None:
+    _api_util._one_thread(api)
 
     if api.unregistered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())

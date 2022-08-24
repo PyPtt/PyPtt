@@ -65,7 +65,7 @@ def get_newest_index(
         search_list: list = None,
         # BBS
         board: str = None) -> int:
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

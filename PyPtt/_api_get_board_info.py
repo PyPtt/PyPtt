@@ -4,7 +4,7 @@ from typing import Dict
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command, check_value
+from . import command, check_value, _api_util
 from . import connect_core
 from . import exceptions
 from . import i18n
@@ -17,14 +17,9 @@ def get_board_info(
         board: str,
         get_post_kind: bool,
         call_by_others: bool) -> Dict:
-    if call_by_others:
-        log_level = Logger.DEBUG
-    else:
-        log_level = Logger.INFO
+    logger = Logger('get_board_info', Logger.DEBUG if call_by_others else Logger.INFO)
 
-    logger = Logger('get_board_info', log_level)
-
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

@@ -1,9 +1,10 @@
 import re
+import threading
 
 from SingleLog.log import Logger
 
 import PyPtt
-from . import command
+from . import command, exceptions
 from . import connect_core
 from . import data_type
 from . import i18n
@@ -434,3 +435,75 @@ def get_search_condition_cmd(
             cmd_list.append(command.enter)
 
     return cmd_list, normal_newest_index
+
+
+def _goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = False) -> None:
+    cmd_list = list()
+    cmd_list.append(command.go_main_menu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(command.enter)
+    cmd_list.append(command.space)
+
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit(
+            i18n.any_key_continue,
+            '任意鍵',
+            response=' ',
+            log_level=Logger.DEBUG
+        ),
+        connect_core.TargetUnit(
+            [
+                '動畫播放中',
+            ],
+            '互動式動畫播放中',
+            response=command.ctrl_c,
+            log_level=Logger.DEBUG
+        ),
+        connect_core.TargetUnit(
+            [
+                '進板成功',
+            ],
+            screens.Target.InBoard,
+            break_detect=True,
+            log_level=Logger.DEBUG
+        ),
+    ]
+
+    if refresh:
+        current_refresh = True
+    else:
+        if board.lower() in api._goto_board_list:
+            current_refresh = True
+        else:
+            current_refresh = False
+    api._goto_board_list.append(board.lower())
+    api.connect_core.send(cmd, target_list, refresh=current_refresh)
+
+    if end:
+        cmd_list = list()
+        cmd_list.append('1')
+        cmd_list.append(command.enter)
+        cmd_list.append('$')
+        cmd = ''.join(cmd_list)
+
+        target_list = [
+            connect_core.TargetUnit(
+                '',
+                screens.Target.InBoard,
+                break_detect=True,
+                log_level=Logger.DEBUG
+            ),
+        ]
+
+        api.connect_core.send(cmd, target_list)
+
+
+def _one_thread(api: PyPtt.API):
+    current_thread_id = threading.get_ident()
+    if current_thread_id == api._thread_id:
+        return
+
+    raise exceptions.MultiThreadOperated()

@@ -1,5 +1,5 @@
 import PyPtt
-from . import command, check_value, lib_util
+from . import command, check_value, lib_util, _api_util
 from . import connect_core
 from . import exceptions
 from . import i18n
@@ -7,7 +7,7 @@ from . import screens
 
 
 def bucket(api: PyPtt.API, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

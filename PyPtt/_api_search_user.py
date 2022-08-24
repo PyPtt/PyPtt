@@ -10,7 +10,7 @@ def search_user(
         api: PyPtt.API, ptt_id: str, min_page: int, max_page: int) -> list:
     logger = Logger('search_user', Logger.INFO)
 
-    api._one_thread()
+    _api_util._one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
