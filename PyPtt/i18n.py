@@ -212,11 +212,25 @@ restore_connection: str = ''
 new_version: str = ''
 development_version: str = ''
 latest_version: str = ''
+del_all_mark_post: str = ''
+mark_success: str = ''
 
 
 def load(lang):
     if not isinstance(lang, Lang):
         raise ValueError('Unknown language', lang)
+
+    global mark_success
+    mark_success = specific_load(lang, [
+        '刪除所有標記文章',
+        'Del All Mark Post',
+    ])
+
+    global del_all_mark_post
+    del_all_mark_post = specific_load(lang, [
+        '刪除所有標記文章',
+        'Del All Mark Post',
+    ])
 
     global latest_version
     latest_version = specific_load(lang, [
