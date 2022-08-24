@@ -250,7 +250,7 @@ try:
     ptt_bot.login(
         ptt_id,
         password,
-        kick_other_login=True)
+        kick_other_session=True)
 except PTT.exceptions.LoginError:
     ptt_bot.log('登入失敗')
     sys.exit()
@@ -760,7 +760,7 @@ What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-ptt_bot.comment(test_board, PTT.data_type.CommentType.PUSH, content, post_index=test_index)
+ptt_bot.comment(test_board, PTT.data_type.CommentType.PUSH, content, index=test_index)
 ```
 執行結果
 
@@ -1179,19 +1179,19 @@ ptt_bot.reply_post(
     PTT.data_type.ReplyTo.BOARD,
     'Test',
     '測試回應到板上，如有打擾抱歉',
-    post_index=reply_post_index)
+    index=reply_post_index)
 
 ptt_bot.reply_post(
     PTT.data_type.ReplyTo.MAIL,
     'Test',
     '測試回應到信箱，如有打擾抱歉',
-    post_index=reply_post_index)
+    index=reply_post_index)
 
 ptt_bot.reply_post(
     PTT.data_type.ReplyTo.BOARD_MAIL,
     'Test',
     '測試回應到板上還有信箱，如有打擾抱歉',
-    post_index=reply_post_index)
+    index=reply_post_index)
 ```
 
 ---
@@ -1242,7 +1242,7 @@ Since 0.9.25
 
 ```python
 try:
-    ptt_bot.del_post('Test', post_index=index)
+    ptt_bot.del_post('Test', index=index)
     ptt_bot.log(f'Test {index} 刪除成功')
 except PTT.exceptions.no_permission:
     ptt_bot.log(f'Test {index} 無刪除權限')
@@ -1325,9 +1325,9 @@ ptt_bot.mark_post(
     MarkType,
     'YourBoad',
     # AID 與 index 擇一使用
-    post_aid='QQaid',
+    aid='QQaid',
     # Postindex 可搭配 search_type and SearchCondition 使用
-    post_index=10,
+    index=10,
     # Optional
     search_type=search_type,
     # Optional

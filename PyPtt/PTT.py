@@ -151,18 +151,18 @@ class API:
         else:
             self.logger.info(i18n.latest_version, version)
 
-    def login(self, ptt_id: str, ptt_pw: str, kick_other_login: bool = False) -> None:
+    def login(self, ptt_id: str, ptt_pw: str, kick_other_session: bool = False) -> None:
 
         """
         Login PTT.
 
         :param ptt_id: PTT id.
         :param ptt_pw: PTT password.
-        :param kick_other_login: kick other session or not while login.
+        :param kick_other_session: kick other session or not while login.
         :return: None
         """
 
-        _api_loginout.login(self, ptt_id, ptt_pw, kick_other_login)
+        _api_loginout.login(self, ptt_id, ptt_pw, kick_other_session)
 
     def logout(self) -> None:
         """
@@ -230,20 +230,19 @@ class API:
 
         return _api_post.post(self, board, title, content, title_index, sign_file)
 
-    def comment(self, board: str, comment_type: int, comment_content: str, post_aid: str = None,
-                post_index: int = 0) -> None:
+    def comment(self, board: str, comment_type: int, comment_content: str, aid: str = None, index: int = 0) -> None:
         """
         Comment.
 
         :param board: The name of PTT board.
         :param comment_type: The comment type. Check data_type.CommentType.
         :param comment_content: The comment content.
-        :param post_aid: The aid of post. Choose one between post_index.
-        :param post_index: The index of post. Choose one between post_aid.
+        :param aid: (Choose between aid and index) the aid of the PTT post.
+        :param index: (Choose between aid and index) the index of the PTT post.
         :return: None
         """
 
-        _api_push.push(self, board, comment_type, comment_content, post_aid, post_index)
+        _api_push.push(self, board, comment_type, comment_content, aid, index)
 
     def get_user(self, user_id) -> Dict:
 
@@ -292,8 +291,8 @@ class API:
 
         return _api_get_board_list.get_board_list(self)
 
-    def reply_post(self, reply_to: ReplyTo, board: str, content: str, sign_file=0, post_aid: str = None,
-                   post_index: int = 0) -> None:
+    def reply_post(self, reply_to: ReplyTo, board: str, content: str, sign_file=0, aid: str = None,
+                   index: int = 0) -> None:
 
         """
         Replay the post.
@@ -302,12 +301,12 @@ class API:
         :param board: The board name.
         :param content: The reply content.
         :param sign_file: The sign file.
-        :param post_aid: The aid of the post.
-        :param post_index: The index of the post.
+        :param aid: (Choose between aid and index) the aid of the PTT post.
+        :param index: (Choose between aid and index) the index of the PTT post.
         :return: None
         """
 
-        _api_reply_post.reply_post(self, reply_to, board, content, sign_file, post_aid, post_index)
+        _api_reply_post.reply_post(self, reply_to, board, content, sign_file, aid, index)
 
     def set_board_title(self, board: str, new_title: str) -> None:
 
@@ -320,7 +319,7 @@ class API:
 
         _api_set_board_title.set_board_title(self, board, new_title)
 
-    def mark_post(self, mark_type: int, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
+    def mark_post(self, mark_type: int, board: str, aid: str = None, index: int = 0, search_type: int = 0,
                   search_condition: str = None) -> None:
 
         """
@@ -328,14 +327,14 @@ class API:
 
         :param mark_type: The mark type. (Check data_type.MarkType)
         :param board: The board name.
-        :param post_aid: The aid of the post.
-        :param post_index: The index of the post.
+        :param aid: (Choose between aid and index) the aid of the PTT post.
+        :param index: (Choose between aid and index) the index of the PTT post.
         :param search_type: (Optional) the search type. Check data_type.SearchType.
         :param search_condition: (Optional) the search condition.
         :return: None
         """
 
-        _api_mark_post.mark_post(self, mark_type, board, post_aid, post_index, search_type, search_condition)
+        _api_mark_post.mark_post(self, mark_type, board, aid, index, search_type, search_condition)
 
     def get_favourite_boards(self) -> list:
         """
@@ -443,16 +442,16 @@ class API:
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
-    def del_post(self, board, post_aid: str = None, post_index: int = 0) -> None:
+    def del_post(self, board, aid: str = None, index: int = 0) -> None:
         """
         Delete the post.
         :param board: The board name.
-        :param post_aid: The aid of post. Choose one between post_index.
-        :param post_index: The index of post. Choose one between post_aid.
+        :param aid: (Choose between aid and index) the aid of the PTT post.
+        :param index: (Choose between aid and index) the index of the PTT post.
         :return: None
         """
 
-        _api_del_post.del_post(self, board, post_aid, post_index)
+        _api_del_post.del_post(self, board, aid, index)
 
     def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
         _api_post.fast_post_step0(self, board, title, content, post_type)
