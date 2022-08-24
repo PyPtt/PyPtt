@@ -13,6 +13,7 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
+from .data_type import CommentType
 
 
 def _push(api: PyPtt.API,
@@ -138,7 +139,7 @@ def _push(api: PyPtt.API,
         target_list)
 
 
-def push(api: PyPtt.API, board: str, push_type: int, push_content: str, post_aid: str, post_index: int) -> None:
+def push(api: PyPtt.API, board: str, push_type: CommentType, push_content: str, post_aid: str, post_index: int) -> None:
     _api_util.goto_board(api, board)
 
     if api.unregistered_user:
@@ -148,8 +149,10 @@ def push(api: PyPtt.API, board: str, push_type: int, push_content: str, post_aid
         raise exceptions.Requirelogin(i18n.require_login)
 
     check_value.check_type(str, 'board', board)
-    check_value.check_type(int, 'push_type',
-                           push_type, value_class=push_type)
+
+    if not isinstance(push_type, data_type.CommentType):
+        raise TypeError(f'CommentType must be data_type.CommentType')
+
     check_value.check_type(str, 'push_content', push_content)
     if post_aid is not None:
         check_value.check_type(str, 'post_aid', post_aid)

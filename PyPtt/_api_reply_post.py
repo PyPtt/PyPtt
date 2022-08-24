@@ -11,7 +11,7 @@ from . import exceptions
 from . import i18n
 
 
-def reply_post(api: PyPtt.API, reply_type: int, board: str, content: str, sign_file, post_aid: str,
+def reply_post(api: PyPtt.API, ReplyTo: int, board: str, content: str, sign_file, post_aid: str,
                post_index: int) -> None:
     logger = Logger('reply_post')
 
@@ -20,7 +20,9 @@ def reply_post(api: PyPtt.API, reply_type: int, board: str, content: str, sign_f
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(int, 'ReplyTo', reply_type, value_class=reply_type)
+    if not isinstance(ReplyTo, data_type.ReplyTo):
+        raise TypeError(f'ReplyTo must be data_type.ReplyTo')
+
     check_value.check_type(str, 'board', board)
     check_value.check_type(str, 'content', content)
     if post_aid is not None:
@@ -55,21 +57,21 @@ def reply_post(api: PyPtt.API, reply_type: int, board: str, content: str, sign_f
     cmd_list.append(command.enter * 2)
     cmd_list.append('r')
 
-    if reply_type == data_type.ReplyTo.BOARD:
+    if ReplyTo == data_type.ReplyTo.BOARD:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_board,
             '▲ 回應至',
             log_level=Logger.INFO,
             response='F' + command.enter
         )
-    elif reply_type == data_type.ReplyTo.MAIL:
+    elif ReplyTo == data_type.ReplyTo.MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_mail,
             '▲ 回應至',
             log_level=Logger.INFO,
             response='M' + command.enter
         )
-    elif reply_type == data_type.ReplyTo.BOARD_MAIL:
+    elif ReplyTo == data_type.ReplyTo.BOARD_MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_board_mail,
             '▲ 回應至',

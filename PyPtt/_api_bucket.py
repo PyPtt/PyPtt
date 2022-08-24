@@ -1,4 +1,4 @@
-import PyPtt
+
 from . import _api_util
 from . import check_value
 from . import command
@@ -9,7 +9,7 @@ from . import lib_util
 from . import screens
 
 
-def bucket(api: PyPtt.API, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
+def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
     _api_util.one_thread(api)
 
     if not api._login_status:

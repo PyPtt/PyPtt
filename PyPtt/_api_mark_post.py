@@ -23,14 +23,17 @@ def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_in
     if api.unregistered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    check_value.check_type(int, 'MarkType', mark_type,
-                           value_class=data_type.MarkType)
+    if not isinstance(mark_type, data_type.MarkType):
+        raise TypeError(f'mark_type must be data_type.MarkType')
+
     check_value.check_type(str, 'board', board)
     if post_aid is not None:
         check_value.check_type(str, 'PostAID', post_aid)
     check_value.check_type(int, 'PostIndex', post_index)
-    check_value.check_type(int, 'SearchType', search_type,
-                           value_class=data_type.SearchType)
+
+    if not isinstance(search_type, data_type.SearchType):
+        raise TypeError(f'search_type must be data_type.SearchType')
+
     if search_condition is not None:
         check_value.check_type(str, 'SearchCondition', search_condition)
 
