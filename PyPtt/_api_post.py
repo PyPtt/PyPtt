@@ -1,5 +1,5 @@
 import PyPtt
-from . import command
+from . import command, _api_util
 from . import connect_core
 from . import exceptions
 from . import i18n, check_value, lib_util
@@ -7,7 +7,7 @@ from . import screens
 
 
 def fast_post_step0(api: PyPtt.API, board: str, title: str, content: str, post_type: int) -> None:
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
     cmd_list = list()
     cmd_list.append(command.ctrl_p)
@@ -103,7 +103,7 @@ def fast_post(
         content: str,
         post_type: int,
         sign_file) -> None:
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
     cmd_list = list()
     cmd_list.append(command.ctrl_p)
@@ -166,7 +166,7 @@ def post(
         content: str,
         title_index: int,
         sign_file) -> None:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if api.unregistered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -190,9 +190,9 @@ def post(
 
     api._check_board(board)
 
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
-    # logger = Logger('post', Logger.INFO)
+    # logger = Logger('post')
 
     cmd_list = list()
     cmd_list.append(command.ctrl_p)

@@ -12,7 +12,7 @@ from . import screens
 
 
 def get_content(api: PyPtt.API, post_mode: bool = True):
-    logger = Logger('get_content', Logger.INFO)
+    logger = Logger('get_content')
     api.Unconfirmed = False
 
     def is_unconfirmed_handler(screen):
@@ -212,7 +212,7 @@ def get_mailbox_capacity(api):
     last_screen = api.connect_core.get_screen_queue()[-1]
     capacity_line = last_screen.split('\n')[2]
 
-    logger = Logger('get_mailbox_capacity', Logger.INFO)
+    logger = Logger('get_mailbox_capacity')
     logger.debug('capacity_line', capacity_line)
 
     pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
@@ -376,7 +376,7 @@ def get_search_condition_cmd(
         search_list: list = None,
         # BBS
         board: str = None):
-    # logger = Logger('get_search_condition_cmd', Logger.INFO)
+    # logger = Logger('get_search_condition_cmd')
     cmd_list = list()
 
     normal_newest_index = -1
@@ -437,7 +437,7 @@ def get_search_condition_cmd(
     return cmd_list, normal_newest_index
 
 
-def _goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = False) -> None:
+def goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = False) -> None:
     cmd_list = list()
     cmd_list.append(command.go_main_menu)
     cmd_list.append('qs')
@@ -475,11 +475,11 @@ def _goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = F
     if refresh:
         current_refresh = True
     else:
-        if board.lower() in api._goto_board_list:
+        if board.lower() in _api_util._goto_board_list:
             current_refresh = True
         else:
             current_refresh = False
-    api._goto_board_list.append(board.lower())
+    _api_util._goto_board_list.append(board.lower())
     api.connect_core.send(cmd, target_list, refresh=current_refresh)
 
     if end:
@@ -501,7 +501,7 @@ def _goto_board(api: PyPtt.API, board: str, refresh: bool = False, end: bool = F
         api.connect_core.send(cmd, target_list)
 
 
-def _one_thread(api: PyPtt.API):
+def one_thread(api: PyPtt.API):
     current_thread_id = threading.get_ident()
     if current_thread_id == api._thread_id:
         return

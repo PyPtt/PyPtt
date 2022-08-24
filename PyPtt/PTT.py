@@ -325,10 +325,6 @@ class API:
 
         _api_del_post.del_post(self, board, post_aid, post_index)
 
-    def _goto_board(self, board: str, refresh: bool = False, end: bool = False) -> None:
-
-        _api_util._goto_board(self, board, refresh, end)
-
     def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
         _api_post.fast_post_step0(self, board, title, content, post_type)
 

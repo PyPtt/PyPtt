@@ -14,7 +14,7 @@ from . import screens
 def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_index: int, search_type: int,
               search_condition: str) -> None:
 
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -77,7 +77,7 @@ def mark_post(api: PyPtt.API, mark_type: int, board: str, post_aid: str, post_in
         board,
         check_moderator=True)
 
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
     cmd_list = list()
     if post_aid is not None:

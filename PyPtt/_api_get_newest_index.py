@@ -14,7 +14,7 @@ from .data_type import SearchType, NewIndex
 
 
 def _get_newest_index(api) -> int:
-    logger = Logger('get_newest_index', Logger.INFO)
+    logger = Logger('get_newest_index')
     last_screen = api.connect_core.get_screen_queue()[-1]
     # print(last_screen)
     last_screen_list = last_screen.split('\n')
@@ -65,7 +65,7 @@ def get_newest_index(
         search_list: list = None,
         # BBS
         board: str = None) -> int:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
@@ -104,7 +104,7 @@ def get_newest_index(
         check_value.check_type(str, 'board', board)
 
         api._check_board(board)
-        api._goto_board(board)
+        _api_util.goto_board(api, board)
 
         cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
             api,

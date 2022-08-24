@@ -1,5 +1,5 @@
 import PyPtt
-from . import command, exceptions, lib_util, check_value
+from . import command, exceptions, lib_util, check_value, _api_util
 from . import connect_core
 from . import i18n
 
@@ -8,9 +8,9 @@ def set_board_title(api: PyPtt.api,
                     board: str,
                     new_title: str) -> None:
     # 第一支板主專用 api
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

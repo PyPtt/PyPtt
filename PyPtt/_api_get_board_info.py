@@ -12,21 +12,17 @@ from . import screens
 from .data_type import Board
 
 
-def get_board_info(
-        api: PyPtt.API,
-        board: str,
-        get_post_kind: bool,
-        call_by_others: bool) -> Dict:
+def get_board_info(api: PyPtt.API, board: str, get_post_kind: bool, call_by_others: bool) -> Dict:
     logger = Logger('get_board_info', Logger.DEBUG if call_by_others else Logger.INFO)
 
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
     check_value.check_type(str, 'board', board)
 
-    api._goto_board(board, refresh=True)
+    _api_util.goto_board(board, refresh=True)
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
@@ -68,7 +64,7 @@ def get_board_info(
             i18n.reading_board_info,
             '任意鍵繼續',
             break_detect=True,
-            log_level=log_level
+            log_level=Logger.DEBUG if call_by_others else Logger.INFO
         ),
     ]
 
@@ -197,7 +193,7 @@ def get_board_info(
     kind_list = None
     if get_post_kind:
 
-        api._goto_board(board)
+        _api_util.goto_board(api, board)
 
         # Go certain board, then post to get post type info
         cmd_list = list()

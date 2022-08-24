@@ -8,7 +8,7 @@ from . import screens
 
 
 def del_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int = 0) -> None:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if api.unregistered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -58,7 +58,7 @@ def del_post(api: PyPtt.API, board: str, post_aid: str = None, post_index: int =
         if api._ID.lower() != post_info['author'].lower():
             raise exceptions.NoPermission(i18n.no_permission)
 
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
     cmd_list = list()
 

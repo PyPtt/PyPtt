@@ -6,7 +6,7 @@ from . import i18n
 
 
 def get_favourite_board(api: PyPtt.API, ) -> list:
-    _api_util._one_thread(api)
+    _api_util.one_thread(api)
 
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)

@@ -3,7 +3,7 @@ from SingleLog.log import Logger
 from . import i18n
 from . import lib_util
 
-logger = Logger('check value', Logger.INFO)
+logger = Logger('check value')
 
 
 def check_type(
