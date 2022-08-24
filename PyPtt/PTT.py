@@ -177,24 +177,19 @@ class API:
         """
         Get the post of PTT.
 
-        :param board: the board name of PTT.
+        :param board: The board name.
         :param aid: (Choose between aid and index) the aid of the PTT post.
         :param index: (Choose between aid and index) the index of the PTT post.
         :param search_type: (Optional) the search type. Check data_type.SearchType.
         :param search_condition: (Optional) the search condition.
         :param search_list: (Optional) the search list including search type and search condition.
         :param query: (Optional) Enable query or not.
-        :return: the dict of post.
+        :return: The dict of post.
         """
         return _api_get_post.get_post(self, board, aid, index, search_type, search_condition, search_list, query)
 
-    def get_newest_index(
-            self,
-            index_type: NewIndex,
-            board: str = None,
-            search_type: SearchType = SearchType.NOPE,
-            search_condition: str = None,
-            search_list: list = None) -> int:
+    def get_newest_index(self, index_type: NewIndex, board: str = None, search_type: SearchType = SearchType.NOPE,
+                         search_condition: str = None, search_list: list = None) -> int:
 
         """
         Get the index from board or mailbox.
@@ -368,29 +363,85 @@ class API:
 
     def get_board_info(self, board: str, get_post_kind: bool = False) -> Dict:
 
+        """
+        Get the board information.
+
+        :param board: The board name.
+        :param get_post_kind: If ture this api will return all the post type.
+        :return: The dict of board information.
+        """
+
         return _api_get_board_info.get_board_info(self, board, get_post_kind, call_by_others=False)
 
-    def get_mail(self, index: int, search_type: int = 0, search_condition: str = None, search_list: list = None):
+    def get_mail(self, index: int, search_type: int = 0, search_condition: str = None,
+                 search_list: list = None) -> Dict:
+
+        """
+        Get the mail.
+
+        :param index: The index of mail.
+        :param search_type: (Optional) the search type. Check data_type.SearchType.
+        :param search_condition: (Optional) the search condition.
+        :param search_list: (Optional) the search list including search type and search condition.
+        :return: The dict of mail.
+        """
 
         return _api_mail.get_mail(self, index, search_type, search_condition, search_list)
 
     def del_mail(self, index) -> None:
 
+        """
+        Del the mail.
+
+        :param index: The index of mail.
+        :return:
+        """
+
         _api_mail.del_mail(self, index)
 
     def change_pw(self, new_password) -> None:
+
+        """
+        Change password!
+
+        :param new_password: The new password.
+        :return: None
+        """
 
         _api_change_pw.change_pw(self, new_password)
 
     def get_aid_from_url(self, url: str) -> Tuple[str, str]:
 
+        """
+        Extract the board name and aid from the ptt url.
+
+        :param url: The ptt url.
+        :return: Tuple[board, aid]
+        """
+
         return lib_util.get_aid_from_url(url)
 
     def get_bottom_post_list(self, board: str) -> list:
 
+        """
+        Get the bottom post list.
+
+        :param board: The board name.
+        :return: The list of the bottom posts.
+        """
+
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
     def del_post(self, board, post_aid: str = None, post_index: int = 0) -> None:
+        
+        """
+        Delete the post.
+        
+        :param board: The board name.
+        :param post_aid: The aid of post. Choose one between post_index.
+        :param post_index: The index of post. Choose one between post_aid.
+        :return: 
+        """
 
         _api_del_post.del_post(self, board, post_aid, post_index)
 
