@@ -1,3 +1,5 @@
+import time
+
 import PyPtt
 from tests import util
 
@@ -6,6 +8,8 @@ def test(ptt_bot: PyPtt.API):
     util.login(ptt_bot)
     ptt_bot.logout()
 
+    time.sleep(3)
+
     util.login(ptt_bot)
     ptt_bot.logout()
 
@@ -13,8 +17,7 @@ def test(ptt_bot: PyPtt.API):
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
-        PyPtt.HOST.PTT2
-    ]
+        PyPtt.HOST.PTT2]
 
     for host in host_list:
         ptt_bot = PyPtt.API(
