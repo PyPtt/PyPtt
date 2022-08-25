@@ -211,6 +211,7 @@ no_changes: str = ''
 restore_connection: str = ''
 new_version: str = ''
 development_version: str = ''
+current_version: str = ''
 latest_version: str = ''
 del_all_mark_post: str = ''
 mark_success: str = ''
@@ -232,9 +233,15 @@ def load(lang):
         'Del All Mark Post',
     ])
 
+    global current_version
+    current_version = specific_load(lang, [
+        '目前版本',
+        'Current version',
+    ])
+
     global latest_version
     latest_version = specific_load(lang, [
-        '已經是最新版本',
+        '正在執行最新版本',
         'Running the latest version',
     ])
 
