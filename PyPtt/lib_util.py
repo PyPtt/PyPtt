@@ -9,7 +9,9 @@ from typing import Tuple
 
 import requests
 
-from . import check_value, version
+from . import check_value
+from . import data_type
+from . import version
 
 
 def get_file_name(path_str: str) -> str:
@@ -27,11 +29,6 @@ def findnth(haystack, needle, n) -> int:
     if len(parts) <= n + 1:
         return -1
     return len(haystack) - len(parts[-1]) - len(needle)
-
-
-class AutoName(Enum):
-    def _generate_next_value_(name, start, count, last_values):
-        return name
 
 
 def get_random_str(length) -> str:
@@ -81,50 +78,49 @@ def get_aid_from_url(url: str) -> Tuple[str, str]:
     return board, aid
 
 
-remote_version: str = ''
-update: bool = False
-develop_version: bool = False
+sync_version_compare: data_type.Compare = data_type.Compare.UNKNOWN
+sync_version_result: str = ''
 
 
-def sync_version():
-    global remote_version
-    global update
-    global develop_version
+def sync_version() -> Tuple[data_type.Compare, str]:
+    global sync_version_compare
+    global sync_version_result
 
-    if not remote_version:
-        r = None
-        for i in range(5):
-            try:
-                r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/1.0/PyPtt/__init__.py',
-                                 timeout=3)
-                break
-            except requests.exceptions.ReadTimeout:
-                print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
-                time.sleep(0.5)
+    if sync_version_compare is not data_type.Compare.UNKNOWN:
+        return sync_version_compare, sync_version_result
 
-        if r is None:
-            return None, None, None
-        else:
-            text = r.text
+    r = None
+    for i in range(5):
+        try:
+            r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/1.0/PyPtt/__init__.py',
+                             timeout=3)
+            break
+        except requests.exceptions.ReadTimeout:
+            print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
+            time.sleep(0.5)
 
-            remote_version = [line for line in text.split('\n') if line.startswith('version')][0]
-            remote_version = remote_version[remote_version.find("'") + 1:]
-            remote_version = remote_version[:remote_version.find("'")]
+    if r is None:
+        return data_type.Compare.SAME, ''
 
-        version_list = [int(v) for v in version.split('.')]
-        new_version_list = [int(v) for v in remote_version.split('.')]
+    text = r.text
 
-        update = False
-        develop_version = False
-        for i in range(len(version_list)):
-            if new_version_list[i] < version_list[i]:
-                develop_version = True
-                break
-            if new_version_list[i] > version_list[i]:
-                update = True
-                break
+    remote_version = [line for line in text.split('\n') if line.startswith('version')][0]
+    remote_version = remote_version[remote_version.find("'") + 1:]
+    remote_version = remote_version[:remote_version.find("'")]
 
-    return remote_version, update, develop_version
+    version_list = [int(v) for v in version.split('.')]
+    remote_version_list = [int(v) for v in remote_version.split('.')]
+
+    sync_version_compare = data_type.Compare.SAME
+    for i in range(len(version_list)):
+        if remote_version_list[i] < version_list[i]:
+            sync_version_compare = data_type.Compare.BIGGER
+            break
+        if version_list[i] < remote_version_list[i]:
+            sync_version_compare = data_type.Compare.SMALLER
+            break
+
+    return sync_version_compare, remote_version
 
 
 if __name__ == '__main__':

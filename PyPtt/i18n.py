@@ -1,9 +1,10 @@
 from enum import auto
 
-from . import lib_util, version
+from . import data_type
+from . import version
 
 
-class Lang(lib_util.AutoName):
+class Lang(data_type.AutoName):
     MANDARIN = auto()
     ENGLISH = auto()
 

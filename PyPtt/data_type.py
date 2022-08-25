@@ -1,6 +1,9 @@
-from enum import auto, IntEnum
+from enum import auto, IntEnum, Enum
 
-from PyPtt.lib_util import AutoName
+
+class AutoName(Enum):
+    def _generate_next_value_(name, start, count, last_values):
+        return name
 
 
 def parse_para(value_type, parameter):
@@ -281,3 +284,10 @@ class Board:
     require_illegal_post = 'require_illegal_post'
     post_kind = 'post_kind'
     kind_list = 'kind_list'
+
+
+class Compare(IntEnum):
+    BIGGER = auto()
+    SAME = auto()
+    SMALLER = auto()
+    UNKNOWN = auto()

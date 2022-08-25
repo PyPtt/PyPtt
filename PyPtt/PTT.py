@@ -27,17 +27,18 @@ from . import _api_set_board_title
 from . import check_value
 from . import config
 from . import connect_core
+from . import data_type
 from . import i18n
 from . import lib_util
 from . import version
 from .connect_core import ConnectMode
-from .data_type import HOST, NewIndex, SearchType, ReplyTo, CommentType
 
 
 class API:
     def __init__(self, language: i18n.Lang = i18n.Lang.MANDARIN, log_level: LoggerLevel = Logger.INFO,
                  screen_timeout: int = 0, screen_long_timeout: int = 0, screen_post_timeout: int = 0,
-                 connect_mode: ConnectMode = ConnectMode.WEBSOCKETS, port: int = 0, log_handler=None, host=HOST.PTT1):
+                 connect_mode: ConnectMode = ConnectMode.WEBSOCKETS, port: int = 0, log_handler=None,
+                 host=data_type.HOST.PTT1):
 
         if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
@@ -60,7 +61,7 @@ class API:
             raise TypeError('[PyPtt] screen_timeout must be integer')
         if not isinstance(screen_long_timeout, int):
             raise TypeError('[PyPtt] screen_long_timeout must be integer')
-        if (not isinstance(host, HOST)) and (not isinstance(host, str)):
+        if (not isinstance(host, data_type.HOST)) and (not isinstance(host, str)):
             raise TypeError('[PyPtt] host must be HOST or a string')
 
         if screen_timeout != 0:
@@ -91,7 +92,7 @@ class API:
         else:
             raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
 
-        if host in [HOST.PTT1, HOST.PTT2] and connect_mode is ConnectMode.TELNET:
+        if host in [data_type.HOST.PTT1, data_type.HOST.PTT2] and connect_mode is ConnectMode.TELNET:
             raise ValueError('[PyPtt] TELNET is not available on PTT1 and PTT2')
 
         self.connect_core = connect_core.API(self.config)
@@ -119,21 +120,21 @@ class API:
         elif self.config.language == i18n.Lang.ENGLISH:
             self.logger.info(i18n.set_up_lang_module, i18n.english_module)
 
-        if self.config.host == HOST.PTT1:
+        if self.config.host == data_type.HOST.PTT1:
             self.logger.info(i18n.set_connect_host, i18n.PTT)
-        elif self.config.host == HOST.PTT2:
+        elif self.config.host == data_type.HOST.PTT2:
             self.logger.info(i18n.set_connect_host, i18n.PTT2)
-        elif self.config.host == HOST.LOCALHOST:
+        elif self.config.host == data_type.HOST.LOCALHOST:
             self.logger.info(i18n.set_connect_host, i18n.localhost)
         else:
             self.logger.info(i18n.set_connect_host, self.config.host)
 
-        remote_version, update, develop_version = lib_util.sync_version()
+        version_compare, remote_version = lib_util.sync_version()
 
-        if update:
-            self.logger.info(i18n.current_version, remote_version)
+        if version_compare is data_type.Compare.SMALLER:
+            self.logger.info(i18n.current_version, version)
             self.logger.info(i18n.new_version, remote_version)
-        elif develop_version:
+        elif version_compare is data_type.Compare.BIGGER:
             self.logger.info(i18n.development_version, version)
         else:
             self.logger.info(i18n.latest_version, version)
@@ -170,8 +171,9 @@ class API:
 
         return _api_get_time.get_time(self)
 
-    def get_post(self, board: str, aid: str = None, index: int = 0, search_type: SearchType = SearchType.NOPE,
-                 search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
+    def get_post(self, board: str, aid: str = None, index: int = 0,
+                 search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: str = None,
+                 search_list: list = None, query: bool = False) -> Dict:
         """
         Get the post of PTT.
 
@@ -186,8 +188,9 @@ class API:
         """
         return _api_get_post.get_post(self, board, aid, index, search_type, search_condition, search_list, query)
 
-    def get_newest_index(self, index_type: NewIndex, board: str = None, search_type: SearchType = SearchType.NOPE,
-                         search_condition: str = None, search_list: list = None) -> int:
+    def get_newest_index(self, index_type: data_type.NewIndex, board: str = None,
+                         search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: str = None,
+                         search_list: list = None) -> int:
 
         """
         Get the newest index from board or mailbox.
@@ -217,7 +220,7 @@ class API:
 
         _api_post.post(self, board, title, content, title_index, sign_file)
 
-    def comment(self, board: str, comment_type: CommentType, comment_content: str, aid: str = None,
+    def comment(self, board: str, comment_type: data_type.CommentType, comment_content: str, aid: str = None,
                 index: int = 0) -> None:
         """
         Comment the post.
@@ -279,7 +282,7 @@ class API:
 
         return _api_get_board_list.get_board_list(self)
 
-    def reply_post(self, reply_to: ReplyTo, board: str, content: str, sign_file=0, aid: str = None,
+    def reply_post(self, reply_to: data_type.ReplyTo, board: str, content: str, sign_file=0, aid: str = None,
                    index: int = 0) -> None:
 
         """
