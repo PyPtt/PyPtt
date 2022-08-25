@@ -43,7 +43,7 @@ develop_version: bool = False
 class API:
     def __init__(self, language: i18n.Lang = i18n.Lang.MANDARIN, log_level: LoggerLevel = Logger.INFO,
                  screen_timeout: int = 0, screen_long_timeout: int = 0, screen_post_timeout: int = 0,
-                 connect_mode=ConnectMode.WEBSOCKETS, port: int = 0, log_handler=None, host=HOST.PTT1):
+                 connect_mode: ConnectMode = ConnectMode.WEBSOCKETS, port: int = 0, log_handler=None, host=HOST.PTT1):
 
         if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
@@ -52,11 +52,13 @@ class API:
 
         self.logger.info(f'PyPtt v {version} developed by CodingMan')
 
-        self._mailbox_full = False
-        self._ID = None
-        self._login_status = False
-        self.registered_user = False
-        self.process_picks = 0
+        self.is_mailbox_full: bool = False
+        self.is_registered_user: bool = False
+        self.process_picks: int = 0
+
+        self._ptt_id: str = ''
+        self._ptt_pw: str = ''
+        self._is_login: bool = False
 
         self.config = config.Config()
 
@@ -252,7 +254,7 @@ class API:
         :return:
         """
 
-        return _api_post.post(self, board, title, content, title_index, sign_file)
+        _api_post.post(self, board, title, content, title_index, sign_file)
 
     def comment(self, board: str, comment_type: CommentType, comment_content: str, aid: str = None,
                 index: int = 0) -> None:
@@ -290,7 +292,7 @@ class API:
         :return: None
         """
 
-        return _api_give_money.give_money(self, ptt_id, money)
+        _api_give_money.give_money(self, ptt_id, money)
 
     def mail(self, ptt_id: str, title: str, content: str, sign_file, backup: bool = True) -> None:
 
