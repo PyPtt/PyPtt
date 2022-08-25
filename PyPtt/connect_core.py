@@ -19,7 +19,6 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
-from .lib_util import AutoName
 
 websockets.http.USER_AGENT += f' PyPtt/{PyPtt.version}'
 
@@ -27,7 +26,7 @@ ssl_context = ssl.create_default_context()
 
 
 @unique
-class ConnectMode(AutoName):
+class ConnectMode(data_type.AutoName):
     TELNET = auto()
     WEBSOCKETS = auto()
 
