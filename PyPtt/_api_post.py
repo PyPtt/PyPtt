@@ -170,7 +170,7 @@ def post(
         sign_file) -> None:
     _api_util.one_thread(api)
 
-    if api.unregistered_user:
+    if not api.registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     if not api._login_status:
