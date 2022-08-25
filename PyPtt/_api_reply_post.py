@@ -15,7 +15,7 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
 
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
     if not isinstance(ReplyTo, data_type.ReplyTo):

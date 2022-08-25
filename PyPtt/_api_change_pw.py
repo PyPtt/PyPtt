@@ -7,7 +7,7 @@ from . import i18n
 def change_pw(api, new_password: str) -> None:
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
     new_password = new_password[:8]
@@ -48,7 +48,7 @@ def change_pw(api, new_password: str) -> None:
         connect_core.TargetUnit(
             i18n.input_origin_password,
             '輸入原密碼',
-            response=api._Password + command.enter,
+            response=api._ptt_pw + command.enter,
             max_match=1),
         connect_core.TargetUnit(
             i18n.done,
@@ -63,7 +63,7 @@ def change_pw(api, new_password: str) -> None:
     if index < 0:
         raise exceptions.Timeout
 
-    api._Password = new_password
+    api._ptt_pw = new_password
 
     # ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)

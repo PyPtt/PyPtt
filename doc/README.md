@@ -227,7 +227,7 @@ if ptt_bot.unregistered_user:
     if ptt_bot.process_picks != 0:
         print(f'註冊單處理順位 {ptt_bot.process_picks}')
 
-if ptt_bot.registered_user:
+if ptt_bot.is_registered_user:
     print('已註冊使用者')
 
 # call ptt_bot other api

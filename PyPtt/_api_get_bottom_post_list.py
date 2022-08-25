@@ -12,7 +12,7 @@ from . import screens
 def get_bottom_post_list(api, board):
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
     check_value.check_type(str, 'board', board)

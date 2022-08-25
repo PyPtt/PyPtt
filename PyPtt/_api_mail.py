@@ -25,10 +25,10 @@ def mail(api,
 
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if not api.registered_user:
+    if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     check_value.check_type(str, 'ptt_id', ptt_id)
@@ -149,10 +149,10 @@ def get_mail(api, index: int, search_type: int = 0, search_condition: str = None
 
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if not api.registered_user:
+    if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     if index == 0:
@@ -309,10 +309,10 @@ def get_mail(api, index: int, search_type: int = 0, search_condition: str = None
 def del_mail(api, index) -> None:
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if not api.registered_user:
+    if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     current_index = api.get_newest_index(data_type.NewIndex.MAIL)
@@ -351,6 +351,6 @@ def del_mail(api, index) -> None:
         cmd,
         target_list)
 
-    if api._mailbox_full:
+    if api.is_mailbox_full:
         api.logout()
         raise exceptions.MailboxFull()

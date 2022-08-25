@@ -13,10 +13,10 @@ def set_board_title(api, board: str, new_title: str) -> None:
 
     _api_util.goto_board(api, board)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if not api.registered_user:
+    if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     check_value.check_type(str, 'board', board)

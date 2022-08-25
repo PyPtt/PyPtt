@@ -68,7 +68,7 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
               search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
     check_value.check_type(str, 'board', board)
