@@ -1,6 +1,6 @@
 from enum import auto
 
-from . import lib_util
+from . import lib_util, version
 
 
 class Lang(lib_util.AutoName):
@@ -33,7 +33,7 @@ def replace(string, *args):
     return string
 
 
-chinese_traditional_module: str = ''
+mandarin_module: str = ''
 english_module: str = ''
 init: str = ''
 connect_host: str = ''
@@ -215,11 +215,25 @@ current_version: str = ''
 latest_version: str = ''
 del_all_mark_post: str = ''
 mark_success: str = ''
+set_up_lang_module: str = ''
+welcome: str = ''
 
 
 def load(lang):
     if not isinstance(lang, Lang):
         raise ValueError('Unknown language', lang)
+
+    global welcome
+    welcome = specific_load(lang, [
+        f'PyPtt v {version} 由 CodingMan 開發',
+        f'PyPtt v {version} developed by CodingMan',
+    ])
+
+    global set_up_lang_module
+    set_up_lang_module = specific_load(lang, [
+        '設定語言模組',
+        'set up language module',
+    ])
 
     global mark_success
     mark_success = specific_load(lang, [
@@ -1241,15 +1255,15 @@ def load(lang):
         '必須為字串',
         'must be a string'])
 
-    global chinese_traditional_module
-    chinese_traditional_module = specific_load(lang, [
-        '繁體中文語言模組',
-        'traditional Chinese language module'])
+    global mandarin_module
+    mandarin_module = specific_load(lang, [
+        '繁體中文',
+        'mandarin'])
 
     global english_module
     english_module = specific_load(lang, [
-        '英文語言模組',
-        'english language module'])
+        '英文',
+        'english'])
 
     global init
     init = specific_load(lang, [
@@ -1259,12 +1273,12 @@ def load(lang):
     global connect_host
     connect_host = specific_load(lang, [
         '連線主機',
-        'the connection host'])
+        'the connect host'])
 
     global set_connect_host
     set_connect_host = specific_load(lang, [
         '設定連線主機',
-        'set up the connection host'])
+        'set up the connect host'])
 
     global PTT
     PTT = specific_load(lang, [

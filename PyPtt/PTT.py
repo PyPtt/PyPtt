@@ -50,8 +50,6 @@ class API:
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
 
-        self.logger.info(f'PyPtt v {version} developed by CodingMan')
-
         self.is_mailbox_full: bool = False
         self.is_registered_user: bool = False
         self.process_picks: int = 0
@@ -83,27 +81,8 @@ class API:
         self.config.language = language
         i18n.load(self.config.language)
 
-        if self.config.language == i18n.Lang.MANDARIN:
-            self.logger.info(i18n.chinese_traditional_module, i18n.init)
-        elif self.config.language == i18n.Lang.ENGLISH:
-            self.logger.info(i18n.english_module, i18n.init)
-
         self.config.host = host
         self.host = host
-
-        if self.config.host == HOST.PTT1:
-            self.logger.info(i18n.set_connect_host, i18n.PTT)
-        elif self.config.host == HOST.PTT2:
-            self.logger.info(i18n.set_connect_host, i18n.PTT2)
-        elif self.config.host == HOST.LOCALHOST:
-            self.logger.info(i18n.set_connect_host, i18n.localhost)
-        else:
-            self.logger.info(i18n.set_connect_host, self.config.host)
-
-        if isinstance(connect_mode, ConnectMode):
-            self.config.connect_mode = connect_mode
-        else:
-            raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
 
         check_value.check_type(int, 'port', port)
         if port == 0:
@@ -131,7 +110,6 @@ class API:
         self._board_info_list = dict()
 
         self.logger.debug('ThreadID', self._thread_id)
-        self.logger.info('PyPtt', i18n.init)
 
         global remote_version
         global update
@@ -171,6 +149,29 @@ class API:
                 if new_version_list[i] > version_list[i]:
                     update = True
                     break
+
+        self.logger.info(i18n.welcome)
+
+        self.logger.info('PyPtt', i18n.init)
+
+        if self.config.connect_mode == ConnectMode.TELNET:
+            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
+        elif self.config.connect_mode == ConnectMode.WEBSOCKETS:
+            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+
+        if self.config.language == i18n.Lang.MANDARIN:
+            self.logger.info(i18n.set_up_lang_module, i18n.mandarin_module)
+        elif self.config.language == i18n.Lang.ENGLISH:
+            self.logger.info(i18n.set_up_lang_module, i18n.english_module)
+
+        if self.config.host == HOST.PTT1:
+            self.logger.info(i18n.set_connect_host, i18n.PTT)
+        elif self.config.host == HOST.PTT2:
+            self.logger.info(i18n.set_connect_host, i18n.PTT2)
+        elif self.config.host == HOST.LOCALHOST:
+            self.logger.info(i18n.set_connect_host, i18n.localhost)
+        else:
+            self.logger.info(i18n.set_connect_host, self.config.host)
 
         if update:
             self.logger.info(i18n.current_version, remote_version)
