@@ -2,11 +2,14 @@ import os
 import random
 import re
 import string
+import time
 import traceback
 from enum import Enum
 from typing import Tuple
 
-from . import check_value
+import requests
+
+from . import check_value, version
 
 
 def get_file_name(path_str: str) -> str:
@@ -76,6 +79,52 @@ def get_aid_from_url(url: str) -> Tuple[str, str]:
     aid = f'{aid_0}{aid_1}'
 
     return board, aid
+
+
+remote_version: str = ''
+update: bool = False
+develop_version: bool = False
+
+
+def sync_version():
+    global remote_version
+    global update
+    global develop_version
+
+    if not remote_version:
+        r = None
+        for i in range(5):
+            try:
+                r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/1.0/PyPtt/__init__.py',
+                                 timeout=3)
+                break
+            except requests.exceptions.ReadTimeout:
+                print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
+                time.sleep(0.5)
+
+        if r is None:
+            return None, None, None
+        else:
+            text = r.text
+
+            remote_version = [line for line in text.split('\n') if line.startswith('version')][0]
+            remote_version = remote_version[remote_version.find("'") + 1:]
+            remote_version = remote_version[:remote_version.find("'")]
+
+        version_list = [int(v) for v in version.split('.')]
+        new_version_list = [int(v) for v in remote_version.split('.')]
+
+        update = False
+        develop_version = False
+        for i in range(len(version_list)):
+            if new_version_list[i] < version_list[i]:
+                develop_version = True
+                break
+            if new_version_list[i] > version_list[i]:
+                update = True
+                break
+
+    return remote_version, update, develop_version
 
 
 if __name__ == '__main__':
