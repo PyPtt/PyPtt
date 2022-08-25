@@ -28,7 +28,7 @@ def mail(api,
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if api.unregistered_user:
+    if not api.registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     check_value.check_type(str, 'ptt_id', ptt_id)
@@ -152,7 +152,7 @@ def get_mail(api, index: int, search_type: int = 0, search_condition: str = None
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if api.unregistered_user:
+    if not api.registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     if index == 0:
@@ -312,7 +312,7 @@ def del_mail(api, index) -> None:
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if api.unregistered_user:
+    if not api.registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     current_index = api.get_newest_index(data_type.NewIndex.MAIL)

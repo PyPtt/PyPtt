@@ -292,18 +292,18 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
         else:
             screens.Target.CursorToGoodbye.append('●(G)oodbye')
 
-    api.unregistered_user = True
+    unregistered_user = True
     if '(T)alk' in ori_screen:
-        api.unregistered_user = False
+        unregistered_user = False
     if '(P)lay' in ori_screen:
-        api.unregistered_user = False
+        unregistered_user = False
     if '(N)amelist' in ori_screen:
-        api.unregistered_user = False
+        unregistered_user = False
 
-    if api.unregistered_user:
+    if unregistered_user:
         logger.info(i18n.unregistered_user_cant_use_all_api)
 
-    api.registered_user = not api.unregistered_user
+    api.registered_user = not unregistered_user
 
     if api.process_picks != 0:
         logger.info(i18n.picks_in_register, api.process_picks)

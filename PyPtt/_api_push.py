@@ -139,7 +139,7 @@ def _push(api,
 def push(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str, post_index: int) -> None:
     _api_util.goto_board(api, board)
 
-    if api.unregistered_user:
+    if not api.registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     if not api._login_status:

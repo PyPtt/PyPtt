@@ -22,7 +22,7 @@ def get_user(api, ptt_id: str) -> Dict:
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if api.unregistered_user:
+    if not api.registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     check_value.check_type(str, 'UserID', ptt_id)

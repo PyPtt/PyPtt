@@ -1,4 +1,5 @@
 ﻿import threading
+import time
 from typing import Dict, Tuple
 
 import requests
@@ -34,6 +35,10 @@ from . import version
 from .connect_core import ConnectMode
 from .data_type import HOST, NewIndex, SearchType, ReplyTo, CommentType
 
+remote_version: str = ''
+update: bool = False
+develop_version: bool = False
+
 
 class API:
     def __init__(self, language: i18n.Lang = i18n.Lang.MANDARIN, log_level: LoggerLevel = Logger.INFO,
@@ -50,7 +55,6 @@ class API:
         self._mailbox_full = False
         self._ID = None
         self._login_status = False
-        self.unregistered_user = True
         self.registered_user = False
         self.process_picks = 0
 
@@ -124,27 +128,47 @@ class API:
         self.logger.debug('ThreadID', self._thread_id)
         self.logger.info('PyPtt', i18n.init)
 
-        r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/PyPtt/version.py', timeout=3)
-        remote_version = r.text
-        remote_version = remote_version[remote_version.find("'") + 1:]
-        remote_version = remote_version[:remote_version.find("'")]
+        global remote_version
+        global update
+        global develop_version
 
-        self.logger.debug('new version', remote_version)
+        if not remote_version:
+            r = None
+            for i in range(5):
+                try:
+                    r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/1.0/PyPtt/__init__.py',
+                                     timeout=3)
+                    break
+                except requests.exceptions.ReadTimeout:
+                    self.logger.debug('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
+                    time.sleep(0.5)
 
-        version_list = version.split('.')
-        new_version_list = remote_version.split('.')
+            if r is None:
+                self.logger.info(i18n.latest_version, version)
+            else:
+                text = r.text
 
-        update = False
-        develop_version = False
-        for i in range(len(remote_version)):
-            if new_version_list[i] < version_list[i]:
-                develop_version = True
-                break
-            if new_version_list[i] > version_list[i]:
-                update = True
-                break
+                remote_version = [line for line in text.split('\n') if line.startswith('version')][0]
+                remote_version = remote_version[remote_version.find("'") + 1:]
+                remote_version = remote_version[:remote_version.find("'")]
+
+            self.logger.debug('new version', remote_version)
+
+            version_list = [int(v) for v in version.split('.')]
+            new_version_list = [int(v) for v in remote_version.split('.')]
+
+            update = False
+            develop_version = False
+            for i in range(len(version_list)):
+                if new_version_list[i] < version_list[i]:
+                    develop_version = True
+                    break
+                if new_version_list[i] > version_list[i]:
+                    update = True
+                    break
 
         if update:
+            self.logger.info(i18n.current_version, remote_version)
             self.logger.info(i18n.new_version, remote_version)
         elif develop_version:
             self.logger.info(i18n.development_version, version)

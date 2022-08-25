@@ -77,7 +77,7 @@ def get_newest_index(
         raise TypeError(f'search_type must be SearchType, but {search_type}')
 
     if index_type == NewIndex.MAIL:
-        if api.unregistered_user:
+        if not api.registered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if board is not None:
