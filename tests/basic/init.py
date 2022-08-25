@@ -1,4 +1,5 @@
 import PyPtt
+from PyPtt.connect_core import ConnectMode
 from tests import util
 
 
@@ -23,6 +24,20 @@ def test():
     util.logger.info('===set host with PTT2===')
     ptt_bot = PyPtt.API(host=PyPtt.HOST.PTT2)
     util.logger.info('host result', ptt_bot.host)
+
+    util.logger.info('===set host with PTT and TELNET ===')
+    try:
+        PyPtt.API(host=PyPtt.HOST.PTT1, connect_mode=ConnectMode.TELNET)
+        assert False
+    except ValueError:
+        util.logger.info('通過')
+
+    util.logger.info('===set host with PTT2 and TELNET ===')
+    try:
+        PyPtt.API(host=PyPtt.HOST.PTT2, connect_mode=ConnectMode.TELNET)
+        assert False
+    except ValueError:
+        util.logger.info('通過')
 
     try:
         util.logger.info('===語言 99===')
