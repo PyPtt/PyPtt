@@ -55,5 +55,3 @@ def login(ptt_bot: PyPtt.API):
         if ptt_bot.process_picks != 0:
             logger.info(f'註冊單處理順位 {ptt_bot.process_picks}')
 
-    if ptt_bot.registered_user:
-        logger.info('已註冊使用者')

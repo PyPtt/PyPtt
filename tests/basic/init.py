@@ -15,13 +15,14 @@ def test():
     PyPtt.API(log_level=PyPtt.LOG_LEVEL.INFO)
     util.logger.info('===log SLIENT===')
     PyPtt.API(log_level=PyPtt.LOG_LEVEL.SILENT)
-    util.logger.info('===log SLIENT======')
 
+    util.logger.info('===set host with PTT===')
     ptt_bot = PyPtt.API(host=PyPtt.HOST.PTT1)
-    util.logger.info('host', ptt_bot.host)
+    util.logger.info('host result', ptt_bot.host)
 
+    util.logger.info('===set host with PTT2===')
     ptt_bot = PyPtt.API(host=PyPtt.HOST.PTT2)
-    util.logger.info('host', ptt_bot.host)
+    util.logger.info('host result', ptt_bot.host)
 
     try:
         util.logger.info('===語言 99===')
@@ -39,15 +40,6 @@ def test():
     except:
         util.logger.info('沒通過')
         assert False
-
-    # def handler(msg):
-    #     with open('log.txt', 'a', encoding='utf-8') as f:
-    #         f.write(msg + '\n')
-    #
-    #
-    # ptt_bot = PyPtt.API(
-    #     log_handler=handler)
-    # util.logger.info('Test log')
 
     util.logger.info('complete')
 
