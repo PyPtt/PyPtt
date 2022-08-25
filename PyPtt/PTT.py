@@ -1,8 +1,6 @@
 ﻿import threading
-import time
 from typing import Dict, Tuple
 
-import requests
 from SingleLog.log import Logger
 from SingleLog.log import LoggerLevel
 
@@ -34,10 +32,6 @@ from . import lib_util
 from . import version
 from .connect_core import ConnectMode
 from .data_type import HOST, NewIndex, SearchType, ReplyTo, CommentType
-
-remote_version: str = ''
-update: bool = False
-develop_version: bool = False
 
 
 class API:
@@ -111,45 +105,6 @@ class API:
 
         self.logger.debug('ThreadID', self._thread_id)
 
-        global remote_version
-        global update
-        global develop_version
-
-        if not remote_version:
-            r = None
-            for i in range(5):
-                try:
-                    r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/1.0/PyPtt/__init__.py',
-                                     timeout=3)
-                    break
-                except requests.exceptions.ReadTimeout:
-                    self.logger.debug('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
-                    time.sleep(0.5)
-
-            if r is None:
-                self.logger.info(i18n.latest_version, version)
-            else:
-                text = r.text
-
-                remote_version = [line for line in text.split('\n') if line.startswith('version')][0]
-                remote_version = remote_version[remote_version.find("'") + 1:]
-                remote_version = remote_version[:remote_version.find("'")]
-
-            self.logger.debug('new version', remote_version)
-
-            version_list = [int(v) for v in version.split('.')]
-            new_version_list = [int(v) for v in remote_version.split('.')]
-
-            update = False
-            develop_version = False
-            for i in range(len(version_list)):
-                if new_version_list[i] < version_list[i]:
-                    develop_version = True
-                    break
-                if new_version_list[i] > version_list[i]:
-                    update = True
-                    break
-
         self.logger.info(i18n.welcome)
 
         self.logger.info('PyPtt', i18n.init)
@@ -172,6 +127,8 @@ class API:
             self.logger.info(i18n.set_connect_host, i18n.localhost)
         else:
             self.logger.info(i18n.set_connect_host, self.config.host)
+
+        remote_version, update, develop_version = lib_util.sync_version()
 
         if update:
             self.logger.info(i18n.current_version, remote_version)
