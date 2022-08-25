@@ -113,37 +113,6 @@ class CommentType(IntEnum):
     ARROW: int = auto()
 
 
-class UserInfo:
-    def __init__(
-            self,
-            ptt_id,
-            money,
-            login_time,
-            account_verified,
-            legal_post,
-            illegal_post,
-            status,
-            mail,
-            last_login,
-            last_ip,
-            five_chess,
-            chess,
-            signature_file):
-        self.id: str = parse_para(str, ptt_id)
-        self.money: str = parse_para(str, money)
-        self.login_time: int = parse_para(int, login_time)
-        self.account_verified: bool = parse_para(bool, account_verified)
-        self.legal_post: int = parse_para(int, legal_post)
-        self.illegal_post: int = parse_para(int, illegal_post)
-        self.status: str = parse_para(str, status)
-        self.mail_status: str = parse_para(str, mail)
-        self.last_login: str = parse_para(str, last_login)
-        self.last_ip: str = parse_para(str, last_ip)
-        self.five_chess: str = parse_para(str, five_chess)
-        self.chess: str = parse_para(str, chess)
-        self.signature_file: str = parse_para(str, signature_file)
-
-
 class User:
     ptt_id = 'ptt_id',
     money = 'money',
