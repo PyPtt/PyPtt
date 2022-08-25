@@ -10,10 +10,10 @@ from . import lib_util
 def give_money(api, ptt_id: str, money: int) -> None:
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if not api.registered_user:
+    if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     check_value.check_type(str, 'ptt_id', ptt_id)
@@ -69,7 +69,7 @@ def give_money(api, ptt_id: str, money: int) -> None:
         connect_core.TargetUnit(
             i18n.verify_id,
             '完成交易前要重新確認您的身份',
-            response=api._Password + command.enter
+            response=api._ptt_pw + command.enter
         ),
         connect_core.TargetUnit(
             i18n.anonymous_transaction,

@@ -15,10 +15,10 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
               search_condition: str) -> None:
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if not api.registered_user:
+    if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     if not isinstance(mark_type, data_type.MarkType):

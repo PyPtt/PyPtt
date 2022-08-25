@@ -15,7 +15,7 @@ from . import screens
 def logout(api) -> None:
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         return
 
     logger = Logger('api_logout', api.config.log_level)
@@ -46,7 +46,7 @@ def logout(api) -> None:
     except RuntimeError:
         pass
 
-    api._login_status = False
+    api._is_login = False
 
     logger.info(i18n.logout, i18n.complete)
 
@@ -60,7 +60,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
     check_value.check_type(str, 'password', ptt_pw)
     check_value.check_type(bool, 'kick_other_login', kick_other_login)
 
-    if api._login_status:
+    if api._is_login:
         api.logout()
 
     api.config.kick_other_login = kick_other_login
@@ -75,14 +75,14 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
             return 'y' + command.enter
         return 'n' + command.enter
 
-    api._mailbox_full = False
+    api.is_mailbox_full = False
 
-    # def mailbox_full():
+    # def is_mailbox_full():
     #     log.log(
     #         api.config,
     #         Logger.INFO,
     #         i18n.MailBoxFull)
-    #     api._mailbox_full = True
+    #     api.is_mailbox_full = True
 
     def register_processing(screen):
         pattern = re.compile('[\d]+')
@@ -94,8 +94,8 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
     ptt_id = ptt_id.strip()
     ptt_pw = ptt_pw.strip()
 
-    api._ID = ptt_id
-    api._Password = ptt_pw
+    api._ptt_id = ptt_id
+    api._ptt_pw = ptt_pw
 
     api.config.kick_other_login = kick_other_login
 
@@ -247,11 +247,11 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
         logger.info(i18n.has_new_mail_goto_main_menu)
 
         if current_capacity > max_capacity:
-            api._mailbox_full = True
+            api.is_mailbox_full = True
 
             logger.info(i18n.mail_box_full)
 
-        if api._mailbox_full:
+        if api.is_mailbox_full:
             logger.info(i18n.use_mailbox_api_will_logout_after_execution)
 
         target_list = [
@@ -303,10 +303,10 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
     if unregistered_user:
         logger.info(i18n.unregistered_user_cant_use_all_api)
 
-    api.registered_user = not unregistered_user
+    api.is_registered_user = not unregistered_user
 
     if api.process_picks != 0:
         logger.info(i18n.picks_in_register, api.process_picks)
 
-    api._login_status = True
+    api._is_login = True
     logger.info(i18n.login_success)

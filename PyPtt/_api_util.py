@@ -524,7 +524,7 @@ def _check_board(api, board: str, check_moderator: bool = False) -> Dict:
         api._board_info_list[board.lower()] = board_info
 
     if check_moderator:
-        if api._ID.lower() not in api._ModeratorList[board.lower()]:
+        if api._ptt_id.lower() not in api._ModeratorList[board.lower()]:
             raise exceptions.NeedModeratorPermission(board)
 
     return api._board_info_list[board.lower()]

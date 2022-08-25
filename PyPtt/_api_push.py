@@ -139,10 +139,10 @@ def _push(api,
 def push(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str, post_index: int) -> None:
     _api_util.goto_board(api, board)
 
-    if not api.registered_user:
+    if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
     check_value.check_type(str, 'board', board)
@@ -181,7 +181,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
             max_push_length = 32
         else:
             api.logger.info(i18n.not_push_aligned)
-            max_push_length = 43 - len(api._ID)
+            max_push_length = 43 - len(api._ptt_id)
     else:
         api.logger.info(i18n.not_record_ip)
         #     推文對齊
@@ -190,7 +190,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
             max_push_length = 46
         else:
             api.logger.info(i18n.not_push_aligned)
-            max_push_length = 58 - len(api._ID)
+            max_push_length = 58 - len(api._ptt_id)
 
     push_content = push_content.strip()
 

@@ -67,7 +67,7 @@ def get_newest_index(
         board: str = None) -> int:
     _api_util.one_thread(api)
 
-    if not api._login_status:
+    if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
     if not isinstance(index_type, NewIndex):
@@ -77,7 +77,7 @@ def get_newest_index(
         raise TypeError(f'search_type must be SearchType, but {search_type}')
 
     if index_type == NewIndex.MAIL:
-        if not api.registered_user:
+        if not api.is_registered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if board is not None:
