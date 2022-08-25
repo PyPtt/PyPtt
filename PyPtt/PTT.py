@@ -113,10 +113,13 @@ class API:
         else:
             self.config.port = port
 
-        if self.config.connect_mode == ConnectMode.TELNET:
-            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
-        elif self.config.connect_mode == ConnectMode.WEBSOCKETS:
-            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+        if isinstance(connect_mode, ConnectMode):
+            self.config.connect_mode = connect_mode
+        else:
+            raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
+
+        if host in [HOST.PTT1, HOST.PTT2] and connect_mode is ConnectMode.TELNET:
+            raise ValueError('[PyPtt] TELNET is not available on PTT1 and PTT2')
 
         self.connect_core = connect_core.API(self.config)
         self._exist_board_list = []
