@@ -5,7 +5,7 @@ import threading
 import time
 import traceback
 import warnings
-from enum import auto, unique
+from enum import auto, unique, Enum
 
 import websockets
 import websockets.exceptions
@@ -26,7 +26,7 @@ ssl_context = ssl.create_default_context()
 
 
 @unique
-class ConnectMode(data_type.AutoName):
+class ConnectMode(Enum):
     TELNET = auto()
     WEBSOCKETS = auto()
 

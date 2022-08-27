@@ -934,7 +934,7 @@ try:
         # 簽名檔
         0)
 except PTT.exceptions.no_such_user:
-    print('No Such User')
+    print('No Such UserField')
 ```
 
 執行結果

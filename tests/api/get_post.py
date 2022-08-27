@@ -120,13 +120,13 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             util.logger.info('作者', post.get('author'))
             util.logger.info('標題', post.get('title'))
 
-            if post.get('delete_status') == PyPtt.PostDelStatus.exist:
+            if post.get('delete_status') == PyPtt.PostStatus.exist:
                 pass
                 # if not query:
                 #     util.logger.info('內文', post.get('content'))
-            elif post.get('delete_status') == PyPtt.PostDelStatus.deleted_by_author:
+            elif post.get('delete_status') == PyPtt.PostStatus.deleted_by_author:
                 util.logger.info('文章被作者刪除')
-            elif post.get('delete_status') == PyPtt.PostDelStatus.deleted_by_moderator:
+            elif post.get('delete_status') == PyPtt.PostStatus.deleted_by_moderator:
                 util.logger.info('文章被版主刪除')
             util.logger.info('=' * 50)
 

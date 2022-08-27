@@ -12,7 +12,7 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
-from .data_type import PostField, Comment, NewIndex
+from .data_type import PostField, CommentField, NewIndex
 from .data_type import SearchType as st
 
 
@@ -204,7 +204,7 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         PostField.url: None,
         PostField.ip: None,
         PostField.push_list: [],
-        PostField.delete_status: data_type.PostDelStatus.exist,
+        PostField.delete_status: data_type.PostStatus.exist,
         PostField.list_date: None,
         PostField.has_control_code: False,
         PostField.pass_format_check: False,
@@ -241,11 +241,11 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         pattern = re.compile('\[[\w]+\]')
         pattern_result = pattern.search(cursor_line)
         if pattern_result is not None:
-            post_del_status = data_type.PostDelStatus.deleted_by_author
+            post_del_status = data_type.PostStatus.deleted_by_author
         else:
             pattern = re.compile('<[\w]+>')
             pattern_result = pattern.search(cursor_line)
-            post_del_status = data_type.PostDelStatus.deleted_by_moderator
+            post_del_status = data_type.PostStatus.deleted_by_moderator
 
         # > 79843     9/11 -             □ (本文已被吃掉)<
         # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
@@ -254,7 +254,7 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
             post_author = pattern_result.group(0)[1:-1]
         else:
             post_author = None
-            post_del_status = data_type.PostDelStatus.deleted_by_unknown
+            post_del_status = data_type.PostStatus.deleted_by_unknown
 
         logger.debug('ListDate', list_date)
         logger.debug('PostAuthor', post_author)
@@ -629,11 +629,11 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         logger.debug(i18n.comment_content, push_content)
 
         current_push = {
-            Comment.type: comment_type,
-            Comment.author: push_author,
-            Comment.content: push_content,
-            Comment.ip: comment_ip,
-            Comment.time: push_date}
+            CommentField.type: comment_type,
+            CommentField.author: push_author,
+            CommentField.content: push_content,
+            CommentField.ip: comment_ip,
+            CommentField.time: push_date}
         push_list.append(current_push)
 
     post.update({

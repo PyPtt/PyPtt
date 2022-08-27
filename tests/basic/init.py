@@ -1,3 +1,5 @@
+from enum import Enum, auto, EnumMeta
+
 import PyPtt
 from PyPtt.connect_core import ConnectMode
 from tests import util

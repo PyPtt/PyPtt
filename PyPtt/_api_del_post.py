@@ -50,7 +50,7 @@ def del_post(api, board: str, post_aid: str = None, post_index: int = 0) -> None
             break
 
     post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
-    if post_info['delete_status'] != data_type.PostDelStatus.exist:
+    if post_info['delete_status'] != data_type.PostStatus.exist:
         if post_aid is not None:
             raise exceptions.DeletedPost(board, post_aid)
         else:

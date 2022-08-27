@@ -1,9 +1,6 @@
-from enum import auto, IntEnum, Enum
+from enum import auto, IntEnum
 
-
-class AutoName(Enum):
-    def _generate_next_value_(name, start, count, last_values):
-        return name
+from AutoStrEnum import AutoStrEnum
 
 
 def parse_para(value_type, parameter):
@@ -35,7 +32,7 @@ class call_status:
     max_value = OFF
 
 
-class SearchType(IntEnum):
+class SearchType(AutoStrEnum):
     """文章搜尋類型"""
 
     NOPE = auto()
@@ -63,71 +60,71 @@ class SearchType(IntEnum):
 #     MARK = auto()
 
 
-class ReplyTo(IntEnum):
+class ReplyTo(AutoStrEnum):
     # 回文類型
 
-    BOARD: int = auto()
-    MAIL: int = auto()
-    BOARD_MAIL: int = auto()
+    BOARD = auto()
+    MAIL = auto()
+    BOARD_MAIL = auto()
 
 
-class CommentType(IntEnum):
-    PUSH: int = auto()
-    BOO: int = auto()
-    ARROW: int = auto()
+class CommentType(AutoStrEnum):
+    PUSH = auto()
+    BOO = auto()
+    ARROW = auto()
 
 
-class User:
-    ptt_id = 'ptt_id',
-    money = 'money',
-    login_time = 'login_time',
-    legal_post = 'legal_post',
-    illegal_post = 'illegal_post',
-    status = 'status',
-    mail = 'mail',
-    last_login = 'last_login',
-    last_ip = 'last_ip',
-    five_chess = 'five_chess',
-    chess = 'chess',
-    signature_file = 'signature_file'
+class UserField(AutoStrEnum):
+    ptt_id = auto()
+    money = auto()
+    login_time = auto()
+    legal_post = auto()
+    illegal_post = auto()
+    status = auto()
+    mail = auto()
+    last_login = auto()
+    last_ip = auto()
+    five_chess = auto()
+    chess = auto()
+    signature_file = auto()
 
 
-class Comment:
-    type = 'type'
-    author = 'author'
-    content = 'content'
-    ip = 'ip'
-    time = 'time'
+class CommentField(AutoStrEnum):
+    type = auto()
+    author = auto()
+    content = auto()
+    ip = auto()
+    time = auto()
 
 
-class PostDelStatus:
-    exist = 'exist'
-    deleted_by_author = 'deleted_by_author'
-    deleted_by_moderator = 'deleted_by_moderator'
-    deleted_by_unknown = 'deleted_by_unknown'
+class PostStatus(AutoStrEnum):
+    exist = auto()
+    deleted_by_author = auto()
+    deleted_by_moderator = auto()
+    deleted_by_unknown = auto()
 
 
-class PostField:
-    board = 'board'
-    aid = 'aid'
-    index = 'index'
-    author = 'author'
-    date = 'date'
-    title = 'title'
-    content = 'content'
-    money = 'money'
-    url = 'url'
-    ip = 'ip'
-    push_list = 'push_list'
-    delete_status = 'delete_status'
-    list_date = 'list_date'
-    has_control_code = 'has_control_code'
-    pass_format_check = 'pass_format_check'
-    location = 'location'
-    push_number = 'push_number'
-    is_lock = 'is_lock'
-    full_content = 'full_content'
-    is_unconfirmed = 'is_unconfirmed'
+class PostField(AutoStrEnum):
+    board = auto()
+    aid = auto()
+    index = auto()
+    author = auto()
+    date = auto()
+    title = auto()
+    content = auto()
+    money = auto()
+    url = auto()
+    ip = auto()
+    push_list = auto()
+    delete_status = auto()
+    list_date = auto()
+    has_control_code = auto()
+    pass_format_check = auto()
+    location = auto()
+    push_number = auto()
+    is_lock = auto()
+    full_content = auto()
+    is_unconfirmed = auto()
 
 
 class WaterballInfo:
@@ -145,7 +142,7 @@ class Cursor:
     NEW: str = '>'
 
 
-class NewIndex(IntEnum):
+class NewIndex(AutoStrEnum):
     # 看板
     BBS = auto()
     # 信箱
@@ -154,7 +151,7 @@ class NewIndex(IntEnum):
     # WEB = auto()
 
 
-class HOST(AutoName):
+class HOST(AutoStrEnum):
     # 批踢踢萬
     PTT1 = auto()
     # 批踢踢兔
@@ -163,17 +160,17 @@ class HOST(AutoName):
     LOCALHOST = auto()
 
 
-class MarkType(IntEnum):
+class MarkType(AutoStrEnum):
     # s 文章
-    S: int = auto()
+    S = auto()
     # 標記文章
-    D: int = auto()
+    D = auto()
     # 刪除標記文章
-    DeleteD: int = auto()
+    DeleteD = auto()
     # M 起來
-    M: int = auto()
+    M = auto()
     # 待證實文章
-    UNCONFIRMED: int = auto()
+    UNCONFIRMED = auto()
 
 
 class FavouriteBoard:
@@ -183,33 +180,33 @@ class FavouriteBoard:
         self.title: str = parse_para(str, board_title)
 
 
-class BoardField:
-    board = 'board'
-    online_user = 'online_user'
-    chinese_des = 'chinese_des'
-    moderators = 'moderators'
-    open_status = 'open_status'
-    into_top_ten_when_hide = 'into_top_ten_when_hide'
-    non_board_members_post = 'non_board_members_post'
-    reply_post = 'reply_post'
-    self_del_post = 'self_del_post'
-    push_post = 'push_post'
-    boo_post = 'boo_post'
-    fast_push = 'fast_push'
-    min_interval = 'min_interval'
-    push_record_ip = 'push_record_ip'
-    push_aligned = 'push_aligned'
-    moderator_can_del_illegal_content = 'moderator_can_del_illegal_content'
-    tran_post_auto_recorded_and_require_post_permissions = 'tran_post_auto_recorded_and_require_post_permissions'
-    cool_mode = 'cool_mode'
-    require18 = 'require18'
-    require_login_time = 'require_login_time'
-    require_illegal_post = 'require_illegal_post'
-    post_kind = 'post_kind'
-    kind_list = 'kind_list'
+class BoardField(AutoStrEnum):
+    board = auto()
+    online_user = auto()
+    chinese_des = auto()
+    moderators = auto()
+    open_status = auto()
+    into_top_ten_when_hide = auto()
+    non_board_members_post = auto()
+    reply_post = auto()
+    self_del_post = auto()
+    push_post = auto()
+    boo_post = auto()
+    fast_push = auto()
+    min_interval = auto()
+    push_record_ip = auto()
+    push_aligned = auto()
+    moderator_can_del_illegal_content = auto()
+    tran_post_auto_recorded_and_require_post_permissions = auto()
+    cool_mode = auto()
+    require18 = auto()
+    require_login_time = auto()
+    require_illegal_post = auto()
+    post_kind = auto()
+    kind_list = auto()
 
 
-class Compare(IntEnum):
+class Compare(AutoStrEnum):
     BIGGER = auto()
     SAME = auto()
     SMALLER = auto()

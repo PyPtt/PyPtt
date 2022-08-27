@@ -1,10 +1,10 @@
-from enum import auto
+from enum import auto, Enum
 
 from . import data_type
 from . import version
 
 
-class Lang(data_type.AutoName):
+class Lang(Enum):
     MANDARIN = auto()
     ENGLISH = auto()
 
@@ -239,13 +239,13 @@ def load(lang):
     global mark_success
     mark_success = specific_load(lang, [
         '刪除所有標記文章',
-        'Del All Mark Post',
+        'Del All Mark PostField',
     ])
 
     global del_all_mark_post
     del_all_mark_post = specific_load(lang, [
         '刪除所有標記文章',
-        'Del All Mark Post',
+        'Del All Mark PostField',
     ])
 
     global current_version
@@ -401,7 +401,7 @@ def load(lang):
     global reply_board
     reply_board = specific_load(lang, [
         '回應至看板',
-        'respond to the Board',
+        'respond to the BoardField',
     ])
 
     global reply_mail
@@ -599,7 +599,7 @@ def load(lang):
     global quit_user_profile
     quit_user_profile = specific_load(lang, [
         f'退出使用者檔案',
-        f'Quit User Profile',
+        f'Quit UserField Profile',
     ])
 
     global reading
@@ -671,13 +671,13 @@ def load(lang):
     global has_post_permission
     has_post_permission = specific_load(lang, [
         '使用者擁有貼文權限',
-        'User Has Post Permission',
+        'UserField Has PostField Permission',
     ])
 
     global deleted_post
     deleted_post = specific_load(lang, [
         '已刪除文章',
-        'Deleted Post',
+        'Deleted PostField',
     ])
 
     global timeout
@@ -701,7 +701,7 @@ def load(lang):
     global can_not_use_search_post_code_f
     can_not_use_search_post_code_f = specific_load(lang, [
         '此狀態下無法使用搜尋文章代碼(AID)功能',
-        'This status can not use the search Post code function',
+        'This status can not use the search PostField code function',
     ])
 
     global screen_no_match_target
@@ -755,7 +755,7 @@ def load(lang):
     global unregistered_user_cant_use_this_api
     unregistered_user_cant_use_this_api = specific_load(lang, [
         '未註冊使用者，無法使用此功能',
-        'unregistered User Can\'t Use This API',
+        'unregistered UserField Can\'t Use This API',
     ])
 
     global connection_closed
@@ -809,7 +809,7 @@ def load(lang):
     global animation_post
     animation_post = specific_load(lang, [
         '動畫文章',
-        'Animation Post',
+        'Animation PostField',
     ])
 
     global post_no_content
@@ -839,7 +839,7 @@ def load(lang):
     global unconfirmed_post
     unconfirmed_post = specific_load(lang, [
         '待證實文章',
-        'Post To Be Confirmed',
+        'PostField To Be Confirmed',
     ])
 
     global comment
@@ -971,7 +971,7 @@ def load(lang):
     global unregistered_user_cant_use_all_api
     unregistered_user_cant_use_all_api = specific_load(lang, [
         '未註冊使用者，將無法使用全部功能',
-        'unregistered User Can\'t Use All API',
+        'unregistered UserField Can\'t Use All API',
     ])
 
     global use_mailbox_api_will_logout_after_execution
