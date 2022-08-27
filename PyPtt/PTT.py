@@ -45,6 +45,15 @@ class API:
 
         self.logger = Logger('PyPtt', log_level, handler=log_handler)
 
+        if not isinstance(language, i18n.Lang):
+            raise TypeError('[PyPtt] language must be i18n.Lang')
+
+        self.config = config.Config()
+        self.config.log_level = log_level
+
+        self.config.language = language
+        i18n.load(self.config.language)
+
         self.is_mailbox_full: bool = False
         self.is_registered_user: bool = False
         self.process_picks: int = 0
@@ -53,16 +62,11 @@ class API:
         self._ptt_pw: str = ''
         self._is_login: bool = False
 
-        self.config = config.Config()
-
-        if not isinstance(language, i18n.Lang):
-            raise TypeError('[PyPtt] language must be i18n.Lang')
-        if not isinstance(screen_timeout, int):
-            raise TypeError('[PyPtt] screen_timeout must be integer')
-        if not isinstance(screen_long_timeout, int):
-            raise TypeError('[PyPtt] screen_long_timeout must be integer')
         if (not isinstance(host, data_type.HOST)) and (not isinstance(host, str)):
             raise TypeError('[PyPtt] host must be HOST or a string')
+
+        check_value.check_type(screen_timeout, int, 'screen_timeout')
+        check_value.check_type(screen_long_timeout, int, 'screen_long_timeout')
 
         if screen_timeout != 0:
             self.config.screen_timeout = screen_timeout
@@ -71,15 +75,11 @@ class API:
         if screen_post_timeout != 0:
             self.config.screen_post_timeout = screen_post_timeout
 
-        self.config.log_level = log_level
-
-        self.config.language = language
-        i18n.load(self.config.language)
-
         self.config.host = host
         self.host = host
 
         check_value.check_type(port, int, 'port')
+        # check_value.check_range()
         if port == 0:
             port = self.config.port
         elif not (0 < port < 65535):
@@ -140,7 +140,7 @@ class API:
             self.logger.info(i18n.latest_version, version)
 
     def __del__(self):
-        self.logger.info(i18n.goodbye)
+        self.logger.debug(i18n.goodbye)
 
     def login(self, ptt_id: str, ptt_pw: str, kick_other_session: bool = False) -> None:
 

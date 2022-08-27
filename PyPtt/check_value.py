@@ -8,13 +8,13 @@ logger = Logger('check value')
 def check_type(value, value_type, name) -> None:
     if not isinstance(value, value_type):
         if value_type is str:
-            raise TypeError(f'{name} {i18n.must_be_a_string}, but got {value}')
+            raise TypeError(f'[PyPtt] {name} {i18n.must_be_a_string}, but got {value}')
         elif value_type is int:
-            raise TypeError(f'{name} {i18n.must_be_a_integer}, but got {value}')
+            raise TypeError(f'[PyPtt] {name} {i18n.must_be_a_integer}, but got {value}')
         elif value_type is bool:
-            raise TypeError(f'{name} {i18n.must_be_a_boolean}, but got {value}')
+            raise TypeError(f'[PyPtt] {name} {i18n.must_be_a_boolean}, but got {value}')
         else:
-            raise TypeError(f'{name} {i18n.must_be} {value_type}, but got {value}')
+            raise TypeError(f'[PyPtt] {name} {i18n.must_be} {value_type}, but got {value}')
 
 
 def check_range(name, value, min_value, max_value) -> None:
