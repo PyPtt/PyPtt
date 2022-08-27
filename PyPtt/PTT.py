@@ -31,14 +31,13 @@ from . import data_type
 from . import i18n
 from . import lib_util
 from . import version
-from .connect_core import ConnectMode
 
 
 class API:
     def __init__(self, language: i18n.Lang = i18n.Lang.MANDARIN, log_level: LoggerLevel = Logger.INFO,
                  screen_timeout: int = 0, screen_long_timeout: int = 0, screen_post_timeout: int = 0,
-                 connect_mode: ConnectMode = ConnectMode.WEBSOCKETS, port: int = 0, log_handler=None,
-                 host=data_type.HOST.PTT1):
+                 connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
+                 log_handler=None, host=data_type.HOST.PTT1):
 
         if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
@@ -79,20 +78,11 @@ class API:
         self.host = host
 
         check_value.check_type(port, int, 'port')
-        # check_value.check_range()
-        if port == 0:
-            port = self.config.port
-        elif not (0 < port < 65535):
-            raise ValueError('[PyPtt] Unknown port', port)
-        else:
-            self.config.port = port
+        check_value.check_range(port, 1, 65535 - 1, 'port')
+        self.config.port = port
 
-        if isinstance(connect_mode, ConnectMode):
-            self.config.connect_mode = connect_mode
-        else:
-            raise ValueError('[PyPtt] Unknown connect_mode', connect_mode)
-
-        if host in [data_type.HOST.PTT1, data_type.HOST.PTT2] and connect_mode is ConnectMode.TELNET:
+        check_value.check_type(connect_mode, data_type.ConnectMode, 'connect_mode')
+        if host in [data_type.HOST.PTT1, data_type.HOST.PTT2] and connect_mode is data_type.ConnectMode.TELNET:
             raise ValueError('[PyPtt] TELNET is not available on PTT1 and PTT2')
 
         self.connect_core = connect_core.API(self.config)
@@ -110,9 +100,9 @@ class API:
 
         self.logger.info('PyPtt', i18n.init)
 
-        if self.config.connect_mode == ConnectMode.TELNET:
+        if self.config.connect_mode == data_type.ConnectMode.TELNET:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
-        elif self.config.connect_mode == ConnectMode.WEBSOCKETS:
+        elif self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
 
         if self.config.language == i18n.Lang.MANDARIN:

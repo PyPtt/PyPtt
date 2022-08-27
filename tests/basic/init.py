@@ -1,7 +1,6 @@
 from enum import Enum, auto, EnumMeta
 
 import PyPtt
-from PyPtt.connect_core import ConnectMode
 from tests import util
 
 
@@ -29,14 +28,14 @@ def test():
 
     util.logger.info('===set host with PTT and TELNET ===')
     try:
-        PyPtt.API(host=PyPtt.HOST.PTT1, connect_mode=ConnectMode.TELNET)
+        PyPtt.API(host=PyPtt.HOST.PTT1, connect_mode=PyPtt.ConnectMode.TELNET)
         assert False
     except ValueError:
         util.logger.info('通過')
 
     util.logger.info('===set host with PTT2 and TELNET ===')
     try:
-        PyPtt.API(host=PyPtt.HOST.PTT2, connect_mode=ConnectMode.TELNET)
+        PyPtt.API(host=PyPtt.HOST.PTT2, connect_mode=PyPtt.ConnectMode.TELNET)
         assert False
     except ValueError:
         util.logger.info('通過')

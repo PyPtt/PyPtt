@@ -102,7 +102,7 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         except ValueError:
             raise ValueError(f'wrong parameter search_condition: {search_condition}')
 
-        check_value.check_range('search_condition', S, -100, 100)
+        check_value.check_range(S, -100, 100, 'search_condition')
 
     if post_aid is not None and search_condition is not None:
         raise ValueError('wrong parameter post_aid and search_condition can\'t both input')

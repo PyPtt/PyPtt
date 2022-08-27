@@ -17,7 +17,7 @@ def check_type(value, value_type, name) -> None:
             raise TypeError(f'[PyPtt] {name} {i18n.must_be} {value_type}, but got {value}')
 
 
-def check_range(name, value, min_value, max_value) -> None:
+def check_range(value, min_value, max_value, name) -> None:
     check_type(value, int, name)
     check_type(min_value, int, 'min_value')
     check_type(max_value, int, 'max_value')
