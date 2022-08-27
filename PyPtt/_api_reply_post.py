@@ -21,10 +21,10 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
     if not isinstance(ReplyTo, data_type.ReplyTo):
         raise TypeError(f'ReplyTo must be data_type.ReplyTo')
 
-    check_value.check_type(str, 'board', board)
-    check_value.check_type(str, 'content', content)
+    check_value.check_type(board, str, 'board')
+    check_value.check_type(content, str, 'content')
     if post_aid is not None:
-        check_value.check_type(str, 'PostAID', post_aid)
+        check_value.check_type(post_aid, str, 'PostAID')
 
     if post_index != 0:
         newest_index = api.get_newest_index(

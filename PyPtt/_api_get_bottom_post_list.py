@@ -15,7 +15,7 @@ def get_bottom_post_list(api, board):
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(str, 'board', board)
+    check_value.check_type(board, str, 'board')
     _api_util._check_board(api, board)
 
     _api_util.goto_board(api, board, end=True)

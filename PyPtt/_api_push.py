@@ -145,15 +145,15 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(str, 'board', board)
+    check_value.check_type(board, str, 'board')
 
     if not isinstance(push_type, data_type.CommentType):
         raise TypeError(f'CommentType must be data_type.CommentType')
 
-    check_value.check_type(str, 'push_content', push_content)
+    check_value.check_type(push_content, str, 'push_content')
     if post_aid is not None:
-        check_value.check_type(str, 'post_aid', post_aid)
-    check_value.check_type(int, 'post_index', post_index)
+        check_value.check_type(post_aid, str, 'post_aid')
+    check_value.check_type(post_index, int, 'post_index')
 
     if len(board) == 0:
         raise ValueError(f'wrong parameter board: {board}')

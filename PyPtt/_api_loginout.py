@@ -56,9 +56,9 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
 
     _api_util.one_thread(api)
 
-    check_value.check_type(str, 'ptt_id', ptt_id)
-    check_value.check_type(str, 'password', ptt_pw)
-    check_value.check_type(bool, 'kick_other_login', kick_other_login)
+    check_value.check_type(ptt_id, str, 'ptt_id')
+    check_value.check_type(ptt_pw, str, 'password')
+    check_value.check_type(kick_other_login, bool, 'kick_other_login')
 
     if api._is_login:
         api.logout()

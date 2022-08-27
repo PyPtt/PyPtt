@@ -71,20 +71,18 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(str, 'board', board)
+    check_value.check_type(board, str, 'board')
     if post_aid is not None:
-        check_value.check_type(str, 'post_aid', post_aid)
-    check_value.check_type(int, 'post_index', post_index)
+        check_value.check_type(post_aid, str, 'post_aid')
+    check_value.check_type(post_index, int, 'post_index')
 
     if search_type is not None and not isinstance(search_type, st):
         raise TypeError(f'search_type must be SearchType, but got {search_type}')
     if search_condition is not None:
-        check_value.check_type(str,
-                               'SearchCondition', search_condition)
+        check_value.check_type(search_condition, str, 'SearchCondition')
 
     if search_list is not None:
-        check_value.check_type(list,
-                               'search_list', search_condition)
+        check_value.check_type(search_condition, list, 'search_list')
 
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')

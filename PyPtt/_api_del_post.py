@@ -18,10 +18,10 @@ def del_post(api, board: str, post_aid: str = None, post_index: int = 0) -> None
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(str, 'board', board)
+    check_value.check_type(board, str, 'board')
     if post_aid is not None:
-        check_value.check_type(str, 'PostAID', post_aid)
-    check_value.check_type(int, 'PostIndex', post_index)
+        check_value.check_type(post_aid, str, 'PostAID')
+    check_value.check_type(post_index, int, 'PostIndex')
 
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')

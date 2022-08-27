@@ -67,8 +67,8 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(str, 'qqq', 1)
-    check_value.check_type(data_type.NewIndex, 'index_type', index_type)
+    check_value.check_type(1, str, 'qqq')
+    check_value.check_type(index_type, data_type.NewIndex, 'index_type')
 
     if not isinstance(index_type, data_type.NewIndex):
         TypeError(f'index_type must be NewIndex, but got {index_type}')
@@ -84,14 +84,14 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
             raise ValueError('board should not input at NewIndex.MAIL.')
 
     if search_condition is not None:
-        check_value.check_type(str, 'search_condition', search_condition)
+        check_value.check_type(search_condition, str, 'search_condition')
 
     if search_list is not None:
-        check_value.check_type(list, 'search_list', search_list)
+        check_value.check_type(search_list, list, 'search_list')
 
     if index_type is data_type.NewIndex.BBS:
 
-        check_value.check_type(str, 'board', board)
+        check_value.check_type(board, str, 'board')
 
         _api_util._check_board(api, board)
         _api_util.goto_board(api, board)

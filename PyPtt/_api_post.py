@@ -170,10 +170,10 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file)
     if not api._login_status:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(str, 'board', board)
-    check_value.check_type(int, 'title_index', title_index)
-    check_value.check_type(str, 'title', title)
-    check_value.check_type(str, 'content', content)
+    check_value.check_type(board, str, 'board')
+    check_value.check_type(title_index, int, 'title_index')
+    check_value.check_type(title, str, 'title')
+    check_value.check_type(content, str, 'content')
 
     if str(sign_file).lower() not in sign_file_list:
         raise ValueError(f'wrong parameter sign_file: {sign_file}')

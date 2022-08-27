@@ -5,7 +5,7 @@ from . import i18n
 logger = Logger('check value')
 
 
-def check_type(value_type, name, value) -> None:
+def check_type(value, value_type, name) -> None:
     if not isinstance(value, value_type):
         if value_type is str:
             raise TypeError(f'{name} {i18n.must_be_a_string}, but got {value}')
@@ -18,9 +18,9 @@ def check_type(value_type, name, value) -> None:
 
 
 def check_range(name, value, min_value, max_value) -> None:
-    check_type(int, name, value)
-    check_type(int, 'min_value', min_value)
-    check_type(int, 'max_value', max_value)
+    check_type(value, int, name)
+    check_type(min_value, int, 'min_value')
+    check_type(max_value, int, 'max_value')
 
     if min_value <= value <= max_value:
         return
@@ -28,7 +28,7 @@ def check_range(name, value, min_value, max_value) -> None:
 
 
 def check_index(name, index, max_value=None) -> None:
-    check_type(int, name, index)
+    check_type(index, int, name)
     if index < 1:
         raise ValueError(f'{name} {i18n.must_bigger_than} 0')
 
@@ -45,8 +45,8 @@ def check_index_range(
         end_name,
         end_index,
         max_value=None) -> None:
-    check_type(int, start_name, start_index)
-    check_type(int, end_name, end_index)
+    check_type(start_index, int, start_name)
+    check_type(end_index, int, end_name)
 
     if start_index < 1:
         raise ValueError(f'{start_name} {start_index} {i18n.must_bigger_than} 0')
