@@ -99,7 +99,7 @@ class API:
         self._exist_board_list = []
         self._board_info_list = dict()
         self._ModeratorList = dict()
-        self._LastThrowWaterBallTime = 0
+        # self._last_throw_water_ball_time = 0
         self._thread_id = threading.get_ident()
         self._goto_board_list = []
         self._board_info_list = dict()
