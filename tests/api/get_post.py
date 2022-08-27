@@ -57,7 +57,7 @@ def test_no_condition(ptt_bot: PyPtt.API):
 
         result.append(post)
         # util.logger.info('+==+' * 10)
-        # util.logger.info(post[PyPtt.Post.content])
+        # util.logger.info(post[PyPtt.PostField.content])
 
     return result
 

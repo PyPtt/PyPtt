@@ -63,42 +63,6 @@ class SearchType(IntEnum):
 #     MARK = auto()
 
 
-class waterball_type:
-    # 水球接收狀態
-
-    # 收到水球
-    CATCH: int = 1
-    # 收到水球
-    SEND: int = 2
-
-    min_value = CATCH
-    max_value = SEND
-
-
-class waterball_operate_type:
-    # 清除水球類型
-
-    CLEAR: int = 1
-    MAIL: int = 2
-    NOTHING: int = 3
-
-    min_value = CLEAR
-    max_value = NOTHING
-
-
-# class FriendListType:
-#     # 名單類型
-#
-#     GoodFriend = 1
-#     BadGuy = 2
-#     SuperFriend = 3
-#     loginNotification = 4
-#     OtherSpecial = 5
-#
-#     min_value = GoodFriend
-#     max_value = OtherSpecial
-
-
 class ReplyTo(IntEnum):
     # 回文類型
 
@@ -143,7 +107,7 @@ class PostDelStatus:
     deleted_by_unknown = 'deleted_by_unknown'
 
 
-class Post:
+class PostField:
     board = 'board'
     aid = 'aid'
     index = 'index'
@@ -190,16 +154,6 @@ class NewIndex(IntEnum):
     # WEB = auto()
 
 
-class crawl_type:
-    # BBS版本
-    BBS: int = 1
-    # 網頁版本
-    WEB: int = 2
-
-    min_value = BBS
-    max_value = BBS
-
-
 class HOST(AutoName):
     # 批踢踢萬
     PTT1 = auto()
@@ -229,7 +183,7 @@ class FavouriteBoard:
         self.title: str = parse_para(str, board_title)
 
 
-class Board:
+class BoardField:
     board = 'board'
     online_user = 'online_user'
     chinese_des = 'chinese_des'

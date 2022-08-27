@@ -1,22 +1,17 @@
 from . import _api_util
 from . import command
 from . import connect_core
-from . import data_type
 from . import exceptions
 from . import i18n
 
 
-def get_favourite_board(api, ) -> list:
+def get_favourite_board(api) -> list:
     _api_util.one_thread(api)
 
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    cmd_list = []
-    cmd_list.append(command.go_main_menu)
-    cmd_list.append('F')
-    cmd_list.append(command.enter)
-    cmd_list.append('0')
+    cmd_list = [command.go_main_menu, 'F', command.enter, '0']
     cmd = ''.join(cmd_list)
 
     target_list = [
@@ -33,8 +28,7 @@ def get_favourite_board(api, ) -> list:
 
         api.connect_core.send(
             cmd,
-            target_list
-        )
+            target_list)
 
         ori_screen = api.connect_core.get_screen_queue()[-1]
         # print(OriScreen)
@@ -82,11 +76,10 @@ def get_favourite_board(api, ) -> list:
             # print('board_type', board_type)
             # print('board_title', board_title)
 
-            f_board = data_type.FavouriteBoard(
-                board,
-                board_type,
-                board_title
-            )
+            f_board = {
+                'board': board,
+                'type': board_type,
+                'title': board_title}
             favourite_board_list.append(f_board)
 
         # print(len(favourite_board_list))
