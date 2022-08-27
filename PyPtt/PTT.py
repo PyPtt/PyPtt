@@ -79,7 +79,7 @@ class API:
         self.config.host = host
         self.host = host
 
-        check_value.check_type(int, 'port', port)
+        check_value.check_type(port, int, 'port')
         if port == 0:
             port = self.config.port
         elif not (0 < port < 65535):

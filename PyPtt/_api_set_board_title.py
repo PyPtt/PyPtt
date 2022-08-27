@@ -19,8 +19,8 @@ def set_board_title(api, board: str, new_title: str) -> None:
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    check_value.check_type(str, 'board', board)
-    check_value.check_type(str, 'new_title', new_title)
+    check_value.check_type(board, str, 'board')
+    check_value.check_type(new_title, str, 'new_title')
 
     _api_util._check_board(
         board,

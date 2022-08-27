@@ -21,7 +21,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(str, 'board', board)
+    check_value.check_type(board, str, 'board')
 
     _api_util.goto_board(api, board, refresh=True)
 

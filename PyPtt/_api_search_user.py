@@ -20,7 +20,7 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    check_value.check_type(str, 'ptt_id', ptt_id)
+    check_value.check_type(ptt_id, str, 'ptt_id')
     if min_page is not None:
         check_value.check_index('min_page', min_page)
     if max_page is not None:

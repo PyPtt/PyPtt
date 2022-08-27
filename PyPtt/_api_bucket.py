@@ -21,10 +21,10 @@ def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    check_value.check_type(str, 'board', board)
-    check_value.check_type(int, 'bucket_days', bucket_days)
-    check_value.check_type(str, 'reason', reason)
-    check_value.check_type(str, 'ptt_id', ptt_id)
+    check_value.check_type(board, str, 'board')
+    check_value.check_type(bucket_days, int, 'bucket_days')
+    check_value.check_type(reason, str, 'reason')
+    check_value.check_type(ptt_id, str, 'ptt_id')
 
     api.get_user(ptt_id)
 

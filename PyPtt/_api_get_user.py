@@ -25,7 +25,7 @@ def get_user(api, ptt_id: str) -> Dict:
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    check_value.check_type(str, 'UserID', ptt_id)
+    check_value.check_type(ptt_id, str, 'UserID')
     if len(ptt_id) < 2:
         raise ValueError(f'wrong parameter user_id: {ptt_id}')
 

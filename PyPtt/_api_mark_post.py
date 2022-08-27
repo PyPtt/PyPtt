@@ -24,16 +24,16 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
     if not isinstance(mark_type, data_type.MarkType):
         raise TypeError(f'mark_type must be data_type.MarkType')
 
-    check_value.check_type(str, 'board', board)
+    check_value.check_type(board, str, 'board')
     if post_aid is not None:
-        check_value.check_type(str, 'PostAID', post_aid)
-    check_value.check_type(int, 'PostIndex', post_index)
+        check_value.check_type(post_aid, str, 'PostAID')
+    check_value.check_type(post_index, int, 'PostIndex')
 
     if not isinstance(search_type, data_type.SearchType):
         raise TypeError(f'search_type must be data_type.SearchType')
 
     if search_condition is not None:
-        check_value.check_type(str, 'SearchCondition', search_condition)
+        check_value.check_type(search_condition, str, 'SearchCondition')
 
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')
