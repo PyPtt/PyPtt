@@ -161,13 +161,7 @@ sign_file_list = [str(x) for x in range(0, 10)]
 sign_file_list.append('x')
 
 
-def post(
-        api: object,
-        board: str,
-        title: str,
-        content: str,
-        title_index: int,
-        sign_file) -> None:
+def post(api, board: str, title: str, content: str, title_index: int, sign_file) -> None:
     _api_util.one_thread(api)
 
     if not api.registered_user:

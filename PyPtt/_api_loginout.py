@@ -18,7 +18,7 @@ def logout(api) -> None:
     if not api._is_login:
         return
 
-    logger = Logger('api_logout', api.config.log_level)
+    logger = Logger('api', api.config.log_level)
 
     cmd_list = []
     cmd_list.append(command.go_main_menu)
@@ -52,7 +52,7 @@ def logout(api) -> None:
 
 
 def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
-    logger = Logger('api_login', api.config.log_level)
+    logger = Logger('api', api.config.log_level)
 
     _api_util.one_thread(api)
 

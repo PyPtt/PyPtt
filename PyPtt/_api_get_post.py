@@ -77,7 +77,7 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
     check_value.check_type(int, 'post_index', post_index)
 
     if search_type is not None and not isinstance(search_type, st):
-        raise TypeError(f'search_type must be SearchType, but {search_type}')
+        raise TypeError(f'search_type must be SearchType, but got {search_type}')
     if search_condition is not None:
         check_value.check_type(str,
                                'SearchCondition', search_condition)

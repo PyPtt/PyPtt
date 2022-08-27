@@ -1,3 +1,5 @@
+from logging import Logger
+
 from . import command, _api_util
 from . import connect_core
 from . import exceptions
@@ -6,6 +8,8 @@ from . import i18n
 
 def change_pw(api, new_password: str) -> None:
     _api_util.one_thread(api)
+
+    logger = Logger('api', api.config.log_level)
 
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)

@@ -11,7 +11,6 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
-from .data_type import BoardField
 
 
 def get_content(api, post_mode: bool = True):
@@ -518,7 +517,7 @@ def _check_board(api, board: str, check_moderator: bool = False) -> Dict:
         api._exist_board_list.append(board.lower())
         api._board_info_list[board.lower()] = board_info
 
-        moderators = board_info[BoardField.moderators]
+        moderators = board_info[data_type.BoardField.moderators]
         moderators = [x.lower() for x in moderators]
         api._ModeratorList[board.lower()] = moderators
         api._board_info_list[board.lower()] = board_info

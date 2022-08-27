@@ -1,4 +1,6 @@
+import inspect
 import re
+import sys
 
 from SingleLog.log import Logger
 
@@ -10,11 +12,11 @@ from . import data_type, lib_util
 from . import exceptions
 from . import i18n
 from . import screens
-from .data_type import SearchType, NewIndex
 
 
 def _get_newest_index(api) -> int:
-    logger = Logger('get_newest_index')
+    logger = Logger('api', api.config.log_level)
+
     last_screen = api.connect_core.get_screen_queue()[-1]
     # print(last_screen)
     last_screen_list = last_screen.split('\n')
@@ -57,49 +59,37 @@ def _get_newest_index(api) -> int:
     return newest_index
 
 
-def get_newest_index(
-        api,
-        index_type: int,
-        search_type: int = 0,
-        search_condition: str = None,
-        search_list: list = None,
-        # BBS
-        board: str = None) -> int:
+def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
+                     search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: str = None,
+                     search_list: list = None) -> int:
     _api_util.one_thread(api)
 
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    if not isinstance(index_type, NewIndex):
-        TypeError('index_type must be NewIndex')
+    check_value.check_type(str, 'qqq', 1)
+    check_value.check_type(data_type.NewIndex, 'index_type', index_type)
 
-    if not isinstance(search_type, SearchType):
-        raise TypeError(f'search_type must be SearchType, but {search_type}')
+    if not isinstance(index_type, data_type.NewIndex):
+        TypeError(f'index_type must be NewIndex, but got {index_type}')
 
-    if index_type == NewIndex.MAIL:
+    if not isinstance(search_type, data_type.SearchType):
+        raise TypeError(f'search_type must be SearchType, but got {search_type}')
+
+    if index_type == data_type.NewIndex.MAIL:
         if not api.is_registered_user:
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if board is not None:
-            raise ValueError('board should not input in mail mode')
-
-        mail_search_options = [
-            SearchType.KEYWORD,
-            SearchType.AUTHOR,
-            SearchType.MARK,
-            SearchType.NOPE,
-        ]
-        if search_type not in mail_search_options:
-            ValueError(f'search type must in {mail_search_options} in mail mode')
+            raise ValueError('board should not input at NewIndex.MAIL.')
 
     if search_condition is not None:
         check_value.check_type(str, 'search_condition', search_condition)
 
     if search_list is not None:
-        check_value.check_type(api.config, list, 'search_list', search_list)
-    check_value.check_type(int, 'SearchType', search_type)
+        check_value.check_type(list, 'search_list', search_list)
 
-    if index_type == data_type.NewIndex.BBS:
+    if index_type is data_type.NewIndex.BBS:
 
         check_value.check_type(str, 'board', board)
 
