@@ -10,7 +10,7 @@ from . import connect_core
 from . import exceptions
 from . import i18n
 from . import screens
-from .data_type import Board
+from .data_type import BoardField
 
 
 def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -> Dict:
@@ -273,26 +273,26 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     #     require_illegal_post,
     #     kind_list)
     return {
-        Board.board: boardname,
-        Board.online_user: online_user,
-        Board.chinese_des: chinese_des,
-        Board.moderators: moderators,
-        Board.open_status: open_status,
-        Board.into_top_ten_when_hide: into_top_ten_when_hide,
-        Board.non_board_members_post: non_board_members_post,
-        Board.reply_post: reply_post,
-        Board.self_del_post: self_del_post,
-        Board.push_post: push_post,
-        Board.boo_post: boo_post,
-        Board.fast_push: fast_push,
-        Board.min_interval: min_interval,
-        Board.push_record_ip: push_record_ip,
-        Board.push_aligned: push_aligned,
-        Board.moderator_can_del_illegal_content: moderator_can_del_illegal_content,
-        Board.tran_post_auto_recorded_and_require_post_permissions: tran_post_auto_recorded_and_require_post_permissions,
-        Board.cool_mode: cool_mode,
-        Board.require18: require18,
-        Board.require_login_time: require_login_time,
-        Board.require_illegal_post: require_illegal_post,
-        Board.kind_list: kind_list
+        BoardField.board: boardname,
+        BoardField.online_user: online_user,
+        BoardField.chinese_des: chinese_des,
+        BoardField.moderators: moderators,
+        BoardField.open_status: open_status,
+        BoardField.into_top_ten_when_hide: into_top_ten_when_hide,
+        BoardField.non_board_members_post: non_board_members_post,
+        BoardField.reply_post: reply_post,
+        BoardField.self_del_post: self_del_post,
+        BoardField.push_post: push_post,
+        BoardField.boo_post: boo_post,
+        BoardField.fast_push: fast_push,
+        BoardField.min_interval: min_interval,
+        BoardField.push_record_ip: push_record_ip,
+        BoardField.push_aligned: push_aligned,
+        BoardField.moderator_can_del_illegal_content: moderator_can_del_illegal_content,
+        BoardField.tran_post_auto_recorded_and_require_post_permissions: tran_post_auto_recorded_and_require_post_permissions,
+        BoardField.cool_mode: cool_mode,
+        BoardField.require18: require18,
+        BoardField.require_login_time: require_login_time,
+        BoardField.require_illegal_post: require_illegal_post,
+        BoardField.kind_list: kind_list
     }

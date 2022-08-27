@@ -12,7 +12,7 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import screens
-from .data_type import Post, Comment, NewIndex
+from .data_type import PostField, Comment, NewIndex
 from .data_type import SearchType as st
 
 
@@ -52,7 +52,7 @@ def get_post(api, board: str, post_aid: str = None, post_index: int = 0, search_
 
         if not post:
             need_continue = True
-        elif not post[Post.pass_format_check]:
+        elif not post[PostField.pass_format_check]:
             need_continue = True
 
         if not need_continue:
@@ -193,26 +193,26 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
     ori_screen = api.connect_core.get_screen_queue()[-1]
 
     post = {
-        Post.board: None,
-        Post.aid: None,
-        Post.index: None,
-        Post.author: None,
-        Post.date: None,
-        Post.title: None,
-        Post.content: None,
-        Post.money: None,
-        Post.url: None,
-        Post.ip: None,
-        Post.push_list: [],
-        Post.delete_status: data_type.PostDelStatus.exist,
-        Post.list_date: None,
-        Post.has_control_code: False,
-        Post.pass_format_check: False,
-        Post.location: None,
-        Post.push_number: None,
-        Post.is_lock: False,
-        Post.full_content: None,
-        Post.is_unconfirmed: False}
+        PostField.board: None,
+        PostField.aid: None,
+        PostField.index: None,
+        PostField.author: None,
+        PostField.date: None,
+        PostField.title: None,
+        PostField.content: None,
+        PostField.money: None,
+        PostField.url: None,
+        PostField.ip: None,
+        PostField.push_list: [],
+        PostField.delete_status: data_type.PostDelStatus.exist,
+        PostField.list_date: None,
+        PostField.has_control_code: False,
+        PostField.pass_format_check: False,
+        PostField.location: None,
+        PostField.push_number: None,
+        PostField.is_lock: False,
+        PostField.full_content: None,
+        PostField.is_unconfirmed: False}
 
     post_author = None
     post_title = None
@@ -261,11 +261,11 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         logger.debug('post_del_status', post_del_status)
 
         post.update({
-            Post.board: board,
-            Post.author: post_author,
-            Post.list_date: list_date,
-            Post.delete_status: post_del_status,
-            Post.pass_format_check: True
+            PostField.board: board,
+            PostField.author: post_author,
+            PostField.list_date: list_date,
+            PostField.delete_status: post_del_status,
+            PostField.pass_format_check: True
         })
 
         return post
@@ -279,49 +279,49 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
 
         if lock_post:
             post.update({
-                Post.board: board,
-                Post.aid: post_aid,
-                Post.index: post_index,
-                Post.author: post_author,
-                Post.title: post_title,
-                Post.url: post_web,
-                Post.money: post_money,
-                Post.list_date: list_date,
-                Post.pass_format_check: True,
-                Post.push_number: push_number,
-                Post.lock: True})
+                PostField.board: board,
+                PostField.aid: post_aid,
+                PostField.index: post_index,
+                PostField.author: post_author,
+                PostField.title: post_title,
+                PostField.url: post_web,
+                PostField.money: post_money,
+                PostField.list_date: list_date,
+                PostField.pass_format_check: True,
+                PostField.push_number: push_number,
+                PostField.is_lock: True})
             return post
 
     if query:
         post.update({
-            Post.board: board,
-            Post.aid: post_aid,
-            Post.index: post_index,
-            Post.author: post_author,
-            Post.title: post_title,
-            Post.url: post_web,
-            Post.money: post_money,
-            Post.list_date: list_date,
-            Post.pass_format_check: True,
-            Post.push_number: push_number})
+            PostField.board: board,
+            PostField.aid: post_aid,
+            PostField.index: post_index,
+            PostField.author: post_author,
+            PostField.title: post_title,
+            PostField.url: post_web,
+            PostField.money: post_money,
+            PostField.list_date: list_date,
+            PostField.pass_format_check: True,
+            PostField.push_number: push_number})
         return post
 
     origin_post, has_control_code = _api_util.get_content(api)
 
     if origin_post is None:
         post.update({
-            Post.board: board,
-            Post.aid: post_aid,
-            Post.index: post_index,
-            Post.author: post_author,
-            Post.title: post_title,
-            Post.url: post_web,
-            Post.money: post_money,
-            Post.list_date: list_date,
-            Post.has_control_code: has_control_code,
-            Post.pass_format_check: False,
-            Post.push_number: push_number,
-            Post.is_unconfirmed: api.Unconfirmed
+            PostField.board: board,
+            PostField.aid: post_aid,
+            PostField.index: post_index,
+            PostField.author: post_author,
+            PostField.title: post_title,
+            PostField.url: post_web,
+            PostField.money: post_money,
+            PostField.list_date: list_date,
+            PostField.has_control_code: has_control_code,
+            PostField.pass_format_check: False,
+            PostField.push_number: push_number,
+            PostField.is_unconfirmed: api.Unconfirmed
         })
         return post
 
@@ -370,24 +370,24 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
             logger.debug(i18n.substandard_post, i18n.author)
 
             post.update({
-                board: board,
-                Post.aid: post_aid,
-                Post.index: post_index,
-                Post.author: post_author,
-                Post.date: post_date,
-                Post.title: post_title,
-                Post.url: post_web,
-                Post.money: post_money,
-                Post.content: post_content,
-                Post.ip: ip,
-                Post.push_list: push_list,
-                Post.list_date: list_date,
-                Post.has_control_code: has_control_code,
-                Post.pass_format_check: False,
-                Post.location: location,
-                Post.push_number: push_number,
-                Post.full_content: origin_post,
-                Post.is_unconfirmed: api.Unconfirmed, })
+                PostField.board: board,
+                PostField.aid: post_aid,
+                PostField.index: post_index,
+                PostField.author: post_author,
+                PostField.date: post_date,
+                PostField.title: post_title,
+                PostField.url: post_web,
+                PostField.money: post_money,
+                PostField.content: post_content,
+                PostField.ip: ip,
+                PostField.push_list: push_list,
+                PostField.list_date: list_date,
+                PostField.has_control_code: has_control_code,
+                PostField.pass_format_check: False,
+                PostField.location: location,
+                PostField.push_number: push_number,
+                PostField.full_content: origin_post,
+                PostField.is_unconfirmed: api.Unconfirmed, })
 
             return post
         post_author = pattern_result.group(0)
@@ -404,24 +404,24 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         logger.debug(i18n.substandard_post, i18n.title)
 
         post.update({
-            Post.board: board,
-            Post.aid: post_aid,
-            Post.index: post_index,
-            Post.author: post_author,
-            Post.date: post_date,
-            Post.title: post_title,
-            Post.url: post_web,
-            Post.money: post_money,
-            Post.content: post_content,
-            Post.ip: ip,
-            Post.push_list: push_list,
-            Post.list_date: list_date,
-            Post.has_control_code: has_control_code,
-            Post.pass_format_check: False,
-            Post.location: location,
-            Post.push_number: push_number,
-            Post.full_content: origin_post,
-            Post.is_unconfirmed: api.Unconfirmed, })
+            PostField.board: board,
+            PostField.aid: post_aid,
+            PostField.index: post_index,
+            PostField.author: post_author,
+            PostField.date: post_date,
+            PostField.title: post_title,
+            PostField.url: post_web,
+            PostField.money: post_money,
+            PostField.content: post_content,
+            PostField.ip: ip,
+            PostField.push_list: push_list,
+            PostField.list_date: list_date,
+            PostField.has_control_code: has_control_code,
+            PostField.pass_format_check: False,
+            PostField.location: location,
+            PostField.push_number: push_number,
+            PostField.full_content: origin_post,
+            PostField.is_unconfirmed: api.Unconfirmed, })
 
         return post
     post_title = pattern_result.group(0)
@@ -436,24 +436,24 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         logger.debug(i18n.substandard_post, i18n.date)
 
         post.update({
-            Post.board: board,
-            Post.aid: post_aid,
-            Post.index: post_index,
-            Post.author: post_author,
-            Post.date: post_date,
-            Post.title: post_title,
-            Post.url: post_web,
-            Post.money: post_money,
-            Post.content: post_content,
-            Post.ip: ip,
-            Post.push_list: push_list,
-            Post.list_date: list_date,
-            Post.has_control_code: has_control_code,
-            Post.pass_format_check: False,
-            Post.location: location,
-            Post.push_number: push_number,
-            Post.full_content: origin_post,
-            Post.is_unconfirmed: api.Unconfirmed, })
+            PostField.board: board,
+            PostField.aid: post_aid,
+            PostField.index: post_index,
+            PostField.author: post_author,
+            PostField.date: post_date,
+            PostField.title: post_title,
+            PostField.url: post_web,
+            PostField.money: post_money,
+            PostField.content: post_content,
+            PostField.ip: ip,
+            PostField.push_list: push_list,
+            PostField.list_date: list_date,
+            PostField.has_control_code: has_control_code,
+            PostField.pass_format_check: False,
+            PostField.location: location,
+            PostField.push_number: push_number,
+            PostField.full_content: origin_post,
+            PostField.is_unconfirmed: api.Unconfirmed, })
 
         return post
     post_date = pattern_result.group(0)
@@ -486,24 +486,24 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         logger.debug(i18n.substandard_post, i18n.content)
 
         post.update({
-            Post.board: board,
-            Post.aid: post_aid,
-            Post.index: post_index,
-            Post.author: post_author,
-            Post.date: post_date,
-            Post.title: post_title,
-            Post.url: post_web,
-            Post.money: post_money,
-            Post.content: post_content,
-            Post.ip: ip,
-            Post.push_list: push_list,
-            Post.list_date: list_date,
-            Post.has_control_code: has_control_code,
-            Post.pass_format_check: False,
-            Post.location: location,
-            Post.push_number: push_number,
-            Post.full_content: origin_post,
-            Post.is_unconfirmed: api.Unconfirmed, })
+            PostField.board: board,
+            PostField.aid: post_aid,
+            PostField.index: post_index,
+            PostField.author: post_author,
+            PostField.date: post_date,
+            PostField.title: post_title,
+            PostField.url: post_web,
+            PostField.money: post_money,
+            PostField.content: post_content,
+            PostField.ip: ip,
+            PostField.push_list: push_list,
+            PostField.list_date: list_date,
+            PostField.has_control_code: has_control_code,
+            PostField.pass_format_check: False,
+            PostField.location: location,
+            PostField.push_number: push_number,
+            PostField.full_content: origin_post,
+            PostField.is_unconfirmed: api.Unconfirmed, })
 
         return post
 
@@ -556,24 +556,24 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
             logger.debug(i18n.substandard_post, ip)
 
             post.update({
-                Post.board: board,
-                Post.aid: post_aid,
-                Post.index: post_index,
-                Post.author: post_author,
-                Post.date: post_date,
-                Post.title: post_title,
-                Post.url: post_web,
-                Post.money: post_money,
-                Post.content: post_content,
-                Post.ip: ip,
-                Post.push_list: push_list,
-                Post.list_date: list_date,
-                Post.has_control_code: has_control_code,
-                Post.pass_format_check: False,
-                Post.location: location,
-                Post.push_number: push_number,
-                Post.full_content: origin_post,
-                Post.is_unconfirmed: api.Unconfirmed, })
+                PostField.board: board,
+                PostField.aid: post_aid,
+                PostField.index: post_index,
+                PostField.author: post_author,
+                PostField.date: post_date,
+                PostField.title: post_title,
+                PostField.url: post_web,
+                PostField.money: post_money,
+                PostField.content: post_content,
+                PostField.ip: ip,
+                PostField.push_list: push_list,
+                PostField.list_date: list_date,
+                PostField.has_control_code: has_control_code,
+                PostField.pass_format_check: False,
+                PostField.location: location,
+                PostField.push_number: push_number,
+                PostField.full_content: origin_post,
+                PostField.is_unconfirmed: api.Unconfirmed, })
 
             return post
     logger.debug('IP', ip)
@@ -637,23 +637,23 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         push_list.append(current_push)
 
     post.update({
-        Post.board: board,
-        Post.aid: post_aid,
-        Post.index: post_index,
-        Post.author: post_author,
-        Post.date: post_date,
-        Post.title: post_title,
-        Post.url: post_web,
-        Post.money: post_money,
-        Post.content: post_content,
-        Post.ip: ip,
-        Post.push_list: push_list,
-        Post.list_date: list_date,
-        Post.has_control_code: has_control_code,
-        Post.pass_format_check: True,
-        Post.location: location,
-        Post.push_number: push_number,
-        Post.full_content: origin_post,
-        Post.is_unconfirmed: api.Unconfirmed})
+        PostField.board: board,
+        PostField.aid: post_aid,
+        PostField.index: post_index,
+        PostField.author: post_author,
+        PostField.date: post_date,
+        PostField.title: post_title,
+        PostField.url: post_web,
+        PostField.money: post_money,
+        PostField.content: post_content,
+        PostField.ip: ip,
+        PostField.push_list: push_list,
+        PostField.list_date: list_date,
+        PostField.has_control_code: has_control_code,
+        PostField.pass_format_check: True,
+        PostField.location: location,
+        PostField.push_number: push_number,
+        PostField.full_content: origin_post,
+        PostField.is_unconfirmed: api.Unconfirmed})
 
     return post
