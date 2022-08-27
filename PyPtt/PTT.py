@@ -34,15 +34,15 @@ from . import version
 
 
 class API:
-    def __init__(self, language: i18n.Lang = i18n.Lang.MANDARIN, log_level: LoggerLevel = Logger.INFO,
+    def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LoggerLevel = Logger.INFO,
                  screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
-                 log_handler=None, host=data_type.HOST.PTT1):
+                 logger_callback=None, host=data_type.HOST.PTT1):
 
         """
         Init.
         
-        :param language: The display language, Reference Lang.
+        :param language: The display language, Reference Language.
         :param log_level: The log level. Reference Logger.LoggerLevel.
         :param screen_timeout:
             After screen_timeout sec, PyPtt will determine that no target found in the current screen.
@@ -64,10 +64,10 @@ class API:
         if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
 
-        self.logger = Logger('PyPtt', log_level, handler=log_handler)
+        self.logger = Logger('PyPtt', log_level, handler=logger_callback)
 
-        if not isinstance(language, i18n.Lang):
-            raise TypeError('[PyPtt] language must be i18n.Lang')
+        if not isinstance(language, data_type.Language):
+            raise TypeError('[PyPtt] language must be i18n.Language')
 
         self.config = config.Config()
         self.config.log_level = log_level
@@ -128,9 +128,9 @@ class API:
         elif self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
             self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
 
-        if self.config.language == i18n.Lang.MANDARIN:
+        if self.config.language == data_type.Language.MANDARIN:
             self.logger.info(i18n.set_up_lang_module, i18n.mandarin_module)
-        elif self.config.language == i18n.Lang.ENGLISH:
+        elif self.config.language == data_type.Language.ENGLISH:
             self.logger.info(i18n.set_up_lang_module, i18n.english_module)
 
         if self.config.host == data_type.HOST.PTT1:
@@ -196,7 +196,7 @@ class API:
         :param board: The board name.
         :param aid: (Choose between aid and index) the aid of the PTT post.
         :param index: (Choose between aid and index) the index of the PTT post.
-        :param search_type: (Optional) the search type. Check data_type.SearchType.
+        :param search_type: (Optional) the search type. Reference SearchType.
         :param search_condition: (Optional) the search condition.
         :param search_list: (Optional) the search list including search type and search condition.
         :param query: (Optional) Enable query or not.
@@ -211,9 +211,9 @@ class API:
         """
         Get the newest index from board or mailbox.
 
-        :param index_type: The index type. Check data_type.NewIndex.
+        :param index_type: The index type. Reference NewIndex.
         :param board: The board name.
-        :param search_type: (Optional) the search type. Check data_type.SearchType.
+        :param search_type: (Optional) the search type. Reference SearchType.
         :param search_condition: (Optional) the search condition.
         :param search_list: (Optional) the search list including search type and search condition.
         :return the index:
@@ -242,7 +242,7 @@ class API:
         Comment the post.
 
         :param board: The name of PTT board.
-        :param comment_type: The comment type. Check data_type.CommentType.
+        :param comment_type: The comment type. Reference CommentType.
         :param comment_content: The comment content.
         :param aid: (Choose between aid and index) the aid of the PTT post.
         :param index: (Choose between aid and index) the index of the PTT post.
@@ -304,7 +304,7 @@ class API:
         """
         Replay the post.
 
-        :param reply_to: The place you want to reply to. (Check data_type.ReplyTo)
+        :param reply_to: The place you want to reply to. (Reference ReplyTo)
         :param board: The board name.
         :param content: The reply content.
         :param sign_file: The sign file.
@@ -332,11 +332,11 @@ class API:
         """
         Mark the post.
 
-        :param mark_type: The mark type. (Check data_type.MarkType)
+        :param mark_type: The mark type. (Reference MarkType)
         :param board: The board name.
         :param aid: (Choose between aid and index) the aid of the PTT post.
         :param index: (Choose between aid and index) the index of the PTT post.
-        :param search_type: (Optional) the search type. Check data_type.SearchType.
+        :param search_type: (Optional) the search type. Reference SearchType.
         :param search_condition: (Optional) the search condition.
         :return: None
         """
@@ -397,7 +397,7 @@ class API:
         Get the mail.
 
         :param index: The index of mail.
-        :param search_type: (Optional) the search type. Check data_type.SearchType.
+        :param search_type: (Optional) the search type. Reference SearchType.
         :param search_condition: (Optional) the search condition.
         :param search_list: (Optional) the search list including search type and search condition.
         :return: The dict of mail.

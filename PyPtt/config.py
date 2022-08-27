@@ -12,7 +12,7 @@ class Config:
     screen_timeout = 3.0
 
     # screen_long_timeout 秒後判定此畫面沒有可辨識的目標
-    # 適用於需要特別等待的情況，例如: 剔除其他登入、發文等等
+    # 適用於需要特別等待的情況，例如: 剔除其他登入等等
     # 建議不要低於 10 秒，剔除其他登入最長可能會花費約六到七秒
     screen_long_timeout = 10.0
 
@@ -21,7 +21,7 @@ class Config:
     screen_post_timeout = 60.0
 
     # 預設語言
-    language = i18n.Lang.MANDARIN
+    language = data_type.Language.MANDARIN
 
     # 預設 log 等級
     log_level = Logger.INFO
@@ -38,4 +38,4 @@ class Config:
     # 預設使用 23
     port = 23
 
-    log_handler = None
+    logger_callback = None

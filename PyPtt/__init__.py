@@ -10,7 +10,7 @@ from .data_type import PostField
 from .data_type import PostStatus
 from .data_type import SearchType
 from .data_type import ConnectMode
-from .i18n import Lang
+from .data_type import Language
 
 from .exceptions import LoginError
 from .exceptions import WrongIDorPassword
