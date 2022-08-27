@@ -49,7 +49,7 @@ def login(ptt_bot: PyPtt.API):
             logger.info('請稍等一下再登入')
             assert False
 
-    if ptt_bot.unregistered_user:
+    if not ptt_bot.is_registered_user:
         logger.info('未註冊使用者')
 
         if ptt_bot.process_picks != 0:
