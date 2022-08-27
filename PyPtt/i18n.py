@@ -2,16 +2,11 @@ import random
 from enum import auto, Enum
 
 from . import version
-
-
-class Lang(Enum):
-    MANDARIN = auto()
-    ENGLISH = auto()
-
+from . import data_type
 
 languageList = [
-    Lang.MANDARIN,
-    Lang.ENGLISH,
+    data_type.Language.MANDARIN,
+    data_type.Language.ENGLISH,
 ]
 
 
@@ -240,7 +235,7 @@ goodbye_mandarin = [
 
 
 def load(lang):
-    if not isinstance(lang, Lang):
+    if not isinstance(lang, data_type.Language):
         raise ValueError('Unknown language', lang)
 
     global goodbye

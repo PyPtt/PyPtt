@@ -16,6 +16,11 @@ def parse_para(value_type, parameter):
     return result
 
 
+class Language(AutoStrEnum):
+    MANDARIN = auto()
+    ENGLISH = auto()
+
+
 class ConnectMode(AutoStrEnum):
     TELNET = auto()
     WEBSOCKETS = auto()
