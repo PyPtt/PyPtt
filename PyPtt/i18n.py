@@ -45,6 +45,7 @@ localhost: str = ''
 must_be_a_string: str = ''
 must_be_a_integer: str = ''
 must_be_a_boolean: str = ''
+must_be: str = ''
 unknown: str = ''
 must_bigger_than: str = ''
 must_small_than: str = ''
@@ -223,6 +224,12 @@ welcome: str = ''
 def load(lang):
     if not isinstance(lang, Lang):
         raise ValueError('Unknown language', lang)
+
+    global must_be
+    must_be = specific_load(lang, [
+        '必須為',
+        'must be',
+    ])
 
     global welcome
     welcome = specific_load(lang, [

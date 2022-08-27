@@ -203,8 +203,8 @@ class API:
         :return the index:
         """
 
-        return _api_get_newest_index.get_newest_index(self, index_type, search_type, search_condition, search_list,
-                                                      board)
+        return _api_get_newest_index.get_newest_index(
+            self, index_type, board, search_type, search_condition, search_list)
 
     def post(self, board: str, title_index: int, title: str, content: str, sign_file) -> None:
         """

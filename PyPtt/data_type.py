@@ -1,4 +1,6 @@
-from enum import auto, IntEnum
+import inspect
+import sys
+from enum import auto
 
 from AutoStrEnum import AutoStrEnum
 
@@ -211,3 +213,7 @@ class Compare(AutoStrEnum):
     SAME = auto()
     SMALLER = auto()
     UNKNOWN = auto()
+
+
+class_list = inspect.getmembers(sys.modules['PyPtt.data_type'], inspect.isclass)
+class_list = set([name[0] for name in class_list])

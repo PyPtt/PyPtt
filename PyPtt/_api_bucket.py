@@ -1,3 +1,5 @@
+from SingleLog.log import Logger
+
 from . import _api_util
 from . import check_value
 from . import command
@@ -10,6 +12,8 @@ from . import screens
 
 def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
     _api_util.one_thread(api)
+
+    logger = Logger('api', api.config.log_level)
 
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
