@@ -1,6 +1,6 @@
+import random
 from enum import auto, Enum
 
-from . import data_type
 from . import version
 
 
@@ -219,11 +219,35 @@ del_all_mark_post: str = ''
 mark_success: str = ''
 set_up_lang_module: str = ''
 welcome: str = ''
+goodbye: str = ''
+
+goodbye_en = [
+    'goodbye',
+    'bye',
+    'see you',
+    'catch you later',
+    'I hate to run, but…',
+    'Until we meet again, I will wait.',
+]
+goodbye_mandarin = [
+    '再見',
+    '掰',
+    '待會見',
+    '祝平安',
+    '謝謝你，我很開心',
+    '等你回來',
+]
 
 
 def load(lang):
     if not isinstance(lang, Lang):
         raise ValueError('Unknown language', lang)
+
+    global goodbye
+    goodbye = specific_load(lang, [
+        random.choice(goodbye_mandarin),
+        random.choice(goodbye_en),
+    ])
 
     global must_be
     must_be = specific_load(lang, [
