@@ -139,6 +139,9 @@ class API:
         else:
             self.logger.info(i18n.latest_version, version)
 
+    def __del__(self):
+        self.logger.info(i18n.goodbye)
+
     def login(self, ptt_id: str, ptt_pw: str, kick_other_session: bool = False) -> None:
 
         """
