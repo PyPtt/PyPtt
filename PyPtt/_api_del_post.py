@@ -41,7 +41,7 @@ def del_post(api, board: str, post_aid: str = None, post_index: int = 0) -> None
             post_index,
             newest_index)
 
-    board_info = _api_util._check_board(api, board)
+    board_info = _api_util.check_board(api, board)
 
     check_author = True
     for moderator in board_info.moderators:

@@ -117,7 +117,7 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
 
         check_value.check_index('post_index', post_index, newest_index)
 
-    _api_util._check_board(api, board)
+    _api_util.check_board(api, board)
     _api_util.goto_board(api, board)
 
     logger = Logger('get_post')

@@ -170,7 +170,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
             board=board)
         check_value.check_index('post_index', post_index, newest_index)
 
-    _api_util._check_board(api, board)
+    _api_util.check_board(api, board)
 
     board_info = api._board_info_list[board.lower()]
 
