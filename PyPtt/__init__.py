@@ -9,6 +9,7 @@ from .data_type import NewIndex
 from .data_type import PostField
 from .data_type import PostStatus
 from .data_type import SearchType
+from .data_type import ConnectMode
 from .i18n import Lang
 
 from .exceptions import LoginError

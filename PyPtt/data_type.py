@@ -16,22 +16,9 @@ def parse_para(value_type, parameter):
     return result
 
 
-class call_status:
-    # 呼叫器狀態
-
-    # 打開
-    ON: int = 0
-    # 拔掉
-    UNPLUG: int = 1
-    # 防水
-    WATERPROOF: int = 2
-    # 好友
-    FRIEND: int = 3
-    # 關掉
-    OFF: int = 4
-
-    min_value = ON
-    max_value = OFF
+class ConnectMode(AutoStrEnum):
+    TELNET = auto()
+    WEBSOCKETS = auto()
 
 
 class SearchType(AutoStrEnum):

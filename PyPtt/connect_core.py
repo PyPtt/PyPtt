@@ -5,7 +5,6 @@ import threading
 import time
 import traceback
 import warnings
-from enum import auto, unique, Enum
 
 import websockets
 import websockets.exceptions
@@ -23,12 +22,6 @@ from . import screens
 websockets.http.USER_AGENT += f' PyPtt/{PyPtt.version}'
 
 ssl_context = ssl.create_default_context()
-
-
-@unique
-class ConnectMode(Enum):
-    TELNET = auto()
-    WEBSOCKETS = auto()
 
 
 class TargetUnit:
@@ -193,7 +186,7 @@ class API(object):
         for _ in range(2):
 
             try:
-                if self.config.connect_mode == ConnectMode.TELNET:
+                if self.config.connect_mode == data_type.ConnectMode.TELNET:
                     self._core = telnetlib.Telnet(telnet_host, self.config.port)
                 else:
                     if not threading.current_thread() is threading.main_thread():
@@ -351,7 +344,7 @@ class API(object):
             else:
                 self.logger.debug(i18n.send_msg, str(msg))
 
-            if self.config.connect_mode == ConnectMode.TELNET:
+            if self.config.connect_mode == data_type.ConnectMode.TELNET:
                 try:
                     self._core.read_very_eager()
                     self._core.write(msg)
@@ -381,7 +374,7 @@ class API(object):
 
                 recv_data_obj = RecvData()
 
-                if self.config.connect_mode == ConnectMode.TELNET:
+                if self.config.connect_mode == data_type.ConnectMode.TELNET:
                     try:
                         recv_data_obj.data = self._core.read_very_eager()
                     except EOFError:
@@ -445,10 +438,10 @@ class API(object):
                 # raise exceptions.NoMatchTargetError(self._RDQ)
                 return -1
         # raise exceptions.NoMatchTargetError(self._RDQ)
-        return -1
+        return -2
 
     def close(self):
-        if self.config.connect_mode == ConnectMode.WEBSOCKETS:
+        if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
             asyncio.get_event_loop().run_until_complete(self._core.close())
         else:
             self._core.close()
