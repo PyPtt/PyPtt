@@ -27,7 +27,7 @@ class Config:
     log_level = Logger.INFO
 
     # 預設不剔除其他登入
-    kick_other_login = False
+    kick_other_session = False
 
     # 預設登入 PTT1
     host = data_type.HOST.PTT1

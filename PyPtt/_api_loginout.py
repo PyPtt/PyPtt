@@ -51,27 +51,27 @@ def logout(api) -> None:
     logger.info(i18n.logout, i18n.complete)
 
 
-def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
+def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     logger = Logger('api', api.config.log_level)
 
     _api_util.one_thread(api)
 
     check_value.check_type(ptt_id, str, 'ptt_id')
     check_value.check_type(ptt_pw, str, 'password')
-    check_value.check_type(kick_other_login, bool, 'kick_other_login')
+    check_value.check_type(kick_other_session, bool, 'kick_other_session')
 
     if api._is_login:
         api.logout()
 
-    api.config.kick_other_login = kick_other_login
+    api.config.kick_other_session = kick_other_session
 
     def kick_other_login_display_msg():
-        if api.config.kick_other_login:
+        if api.config.kick_other_session:
             return i18n.kick_other_login
         return i18n.not_kick_other_login
 
     def kick_other_login_response(screen):
-        if api.config.kick_other_login:
+        if api.config.kick_other_session:
             return 'y' + command.enter
         return 'n' + command.enter
 
@@ -97,7 +97,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_login: bool):
     api._ptt_id = ptt_id
     api._ptt_pw = ptt_pw
 
-    api.config.kick_other_login = kick_other_login
+    api.config.kick_other_session = kick_other_session
 
     api.connect_core.connect()
 
