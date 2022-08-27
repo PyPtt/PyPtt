@@ -169,13 +169,8 @@ def get_mail(api, index: int, search_type: int = 0, search_condition: str = None
     cmd_list.append('m')
 
     # 處理條件整理出指令
-    _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
-        api,
-        data_type.NewIndex.MAIL,
-        search_type,
-        search_condition,
-        search_list,
-        None)
+    _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, data_type.NewIndex.MAIL, None, search_type,
+                                                                        search_condition, search_list)
     cmd_list.extend(_cmd_list)
 
     # 前進至目標信件位置

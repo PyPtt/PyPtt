@@ -42,7 +42,7 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
     if post_aid is not None and post_index != 0:
         raise ValueError('wrong parameter post_aid and post_index can\'t both input')
 
-    _api_util._check_board(api, board)
+    _api_util.check_board(api, board)
 
     _api_util.goto_board(api, board)
 

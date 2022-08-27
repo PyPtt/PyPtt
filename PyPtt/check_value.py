@@ -39,12 +39,7 @@ def check_index(name, index, max_value=None) -> None:
             raise ValueError(f'{name} {index} {i18n.must_between} 0 ~ {max_value}')
 
 
-def check_index_range(
-        start_name,
-        start_index,
-        end_name,
-        end_index,
-        max_value=None) -> None:
+def check_index_range(start_name, start_index, end_name, end_index, max_value=None) -> None:
     check_type(start_index, int, start_name)
     check_type(end_index, int, end_name)
 

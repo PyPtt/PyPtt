@@ -22,7 +22,7 @@ def set_board_title(api, board: str, new_title: str) -> None:
     check_value.check_type(board, str, 'board')
     check_value.check_type(new_title, str, 'new_title')
 
-    _api_util._check_board(
+    _api_util.check_board(
         board,
         check_moderator=True)
 

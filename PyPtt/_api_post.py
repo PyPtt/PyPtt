@@ -184,7 +184,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file)
     content = content.replace('\n', '\r\n')
     content = content.replace(random_tag, '\r\n')
 
-    _api_util._check_board(api, board)
+    _api_util.check_board(api, board)
 
     _api_util.goto_board(api, board)
 

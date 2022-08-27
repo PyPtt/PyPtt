@@ -1,6 +1,4 @@
-import inspect
 import re
-import sys
 
 from SingleLog.log import Logger
 
@@ -67,14 +65,8 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check_type(1, str, 'qqq')
     check_value.check_type(index_type, data_type.NewIndex, 'index_type')
-
-    if not isinstance(index_type, data_type.NewIndex):
-        TypeError(f'index_type must be NewIndex, but got {index_type}')
-
-    if not isinstance(search_type, data_type.SearchType):
-        raise TypeError(f'search_type must be SearchType, but got {search_type}')
+    check_value.check_type(search_type, data_type.SearchType, 'search_type')
 
     if index_type == data_type.NewIndex.MAIL:
         if not api.is_registered_user:
@@ -93,16 +85,11 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
 
         check_value.check_type(board, str, 'board')
 
-        _api_util._check_board(api, board)
+        _api_util.check_board(api, board)
         _api_util.goto_board(api, board)
 
-        cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
-            api,
-            index_type,
-            search_type,
-            search_condition,
-            search_list,
-            board)
+        cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, index_type, board, search_type,
+                                                                           search_condition, search_list)
 
         cmd_list.append('1')
         cmd_list.append(command.enter)
@@ -152,13 +139,8 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
         cmd_list.append(command.ctrl_z)
         cmd_list.append('m')
 
-        _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
-            api,
-            index_type,
-            search_type,
-            search_condition,
-            search_list,
-            board)
+        _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, index_type, board, search_type,
+                                                                            search_condition, search_list)
         # print('normal_newest_index', normal_newest_index)
 
         cmd_list.extend(_cmd_list)

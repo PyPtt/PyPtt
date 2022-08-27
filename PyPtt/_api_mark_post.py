@@ -75,7 +75,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
         if api.config.host == data_type.HOST.PTT2:
             raise exceptions.HostNotSupport(lib_util.get_current_func_name())
 
-    _api_util._check_board(
+    _api_util.check_board(
         board,
         check_moderator=True)
 

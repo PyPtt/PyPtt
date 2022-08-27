@@ -370,14 +370,9 @@ def parse_query_post(api, ori_screen):
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
 
 
-def get_search_condition_cmd(
-        api,
-        index_type: int,
-        search_type: int = 0,
-        search_condition: str = None,
-        search_list: list = None,
-        # BBS
-        board: str = None):
+def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: str = None,
+                             search_type: data_type.SearchType = data_type.SearchType.NOPE,
+                             search_condition: str = None, search_list: list = None):
     # logger = Logger('get_search_condition_cmd')
     cmd_list = []
 
@@ -511,7 +506,7 @@ def one_thread(api):
     raise exceptions.MultiThreadOperated()
 
 
-def _check_board(api, board: str, check_moderator: bool = False) -> Dict:
+def check_board(api, board: str, check_moderator: bool = False) -> Dict:
     if board.lower() not in api._exist_board_list:
         board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)
         api._exist_board_list.append(board.lower())
