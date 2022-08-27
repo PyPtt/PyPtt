@@ -39,6 +39,28 @@ class API:
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
                  log_handler=None, host=data_type.HOST.PTT1):
 
+        """
+        Init.
+        
+        :param language: The display language, Reference Lang.
+        :param log_level: The log level. Reference Logger.LoggerLevel.
+        :param screen_timeout:
+            After screen_timeout sec, PyPtt will determine that no target found in the current screen.
+        :param screen_long_timeout:
+            After screen_long_timeout sec, PyPtt will determine that no target found in the current screen.
+            This setting is suitable for situations that require more waiting, such as: kick other session, etc.
+        :param screen_post_timeout:
+            After screen_post_timeout sec, PyPtt will determine that no target found in the current screen.
+            This setting is suitable for situations that require more waiting, such as: post, etc.
+        :param connect_mode:
+            The connect mode is the protocol to connect PTT, such as WebSocket, and Telnet. Reference ConnectMode
+        :param port:
+            The connect port.
+        :param logger_callback: if you want to handle the output log, you can set up the logger callback.
+        :param host:
+            The host connect target, such as PTT, PTT2 or docker, etc.
+        """
+
         if not isinstance(log_level, LoggerLevel):
             raise TypeError('[PyPtt] log_level must be integer')
 
