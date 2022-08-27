@@ -35,7 +35,7 @@ from . import version
 
 class API:
     def __init__(self, language: i18n.Lang = i18n.Lang.MANDARIN, log_level: LoggerLevel = Logger.INFO,
-                 screen_timeout: int = 0, screen_long_timeout: int = 0, screen_post_timeout: int = 0,
+                 screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
                  log_handler=None, host=data_type.HOST.PTT1):
 
@@ -64,8 +64,8 @@ class API:
         if (not isinstance(host, data_type.HOST)) and (not isinstance(host, str)):
             raise TypeError('[PyPtt] host must be HOST or a string')
 
-        check_value.check_type(screen_timeout, int, 'screen_timeout')
-        check_value.check_type(screen_long_timeout, int, 'screen_long_timeout')
+        check_value.check_type(screen_timeout, float, 'screen_timeout')
+        check_value.check_type(screen_long_timeout, float, 'screen_long_timeout')
 
         if screen_timeout != 0:
             self.config.screen_timeout = screen_timeout
@@ -84,6 +84,7 @@ class API:
         check_value.check_type(connect_mode, data_type.ConnectMode, 'connect_mode')
         if host in [data_type.HOST.PTT1, data_type.HOST.PTT2] and connect_mode is data_type.ConnectMode.TELNET:
             raise ValueError('[PyPtt] TELNET is not available on PTT1 and PTT2')
+        self.config.connect_mode = connect_mode
 
         self.connect_core = connect_core.API(self.config)
         self._exist_board_list = []
