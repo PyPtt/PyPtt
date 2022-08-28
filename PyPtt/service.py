@@ -1,7 +1,7 @@
 import time
 import uuid
 
-from SingleLog.log import Logger
+from SingleLog import Logger
 
 import PyPtt
 

@@ -1,6 +1,7 @@
 import time
 
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -36,40 +37,40 @@ def _push(api,
         connect_core.TargetUnit(
             i18n.has_push_permission,
             '您覺得這篇',
-            log_level=Logger.DEBUG,
+            log_level=LogLevel.DEBUG,
             break_detect=True
         ),
         connect_core.TargetUnit(
             i18n.only_arrow,
             '加註方式',
-            log_level=Logger.DEBUG,
+            log_level=LogLevel.DEBUG,
             break_detect=True
         ),
         connect_core.TargetUnit(
             i18n.no_fast_comment,
             '禁止快速連續推文',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             break_detect=True,
             exceptions_=exceptions.NoFastComment()
         ),
         connect_core.TargetUnit(
             i18n.no_fast_comment,
             '禁止短時間內大量推文',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             break_detect=True,
             exceptions_=exceptions.NoFastComment()
         ),
         connect_core.TargetUnit(
             i18n.no_permission,
             '使用者不可發言',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             break_detect=True,
             exceptions_=exceptions.NoPermission(i18n.no_permission)
         ),
         connect_core.TargetUnit(
             i18n.no_comment,
             '◆ 抱歉, 禁止推薦',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             break_detect=True,
             exceptions_=exceptions.NoPush()
         ),
@@ -127,7 +128,7 @@ def _push(api,
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
     ]
 

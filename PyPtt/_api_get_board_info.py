@@ -1,7 +1,8 @@
 import re
 from typing import Dict
 
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -14,7 +15,7 @@ from .data_type import BoardField
 
 
 def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -> Dict:
-    logger = Logger('get_board_info', Logger.DEBUG if call_by_others else Logger.INFO)
+    logger = Logger('get_board_info', LogLevel.DEBUG if call_by_others else LogLevel.INFO)
 
     _api_util.one_thread(api)
 
@@ -65,7 +66,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
             i18n.reading_board_info,
             '任意鍵繼續',
             break_detect=True,
-            log_level=Logger.DEBUG if call_by_others else Logger.INFO
+            log_level=LogLevel.DEBUG if call_by_others else LogLevel.INFO
         ),
     ]
 

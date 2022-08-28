@@ -1,6 +1,6 @@
 import re
 
-from SingleLog.log import Logger
+from SingleLog import LogLevel
 
 from . import _api_util
 from . import command
@@ -28,7 +28,7 @@ def has_new_mail(api) -> int:
             i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         )
     ]
 

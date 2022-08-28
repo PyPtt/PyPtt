@@ -4,7 +4,6 @@ import re
 import string
 import time
 import traceback
-from enum import Enum
 from typing import Tuple
 
 import requests

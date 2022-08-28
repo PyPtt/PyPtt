@@ -1,4 +1,5 @@
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -43,12 +44,12 @@ def get_bottom_post_list(api, board):
             screens.Target.QueryPost,
             break_detect=True,
             refresh=False,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.post_deleted,
             screens.Target.InBoard,
             break_detect=True,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.no_such_board,
             screens.Target.MainMenu_Exiting,

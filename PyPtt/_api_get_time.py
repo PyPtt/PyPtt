@@ -1,6 +1,6 @@
 import re
 
-from SingleLog.log import Logger
+from SingleLog import LogLevel
 
 from . import _api_util
 from . import command
@@ -29,7 +29,7 @@ def get_time(api) -> str:
         connect_core.TargetUnit(
             i18n.query_ptt_time_success,
             screens.Target.MainMenu,
-            log_level=Logger.DEBUG,
+            log_level=LogLevel.DEBUG,
             break_detect=True),
     ]
 

@@ -1,4 +1,4 @@
-from SingleLog.log import Logger
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -107,13 +107,13 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
                 i18n.quit_user_profile,
                 '《ＩＤ暱稱》',
                 response=command.enter,
-                # log_level=Logger.DEBUG
+                # log_level=LogLevel.DEBUG
             ),
             connect_core.TargetUnit(
                 i18n.done,
                 '查詢網友',
                 break_detect=True,
-                # log_level=Logger.DEBUG
+                # log_level=LogLevel.DEBUG
             )
         ]
     )

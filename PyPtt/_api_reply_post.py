@@ -1,4 +1,5 @@
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -59,21 +60,21 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_board,
             '▲ 回應至',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             response='F' + command.enter
         )
     elif ReplyTo == data_type.ReplyTo.MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_mail,
             '▲ 回應至',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             response='M' + command.enter
         )
     elif ReplyTo == data_type.ReplyTo.BOARD_MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_board_mail,
             '▲ 回應至',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             response='B' + command.enter
         )
 
@@ -87,13 +88,13 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
         connect_core.TargetUnit(
             i18n.no_response,
             '◆ 很抱歉, 此文章已結案並標記, 不得回應',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             exceptions_=exceptions.NoResponse()
         ),
         connect_core.TargetUnit(
             i18n.forced_write,
             '(E)繼續編輯 (W)強制寫入',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             response='W' + command.enter
         ),
         connect_core.TargetUnit(
@@ -109,26 +110,26 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
         connect_core.TargetUnit(
             i18n.edit_post,
             '編輯文章',
-            log_level=Logger.INFO,
+            log_level=LogLevel.INFO,
             response=str(content) + command.enter + command.ctrl_x
         ),
         connect_core.TargetUnit(
             i18n.quote_original,
             '請問要引用原文嗎',
-            log_level=Logger.DEBUG,
+            log_level=LogLevel.DEBUG,
             response='Y' + command.enter
         ),
         connect_core.TargetUnit(
             i18n.use_the_original_title,
             '採用原標題[Y/n]?',
-            log_level=Logger.DEBUG,
+            log_level=LogLevel.DEBUG,
             response='Y' + command.enter
         ),
         reply_target_unit,
         connect_core.TargetUnit(
             i18n.api_save_draft,
             '已順利寄出，是否自存底稿',
-            log_level=Logger.DEBUG,
+            log_level=LogLevel.DEBUG,
             response='Y' + command.enter
         ),
     ]

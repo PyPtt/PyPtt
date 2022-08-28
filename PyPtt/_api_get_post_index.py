@@ -1,4 +1,4 @@
-from SingleLog.log import Logger
+from SingleLog import LogLevel
 
 from . import _api_util
 from . import command
@@ -25,7 +25,7 @@ def get_post_index(api, board: str, aid: str) -> int:
         connect_core.TargetUnit(
             no_such_post,
             '找不到這個文章代碼',
-            log_level=Logger.DEBUG,
+            log_level=LogLevel.DEBUG,
             exceptions_=exceptions.NoSuchPost(board, aid)
         ),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
@@ -43,13 +43,13 @@ def get_post_index(api, board: str, aid: str) -> int:
             i18n.success,
             screens.Target.InBoard,
             break_detect=True,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
             i18n.success,
             screens.Target.InBoardWithCursor,
             break_detect=True,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
             i18n.no_such_board,

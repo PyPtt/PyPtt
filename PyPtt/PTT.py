@@ -1,8 +1,8 @@
 ﻿import threading
 from typing import Dict, Tuple
 
-from SingleLog.log import Logger
-from SingleLog.log import LoggerLevel
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_bucket
 from . import _api_change_pw
@@ -34,7 +34,7 @@ from . import version
 
 
 class API:
-    def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LoggerLevel = Logger.INFO,
+    def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LogLevel = LogLevel.INFO,
                  screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
                  logger_callback=None, host=data_type.HOST.PTT1):
@@ -43,7 +43,7 @@ class API:
         Init.
         
         :param language: The display language, Reference Language.
-        :param log_level: The log level. Reference Logger.LoggerLevel.
+        :param log_level: The log level. Reference SingleLog.LogLevel.
         :param screen_timeout:
             After screen_timeout sec, PyPtt will determine that no target found in the current screen.
         :param screen_long_timeout:
@@ -61,8 +61,8 @@ class API:
             The host connect target, such as PTT, PTT2 or docker, etc.
         """
 
-        if not isinstance(log_level, LoggerLevel):
-            raise TypeError('[PyPtt] log_level must be LoggerLevel')
+        if not isinstance(log_level, LogLevel):
+            raise TypeError('[PyPtt] log_level must be LogLevel')
 
         self.logger = Logger('PyPtt', log_level, handler=logger_callback)
 

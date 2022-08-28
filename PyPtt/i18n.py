@@ -1,8 +1,7 @@
 import random
-from enum import auto, Enum
 
-from . import version
 from . import data_type
+from . import version
 
 languageList = [
     data_type.Language.MANDARIN,
