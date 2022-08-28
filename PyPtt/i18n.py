@@ -1360,7 +1360,3 @@ def _createlist():
     with open('i18n.txt', 'w') as F:
         F.write('\n'.join(i18nStrList))
 
-
-if __name__ == '__main__':
-    load(Lang.MANDARIN)
-    _createlist()

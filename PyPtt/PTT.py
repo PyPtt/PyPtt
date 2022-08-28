@@ -41,7 +41,6 @@ class API:
 
         """
         Init.
-        
         :param language: The display language, Reference Language.
         :param log_level: The log level. Reference SingleLog.LogLevel.
         :param screen_timeout:
