@@ -71,3 +71,5 @@ def change_pw(api, new_password: str) -> None:
 
     # ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
+
+    # logger.info()
