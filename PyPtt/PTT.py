@@ -62,7 +62,7 @@ class API:
         """
 
         if not isinstance(log_level, LoggerLevel):
-            raise TypeError('[PyPtt] log_level must be integer')
+            raise TypeError('[PyPtt] log_level must be LoggerLevel')
 
         self.logger = Logger('PyPtt', log_level, handler=logger_callback)
 
@@ -83,9 +83,7 @@ class API:
         self._ptt_pw: str = ''
         self._is_login: bool = False
 
-        if (not isinstance(host, data_type.HOST)) and (not isinstance(host, str)):
-            raise TypeError('[PyPtt] host must be HOST or a string')
-
+        check_value.check_type(host, (data_type.HOST, str), 'host')
         check_value.check_type(screen_timeout, float, 'screen_timeout')
         check_value.check_type(screen_long_timeout, float, 'screen_long_timeout')
 
@@ -120,7 +118,6 @@ class API:
         self.logger.debug('ThreadID', self._thread_id)
 
         self.logger.info(i18n.welcome)
-
         self.logger.info('PyPtt', i18n.init)
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
