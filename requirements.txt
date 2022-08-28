@@ -3,3 +3,4 @@ websockets
 uao
 SingleLog
 requests
+AutoStrEnum

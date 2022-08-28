@@ -3,5 +3,6 @@ websockets
 uao
 SingleLog
 requests
+AutoStrEnum
 twine
 wheel
