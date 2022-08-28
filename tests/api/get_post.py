@@ -1,5 +1,7 @@
 import json
 
+import AutoStrEnum
+
 import PyPtt
 from tests import util
 
@@ -137,7 +139,9 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
 
 def test(ptt_bot: PyPtt.API):
     result = test_no_condition(ptt_bot)
-    util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
+
+    print(result)
+    util.logger.info(json.dumps(result, indent=4, ensure_ascii=False, cls=AutoStrEnum.AutoJsonEncoder))
 
     # result = get_post_with_condition(ptt_bot)
     # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
