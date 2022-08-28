@@ -38,13 +38,14 @@ setup(
     ],
     keywords=['PTT', 'crawler', 'bot', 'library', 'websockets'],  # Optional
 
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     packages=['PyPtt', 'PyPtt_0_9'],
     install_requires=[
         'progressbar2',
         'websockets',
         'uao',
         'SingleLog',
-        'requests'
+        'requests',
+        'AutoStrEnum'
     ],
 )
