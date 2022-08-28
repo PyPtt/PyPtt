@@ -1,7 +1,8 @@
 import re
 from typing import Dict
 
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -191,12 +192,12 @@ def get_mail(api, index: int, search_type: int = 0, search_condition: str = None
             i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.mail_box,
             fast_target,
             break_detect=True,
-            log_level=Logger.DEBUG)
+            log_level=LogLevel.DEBUG)
     ]
 
     # 送出訊息
@@ -338,7 +339,7 @@ def del_mail(api, index) -> None:
             i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=Logger.DEBUG)
+            log_level=LogLevel.DEBUG)
     ]
 
     # 送出

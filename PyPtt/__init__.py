@@ -1,6 +1,6 @@
-from SingleLog.log import Logger
+from SingleLog import LogLevel
 
-LOG_LEVEL = Logger
+LOG_LEVEL = LogLevel
 version = '1.0.0'
 
 from .PTT import API

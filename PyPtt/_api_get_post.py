@@ -2,7 +2,8 @@ import re
 import time
 from typing import Dict
 
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -175,12 +176,12 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
             screens.Target.QueryPost,
             break_detect=True,
             refresh=False,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.post_deleted,
             screens.Target.InBoard,
             break_detect=True,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.no_such_board,
             screens.Target.MainMenu_Exiting,

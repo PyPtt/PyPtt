@@ -1,4 +1,4 @@
-from SingleLog.log import Logger
+from SingleLog import Logger
 
 from . import i18n
 

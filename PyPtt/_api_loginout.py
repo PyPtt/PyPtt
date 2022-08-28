@@ -1,6 +1,6 @@
 import re
 
-from SingleLog.log import Logger
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -80,7 +80,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     # def is_mailbox_full():
     #     log.log(
     #         api.config,
-    #         Logger.INFO,
+    #         LogLevel.INFO,
     #         i18n.MailBoxFull)
     #     api.is_mailbox_full = True
 

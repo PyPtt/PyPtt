@@ -1,4 +1,5 @@
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import command
 from . import connect_core
@@ -24,32 +25,32 @@ def get_call_status(api) -> None:
             i18n.get_call_status_success,
             '[呼叫器]打開',
             break_detect=True,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.get_call_status_success,
             '[呼叫器]拔掉',
             break_detect=True,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.get_call_status_success,
             '[呼叫器]防水',
             break_detect=True,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.get_call_status_success,
             '[呼叫器]好友',
             break_detect=True,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.get_call_status_success,
             '[呼叫器]關閉',
             break_detect=True,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
             i18n.get_call_status,
             '★',
             response=cmd,
-            log_level=Logger.DEBUG),
+            log_level=LogLevel.DEBUG),
     ]
 
     for i in range(2):

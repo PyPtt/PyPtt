@@ -1,6 +1,7 @@
 import re
 
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -102,17 +103,17 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
                 i18n.no_post,
                 '沒有文章...',
                 break_detect=True,
-                log_level=Logger.DEBUG),
+                log_level=LogLevel.DEBUG),
             connect_core.TargetUnit(
                 i18n.complete,
                 screens.Target.InBoard,
                 break_detect=True,
-                log_level=Logger.DEBUG),
+                log_level=LogLevel.DEBUG),
             connect_core.TargetUnit(
                 i18n.complete,
                 screens.Target.InBoardWithCursor,
                 break_detect=True,
-                log_level=Logger.DEBUG),
+                log_level=LogLevel.DEBUG),
             connect_core.TargetUnit(
                 i18n.no_such_board,
                 screens.Target.MainMenu_Exiting,
@@ -157,7 +158,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
                 i18n.no_mail,
                 screens.Target.CursorToGoodbye,
                 break_detect=True,
-                log_level=Logger.DEBUG),
+                log_level=LogLevel.DEBUG),
         ]
 
         def get_index(api):

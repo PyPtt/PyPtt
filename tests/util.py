@@ -1,6 +1,7 @@
 import json
 
-from SingleLog.log import Logger
+from SingleLog import Logger
+from SingleLog import LogLevel
 
 import PyPtt
 from . import config

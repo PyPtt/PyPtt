@@ -1,5 +1,6 @@
 import progressbar
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_util
 from . import command
@@ -58,7 +59,7 @@ def get_board_list(api) -> list:
 
     logger.debug('max_no', max_no)
 
-    if api.config.log_level == Logger.INFO:
+    if api.config.log_level == LogLevel.INFO:
         pb = progressbar.ProgressBar(
             max_value=max_no,
             redirect_stdout=True)
@@ -114,14 +115,14 @@ def get_board_list(api) -> list:
 
             board_list.append(board_name)
 
-            if api.config.log_level == Logger.INFO:
+            if api.config.log_level == LogLevel.INFO:
                 pb.update(no)
 
         if no >= max_no:
             break
         cmd = command.ctrl_f
 
-    if api.config.log_level == Logger.INFO:
+    if api.config.log_level == LogLevel.INFO:
         pb.finish()
 
     return board_list

@@ -9,8 +9,8 @@ import warnings
 import websockets
 import websockets.exceptions
 import websockets.http
-from SingleLog.log import Logger
-from SingleLog.log import LoggerLevel
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 import PyPtt
 from . import command
@@ -29,7 +29,7 @@ class TargetUnit:
             self,
             display_msg,
             detect_target,
-            log_level: LoggerLevel = None,
+            log_level: LogLevel = None,
             response: str = '',
             break_detect=False,
             break_detect_after_send=False,
@@ -42,7 +42,7 @@ class TargetUnit:
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
         if log_level is None:
-            self._log_level = Logger.INFO
+            self._log_level = LogLevel.INFO
         else:
             self._log_level = log_level
         self._Response = response
@@ -142,7 +142,7 @@ class API(object):
             screens.Target.use_too_many_resources,
             exceptions_=exceptions.use_too_many_resources())
 
-        self.logger = Logger('connector', Logger.SILENT)
+        self.logger = Logger('connector', LogLevel.SILENT)
 
     def connect(self) -> None:
         def _wait():

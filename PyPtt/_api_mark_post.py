@@ -1,4 +1,4 @@
-from SingleLog.log import Logger
+from SingleLog import LogLevel
 
 from . import _api_util
 from . import check_value
@@ -125,12 +125,12 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
             [i18n.del_all_mark_post],
             '刪除所有標記',
             response='y' + command.enter,
-            log_level=Logger.INFO),
+            log_level=LogLevel.INFO),
         connect_core.TargetUnit(
             [i18n.mark_success],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=Logger.INFO),
+            log_level=LogLevel.INFO),
     ]
 
     api.connect_core.send(cmd, target_list)

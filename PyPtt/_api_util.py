@@ -2,7 +2,8 @@ import re
 import threading
 from typing import Dict
 
-from SingleLog.log import Logger
+from SingleLog import LogLevel
+from SingleLog import Logger
 
 from . import _api_get_board_info
 from . import command
@@ -37,19 +38,19 @@ def get_content(api, post_mode: bool = True):
             i18n.browse_post_done,
             screens.Target.PostEnd,
             break_detect=True,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
             i18n.browse_post,
             screens.Target.InPost,
             break_detect=True,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
             i18n.post_no_content,
             screens.Target.PostNoContent,
             break_detect=True,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         # 動畫文章
         connect_core.TargetUnit(
@@ -449,7 +450,7 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
             i18n.any_key_continue,
             '任意鍵',
             response=' ',
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -457,7 +458,7 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
             ],
             '互動式動畫播放中',
             response=command.ctrl_c,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
             [
@@ -465,7 +466,7 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
             ],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=Logger.DEBUG
+            log_level=LogLevel.DEBUG
         ),
     ]
 
@@ -491,7 +492,7 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
                 '',
                 screens.Target.InBoard,
                 break_detect=True,
-                log_level=Logger.DEBUG
+                log_level=LogLevel.DEBUG
             ),
         ]
 
