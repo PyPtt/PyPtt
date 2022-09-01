@@ -1,7 +1,6 @@
 import json
 
 from SingleLog import Logger
-from SingleLog import LogLevel
 
 import PyPtt
 from . import config
@@ -12,7 +11,9 @@ def log_to_file(msg: str):
         f.write(f'{msg}\n')
 
 
-logger = Logger('TEST_UTIL', handler=log_to_file)
+logger = Logger('TEST_UTIL',
+                # handler=log_to_file
+                )
 logger.info = print
 
 
@@ -30,7 +31,7 @@ def get_id_pw(password_file):
     return ptt_id, password
 
 
-def login(ptt_bot: PyPtt.API):
+def login(ptt_bot: PyPtt.API, kick: bool = True):
     if ptt_bot.host == PyPtt.HOST.PTT1:
         ptt_id, ptt_pw = config.PTT1_ID, config.PTT1_PW
     else:
@@ -38,7 +39,7 @@ def login(ptt_bot: PyPtt.API):
 
     for _ in range(3):
         try:
-            ptt_bot.login(ptt_id=ptt_id, ptt_pw=ptt_pw)
+            ptt_bot.login(ptt_id=ptt_id, ptt_pw=ptt_pw, kick_other_session=kick)
             break
         except PyPtt.LoginError:
             logger.info('登入失敗')
@@ -56,3 +57,7 @@ def login(ptt_bot: PyPtt.API):
         if ptt_bot.process_picks != 0:
             logger.info(f'註冊單處理順位 {ptt_bot.process_picks}')
 
+
+def show_data(data, key: str = None):
+    if isinstance(data, dict):
+        logger.info(f'{key}: {data[key]}')

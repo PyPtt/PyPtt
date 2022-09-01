@@ -7,7 +7,10 @@ import traceback
 from typing import Tuple
 
 import requests
+from SingleLog import Logger
+from colorama import Fore
 
+from . import config
 from . import check_value
 from . import data_type
 from . import version
@@ -88,18 +91,25 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     if sync_version_compare is not data_type.Compare.UNKNOWN:
         return sync_version_compare, sync_version_result
 
+    logger = Logger('PyPtt', **config.LOGGER_CONFIG)
+    logger.info('fetching latest version from github')
+
     r = None
     for i in range(5):
         try:
-            r = requests.get('https://raw.githubusercontent.com/PttCodingMan/PyPtt/1.0/PyPtt/__init__.py',
-                             timeout=3)
+            r = requests.get(
+                'https://raw.githubusercontent.com/PttCodingMan/PyPtt/1.0/PyPtt/__init__.py',
+                timeout=2)
             break
         except requests.exceptions.ReadTimeout:
-            print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
+            # print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
+            logger.stage(f'retry')
             time.sleep(0.5)
 
     if r is None:
+        logger.stage('fail')
         return data_type.Compare.SAME, ''
+    logger.stage('success')
 
     text = r.text
 
@@ -118,7 +128,6 @@ def sync_version() -> Tuple[data_type.Compare, str]:
         if version_list[i] < remote_version_list[i]:
             sync_version_compare = data_type.Compare.SMALLER
             break
-
     return sync_version_compare, remote_version
 
 

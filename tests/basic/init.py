@@ -1,5 +1,3 @@
-from enum import Enum, auto, EnumMeta
-
 import PyPtt
 from tests import util
 

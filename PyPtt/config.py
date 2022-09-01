@@ -1,4 +1,5 @@
 from SingleLog import LogLevel
+from colorama import Fore
 
 from . import data_type
 
@@ -38,3 +39,8 @@ class Config:
     port = 23
 
     logger_callback = None
+
+
+LOGGER_CONFIG = {
+    'stage_color_list': [Fore.RESET], 'key_word_success': [], 'key_word_fails': []
+}
