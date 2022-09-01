@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import ssl
 import telnetlib
@@ -5,6 +7,7 @@ import threading
 import time
 import traceback
 import warnings
+from typing import Any
 
 import websockets
 import websockets.exceptions
@@ -30,7 +33,7 @@ class TargetUnit:
             display_msg,
             detect_target,
             log_level: LogLevel = None,
-            response: str = '',
+            response: [Any | str] = '',
             break_detect=False,
             break_detect_after_send=False,
             exceptions_=None,
@@ -142,7 +145,9 @@ class API(object):
             screens.Target.use_too_many_resources,
             exceptions_=exceptions.use_too_many_resources())
 
-        self.logger = Logger('connector', LogLevel.SILENT)
+        self.logger = Logger('connect', self.config.log_level)
+        self.ptt_logger = Logger(i18n.PTT if self.config.host == data_type.HOST.PTT1 else i18n.PTT2,
+                                 self.config.log_level, skip_repeat=True, stage_sep='.')
 
     def connect(self) -> None:
         def _wait():
@@ -162,7 +167,7 @@ class API(object):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
         self.current_encoding = 'big5uao'
-        self.logger.info(i18n.connect_core, i18n.active)
+        # self.logger.info(i18n.connect_core, i18n.active)
 
         if self.config.host == data_type.HOST.PTT1:
             telnet_host = 'ptt.cc'
@@ -248,9 +253,7 @@ class API(object):
 
                 find_target = True
 
-                self.logger.debug(
-                    i18n.ptt_msg,
-                    target.get_display_msg())
+                self.ptt_logger.info(target.get_display_msg())
 
                 # if target.get_display_msg() == '登入成功':
                 #     print(type(receive_data_buffer), receive_data_buffer)
@@ -283,32 +286,8 @@ class API(object):
                 break
         return screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index
 
-    def send(
-            self,
-            msg: str,
-            target_list: list,
-            screen_timeout: int = 0,
-            refresh: bool = True,
-            secret: bool = False) -> int:
-
-        def clean_screen(recv_screen: str, NoColor: bool = True) -> str:
-
-            if not recv_screen:
-                return recv_screen
-            # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__lib_utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
-
-            # screen = re.sub('\[[\d+;]*m', '', screen)
-
-            # recv_screen = re.sub(r'[\r]', '', recv_screen)
-            # recv_screen = re.sub(r'[\x00-\x07]', '', recv_screen)
-            # recv_screen = re.sub(r'[\x0b\x0c]', '', recv_screen)
-            # recv_screen = re.sub(r'[\x0e-\x1A]', '', recv_screen)
-            # recv_screen = re.sub(r'[\x1C-\x1F]', '', recv_screen)
-            # recv_screen = re.sub(r'[\x7f-\xff]', '', recv_screen)
-
-            recv_screen = screens.vt100(recv_screen)
-
-            return recv_screen
+    def send(self, msg: str, target_list: list, screen_timeout: int = 0, refresh: bool = True,
+             secret: bool = False) -> int:
 
         if not all(isinstance(T, TargetUnit) for T in target_list):
             raise ValueError('Item of TargetList must be TargetUnit')
@@ -402,9 +381,6 @@ class API(object):
                         raise exceptions.ConnectionClosed()
 
                 receive_data_buffer += recv_data_obj.data
-                # receive_data_temp = receive_data_buffer.decode(
-                #     'utf-8', errors='replace')
-                # screen = clean_screen(receive_data_temp)
 
                 screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                     self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)

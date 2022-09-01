@@ -122,7 +122,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             util.logger.info('作者', post.get('author'))
             util.logger.info('標題', post.get('title'))
 
-            if post.get('delete_status') == PyPtt.PostStatus.exist:
+            if post.get('delete_status') == PyPtt.PostStatus.exists:
                 pass
                 # if not query:
                 #     util.logger.info('內文', post.get('content'))

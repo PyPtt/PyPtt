@@ -5,7 +5,7 @@ from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
-    util.login(ptt_bot)
+    util.login(ptt_bot, kick=True)
     ptt_bot.logout()
 
     max_wait_time = 5
@@ -13,7 +13,7 @@ def test(ptt_bot: PyPtt.API):
         util.logger.info('wait', max_wait_time - sec)
         time.sleep(1)
 
-    util.login(ptt_bot)
+    util.login(ptt_bot, kick=False)
     ptt_bot.logout()
 
 

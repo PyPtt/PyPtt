@@ -203,7 +203,7 @@ def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search
         PostField.url: None,
         PostField.ip: None,
         PostField.push_list: [],
-        PostField.delete_status: data_type.PostStatus.exist,
+        PostField.delete_status: data_type.PostStatus.exists,
         PostField.list_date: None,
         PostField.has_control_code: False,
         PostField.pass_format_check: False,

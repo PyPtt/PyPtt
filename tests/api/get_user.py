@@ -5,11 +5,13 @@ from tests import util
 def test(ptt_bot: PyPtt.API):
     test_users = [
         'CodingMan',
+        'DeepLearning',
     ]
 
     for test_user in test_users:
         user_info = ptt_bot.get_user(test_user)
-        print(user_info)
+
+        util.show_data(user_info, 'login_count')
 
 
 def func():

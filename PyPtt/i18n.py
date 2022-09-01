@@ -738,7 +738,7 @@ def load(lang):
     global no_such_post
     no_such_post = specific_load(lang, [
         '{Target0} 板找不到這個文章代碼 {Target1}',
-        'in {Target0}, the post code is not exist {Target1}',
+        'in {Target0}, the post code is not exists {Target1}',
     ])
 
     global connect_fail
@@ -1169,7 +1169,7 @@ def load(lang):
 
     global kick_other_login
     kick_other_login = specific_load(lang, [
-        '剔除其他登入',
+        '強制執行剔除其他登入',
         'kick other login',
     ])
 

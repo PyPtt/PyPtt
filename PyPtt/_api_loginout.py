@@ -97,8 +97,6 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     api._ptt_id = ptt_id
     api._ptt_pw = ptt_pw
 
-    api.config.kick_other_session = kick_other_session
-
     api.connect_core.connect()
 
     logger.info(i18n.login_id, ptt_id)

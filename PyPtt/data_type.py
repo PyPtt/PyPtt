@@ -92,7 +92,7 @@ class CommentField(AutoStrEnum):
 
 
 class PostStatus(AutoStrEnum):
-    exist = auto()
+    exists = auto()
     deleted_by_author = auto()
     deleted_by_moderator = auto()
     deleted_by_unknown = auto()
@@ -207,5 +207,5 @@ class Compare(AutoStrEnum):
     UNKNOWN = auto()
 
 
-class_list = inspect.getmembers(sys.modules['PyPtt.data_type'], inspect.isclass)
-class_list = set([name[0] for name in class_list])
+# class_list = inspect.getmembers(sys.modules['PyPtt.data_type'], inspect.isclass)
+# class_list = set([name[0] for name in class_list])
