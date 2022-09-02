@@ -253,7 +253,7 @@ class API(object):
 
                 find_target = True
 
-                self.ptt_logger.info(target.get_display_msg())
+                # self.ptt_logger.info(target.get_display_msg())
 
                 # if target.get_display_msg() == '登入成功':
                 #     print(type(receive_data_buffer), receive_data_buffer)

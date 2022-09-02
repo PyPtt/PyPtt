@@ -5,6 +5,7 @@ from SingleLog import Logger
 from . import _api_util
 from . import check_value
 from . import command
+from . import config
 from . import connect_core
 from . import data_type
 from . import exceptions
@@ -18,7 +19,7 @@ def logout(api) -> None:
     if not api._is_login:
         return
 
-    logger = Logger('api', api.config.log_level)
+    logger = Logger('api', api.config.log_level, **config.LOGGER_CONFIG)
 
     cmd_list = []
     cmd_list.append(command.go_main_menu)
@@ -36,7 +37,7 @@ def logout(api) -> None:
             break_detect=True),
     ]
 
-    logger.info(i18n.logout, i18n.active)
+    logger.info(i18n.logout)
 
     try:
         api.connect_core.send(cmd, target_list)
@@ -48,11 +49,11 @@ def logout(api) -> None:
 
     api._is_login = False
 
-    logger.info(i18n.logout, i18n.complete)
+    logger.stage(i18n.success)
 
 
 def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
-    logger = Logger('api', api.config.log_level)
+    logger = Logger('api', api.config.log_level, **config.LOGGER_CONFIG)
 
     _api_util.one_thread(api)
 
@@ -270,7 +271,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
 
     login_result = target_list[index].get_display_msg()
     if login_result != i18n.login_success:
-        print(ori_screen)
+        # print(ori_screen)
         logger.info('reason', login_result)
         raise exceptions.LoginError()
 
@@ -307,4 +308,4 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         logger.info(i18n.picks_in_register, api.process_picks)
 
     api._is_login = True
-    logger.info(i18n.login_success)
+    logger.stage(i18n.success)

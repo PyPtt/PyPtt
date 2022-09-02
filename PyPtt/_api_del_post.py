@@ -9,7 +9,7 @@ from . import lib_util
 from . import screens
 
 
-def del_post(api, board: str, post_aid: str = None, post_index: int = 0) -> None:
+def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0) -> None:
     _api_util.one_thread(api)
 
     if not api.is_registered_user:

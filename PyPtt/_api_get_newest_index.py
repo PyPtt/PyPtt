@@ -58,9 +58,9 @@ def _get_newest_index(api) -> int:
     return newest_index
 
 
-def get_newest_index(api, index_type: data_type.NewIndex, board: str = None,
-                     search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: str = None,
-                     search_list: list = None) -> int:
+def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = None,
+                     search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: [str | None] = None,
+                     search_list: [list | None] = None) -> int:
     _api_util.one_thread(api)
 
     if not api._is_login:
