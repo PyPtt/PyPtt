@@ -10,7 +10,7 @@ import requests
 from SingleLog import Logger
 from colorama import Fore
 
-from . import config
+from . import config, i18n
 from . import check_value
 from . import data_type
 from . import version
@@ -92,7 +92,7 @@ def sync_version() -> Tuple[data_type.Compare, str]:
         return sync_version_compare, sync_version_result
 
     logger = Logger('PyPtt', **config.LOGGER_CONFIG)
-    logger.info('fetching latest version from github')
+    logger.info(i18n.update_remote_version)
 
     r = None
     for i in range(5):
@@ -103,13 +103,13 @@ def sync_version() -> Tuple[data_type.Compare, str]:
             break
         except requests.exceptions.ReadTimeout:
             # print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
-            logger.stage(f'retry')
+            logger.stage(i18n.retry)
             time.sleep(0.5)
 
     if r is None:
-        logger.stage('fail')
+        logger.stage(i18n.fail)
         return data_type.Compare.SAME, ''
-    logger.stage('success')
+    logger.stage(i18n.success)
 
     text = r.text
 
