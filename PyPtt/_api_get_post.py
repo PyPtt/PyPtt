@@ -1,7 +1,11 @@
+from __future__ import annotations
+
+import json
 import re
 import time
 from typing import Dict
 
+from AutoStrEnum import AutoJsonEncoder
 from SingleLog import LogLevel
 from SingleLog import Logger
 
@@ -17,56 +21,43 @@ from .data_type import PostField, CommentField, NewIndex
 from .data_type import SearchType as st
 
 
-def get_post(api, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
-             search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
+def get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0, search_list: [list | None] = None,
+             search_type: data_type.SearchType = data_type.SearchType.NOPE,
+             search_condition: [str | None] = None, query: bool = False) -> Dict:
     max_retry = 2
     post = {}
     for i in range(max_retry):
-
-        need_continue = False
         try:
-            post = _get_post(
-                api,
-                board,
-                post_aid,
-                post_index,
-                search_type,
-                search_condition,
-                search_list,
-                query)
+            post = _get_post(api, board, post_aid, post_index, search_type, search_condition, search_list, query)
+            if not post:
+                pass
+            elif not post[PostField.pass_format_check]:
+                pass
+            else:
+                break
         except exceptions.ParseError:
             if i == max_retry - 1:
                 raise
-            need_continue = True
         except exceptions.UnknownError:
             if i == max_retry - 1:
                 raise
-            need_continue = True
         except exceptions.NoSuchBoard:
             if i == max_retry - 1:
                 raise
-            need_continue = True
         except exceptions.NoMatchTargetError:
             if i == max_retry - 1:
                 raise
-            need_continue = True
-
-        if not post:
-            need_continue = True
-        elif not post[PostField.pass_format_check]:
-            need_continue = True
-
-        if not need_continue:
-            break
 
         api.logger.debug('Wait for retry repost')
         time.sleep(0.1)
 
-    return post
+    post = json.dumps(post, cls=AutoJsonEncoder, ensure_ascii=False)
+    return json.loads(post)
 
 
-def _get_post(api, board: str, post_aid: str = None, post_index: int = 0, search_type: int = 0,
-              search_condition: str = None, search_list: list = None, query: bool = False) -> Dict:
+def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0,
+              search_type: data_type.SearchType = data_type.SearchType.NOPE,
+              search_condition: [str | None] = None, search_list: [list | None] = None, query: bool = False) -> Dict:
     _api_util.one_thread(api)
 
     if not api._is_login:
