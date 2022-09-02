@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 import threading
 from typing import Dict
@@ -371,9 +373,9 @@ def parse_query_post(api, ori_screen):
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
 
 
-def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: str = None,
+def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | None] = None,
                              search_type: data_type.SearchType = data_type.SearchType.NOPE,
-                             search_condition: str = None, search_list: list = None):
+                             search_condition: [str | None] = None, search_list: [list | None] = None):
     # logger = Logger('get_search_condition_cmd')
     cmd_list = []
 
@@ -453,17 +455,13 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
             log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
-            [
-                '動畫播放中',
-            ],
+            '動畫播放中',
             '互動式動畫播放中',
             response=command.ctrl_c,
             log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
-            [
-                '進板成功',
-            ],
+            '進板成功',
             screens.Target.InBoard,
             break_detect=True,
             log_level=LogLevel.DEBUG

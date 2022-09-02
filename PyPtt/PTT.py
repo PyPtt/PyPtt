@@ -1,5 +1,7 @@
-﻿import threading
-from typing import Dict, Tuple
+﻿from __future__ import annotations
+
+import threading
+from typing import Dict, Tuple, Callable
 
 from SingleLog import LogLevel
 from SingleLog import Logger
@@ -37,7 +39,7 @@ class API:
     def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LogLevel = LogLevel.INFO,
                  screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
-                 logger_callback=None, host=data_type.HOST.PTT1):
+                 logger_callback: Callable = None, host=data_type.HOST.PTT1):
 
         """
         Init.
@@ -54,16 +56,23 @@ class API:
         :param connect_mode:
             The connect mode is the protocol to connect PTT, such as WebSocket, and Telnet. Reference ConnectMode
         :param port:
-            The connect port.
+            To connect port.
         :param logger_callback: if you want to handle the output log, you can set up the logger callback.
         :param host:
             The host connect target, such as PTT, PTT2 or docker, etc.
         """
 
+        self.logger = None
+
         if not isinstance(log_level, LogLevel):
             raise TypeError('[PyPtt] log_level must be LogLevel')
 
-        self.logger = Logger('PyPtt', log_level, handler=logger_callback)
+        self.logger = Logger('PyPtt', log_level)
+
+        if logger_callback is not None and not callable(logger_callback):
+            raise TypeError('[PyPtt] logger_callback must be callable')
+
+        self.logger = Logger('PyPtt', log_level, callback=logger_callback)
 
         if not isinstance(language, data_type.Language):
             raise TypeError('[PyPtt] language must be PyPtt.Language')
@@ -73,6 +82,10 @@ class API:
 
         self.config.language = language
         i18n.load(self.config.language)
+
+        config.LOGGER_CONFIG['key_word_success'].append(i18n.success)
+
+        config.LOGGER_CONFIG['key_word_fails'].append(i18n.retry)
 
         self.is_mailbox_full: bool = False
         self.is_registered_user: bool = False
@@ -149,7 +162,8 @@ class API:
             self.logger.info(i18n.latest_version, version)
 
     def __del__(self):
-        self.logger.debug(i18n.goodbye)
+        if self.logger:
+            self.logger.debug(i18n.goodbye)
 
     def login(self, ptt_id: str, ptt_pw: str, kick_other_session: bool = False) -> None:
 
@@ -183,9 +197,9 @@ class API:
 
         return _api_get_time.get_time(self)
 
-    def get_post(self, board: str, aid: str = None, index: int = 0,
-                 search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: str = None,
-                 search_list: list = None, query: bool = False) -> Dict:
+    def get_post(self, board: str, aid: [str | None] = None, index: int = 0,
+                 search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: [str | None] = None,
+                 search_list: [list | None] = None, query: bool = False) -> Dict:
         """
         Get the post of PTT.
 
@@ -200,9 +214,9 @@ class API:
         """
         return _api_get_post.get_post(self, board, aid, index, search_type, search_condition, search_list, query)
 
-    def get_newest_index(self, index_type: data_type.NewIndex, board: str = None,
-                         search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: str = None,
-                         search_list: list = None) -> int:
+    def get_newest_index(self, index_type: data_type.NewIndex, board: [str | None] = None,
+                         search_type: data_type.SearchType = data_type.SearchType.NOPE,
+                         search_list: [list | None] = None, search_condition: [str | None] = None) -> int:
 
         """
         Get the newest index from board or mailbox.
@@ -232,7 +246,7 @@ class API:
 
         _api_post.post(self, board, title, content, title_index, sign_file)
 
-    def comment(self, board: str, comment_type: data_type.CommentType, comment_content: str, aid: str = None,
+    def comment(self, board: str, comment_type: data_type.CommentType, comment_content: str, aid: [str | None] = None,
                 index: int = 0) -> None:
         """
         Comment the post.
@@ -294,7 +308,7 @@ class API:
 
         return _api_get_board_list.get_board_list(self)
 
-    def reply_post(self, reply_to: data_type.ReplyTo, board: str, content: str, sign_file=0, aid: str = None,
+    def reply_post(self, reply_to: data_type.ReplyTo, board: str, content: str, sign_file=0, aid: [str | None] = None,
                    index: int = 0) -> None:
 
         """
@@ -322,8 +336,8 @@ class API:
 
         _api_set_board_title.set_board_title(self, board, new_title)
 
-    def mark_post(self, mark_type: int, board: str, aid: str = None, index: int = 0, search_type: int = 0,
-                  search_condition: str = None) -> None:
+    def mark_post(self, mark_type: int, board: str, aid: [str | None] = None, index: int = 0, search_type: int = 0,
+                  search_condition: [str | None] = None) -> None:
 
         """
         Mark the post.
@@ -386,8 +400,8 @@ class API:
 
         return _api_get_board_info.get_board_info(self, board, get_post_types, call_by_others=False)
 
-    def get_mail(self, index: int, search_type: int = 0, search_condition: str = None,
-                 search_list: list = None) -> Dict:
+    def get_mail(self, index: int, search_type: int = 0, search_condition: [str | None] = None,
+                 search_list: [list | None] = None) -> Dict:
 
         """
         Get the mail.
@@ -445,7 +459,7 @@ class API:
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
-    def del_post(self, board, aid: str = None, index: int = 0) -> None:
+    def del_post(self, board, aid: [str | None] = None, index: int = 0) -> None:
         """
         Delete the post.
         :param board: The board name.

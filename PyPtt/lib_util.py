@@ -8,10 +8,9 @@ from typing import Tuple
 
 import requests
 from SingleLog import Logger
-from colorama import Fore
 
-from . import config, i18n
 from . import check_value
+from . import config, i18n
 from . import data_type
 from . import version
 

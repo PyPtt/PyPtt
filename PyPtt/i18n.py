@@ -214,6 +214,9 @@ mark_success: str = ''
 set_up_lang_module: str = ''
 welcome: str = ''
 goodbye: str = ''
+update_remote_version: str = ''
+retry: str = ''
+
 
 goodbye_en = [
     'goodbye',
@@ -236,6 +239,18 @@ goodbye_mandarin = [
 def load(lang):
     if not isinstance(lang, data_type.Language):
         raise ValueError('Unknown language', lang)
+
+    global retry
+    retry = specific_load(lang, [
+        '重試',
+        'retry',
+    ])
+
+    global update_remote_version
+    update_remote_version = specific_load(lang, [
+        '確認最新版本',
+        'fetching latest version',
+    ])
 
     global goodbye
     goodbye = specific_load(lang, [

@@ -144,8 +144,8 @@ mail_date_pattern = re.compile('時間  (.+)')
 ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 
-def get_mail(api, index: int, search_type: int = 0, search_condition: str = None,
-             search_list: list = None) -> Dict:
+def get_mail(api, index: int, search_type: int = 0, search_condition: [str | None] = None,
+             search_list: [list | None] = None) -> Dict:
     logger = Logger('get_mail')
 
     _api_util.one_thread(api)
