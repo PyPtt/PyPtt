@@ -212,7 +212,9 @@ class API:
         :param query: (Optional) Enable query or not.
         :return: The dict of post.
         """
-        return _api_get_post.get_post(self, board, aid, index, search_type, search_condition, search_list, query)
+        return _api_get_post.get_post(
+            self, board, aid=aid, index=index, search_type=search_type, search_condition=search_condition,
+            search_list=search_list, query=query)
 
     def get_newest_index(self, index_type: data_type.NewIndex, board: [str | None] = None,
                          search_type: data_type.SearchType = data_type.SearchType.NOPE,
