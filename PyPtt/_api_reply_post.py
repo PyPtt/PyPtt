@@ -32,7 +32,7 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
             data_type.NewIndex.BBS,
             board=board)
         check_value.check_index(
-            'post_index',
+            'index',
             post_index,
             max_value=newest_index)
 
@@ -41,7 +41,7 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
         raise ValueError(f'wrong parameter sign_file: {sign_file}')
 
     if post_aid is not None and post_index != 0:
-        raise ValueError('wrong parameter post_aid and post_index can\'t both input')
+        raise ValueError('wrong parameter aid and index can\'t both input')
 
     _api_util.check_board(api, board)
 

@@ -21,14 +21,14 @@ from .data_type import PostField, CommentField, NewIndex
 from .data_type import SearchType as st
 
 
-def get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0, search_list: [list | None] = None,
+def get_post(api, board: str, aid: [str | None] = None, index: int = 0, search_list: [list | None] = None,
              search_type: data_type.SearchType = data_type.SearchType.NOPE,
              search_condition: [str | None] = None, query: bool = False) -> Dict:
     max_retry = 2
     post = {}
     for i in range(max_retry):
         try:
-            post = _get_post(api, board, post_aid, post_index, search_type, search_condition, search_list, query)
+            post = _get_post(api, board, aid, index, search_type, search_condition, search_list, query)
             if not post:
                 pass
             elif not post[PostField.pass_format_check]:
@@ -65,8 +65,8 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
 
     check_value.check_type(board, str, 'board')
     if post_aid is not None:
-        check_value.check_type(post_aid, str, 'post_aid')
-    check_value.check_type(post_index, int, 'post_index')
+        check_value.check_type(post_aid, str, 'aid')
+    check_value.check_type(post_index, int, 'index')
 
     if search_type is not None and not isinstance(search_type, st):
         raise TypeError(f'search_type must be SearchType, but got {search_type}')
@@ -80,10 +80,10 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
         raise ValueError(f'board error parameter: {board}')
 
     if post_index != 0 and isinstance(post_aid, str):
-        raise ValueError('wrong parameter post_index and post_aid can\'t both input')
+        raise ValueError('wrong parameter index and aid can\'t both input')
 
     if post_index == 0 and post_aid is None:
-        raise ValueError('wrong parameter post_index or post_aid must input')
+        raise ValueError('wrong parameter index or aid must input')
 
     if search_condition is not None and search_type == 0:
         raise ValueError('wrong parameter search_type must input')
@@ -97,7 +97,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
         check_value.check_range(S, -100, 100, 'search_condition')
 
     if post_aid is not None and search_condition is not None:
-        raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
+        raise ValueError('wrong parameter aid and search_condition can\'t both input')
 
     if post_index != 0:
         newest_index = api.get_newest_index(
@@ -107,7 +107,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
             search_condition=search_condition,
             search_list=search_list)
 
-        check_value.check_index('post_index', post_index, newest_index)
+        check_value.check_index('index', post_index, newest_index)
 
     _api_util.check_board(api, board)
     _api_util.goto_board(api, board)

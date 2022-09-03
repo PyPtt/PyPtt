@@ -27,10 +27,10 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
         raise ValueError(f'board error parameter: {board}')
 
     if post_index != 0 and isinstance(post_aid, str):
-        raise ValueError('wrong parameter post_index and post_aid can\'t both input')
+        raise ValueError('wrong parameter index and aid can\'t both input')
 
     if post_index == 0 and post_aid is None:
-        raise ValueError('wrong parameter post_index or post_aid must input')
+        raise ValueError('wrong parameter index or aid must input')
 
     if post_index != 0:
         newest_index = api.get_newest_index(

@@ -40,13 +40,13 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
 
     if mark_type != data_type.MarkType.DeleteD:
         if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError('wrong parameter post_index and post_aid can\'t both input')
+            raise ValueError('wrong parameter index and aid can\'t both input')
 
         if post_index == 0 and post_aid is None:
-            raise ValueError('wrong parameter post_index or post_aid must input')
+            raise ValueError('wrong parameter index or aid must input')
 
     if search_condition is not None and search_type == 0:
-        raise ValueError('wrong parameter post_index or post_aid must input')
+        raise ValueError('wrong parameter index or aid must input')
 
     if search_type == data_type.SearchType.PUSH:
         try:
@@ -57,7 +57,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
         check_value.check_range(S, -100, 100, 'search_condition')
 
     if post_aid is not None and search_condition is not None:
-        raise ValueError('wrong parameter post_aid and search_condition can\'t both input')
+        raise ValueError('wrong parameter aid and search_condition can\'t both input')
 
     if post_index != 0:
         newest_index = api.get_newest_index(
@@ -66,7 +66,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
             search_type=search_type,
             search_condition=search_condition)
         check_value.check_index(
-            'post_index',
+            'index',
             post_index,
             max_value=newest_index)
 
