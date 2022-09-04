@@ -1,6 +1,5 @@
 ﻿from __future__ import annotations
 
-import platform
 import threading
 from typing import Dict, Tuple, Callable
 
@@ -37,30 +36,40 @@ from . import version
 
 
 class API:
+    """
+    A Python PTT Library.
+    """
+
     def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LogLevel = LogLevel.INFO,
                  screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
                  logger_callback: Callable = None, host=data_type.HOST.PTT1):
 
         """
-        Init.
-        :param language: The display language, Reference Language.
-        :param log_level: The log level. Reference SingleLog.LogLevel.
-        :param screen_timeout:
-            After screen_timeout sec, PyPtt will determine that no target found in the current screen.
-        :param screen_long_timeout:
-            After screen_long_timeout sec, PyPtt will determine that no target found in the current screen.
+        Init library instance.
+
+        Args:
+            language: The language of PTT. Reference Language.
+
+            log_level: The log level. Reference SingleLog.LogLevel.
+
+            screen_timeout: After screen_timeout sec, PyPtt will determine that no target found in the current screen.
+
+            screen_long_timeout: After screen_long_timeout sec, PyPtt will determine that no target found in the current screen.
             This setting is suitable for situations that require more waiting, such as: kick other session, etc.
-        :param screen_post_timeout:
-            After screen_post_timeout sec, PyPtt will determine that no target found in the current screen.
+
+            screen_post_timeout: After screen_post_timeout sec, PyPtt will determine that no target found in the current screen.
             This setting is suitable for situations that require more waiting, such as: post, etc.
-        :param connect_mode:
-            The connect mode is the protocol to connect PTT, such as WebSocket, and Telnet. Reference ConnectMode
-        :param port:
-            To connect port.
-        :param logger_callback: if you want to handle the output log, you can set up the logger callback.
-        :param host:
-            The host connect target, such as PTT, PTT2 or docker, etc.
+
+            connect_mode: The connect mode is the protocol to connect PTT, such as WebSocket, and Telnet. Reference ConnectMode.
+            port: The port of PTT.
+
+            logger_callback: The logger callback.
+            host: The host connect target, such as PTT, PTT2 or docker, etc.
+
+        Returns:
+            None
+
         """
 
         self.logger = None
@@ -171,10 +180,14 @@ class API:
         """
         Login PTT.
 
-        :param ptt_id: PTT id.
-        :param ptt_pw: PTT password.
-        :param kick_other_session: kick other session or not while login.
-        :return: None
+        Args:
+            ptt_id: The PTT ID.
+            ptt_pw: The PTT password.
+            kick_other_session: If True, kick other session.
+
+        Returns:
+            None
+
         """
 
         _api_loginout.login(self, ptt_id, ptt_pw, kick_other_session)
