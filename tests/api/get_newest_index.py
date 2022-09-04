@@ -20,12 +20,12 @@ def test(ptt_bot: PyPtt.API):
     for board, search_type, search_condition in test_list:
         for _ in range(3):
             index = ptt_bot.get_newest_index(
-                PyPtt.NewIndex.BBS,
+                PyPtt.NewIndex.BOARD,
                 board)
             util.logger.info(f'{board} newest index', index)
 
             index = ptt_bot.get_newest_index(
-                PyPtt.NewIndex.BBS,
+                PyPtt.NewIndex.BOARD,
                 board=board,
                 search_type=search_type,
                 search_condition=search_condition)

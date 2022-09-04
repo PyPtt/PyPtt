@@ -61,7 +61,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
 
     if post_index != 0:
         newest_index = api.get_newest_index(
-            data_type.NewIndex.BBS,
+            data_type.NewIndex.BOARD,
             board=board,
             search_type=search_type,
             search_condition=search_condition)

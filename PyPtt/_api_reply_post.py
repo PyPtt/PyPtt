@@ -29,7 +29,7 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
 
     if post_index != 0:
         newest_index = api.get_newest_index(
-            data_type.NewIndex.BBS,
+            data_type.NewIndex.BOARD,
             board=board)
         check_value.check_index(
             'index',

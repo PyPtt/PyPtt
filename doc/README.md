@@ -299,12 +299,12 @@ if post_info is None:
     print('post_info is None')
     sys.exit()
 
-if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
-    if post_info.delete_status == PTT.data_type.post_delete_status.MODERATOR:
+if post_info.status != PTT.data_type.post_delete_status.NOT_DELETED:
+    if post_info.status == PTT.data_type.post_delete_status.MODERATOR:
         print(f'[板主刪除][{post_info.author}]')
-    elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
+    elif post_info.status == PTT.data_type.post_delete_status.AUTHOR:
         print(f'[作者刪除][{post_info.author}]')
-    elif post_info.delete_status == PTT.data_type.post_delete_status.UNKNOWN:
+    elif post_info.status == PTT.data_type.post_delete_status.UNKNOWN:
         print(f'[不明刪除]')
     sys.exit()
 
@@ -382,7 +382,7 @@ test_list = [
 
 for (test_board, search_type, condition) in test_list:
     index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.index_type.BOARD,
         test_board,
         search_type=search_type,
         search_condition=condition,
@@ -418,7 +418,7 @@ search_list = [
 ]
 
 index = ptt_bot.get_newest_index(
-    PTT.data_type.index_type.BBS,
+    PTT.data_type.index_type.BOARD,
     'Gossiping',
     search_type=PTT.data_type.post_search_type.KEYWORD,
     search_condition='新聞',
@@ -472,7 +472,7 @@ test_board_list = [
 
 for test_board in test_board_list:
     index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.index_type.BOARD,
         board=test_board
     )
     print(f'{test_board} 最新文章編號 {index}')
@@ -487,7 +487,7 @@ test_list = [
 
 for (test_board, search_type, condition) in test_list:
     newest_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.index_type.BOARD,
         test_board,
         search_type=search_type,
         search_condition=condition,
@@ -506,7 +506,7 @@ search_list = [
 ]
 
 index = ptt_bot.get_newest_index(
-    PTT.data_type.index_type.BBS,
+    PTT.data_type.index_type.BOARD,
     'Gossiping',
     search_type=PTT.data_type.post_search_type.KEYWORD,
     search_condition='新聞',
@@ -558,13 +558,12 @@ mail_index = ptt_bot.get_newest_index(
 
 ```python
 def crawl_handler(post_info):
-
-    if post_info.delete_status != PTT.data_type.post_delete_status.NOT_DELETED:
-        if post_info.delete_status == PTT.data_type.post_delete_status.MODERATOR:
+    if post_info.status != PTT.data_type.post_delete_status.NOT_DELETED:
+        if post_info.status == PTT.data_type.post_delete_status.MODERATOR:
             print(f'[板主刪除][{post_info.author}]')
-        elif post_info.delete_status == PTT.data_type.post_delete_status.AUTHOR:
+        elif post_info.status == PTT.data_type.post_delete_status.AUTHOR:
             print(f'[作者刪除][{post_info.author}]')
-        elif post_info.delete_status == PTT.data_type.post_delete_status.UNKNOWN:
+        elif post_info.status == PTT.data_type.post_delete_status.UNKNOWN:
             print(f'[不明刪除]')
         return
 
@@ -575,7 +574,7 @@ test_board = 'Gossiping'
 test_range = 1000
 
 newest_index = ptt_bot.get_newest_index(
-    PTT.data_type.index_type.BBS,
+    PTT.data_type.index_type.BOARD,
     board=test_board)
 start_index = newest_index - test_range + 1
 
@@ -585,7 +584,7 @@ print(f'預備爬行 {test_board} 編號 {start_index} ~ {newest_index} 文章')
 # end_aid = ptt_bot.get_post_index(test_board, newest_index)
 
 error_post_list, del_post_list = ptt_bot.crawl_board(
-    PTT.data_type.crawl_type.BBS,
+    PTT.data_type.crawl_type.BOARD,
     crawl_handler,
     test_board,
     # 使用 index 來標示文章範圍
@@ -653,7 +652,7 @@ test_list = [
 for (test_board, search_type, condition) in test_list:
     show_condition(test_board, search_type, condition)
     newest_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.BBS,
+        PTT.data_type.index_type.BOARD,
         test_board,
         search_type=search_type,
         search_condition=condition,
@@ -663,7 +662,7 @@ for (test_board, search_type, condition) in test_list:
     start_index = newest_index - test_range + 1
     # 有下條件的情況下，無法使用 aid 來標記範圍
     error_post_list, del_post_list = ptt_bot.crawl_board(
-        PTT.data_type.crawl_type.BBS,
+        PTT.data_type.crawl_type.BOARD,
         crawlHandler,
         test_board,
         start_index=start_index,
@@ -681,23 +680,23 @@ Since 0.9.21
 
 ```python
 search_list = [
-        (PTT.data_type.post_search_type.KEYWORD, '新聞'),
-        (PTT.data_type.post_search_type.AUTHOR, 'Code'),
-    ]
+    (PTT.data_type.post_search_type.KEYWORD, '新聞'),
+    (PTT.data_type.post_search_type.AUTHOR, 'Code'),
+]
 
-    newest_index = ptt_bot.get_newest_index(
-        PTT.data_type.index_type.BBS,
-        'Gossiping',
-        search_list=search_list)
-    print(f'Gossiping 最新文章編號 {newest_index}')
+newest_index = ptt_bot.get_newest_index(
+    PTT.data_type.index_type.BOARD,
+    'Gossiping',
+    search_list=search_list)
+print(f'Gossiping 最新文章編號 {newest_index}')
 
-    error_post_list, del_post_list = ptt_bot.crawl_board(
-        PTT.data_type.crawl_type.BBS,
-        crawlHandler,
-        'Gossiping',
-        start_index=1,
-        end_index=newest_index,
-        search_list=search_list)
+error_post_list, del_post_list = ptt_bot.crawl_board(
+    PTT.data_type.crawl_type.BOARD,
+    crawlHandler,
+    'Gossiping',
+    start_index=1,
+    end_index=newest_index,
+    search_list=search_list)
 ```
 
 如果只需要對文章按 Q 的資訊  
@@ -710,7 +709,7 @@ Since 0.8.16
 
 ```python
 error_post_list, del_post_list = ptt_bot.crawl_board(
-    PTT.data_type.crawl_type.BBS,
+    PTT.data_type.crawl_type.BOARD,
     crawlHandler,
     'Gossiping',
     start_index=1,
@@ -752,12 +751,12 @@ for _ in range(3):
 ```python
 test_board = 'Test'
 test_index = 398
-index = ptt_bot.get_newest_index(PTT.data_type.index_type.BBS, board=test_board)
+index = ptt_bot.get_newest_index(PTT.data_type.index_type.BOARD, board=test_board)
 print(f'{test_board} 最新文章編號 {index}')
 
 content = '''
 What is Ptt?
-批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin board System) 為主的一系列服務。
+批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BOARD, Bulletin board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
 ptt_bot.comment(test_board, PTT.data_type.CommentType.PUSH, content, index=test_index)

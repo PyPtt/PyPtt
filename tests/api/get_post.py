@@ -99,7 +99,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
     for (board, search_type, condition) in test_list:
         show_condition(board, search_type, condition)
         index = ptt_bot.get_newest_index(
-            PyPtt.NewIndex.BBS,
+            PyPtt.NewIndex.BOARD,
             board,
             search_type=search_type,
             search_condition=condition)
@@ -120,13 +120,13 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             util.logger.info('作者', post.get('author'))
             util.logger.info('標題', post.get('title'))
 
-            if post.get('delete_status') == PyPtt.PostStatus.exists:
+            if post.get('status') == PyPtt.PostStatus.EXISTS:
                 pass
                 # if not query:
                 #     util.logger.info('內文', post.get('content'))
-            elif post.get('delete_status') == PyPtt.PostStatus.deleted_by_author:
+            elif post.get('status') == PyPtt.PostStatus.DELETED_BY_AUTHOR:
                 util.logger.info('文章被作者刪除')
-            elif post.get('delete_status') == PyPtt.PostStatus.deleted_by_moderator:
+            elif post.get('status') == PyPtt.PostStatus.DELETED_BY_MODERATOR:
                 util.logger.info('文章被版主刪除')
             util.logger.info('=' * 50)
 

@@ -759,7 +759,7 @@ def load(lang):
     global no_such_post
     no_such_post = specific_load(lang, [
         '{Target0} 板找不到這個文章代碼 {Target1}',
-        'in {Target0}, the post code is not exists {Target1}',
+        'in {Target0}, the post code is not EXISTS {Target1}',
     ])
 
     global connect_fail

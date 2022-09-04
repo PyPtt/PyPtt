@@ -1,6 +1,8 @@
-import json
+import time
 
 import PyPtt
+import config
+from PyPtt import PostField
 from tests import util
 
 
@@ -10,32 +12,59 @@ def test(ptt_bot: PyPtt.API):
 github: https://github.com/PttCodingMan/PyPtt
 
 開發手冊: https://github.com/PttCodingMan/PyPtt/tree/master/doc
-ポ
-ポポ
-ポポポ
-☂
-☂☂
-☂☂☂
+
+測試標記
+781d16268c9f25a39142a17ff063ac029b1466ca14cb34f5d88fe8aadfeee053
 '''
 
+    temp = ''
+    for i in range(100):
+        content = f'{content}\n={i}='
+        temp = f'{temp}\n={i}='
+
+    check_ = [
+        '781d16268c9f25a39142a17ff063ac029b1466ca14cb34f5d88fe8aadfeee053',
+        temp
+    ]
+
     for _ in range(3):
-        ptt_bot.post(
-            # 看板
-            'Test',
-            # 標題分類
-            1,
-            # 標題
-            'PyPtt 程式貼文測試',
-            # 內文
-            content,
-            # 簽名檔
-            0)
+        ptt_bot.post(board='Test', title_index=1, title='PyPtt 程式貼文測試', content=content, sign_file=0)
+
+    time.sleep(1)
+
+    newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Test')
+
+    current_id = config.PTT1_ID if ptt_bot.host == PyPtt.HOST.PTT1 else config.PTT2_ID
+
+    for i in range(10):
+        post = ptt_bot.get_post(board='Test', index=newest_index - i)
+
+        if post[PostField.status] != PyPtt.PostStatus.EXISTS:
+            print(f'Post {newest_index - i} not exists')
+            continue
+
+        post_author = post[PostField.author]
+        post_author = post_author.split(' ')[0]
+        if post_author != current_id:
+            print(f'Post {newest_index - i} author not match', post_author)
+            continue
+
+        check = True
+        for c in check_:
+            if c not in post[PostField.content]:
+                check = False
+                break
+        print(f'check: {check}')
+
+        time.sleep(3)
+        ptt_bot.del_post(board='Test', index=newest_index - i)
 
 
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
-        PyPtt.HOST.PTT2]
+        # PyPtt.HOST.PTT2
+    ]
 
     for host in host_list:
         ptt_bot = PyPtt.API(

@@ -93,10 +93,10 @@ class CommentField(AutoStrEnum):
 
 
 class PostStatus(AutoStrEnum):
-    exists = auto()
-    deleted_by_author = auto()
-    deleted_by_moderator = auto()
-    deleted_by_unknown = auto()
+    EXISTS = auto()
+    DELETED_BY_AUTHOR = auto()
+    DELETED_BY_MODERATOR = auto()
+    DELETED_BY_UNKNOWN = auto()
 
 
 class PostField(AutoStrEnum):
@@ -111,7 +111,7 @@ class PostField(AutoStrEnum):
     url = auto()
     ip = auto()
     push_list = auto()
-    delete_status = auto()
+    status = auto()
     list_date = auto()
     has_control_code = auto()
     pass_format_check = auto()
@@ -139,7 +139,7 @@ class Cursor:
 
 class NewIndex(AutoStrEnum):
     # 看板
-    BBS = auto()
+    BOARD = auto()
     # 信箱
     MAIL = auto()
     # 網頁，尚不支援
