@@ -130,6 +130,16 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     return sync_version_compare, remote_version
 
 
+def uniform_new_line(text: str) -> str:
+    random_tag = get_random_str(10)
+
+    text = text.replace('\r\n', random_tag)
+    text = text.replace('\n', '\r\n')
+    text = text.replace(random_tag, '\r\n')
+
+    return text
+
+
 if __name__ == '__main__':
     for _ in range(5):
         print(get_random_str(10))

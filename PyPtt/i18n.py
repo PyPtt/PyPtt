@@ -217,6 +217,8 @@ goodbye: str = ''
 update_remote_version: str = ''
 retry: str = ''
 change_pw: str = ''
+post: str = ''
+
 
 goodbye_en = [
     'goodbye',
@@ -239,6 +241,12 @@ goodbye_mandarin = [
 def load(lang):
     if not isinstance(lang, data_type.Language):
         raise ValueError('Unknown language', lang)
+
+    global post
+    post = specific_load(lang, [
+        '發佈文章',
+        'post article',
+    ])
 
     global change_pw
     change_pw = specific_load(lang, [
@@ -716,8 +724,8 @@ def load(lang):
 
     global has_post_permission
     has_post_permission = specific_load(lang, [
-        '使用者擁有貼文權限',
-        'UserField Has PostField Permission',
+        '確認擁有貼文權限',
+        'have permission to post',
     ])
 
     global deleted_post

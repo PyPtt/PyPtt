@@ -73,7 +73,7 @@ class API:
         if logger_callback is not None and not callable(logger_callback):
             raise TypeError('[PyPtt] logger_callback must be callable')
 
-        self.logger = Logger('PyPtt', log_level, callback=logger_callback)
+        self.logger = Logger('PyPtt', log_level, callback=logger_callback, **config.LOGGER_CONFIG)
 
         self.logger.info('Python', platform.python_version())
 
