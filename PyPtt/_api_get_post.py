@@ -51,7 +51,7 @@ def get_post(api, board: str, aid: [str | None] = None, index: int = 0, search_l
         api.logger.debug('Wait for retry repost')
         time.sleep(0.1)
 
-    post = json.dumps(post, cls=AutoJsonEncoder, ensure_ascii=False)
+    post = json.dumps(post, cls=AutoJsonEncoder)
     return json.loads(post)
 
 

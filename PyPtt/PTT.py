@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+import platform
 import threading
 from typing import Dict, Tuple, Callable
 
@@ -73,6 +74,8 @@ class API:
             raise TypeError('[PyPtt] logger_callback must be callable')
 
         self.logger = Logger('PyPtt', log_level, callback=logger_callback)
+
+        self.logger.info('Python', platform.python_version())
 
         if not isinstance(language, data_type.Language):
             raise TypeError('[PyPtt] language must be PyPtt.Language')
