@@ -58,8 +58,7 @@ def get_call_status(api) -> None:
         if index < 0:
             if i == 0:
                 continue
-            ori_screen = api.connect_core.get_screen_queue()[-1]
-            raise exceptions.UnknownError(ori_screen)
+            raise exceptions.UnknownError('UnknownError')
 
     if index == 0:
         return data_type.call_status.ON
