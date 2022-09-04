@@ -37,7 +37,7 @@ def logout(api) -> None:
             break_detect=True),
     ]
 
-    logger.info(i18n.logout)
+    api.logger.info(i18n.logout)
 
     try:
         api.connect_core.send(cmd, target_list)
@@ -49,11 +49,10 @@ def logout(api) -> None:
 
     api._is_login = False
 
-    logger.stage(i18n.success)
+    api.logger.stage(i18n.success)
 
 
 def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
-    logger = Logger('api', api.config.log_level, **config.LOGGER_CONFIG)
 
     _api_util.one_thread(api)
 
@@ -100,7 +99,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
 
     api.connect_core.connect()
 
-    logger.info(i18n.login_id, ptt_id)
+    api.logger.info(i18n.login_id, ptt_id)
 
     target_list = [
         connect_core.TargetUnit(
@@ -243,15 +242,15 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
 
         current_capacity, max_capacity = _api_util.get_mailbox_capacity(api)
 
-        logger.info(i18n.has_new_mail_goto_main_menu)
+        api.logger.info(i18n.has_new_mail_goto_main_menu)
 
         if current_capacity > max_capacity:
             api.is_mailbox_full = True
 
-            logger.info(i18n.mail_box_full)
+            api.logger.info(i18n.mail_box_full)
 
         if api.is_mailbox_full:
-            logger.info(i18n.use_mailbox_api_will_logout_after_execution)
+            api.logger.info(i18n.use_mailbox_api_will_logout_after_execution)
 
         target_list = [
             connect_core.TargetUnit(
@@ -272,15 +271,15 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     login_result = target_list[index].get_display_msg()
     if login_result != i18n.login_success:
         # print(ori_screen)
-        logger.info('reason', login_result)
+        api.logger.info('reason', login_result)
         raise exceptions.LoginError()
 
     if '> (' in ori_screen:
         api.cursor = data_type.Cursor.NEW
-        logger.debug(i18n.new_cursor)
+        api.logger.debug(i18n.new_cursor)
     else:
         api.cursor = data_type.Cursor.OLD
-        logger.debug(i18n.old_cursor)
+        api.logger.debug(i18n.old_cursor)
 
     if api.cursor not in screens.Target.InBoardWithCursor:
         screens.Target.InBoardWithCursor.append('\n' + api.cursor)
@@ -300,12 +299,12 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         unregistered_user = False
 
     if unregistered_user:
-        logger.info(i18n.unregistered_user_cant_use_all_api)
+        api.logger.info(i18n.unregistered_user_cant_use_all_api)
 
     api.is_registered_user = not unregistered_user
 
     if api.process_picks != 0:
-        logger.info(i18n.picks_in_register, api.process_picks)
+        api.logger.info(i18n.picks_in_register, api.process_picks)
 
     api._is_login = True
-    logger.stage(i18n.success)
+    api.logger.stage(i18n.success)

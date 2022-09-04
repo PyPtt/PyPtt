@@ -11,10 +11,7 @@ def log_to_file(msg: str):
         f.write(f'{msg}\n')
 
 
-logger = Logger('TEST_UTIL',
-                # handler=log_to_file
-                )
-logger.info = print
+logger = Logger('Test')
 
 
 def get_id_pw(password_file):

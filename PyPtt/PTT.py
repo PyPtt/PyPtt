@@ -75,8 +75,6 @@ class API:
 
         self.logger = Logger('PyPtt', log_level, callback=logger_callback, **config.LOGGER_CONFIG)
 
-        self.logger.info('Python', platform.python_version())
-
         if not isinstance(language, data_type.Language):
             raise TypeError('[PyPtt] language must be PyPtt.Language')
 
