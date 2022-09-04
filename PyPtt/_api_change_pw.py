@@ -1,4 +1,4 @@
-from logging import Logger
+from SingleLog import Logger
 
 from . import command, _api_util
 from . import connect_core
@@ -13,6 +13,8 @@ def change_pw(api, new_password: str) -> None:
 
     if not api._is_login:
         raise exceptions.Requirelogin(i18n.require_login)
+
+    logger.info(i18n.change_pw)
 
     new_password = new_password[:8]
 
@@ -69,7 +71,4 @@ def change_pw(api, new_password: str) -> None:
 
     api._ptt_pw = new_password
 
-    # ori_screen = api.connect_core.get_screen_queue()[-1]
-    # print(ori_screen)
-
-    # logger.info()
+    logger.stage(i18n.success)

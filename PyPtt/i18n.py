@@ -216,7 +216,7 @@ welcome: str = ''
 goodbye: str = ''
 update_remote_version: str = ''
 retry: str = ''
-
+change_pw: str = ''
 
 goodbye_en = [
     'goodbye',
@@ -239,6 +239,12 @@ goodbye_mandarin = [
 def load(lang):
     if not isinstance(lang, data_type.Language):
         raise ValueError('Unknown language', lang)
+
+    global change_pw
+    change_pw = specific_load(lang, [
+        '變更密碼',
+        'change password',
+    ])
 
     global retry
     retry = specific_load(lang, [
@@ -1374,4 +1380,3 @@ def _createlist():
 
     with open('i18n.txt', 'w') as F:
         F.write('\n'.join(i18nStrList))
-

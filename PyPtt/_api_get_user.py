@@ -1,6 +1,8 @@
+import json
 import re
 from typing import Dict
 
+from AutoStrEnum import AutoJsonEncoder
 from SingleLog import Logger
 
 from . import _api_util
@@ -12,6 +14,7 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
+from .data_type import UserField
 
 
 def get_user(api, ptt_id: str) -> Dict:
@@ -125,18 +128,19 @@ def get_user(api, ptt_id: str) -> Dict:
     logger.debug('signature_file', signature_file)
 
     user = {
-        'ptt_id': ptt_id,
-        'money': money,
-        'login_count': login_count,
-        'account_verified': account_verified,
-        'legal_post': legal_post,
-        'illegal_post': illegal_post,
-        'status': status,
-        'mail': mail,
-        'last_login_date': last_login_date,
-        'last_login_ip': last_login_ip,
-        'five_chess': five_chess,
-        'chess': chess,
-        'signature_file': signature_file,
+        UserField.ptt_id: ptt_id,
+        UserField.money: money,
+        UserField.login_count: login_count,
+        UserField.account_verified: account_verified,
+        UserField.legal_post: legal_post,
+        UserField.illegal_post: illegal_post,
+        UserField.status: status,
+        UserField.mail: mail,
+        UserField.last_login_date: last_login_date,
+        UserField.last_login_ip: last_login_ip,
+        UserField.five_chess: five_chess,
+        UserField.chess: chess,
+        UserField.signature_file: signature_file,
     }
-    return user
+    user = json.dumps(user, cls=AutoJsonEncoder)
+    return json.loads(user)
