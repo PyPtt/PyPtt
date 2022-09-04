@@ -101,7 +101,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
 
     if post_index != 0:
         newest_index = api.get_newest_index(
-            NewIndex.BBS,
+            NewIndex.BOARD,
             board=board,
             search_type=search_type,
             search_condition=search_condition,
@@ -194,7 +194,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
         PostField.url: None,
         PostField.ip: None,
         PostField.push_list: [],
-        PostField.delete_status: data_type.PostStatus.exists,
+        PostField.status: data_type.PostStatus.EXISTS,
         PostField.list_date: None,
         PostField.has_control_code: False,
         PostField.pass_format_check: False,
@@ -231,11 +231,11 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
         pattern = re.compile('\[[\w]+\]')
         pattern_result = pattern.search(cursor_line)
         if pattern_result is not None:
-            post_del_status = data_type.PostStatus.deleted_by_author
+            post_del_status = data_type.PostStatus.DELETED_BY_AUTHOR
         else:
             pattern = re.compile('<[\w]+>')
             pattern_result = pattern.search(cursor_line)
-            post_del_status = data_type.PostStatus.deleted_by_moderator
+            post_del_status = data_type.PostStatus.DELETED_BY_MODERATOR
 
         # > 79843     9/11 -             □ (本文已被吃掉)<
         # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
@@ -244,7 +244,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
             post_author = pattern_result.group(0)[1:-1]
         else:
             post_author = None
-            post_del_status = data_type.PostStatus.deleted_by_unknown
+            post_del_status = data_type.PostStatus.DELETED_BY_UNKNOWN
 
         logger.debug('ListDate', list_date)
         logger.debug('PostAuthor', post_author)
@@ -254,7 +254,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
             PostField.board: board,
             PostField.author: post_author,
             PostField.list_date: list_date,
-            PostField.delete_status: post_del_status,
+            PostField.status: post_del_status,
             PostField.pass_format_check: True
         })
 

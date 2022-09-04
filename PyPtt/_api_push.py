@@ -167,7 +167,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
 
     if post_index != 0:
         newest_index = api.get_newest_index(
-            data_type.NewIndex.BBS,
+            data_type.NewIndex.BOARD,
             board=board)
         check_value.check_index('index', post_index, newest_index)
 

@@ -237,7 +237,7 @@ class API:
         return _api_get_newest_index.get_newest_index(
             self, index_type, board, search_type, search_condition, search_list)
 
-    def post(self, board: str, title_index: int, title: str, content: str, sign_file) -> None:
+    def post(self, board: str, title_index: int, title: str, content: str, sign_file: [str | int]) -> None:
         """
         Post on PTT.
 

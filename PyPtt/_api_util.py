@@ -382,7 +382,7 @@ def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | 
     normal_newest_index = -1
     if search_condition is not None:
 
-        if index_type == data_type.NewIndex.BBS:
+        if index_type == data_type.NewIndex.BOARD:
             normal_newest_index = api.get_newest_index(index_type, board=board)
         else:
             normal_newest_index = api.get_newest_index(index_type)
@@ -394,7 +394,7 @@ def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | 
         elif search_type == data_type.SearchType.MARK:
             cmd_list.append('G')
 
-        if index_type == data_type.NewIndex.BBS:
+        if index_type == data_type.NewIndex.BOARD:
             if search_type == data_type.SearchType.PUSH:
                 cmd_list.append('Z')
             elif search_type == data_type.SearchType.MONEY:
@@ -406,7 +406,7 @@ def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | 
     if search_list is not None:
 
         if normal_newest_index == -1:
-            if index_type == data_type.NewIndex.BBS:
+            if index_type == data_type.NewIndex.BOARD:
                 normal_newest_index = api.get_newest_index(index_type, board=board)
             else:
                 normal_newest_index = api.get_newest_index(index_type)
@@ -421,7 +421,7 @@ def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | 
                 cmd_list.append('a')
             elif search_type_ == data_type.SearchType.MARK:
                 cmd_list.append('G')
-            elif index_type == data_type.NewIndex.BBS:
+            elif index_type == data_type.NewIndex.BOARD:
                 if search_type_ == data_type.SearchType.PUSH:
                     cmd_list.append('Z')
                 elif search_type_ == data_type.SearchType.MONEY:

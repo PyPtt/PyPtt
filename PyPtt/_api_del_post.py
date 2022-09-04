@@ -36,7 +36,7 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
 
     if post_index != 0:
         newest_index = api.get_newest_index(
-            data_type.NewIndex.BBS,
+            data_type.NewIndex.BOARD,
             board=board)
         check_value.check_index(
             'PostIndex',
@@ -46,13 +46,13 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
     board_info = _api_util.check_board(api, board)
 
     check_author = True
-    for moderator in board_info.moderators:
+    for moderator in board_info[data_type.BoardField.moderators]:
         if api._ptt_id.lower() == moderator.lower():
             check_author = False
             break
 
     post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
-    if post_info['delete_status'] != data_type.PostStatus.exists:
+    if post_info['status'] != data_type.PostStatus.EXISTS:
         if post_aid is not None:
             raise exceptions.DeletedPost(board, post_aid)
         else:

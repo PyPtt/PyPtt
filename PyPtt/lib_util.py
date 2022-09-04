@@ -40,7 +40,7 @@ def get_aid_from_url(url: str) -> Tuple[str, str]:
     # 檢查是否為字串
     check_value.check_type(url, str, 'url')
 
-    # 檢查是否符合 PTT BBS 文章網址格式
+    # 檢查是否符合 PTT BOARD 文章網址格式
     pattern = re.compile('https://www.ptt.cc/bbs/[-.\w]+/M.[\d]+.A[.\w]*.html')
     r = pattern.search(url)
     if r is None:
