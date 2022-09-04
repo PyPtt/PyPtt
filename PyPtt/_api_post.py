@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import NoReturn
+
 from . import _api_util
 from . import check_value
 from . import command
@@ -51,8 +55,7 @@ def fast_post_step0(api, board: str, title: str, content: str, post_type: int) -
     ]
     index = api.connect_core.fast_send(cmd, target_list)
     if index < 0:
-        screens.show(api.config, api.connect_core.get_screen_queue())
-        raise exceptions.UnknownError(i18n.UnknownError)
+        raise exceptions.UnknownError('UnknownError')
     if index == 1 or index == 2:
         raise exceptions.NoPermission(i18n.no_permission)
 
@@ -94,8 +97,7 @@ def fast_post_step1(api: object, sign_file) -> None:
     ]
     index = api.connect_core.fast_send(cmd, target_list)
     if index < 0:
-        screens.show(api.config, api.connect_core.get_screen_queue())
-        raise exceptions.UnknownError(i18n.UnknownError)
+        raise exceptions.UnknownError('UnknownError')
 
 
 def fast_post(
@@ -151,8 +153,7 @@ def fast_post(
     ]
     index = api.connect_core.fast_send(cmd, target_list)
     if index < 0:
-        screens.show(api.config, api.connect_core.get_screen_queue())
-        raise exceptions.UnknownError(i18n.UnknownError)
+        raise exceptions.UnknownError('UnknownError')
     if index == 1 or index == 2:
         raise exceptions.NoPermission(i18n.no_permission)
 
@@ -161,7 +162,7 @@ sign_file_list = [str(x) for x in range(0, 10)]
 sign_file_list.append('x')
 
 
-def post(api, board: str, title: str, content: str, title_index: int, sign_file) -> None:
+def post(api, board: str, title: str, content: str, title_index: int, sign_file: [str | int]) -> None:
     _api_util.one_thread(api)
 
     if not api.is_registered_user:
@@ -214,8 +215,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file)
     ]
     index = api.connect_core.send(cmd, target_list)
     if index < 0:
-        screens.show(api.config, api.connect_core.get_screen_queue())
-        raise exceptions.UnknownError(i18n.UnknownError)
+        raise exceptions.UnknownError('UnknownError')
     if index == 1 or index == 2:
         raise exceptions.NoPermission(i18n.no_permission)
 
