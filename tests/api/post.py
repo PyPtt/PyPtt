@@ -27,7 +27,9 @@ github: https://github.com/PttCodingMan/PyPtt
         temp
     ]
 
-    for _ in range(3):
+    check_range = 3
+
+    for _ in range(check_range):
         ptt_bot.post(board='Test', title_index=1, title='PyPtt 程式貼文測試', content=content, sign_file=0)
 
     time.sleep(1)
@@ -36,6 +38,7 @@ github: https://github.com/PttCodingMan/PyPtt
 
     current_id = config.PTT1_ID if ptt_bot.host == PyPtt.HOST.PTT1 else config.PTT2_ID
 
+    check_count = 0
     for i in range(10):
         post = ptt_bot.get_post(board='Test', index=newest_index - i)
 
@@ -56,14 +59,17 @@ github: https://github.com/PttCodingMan/PyPtt
                 break
         print(f'check: {check}')
 
-        time.sleep(3)
         ptt_bot.del_post(board='Test', index=newest_index - i)
+
+        check_count += 1
+        if check_count == check_range:
+            break
 
 
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
-        # PyPtt.HOST.PTT2
+        PyPtt.HOST.PTT2
     ]
 
     for host in host_list:
