@@ -28,6 +28,7 @@ github: https://github.com/PttCodingMan/PyPtt
     ]
 
     check_range = 3
+    current_id = config.PTT1_ID if ptt_bot.host == PyPtt.HOST.PTT1 else config.PTT2_ID
 
     for _ in range(check_range):
         ptt_bot.post(board='Test', title_index=1, title='PyPtt 程式貼文測試', content=content, sign_file=0)
@@ -35,8 +36,6 @@ github: https://github.com/PttCodingMan/PyPtt
     time.sleep(1)
 
     newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Test')
-
-    current_id = config.PTT1_ID if ptt_bot.host == PyPtt.HOST.PTT1 else config.PTT2_ID
 
     check_count = 0
     for i in range(10):
@@ -52,12 +51,14 @@ github: https://github.com/PttCodingMan/PyPtt
             print(f'Post {newest_index - i} author not match', post_author)
             continue
 
+        util.logger.info('test ', check_count)
+
         check = True
         for c in check_:
             if c not in post[PostField.content]:
                 check = False
                 break
-        print(f'check: {check}')
+        util.logger.stage('pass' if check else 'fail')
 
         ptt_bot.del_post(board='Test', index=newest_index - i)
 
