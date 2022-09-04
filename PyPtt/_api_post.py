@@ -179,17 +179,10 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     if str(sign_file).lower() not in sign_file_list:
         raise ValueError(f'wrong parameter sign_file: {sign_file}')
 
-    random_tag = lib_util.get_random_str(10)
-
-    content = content.replace('\r\n', random_tag)
-    content = content.replace('\n', '\r\n')
-    content = content.replace(random_tag, '\r\n')
-
     _api_util.check_board(api, board)
-
     _api_util.goto_board(api, board)
 
-    # logger = Logger('post')
+    api.logger.info(i18n.post)
 
     cmd_list = []
     cmd_list.append(command.ctrl_p)
@@ -219,7 +212,11 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     if index == 1 or index == 2:
         raise exceptions.NoPermission(i18n.no_permission)
 
+    api.logger.stage(i18n.has_post_permission)
+
     screens.show(api.config, api.connect_core.get_screen_queue())
+
+    content = lib_util.uniform_new_line(content)
 
     cmd_list = []
     cmd_list.append(str(title_index))
@@ -252,3 +249,5 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
         cmd,
         target_list,
         screen_timeout=api.config.screen_post_timeout)
+
+    api.logger.stage(i18n.success)
