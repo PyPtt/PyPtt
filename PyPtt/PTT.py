@@ -37,23 +37,22 @@ from . import version
 
 class API:
     """
-    時下最流行的 Python PTT Library
+    這個 API 類別實作了 PTT 與 PTT2 的常用操作，
+
+    如果你想建立一個 `ptt_bot` 那應該會是這個樣子::
+
+        from PyPtt import API
+        ptt_bot = PTT.API()
 
     Args:
         language: PyPtt 顯示訊息的語言。預設為繁體中文。
-
         log_level: PyPtt 顯示訊息的等級。預設為 INFO。
-
         screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 3 秒。
-
-        screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間
-        例如踢掉其他連線等等。預設為 10 秒。
-
-        screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間
-        例如發佈文章等等。預設為 60 秒。
-
+        screen_long_timeout:
+            經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間例如踢掉其他連線等等。預設為 10 秒。
+        screen_post_timeout:
+            經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 60 秒。
         connect_mode: PyPtt 連線的模式。預設為 WEBSOCKETS。
-
         logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。
 
     Returns:
@@ -70,19 +69,11 @@ class API:
 
         Args:
             language: PyPtt 顯示訊息的語言。預設為繁體中文。
-
             log_level: PyPtt 顯示訊息的等級。預設為 INFO。
-
             screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 3 秒。
-
-            screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間
-            例如踢掉其他連線等等。預設為 10 秒。
-
-            screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間
-            例如發佈文章等等。預設為 60 秒。
-
+            screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 10 秒。
+            screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 60 秒。
             connect_mode: PyPtt 連線的模式。預設為 WEBSOCKETS。
-
             logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。
 
         Returns:
@@ -583,4 +574,4 @@ class API:
 
 if __name__ == '__main__':
     print('PyPtt v ' + version)
-    print('Developed by CodingMan')
+    print('Maintained by CodingMan')
