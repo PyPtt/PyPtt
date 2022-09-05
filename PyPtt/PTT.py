@@ -1,7 +1,7 @@
 ﻿from __future__ import annotations
 
 import threading
-from typing import Dict, Tuple, Callable
+from typing import Dict, Tuple, Callable, List
 
 from SingleLog import LogLevel
 from SingleLog import Logger
@@ -37,7 +37,7 @@ from . import version
 
 class API:
     """
-    A Python PTT Library.
+    時下最流行的 Python PTT Library
     """
 
     def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LogLevel = LogLevel.INFO,
@@ -46,30 +46,27 @@ class API:
                  logger_callback: Callable = None, host=data_type.HOST.PTT1):
 
         """
-        Init library instance.
+        初始化 PyPtt.
 
         Args:
-            language: The language of PTT. Reference Language.
+            language: PyPtt 顯示訊息的語言。預設為繁體中文。
 
-            log_level: The log level. Reference SingleLog.LogLevel.
+            log_level: PyPtt 顯示訊息的等級。預設為 INFO。
 
-            screen_timeout: After screen_timeout sec, PyPtt will determine that no target found in the current screen.
+            screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 3 秒。
 
-            screen_long_timeout: After screen_long_timeout sec, PyPtt will determine that no target found in the current screen.
-            This setting is suitable for situations that require more waiting, such as: kick other session, etc.
+            screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間
+            例如踢掉其他連線等等。預設為 10 秒。
 
-            screen_post_timeout: After screen_post_timeout sec, PyPtt will determine that no target found in the current screen.
-            This setting is suitable for situations that require more waiting, such as: post, etc.
+            screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間
+            例如發佈文章等等。預設為 60 秒。
 
-            connect_mode: The connect mode is the protocol to connect PTT, such as WebSocket, and Telnet. Reference ConnectMode.
-            port: The port of PTT.
+            connect_mode: PyPtt 連線的模式。預設為 WEBSOCKETS。
 
-            logger_callback: The logger callback.
-            host: The host connect target, such as PTT, PTT2 or docker, etc.
+            logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。
 
         Returns:
             None
-
         """
 
         self.logger = None
@@ -178,12 +175,12 @@ class API:
     def login(self, ptt_id: str, ptt_pw: str, kick_other_session: bool = False) -> None:
 
         """
-        Login PTT.
+        登入 PTT。
 
         Args:
-            ptt_id: The PTT ID.
-            ptt_pw: The PTT password.
-            kick_other_session: If True, kick other session.
+            ptt_id: PTT ID。
+            ptt_pw: PTT 密碼。
+            kick_other_session: 是否踢掉其他登入的 session。預設為 False。
 
         Returns:
             None
@@ -194,9 +191,10 @@ class API:
 
     def logout(self) -> None:
         """
-        Logout PTT.
+        登出 PTT。
 
-        :return: None
+        Returns:
+            None
         """
 
         _api_loginout.logout(self)
@@ -204,9 +202,10 @@ class API:
     def get_time(self) -> str:
 
         """
-        Get time of PTT.
+        取得 PTT 系統時間。
 
-        :return: None
+        Returns:
+            None
         """
 
         return _api_get_time.get_time(self)
@@ -215,16 +214,20 @@ class API:
                  search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: [str | None] = None,
                  search_list: [list | None] = None, query: bool = False) -> Dict:
         """
-        Get the post of PTT.
+        取得文章。
 
-        :param board: The board name.
-        :param aid: (Choose between aid and index) the aid of the PTT post.
-        :param index: (Choose between aid and index) the index of the PTT post.
-        :param search_type: (Optional) the search type. Reference SearchType.
-        :param search_condition: (Optional) the search condition.
-        :param search_list: (Optional) the search list including search type and search condition.
-        :param query: (Optional) Enable query or not.
-        :return: The dict of post.
+        Args:
+            board: 看板名稱。
+            aid: 文章編號。
+            index: 文章編號。
+            search_type: 搜尋類型。
+            search_condition: 搜尋條件。
+            search_list: 搜尋清單。
+            query: 是否為查詢模式。
+
+        Returns:
+            Dict，文章內容。
+
         """
         return _api_get_post.get_post(
             self, board, aid=aid, index=index, search_type=search_type, search_condition=search_condition,
@@ -235,14 +238,18 @@ class API:
                          search_list: [list | None] = None, search_condition: [str | None] = None) -> int:
 
         """
-        Get the newest index from board or mailbox.
+        取得最新文章或信箱編號。
 
-        :param index_type: The index type. Reference NewIndex.
-        :param board: The board name.
-        :param search_type: (Optional) the search type. Reference SearchType.
-        :param search_condition: (Optional) the search condition.
-        :param search_list: (Optional) the search list including search type and search condition.
-        :return the index:
+        Args:
+            index_type: 編號類型。NewIndex.BOARD 或 NewIndex.MAIL。
+            board: 看板名稱。
+            search_type: 搜尋類型。
+            search_list: 搜尋清單。
+            search_condition: 搜尋條件。
+
+        Returns:
+            int，最新文章或信箱編號。
+
         """
 
         return _api_get_newest_index.get_newest_index(
@@ -250,14 +257,18 @@ class API:
 
     def post(self, board: str, title_index: int, title: str, content: str, sign_file: [str | int]) -> None:
         """
-        Post on PTT.
+        發文。
 
-        :param board: The board name.
-        :param title_index:
-        :param title:
-        :param content:
-        :param sign_file:
-        :return:
+        Args:
+            board: 看板名稱。
+            title_index: 文章標題編號。
+            title: 文章標題。
+            content: 文章內容。
+            sign_file: 簽名檔名稱或編號。
+
+        Returns:
+            None
+
         """
 
         _api_post.post(self, board, title, content, title_index, sign_file)
@@ -265,14 +276,18 @@ class API:
     def comment(self, board: str, comment_type: data_type.CommentType, comment_content: str, aid: [str | None] = None,
                 index: int = 0) -> None:
         """
-        Comment the post.
+        推文。
 
-        :param board: The name of PTT board.
-        :param comment_type: The comment type. Reference CommentType.
-        :param comment_content: The comment content.
-        :param aid: (Choose between aid and index) the aid of the PTT post.
-        :param index: (Choose between aid and index) the index of the PTT post.
-        :return: None
+        Args:
+            board: 看板名稱。
+            comment_type: 推文類型。
+            comment_content: 推文內容。
+            aid: 文章編號。
+            index: 文章編號。
+
+        Returns:
+            None
+
         """
 
         _api_push.push(self, board, comment_type, comment_content, aid, index)
@@ -280,10 +295,14 @@ class API:
     def get_user(self, user_id) -> Dict:
 
         """
-        Get the information of The PTT user id.
+        取得使用者資訊。
 
-        :param user_id: The PTT user id.
-        :return: the user info in dict.
+        Args:
+            user_id: 使用者 ID。
+
+        Returns:
+            Dict，使用者資訊。
+
         """
 
         return _api_get_user.get_user(self, user_id)
@@ -291,11 +310,15 @@ class API:
     def give_money(self, ptt_id: str, money: int) -> None:
 
         """
-        Give money to The PTT user id.
+        轉帳。
 
-        :param ptt_id: The PTT user id.
-        :param money: The number of money.
-        :return: None
+        Args:
+            ptt_id: PTT ID。
+            money: 轉帳金額。
+
+        Returns:
+            None
+
         """
 
         _api_give_money.give_money(self, ptt_id, money)
@@ -303,23 +326,28 @@ class API:
     def mail(self, ptt_id: str, title: str, content: str, sign_file, backup: bool = True) -> None:
 
         """
-        Mail to The PTT user id.
+        寄信。
 
-        :param ptt_id: The PTT user id.
-        :param title: The title of mail.
-        :param content: The content of mail.
-        :param sign_file: The sign file of mail.
-        :param backup: If true the mail will store in your mailbox.
-        :return: None
+        Args:
+            ptt_id: PTT ID。
+            title: 信件標題。
+            content: 信件內容。
+            sign_file: 簽名檔名稱或編號。
+            backup: 是否備份信件。
+
+        Returns:
+            None
         """
 
         _api_mail.mail(self, ptt_id, title, content, sign_file, backup)
 
-    def get_board_list(self) -> list:
+    def get_board_list(self) -> List[str]:
 
         """
-        Get the board list.
-        :return: The board list.
+        取得看板清單。
+
+        Returns:
+            List[str]，看板清單。
         """
 
         return _api_get_board_list.get_board_list(self)
@@ -328,15 +356,18 @@ class API:
                    index: int = 0) -> None:
 
         """
-        Replay the post.
+        回覆文章。
 
-        :param reply_to: The place you want to reply to. (Reference ReplyTo)
-        :param board: The board name.
-        :param content: The reply content.
-        :param sign_file: The sign file.
-        :param aid: (Choose between aid and index) the aid of the PTT post.
-        :param index: (Choose between aid and index) the index of the PTT post.
-        :return: None
+        Args:
+            reply_to: 回覆類型。
+            board: 看板名稱。
+            content: 回覆內容。
+            sign_file: 簽名檔名稱或編號。
+            aid: 文章編號。
+            index: 文章編號。
+
+        Returns:
+            None
         """
 
         _api_reply_post.reply_post(self, reply_to, board, content, sign_file, aid, index)
@@ -344,10 +375,14 @@ class API:
     def set_board_title(self, board: str, new_title: str) -> None:
 
         """
-        Set the title of the board.
-        :param board: The board name.
-        :param new_title: The new title of the board.
-        :return: None
+        設定看板標題。
+
+        Args:
+            board: 看板名稱。
+            new_title: 新標題。
+
+        Returns:
+            None
         """
 
         _api_set_board_title.set_board_title(self, board, new_title)
@@ -356,23 +391,28 @@ class API:
                   search_condition: [str | None] = None) -> None:
 
         """
-        Mark the post.
+        標記文章。
 
-        :param mark_type: The mark type. (Reference MarkType)
-        :param board: The board name.
-        :param aid: (Choose between aid and index) the aid of the PTT post.
-        :param index: (Choose between aid and index) the index of the PTT post.
-        :param search_type: (Optional) the search type. Reference SearchType.
-        :param search_condition: (Optional) the search condition.
-        :return: None
+        Args:
+            mark_type: 標記類型。
+            board: 看板名稱。
+            aid: 文章編號。
+            index: 文章編號。
+            search_type: 搜尋類型。
+            search_condition: 搜尋條件。
+
+        Returns:
+            None
         """
 
         _api_mark_post.mark_post(self, mark_type, board, aid, index, search_type, search_condition)
 
     def get_favourite_boards(self) -> list:
         """
-        Get the favourite boards.
-        :return: the list of favourite boards.
+        取得收藏看板清單。
+
+        Returns:
+            list，收藏看板清單。
         """
 
         return _api_get_favourite_board.get_favourite_board(self)
@@ -380,26 +420,32 @@ class API:
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
 
         """
-        Bucket The PTT user id.
+        水桶。
 
-        :param board: The board name.
-        :param bucket_days: The days of bucket.
-        :param reason: The reason of bucket.
-        :param ptt_id: The bucket PTT user.
-        :return: None
+        Args:
+            board: 看板名稱。
+            bucket_days: 水桶天數。
+            reason: 水桶原因。
+            ptt_id: PTT ID。
+
+        Returns:
+            None
         """
 
         _api_bucket.bucket(self, board, bucket_days, reason, ptt_id)
 
-    def search_user(self, ptt_id: str, min_page: int = None, max_page: int = None) -> list:
+    def search_user(self, ptt_id: str, min_page: int = None, max_page: int = None) -> List[str]:
 
         """
-        Search the PTT users.
+        搜尋使用者。
 
-        :param ptt_id: All or part of the PTT user id.
-        :param min_page: The min page of searching.
-        :param max_page: The max page of searching.
-        :return: The list of PTT users.
+        Args:
+            ptt_id: PTT ID。
+            min_page: 最小頁數。
+            max_page: 最大頁數。
+
+        Returns:
+            List[str]，搜尋結果。
         """
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
@@ -407,11 +453,14 @@ class API:
     def get_board_info(self, board: str, get_post_types: bool = False) -> Dict:
 
         """
-        Get the board information.
+        取得看板資訊。
 
-        :param board: The board name.
-        :param get_post_types: If ture this api will return all the post types.
-        :return: The dict of board information.
+        Args:
+            board: 看板名稱。
+            get_post_types: 是否取得文章類型。
+
+        Returns:
+            Dict，看板資訊。
         """
 
         return _api_get_board_info.get_board_info(self, board, get_post_types, call_by_others=False)
@@ -420,13 +469,16 @@ class API:
                  search_list: [list | None] = None) -> Dict:
 
         """
-        Get the mail.
+        取得信件。
 
-        :param index: The index of mail.
-        :param search_type: (Optional) the search type. Reference SearchType.
-        :param search_condition: (Optional) the search condition.
-        :param search_list: (Optional) the search list including search type and search condition.
-        :return: The dict of mail.
+        Args:
+            index: 信件編號。
+            search_type: 搜尋類型。
+            search_condition: 搜尋條件。
+            search_list: 搜尋清單。
+
+        Returns:
+            Dict，信件資訊。
         """
 
         return _api_mail.get_mail(self, index, search_type, search_condition, search_list)
@@ -434,10 +486,13 @@ class API:
     def del_mail(self, index) -> None:
 
         """
-        Del the mail.
+        刪除信件。
 
-        :param index: The index of mail.
-        :return:
+        Args:
+            index: 信件編號。
+
+        Returns:
+            None
         """
 
         _api_mail.del_mail(self, index)
@@ -445,10 +500,13 @@ class API:
     def change_pw(self, new_password) -> None:
 
         """
-        Change password!
+        更改密碼。
 
-        :param new_password: The new password.
-        :return: None
+        Args:
+            new_password: 新密碼。
+
+        Returns:
+            None
         """
 
         _api_change_pw.change_pw(self, new_password)
@@ -456,32 +514,42 @@ class API:
     def get_aid_from_url(self, url: str) -> Tuple[str, str]:
 
         """
-        Extract the board name and aid from the ptt url.
+        從網址取得看板名稱與文章編號。
 
-        :param url: The ptt url.
-        :return: Tuple[board, aid]
+        Args:
+            url: 網址。
+
+        Returns:
+            Tuple，看板名稱與文章編號。
         """
 
         return lib_util.get_aid_from_url(url)
 
-    def get_bottom_post_list(self, board: str) -> list:
+    def get_bottom_post_list(self, board: str) -> List[str]:
 
         """
-        Get the bottom post list.
+        取得看板置底文章清單。
 
-        :param board: The board name.
-        :return: The list of the bottom posts.
+        Args:
+            board: 看板名稱。
+
+        Returns:
+            List[str]，置底文章清單。
         """
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
     def del_post(self, board, aid: [str | None] = None, index: int = 0) -> None:
         """
-        Delete the post.
-        :param board: The board name.
-        :param aid: (Choose between aid and index) the aid of the PTT post.
-        :param index: (Choose between aid and index) the index of the PTT post.
-        :return: None
+        刪除文章。
+
+        Args:
+            board: 看板名稱。
+            aid: 文章編號。
+            index: 文章編號。
+
+        Returns:
+            None
         """
 
         _api_del_post.del_post(self, board, aid, index)
