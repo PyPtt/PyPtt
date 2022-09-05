@@ -1,0 +1,407 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PyPtt.exceptions &#8212; PyPtt  說明文件</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜尋" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>PyPtt.exceptions 的原始碼</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">data_type</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">i18n</span>
+
+
+<div class="viewcode-block" id="Error"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.Error">[文件]</a><span class="k">class</span> <span class="nc">Error</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="UnknownError"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.UnknownError">[文件]</a><span class="k">class</span> <span class="nc">UnknownError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="Requirelogin"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.Requirelogin">[文件]</a><span class="k">class</span> <span class="nc">Requirelogin</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoPermission"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoPermission">[文件]</a><span class="k">class</span> <span class="nc">NoPermission</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="LoginError"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.LoginError">[文件]</a><span class="k">class</span> <span class="nc">LoginError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">login_fail</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoFastComment"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoFastComment">[文件]</a><span class="k">class</span> <span class="nc">NoFastComment</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">no_fast_comment</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoSuchUser"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoSuchUser">[文件]</a><span class="k">class</span> <span class="nc">NoSuchUser</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">no_such_user</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">user</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="UserOffline"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.UserOffline">[文件]</a><span class="k">class</span> <span class="nc">UserOffline</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">user_offline</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">user</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="ParseError"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.ParseError">[文件]</a><span class="k">class</span> <span class="nc">ParseError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">screen</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoMoney"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoMoney">[文件]</a><span class="k">class</span> <span class="nc">NoMoney</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">no_money</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="MoneyTooFew"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.MoneyTooFew">[文件]</a><span class="k">class</span> <span class="nc">MoneyTooFew</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">money_too_few</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoSuchBoard"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoSuchBoard">[文件]</a><span class="k">class</span> <span class="nc">NoSuchBoard</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">board</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">host</span> <span class="o">==</span> <span class="n">data_type</span><span class="o">.</span><span class="n">HOST</span><span class="o">.</span><span class="n">PTT1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">i18n</span><span class="o">.</span><span class="n">PTT</span><span class="p">,</span>
+                <span class="n">i18n</span><span class="o">.</span><span class="n">no_such_board</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">i18n</span><span class="o">.</span><span class="n">PTT2</span><span class="p">,</span>
+                <span class="n">i18n</span><span class="o">.</span><span class="n">no_such_board</span>
+            <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">language</span> <span class="o">==</span> <span class="n">data_type</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">MANDARIN</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">board</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">board</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="ConnectionClosed"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.ConnectionClosed">[文件]</a><span class="k">class</span> <span class="nc">ConnectionClosed</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">connection_closed</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="UnregisteredUser"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.UnregisteredUser">[文件]</a><span class="k">class</span> <span class="nc">UnregisteredUser</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">unregistered_user_cant_use_this_api</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">api_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="MultiThreadOperated"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.MultiThreadOperated">[文件]</a><span class="k">class</span> <span class="nc">MultiThreadOperated</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">multi_thread_operate</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="WrongIDorPassword"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.WrongIDorPassword">[文件]</a><span class="k">class</span> <span class="nc">WrongIDorPassword</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">wrong_id_pw</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="WrongPassword"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.WrongPassword">[文件]</a><span class="k">class</span> <span class="nc">WrongPassword</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">error_pw</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="LoginTooOften"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.LoginTooOften">[文件]</a><span class="k">class</span> <span class="nc">LoginTooOften</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">login_too_often</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="use_too_many_resources"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.use_too_many_resources">[文件]</a><span class="k">class</span> <span class="nc">use_too_many_resources</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">use_too_many_resources</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="HostNotSupport"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.HostNotSupport">[文件]</a><span class="k">class</span> <span class="nc">HostNotSupport</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i18n</span><span class="o">.</span><span class="n">ptt2_not_support</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">api</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoPush"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoPush">[文件]</a><span class="k">class</span> <span class="nc">NoPush</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">no_comment</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoResponse"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoResponse">[文件]</a><span class="k">class</span> <span class="nc">NoResponse</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">no_response</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NeedModeratorPermission"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NeedModeratorPermission">[文件]</a><span class="k">class</span> <span class="nc">NeedModeratorPermission</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i18n</span><span class="o">.</span><span class="n">need_moderator_permission</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">board</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="ConnectError"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.ConnectError">[文件]</a><span class="k">class</span> <span class="nc">ConnectError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">connect_fail</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoMatchTargetError"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoMatchTargetError">[文件]</a><span class="k">class</span> <span class="nc">NoMatchTargetError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen_queue</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ScreenQueue</span> <span class="o">=</span> <span class="n">screen_queue</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">screens</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ScreenQueue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">screens</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">i18n</span><span class="o">.</span><span class="n">screen_no_match_target</span></div>
+
+
+<div class="viewcode-block" id="NoSuchPost"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoSuchPost">[文件]</a><span class="k">class</span> <span class="nc">NoSuchPost</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">,</span> <span class="n">aid</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">i18n</span><span class="o">.</span><span class="n">no_such_post</span><span class="p">,</span>
+            <span class="n">board</span><span class="p">,</span>
+            <span class="n">aid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="CanNotUseSearchPostCode"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.CanNotUseSearchPostCode">[文件]</a><span class="k">class</span> <span class="nc">CanNotUseSearchPostCode</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">can_not_use_search_post_code_f</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="UserHasPreviouslyBeenBanned"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.UserHasPreviouslyBeenBanned">[文件]</a><span class="k">class</span> <span class="nc">UserHasPreviouslyBeenBanned</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">user_has_previously_been_banned</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="MailboxFull"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.MailboxFull">[文件]</a><span class="k">class</span> <span class="nc">MailboxFull</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">mail_box_full</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="Timeout"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.Timeout">[文件]</a><span class="k">class</span> <span class="nc">Timeout</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">timeout</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="NoSearchResult"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.NoSearchResult">[文件]</a><span class="k">class</span> <span class="nc">NoSearchResult</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">no_search_result</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<span class="c1"># 此帳號已設定為只能使用安全連線</span>
+
+<div class="viewcode-block" id="OnlySecureConnection"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.OnlySecureConnection">[文件]</a><span class="k">class</span> <span class="nc">OnlySecureConnection</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">only_secure_connection</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="DeletedPost"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.DeletedPost">[文件]</a><span class="k">class</span> <span class="nc">DeletedPost</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">board</span><span class="p">,</span> <span class="n">aid</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">i18n</span><span class="o">.</span><span class="n">deleted_post</span><span class="p">,</span>
+            <span class="n">board</span><span class="p">,</span>
+            <span class="n">aid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="SetConnectMailFirst"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.exceptions.SetConnectMailFirst">[文件]</a><span class="k">class</span> <span class="nc">SetConnectMailFirst</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">i18n</span><span class="o">.</span><span class="n">set_connect_mail_first</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+<span class="c1"># class SystemOverload(Exception):</span>
+<span class="c1">#     def __init__(self):</span>
+<span class="c1">#         self.message = i18n.system_busy_try_later</span>
+<span class="c1">#</span>
+<span class="c1">#     def __str__(self):</span>
+<span class="c1">#         return self.message</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">PyPtt</a></h1>
+
+
+
+
+
+
+
+
+<h3>瀏覽</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../PyPtt/PyPtt.html">PyPtt package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">模組原始碼</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜尋</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="前往" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, CodingMan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
