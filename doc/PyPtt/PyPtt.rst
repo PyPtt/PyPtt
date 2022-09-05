@@ -1,7 +1,7 @@
-PyPtt package
+PyPtt 文件
 =============
 
-PyPtt.PTT module
+API 詳細說明
 ----------------
 
 .. automodule:: PyPtt.PTT
