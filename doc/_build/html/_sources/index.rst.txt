@@ -1,20 +1,24 @@
-.. PyPtt documentation master file, created by
-   sphinx-quickstart on Sun Sep  4 22:52:16 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-PyPtt 說明文件
-=================================
+.. image:: https://raw.githubusercontent.com/PyPtt/PyPtt/1.0/logo/facebook_cover_photo_2.png
+    :alt: PyPtt: PTT bot library for Python
+    :align: center
+
+| 歡迎來到 **PyPtt** 的官方文件
+
+安裝 PyPtt
+=================
+
+使用以下指令來安裝 PyPtt。
+
+.. code-block:: sh
+
+    $ pip install PyPtt
+
+PyPtt 現在已經安裝完成。 來看看詳細說明吧 :doc:`/api`。
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: 教學
 
-   PyPtt/PyPtt
+   api
 
-索引與頁面
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
