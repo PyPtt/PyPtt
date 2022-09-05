@@ -10,7 +10,7 @@ PyPtt 說明文件
    :maxdepth: 2
    :caption: Contents:
 
-   API
+   PyPtt/PyPtt
 
 索引與頁面
 ==================
