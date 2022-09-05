@@ -76,24 +76,17 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        language: PyPtt 顯示訊息的語言。預設為繁體中文。</span>
-
 <span class="sd">        log_level: PyPtt 顯示訊息的等級。預設為 INFO。</span>
-
 <span class="sd">        screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 3 秒。</span>
-
-<span class="sd">        screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間</span>
-<span class="sd">        例如踢掉其他連線等等。預設為 10 秒。</span>
-
-<span class="sd">        screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間</span>
-<span class="sd">        例如發佈文章等等。預設為 60 秒。</span>
-
+<span class="sd">        screen_long_timeout:</span>
+<span class="sd">            經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間例如踢掉其他連線等等。預設為 10 秒。</span>
+<span class="sd">        screen_post_timeout:</span>
+<span class="sd">            經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 60 秒。</span>
 <span class="sd">        connect_mode: PyPtt 連線的模式。預設為 WEBSOCKETS。</span>
-
 <span class="sd">        logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        None</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="n">data_type</span><span class="o">.</span><span class="n">Language</span> <span class="o">=</span> <span class="n">data_type</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">MANDARIN</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="n">LogLevel</span> <span class="o">=</span> <span class="n">LogLevel</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
@@ -106,19 +99,11 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            language: PyPtt 顯示訊息的語言。預設為繁體中文。</span>
-
 <span class="sd">            log_level: PyPtt 顯示訊息的等級。預設為 INFO。</span>
-
 <span class="sd">            screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 3 秒。</span>
-
-<span class="sd">            screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間</span>
-<span class="sd">            例如踢掉其他連線等等。預設為 10 秒。</span>
-
-<span class="sd">            screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間</span>
-<span class="sd">            例如發佈文章等等。預設為 60 秒。</span>
-
+<span class="sd">            screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 10 秒。</span>
+<span class="sd">            screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 60 秒。</span>
 <span class="sd">            connect_mode: PyPtt 連線的模式。預設為 WEBSOCKETS。</span>
-
 <span class="sd">            logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。</span>
 
 <span class="sd">        Returns:</span>
@@ -619,7 +604,7 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PyPtt v &#39;</span> <span class="o">+</span> <span class="n">version</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Developed by CodingMan&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Maintained by CodingMan&#39;</span><span class="p">)</span>
 </pre></div>
 
           </div>
