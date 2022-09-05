@@ -8,6 +8,7 @@ on:
     branches:
       - 1.0
   workflow_dispatch:
+
 jobs:
   build:
 
@@ -15,30 +16,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: [ "3.8", "3.9", "3.10" ]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 PyPtt/ --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 PyPtt/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-#    - name: Test with pytest
-#      env:
-#        PTT1_ID: ${{ secrets.PTT1_ID }}
-#        PTT1_PW: ${{ secrets.PTT1_PW }}
-#        PTT2_ID: ${{ secrets.PTT2_ID }}
-#        PTT2_PW: ${{ secrets.PTT2_PW }}
-#      run: |
-#        pytest
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 PyPtt/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 PyPtt/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  upload-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build HTML
+        uses: ammaraskar/sphinx-action@0.4
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: html-docs
+          path: docs/build/html/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/1.0'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html/
