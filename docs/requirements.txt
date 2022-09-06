@@ -1,2 +1,2 @@
 PyPtt
-python3-sphinx
+sphinx
