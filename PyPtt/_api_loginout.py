@@ -19,8 +19,6 @@ def logout(api) -> None:
     if not api._is_login:
         return
 
-    logger = Logger('api', api.config.log_level, **config.LOGGER_CONFIG)
-
     cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('g')

@@ -218,7 +218,8 @@ update_remote_version: str = ''
 retry: str = ''
 change_pw: str = ''
 post: str = ''
-
+red_bag_no_edition: str = ''
+edit_red_bag: str = ''
 
 goodbye_en = [
     'goodbye',
@@ -241,6 +242,18 @@ goodbye_mandarin = [
 def load(lang):
     if not isinstance(lang, data_type.Language):
         raise ValueError('Unknown language', lang)
+
+    global red_bag_no_edition
+    red_bag_no_edition = specific_load(lang, [
+        '不修改紅包袋',
+        'Not editing the red bag',
+    ])
+
+    global edit_red_bag
+    edit_red_bag = specific_load(lang, [
+        '修改紅包袋',
+        'Edits the red bag',
+    ])
 
     global post
     post = specific_load(lang, [

@@ -318,7 +318,7 @@ class API:
 
         return _api_get_user.get_user(self, user_id)
 
-    def give_money(self, ptt_id: str, money: int) -> None:
+    def give_money(self, ptt_id: str, money: int, red_bag_title: str = '', red_bag_content: str = '') -> None:
 
         """
         轉帳。
@@ -326,13 +326,15 @@ class API:
         Args:
             ptt_id: PTT ID。
             money: 轉帳金額。
+            red_bag_title: 紅包標題。
+            red_bag_content: 紅包內容。
 
         Returns:
             None
 
         """
 
-        _api_give_money.give_money(self, ptt_id, money)
+        _api_give_money.give_money(self, ptt_id, money, red_bag_title, red_bag_content)
 
     def mail(self, ptt_id: str, title: str, content: str, sign_file, backup: bool = True) -> None:
 
