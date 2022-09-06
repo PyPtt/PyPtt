@@ -25,9 +25,7 @@ jobs:
         cache: 'pip'
         cache-dependency-path: 'docs/requirements.txt'
     - name: 'build HTML documentation'
-      run: |
-      cd docs
-      make html
+      run: make -C docs/ html
     - name: 'upload'
       uses: actions/upload-artifact@v3
       with:
