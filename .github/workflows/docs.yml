@@ -5,20 +5,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-docs:
+  build:
+    name: Push Sphinx Pages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Build HTML
-        uses: ammaraskar/sphinx-action@master
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: html-docs
-          path: docs/build/html/
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/1.0'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/html/
+    - uses: seanzhengw/sphinx-pages@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        create_readme: true
