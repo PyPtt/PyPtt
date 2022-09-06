@@ -1,41 +1,34 @@
 import progressbar
-try:
-    from . import i18n
-    from . import connect_core
-    from . import log
-    from . import screens
-    from . import command
-except ModuleNotFoundError:
-    import i18n
-    import connect_core
-    import log
-    import screens
-    import command
+from SingleLog import LogLevel
+from SingleLog import Logger
+
+from . import _api_util
+from . import command
+from . import connect_core
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def get_board_list(api) -> list:
+    logger = Logger('get_board_list')
 
-    # log.showValue(
-    #     api.config,
-    #     log.level.INFO,
-    #     [
-    #         i18n.PTT,
-    #         i18n.Msg
-    #     ],
-    #     i18n.MarkPost
-    # )
+    _api_util.one_thread(api)
 
-    cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    if not api._is_login:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    cmd_list = []
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('F')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('y')
     cmd_list.append('$')
     cmd = ''.join(cmd_list)
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.BoardList,
+            i18n.board_list,
             screens.Target.InBoardList,
             break_detect=True)
     ]
@@ -64,26 +57,22 @@ def get_board_list(api) -> list:
         # print(f'FrontPartList =>{FrontPartList}<=')
         max_no = int(front_part_list[0].rstrip(')'))
 
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        'MaxNo',
-        max_no)
+    logger.debug('max_no', max_no)
 
-    if api.config.log_level == log.level.INFO:
+    if api.config.log_level == LogLevel.INFO:
         pb = progressbar.ProgressBar(
             max_value=max_no,
             redirect_stdout=True)
 
-    cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list = []
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('F')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('y')
     cmd_list.append('0')
     cmd = ''.join(cmd_list)
 
-    board_list = list()
+    board_list = []
     while True:
 
         api.connect_core.send(
@@ -116,32 +105,24 @@ def get_board_list(api) -> list:
             # print(f'No  =>{no}<=')
             # print(f'LastNo =>{LastNo}<=')
 
-            log.show_value(
-                api.config,
-                log.level.DEBUG,
-                'Board NO',
-                no)
+            logger.debug('board NO', no)
 
             board_name = front_part_list[1]
             if board_name.startswith('ˇ'):
                 board_name = board_name[1:]
 
-            log.show_value(
-                api.config,
-                log.level.DEBUG,
-                'Board Name',
-                board_name)
+            logger.debug('board Name', board_name)
 
             board_list.append(board_name)
 
-            if api.config.log_level == log.level.INFO:
+            if api.config.log_level == LogLevel.INFO:
                 pb.update(no)
 
         if no >= max_no:
             break
-        cmd = command.Ctrl_F
+        cmd = command.ctrl_f
 
-    if api.config.log_level == log.level.INFO:
+    if api.config.log_level == LogLevel.INFO:
         pb.finish()
 
     return board_list

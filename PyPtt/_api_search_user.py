@@ -1,23 +1,39 @@
-try:
-    from . import i18n
-    from . import connect_core
-    from . import log
-    from . import command
-except ModuleNotFoundError:
-    import i18n
-    import connect_core
-    import log
-    import command
+from SingleLog import Logger
+
+from . import _api_util
+from . import check_value
+from . import command
+from . import connect_core
+from . import exceptions
+from . import i18n
+from . import lib_util
 
 
-def search_user(
-        api: object, ptt_id: str, min_page: int, max_page: int) -> list:
-    cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
+    logger = Logger('search_user')
+
+    _api_util.one_thread(api)
+
+    if not api._is_login:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if not api.is_registered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    check_value.check_type(ptt_id, str, 'ptt_id')
+    if min_page is not None:
+        check_value.check_index('min_page', min_page)
+    if max_page is not None:
+        check_value.check_index('max_page', max_page)
+    if min_page is not None and max_page is not None:
+        check_value.check_index_range('min_page', min_page, 'max_page', max_page)
+
+    cmd_list = []
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append('Q')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd_list.append(ptt_id)
     cmd = ''.join(cmd_list)
 
@@ -31,35 +47,29 @@ def search_user(
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '任意鍵',
             break_detect=True,
-        ),
-    ]
+        )]
 
-    resultlist = list()
+    resultlist = []
 
     while True:
 
         api.connect_core.send(
             cmdtemp,
-            target_list
-        )
+            target_list)
         ori_screen = api.connect_core.get_screen_queue()[-1]
-        log.log(
-            api.config,
-            log.level.INFO,
-            i18n.Reading
-        )
+        logger.info(i18n.reading)
         # print(OriScreen)
         # print(len(OriScreen.split('\n')))
 
         if len(ori_screen.split('\n')) == 2:
-            resultid = ori_screen.split('\n')[1]
-            resultid = resultid[resultid.find(' ') + 1:].strip()
-            # print(resultid)
+            result_id = ori_screen.split('\n')[1]
+            result_id = result_id[result_id.find(' ') + 1:].strip()
+            # print(result_id)
 
-            resultlist.append(resultid)
+            resultlist.append(result_id)
             break
         else:
 
@@ -87,27 +97,23 @@ def search_user(
 
             cmdtemp = ' '
 
-    log.log(
-        api.config,
-        log.level.INFO,
-        i18n.ReadComplete
-    )
+    logger.info(i18n.read_complete)
 
     api.connect_core.send(
-        command.Enter,
+        command.enter,
         [
             # 《ＩＤ暱稱》
             connect_core.TargetUnit(
-                i18n.QuitUserProfile,
+                i18n.quit_user_profile,
                 '《ＩＤ暱稱》',
-                response=command.Enter,
-                # log_level=log.level.DEBUG
+                response=command.enter,
+                # log_level=LogLevel.DEBUG
             ),
             connect_core.TargetUnit(
-                i18n.Done,
+                i18n.done,
                 '查詢網友',
                 break_detect=True,
-                # log_level=log.level.DEBUG
+                # log_level=LogLevel.DEBUG
             )
         ]
     )

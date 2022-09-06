@@ -1,9 +1,5 @@
-try:
-    from . import data_type
-    from . import i18n
-except ModuleNotFoundError:
-    import data_type
-    import i18n
+from . import data_type
+from . import i18n
 
 
 class Error(Exception):
@@ -40,15 +36,15 @@ class NoPermission(Exception):
 
 class LoginError(Exception):
     def __init__(self):
-        self.message = i18n.loginFail
+        self.message = i18n.login_fail
 
     def __str__(self):
         return self.message
 
 
-class NoFastPush(Exception):
+class NoFastComment(Exception):
     def __init__(self):
-        self.message = i18n.NoFastPush
+        self.message = i18n.no_fast_comment
 
     def __str__(self):
         return self.message
@@ -56,7 +52,7 @@ class NoFastPush(Exception):
 
 class NoSuchUser(Exception):
     def __init__(self, user):
-        self.message = i18n.NoSuchUser + ': ' + user
+        self.message = i18n.no_such_user + ': ' + user
 
     def __str__(self):
         return self.message
@@ -64,7 +60,7 @@ class NoSuchUser(Exception):
 
 class UserOffline(Exception):
     def __init__(self, user):
-        self.message = i18n.UserOffline + ': ' + user
+        self.message = i18n.user_offline + ': ' + user
 
     def __str__(self):
         return self.message
@@ -80,7 +76,7 @@ class ParseError(Exception):
 
 class NoMoney(Exception):
     def __init__(self):
-        self.message = i18n.NoMoney
+        self.message = i18n.no_money
 
     def __str__(self):
         return self.message
@@ -88,7 +84,7 @@ class NoMoney(Exception):
 
 class MoneyTooFew(Exception):
     def __init__(self):
-        self.message = i18n.MoneyTooFew
+        self.message = i18n.money_too_few
 
     def __str__(self):
         return self.message
@@ -96,18 +92,18 @@ class MoneyTooFew(Exception):
 
 class NoSuchBoard(Exception):
     def __init__(self, config, board):
-        if config.host == data_type.host_type.PTT1:
+        if config.host == data_type.HOST.PTT1:
             self.message = [
                 i18n.PTT,
-                i18n.NoSuchBoard
+                i18n.no_such_board
             ]
         else:
             self.message = [
                 i18n.PTT2,
-                i18n.NoSuchBoard
+                i18n.no_such_board
             ]
 
-        if config.language == i18n.language.CHINESE:
+        if config.language == data_type.Language.MANDARIN:
             self.message = ''.join(self.message) + ': ' + board
         else:
             self.message = ' '.join(self.message) + ': ' + board
@@ -118,7 +114,7 @@ class NoSuchBoard(Exception):
 
 class ConnectionClosed(Exception):
     def __init__(self):
-        self.message = i18n.ConnectionClosed
+        self.message = i18n.connection_closed
 
     def __str__(self):
         return self.message
@@ -126,7 +122,7 @@ class ConnectionClosed(Exception):
 
 class UnregisteredUser(Exception):
     def __init__(self, api_name):
-        self.message = i18n.UnregisteredUserCantUseThisAPI + ': ' + api_name
+        self.message = i18n.unregistered_user_cant_use_this_api + ': ' + api_name
 
     def __str__(self):
         return self.message
@@ -134,7 +130,7 @@ class UnregisteredUser(Exception):
 
 class MultiThreadOperated(Exception):
     def __init__(self):
-        self.message = i18n.MultiThreadOperate
+        self.message = i18n.multi_thread_operate
 
     def __str__(self):
         return self.message
@@ -142,7 +138,7 @@ class MultiThreadOperated(Exception):
 
 class WrongIDorPassword(Exception):
     def __init__(self):
-        self.message = i18n.ErrorIDPW
+        self.message = i18n.wrong_id_pw
 
     def __str__(self):
         return self.message
@@ -150,7 +146,7 @@ class WrongIDorPassword(Exception):
 
 class WrongPassword(Exception):
     def __init__(self):
-        self.message = i18n.ErrorPW
+        self.message = i18n.error_pw
 
     def __str__(self):
         return self.message
@@ -158,15 +154,15 @@ class WrongPassword(Exception):
 
 class LoginTooOften(Exception):
     def __init__(self):
-        self.message = i18n.LoginTooOften
+        self.message = i18n.login_too_often
 
     def __str__(self):
         return self.message
 
 
-class UseTooManyResources(Exception):
+class use_too_many_resources(Exception):
     def __init__(self):
-        self.message = i18n.UseTooManyResources
+        self.message = i18n.use_too_many_resources
 
     def __str__(self):
         return self.message
@@ -174,7 +170,7 @@ class UseTooManyResources(Exception):
 
 class HostNotSupport(Exception):
     def __init__(self, api):
-        self.message = f'{i18n.PTT2NotSupport}: {api}'
+        self.message = f'{i18n.ptt2_not_support}: {api}'
 
     def __str__(self):
         return self.message
@@ -182,7 +178,7 @@ class HostNotSupport(Exception):
 
 class NoPush(Exception):
     def __init__(self):
-        self.message = i18n.NoPush
+        self.message = i18n.no_comment
 
     def __str__(self):
         return self.message
@@ -190,7 +186,7 @@ class NoPush(Exception):
 
 class NoResponse(Exception):
     def __init__(self):
-        self.message = i18n.NoResponse
+        self.message = i18n.no_response
 
     def __str__(self):
         return self.message
@@ -198,7 +194,7 @@ class NoResponse(Exception):
 
 class NeedModeratorPermission(Exception):
     def __init__(self, board):
-        self.message = f'{i18n.NeedModeratorPermission}: {board}'
+        self.message = f'{i18n.need_moderator_permission}: {board}'
 
     def __str__(self):
         return self.message
@@ -206,12 +202,7 @@ class NeedModeratorPermission(Exception):
 
 class ConnectError(Exception):
     def __init__(self, config):
-        self.message = [i18n.Connect, i18n.Fail]
-
-        if config.language == i18n.language.CHINESE:
-            self.message = ''.join(self.message)
-        else:
-            self.message = ' '.join(self.message)
+        self.message = i18n.connect_fail
 
     def __str__(self):
         return self.message
@@ -223,13 +214,13 @@ class NoMatchTargetError(Exception):
 
     def __str__(self):
         screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
-        return screens + '\n' + i18n.ScreenNoMatchTarget
+        return screens + '\n' + i18n.screen_no_match_target
 
 
 class NoSuchPost(Exception):
     def __init__(self, board, aid):
         self.message = i18n.replace(
-            i18n.NoSuchPost,
+            i18n.no_such_post,
             board,
             aid)
 
@@ -239,7 +230,7 @@ class NoSuchPost(Exception):
 
 class CanNotUseSearchPostCode(Exception):
     def __init__(self):
-        self.message = i18n.CanNotUseSearchPostCodeF
+        self.message = i18n.can_not_use_search_post_code_f
 
     def __str__(self):
         return self.message
@@ -247,7 +238,7 @@ class CanNotUseSearchPostCode(Exception):
 
 class UserHasPreviouslyBeenBanned(Exception):
     def __init__(self):
-        self.message = i18n.UserHasPreviouslyBeenBanned
+        self.message = i18n.user_has_previously_been_banned
 
     def __str__(self):
         return self.message
@@ -255,7 +246,7 @@ class UserHasPreviouslyBeenBanned(Exception):
 
 class MailboxFull(Exception):
     def __init__(self):
-        self.message = i18n.MailBoxFull
+        self.message = i18n.mail_box_full
 
     def __str__(self):
         return self.message
@@ -271,7 +262,7 @@ class Timeout(Exception):
 
 class NoSearchResult(Exception):
     def __init__(self):
-        self.message = i18n.NoSearchResult
+        self.message = i18n.no_search_result
 
     def __str__(self):
         return self.message
@@ -281,7 +272,7 @@ class NoSearchResult(Exception):
 
 class OnlySecureConnection(Exception):
     def __init__(self):
-        self.message = i18n.OnlySecureConnection
+        self.message = i18n.only_secure_connection
 
     def __str__(self):
         return self.message
@@ -290,7 +281,7 @@ class OnlySecureConnection(Exception):
 class DeletedPost(Exception):
     def __init__(self, board, aid):
         self.message = i18n.replace(
-            i18n.DeletedPost,
+            i18n.deleted_post,
             board,
             aid)
 
@@ -298,9 +289,16 @@ class DeletedPost(Exception):
         return self.message
 
 
-class set_connect_mail_first(Exception):
+class SetConnectMailFirst(Exception):
     def __init__(self):
         self.message = i18n.set_connect_mail_first
 
     def __str__(self):
         return self.message
+
+# class SystemOverload(Exception):
+#     def __init__(self):
+#         self.message = i18n.system_busy_try_later
+#
+#     def __str__(self):
+#         return self.message

@@ -1,79 +1,56 @@
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import log
-    from . import screens
-    from . import exceptions
-    from . import command
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import log
-    import screens
-    import exceptions
-    import command
+from SingleLog import LogLevel
+from SingleLog import Logger
+
+from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def get_call_status(api) -> None:
+    # logger = Logger('api', api.config.log_level)
 
-    cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
+    cmd_list = []
+    cmd_list.append(command.go_main_menu)
     cmd_list.append('A')
-    cmd_list.append(command.Right)
-    cmd_list.append(command.Left)
+    cmd_list.append(command.right)
+    cmd_list.append(command.left)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.Success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]打開',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.Success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]拔掉',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.Success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]防水',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.Success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]好友',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-                i18n.Success,
-            ],
+            i18n.get_call_status_success,
             '[呼叫器]關閉',
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
-            [
-                i18n.GetCallStatus,
-            ],
+            i18n.get_call_status,
             '★',
             response=cmd,
-            log_level=log.level.DEBUG),
+            log_level=LogLevel.DEBUG),
     ]
 
     for i in range(2):
@@ -81,8 +58,7 @@ def get_call_status(api) -> None:
         if index < 0:
             if i == 0:
                 continue
-            ori_screen = api.connect_core.get_screen_queue()[-1]
-            raise exceptions.UnknownError(ori_screen)
+            raise exceptions.UnknownError('UnknownError')
 
     if index == 0:
         return data_type.call_status.ON
@@ -104,22 +80,18 @@ def set_call_status(api, call_status) -> None:
 
     current_call_status = api._get_call_status()
 
-    cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append(command.Ctrl_U)
+    cmd_list = []
+    cmd_list.append(command.go_main_menu)
+    cmd_list.append(command.ctrl_u)
     cmd_list.append('p')
 
     cmd = ''.join(cmd_list)
 
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.SetCallStatus,
-                i18n.Success
-            ],
+            i18n.set_call_status_success,
             screens.Target.InUserList,
-            break_detect=True)
-    ]
+            break_detect=True)]
 
     while current_call_status != call_status:
         api.connect_core.send(

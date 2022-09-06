@@ -1,67 +1,58 @@
-try:
-    from . import i18n
-    from . import connect_core
-    from . import log
-    from . import screens
-    from . import exceptions
-    from . import command
-except ModuleNotFoundError:
-    import i18n
-    import connect_core
-    import log
-    import screens
-    import exceptions
-    import command
+from SingleLog import LogLevel
+
+from . import _api_util
+from . import command
+from . import connect_core
+from . import exceptions
+from . import i18n
+from . import screens
 
 
-def get_post_index(
-        api,
-        board: str,
-        aid: str) -> int:
-    api._goto_board(board)
+def get_post_index(api, board: str, aid: str) -> int:
+    _api_util.goto_board(api, board)
 
-    cmd_list = list()
+    cmd_list = []
     cmd_list.append('#')
     cmd_list.append(aid)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 
-    no_such_post = i18n.NoSuchPost
+    no_such_post = i18n.no_such_post
     no_such_post = i18n.replace(no_such_post, board, aid)
 
     target_list = [
         connect_core.TargetUnit(
             no_such_post,
             '找不到這個文章代碼',
-            log_level=log.level.DEBUG,
+            log_level=LogLevel.DEBUG,
             exceptions_=exceptions.NoSuchPost(board, aid)
         ),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
         connect_core.TargetUnit(
-            i18n.CanNotUseSearchPostCodeF,
+            i18n.can_not_use_search_post_code_f,
             '此狀態下無法使用搜尋文章代碼(AID)功能',
             exceptions_=exceptions.CanNotUseSearchPostCode()
         ),
         connect_core.TargetUnit(
-            i18n.NoPost,
+            i18n.no_post,
             '沒有文章...',
             exceptions_=exceptions.NoSuchPost(board, aid)
         ),
         connect_core.TargetUnit(
-            i18n.Success,
+            i18n.success,
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
-            i18n.Success,
+            i18n.success,
             screens.Target.InBoardWithCursor,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
-            i18n.NoSuchBoard,
+            i18n.no_such_board,
             screens.Target.MainMenu_Exiting,
             exceptions_=exceptions.NoSuchBoard(api.config, board)
             # BreakDetect=True,
@@ -79,7 +70,7 @@ def get_post_index(
 
     # if index == 5:
     #     print(OriScreen)
-    #     raise exceptions.NoSuchBoard(api.config, Board)
+    #     raise exceptions.NoSuchBoard(api.config, board)
 
     # print(index)
     # print(OriScreen)

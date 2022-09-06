@@ -1,59 +1,78 @@
-import re
+from __future__ import annotations
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import log
-    from . import screens
-    from . import exceptions
-    from . import command
-    from . import _api_util
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import log
-    import screens
-    import exceptions
-    import command
-    import _api_util
+import re
+from typing import Dict
+
+from SingleLog import LogLevel
+from SingleLog import Logger
+
+from . import _api_util
+from . import check_value
+from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import lib_util
+from . import screens
 
 
 # 寄信
-def mail(
-        api,
-        ptt_id: str,
-        title: str,
-        content: str,
-        sign_file,
-        backup: bool = True) -> None:
-    cmd_list = list()
+def mail(api,
+         ptt_id: str,
+         title: str,
+         content: str,
+         sign_file,
+         backup: bool = True) -> None:
+    logger = Logger('main')
+
+    _api_util.one_thread(api)
+
+    if not api._is_login:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if not api.is_registered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    check_value.check_type(ptt_id, str, 'ptt_id')
+    check_value.check_type(title, str, 'title')
+    check_value.check_type(content, str, 'content')
+
+    api.get_user(ptt_id)
+
+    check_sign_file = False
+    for i in range(0, 10):
+        if str(i) == sign_file or i == sign_file:
+            check_sign_file = True
+            break
+
+    if not check_sign_file:
+        if sign_file.lower() != 'x':
+            raise ValueError(f'wrong parameter sign_file: {sign_file}')
+
+    cmd_list = []
     # 回到主選單
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     # 私人信件區
     cmd_list.append('M')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     # 站內寄信
     cmd_list.append('S')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     # 輸入 id
     cmd_list.append(ptt_id)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
 
     cmd = ''.join(cmd_list)
 
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
-            [
-                i18n.Start,
-                i18n.SendMail
-            ],
+            i18n.send_mail,
             '主題：',
             break_detect=True),
         connect_core.TargetUnit(
-            i18n.NoSuchUser,
+            i18n.no_such_user,
             '【電子郵件】',
             exceptions_=exceptions.NoSuchUser(ptt_id))
     ]
@@ -64,46 +83,45 @@ def mail(
         screen_timeout=api.config.screen_long_timeout
     )
 
-    cmd_list = list()
+    cmd_list = []
     # 輸入標題
     cmd_list.append(title)
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     # 輸入內容
     cmd_list.append(content)
     # 儲存檔案
-    cmd_list.append(command.Ctrl_X)
+    cmd_list.append(command.ctrl_x)
 
     cmd = ''.join(cmd_list)
 
     # 根據簽名檔調整顯示訊息
     if sign_file == 0:
-        sing_file_selection = i18n.NoSignatureFile
+        sing_file_selection = i18n.no_signature_file
     else:
-        sing_file_selection = i18n.Select + ' ' + \
-                              str(sign_file) + 'th ' + i18n.SignatureFile
+        sing_file_selection = i18n.replace(i18n.select_sign_file, str(sign_file))
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
-            i18n.AnyKeyContinue,
+            i18n.any_key_continue,
             '請按任意鍵繼續',
             break_detect_after_send=True,
-            response=command.Enter),
+            response=command.enter),
         connect_core.TargetUnit(
-            i18n.SaveFile,
+            i18n.save_file,
             '確定要儲存檔案嗎',
-            response='s' + command.Enter, ),
+            response='s' + command.enter, ),
         connect_core.TargetUnit(
-            i18n.SelfSaveDraft if backup else i18n.NotSelfSaveDraft,
+            i18n.api_save_draft if backup else i18n.not_api_save_draft,
             '是否自存底稿',
-            response=('y' if backup else 'n') + command.Enter),
+            response=('y' if backup else 'n') + command.enter),
         connect_core.TargetUnit(
             sing_file_selection,
             '選擇簽名檔',
-            response=str(sign_file) + command.Enter),
+            response=str(sign_file) + command.enter),
         connect_core.TargetUnit(
             sing_file_selection,
             'x=隨機',
-            response=str(sign_file) + command.Enter),
+            response=str(sign_file) + command.enter),
     ]
 
     # 送出訊息
@@ -112,11 +130,7 @@ def mail(
         target_list,
         screen_timeout=api.config.screen_post_timeout)
 
-    log.show_value(
-        api.config,
-        log.level.INFO,
-        i18n.SendMail,
-        i18n.Success)
+    logger.info(i18n.send_mail, i18n.success)
 
 
 # --
@@ -132,32 +146,39 @@ mail_date_pattern = re.compile('時間  (.+)')
 ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 
-def get_mail(
-        api,
-        index,
-        search_type: int = 0,
-        search_condition: str = None,
-        search_list: list = None) -> data_type.MailInfo:
-    cmd_list = list()
+def get_mail(api, index: int, search_type: int = 0, search_condition: [str | None] = None,
+             search_list: [list | None] = None) -> Dict:
+    logger = Logger('get_mail')
+
+    _api_util.one_thread(api)
+
+    if not api._is_login:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if not api.is_registered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    if index == 0:
+        return {}
+    current_index = api.get_newest_index(data_type.NewIndex.MAIL)
+    api.logger.info('current_index', current_index)
+    check_value.check_index('index', index, current_index)
+
+    cmd_list = []
     # 回到主選單
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     # 進入信箱
-    cmd_list.append(command.Ctrl_Z)
+    cmd_list.append(command.ctrl_z)
     cmd_list.append('m')
 
     # 處理條件整理出指令
-    _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(
-        api,
-        data_type.index_type.MAIL,
-        search_type,
-        search_condition,
-        search_list,
-        None)
+    _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, data_type.NewIndex.MAIL, None, search_type,
+                                                                        search_condition, search_list)
     cmd_list.extend(_cmd_list)
 
     # 前進至目標信件位置
     cmd_list.append(str(index))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
 
     # 有時候會沒有最底下一列，只好偵測游標是否出現
@@ -170,15 +191,15 @@ def get_mail(
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.level.DEBUG),
+            log_level=LogLevel.DEBUG),
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             fast_target,
             break_detect=True,
-            log_level=log.level.DEBUG)
+            log_level=LogLevel.DEBUG)
     ]
 
     # 送出訊息
@@ -196,11 +217,7 @@ def get_mail(
     else:
         mail_author = pattern_result.group(0)[2:].strip()
 
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        i18n.Author,
-        mail_author)
+    logger.debug(i18n.author, mail_author)
 
     # 使用表示式分析信件標題
     pattern_result = mail_title_pattern.search(origin_mail)
@@ -209,11 +226,7 @@ def get_mail(
     else:
         mail_title = pattern_result.group(0)[2:].strip()
 
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        i18n.Title,
-        mail_title)
+    logger.debug(i18n.title, mail_title)
 
     # 使用表示式分析信件日期
     pattern_result = mail_date_pattern.search(origin_mail)
@@ -221,16 +234,10 @@ def get_mail(
         mail_date = None
     else:
         mail_date = pattern_result.group(0)[2:].strip()
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        i18n.Date,
-        mail_date)
+    logger.debug(i18n.date, mail_date)
 
     # 從全文拿掉信件開頭作為信件內文
-    mail_content = origin_mail[
-                   origin_mail.find(content_start) +
-                   len(content_start) + 1:]
+    mail_content = origin_mail[origin_mail.find(content_start) + len(content_start) + 1:]
 
     # 紅包偵測
     red_envelope = False
@@ -239,14 +246,9 @@ def get_mail(
         red_envelope = True
     else:
 
-        mail_content = mail_content[
-                       :mail_content.rfind(content_end) + 3]
+        mail_content = mail_content[:mail_content.rfind(content_end) + 3]
 
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        i18n.Content,
-        mail_content)
+    logger.debug(i18n.content, mail_content)
 
     if red_envelope:
         mail_ip = None
@@ -280,14 +282,7 @@ def get_mail(
             else:
                 mail_ip = result.group(0)
 
-            log.show_value(
-                api.config,
-                log.level.DEBUG,
-                [
-                    i18n.MailBox,
-                    'IP',
-                ],
-                mail_ip)
+            logger.debug('IP', mail_ip)
 
             location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
             if len(location) == 0:
@@ -296,58 +291,64 @@ def get_mail(
                 # print(location)
                 mail_location = location[1:-1]
 
-                log.show_value(
-                    api.config,
-                    log.level.DEBUG,
-                    [
-                        i18n.MailBox,
-                        'location',
-                    ],
-                    mail_location)
+                logger.debug('location', mail_location)
 
-    mail_result = data_type.MailInfo(
-        origin_mail=origin_mail,
-        author=mail_author,
-        title=mail_title,
-        date=mail_date,
-        content=mail_content,
-        ip=mail_ip,
-        location=mail_location,
-        is_red_envelope=red_envelope)
-
-    return mail_result
+    return {
+        'origin_mail': origin_mail,
+        'author': mail_author,
+        'title': mail_title,
+        'date': mail_date,
+        'content': mail_content,
+        'ip': mail_ip,
+        'location': mail_location,
+        'is_red_envelope': red_envelope}
 
 
 def del_mail(api, index) -> None:
-    cmd_list = list()
+    _api_util.one_thread(api)
+
+    if not api._is_login:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    if not api.is_registered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    current_index = api.get_newest_index(data_type.NewIndex.MAIL)
+    check_value.check_index(index, current_index)
+
+    cmd_list = []
     # 進入主選單
-    cmd_list.append(command.GoMainMenu)
+    cmd_list.append(command.go_main_menu)
     # 進入信箱
-    cmd_list.append(command.Ctrl_Z)
+    cmd_list.append(command.ctrl_z)
     cmd_list.append('m')
     if index > 20:
         # speed up
         cmd_list.append(str(1))
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
     # 前進到目標信件位置
     cmd_list.append(str(index))
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     # 刪除
     cmd_list.append('dy')
-    cmd_list.append(command.Enter)
+    cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
 
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.level.DEBUG)
+            log_level=LogLevel.DEBUG)
     ]
 
     # 送出
     api.connect_core.send(
         cmd,
         target_list)
+
+    if api.is_mailbox_full:
+        api.logout()
+        raise exceptions.MailboxFull()

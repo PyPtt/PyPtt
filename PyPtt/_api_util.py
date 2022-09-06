@@ -1,72 +1,64 @@
-import re
+from __future__ import annotations
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import log
-    from . import screens
-    from . import command
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import log
-    import screens
-    import command
+import re
+import threading
+from typing import Dict
+
+from SingleLog import LogLevel
+from SingleLog import Logger
+
+from . import _api_get_board_info
+from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import screens
 
 
 def get_content(api, post_mode: bool = True):
+    logger = Logger('get_content')
     api.Unconfirmed = False
 
     def is_unconfirmed_handler(screen):
         api.Unconfirmed = True
 
     if post_mode:
-        cmd = command.Enter * 2
+        cmd = command.enter * 2
     else:
-        cmd = command.Enter
+        cmd = command.enter
 
     target_list = [
         # 待證實文章
         connect_core.TargetUnit(
-            i18n.UnconfirmedPost,
+            i18n.unconfirmed_post,
             '本篇文章內容經站方授權之板務管理人員判斷有尚待證實之處',
             response=' ',
             handler=is_unconfirmed_handler
         ),
         connect_core.TargetUnit(
-            [
-                i18n.BrowsePost,
-                i18n.Done,
-            ],
+            i18n.browse_post_done,
             screens.Target.PostEnd,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
-            [
-                i18n.BrowsePost,
-            ],
+            i18n.browse_post,
             screens.Target.InPost,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         connect_core.TargetUnit(
-            [
-                i18n.PostNoContent,
-            ],
+            i18n.post_no_content,
             screens.Target.PostNoContent,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=LogLevel.DEBUG
         ),
         # 動畫文章
         connect_core.TargetUnit(
-            [
-                i18n.AnimationPost,
-            ],
+            i18n.animation_post,
             screens.Target.Animation,
-            response=command.GoMainMenu_TypeQ,
+            response=command.go_main_menu_type_q,
             break_detect_after_send=True
         ),
     ]
@@ -74,7 +66,7 @@ def get_content(api, post_mode: bool = True):
     line_from_pattern = re.compile('[\d]+~[\d]+')
 
     content_start = '───────────────────────────────────────'
-    content_end = list()
+    content_end = []
     content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
@@ -87,7 +79,7 @@ def get_content(api, post_mode: bool = True):
     content_start_jump_set = False
 
     first_page = True
-    origin_post = list()
+    origin_post = []
     stop_dict = dict()
 
     while True:
@@ -184,12 +176,8 @@ def get_content(api, post_mode: bool = True):
                 new_content_part = lines[-1]
 
             origin_post.append(new_content_part)
-            log.show_value(
-                api.config,
-                log.level.DEBUG,
-                'NewContentPart',
-                new_content_part
-            )
+
+            logger.debug('NewContentPart', new_content_part)
 
         if index == 1:
             if content_start_jump and len(new_content_part) == 0:
@@ -211,21 +199,16 @@ def get_content(api, post_mode: bool = True):
                 break
 
         if not push_start:
-            cmd = command.Down
+            cmd = command.down
         else:
-            cmd = command.Right
+            cmd = command.right
 
     # print(api.Unconfirmed)
     origin_post = '\n'.join(origin_post)
     # OriginPost = [line.strip() for line in OriginPost.split('\n')]
     # OriginPost = '\n'.join(OriginPost)
 
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        'OriginPost',
-        origin_post
-    )
+    logger.debug('OriginPost', origin_post)
 
     return origin_post, has_control_code
 
@@ -233,34 +216,32 @@ def get_content(api, post_mode: bool = True):
 def get_mailbox_capacity(api):
     last_screen = api.connect_core.get_screen_queue()[-1]
     capacity_line = last_screen.split('\n')[2]
-    log.show_value(
-        api.config,
-        log.level.DEBUG,
-        'capacity_line',
-        capacity_line)
+
+    logger = Logger('get_mailbox_capacity')
+    logger.debug('capacity_line', capacity_line)
 
     pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
     if pattern_result is not None:
         # print(pattern_result.group(0))
         current_capacity = int(pattern_result.group(0).split('/')[0])
         max_capacity = int(pattern_result.group(0).split('/')[1])
-        log.show_value(
-            api.config,
-            log.level.DEBUG,
-            'current_capacity',
-            current_capacity)
 
-        log.show_value(
-            api.config,
-            log.level.DEBUG,
-            'max_capacity',
-            max_capacity)
+        logger.debug('current_capacity', current_capacity)
+        logger.debug('max_capacity', max_capacity)
 
         return current_capacity, max_capacity
     return 0, 0
 
 
+# >     1   112/09 ericsk       □ [心得] 終於開板了
+# ┌── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┐
+# │ 文章代碼(AID): #13cPSYOX (Python) [ptt.cc] [心得] 終於開板了  │
+# │ 文章網址: https://www.ptt.cc/bbs/Python/M.1134139170.A.621.html      │
+# │ 這一篇文章值 2 Ptt幣                                              │
+# └── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┘
+
 def parse_query_post(api, ori_screen):
+    logger = Logger('parse_query_post')
     lock_post = False
     try:
         cursor_line = [line for line in ori_screen.split(
@@ -295,10 +276,8 @@ def parse_query_post(api, ori_screen):
     elif ' 鎖 ' in post_title:
         post_title = post_title[post_title.find('鎖') + 1:].strip()
 
-    ori_screen_temp = ori_screen[ori_screen.find('┌──────────'):]
-    ori_screen_temp = ori_screen_temp[:ori_screen_temp.find(
-        '└─────────────')
-                      ]
+    ori_screen_temp = ori_screen[ori_screen.find('┌──'):]
+    ori_screen_temp = ori_screen_temp[:ori_screen_temp.find('└──')]
 
     aid_line = [line for line in ori_screen.split(
         '\n') if line.startswith('│ 文章代碼(AID)')]
@@ -312,6 +291,7 @@ def parse_query_post(api, ori_screen):
 
     pattern = re.compile('文章網址: https:[\S]+html')
     pattern_result = pattern.search(ori_screen_temp)
+
     if pattern_result is None:
         post_web = None
     else:
@@ -381,57 +361,52 @@ def parse_query_post(api, ori_screen):
             push_number = None
 
     # print(PushNumber)
-    log.show_value(api.config, log.level.DEBUG,
-                   'PostAuthor', post_author)
-    log.show_value(api.config, log.level.DEBUG, 'PostTitle', post_title)
-    log.show_value(api.config, log.level.DEBUG, 'PostAID', post_aid)
-    log.show_value(api.config, log.level.DEBUG, 'PostWeb', post_web)
-    log.show_value(api.config, log.level.DEBUG, 'PostMoney', post_money)
-    log.show_value(api.config, log.level.DEBUG, 'ListDate', list_date)
-    log.show_value(api.config, log.level.DEBUG,
-                   'PushNumber', push_number)
+
+    logger.debug('PostAuthor', post_author)
+    logger.debug('PostTitle', post_title)
+    logger.debug('PostAID', post_aid)
+    logger.debug('PostWeb', post_web)
+    logger.debug('PostMoney', post_money)
+    logger.debug('ListDate', list_date)
+    logger.debug('PushNumber', push_number)
 
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
 
 
-def get_search_condition_cmd(
-        api,
-        index_type: int,
-        search_type: int = 0,
-        search_condition: str = None,
-        search_list: list = None,
-        # BBS
-        board: str = None):
-    cmd_list = list()
+def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | None] = None,
+                             search_type: data_type.SearchType = data_type.SearchType.NOPE,
+                             search_condition: [str | None] = None, search_list: [list | None] = None):
+    # logger = Logger('get_search_condition_cmd')
+    cmd_list = []
 
     normal_newest_index = -1
     if search_condition is not None:
 
-        if index_type == data_type.index_type.BBS:
+        if index_type == data_type.NewIndex.BOARD:
             normal_newest_index = api.get_newest_index(index_type, board=board)
         else:
             normal_newest_index = api.get_newest_index(index_type)
 
-        if search_type == data_type.post_search_type.KEYWORD:
+        if search_type == data_type.SearchType.KEYWORD:
             cmd_list.append('/')
-        elif search_type == data_type.post_search_type.AUTHOR:
+        elif search_type == data_type.SearchType.AUTHOR:
             cmd_list.append('a')
-        elif search_type == data_type.post_search_type.MARK:
+        elif search_type == data_type.SearchType.MARK:
             cmd_list.append('G')
 
-        if index_type == data_type.index_type.BBS:
-            if search_type == data_type.post_search_type.PUSH:
+        if index_type == data_type.NewIndex.BOARD:
+            if search_type == data_type.SearchType.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.post_search_type.MONEY:
+            elif search_type == data_type.SearchType.MONEY:
                 cmd_list.append('A')
 
         cmd_list.append(search_condition)
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
     if search_list is not None:
 
         if normal_newest_index == -1:
-            if index_type == data_type.index_type.BBS:
+            if index_type == data_type.NewIndex.BOARD:
                 normal_newest_index = api.get_newest_index(index_type, board=board)
             else:
                 normal_newest_index = api.get_newest_index(index_type)
@@ -440,16 +415,16 @@ def get_search_condition_cmd(
 
             # print('==>', search_type_, search_condition_)
 
-            if search_type_ == data_type.post_search_type.KEYWORD:
+            if search_type_ == data_type.SearchType.KEYWORD:
                 cmd_list.append('/')
-            elif search_type_ == data_type.post_search_type.AUTHOR:
+            elif search_type_ == data_type.SearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type_ == data_type.post_search_type.MARK:
+            elif search_type_ == data_type.SearchType.MARK:
                 cmd_list.append('G')
-            elif index_type == data_type.index_type.BBS:
-                if search_type_ == data_type.post_search_type.PUSH:
+            elif index_type == data_type.NewIndex.BOARD:
+                if search_type_ == data_type.SearchType.PUSH:
                     cmd_list.append('Z')
-                elif search_type_ == data_type.post_search_type.MONEY:
+                elif search_type_ == data_type.SearchType.MONEY:
                     cmd_list.append('A')
                 else:
                     continue
@@ -457,6 +432,92 @@ def get_search_condition_cmd(
                 continue
 
             cmd_list.append(search_condition_)
-            cmd_list.append(command.Enter)
+            cmd_list.append(command.enter)
 
     return cmd_list, normal_newest_index
+
+
+def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> None:
+    cmd_list = []
+    cmd_list.append(command.go_main_menu)
+    cmd_list.append('qs')
+    cmd_list.append(board)
+    cmd_list.append(command.enter)
+    cmd_list.append(command.space)
+
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit(
+            i18n.any_key_continue,
+            '任意鍵',
+            response=' ',
+            log_level=LogLevel.DEBUG
+        ),
+        connect_core.TargetUnit(
+            '動畫播放中',
+            '互動式動畫播放中',
+            response=command.ctrl_c,
+            log_level=LogLevel.DEBUG
+        ),
+        connect_core.TargetUnit(
+            '進板成功',
+            screens.Target.InBoard,
+            break_detect=True,
+            log_level=LogLevel.DEBUG
+        ),
+    ]
+
+    if refresh:
+        current_refresh = True
+    else:
+        if board.lower() in api._goto_board_list:
+            current_refresh = True
+        else:
+            current_refresh = False
+    api._goto_board_list.append(board.lower())
+    api.connect_core.send(cmd, target_list, refresh=current_refresh)
+
+    if end:
+        cmd_list = []
+        cmd_list.append('1')
+        cmd_list.append(command.enter)
+        cmd_list.append('$')
+        cmd = ''.join(cmd_list)
+
+        target_list = [
+            connect_core.TargetUnit(
+                '',
+                screens.Target.InBoard,
+                break_detect=True,
+                log_level=LogLevel.DEBUG
+            ),
+        ]
+
+        api.connect_core.send(cmd, target_list)
+
+
+def one_thread(api):
+    current_thread_id = threading.get_ident()
+    if current_thread_id == api._thread_id:
+        return
+
+    raise exceptions.MultiThreadOperated()
+
+
+def check_board(api, board: str, check_moderator: bool = False) -> Dict:
+    if board.lower() not in api._exist_board_list:
+        board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)
+        api._exist_board_list.append(board.lower())
+        api._board_info_list[board.lower()] = board_info
+
+        moderators = board_info[data_type.BoardField.moderators]
+        moderators = [x.lower() for x in moderators]
+        api._ModeratorList[board.lower()] = moderators
+        api._board_info_list[board.lower()] = board_info
+
+    if check_moderator:
+        if api._ptt_id.lower() not in api._ModeratorList[board.lower()]:
+            raise exceptions.NeedModeratorPermission(board)
+
+    return api._board_info_list[board.lower()]
