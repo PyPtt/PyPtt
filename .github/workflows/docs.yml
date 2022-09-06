@@ -20,18 +20,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    steps:
-    - uses: actions/checkout@v3
-    - name: 'set up Python'
-      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v2
+    - uses: actions/checkout@master
       with:
-        python-version: '3.10'
-    - name: 'Install build dependencies'
-      run: pip install -r docs/requirements.txt
-    - name: 'build HTML documentation'
-      run: make -C docs/ html
-    - name: 'upload'
-      uses: actions/upload-artifact@v3
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+    - name: Build and Commit
+      uses: sphinx-notes/pages@v2
       with:
-        name: doc-html
-        path: docs/_build/html
+        requirements_path: docs/requirements.txt
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
