@@ -25,6 +25,10 @@ jobs:
         python-version: '3'
         cache: 'pip'
         cache-dependency-path: 'docs/requirements.txt'
+    - name: 'Install build dependencies'
+      run: make -C docs/ venv
+    - name: 'Check documentation'
+      run: make -C docs/ check
     - name: 'build HTML documentation'
       run: make -C docs/ html
     - name: 'upload'
