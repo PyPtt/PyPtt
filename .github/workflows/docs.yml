@@ -1,11 +1,12 @@
 
-name: build-doc
+name: docs
 
 on:
   workflow_run:
     workflows: [ test ]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   on-test-failure:
