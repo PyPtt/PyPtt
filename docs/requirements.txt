@@ -1,2 +1,3 @@
 PyPtt
 sphinx
+sphinx-copybutton
