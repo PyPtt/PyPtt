@@ -7,7 +7,7 @@ from . import i18n
 from . import lib_util
 
 
-def give_money(api, ptt_id: str, money: int) -> None:
+def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content: str) -> None:
     _api_util.one_thread(api)
 
     if not api._is_login:
@@ -18,6 +18,8 @@ def give_money(api, ptt_id: str, money: int) -> None:
 
     check_value.check_type(ptt_id, str, 'ptt_id')
     check_value.check_type(money, int, 'money')
+    check_value.check_type(red_bag_title, str, 'red_bag_title')
+    check_value.check_type(red_bag_content, str, 'red_bag_content')
     # Check data_type.user
     api.get_user(ptt_id)
 
@@ -35,30 +37,30 @@ def give_money(api, ptt_id: str, money: int) -> None:
     edit_red_bag_cmd_list = list()
 
     edit_red_bag_target = connect_core.TargetUnit(
-        i18n.ConstantRedBagNoEdition,
+        i18n.red_bag_no_edition,
         '要修改紅包袋嗎',
-        response='n' + command.Enter
+        response='n' + command.enter
     )
-    if (title != '' or content != ''):
+    if red_bag_title != '' or red_bag_content != '':
         edit_red_bag_cmd_list.append('y')
-        edit_red_bag_cmd_list.append(command.Enter)
-        if title != '':
-            edit_red_bag_cmd_list.append(command.Down)
-            edit_red_bag_cmd_list.append(command.Ctrl_Y) # remove the title
-            edit_red_bag_cmd_list.append(command.Enter)
-            edit_red_bag_cmd_list.append(command.Up)
-            edit_red_bag_cmd_list.append(f'標題: {title}')
+        edit_red_bag_cmd_list.append(command.enter)
+        if red_bag_title != '':
+            edit_red_bag_cmd_list.append(command.down)
+            edit_red_bag_cmd_list.append(command.ctrl_y)  # remove the red_bag_title
+            edit_red_bag_cmd_list.append(command.enter)
+            edit_red_bag_cmd_list.append(command.up)
+            edit_red_bag_cmd_list.append(f'標題: {red_bag_title}')
             # reset cursor to original position
-            edit_red_bag_cmd_list.append(command.Up * 2)
-        if content != '':
-            edit_red_bag_cmd_list.append(command.Down * 4)
-            edit_red_bag_cmd_list.append(command.Ctrl_Y * 8) # remove original content
-            edit_red_bag_cmd_list.append(content)
-        edit_red_bag_cmd_list.append(command.Ctrl_X)
+            edit_red_bag_cmd_list.append(command.up * 2)
+        if red_bag_content != '':
+            edit_red_bag_cmd_list.append(command.down * 4)
+            edit_red_bag_cmd_list.append(command.ctrl_y * 8)  # remove original red_bag_content
+            edit_red_bag_cmd_list.append(red_bag_content)
+        edit_red_bag_cmd_list.append(command.ctrl_x)
 
         edit_red_bag_cmd = ''.join(edit_red_bag_cmd_list)
         edit_red_bag_target = connect_core.TargetUnit(
-            i18n.ConstantEditRedBag,
+            i18n.edit_red_bag,
             '要修改紅包袋嗎',
             response=edit_red_bag_cmd
         )
