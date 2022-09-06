@@ -8,17 +8,26 @@
 
 import os
 import sys
-
+from datetime import datetime
 sys.path.insert(0, os.path.abspath('../'))
 
+import PyPtt
+
 project = 'PyPtt'
-copyright = '2022, CodingMan'
+copyright = f'2017 ~ {datetime.now().year}, CodingMan'
 author = 'CodingMan'
+
+version = PyPtt.version
+release = PyPtt.version
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx_copybutton'
+]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
