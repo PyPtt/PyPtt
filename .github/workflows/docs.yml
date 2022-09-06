@@ -6,10 +6,20 @@ on:
 
 jobs:
   build:
-    name: Push Sphinx Pages
+    name: 'Docs'
     runs-on: ubuntu-latest
     steps:
-    - uses: seanzhengw/sphinx-pages@master
+    - uses: actions/checkout@v3
+    - name: 'Set up Python'
+      uses: actions/setup-python@v4
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        create_readme: true
+        python-version: '3'
+        cache: 'pip'
+        cache-dependency-path: 'docs/requirements.txt'
+    - name: 'Build HTML documentation'
+      run: make -C docs/ html
+    - name: 'Upload'
+      uses: actions/upload-artifact@v3
+      with:
+        name: doc-html
+        path: docs/build/html
