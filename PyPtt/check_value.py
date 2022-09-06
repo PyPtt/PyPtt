@@ -1,167 +1,63 @@
-try:
-    from . import i18n
-    from . import log
-    from . import lib_util
-except ModuleNotFoundError:
-    import i18n
-    import log
-    import lib_util
+from SingleLog import Logger
+
+from . import i18n
+
+logger = Logger('check value')
 
 
-def check(
-        config,
-        value_type,
-        name,
-        value,
-        value_class=None) -> None:
+def check_type(value, value_type, name) -> None:
     if not isinstance(value, value_type):
         if value_type is str:
-            raise TypeError(
-                log.merge(
-                    config,
-                    [
-                        name,
-                        str(value),
-                        i18n.MustBe,
-                        i18n.String
-                    ]))
+            raise TypeError(f'[PyPtt] {name} {i18n.must_be_a_string}, but got {value}')
         elif value_type is int:
-            raise TypeError(
-                log.merge(
-                    config,
-                    [
-                        name,
-                        str(value),
-                        i18n.MustBe,
-                        i18n.Integer
-                    ]))
+            raise TypeError(f'[PyPtt] {name} {i18n.must_be_a_integer}, but got {value}')
         elif value_type is bool:
-            raise TypeError(
-                log.merge(
-                    config,
-                    [
-                        name,
-                        str(value),
-                        i18n.MustBe,
-                        i18n.Boolean
-                    ]))
-
-    if value_class is not None:
-        if not lib_util.check_range(value_class, value):
-            raise ValueError(f'Unknown {name}', value)
+            raise TypeError(f'[PyPtt] {name} {i18n.must_be_a_boolean}, but got {value}')
+        else:
+            raise TypeError(f'[PyPtt] {name} {i18n.must_be} {value_type}, but got {value}')
 
 
-def check_index(
-        config,
-        index_name,
-        index,
-        max_value=None) -> None:
-    check(config, int, index_name, index)
+def check_range(value, min_value, max_value, name) -> None:
+    check_type(value, int, name)
+    check_type(min_value, int, 'min_value')
+    check_type(max_value, int, 'max_value')
+
+    if min_value <= value <= max_value:
+        return
+    raise ValueError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
+
+
+def check_index(name, index, max_value=None) -> None:
+    check_type(index, int, name)
     if index < 1:
-        raise ValueError(
-            log.merge(
-                config,
-                [
-                    index_name,
-                    str(index),
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                    f'{index} must bigger than 0'
-                ]))
+        raise ValueError(f'{name} {i18n.must_bigger_than} 0')
 
     if max_value is not None:
         if index > max_value:
-            log.show_value(
-                config,
-                log.level.INFO,
-                'Index',
-                index)
-            log.show_value(
-                config,
-                log.level.INFO,
-                'max_value',
-                max_value)
-            raise ValueError(
-                log.merge(
-                    config,
-                    [
-                        index_name,
-                        str(index),
-                        i18n.ErrorParameter,
-                        i18n.OutOfRange,
-                        f'must between 0 ~ {max_value} but get {index}'
-                    ]))
+            logger.info('index', index)
+            logger.info('max_value', max_value)
+            raise ValueError(f'{name} {index} {i18n.must_between} 0 ~ {max_value}')
 
 
-def check_index_range(
-        config,
-        start_name,
-        start_index,
-        end_name,
-        end_index,
-        max_value=None) -> None:
-    check(config, int, start_name, start_index)
-    check(config, int, end_name, end_index)
+def check_index_range(start_name, start_index, end_name, end_index, max_value=None) -> None:
+    check_type(start_index, int, start_name)
+    check_type(end_index, int, end_name)
 
     if start_index < 1:
-        raise ValueError(
-            log.merge(
-                config,
-                [
-                    start_name,
-                    str(start_name),
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                    f'{start_index} must bigger than 1'
-                ]))
+        raise ValueError(f'{start_name} {start_index} {i18n.must_bigger_than} 0')
 
-    if end_index < 1:
-        raise ValueError(
-            log.merge(
-                config,
-                [
-                    end_name,
-                    str(end_index),
-                    i18n.ErrorParameter,
-                    i18n.OutOfRange,
-                    f'{end_index} must bigger than 1'
-                ]))
+    if end_index <= 1:
+        raise ValueError(f'{end_name} {end_index} {i18n.must_bigger_than} 1')
 
     if start_index > end_index:
-        raise ValueError(
-            log.merge(
-                config,
-                [
-                    start_name,
-                    str(start_index),
-                    i18n.MustSmallOrEqual,
-                    end_name,
-                    str(end_index)
-                ]))
+        raise ValueError(f'{end_name} {end_index} {i18n.must_bigger_than} {start_name} {start_index}')
 
     if max_value is not None:
         if start_index > max_value:
-            raise ValueError(
-                log.merge(
-                    config,
-                    [
-                        start_name,
-                        str(start_index),
-                        i18n.ErrorParameter,
-                        i18n.OutOfRange,
-                        str(max_value),
-                    ]))
+            raise ValueError(f'{start_name} {start_index} {i18n.must_small_than} {max_value}')
 
         if end_index > max_value:
-            raise ValueError(
-                log.merge(
-                    config,
-                    [
-                        end_name,
-                        i18n.ErrorParameter,
-                        i18n.OutOfRange,
-                        str(max_value),
-                    ]))
+            raise ValueError(f'{end_name} {end_index} {i18n.must_small_than} {max_value}')
 
 
 if __name__ == '__main__':

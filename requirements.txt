@@ -1,4 +1,6 @@
 progressbar2
 websockets
 uao
-SingleLog
+SingleLog==2.*
+requests
+AutoStrEnum

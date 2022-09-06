@@ -1,40 +1,34 @@
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import command
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import command
+from . import _api_util
+from . import command
+from . import connect_core
+from . import exceptions
+from . import i18n
 
 
 def get_favourite_board(api) -> list:
+    _api_util.one_thread(api)
 
-    cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append('F')
-    cmd_list.append(command.Enter)
-    cmd_list.append('0')
+    if not api._is_login:
+        raise exceptions.Requirelogin(i18n.require_login)
+
+    cmd_list = [command.go_main_menu, 'F', command.enter, '0']
     cmd = ''.join(cmd_list)
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.FavouriteBoardList,
+            i18n.favourite_board_list,
             '選擇看板',
             break_detect=True
         )
     ]
 
-    board_list = list()
-    favourite_board_list = list()
+    board_list = []
+    favourite_board_list = []
     while True:
 
         api.connect_core.send(
             cmd,
-            target_list
-        )
+            target_list)
 
         ori_screen = api.connect_core.get_screen_queue()[-1]
         # print(OriScreen)
@@ -53,8 +47,7 @@ def get_favourite_board(api) -> list:
                 continue
             if len(screen_buf[i]) <= min_len:
                 # print(f'[{ScreenBuf[i]}]')
-                screen_buf[i] = screen_buf[i] + \
-                    (' ' * ((min_len + 1) - len(screen_buf[i])))
+                screen_buf[i] = screen_buf[i] + (' ' * ((min_len + 1) - len(screen_buf[i])))
         screen_buf = [x[10:min_len - len(x)].strip() for x in screen_buf]
         screen_buf = list(filter(None, screen_buf))
 
@@ -72,7 +65,7 @@ def get_favourite_board(api) -> list:
             board_title = line[17:].strip()
             # print(line)
             # print('\t' + Type)
-            # print('\t' + Board)
+            # print('\t' + board)
             # print('\t' + BoardTitle)
 
             if board in board_list:
@@ -83,21 +76,20 @@ def get_favourite_board(api) -> list:
             # print('board_type', board_type)
             # print('board_title', board_title)
 
-            f_board = data_type.FavouriteBoard(
-                board,
-                board_type,
-                board_title
-            )
+            f_board = {
+                'board': board,
+                'type': board_type,
+                'title': board_title}
             favourite_board_list.append(f_board)
 
-        # print(len(FavouriteBoardList))
+        # print(len(favourite_board_list))
         # print(len(screen_buf))
         if len(screen_buf) < 20:
             break
 
-        cmd = command.Ctrl_F
+        cmd = command.ctrl_f
 
     # ScreenBuf = '\n'.join(ScreenBuf)
     # print(ScreenBuf)
-    # print(len(FavouriteBoardList))
+    # print(len(favourite_board_list))
     return favourite_board_list

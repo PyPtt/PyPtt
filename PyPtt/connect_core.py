@@ -1,51 +1,39 @@
-import time
+from __future__ import annotations
+
 import asyncio
-import websockets
-import websockets.http
-import websockets.exceptions
+import ssl
 import telnetlib
-import re
-import traceback
 import threading
-from uao import register_uao
+import time
+import traceback
+import warnings
+from typing import Any
 
-register_uao()
+import websockets
+import websockets.exceptions
+import websockets.http
+from SingleLog import LogLevel
+from SingleLog import Logger
 
-try:
-    from . import data_type
-    from . import i18n
-    from . import log
-    from . import screens
-    from . import command
-    from . import exceptions
-    from . import version
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import log
-    import screens
-    import command
-    import exceptions
-    import version
+import PyPtt
+from . import command
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import screens
 
-websockets.http.USER_AGENT += f' PyPtt/{version.V}'
+websockets.http.USER_AGENT += f' PyPtt/{PyPtt.version}'
 
-
-class connect_mode(object):
-    TELNET = 1
-    WEBSOCKET = 2
-
-    min_value = TELNET
-    max_value = WEBSOCKET
+ssl_context = ssl.create_default_context()
 
 
-class TargetUnit(object):
+class TargetUnit:
     def __init__(
             self,
             display_msg,
             detect_target,
-            log_level: int = 0,
-            response: str = '',
+            log_level: LogLevel = None,
+            response: [Any | str] = '',
             break_detect=False,
             break_detect_after_send=False,
             exceptions_=None,
@@ -56,8 +44,8 @@ class TargetUnit(object):
 
         self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
-        if log_level == 0:
-            self._log_level = log.level.INFO
+        if log_level is None:
+            self._log_level = LogLevel.INFO
         else:
             self._log_level = log_level
         self._Response = response
@@ -136,7 +124,7 @@ async def websocket_receiver(core, screen_timeout, recv_data_obj):
 
 class ReceiveDataQueue(object):
     def __init__(self):
-        self._ReceiveDataQueue = list()
+        self._ReceiveDataQueue = []
 
     def add(self, screen):
         self._ReceiveDataQueue.append(screen)
@@ -149,49 +137,47 @@ class ReceiveDataQueue(object):
 class API(object):
     def __init__(self, config):
 
+        self.current_encoding = 'big5uao'
         self.config = config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(
-            [
-                i18n.UseTooManyResources,
-            ],
-            screens.Target.UseTooManyResources,
-            exceptions_=exceptions.UseTooManyResources())
+            i18n.use_too_many_resources,
+            screens.Target.use_too_many_resources,
+            exceptions_=exceptions.use_too_many_resources())
 
-        log.show_value(
-            self.config, log.level.INFO, [
-                i18n.connect_core,
-            ],
-            i18n.Init)
+        self.logger = Logger('connect', self.config.log_level)
+        self.ptt_logger = Logger(i18n.PTT if self.config.host == data_type.HOST.PTT1 else i18n.PTT2,
+                                 self.config.log_level, skip_repeat=True, stage_sep='.')
 
     def connect(self) -> None:
         def _wait():
             for i in range(self.config.retry_wait_time):
-                log.show_value(
-                    self.config, log.level.INFO, [
-                        i18n.Prepare,
-                        i18n.Again,
-                        i18n.Connect,
-                        i18n.PTT,
-                    ],
-                    str(self.config.retry_wait_time - i))
+
+                if self.config.host == data_type.HOST.PTT1:
+                    self.logger.info(i18n.prepare_connect_again, i18n.PTT, str(self.config.retry_wait_time - i))
+                elif self.config.host == data_type.HOST.PTT2:
+                    self.logger.info(i18n.prepare_connect_again, i18n.PTT2, str(self.config.retry_wait_time - i))
+                elif self.config.host == data_type.HOST.LOCALHOST:
+                    self.logger.info(i18n.prepare_connect_again, i18n.localhost, str(self.config.retry_wait_time - i))
+                else:
+                    self.logger.info(i18n.prepare_connect_again, self.config.host, str(self.config.retry_wait_time - i))
+
                 time.sleep(1)
 
-        log.show_value(
-            self.config, log.level.INFO, [
-                i18n.connect_core,
-            ],
-            i18n.Active)
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-        if self.config.host == data_type.host_type.PTT1:
+        self.current_encoding = 'big5uao'
+        # self.logger.info(i18n.connect_core, i18n.active)
+
+        if self.config.host == data_type.HOST.PTT1:
             telnet_host = 'ptt.cc'
             websocket_host = 'wss://ws.ptt.cc/bbs/'
             websocket_origin = 'https://term.ptt.cc'
-        elif self.config.host == data_type.host_type.PTT2:
+        elif self.config.host == data_type.HOST.PTT2:
             telnet_host = 'ptt2.cc'
             websocket_host = 'wss://ws.ptt2.cc/bbs/'
             websocket_origin = 'https://term.ptt2.cc'
-        elif self.config.host == data_type.host_type.LOCALHOST:
+        elif self.config.host == data_type.HOST.LOCALHOST:
             telnet_host = 'localhost'
             websocket_host = 'wss://localhost'
             websocket_origin = 'https://term.ptt.cc'
@@ -200,63 +186,39 @@ class API(object):
             websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
 
-        if self.config.connect_mode == connect_mode.TELNET:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                i18n.ConnectMode,
-                i18n.ConnectMode_Telnet)
-        elif self.config.connect_mode == connect_mode.WEBSOCKET:
-            log.show_value(
-                self.config,
-                log.level.INFO,
-                i18n.ConnectMode,
-                i18n.ConnectMode_WebSocket)
-
         connect_success = False
 
         for _ in range(2):
 
             try:
-                if self.config.connect_mode == connect_mode.TELNET:
-
+                if self.config.connect_mode == data_type.ConnectMode.TELNET:
                     self._core = telnetlib.Telnet(telnet_host, self.config.port)
-
                 else:
-
                     if not threading.current_thread() is threading.main_thread():
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
-                    log.show_value(
-                        self.config,
-                        log.level.DEBUG,
-                        'USER_AGENT',
-                        websockets.http.USER_AGENT)
-
+                    self.logger.debug('USER_AGENT', websockets.http.USER_AGENT)
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             websocket_host,
-                            origin=websocket_origin))
+                            origin=websocket_origin,
+                            ssl=ssl_context))
 
                 connect_success = True
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                if self.config.host == data_type.host_type.PTT1:
-                    log.show_value(
-                        self.config, log.level.INFO, [
-                            i18n.Connect,
-                            i18n.PTT,
-                        ],
-                        i18n.Fail)
+
+                if self.config.host == data_type.HOST.PTT1:
+                    self.logger.info(i18n.connect, i18n.PTT, i18n.fail)
+                elif self.config.host == data_type.HOST.PTT2:
+                    self.logger.info(i18n.connect, i18n.PTT2, i18n.fail)
+                elif self.config.host == data_type.HOST.LOCALHOST:
+                    self.logger.info(i18n.connect, i18n.localhost, i18n.fail)
                 else:
-                    log.show_value(
-                        self.config, log.level.INFO, [
-                            i18n.Connect,
-                            i18n.PTT2,
-                        ],
-                        i18n.Fail)
+                    self.logger.info(i18n.connect, self.config.host, i18n.fail)
+
                 _wait()
                 continue
 
@@ -265,165 +227,67 @@ class API(object):
         if not connect_success:
             raise exceptions.ConnectError(self.config)
 
-    def fast_send(
-            self,
-            msg: str,
-            target_list: list,
-            refresh: bool = True) -> int:
+    def _decode_screen(self, receive_data_buffer, start_time, target_list, is_secret, refresh, msg):
 
         break_detect_after_send = False
-        break_index = -1
-
         use_too_many_res = False
-        while True:
 
-            if refresh and not msg.endswith(command.Refresh):
-                msg = msg + command.Refresh
-            try:
-                msg = msg.encode('big5uao', 'replace')
+        vt100_p = screens.VT100Parser(receive_data_buffer, self.current_encoding)
+        screen = vt100_p.screen
 
-            except AttributeError:
-                pass
-            except Exception as e:
-                traceback.print_tb(e.__traceback__)
-                print(e)
-                msg = msg.encode('big5', 'replace')
-
-            try:
-                asyncio.get_event_loop().run_until_complete(
-                    self._core.send(msg))
-            except websockets.exceptions.ConnectionClosedError:
-                raise exceptions.ConnectionClosed()
-            except RuntimeError:
-                raise exceptions.ConnectionClosed()
-            except websockets.exceptions.ConnectionClosedOK:
-                raise exceptions.ConnectionClosed()
-
-            if break_detect_after_send:
-                return break_index
-
-            msg = ''
-            receive_data_buffer = bytes()
-
-            # print(f'0 {use_too_many_res}')
-            start_time = time.time()
-            mid_time = time.time()
-            while mid_time - start_time < self.config.screen_timeout:
-
-                recv_data_obj = RecvData()
-
-                try:
-
-                    asyncio.get_event_loop().run_until_complete(
-                        websocket_receiver(
-                            self._core, self.config.screen_timeout, recv_data_obj))
-
-                except websockets.exceptions.ConnectionClosed:
-                    # print(f'0.1 {use_too_many_res}')
-                    if use_too_many_res:
-                        # print(f'0.2 {use_too_many_res}')
-                        raise exceptions.UseTooManyResources()
-                    # print(f'0.3 {use_too_many_res}')
-                    raise exceptions.ConnectionClosed()
-                except websockets.exceptions.ConnectionClosedOK:
-                    raise exceptions.ConnectionClosed()
-                except asyncio.TimeoutError:
-                    return -1
-                except RuntimeError:
-                    raise exceptions.ConnectionClosed()
-
-                receive_data_buffer += recv_data_obj.data
-                screen = receive_data_buffer.decode(
-                    'big5uao', errors='replace')
-
-                find_target = False
-                for Target in target_list:
-                    condition = Target.is_match(screen)
-                    if condition:
-                        if len(screen) > 0:
-                            screens.show(self.config, screen)
-                            self._RDQ.add(screen)
-                            # self._ReceiveDataQueue.append(screen)
-                            if Target == self._UseTooManyResources:
-                                # print('!!!!!!!!!!!!!!!')
-                                use_too_many_res = True
-                                # print(f'1 {use_too_many_res}')
-                                break
-                            Target.raise_exception()
-
-                        find_target = True
-
-                        if Target.is_break():
-                            return target_list.index(Target)
-
-                        msg = Target.get_response(screen)
-
-                        add_refresh = False
-                        if Target.is_refresh():
-                            add_refresh = True
-                        elif refresh:
-                            add_refresh = True
-
-                        if add_refresh:
-                            if not msg.endswith(command.Refresh):
-                                msg = msg + command.Refresh
-
-                        if Target.is_break_after_send():
-                            break_index = target_list.index(Target)
-                            break_detect_after_send = True
-                        break
-
-                # print(f'2 {use_too_many_res}')
-                if use_too_many_res:
-                    # print(f'3 {use_too_many_res}')
-                    continue
-                # print(f'4 {use_too_many_res}')
-
-                if find_target:
-                    break
+        find_target = False
+        target_index = -1
+        for target in target_list:
+            condition = target.is_match(screen)
+            if condition:
+                if target._Handler is not None:
+                    target._Handler(screen)
                 if len(screen) > 0:
                     screens.show(self.config, screen)
                     self._RDQ.add(screen)
-                    # self._ReceiveDataQueue.append(screen)
+                    if target == self._UseTooManyResources:
+                        use_too_many_res = True
+                        # print(f'1 {use_too_many_res}')
+                        break
+                    target.raise_exception()
 
-                mid_time = time.time()
+                find_target = True
 
-            if not find_target:
-                # raise exceptions.NoMatchTargetError(self._RDQ)
-                return -1
-        # raise exceptions.NoMatchTargetError(self._RDQ)
-        return -1
+                # self.ptt_logger.info(target.get_display_msg())
 
-    def send(
-            self,
-            msg: str,
-            target_list: list,
-            screen_timeout: int = 0,
-            refresh: bool = True,
-            secret: bool = False) -> int:
+                # if target.get_display_msg() == '登入成功':
+                #     print(type(receive_data_buffer), receive_data_buffer)
+                #     print(receive_data_buffer == temp)
 
-        def clean_screen(recv_screen: str, NoColor: bool = True) -> str:
+                end_time = time.time()
+                self.logger.debug(i18n.spend_time, round(end_time - start_time, 3))
 
-            if not recv_screen:
-                return recv_screen
-            # http://asf.atmel.com/docs/latest/uc3l/html/group__group__avr32__lib_utils__print__funcs.html#ga024c3e2852fe509450ebc363df52ae73
+                if target.is_break():
+                    target_index = target_list.index(target)
+                    break
 
-            # screen = re.sub('\[[\d+;]*m', '', screen)
+                msg = target.get_response(screen)
 
-            recv_screen = re.sub(r'[\r]', '', recv_screen)
-            # recv_screen = re.sub(r'[\x00-\x08]', '', recv_screen)
-            recv_screen = re.sub(r'[\x00-\x07]', '', recv_screen)
-            # print(recv_screen)
-            recv_screen = re.sub(r'[\x0b\x0c]', '', recv_screen)
-            # screen = re.sub(r'[\x0e-\x1f]', '', screen)
+                add_refresh = False
+                if target.is_refresh():
+                    add_refresh = True
+                elif refresh:
+                    add_refresh = True
 
-            recv_screen = re.sub(r'[\x0e-\x1A]', '', recv_screen)
-            recv_screen = re.sub(r'[\x1C-\x1F]', '', recv_screen)
-            recv_screen = re.sub(r'[\x7f-\xff]', '', recv_screen)
+                if add_refresh:
+                    if not msg.endswith(command.refresh):
+                        msg = msg + command.refresh
 
-            recv_screen = screens.vt100(recv_screen)
+                is_secret = target.is_secret()
 
-            return recv_screen
+                if target.is_break_after_send():
+                    # break_index = target_list.index(target)
+                    break_detect_after_send = True
+                break
+        return screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index
+
+    def send(self, msg: str, target_list: list, screen_timeout: int = 0, refresh: bool = True,
+             secret: bool = False) -> int:
 
         if not all(isinstance(T, TargetUnit) for T in target_list):
             raise ValueError('Item of TargetList must be TargetUnit')
@@ -437,39 +301,29 @@ class API(object):
             current_screen_timeout = screen_timeout
 
         break_detect_after_send = False
-        break_index = -1
         is_secret = secret
 
         use_too_many_res = False
         while True:
 
-            if refresh and not msg.endswith(command.Refresh):
-                msg = msg + command.Refresh
-            try:
-                msg = msg.encode('big5uao', 'replace')
+            if refresh and not msg.endswith(command.refresh):
+                msg = msg + command.refresh
 
+            try:
+                msg = msg.encode('utf-8', 'replace')
             except AttributeError:
                 pass
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
-                msg = msg.encode('big5', 'replace')
+                msg = msg.encode('utf-8', 'replace')
 
             if is_secret:
-                log.show_value(
-                    self.config,
-                    log.level.DEBUG, [
-                        i18n.SendMsg
-                    ],
-                    i18n.HideSensitiveInfor)
+                self.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
             else:
-                log.show_value(
-                    self.config,
-                    log.level.DEBUG, [
-                        i18n.SendMsg
-                    ],
-                    msg)
-            if self.config.connect_mode == connect_mode.TELNET:
+                self.logger.debug(i18n.send_msg, str(msg))
+
+            if self.config.connect_mode == data_type.ConnectMode.TELNET:
                 try:
                     self._core.read_very_eager()
                     self._core.write(msg)
@@ -487,7 +341,7 @@ class API(object):
                     raise exceptions.ConnectionClosed()
 
                 if break_detect_after_send:
-                    return break_index
+                    return -1
 
             msg = ''
             receive_data_buffer = bytes()
@@ -499,7 +353,7 @@ class API(object):
 
                 recv_data_obj = RecvData()
 
-                if self.config.connect_mode == connect_mode.TELNET:
+                if self.config.connect_mode == data_type.ConnectMode.TELNET:
                     try:
                         recv_data_obj.data = self._core.read_very_eager()
                     except EOFError:
@@ -516,7 +370,7 @@ class API(object):
                         # print(f'0.1 {use_too_many_res}')
                         if use_too_many_res:
                             # print(f'0.2 {use_too_many_res}')
-                            raise exceptions.UseTooManyResources()
+                            raise exceptions.use_too_many_resources()
                         # print(f'0.3 {use_too_many_res}')
                         raise exceptions.ConnectionClosed()
                     except websockets.exceptions.ConnectionClosedOK:
@@ -527,85 +381,25 @@ class API(object):
                         raise exceptions.ConnectionClosed()
 
                 receive_data_buffer += recv_data_obj.data
-                receive_data_temp = receive_data_buffer.decode(
-                    'big5uao', errors='replace')
-                screen = clean_screen(receive_data_temp)
 
-                # qq = receive_data_temp.encode('utf-8')
-                # b = None
-                # for q in qq:
-                #     if not b:
-                #         b = f'bytes([{q}'
-                #     else:
-                #         b += f', {q}'
-                # b += f'])'
-                # print(b)
+                screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
+                    self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
-                find_target = False
-                for Target in target_list:
-                    condition = Target.is_match(screen)
-                    if condition:
-                        if Target._Handler is not None:
-                            Target._Handler(screen)
-                        if len(screen) > 0:
-                            screens.show(self.config, screen)
-                            self._RDQ.add(screen)
-                            # self._ReceiveDataQueue.append(screen)
-                            if Target == self._UseTooManyResources:
-                                # print('!!!!!!!!!!!!!!!')
-                                use_too_many_res = True
-                                # print(f'1 {use_too_many_res}')
-                                break
-                            Target.raise_exception()
+                if self.current_encoding == 'big5uao' and not find_target:
+                    self.current_encoding = 'utf-8'
+                    screen_, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
+                        self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
-                        find_target = True
+                    if find_target:
+                        screen = screen_
+                    else:
+                        self.current_encoding = 'big5uao'
 
-                        log.show_value(
-                            self.config,
-                            Target.get_log_level(),
-                            [
-                                i18n.PTT,
-                                i18n.Msg
-                            ],
-                            Target.get_display_msg()
-                        )
+                if target_index != -1:
+                    return target_index
 
-                        end_time = time.time()
-                        log.show_value(
-                            self.config,
-                            log.level.DEBUG, [
-                                i18n.SpendTime,
-                            ],
-                            round(end_time - start_time, 3)
-                        )
-
-                        if Target.is_break():
-                            return target_list.index(Target)
-
-                        msg = Target.get_response(screen)
-
-                        add_refresh = False
-                        if Target.is_refresh():
-                            add_refresh = True
-                        elif refresh:
-                            add_refresh = True
-
-                        if add_refresh:
-                            if not msg.endswith(command.Refresh):
-                                msg = msg + command.Refresh
-
-                        is_secret = Target.is_secret()
-
-                        if Target.is_break_after_send():
-                            break_index = target_list.index(Target)
-                            break_detect_after_send = True
-                        break
-
-                # print(f'2 {use_too_many_res}')
                 if use_too_many_res:
-                    # print(f'3 {use_too_many_res}')
                     continue
-                # print(f'4 {use_too_many_res}')
 
                 if find_target:
                     break
@@ -620,10 +414,10 @@ class API(object):
                 # raise exceptions.NoMatchTargetError(self._RDQ)
                 return -1
         # raise exceptions.NoMatchTargetError(self._RDQ)
-        return -1
+        return -2
 
     def close(self):
-        if self.config.connect_mode == connect_mode.WEBSOCKET:
+        if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
             asyncio.get_event_loop().run_until_complete(self._core.close())
         else:
             self._core.close()

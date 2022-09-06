@@ -1,42 +1,34 @@
 import re
 
-try:
-    from . import i18n
-    from . import connect_core
-    from . import log
-    from . import screens
-    from . import command
-    from . import _api_util
-except ModuleNotFoundError:
-    import i18n
-    import connect_core
-    import log
-    import screens
-    import command
-    import _api_util
+from SingleLog import LogLevel
+
+from . import _api_util
+from . import command
+from . import connect_core
+from . import i18n
+from . import screens
 
 
 def has_new_mail(api) -> int:
-
-    cmd_list = list()
-    cmd_list.append(command.GoMainMenu)
-    cmd_list.append(command.Ctrl_Z)
+    cmd_list = []
+    cmd_list.append(command.go_main_menu)
+    cmd_list.append(command.ctrl_z)
     cmd_list.append('m')
     # cmd_list.append('1')
-    # cmd_list.append(command.Enter)
+    # cmd_list.append(command.enter)
     cmd = ''.join(cmd_list)
     current_capacity = None
     plus_count = 0
     index_pattern = re.compile('(\d+)')
-    checked_index_list = list()
+    checked_index_list = []
     break_detect = False
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.MailBox,
+            i18n.mail_box,
             screens.Target.InMailBox,
             break_detect=True,
-            log_level=log.level.DEBUG
+            log_level=LogLevel.DEBUG
         )
     ]
 
@@ -46,12 +38,12 @@ def has_new_mail(api) -> int:
     )
     current_capacity, _ = _api_util.get_mailbox_capacity(api)
     if current_capacity > 20:
-        cmd_list = list()
-        cmd_list.append(command.GoMainMenu)
-        cmd_list.append(command.Ctrl_Z)
+        cmd_list = []
+        cmd_list.append(command.go_main_menu)
+        cmd_list.append(command.ctrl_z)
         cmd_list.append('m')
         cmd_list.append('1')
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
         cmd = ''.join(cmd_list)
 
     while True:
@@ -86,6 +78,6 @@ def has_new_mail(api) -> int:
         plus_count += current_plus_count
         if break_detect:
             break
-        cmd = command.Ctrl_F
+        cmd = command.ctrl_f
 
     return plus_count

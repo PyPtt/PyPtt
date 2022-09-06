@@ -1,2 +1,2 @@
 ignore:
-  - "./*.py"
+  - "PyPtt/*.py"

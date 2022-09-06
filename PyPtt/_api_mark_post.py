@@ -1,193 +1,136 @@
-try:
-    from . import data_type
-    from . import i18n
-    from . import connect_core
-    from . import log
-    from . import screens
-    from . import command
-    from . import check_value
-    from . import exceptions
-    from . import lib_util
-except ModuleNotFoundError:
-    import data_type
-    import i18n
-    import connect_core
-    import log
-    import screens
-    import command
-    import check_value
-    import exceptions
-    import lib_util
+from SingleLog import LogLevel
+
+from . import _api_util
+from . import check_value
+from . import command
+from . import connect_core
+from . import data_type
+from . import exceptions
+from . import i18n
+from . import lib_util
+from . import screens
 
 
-def mark_post(
-        api,
-        mark_type: int,
-        board: str,
-        post_aid: str,
-        post_index: int,
-        search_type: int,
-        search_condition: str) -> None:
+def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, search_type: int,
+              search_condition: str) -> None:
+    _api_util.one_thread(api)
 
-    log.show_value(
-        api.config,
-        log.level.INFO,
-        [
-            i18n.PTT,
-            i18n.Msg
-        ],
-        i18n.MarkPost
-    )
+    if not api._is_login:
+        raise exceptions.Requirelogin(i18n.require_login)
 
-    check_value.check(api.config, int, 'mark_type', mark_type,
-                      value_class=data_type.mark_type)
-    check_value.check(api.config, str, 'Board', board)
+    if not api.is_registered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+    if not isinstance(mark_type, data_type.MarkType):
+        raise TypeError(f'mark_type must be data_type.MarkType')
+
+    check_value.check_type(board, str, 'board')
     if post_aid is not None:
-        check_value.check(api.config, str, 'PostAID', post_aid)
-    check_value.check(api.config, int, 'PostIndex', post_index)
-    check_value.check(api.config, int, 'SearchType', search_type,
-                      value_class=data_type.post_search_type)
+        check_value.check_type(post_aid, str, 'PostAID')
+    check_value.check_type(post_index, int, 'PostIndex')
+
+    if not isinstance(search_type, data_type.SearchType):
+        raise TypeError(f'search_type must be data_type.SearchType')
+
     if search_condition is not None:
-        check_value.check(api.config, str,
-                          'SearchCondition', search_condition)
+        check_value.check_type(search_condition, str, 'SearchCondition')
 
     if len(board) == 0:
-        raise ValueError(log.merge([
-            i18n.Board,
-            i18n.ErrorParameter,
-            board
-        ]))
+        raise ValueError(f'board error parameter: {board}')
 
-    if mark_type != data_type.mark_type.DeleteD:
+    if mark_type != data_type.MarkType.DeleteD:
         if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError(log.merge(
-                api.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.ErrorParameter,
-                    i18n.BothInput
-                ]))
+            raise ValueError('wrong parameter index and aid can\'t both input')
 
         if post_index == 0 and post_aid is None:
-            raise ValueError(log.merge(
-                api.config,
-                [
-                    'PostIndex',
-                    'PostAID',
-                    i18n.ErrorParameter
-                ]))
+            raise ValueError('wrong parameter index or aid must input')
 
     if search_condition is not None and search_type == 0:
-        raise ValueError(log.merge(
-            api.config,
-            [
-                'SearchType',
-                i18n.ErrorParameter,
-            ]))
+        raise ValueError('wrong parameter index or aid must input')
 
-    if search_type == data_type.post_search_type.PUSH:
+    if search_type == data_type.SearchType.PUSH:
         try:
             S = int(search_condition)
         except ValueError:
-            raise ValueError(log.merge(
-                api.config,
-                [
-                    'SearchCondition',
-                    i18n.ErrorParameter,
-                ]))
+            raise ValueError(f'wrong parameter search_condition: {search_condition}')
 
-        if not (-100 <= S <= 110):
-            raise ValueError(log.merge(
-                api.config,
-                [
-                    'SearchCondition',
-                    i18n.ErrorParameter,
-                ]))
+        check_value.check_range(S, -100, 100, 'search_condition')
 
     if post_aid is not None and search_condition is not None:
-        raise ValueError(log.merge(
-            api.config, [
-                'PostAID',
-                'SearchCondition',
-                i18n.ErrorParameter,
-                i18n.BothInput,
-            ]))
+        raise ValueError('wrong parameter aid and search_condition can\'t both input')
 
     if post_index != 0:
-        newest_index = api._get_newest_index(
-            data_type.index_type.BBS,
+        newest_index = api.get_newest_index(
+            data_type.NewIndex.BOARD,
             board=board,
             search_type=search_type,
-            search_condition=search_condition
-        )
-        check_value.check_index(api.config, 'PostIndex',
-                                post_index, max_value=newest_index)
+            search_condition=search_condition)
+        check_value.check_index(
+            'index',
+            post_index,
+            max_value=newest_index)
 
-    if mark_type == data_type.mark_type.UNCONFIRMED:
+    if mark_type == data_type.MarkType.UNCONFIRMED:
         # 批踢踢兔沒有待證文章功能 QQ
-        if api.config.host == data_type.host_type.PTT2:
+        if api.config.host == data_type.HOST.PTT2:
             raise exceptions.HostNotSupport(lib_util.get_current_func_name())
 
-    api._check_board(
+    _api_util.check_board(
         board,
         check_moderator=True)
 
-    api._goto_board(board)
+    _api_util.goto_board(api, board)
 
-    cmd_list = list()
+    cmd_list = []
     if post_aid is not None:
         cmd_list.append('#' + post_aid)
 
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
     elif post_index != 0:
         if search_condition is not None:
-            if search_type == data_type.post_search_type.KEYWORD:
+            if search_type == data_type.SearchType.KEYWORD:
                 cmd_list.append('/')
-            elif search_type == data_type.post_search_type.AUTHOR:
+            elif search_type == data_type.SearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.post_search_type.PUSH:
+            elif search_type == data_type.SearchType.PUSH:
                 cmd_list.append('Z')
-            elif search_type == data_type.post_search_type.MARK:
+            elif search_type == data_type.SearchType.MARK:
                 cmd_list.append('G')
-            elif search_type == data_type.post_search_type.MONEY:
+            elif search_type == data_type.SearchType.MONEY:
                 cmd_list.append('A')
 
             cmd_list.append(search_condition)
-            cmd_list.append(command.Enter)
+            cmd_list.append(command.enter)
 
         cmd_list.append(str(post_index))
 
-        cmd_list.append(command.Enter)
+        cmd_list.append(command.enter)
 
-    if mark_type == data_type.mark_type.S:
+    if mark_type == data_type.MarkType.S:
         cmd_list.append('L')
-    elif mark_type == data_type.mark_type.D:
+    elif mark_type == data_type.MarkType.D:
         cmd_list.append('t')
-    elif mark_type == data_type.mark_type.DeleteD:
-        cmd_list.append(command.Ctrl_D)
-    elif mark_type == data_type.mark_type.M:
+    elif mark_type == data_type.MarkType.DeleteD:
+        cmd_list.append(command.ctrl_d)
+    elif mark_type == data_type.MarkType.M:
         cmd_list.append('m')
-    elif mark_type == data_type.mark_type.UNCONFIRMED:
-        cmd_list.append(command.Ctrl_E + 'S')
+    elif mark_type == data_type.MarkType.UNCONFIRMED:
+        cmd_list.append(command.ctrl_e + 'S')
 
     cmd = ''.join(cmd_list)
 
     target_list = [
         connect_core.TargetUnit(
-            [i18n.DelAllMarkPost],
+            [i18n.del_all_mark_post],
             '刪除所有標記',
-            response='y' + command.Enter,
-            log_level=log.level.INFO),
+            response='y' + command.enter,
+            log_level=LogLevel.INFO),
         connect_core.TargetUnit(
-            [
-                i18n.Mark,
-                i18n.Success,
-            ],
+            [i18n.mark_success],
             screens.Target.InBoard,
             break_detect=True,
-            log_level=log.level.INFO),
+            log_level=LogLevel.INFO),
     ]
 
     api.connect_core.send(cmd, target_list)

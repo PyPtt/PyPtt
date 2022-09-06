@@ -1,0 +1,1493 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PyPtt.i18n &#8212; PyPtt  說明文件</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜尋" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>PyPtt.i18n 的原始碼</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">data_type</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">version</span>
+
+<span class="n">languageList</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">data_type</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">MANDARIN</span><span class="p">,</span>
+    <span class="n">data_type</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">ENGLISH</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="specific_load"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.i18n.specific_load">[文件]</a><span class="k">def</span> <span class="nf">specific_load</span><span class="p">(</span><span class="n">input_language</span><span class="p">,</span> <span class="n">lang_list</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">languageList</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">languageList</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lang_list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;SpecificLoad LangList length error&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">input_language</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">languageList</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;SpecificLoad unknown language&#39;</span><span class="p">,</span> <span class="n">input_language</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lang_list</span><span class="p">[</span><span class="n">languageList</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">input_language</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="replace"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.i18n.replace">[文件]</a><span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="c1"># for i in range(len(args)):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{Target&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">string</span></div>
+
+
+<span class="n">mandarin_module</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">english_module</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">init</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">connect_host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">set_connect_host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">PTT</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">PTT2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">localhost</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">must_be_a_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">must_be_a_integer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">must_be_a_boolean</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">must_be</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">must_bigger_than</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">must_small_than</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">must_between</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">connect_core</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">use_too_many_resources</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">prepare_connect_again</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">active</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">connect_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">connect_mode_TELNET</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">connect_mode_WEBSOCKET</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">set_connect_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">fail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">connect</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">hide_sensitive_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">send_msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">ptt_msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">spend_time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">kick_other_login</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">not_kick_other_login</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">login_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">mail_box</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">login_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">go_main_menu</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">wrong_id_pw</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">login_too_often</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">system_busy_try_later</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">del_wrong_pw_record</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">post_not_finish</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">in_login_process_please_wait</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">any_key_continue</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">update_sync_online_user_friend_list</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">error_login_rich_people_go_main_menu</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">skip_registration_form</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">only_secure_connection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">debug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">out_side</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">new_cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">old_cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">logout_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">logout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">complete</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">query_ptt_time_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">has_new_mail_goto_main_menu</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">mail_box_full</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">use_mailbox_api_will_logout_after_execution</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">unregistered_user_cant_use_all_api</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">picks_in_register</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">reading_board_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_permission</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">set_connect_mail_first</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_such_board</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_mail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">find_newest_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">catch_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">catch_post_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">query_post_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">post_deleted</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">board</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">substandard_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">comment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">comment_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">comment_content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">unconfirmed_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">browse_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">done</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">browse_post_done</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">post_no_content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">animation_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">login_fail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_fast_comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_such_user</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">user_offline</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_money</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">money_too_few</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">connection_closed</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">unregistered_user_cant_use_this_api</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">multi_thread_operate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">error_pw</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">ptt2_not_support</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_response</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">need_moderator_permission</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">connect_fail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_such_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">screen_no_match_target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">can_not_use_search_post_code_f</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">user_has_previously_been_banned</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_search_result</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">timeout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">deleted_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">has_post_permission</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">save_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">select_signature</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">not_record_ip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">record_ip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">push_aligned</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">not_push_aligned</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">has_push_permission</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">only_arrow</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">error_parameter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">wait_for_no_fast_comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">require_login</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">reading</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">quit_user_profile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">read_complete</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">get_user</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">get_user_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">get_user_fail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">water_ball</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">set_call_status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">throw_waterball</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">throw_waterball_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_waterball</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">browse_waterball</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">browse_waterball_done</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">get_call_status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">get_call_status_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">set_call_status_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">transaction_cancelled</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">transaction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">transaction_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">constant_red_bag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">verify_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">anonymous_transaction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">input_money</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">authentication_has_not_expired</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">trading_in_progress</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">send_mail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_signature_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">select_sign_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">not_self_save_draft</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">self_save_draft</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">board_list</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">reply_board</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">reply_mail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">reply_board_mail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">forced_write</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">edit_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">use_the_original_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">quote_original</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">respond_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">favourite_board_list</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">confirm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">input_origin_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">input_new_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">check_new_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">catch_bottom_post_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">confirm_delete</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">delete_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">bucket_fail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">bucket_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">input_bucket_days_reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">new_settings_have_been_saved</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">no_changes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">restore_connection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">new_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">development_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">current_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">latest_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">del_all_mark_post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">mark_success</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">set_up_lang_module</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">welcome</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">goodbye</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">update_remote_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">retry</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">change_pw</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">post</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+
+<span class="n">goodbye_en</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;goodbye&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bye&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;see you&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;catch you later&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;I hate to run, but…&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Until we meet again, I will wait.&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">goodbye_mandarin</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;再見&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;掰&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;待會見&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;祝平安&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;謝謝你，我很開心&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;等你回來&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../PyPtt/PyPtt.html#PyPtt.i18n.load">[文件]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">lang</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">data_type</span><span class="o">.</span><span class="n">Language</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown language&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="p">)</span>
+
+    <span class="k">global</span> <span class="n">post</span>
+    <span class="n">post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;發佈文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;post article&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">change_pw</span>
+    <span class="n">change_pw</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;變更密碼&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;change password&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">retry</span>
+    <span class="n">retry</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;重試&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;retry&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">update_remote_version</span>
+    <span class="n">update_remote_version</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;確認最新版本&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fetching latest version&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">goodbye</span>
+    <span class="n">goodbye</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">goodbye_mandarin</span><span class="p">),</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">goodbye_en</span><span class="p">),</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">must_be</span>
+    <span class="n">must_be</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;必須為&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;must be&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">welcome</span>
+    <span class="n">welcome</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;PyPtt v </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s1"> 由 CodingMan 開發&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;PyPtt v </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s1"> developed by CodingMan&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">set_up_lang_module</span>
+    <span class="n">set_up_lang_module</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;設定語言模組&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;set up language module&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">mark_success</span>
+    <span class="n">mark_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;刪除所有標記文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Del All Mark PostField&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">del_all_mark_post</span>
+    <span class="n">del_all_mark_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;刪除所有標記文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Del All Mark PostField&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">current_version</span>
+    <span class="n">current_version</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;目前版本&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Current version&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">latest_version</span>
+    <span class="n">latest_version</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;正在執行最新版本&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Running the latest version&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">development_version</span>
+    <span class="n">development_version</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;正在執行開發版本&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Running development version&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">new_version</span>
+    <span class="n">new_version</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;有新版本&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;There is a new version&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">restore_connection</span>
+    <span class="n">restore_connection</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;恢復連線&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;restore Connection&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_changes</span>
+    <span class="n">no_changes</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;未改變任何設定&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no changes have been made to any settings&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">new_settings_have_been_saved</span>
+    <span class="n">new_settings_have_been_saved</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;已儲存新設定&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;new settings have been saved&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">input_bucket_days_reason</span>
+    <span class="n">input_bucket_days_reason</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;輸入水桶天數與理由&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;input bucket days and reason&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">bucket_success</span>
+    <span class="n">bucket_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;水桶成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;bucket success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">bucket_fail</span>
+    <span class="n">bucket_fail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;水桶失敗&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;bucket fail&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">confirm_delete</span>
+    <span class="n">confirm_delete</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;確定刪除&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;confirm delete&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">delete_success</span>
+    <span class="n">delete_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;刪除成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;delete Success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">catch_bottom_post_success</span>
+    <span class="n">catch_bottom_post_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得置底文章成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;catch bottom post success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">catch_post_success</span>
+    <span class="n">catch_post_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得文章成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;get post success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">query_post_success</span>
+    <span class="n">query_post_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;查詢文章成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;query post success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">input_origin_password</span>
+    <span class="n">input_origin_password</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;輸入原密碼&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;input Origin Password&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">input_new_password</span>
+    <span class="n">input_new_password</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;設定新密碼&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;input new password&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">check_new_password</span>
+    <span class="n">check_new_password</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;檢查新密碼&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;check new password&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">confirm</span>
+    <span class="n">confirm</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;確認&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;confirm&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">favourite_board_list</span>
+    <span class="n">favourite_board_list</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;我的最愛&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;favourite board list&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">respond_success</span>
+    <span class="n">respond_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;回應成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;respond success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">use_the_original_title</span>
+    <span class="n">use_the_original_title</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;採用原標題&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;use the original title&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">quote_original</span>
+    <span class="n">quote_original</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;引用原文&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;quote original&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">edit_post</span>
+    <span class="n">edit_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;編輯文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;edit post&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">forced_write</span>
+    <span class="n">forced_write</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;強制寫入&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Forced Write&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">reply_board</span>
+    <span class="n">reply_board</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;回應至看板&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;respond to the BoardField&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">reply_mail</span>
+    <span class="n">reply_mail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;回應至作者信箱&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;respond to the mailbox of author&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">reply_board_mail</span>
+    <span class="n">reply_board_mail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;回應至看板與作者信箱&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;respond to the board and the mailbox of author&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">board_list</span>
+    <span class="n">board_list</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;看板列表&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;board list&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">self_save_draft</span>
+    <span class="n">self_save_draft</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;自存底稿&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;self-save draft&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">not_self_save_draft</span>
+    <span class="n">not_self_save_draft</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;放棄自存底稿&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;not self-save draft&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">select_sign_file</span>
+    <span class="n">select_sign_file</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;選擇第 </span><span class="si">{Target0}</span><span class="s1"> 簽名檔&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;select </span><span class="si">{Target0}</span><span class="s1">th signature file&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_signature_file</span>
+    <span class="n">no_signature_file</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;不加簽名檔&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no Signature File&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">send_mail</span>
+    <span class="n">send_mail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;寄信&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;send mail&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">trading_in_progress</span>
+    <span class="n">trading_in_progress</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;交易正在進行中&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;trading is in progress&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">authentication_has_not_expired</span>
+    <span class="n">authentication_has_not_expired</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;認證尚未過期&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;authentication has not expired&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">input_id</span>
+    <span class="n">input_id</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;輸入帳號&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;input ID&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">input_money</span>
+    <span class="n">input_money</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;輸入金額&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;input money&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">anonymous_transaction</span>
+    <span class="n">anonymous_transaction</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;不使用匿名交易&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;transaction without anomalous&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">verify_id</span>
+    <span class="n">verify_id</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;確認身分&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;verify ID&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">constant_red_bag</span>
+    <span class="n">constant_red_bag</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;不修改紅包袋&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;constant the red bag&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">transaction_success</span>
+    <span class="n">transaction_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;交易成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;transaction success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">transaction</span>
+    <span class="n">transaction</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;交易&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;transaction&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">transaction_cancelled</span>
+    <span class="n">transaction_cancelled</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;交易取消!&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;the transaction is cancelled!&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">set_call_status_success</span>
+    <span class="n">set_call_status_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;設定呼叫器狀態成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;set BBCall status success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">get_call_status</span>
+    <span class="n">get_call_status</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得呼叫器狀態&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;get BBCall status&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">get_call_status_success</span>
+    <span class="n">get_call_status_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得呼叫器狀態成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;get BBCall status success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">browse_waterball</span>
+    <span class="n">browse_waterball</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;瀏覽水球紀錄&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;browse waterball&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">browse_waterball_done</span>
+    <span class="n">browse_waterball_done</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;瀏覽水球紀錄完成&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;browse waterball complete&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_waterball</span>
+    <span class="n">no_waterball</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;無訊息記錄&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no waterball&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">throw_waterball_success</span>
+    <span class="n">throw_waterball_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;丟水球成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;throw waterball success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">throw_waterball</span>
+    <span class="n">throw_waterball</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;丟 </span><span class="si">{Target0}</span><span class="s1"> 水球&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;throw </span><span class="si">{Target0}</span><span class="s1"> waterball&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">set_call_status</span>
+    <span class="n">set_call_status</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;設定呼叫器狀態&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;set call status&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">water_ball</span>
+    <span class="n">water_ball</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;水球&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;water Ball&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">get_user</span>
+    <span class="n">get_user</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得使用者&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;get user&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">get_user_success</span>
+    <span class="n">get_user_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得使用者成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;get user success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">get_user_fail</span>
+    <span class="n">get_user_fail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得使用者失敗&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;get user fail&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">read_complete</span>
+    <span class="n">read_complete</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;讀取完成&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;read complete&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">quit_user_profile</span>
+    <span class="n">quit_user_profile</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;退出使用者檔案&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;Quit UserField Profile&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">reading</span>
+    <span class="n">reading</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;讀取中&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;reading&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">require_login</span>
+    <span class="n">require_login</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;請先登入&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;please login first&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">error_parameter</span>
+    <span class="n">error_parameter</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;參數錯誤&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;wrong parameter&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">only_arrow</span>
+    <span class="n">only_arrow</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;使用加註方式&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Arrow Only in Push&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">has_push_permission</span>
+    <span class="n">has_push_permission</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;使用者擁有推文權限&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;user has comment permission&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">push_aligned</span>
+    <span class="n">push_aligned</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;推文對齊&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Push aligned&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">not_push_aligned</span>
+    <span class="n">not_push_aligned</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;無推文對齊&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;No push aligned&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">not_record_ip</span>
+    <span class="n">not_record_ip</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;不紀錄 IP&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;not record IP&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">record_ip</span>
+    <span class="n">record_ip</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;紀錄 IP&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Record ip&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">select_signature</span>
+    <span class="n">select_signature</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;選擇簽名檔&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Select Signature&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">save_file</span>
+    <span class="n">save_file</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;儲存檔案&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Save File&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">has_post_permission</span>
+    <span class="n">has_post_permission</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;確認擁有貼文權限&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;have permission to post&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">deleted_post</span>
+    <span class="n">deleted_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;已刪除文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Deleted PostField&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">timeout</span>
+    <span class="n">timeout</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;等待過久&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;timeout&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_search_result</span>
+    <span class="n">no_search_result</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;沒有搜尋結果&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;No Search Result&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">user_has_previously_been_banned</span>
+    <span class="n">user_has_previously_been_banned</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;使用者之前已被禁言&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;user has previously been banned&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">can_not_use_search_post_code_f</span>
+    <span class="n">can_not_use_search_post_code_f</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;此狀態下無法使用搜尋文章代碼(AID)功能&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;This status can not use the search PostField code function&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">screen_no_match_target</span>
+    <span class="n">screen_no_match_target</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;畫面無法辨識&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;this screen is not recognized&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_such_post</span>
+    <span class="n">no_such_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;</span><span class="si">{Target0}</span><span class="s1"> 板找不到這個文章代碼 </span><span class="si">{Target1}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;in </span><span class="si">{Target0}</span><span class="s1">, the post code is not EXISTS </span><span class="si">{Target1}</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">connect_fail</span>
+    <span class="n">connect_fail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;連線失敗&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;connect fail&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">need_moderator_permission</span>
+    <span class="n">need_moderator_permission</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;需要板主權限&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;need moderator permission&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_response</span>
+    <span class="n">no_response</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;很抱歉, 此文章已結案並標記, 不得回應&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;this post has been closed and marked, no response&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_comment</span>
+    <span class="n">no_comment</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;禁止推薦&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no comment&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">error_pw</span>
+    <span class="n">error_pw</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;密碼不正確&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;wrong password&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">multi_thread_operate</span>
+    <span class="n">multi_thread_operate</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;請勿使用多線程同時操作一個 PyPtt 物件&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;do not use a multi-thread to operate a PyPtt object&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">unregistered_user_cant_use_this_api</span>
+    <span class="n">unregistered_user_cant_use_this_api</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;未註冊使用者，無法使用此功能&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;unregistered UserField Can</span><span class="se">\&#39;</span><span class="s1">t Use This API&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">connection_closed</span>
+    <span class="n">connection_closed</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;連線已經被關閉&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;connection Closed&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">money_too_few</span>
+    <span class="n">money_too_few</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;金額過少，交易取消!&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;the amount is too small, the transaction is cancelled!&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_money</span>
+    <span class="n">no_money</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;PTT 幣不足&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;not enough PTT coins&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">user_offline</span>
+    <span class="n">user_offline</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;使用者離線&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;user offline&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_such_user</span>
+    <span class="n">no_such_user</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;無該使用者&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no such user&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_fast_comment</span>
+    <span class="n">no_fast_comment</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;禁止快速連續推文&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no fast comment&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">wait_for_no_fast_comment</span>
+    <span class="n">wait_for_no_fast_comment</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;因</span><span class="si">{</span><span class="n">no_fast_comment</span><span class="si">}</span><span class="s1">，所以等待五秒&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;because </span><span class="si">{</span><span class="n">no_fast_comment</span><span class="si">}</span><span class="s1">, wait 5 sec&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">login_fail</span>
+    <span class="n">login_fail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;登入失敗&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;login fail&#39;</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">animation_post</span>
+    <span class="n">animation_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;動畫文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Animation PostField&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">post_no_content</span>
+    <span class="n">post_no_content</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;此文章無內容&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;post has no content&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">done</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;完成&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;done&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">browse_post</span>
+    <span class="n">browse_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;瀏覽文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;browse post&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">browse_post_done</span>
+    <span class="n">browse_post_done</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">browse_post</span><span class="si">}{</span><span class="n">done</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">browse_post</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">done</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">unconfirmed_post</span>
+    <span class="n">unconfirmed_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;待證實文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PostField To Be Confirmed&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">comment</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;推文&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;comment&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">comment_date</span>
+    <span class="n">comment_date</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;推文日期&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;comment date&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">comment_id</span>
+    <span class="n">comment_id</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;推文帳號&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;comment id&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">content</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;內文&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;content&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">comment_content</span>
+    <span class="n">comment_content</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">comment</span><span class="si">}{</span><span class="n">content</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">comment</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">date</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;日期&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;date&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">title</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;標題&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">author</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;作者&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;author&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">substandard_post</span>
+    <span class="n">substandard_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;不合規範文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;substandard post&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">board</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;看板&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;board&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">post_deleted</span>
+    <span class="n">post_deleted</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;文章已經被刪除&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;post has been deleted&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">success</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">catch_post</span>
+    <span class="n">catch_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;catch post&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">find_newest_index</span>
+    <span class="n">find_newest_index</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;找到最新編號&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;find newest index&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_mail</span>
+    <span class="n">no_mail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;沒有信件&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;you have no mail&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_such_board</span>
+    <span class="n">no_such_board</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;無該看板&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no such board&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_post</span>
+    <span class="n">no_post</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;沒有文章&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;no post&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">set_connect_mail_first</span>
+    <span class="n">set_connect_mail_first</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;設定聯絡信箱後才能修改密碼&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;password can only be changed after setting the contact mailbox&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">no_permission</span>
+    <span class="n">no_permission</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;使用者沒有權限&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;user Has No Permission&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">reading_board_info</span>
+    <span class="n">reading_board_info</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;讀取看板資訊&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;reading board Info&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">picks_in_register</span>
+    <span class="n">picks_in_register</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;註冊申請單處理順位&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;registration application processing order&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">unregistered_user_cant_use_all_api</span>
+    <span class="n">unregistered_user_cant_use_all_api</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;未註冊使用者，將無法使用全部功能&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;unregistered UserField Can</span><span class="se">\&#39;</span><span class="s1">t Use All API&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">use_mailbox_api_will_logout_after_execution</span>
+    <span class="n">use_mailbox_api_will_logout_after_execution</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;如果使用信箱相關功能，將執行後自動登出&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;if you use mailbox related functions, you will be logged out automatically after execution&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">mail_box_full</span>
+    <span class="n">mail_box_full</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;郵件已滿&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mail box is full&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">has_new_mail_goto_main_menu</span>
+    <span class="n">has_new_mail_goto_main_menu</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;有新信，回到主選單&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;new mail! Back to main menu&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">query_ptt_time_success</span>
+    <span class="n">query_ptt_time_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;取得批踢踢時間成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;query ptt time success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">complete</span>
+    <span class="n">complete</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;完成&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;complete&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">logout</span>
+    <span class="n">logout</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;登出&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;logout&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">logout_success</span>
+    <span class="n">logout_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;登出成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;logout success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">new_cursor</span>
+    <span class="n">new_cursor</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;新式游標&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;new cursor&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">old_cursor</span>
+    <span class="n">old_cursor</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;舊式游標&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;old cursor&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">debug</span>
+    <span class="n">debug</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;除錯&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;dbug&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">info</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;資訊&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;info&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">out_side</span>
+    <span class="n">out_side</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;外部&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;out&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">only_secure_connection</span>
+    <span class="n">only_secure_connection</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;跳過填寫註冊單&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;skip registration form&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">skip_registration_form</span>
+    <span class="n">skip_registration_form</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;跳過填寫註冊單&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;skip registration form&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">error_login_rich_people_go_main_menu</span>
+    <span class="n">error_login_rich_people_go_main_menu</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;錯誤登入到大富翁排行榜，回到主選單&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;error login rich people, go main menu&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">update_sync_online_user_friend_list</span>
+    <span class="n">update_sync_online_user_friend_list</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;正在更新與同步線上使用者及好友名單&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;update sync online user friend list&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">any_key_continue</span>
+    <span class="n">any_key_continue</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;任意鍵繼續&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;any key to continue&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">in_login_process_please_wait</span>
+    <span class="n">in_login_process_please_wait</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;登入中，請稍候&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;in login process, please wait&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">post_not_finish</span>
+    <span class="n">post_not_finish</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;文章尚未完成&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;post is not finish&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">del_wrong_pw_record</span>
+    <span class="n">del_wrong_pw_record</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;刪除錯誤密碼嘗試紀錄&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;delete error password record&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">system_busy_try_later</span>
+    <span class="n">system_busy_try_later</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;系統繁忙，請稍後再試&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;system busy, try later&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">login_too_often</span>
+    <span class="n">login_too_often</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;登入太頻繁&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;login too often&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">wrong_id_pw</span>
+    <span class="n">wrong_id_pw</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;帳號密碼錯誤&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;wrong id or pw&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">go_main_menu</span>
+    <span class="n">go_main_menu</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;回到主選單&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;go to main menu&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">login_success</span>
+    <span class="n">login_success</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;登入成功&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;login success&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">mail_box</span>
+    <span class="n">mail_box</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;郵件信箱&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mail box&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">login_id</span>
+    <span class="n">login_id</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;登入帳號&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;login id&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">not_kick_other_login</span>
+    <span class="n">not_kick_other_login</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;不剔除其他登入&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;not kick other login&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">kick_other_login</span>
+    <span class="n">kick_other_login</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;強制執行剔除其他登入&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;kick other login&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">spend_time</span>
+    <span class="n">spend_time</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;花費時間&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;spend time&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">ptt_msg</span>
+    <span class="n">ptt_msg</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;批踢踢訊息&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ptt msg&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">send_msg</span>
+    <span class="n">send_msg</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;送出訊息&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;send msg&#39;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">hide_sensitive_info</span>
+    <span class="n">hide_sensitive_info</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;隱藏敏感資訊&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;hide sensitive info&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">connect</span>
+    <span class="n">connect</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;連線&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;connect&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">fail</span>
+    <span class="n">fail</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;失敗&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fail&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">connect_mode_WEBSOCKET</span>
+    <span class="n">connect_mode_WEBSOCKET</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;WebSocket&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;WebSocket&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">connect_mode_TELNET</span>
+    <span class="n">connect_mode_TELNET</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;Telnet&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Telnet&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">connect_mode</span>
+    <span class="n">connect_mode</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;連線模式&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;the connect mode&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">set_connect_mode</span>
+    <span class="n">set_connect_mode</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;設定連線模式&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;set up the connect mode&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">active</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;啟動&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;active&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">prepare_connect_again</span>
+    <span class="n">prepare_connect_again</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;準備再次連線&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;prepare connect again&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">use_too_many_resources</span>
+    <span class="n">use_too_many_resources</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;耗用過多資源&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;use too many resources&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">connect_core</span>
+    <span class="n">connect_core</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;連線核心&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;connect core&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">must_small_than</span>
+    <span class="n">must_small_than</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;必須小於&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;must smaller than&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">must_between</span>
+    <span class="n">must_between</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;必須介於&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;must between&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">must_bigger_than</span>
+    <span class="n">must_bigger_than</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;必須大於&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;must bigger than&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">unknown</span>
+    <span class="n">unknown</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;不明的&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;unknown&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">must_be_a_boolean</span>
+    <span class="n">must_be_a_boolean</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;必須為布林值&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;must be a boolean&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">must_be_a_integer</span>
+    <span class="n">must_be_a_integer</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;必須為數字&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;must be a integer&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">must_be_a_string</span>
+    <span class="n">must_be_a_string</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;必須為字串&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;must be a string&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">mandarin_module</span>
+    <span class="n">mandarin_module</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;繁體中文&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mandarin&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">english_module</span>
+    <span class="n">english_module</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;英文&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;english&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">init</span>
+    <span class="n">init</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;初始化&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;init&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">connect_host</span>
+    <span class="n">connect_host</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;連線主機&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;the connect host&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">set_connect_host</span>
+    <span class="n">set_connect_host</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;設定連線主機&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;set up the connect host&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">PTT</span>
+    <span class="n">PTT</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;批踢踢&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PTT&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">PTT2</span>
+    <span class="n">PTT2</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;批踢踢兔&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PTT2&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">localhost</span>
+    <span class="n">localhost</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;本機&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;localhost&#39;</span><span class="p">])</span>
+
+    <span class="k">global</span> <span class="n">ptt2_not_support</span>
+    <span class="n">ptt2_not_support</span> <span class="o">=</span> <span class="n">specific_load</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PTT2</span><span class="si">}</span><span class="s1">不支援此功能&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PTT2</span><span class="si">}</span><span class="s1"> not support this api&#39;</span><span class="p">,</span>
+    <span class="p">])</span></div>
+
+    <span class="c1">##############################################</span>
+
+    <span class="c1"># No changes have been made to any settings</span>
+
+    <span class="c1"># Quote original</span>
+
+    <span class="c1"># global List</span>
+    <span class="c1"># List = []</span>
+
+    <span class="c1"># for k, v in globals().items():</span>
+    <span class="c1">#     # System Var</span>
+    <span class="c1">#     if k.startswith(&#39;_&#39;):</span>
+    <span class="c1">#         continue</span>
+
+    <span class="c1">#     print(f&#39;k {k}&#39;)</span>
+    <span class="c1">#     print(f&#39;v {v}&#39;)</span>
+    <span class="c1">#     if isinstance(k, str) and isinstance(v, str):</span>
+    <span class="c1">#         List.append(k)</span>
+
+
+<span class="k">def</span> <span class="nf">_createlist</span><span class="p">():</span>
+    <span class="n">i18nStrList</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># System Var</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">i18nStrList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;i18n.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">F</span><span class="p">:</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">i18nStrList</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">PyPtt</a></h1>
+
+
+
+
+
+
+
+
+<h3>瀏覽</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../PyPtt/PyPtt.html">PyPtt package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">模組原始碼</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜尋</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="前往" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, CodingMan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
