@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>安裝 PyPtt &#8212; PyPtt 1.0.0 說明文件</title>
+    <title>如何安裝 PyPtt &#8212; PyPtt 1.0.0 說明文件</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -21,6 +21,8 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜尋" href="search.html" />
+    <link rel="next" title="APIs" href="api/index.html" />
+    <link rel="prev" title="PyPtt" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -38,12 +40,31 @@
           <div class="body" role="main">
             
   <section id="pyptt">
-<h1>安裝 PyPtt<a class="headerlink" href="#pyptt" title="本標頭的永久連結">¶</a></h1>
-<p>使用以下指令來安裝 PyPtt。</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ pip install PyPtt
+<h1>如何安裝 PyPtt<a class="headerlink" href="#pyptt" title="本標頭的永久連結">¶</a></h1>
+<section id="python">
+<h2>Python 版本<a class="headerlink" href="#python" title="本標頭的永久連結">¶</a></h2>
+<p>建議你使用 Python 3.8 以上的版本。
+因為所有測試都建立在 Python 3.8 以上的版本上。</p>
+</section>
+<section id="id1">
+<h2>相依套件<a class="headerlink" href="#id1" title="本標頭的永久連結">¶</a></h2>
+<p>PyPtt 目前相依於以下套件，這些套件都會在安裝 PyPtt 的過程被自動安裝。</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://websockets.readthedocs.io/en/stable/">websockets</a> is a library for building <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">WebSocket</a> servers and clients in Python with a focus on correctness, simplicity, robustness, and performance.</p></li>
+<li><p><a class="reference external" href="https://github.com/eight04/pyUAO">uao</a> is a pure Python implementation of the Unicode encoder/decoder.</p></li>
+<li><p><a class="reference external" href="https://github.com/PttCodingMan/SingleLog">SingleLog</a> is a simple logging library for Python.</p></li>
+<li><p><a class="reference external" href="https://requests.readthedocs.io/en/master/">requests</a> is a Python HTTP library, released under the Apache License 2.0.</p></li>
+<li><p><a class="reference external" href="https://github.com/PttCodingMan/PttCodingMan">AutoStrEnum</a> is a Python library that provides an Enum class that automatically converts enum values to and from strings.</p></li>
+</ul>
+</section>
+<section id="pypi">
+<h2>從 PyPi 安裝<a class="headerlink" href="#pypi" title="本標頭的永久連結">¶</a></h2>
+<p>你可以使用以下指令來安裝 PyPtt</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install PyPtt
 </pre></div>
 </div>
-<p>PyPtt 現在已經安裝完成。 來看看詳細說明吧 <a class="reference internal" href="api.html"><span class="doc">API</span></a>。</p>
+<p>現在 PyPtt 已經成功安裝了，來看看 PyPtt 的 <a class="reference internal" href="api/index.html"><span class="doc">API 說明</span></a> 或者 <a class="reference internal" href="examples.html"><span class="doc">使用範例</span></a> 吧！</p>
+</section>
 </section>
 
 
@@ -63,15 +84,26 @@
 
 
 <h3>瀏覽</h3>
-<p class="caption" role="heading"><span class="caption-text">教學</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<p class="caption" role="heading"><span class="caption-text">目錄</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">如何安裝 PyPtt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python">Python 版本</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">相依套件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pypi">從 PyPi 安裝</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">應用範例</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/PyPtt">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyPtt/">PyPI</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="上一章">PyPtt</a></li>
+      <li>Next: <a href="api/index.html" title="下一章">APIs</a></li>
   </ul></li>
 </ul>
 </div>

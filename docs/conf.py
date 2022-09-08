@@ -26,8 +26,11 @@ release = PyPtt.version
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-    'sphinx_copybutton'
+    'sphinx_copybutton',
+    'sphinx.ext.autosectionlabel'
 ]
+autosectionlabel_prefix_document = True
+autosectionlabel_maxdepth = 6
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']

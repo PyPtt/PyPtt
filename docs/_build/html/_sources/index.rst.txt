@@ -1,8 +1,8 @@
 
 PyPtt
-=======================================================================
+====================
 
-.. image:: ./_images/banner.png
+.. image:: https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_cover_photo_2.png
     :alt: PyPtt: PTT bot library for Python
     :align: center
 
@@ -21,19 +21,32 @@ PyPtt
 .. image:: https://img.shields.io/badge/License-LGPL%20v3-blue.svg
     :target: https://www.gnu.org/licenses/lgpl-3.0
 
-| 歡迎來到 **PyPtt** 的官方文件
-| 本文件將會詳細介紹如何使用 **PyPtt** 來開發你的 PTT 機器人。
+| 歡迎來到 PyPtt_ 的官方文件
+| 本文件將會詳細介紹如何使用 PyPtt_ 來開發你的 PTT 機器人。
+| 本文件的內容會隨著 PyPtt_ 的更新而更新，如果你發現任何錯誤，歡迎到 PyPtt_ 發 issue。
 
+.. _PyPTt: https://github.com/PyPtt/PyPtt
 
-安裝最新版本的 PyPtt
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. code-block:: sh
+文件
+----------------
+:doc:`安裝指南 <install>`
+    如何把 PyPtt 安裝到你的環境中。
 
-    pip install PyPtt
+:doc:`API 說明 <api/index>`
+    PyPtt 的所有 API 說明。
+
+:doc:`使用範例 <examples>`
+    一些使用 PyPtt 的範例。
 
 .. toctree::
-   :maxdepth: 23
-   :caption: 教學
+    :maxdepth: 2
+    :caption: 目錄
+    :hidden:
 
-   api
+    install
+    api/index
+    examples
+
+    Github <https://github.com/PyPtt/PyPtt>
+    PyPI <https://pypi.org/project/PyPtt/>
 

@@ -1,3 +1,4 @@
 PyPtt
 sphinx
 sphinx-copybutton
+pydata_sphinx_theme
