@@ -97,7 +97,7 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     for i in range(5):
         try:
             r = requests.get(
-                'https://raw.githubusercontent.com/PttCodingMan/PyPtt/1.0/PyPtt/__init__.py',
+                'https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/PyPtt/__init__.py',
                 timeout=2)
             break
         except requests.exceptions.ReadTimeout:
