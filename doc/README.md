@@ -77,7 +77,7 @@ pip install PyPtt==VERSION
 ###### PTT.exceptions.NoPush
     Since 0.8.25
     禁止推文
-###### PTT.exceptions.NoResponse
+###### PTT.exceptions.CantResponse
     Since 0.8.26
     禁止回應
 ###### PTT.exceptions.NeedModeratorPermission

@@ -89,7 +89,7 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
             i18n.no_response,
             '◆ 很抱歉, 此文章已結案並標記, 不得回應',
             log_level=LogLevel.INFO,
-            exceptions_=exceptions.NoResponse()
+            exceptions_=exceptions.CantResponse()
         ),
         connect_core.TargetUnit(
             i18n.forced_write,

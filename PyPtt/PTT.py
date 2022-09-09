@@ -54,8 +54,6 @@ class API:
             logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。
             host: PyPtt 連線的 PTT 伺服器。預設為 **HOST.PTT1**，詳見 :ref:`host`。
 
-        .. _LogLevel: https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22
-
         Returns:
             None
 
@@ -64,6 +62,9 @@ class API:
             import PyPtt
             ptt_bot = PyPtt.API()
 
+        參考: :ref:`language`、LogLevel_、:ref:`connect-mode`、:ref:`host`
+
+        .. _LogLevel: https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22
         """
 
         self.logger = None
@@ -309,7 +310,7 @@ class API:
         取得最新文章或信箱編號。
 
         Args:
-            index_type: 編號類型。NewIndex.BOARD 或 NewIndex.MAIL。
+            index_type: 編號類型。NewIndex.BOARD 或 NewIndex.MAIL。詳見 :ref:`NewIndex <new-index>`
             board: 看板名稱。
             search_type: 搜尋類型。
             search_list: 搜尋清單。
@@ -440,7 +441,25 @@ class API:
             user_id: 使用者 ID。
 
         Returns:
-            Dict，使用者資訊。
+            Dict，使用者資訊。詳見 :ref:`使用者資料欄位 <user-field>`
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchUser: 使用者不存在。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                user_info = ptt_bot.get_user('CodingMan')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        參考 :ref:`使用者資料欄位 <user-field>`
 
         """
 
@@ -500,7 +519,7 @@ class API:
         回覆文章。
 
         Args:
-            reply_to: 回覆類型。
+            reply_to: 回覆類型。詳見 :ref:`回覆類型 <reply-to>`。
             board: 看板名稱。
             content: 回覆內容。
             sign_file: 簽名檔名稱或編號。
@@ -509,6 +528,27 @@ class API:
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchBoard: 看板不存在。
+            PyPtt.NoSuchPost: 文章不存在。
+            PyPtt.NoPermission: 沒有回覆權限。
+            PyPtt.CantResponse: 已結案並標記, 不得回應。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.reply_post(reply_to=PyPtt.ReplyTo.BOARD, board='Test', content='PyPtt 程式回覆測試', index=123)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        參考 :ref:`回覆類型 <reply-to>`、:ref:`取得最新文章編號 <api-get-newest-index>`
         """
 
         _api_reply_post.reply_post(self, reply_to, board, content, sign_file, aid, index)

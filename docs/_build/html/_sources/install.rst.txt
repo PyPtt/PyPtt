@@ -25,9 +25,9 @@ PyPtt 目前相依於以下套件，這些套件都會在安裝的過程中被�
 .. _requests: https://requests.readthedocs.io/en/master/
 .. _AutoStrEnum: https://github.com/PttCodingMan/PttCodingMan
 
-使用虛擬環境安裝 (建議)
+使用虛擬環境安裝 (推薦)
 -------------------------
-| 我們建議各位使用虛擬環境來安裝 PyPtt，因為如此可以最大程度地避免套件衝突。
+| 我們推薦各位使用虛擬環境來安裝 PyPtt，因為如此可以最大程度地避免套件衝突。
 |
 | 你可以從 `Virtual Environments and Packages`_ 中了解，更多關於使用虛擬環境的理由與如何建立你的虛擬環境。
 
