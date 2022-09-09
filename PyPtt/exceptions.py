@@ -184,7 +184,7 @@ class NoPush(Exception):
         return self.message
 
 
-class NoResponse(Exception):
+class CantResponse(Exception):
     def __init__(self):
         self.message = i18n.no_response
 

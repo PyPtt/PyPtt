@@ -45,7 +45,7 @@ PyPtt
     一些使用 PyPtt 的範例。
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     :caption: 目錄
     :hidden:
 
