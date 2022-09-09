@@ -22,7 +22,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜尋" href="search.html" />
     <link rel="next" title="應用範例" href="examples.html" />
-    <link rel="prev" title="get_user" href="api/get_user.html" />
+    <link rel="prev" title="bucket" href="api/bucket.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -115,7 +115,7 @@
 
 </section>
 <section id="searchtype">
-<h2>SearchType<a class="headerlink" href="#searchtype" title="本標頭的永久連結">¶</a></h2>
+<span id="search-type"></span><h2>SearchType<a class="headerlink" href="#searchtype" title="本標頭的永久連結">¶</a></h2>
 <ul class="simple">
 <li><p>搜尋看板的方式。</p></li>
 </ul>
@@ -225,6 +225,42 @@
 <dt class="sig sig-object py" id="PyPtt.PostStatus.DELETED_BY_UNKNOWN">
 <span class="sig-prename descclassname"><span class="pre">PyPtt.PostStatus.</span></span><span class="sig-name descname"><span class="pre">DELETED_BY_UNKNOWN</span></span><a class="headerlink" href="#PyPtt.PostStatus.DELETED_BY_UNKNOWN" title="本定義的永久連結">¶</a></dt>
 <dd><p>無法判斷，被如何刪除</p>
+</dd></dl>
+
+</section>
+<section id="marktype">
+<span id="mark-type"></span><h2>MarkType<a class="headerlink" href="#marktype" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>版主標記文章種類</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MarkType.S">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MarkType.</span></span><span class="sig-name descname"><span class="pre">S</span></span><a class="headerlink" href="#PyPtt.MarkType.S" title="本定義的永久連結">¶</a></dt>
+<dd><p>S 文章</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MarkType.D">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MarkType.</span></span><span class="sig-name descname"><span class="pre">D</span></span><a class="headerlink" href="#PyPtt.MarkType.D" title="本定義的永久連結">¶</a></dt>
+<dd><p>標記文章</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MarkType.DELETE_D">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MarkType.</span></span><span class="sig-name descname"><span class="pre">DELETE_D</span></span><a class="headerlink" href="#PyPtt.MarkType.DELETE_D" title="本定義的永久連結">¶</a></dt>
+<dd><p>刪除標記文章</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MarkType.M">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MarkType.</span></span><span class="sig-name descname"><span class="pre">M</span></span><a class="headerlink" href="#PyPtt.MarkType.M" title="本定義的永久連結">¶</a></dt>
+<dd><p>M 起來</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MarkType.UNCONFIRMED">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MarkType.</span></span><span class="sig-name descname"><span class="pre">UNCONFIRMED</span></span><a class="headerlink" href="#PyPtt.MarkType.UNCONFIRMED" title="本定義的永久連結">¶</a></dt>
+<dd><p>待證實文章</p>
 </dd></dl>
 
 </section>
@@ -348,8 +384,86 @@
 </dd></dl>
 
 </section>
+<section id="favouriteboardfield">
+<span id="favorite-board-field"></span><h2>FavouriteBoardField<a class="headerlink" href="#favouriteboardfield" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>我的最愛資料欄位。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.FavouriteBoardField.board">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.FavouriteBoardField.</span></span><span class="sig-name descname"><span class="pre">board</span></span><a class="headerlink" href="#PyPtt.FavouriteBoardField.board" title="本定義的永久連結">¶</a></dt>
+<dd><p>看板名稱</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.FavouriteBoardField.title">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.FavouriteBoardField.</span></span><span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#PyPtt.FavouriteBoardField.title" title="本定義的永久連結">¶</a></dt>
+<dd><p>看板標題</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.FavouriteBoardField.type">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.FavouriteBoardField.</span></span><span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#PyPtt.FavouriteBoardField.type" title="本定義的永久連結">¶</a></dt>
+<dd><p>類別</p>
+</dd></dl>
+
+</section>
+<section id="mailfield">
+<span id="mail-field"></span><h2>MailField<a class="headerlink" href="#mailfield" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>信件資料欄位。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MailField.origin_mail">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MailField.</span></span><span class="sig-name descname"><span class="pre">origin_mail</span></span><a class="headerlink" href="#PyPtt.MailField.origin_mail" title="本定義的永久連結">¶</a></dt>
+<dd><p>原始信件全文</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MailField.author">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MailField.</span></span><span class="sig-name descname"><span class="pre">author</span></span><a class="headerlink" href="#PyPtt.MailField.author" title="本定義的永久連結">¶</a></dt>
+<dd><p>信件作者</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MailField.title">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MailField.</span></span><span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#PyPtt.MailField.title" title="本定義的永久連結">¶</a></dt>
+<dd><p>信件標題</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MailField.date">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MailField.</span></span><span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#PyPtt.MailField.date" title="本定義的永久連結">¶</a></dt>
+<dd><p>信件日期</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MailField.content">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MailField.</span></span><span class="sig-name descname"><span class="pre">content</span></span><a class="headerlink" href="#PyPtt.MailField.content" title="本定義的永久連結">¶</a></dt>
+<dd><p>信件內容</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MailField.ip">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MailField.</span></span><span class="sig-name descname"><span class="pre">ip</span></span><a class="headerlink" href="#PyPtt.MailField.ip" title="本定義的永久連結">¶</a></dt>
+<dd><p>信件 IP</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MailField.location">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MailField.</span></span><span class="sig-name descname"><span class="pre">location</span></span><a class="headerlink" href="#PyPtt.MailField.location" title="本定義的永久連結">¶</a></dt>
+<dd><p>信件位置</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.MailField.is_red_envelope">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.MailField.</span></span><span class="sig-name descname"><span class="pre">is_red_envelope</span></span><a class="headerlink" href="#PyPtt.MailField.is_red_envelope" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否為紅包</p>
+</dd></dl>
+
+</section>
 <section id="boardfield">
-<h2>BoardField<a class="headerlink" href="#boardfield" title="本標頭的永久連結">¶</a></h2>
+<span id="board-field"></span><h2>BoardField<a class="headerlink" href="#boardfield" title="本標頭的永久連結">¶</a></h2>
 <ul class="simple">
 <li><p>看板資料欄位。</p></li>
 </ul>
@@ -633,7 +747,7 @@
 <h3>瀏覽</h3>
 <p class="caption" role="heading"><span class="caption-text">目錄</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">如何安裝 PyPtt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">APIs</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">參數型態</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#host">HOST</a></li>
@@ -644,8 +758,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#replyto">ReplyTo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commenttype">CommentType</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#poststatus">PostStatus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#marktype">MarkType</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#userfield">UserField</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commentfield">CommentField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#favouriteboardfield">FavouriteBoardField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mailfield">MailField</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#boardfield">BoardField</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#postfield">PostField</a></li>
 </ul>
@@ -659,7 +776,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="api/get_user.html" title="上一章">get_user</a></li>
+      <li>Previous: <a href="api/bucket.html" title="上一章">bucket</a></li>
       <li>Next: <a href="examples.html" title="下一章">應用範例</a></li>
   </ul></li>
 </ul>

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Dict
+from typing import Dict, Optional
 
 from SingleLog import LogLevel
 from SingleLog import Logger
@@ -15,6 +15,7 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
+from .data_type import MailField
 
 
 # 寄信
@@ -146,7 +147,7 @@ mail_date_pattern = re.compile('時間  (.+)')
 ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 
-def get_mail(api, index: int, search_type: int = 0, search_condition: [str | None] = None,
+def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None, search_condition: [str | None] = None,
              search_list: [list | None] = None) -> Dict:
     logger = Logger('get_mail')
 
@@ -294,14 +295,14 @@ def get_mail(api, index: int, search_type: int = 0, search_condition: [str | Non
                 logger.debug('location', mail_location)
 
     return {
-        'origin_mail': origin_mail,
-        'author': mail_author,
-        'title': mail_title,
-        'date': mail_date,
-        'content': mail_content,
-        'ip': mail_ip,
-        'location': mail_location,
-        'is_red_envelope': red_envelope}
+        MailField.origin_mail: origin_mail,
+        MailField.author: mail_author,
+        MailField.title: mail_title,
+        MailField.date: mail_date,
+        MailField.content: mail_content,
+        MailField.ip: mail_ip,
+        MailField.location: mail_location,
+        MailField.is_red_envelope: red_envelope}
 
 
 def del_mail(api, index) -> None:

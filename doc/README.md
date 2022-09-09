@@ -1320,7 +1320,7 @@ mark_type = PTT.data_type.mark_type.S
 # 標記文章
 mark_type = PTT.data_type.mark_type.D
 # 刪除標記文章
-mark_type = PTT.data_type.mark_type.DeleteD
+mark_type = PTT.data_type.mark_type.DELETE_D
 # M 起來
 # Since 0.8.27
 mark_type = PTT.data_type.mark_type.M

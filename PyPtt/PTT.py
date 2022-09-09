@@ -1,7 +1,7 @@
 ﻿from __future__ import annotations
 
 import threading
-from typing import Dict, Tuple, Callable, List
+from typing import Dict, Tuple, Callable, List, Optional
 
 from SingleLog import LogLevel
 from SingleLog import Logger
@@ -39,20 +39,22 @@ class API:
     def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LogLevel = LogLevel.INFO,
                  screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
-                 logger_callback: Callable = None, host=data_type.HOST.PTT1):
+                 logger_callback: Optional[Callable] = None, host=data_type.HOST.PTT1):
 
         """
+
         初始化 PyPtt.
 
         Args:
-            language (Language): PyPtt 顯示訊息的語言。預設為 **Language.MANDARIN**，詳見 :ref:`language`。
-            log_level: PyPtt 顯示訊息的等級。預設為 **LogLevel.INFO**，詳見 LogLevel_。
+            language (:ref:`language`): PyPtt 顯示訊息的語言。預設為 **MANDARIN**。
+            log_level (LogLevel_): PyPtt 顯示訊息的等級。預設為 **INFO**。
             screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 **3 秒**。
             screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 **10 秒**。
             screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 **60 秒**。
-            connect_mode: PyPtt 連線的模式。預設為 **ConnectMode.WEBSOCKETS**，詳見 :ref:`connect-mode`。
-            logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。
-            host: PyPtt 連線的 PTT 伺服器。預設為 **HOST.PTT1**，詳見 :ref:`host`。
+            connect_mode (:ref:`connect-mode`): PyPtt 連線的模式。預設為 **WEBSOCKETS**。
+            logger_callback (Callable): PyPtt 顯示訊息的 callback。預設為 None。
+            port (int): PyPtt 連線的 port。預設為 **23**。
+            host (:ref:`host`): PyPtt 連線的 PTT 伺服器。預設為 **PTT1**。
 
         Returns:
             None
@@ -250,20 +252,20 @@ class API:
 
         return _api_get_time.get_time(self)
 
-    def get_post(self, board: str, aid: [str | None] = None, index: int = 0,
-                 search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: [str | None] = None,
-                 search_list: [list | None] = None, query: bool = False) -> Dict:
+    def get_post(self, board: str, aid: Optional[str] = None, index: int = 0,
+                 search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: Optional[str] = None,
+                 search_list: Optional[List[str]] = None, query: bool = False) -> Dict:
         """
         取得文章。
 
         Args:
-            board: 看板名稱。
-            aid: 文章編號。
+            board (str): 看板名稱。
+            aid (str): 文章編號。
             index: 文章編號。
-            search_type: 搜尋類型。
-            search_condition: 搜尋條件。
-            search_list: 搜尋清單。
-            query: 是否為查詢模式。
+            search_type (:ref:`search-type`): 搜尋類型。
+            search_condition (str): 搜尋條件。
+            search_list (List[str]): 搜尋清單。
+            query (bool): 是否為查詢模式。
 
         Returns:
             Dict，文章內容。詳見 :ref:`post-field`
@@ -302,25 +304,25 @@ class API:
             self, board, aid=aid, index=index, search_type=search_type, search_condition=search_condition,
             search_list=search_list, query=query)
 
-    def get_newest_index(self, index_type: data_type.NewIndex, board: [str | None] = None,
-                         search_type: data_type.SearchType = data_type.SearchType.NOPE,
-                         search_list: [list | None] = None, search_condition: [str | None] = None) -> int:
-
+    def get_newest_index(self, index_type: data_type.NewIndex, board: Optional[str] = None,
+                         search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
+                         search_list: Optional[List[str]] = None, ) -> int:
         """
         取得最新文章或信箱編號。
 
         Args:
-            index_type: 編號類型。NewIndex.BOARD 或 NewIndex.MAIL。詳見 :ref:`NewIndex <new-index>`
-            board: 看板名稱。
-            search_type: 搜尋類型。
-            search_list: 搜尋清單。
-            search_condition: 搜尋條件。
+            index_type (:ref:`new-index`): 編號類型。
+            board (str): 看板名稱。
+            search_type (:ref:`search-type`) 搜尋類型。
+            search_condition (str): 搜尋條件。
+            search_list (List[str]): 搜尋清單。
 
         Returns:
             int，最新文章或信箱編號。
 
         Raises:
             PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchBoard: 看板不存在。
 
         取得最新看板編號::
 
@@ -356,16 +358,16 @@ class API:
         return _api_get_newest_index.get_newest_index(
             self, index_type, board, search_type, search_condition, search_list)
 
-    def post(self, board: str, title_index: int, title: str, content: str, sign_file: [str | int]) -> None:
+    def post(self, board: str, title_index: int, title: str, content: str, sign_file: [str | int] = 0) -> None:
         """
         發文。
 
         Args:
-            board: 看板名稱。
-            title_index: 文章標題編號。
-            title: 文章標題。
-            content: 文章內容。
-            sign_file: 簽名檔名稱或編號。
+            board (str): 看板名稱。
+            title_index (int): 文章標題編號。
+            title (str): 文章標題。
+            content (str): 文章內容。
+            sign_file  (str | int): 編號或隨機簽名檔 (x)，預設為 0 (不選)。
 
         Returns:
             None
@@ -392,17 +394,17 @@ class API:
 
         _api_post.post(self, board, title, content, title_index, sign_file)
 
-    def comment(self, board: str, comment_type: data_type.CommentType, comment_content: str, aid: [str | None] = None,
+    def comment(self, board: str, comment_type: data_type.CommentType, content: str, aid: Optional[str] = None,
                 index: int = 0) -> None:
         """
         推文。
 
         Args:
-            board: 看板名稱。
-            comment_type: 推文類型。
-            comment_content: 推文內容。
-            aid: 文章編號。
-            index: 文章編號。
+            board (str): 看板名稱。
+            comment_type (:ref:`comment-type`): 推文類型。
+            content (str): 推文內容。
+            aid (str): 文章編號。
+            index (int): 文章編號。
 
         Returns:
             None
@@ -430,15 +432,15 @@ class API:
         參考 :ref:`推文類型 <comment-type>`、:ref:`取得最新文章編號 <api-get-newest-index>`
         """
 
-        _api_push.push(self, board, comment_type, comment_content, aid, index)
+        _api_push.push(self, board, comment_type, content, aid, index)
 
-    def get_user(self, user_id) -> Dict:
+    def get_user(self, user_id: str) -> Dict:
 
         """
         取得使用者資訊。
 
         Args:
-            user_id: 使用者 ID。
+            user_id (str): 使用者 ID。
 
         Returns:
             Dict，使用者資訊。詳見 :ref:`使用者資料欄位 <user-field>`
@@ -465,38 +467,77 @@ class API:
 
         return _api_get_user.get_user(self, user_id)
 
-    def give_money(self, ptt_id: str, money: int, red_bag_title: str = '', red_bag_content: str = '') -> None:
+    def give_money(self, ptt_id: str, money: int, red_bag_title: Optional[str] = None,
+                   red_bag_content: Optional[str] = None) -> None:
 
         """
         轉帳。
 
         Args:
-            ptt_id: PTT ID。
-            money: 轉帳金額。
-            red_bag_title: 紅包標題。
-            red_bag_content: 紅包內容。
+            ptt_id (str): PTT ID。
+            money (int): 轉帳金額。
+            red_bag_title (str): 紅包標題。
+            red_bag_content (str): 紅包內容。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.NoSuchUser: 使用者不存在。
+            PyPtt.NoMoney: 餘額不足。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.give_money(ptt_id='CodingMan', money=100)
+                # or
+                ptt_bot.give_money('CodingMan', 100, red_bag_title='紅包袋標題', red_bag_content='紅包袋內文')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
 
         """
 
         _api_give_money.give_money(self, ptt_id, money, red_bag_title, red_bag_content)
 
-    def mail(self, ptt_id: str, title: str, content: str, sign_file, backup: bool = True) -> None:
+    def mail(self, ptt_id: str, title: str, content: str, sign_file: [int | str] = 0,
+             backup: bool = True) -> None:
 
         """
         寄信。
 
         Args:
-            ptt_id: PTT ID。
-            title: 信件標題。
-            content: 信件內容。
-            sign_file: 簽名檔名稱或編號。
-            backup: 是否備份信件。
+            ptt_id (str): PTT ID。
+            title (str): 信件標題。
+            content (str): 信件內容。
+            sign_file (str | int): 編號或隨機簽名檔 (x)，預設為 0 (不選)。
+            backup (bool): 如果是 True 寄信時將會備份信件，預設為 True。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.NoSuchUser: 使用者不存在。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.mail(ptt_id='CodingMan', title='信件標題', content='信件內容')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         _api_mail.mail(self, ptt_id, title, content, sign_file, backup)
@@ -508,21 +549,36 @@ class API:
 
         Returns:
             List[str]，看板清單。
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                board_list = ptt_bot.get_board_list()
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         return _api_get_board_list.get_board_list(self)
 
-    def reply_post(self, reply_to: data_type.ReplyTo, board: str, content: str, sign_file=0, aid: [str | None] = None,
-                   index: int = 0) -> None:
+    def reply_post(self, reply_to: data_type.ReplyTo, board: str, content: str, sign_file: [str | int] = 0,
+                   aid: Optional[str] = None, index: int = 0) -> None:
 
         """
         回覆文章。
 
         Args:
-            reply_to: 回覆類型。詳見 :ref:`回覆類型 <reply-to>`。
-            board: 看板名稱。
-            content: 回覆內容。
-            sign_file: 簽名檔名稱或編號。
+            reply_to (:ref:`reply-to`): 回覆類型。
+            board (str): 看板名稱。
+            content (str): 回覆內容。
+            sign_file (str | int): 編號或隨機簽名檔 (x)，預設為 **0** (不選)。
             aid: 文章編號。
             index: 文章編號。
 
@@ -543,7 +599,7 @@ class API:
             ptt_bot = PyPtt.API()
             try:
                 # .. login ..
-                ptt_bot.reply_post(reply_to=PyPtt.ReplyTo.BOARD, board='Test', content='PyPtt 程式回覆測試', index=123)
+                ptt_bot.reply_post(reply_to=PyPtt.reply_to.BOARD, board='Test', content='PyPtt 程式回覆測試', index=123)
                 # .. do something ..
             finally:
                 ptt_bot.logout()
@@ -554,146 +610,299 @@ class API:
         _api_reply_post.reply_post(self, reply_to, board, content, sign_file, aid, index)
 
     def set_board_title(self, board: str, new_title: str) -> None:
-
         """
         設定看板標題。
 
         Args:
-            board: 看板名稱。
-            new_title: 新標題。
+            board (str): 看板名稱。
+            new_title (str): 新標題。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.NoSuchBoard: 看板不存在。
+            PyPtt.NeedModeratorPermission: 需要看板管理員權限。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.set_board_title(board='Test', new_title='現在時間 %s' % datetime.datetime.now())
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
         """
 
         _api_set_board_title.set_board_title(self, board, new_title)
 
-    def mark_post(self, mark_type: int, board: str, aid: [str | None] = None, index: int = 0, search_type: int = 0,
-                  search_condition: [str | None] = None) -> None:
-
+    def mark_post(self, mark_type: int, board: str, aid: Optional[str] = None, index: int = 0, search_type: int = 0,
+                  search_condition: Optional[str] = None) -> None:
         """
         標記文章。
 
         Args:
-            mark_type: 標記類型。
-            board: 看板名稱。
-            aid: 文章編號。
-            index: 文章編號。
-            search_type: 搜尋類型。
-            search_condition: 搜尋條件。
+            mark_type (:ref:`mark-type`): 標記類型。
+            board (str): 看板名稱。
+            aid (str): 文章編號。
+            index (int): 文章編號。
+            search_type (:ref:`search-type`): 搜尋類型。
+            search_condition (str): 搜尋條件。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.NoSuchBoard: 看板不存在。
+            PyPtt.NoSuchPost: 文章不存在。
+            PyPtt.NeedModeratorPermission: 需要看板管理員權限。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.mark_post(mark_type=PyPtt.MarkType.M, board='Test', index=123)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         _api_mark_post.mark_post(self, mark_type, board, aid, index, search_type, search_condition)
 
-    def get_favourite_boards(self) -> list:
+    def get_favourite_boards(self) -> List[dict]:
         """
-        取得收藏看板清單。
+        取得我的最愛清單。
 
         Returns:
-            list，收藏看板清單。
+            List[dict]，收藏看板清單，詳見 :ref:`favorite-board-field`。
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+
+            try:
+                # .. login ..
+                favourite_boards = ptt_bot.get_favourite_boards()
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         return _api_get_favourite_board.get_favourite_board(self)
 
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
-
         """
         水桶。
 
         Args:
-            board: 看板名稱。
-            bucket_days: 水桶天數。
-            reason: 水桶原因。
-            ptt_id: PTT ID。
+            board (str): 看板名稱。
+            bucket_days (int): 水桶天數。
+            reason (str): 水桶原因。
+            ptt_id (str): PTT ID。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.NoSuchBoard: 看板不存在。
+            PyPtt.NoSuchUser: 使用者不存在。
+            PyPtt.NeedModeratorPermission: 需要看板管理員權限。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.bucket(board='Test', bucket_days=7, reason='PyPtt 程式水桶測試', ptt_id='test')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
         """
 
         _api_bucket.bucket(self, board, bucket_days, reason, ptt_id)
 
-    def search_user(self, ptt_id: str, min_page: int = None, max_page: int = None) -> List[str]:
-
+    def search_user(self, ptt_id: str, min_page: Optional[int] = None, max_page: Optional[int] = None) -> List[str]:
         """
         搜尋使用者。
 
         Args:
-            ptt_id: PTT ID。
-            min_page: 最小頁數。
-            max_page: 最大頁數。
+            ptt_id (str): PTT ID。
+            min_page (int): 最小頁數。
+            max_page (int): 最大頁數。
 
         Returns:
             List[str]，搜尋結果。
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.UnregisteredUser: 未註冊使用者。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                search_result = ptt_bot.search_user(ptt_id='Coding')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         return _api_search_user.search_user(self, ptt_id, min_page, max_page)
 
     def get_board_info(self, board: str, get_post_types: bool = False) -> Dict:
-
         """
         取得看板資訊。
 
         Args:
-            board: 看板名稱。
-            get_post_types: 是否取得文章類型。
+            board (str): 看板名稱。
+            get_post_types (bool): 是否取得文章類型。
 
         Returns:
-            Dict，看板資訊。
+            Dict，看板資訊，詳見 :ref:`board-field`。
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchBoard: 看板不存在。
+            PyPtt.NoPermission: 沒有權限。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                board_info = ptt_bot.get_board_info(board='Test')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         return _api_get_board_info.get_board_info(self, board, get_post_types, call_by_others=False)
 
-    def get_mail(self, index: int, search_type: int = 0, search_condition: [str | None] = None,
-                 search_list: [list | None] = None) -> Dict:
-
+    def get_mail(self, index: int, search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
+                 search_list: Optional[list] = None) -> Dict:
         """
         取得信件。
 
         Args:
-            index: 信件編號。
-            search_type: 搜尋類型。
+            index (int): 信件編號。
+            search_type (:ref:`search-type`): 搜尋類型。
             search_condition: 搜尋條件。
             search_list: 搜尋清單。
 
         Returns:
-            Dict，信件資訊。
+            Dict，信件資訊，詳見 :ref:`mail-field`。
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchMail: 信件不存在。
+            PyPtt.NoPermission: 沒有權限。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                mail = ptt_bot.get_mail(index=1)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        參考 :doc:`get_newest_index`
         """
 
         return _api_mail.get_mail(self, index, search_type, search_condition, search_list)
 
-    def del_mail(self, index) -> None:
-
+    def del_mail(self, index: int) -> None:
         """
         刪除信件。
 
         Args:
-            index: 信件編號。
+            index (int): 信件編號。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.MailboxFull: 信箱已滿。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.del_mail(index=1)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        參考 :doc:`get_newest_index`
         """
 
         _api_mail.del_mail(self, index)
 
-    def change_pw(self, new_password) -> None:
-
+    def change_pw(self, new_password: str) -> None:
         """
         更改密碼。
 
         Args:
-            new_password: 新密碼。
+            new_password (str): 新密碼。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.SetConnectMailFirst: 需要先設定聯絡信箱。
+            PyPtt.WrongPassword: 密碼錯誤。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.change_pw(new_password='123456')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         _api_change_pw.change_pw(self, new_password)
 
     def get_aid_from_url(self, url: str) -> Tuple[str, str]:
-
         """
         從網址取得看板名稱與文章編號。
 
@@ -701,36 +910,83 @@ class API:
             url: 網址。
 
         Returns:
-            Tuple，看板名稱與文章編號。
+            Tuple[str, str]，看板名稱與文章編號。
+
+        Raises:
+            PyPtt.NoSuchURL: 網址不存在。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            url = 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'
+            board, aid = ptt_bot.get_aid_from_url(url)
         """
 
         return lib_util.get_aid_from_url(url)
 
     def get_bottom_post_list(self, board: str) -> List[str]:
-
         """
         取得看板置底文章清單。
 
         Args:
-            board: 看板名稱。
+            board (str): 看板名稱。
 
         Returns:
-            List[str]，置底文章清單。
+            List[post]，置底文章清單，詳見 :ref:`post-field`。
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchBoard: 看板不存在。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+
+            try:
+                # .. login ..
+                bottom_post_list = ptt_bot.get_bottom_post_list(board='Python')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
-    def del_post(self, board, aid: [str | None] = None, index: int = 0) -> None:
+    def del_post(self, board: str, aid: Optional[str] = None, index: int = 0) -> None:
         """
         刪除文章。
 
         Args:
-            board: 看板名稱。
-            aid: 文章編號。
-            index: 文章編號。
+            board (str): 看板名稱。
+            aid (str): 文章編號。
+            index (int): 文章編號。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.NoSuchBoard: 看板不存在。
+            PyPtt.NoSuchPost: 文章不存在。
+            PyPtt.DeletedPost: 文章已被刪除，所以無法刪除。
+            PyPtt.NoPermission: 沒有權限。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.del_post(board='Python', aid='1TJH_XY0')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         _api_del_post.del_post(self, board, aid, index)
