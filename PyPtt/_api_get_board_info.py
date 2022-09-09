@@ -192,7 +192,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         require_illegal_post = 0
     logger.debug('發文限制退文篇數', require_illegal_post)
 
-    kind_list = None
+    kind_list = []
     if get_post_kind:
 
         _api_util.goto_board(api, board)
@@ -257,22 +257,22 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     #     moderators,
     #     open_status,
     #     into_top_ten_when_hide,
-    #     non_board_members_post,
-    #     reply_post,
+    #     can_non_board_members_post,
+    #     can_reply_post,
     #     self_del_post,
-    #     push_post,
-    #     boo_post,
-    #     fast_push,
-    #     min_interval,
-    #     push_record_ip,
-    #     push_aligned,
-    #     moderator_can_del_illegal_content,
-    #     tran_post_auto_recorded_and_require_post_permissions,
-    #     cool_mode,
-    #     require18,
+    #     can_comment_post,
+    #     can_boo_post,
+    #     can_fast_push,
+    #     min_interval_between_comments,
+    #     is_comment_record_ip,
+    #     is_comment_aligned,
+    #     can_moderators_del_illegal_content,
+    #     does_tran_post_auto_recorded_and_require_post_permissions,
+    #     is_cool_mode,
+    #     is_require18,
     #     require_login_time,
     #     require_illegal_post,
-    #     kind_list)
+    #     post_kind_list)
     return {
         BoardField.board: boardname,
         BoardField.online_user: online_user,
@@ -280,20 +280,20 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         BoardField.moderators: moderators,
         BoardField.open_status: open_status,
         BoardField.into_top_ten_when_hide: into_top_ten_when_hide,
-        BoardField.non_board_members_post: non_board_members_post,
-        BoardField.reply_post: reply_post,
+        BoardField.can_non_board_members_post: non_board_members_post,
+        BoardField.can_reply_post: reply_post,
         BoardField.self_del_post: self_del_post,
-        BoardField.push_post: push_post,
-        BoardField.boo_post: boo_post,
-        BoardField.fast_push: fast_push,
-        BoardField.min_interval: min_interval,
-        BoardField.push_record_ip: push_record_ip,
-        BoardField.push_aligned: push_aligned,
-        BoardField.moderator_can_del_illegal_content: moderator_can_del_illegal_content,
-        BoardField.tran_post_auto_recorded_and_require_post_permissions: tran_post_auto_recorded_and_require_post_permissions,
-        BoardField.cool_mode: cool_mode,
-        BoardField.require18: require18,
+        BoardField.can_comment_post: push_post,
+        BoardField.can_boo_post: boo_post,
+        BoardField.can_fast_push: fast_push,
+        BoardField.min_interval_between_comments: min_interval,
+        BoardField.is_comment_record_ip: push_record_ip,
+        BoardField.is_comment_aligned: push_aligned,
+        BoardField.can_moderators_del_illegal_content: moderator_can_del_illegal_content,
+        BoardField.does_tran_post_auto_recorded_and_require_post_permissions: tran_post_auto_recorded_and_require_post_permissions,
+        BoardField.is_cool_mode: cool_mode,
+        BoardField.is_require18: require18,
         BoardField.require_login_time: require_login_time,
         BoardField.require_illegal_post: require_illegal_post,
-        BoardField.kind_list: kind_list
+        BoardField.post_kind_list: kind_list
     }
