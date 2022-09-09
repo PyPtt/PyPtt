@@ -1,4 +1,4 @@
-初始化 PyPtt
+init
 =======
 
 .. _api-init:
