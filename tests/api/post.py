@@ -41,7 +41,7 @@ github: https://github.com/PttCodingMan/PyPtt
     for i in range(10):
         post = ptt_bot.get_post(board='Test', index=newest_index - i)
 
-        if post[PostField.status] != PyPtt.PostStatus.EXISTS:
+        if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
             print(f'Post {newest_index - i} not exists')
             continue
 
