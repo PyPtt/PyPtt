@@ -107,7 +107,7 @@ def get_user(api, ptt_id: str) -> Dict:
     else:
         illegal_post = None
 
-    status, mail = parse_user_info_from_line(lines[2])
+    activity, mail = parse_user_info_from_line(lines[2])
     last_login_date, last_login_ip = parse_user_info_from_line(lines[3])
     five_chess, chess = parse_user_info_from_line(lines[4])
 
@@ -119,7 +119,7 @@ def get_user(api, ptt_id: str) -> Dict:
     logger.debug('account_verified', account_verified)
     logger.debug('legal_post', legal_post)
     logger.debug('illegal_post', illegal_post)
-    logger.debug('status', status)
+    logger.debug('activity', activity)
     logger.debug('mail', mail)
     logger.debug('last_login_date', last_login_date)
     logger.debug('last_login_ip', last_login_ip)
@@ -134,7 +134,7 @@ def get_user(api, ptt_id: str) -> Dict:
         UserField.account_verified: account_verified,
         UserField.legal_post: legal_post,
         UserField.illegal_post: illegal_post,
-        UserField.status: status,
+        UserField.activity: activity,
         UserField.mail: mail,
         UserField.last_login_date: last_login_date,
         UserField.last_login_ip: last_login_ip,

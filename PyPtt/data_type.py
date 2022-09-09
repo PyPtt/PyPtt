@@ -75,7 +75,7 @@ class UserField(AutoStrEnum):
     account_verified = auto()
     legal_post = auto()
     illegal_post = auto()
-    status = auto()
+    activity = auto()
     mail = auto()
     last_login_date = auto()
     last_login_ip = auto()
@@ -178,7 +178,7 @@ class FavouriteBoard:
 class BoardField(AutoStrEnum):
     board = auto()
     online_user = auto()
-    chinese_des = auto()
+    mandarin_des = auto()
     moderators = auto()
     open_status = auto()
     into_top_ten_when_hide = auto()
