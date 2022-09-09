@@ -43,12 +43,14 @@
 <h1>如何安裝 PyPtt<a class="headerlink" href="#pyptt" title="本標頭的永久連結">¶</a></h1>
 <section id="python">
 <h2>Python 版本<a class="headerlink" href="#python" title="本標頭的永久連結">¶</a></h2>
-<p>建議你使用 Python 3.8 以上的版本。
-因為所有測試都建立在 Python 3.8 以上的版本上。</p>
+<div class="line-block">
+<div class="line">建議你使用 <a class="reference external" href="https://www.python.org/">CPython</a> 3.8 以上的版本。</div>
+<div class="line">因為我們僅支援 <a class="reference external" href="https://www.python.org/">CPython</a> 3.8 或更新的版本。</div>
+</div>
 </section>
 <section id="id1">
 <h2>相依套件<a class="headerlink" href="#id1" title="本標頭的永久連結">¶</a></h2>
-<p>PyPtt 目前相依於以下套件，這些套件都會在安裝 PyPtt 的過程被自動安裝。</p>
+<p>PyPtt 目前相依於以下套件，這些套件都會在安裝的過程中被自動安裝。</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://websockets.readthedocs.io/en/stable/">websockets</a> is a library for building <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">WebSocket</a> servers and clients in Python with a focus on correctness, simplicity, robustness, and performance.</p></li>
 <li><p><a class="reference external" href="https://github.com/eight04/pyUAO">uao</a> is a pure Python implementation of the Unicode encoder/decoder.</p></li>
@@ -56,6 +58,14 @@
 <li><p><a class="reference external" href="https://requests.readthedocs.io/en/master/">requests</a> is a Python HTTP library, released under the Apache License 2.0.</p></li>
 <li><p><a class="reference external" href="https://github.com/PttCodingMan/PttCodingMan">AutoStrEnum</a> is a Python library that provides an Enum class that automatically converts enum values to and from strings.</p></li>
 </ul>
+</section>
+<section id="id2">
+<h2>使用虛擬環境安裝 (建議)<a class="headerlink" href="#id2" title="本標頭的永久連結">¶</a></h2>
+<div class="line-block">
+<div class="line">我們建議各位使用虛擬環境來安裝 PyPtt，因為如此可以最大程度地避免套件衝突。</div>
+<div class="line"><br /></div>
+<div class="line">你可以從 <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html#tut-venv">Virtual Environments and Packages</a> 中了解，更多關於使用虛擬環境的理由與如何建立你的虛擬環境。</div>
+</div>
 </section>
 <section id="pypi">
 <h2>從 PyPi 安裝<a class="headerlink" href="#pypi" title="本標頭的永久連結">¶</a></h2>
@@ -89,6 +99,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">如何安裝 PyPtt</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#python">Python 版本</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id1">相依套件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">使用虛擬環境安裝 (建議)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pypi">從 PyPi 安裝</a></li>
 </ul>
 </li>

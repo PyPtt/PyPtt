@@ -23,9 +23,15 @@ PyPtt
 
 | 歡迎來到 PyPtt_ 的官方文件
 | 本文件將會詳細介紹如何使用 PyPtt_ 來開發你的 PTT 機器人。
-| 本文件的內容會隨著 PyPtt_ 的更新而更新，如果你發現任何錯誤，歡迎到 PyPtt_ 發 issue。
+|
+| 本文件的內容會隨著 PyPtt_ 的更新而更新，如果你發現任何錯誤，歡迎到 PyPtt_ 發 issue 或者加入 `PyPtt Telegram 社群`_ 一起討論。
+|
+| PyPtt 由 CodingMan_ 與 `其他許多貢獻者`_ 共同維護。
 
 .. _PyPTt: https://github.com/PyPtt/PyPtt
+.. _`PyPtt Telegram 社群`: https://t.me/PyPtt
+.. _CodingMan: https://github.com/PttCodingMan
+.. _`其他許多貢獻者`: https://github.com/PyPtt/PyPtt/graphs/contributors
 
 文件
 ----------------
@@ -45,6 +51,7 @@ PyPtt
 
     install
     api/index
+    type
     examples
 
     Github <https://github.com/PyPtt/PyPtt>

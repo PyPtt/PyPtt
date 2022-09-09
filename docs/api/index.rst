@@ -8,3 +8,4 @@ APIs
    :caption: APIs
 
    init
+   login_logout

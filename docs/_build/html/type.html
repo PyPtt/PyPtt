@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>型別介紹 &#8212; PyPtt 1.0.0 說明文件</title>
+    <title>參數型態 &#8212; PyPtt 1.0.0 說明文件</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -21,6 +21,8 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜尋" href="search.html" />
+    <link rel="next" title="應用範例" href="examples.html" />
+    <link rel="prev" title="登入與登出" href="api/login_logout.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -38,11 +40,578 @@
           <div class="body" role="main">
             
   <section id="id1">
-<h1>型別介紹<a class="headerlink" href="#id1" title="本標頭的永久連結">¶</a></h1>
-<div class="line-block">
-<div class="line">這是 PyPtt 的 API 文件。</div>
-<div class="line">在這裡我們記錄了所有的函式，以及他們的參數，以及他們的回傳值。</div>
-</div>
+<h1>參數型態<a class="headerlink" href="#id1" title="本標頭的永久連結">¶</a></h1>
+<p>這裡介紹 PyPtt 的參數型態</p>
+<section id="host">
+<h2>HOST<a class="headerlink" href="#host" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>連線的 PTT 伺服器。預設為 <strong>PTT1</strong>。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.HOST.PTT1">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.HOST.</span></span><span class="sig-name descname"><span class="pre">PTT1</span></span><a class="headerlink" href="#PyPtt.HOST.PTT1" title="本定義的永久連結">¶</a></dt>
+<dd><p>批踢踢實業坊</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.HOST.PTT2">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.HOST.</span></span><span class="sig-name descname"><span class="pre">PTT2</span></span><a class="headerlink" href="#PyPtt.HOST.PTT2" title="本定義的永久連結">¶</a></dt>
+<dd><p>批踢踢兔</p>
+</dd></dl>
+
+</section>
+<section id="language">
+<h2>Language<a class="headerlink" href="#language" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>顯示訊息的語言。預設為 <strong>MANDARIN</strong>。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.Language.MANDARIN">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.Language.</span></span><span class="sig-name descname"><span class="pre">MANDARIN</span></span><a class="headerlink" href="#PyPtt.Language.MANDARIN" title="本定義的永久連結">¶</a></dt>
+<dd><p>繁體中文</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.Language.ENGLISH">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.Language.</span></span><span class="sig-name descname"><span class="pre">ENGLISH</span></span><a class="headerlink" href="#PyPtt.Language.ENGLISH" title="本定義的永久連結">¶</a></dt>
+<dd><p>英文</p>
+</dd></dl>
+
+</section>
+<section id="connectmode">
+<h2>ConnectMode<a class="headerlink" href="#connectmode" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>連線的模式。預設為 <strong>WEBSOCKETS</strong>。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.ConnectMode.WEBSOCKETS">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.ConnectMode.</span></span><span class="sig-name descname"><span class="pre">WEBSOCKETS</span></span><a class="headerlink" href="#PyPtt.ConnectMode.WEBSOCKETS" title="本定義的永久連結">¶</a></dt>
+<dd><p>使用 WEBSOCKETS 連線</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.ConnectMode.TELNET">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.ConnectMode.</span></span><span class="sig-name descname"><span class="pre">TELNET</span></span><a class="headerlink" href="#PyPtt.ConnectMode.TELNET" title="本定義的永久連結">¶</a></dt>
+<dd><p>使用 TELNET 連線</p>
+</dd></dl>
+
+</section>
+<section id="newindex">
+<h2>NewIndex<a class="headerlink" href="#newindex" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>搜尋 Index 的種類。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.NewIndex.BOARD">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.NewIndex.</span></span><span class="sig-name descname"><span class="pre">BOARD</span></span><a class="headerlink" href="#PyPtt.NewIndex.BOARD" title="本定義的永久連結">¶</a></dt>
+<dd><p>搜尋看板 Index</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.NewIndex.MAIL">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.NewIndex.</span></span><span class="sig-name descname"><span class="pre">MAIL</span></span><a class="headerlink" href="#PyPtt.NewIndex.MAIL" title="本定義的永久連結">¶</a></dt>
+<dd><p>搜尋信箱 Index</p>
+</dd></dl>
+
+</section>
+<section id="searchtype">
+<h2>SearchType<a class="headerlink" href="#searchtype" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>搜尋看板的方式。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.SearchType.KEYWORD">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.SearchType.</span></span><span class="sig-name descname"><span class="pre">KEYWORD</span></span><a class="headerlink" href="#PyPtt.SearchType.KEYWORD" title="本定義的永久連結">¶</a></dt>
+<dd><p>搜尋關鍵字</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.SearchType.AUTHOR">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.SearchType.</span></span><span class="sig-name descname"><span class="pre">AUTHOR</span></span><a class="headerlink" href="#PyPtt.SearchType.AUTHOR" title="本定義的永久連結">¶</a></dt>
+<dd><p>搜尋作者</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.SearchType.COMMENT">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.SearchType.</span></span><span class="sig-name descname"><span class="pre">COMMENT</span></span><a class="headerlink" href="#PyPtt.SearchType.COMMENT" title="本定義的永久連結">¶</a></dt>
+<dd><p>搜尋推文數</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.SearchType.MARK">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.SearchType.</span></span><span class="sig-name descname"><span class="pre">MARK</span></span><a class="headerlink" href="#PyPtt.SearchType.MARK" title="本定義的永久連結">¶</a></dt>
+<dd><p>搜尋標記</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.SearchType.MONEY">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.SearchType.</span></span><span class="sig-name descname"><span class="pre">MONEY</span></span><a class="headerlink" href="#PyPtt.SearchType.MONEY" title="本定義的永久連結">¶</a></dt>
+<dd><p>搜尋稿酬</p>
+</dd></dl>
+
+</section>
+<section id="replyto">
+<h2>ReplyTo<a class="headerlink" href="#replyto" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>回文的方式。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.ReplyTo.BOARD">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.ReplyTo.</span></span><span class="sig-name descname"><span class="pre">BOARD</span></span><a class="headerlink" href="#PyPtt.ReplyTo.BOARD" title="本定義的永久連結">¶</a></dt>
+<dd><p>回文至看板</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.ReplyTo.MAIL">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.ReplyTo.</span></span><span class="sig-name descname"><span class="pre">MAIL</span></span><a class="headerlink" href="#PyPtt.ReplyTo.MAIL" title="本定義的永久連結">¶</a></dt>
+<dd><p>回文至信箱</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.ReplyTo.BOARD_MAIL">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.ReplyTo.</span></span><span class="sig-name descname"><span class="pre">BOARD_MAIL</span></span><a class="headerlink" href="#PyPtt.ReplyTo.BOARD_MAIL" title="本定義的永久連結">¶</a></dt>
+<dd><p>回文至看板與信箱</p>
+</dd></dl>
+
+</section>
+<section id="commenttype">
+<span id="comment-type"></span><h2>CommentType<a class="headerlink" href="#commenttype" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>推文方式。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.CommentType.PUSH">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.CommentType.</span></span><span class="sig-name descname"><span class="pre">PUSH</span></span><a class="headerlink" href="#PyPtt.CommentType.PUSH" title="本定義的永久連結">¶</a></dt>
+<dd><p>推</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.CommentType.BOO">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.CommentType.</span></span><span class="sig-name descname"><span class="pre">BOO</span></span><a class="headerlink" href="#PyPtt.CommentType.BOO" title="本定義的永久連結">¶</a></dt>
+<dd><p>噓</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.CommentType.ARROW">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.CommentType.</span></span><span class="sig-name descname"><span class="pre">ARROW</span></span><a class="headerlink" href="#PyPtt.CommentType.ARROW" title="本定義的永久連結">¶</a></dt>
+<dd><p>箭頭</p>
+</dd></dl>
+
+</section>
+<section id="poststatus">
+<span id="post-status"></span><h2>PostStatus<a class="headerlink" href="#poststatus" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>文章狀態。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostStatus.EXISTS">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostStatus.</span></span><span class="sig-name descname"><span class="pre">EXISTS</span></span><a class="headerlink" href="#PyPtt.PostStatus.EXISTS" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章存在</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostStatus.DELETED_BY_AUTHOR">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostStatus.</span></span><span class="sig-name descname"><span class="pre">DELETED_BY_AUTHOR</span></span><a class="headerlink" href="#PyPtt.PostStatus.DELETED_BY_AUTHOR" title="本定義的永久連結">¶</a></dt>
+<dd><p>被作者刪除</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostStatus.DELETED_BY_MODERATOR">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostStatus.</span></span><span class="sig-name descname"><span class="pre">DELETED_BY_MODERATOR</span></span><a class="headerlink" href="#PyPtt.PostStatus.DELETED_BY_MODERATOR" title="本定義的永久連結">¶</a></dt>
+<dd><p>被板主刪除</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostStatus.DELETED_BY_UNKNOWN">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostStatus.</span></span><span class="sig-name descname"><span class="pre">DELETED_BY_UNKNOWN</span></span><a class="headerlink" href="#PyPtt.PostStatus.DELETED_BY_UNKNOWN" title="本定義的永久連結">¶</a></dt>
+<dd><p>無法判斷，被如何刪除</p>
+</dd></dl>
+
+</section>
+<section id="userfield">
+<h2>UserField<a class="headerlink" href="#userfield" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>使用者資料欄位。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.ptt_id">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">ptt_id</span></span><a class="headerlink" href="#PyPtt.UserField.ptt_id" title="本定義的永久連結">¶</a></dt>
+<dd><p>使用者 ID</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.money">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">money</span></span><a class="headerlink" href="#PyPtt.UserField.money" title="本定義的永久連結">¶</a></dt>
+<dd><p>經濟狀態</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.login_count">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">login_count</span></span><a class="headerlink" href="#PyPtt.UserField.login_count" title="本定義的永久連結">¶</a></dt>
+<dd><p>登入次數</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.account_verified">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">account_verified</span></span><a class="headerlink" href="#PyPtt.UserField.account_verified" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否通過認證</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.legal_post">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">legal_post</span></span><a class="headerlink" href="#PyPtt.UserField.legal_post" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章數量</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.illegal_post">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">illegal_post</span></span><a class="headerlink" href="#PyPtt.UserField.illegal_post" title="本定義的永久連結">¶</a></dt>
+<dd><p>退文數量</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.activity">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">activity</span></span><a class="headerlink" href="#PyPtt.UserField.activity" title="本定義的永久連結">¶</a></dt>
+<dd><p>目前動態</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.mail">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">mail</span></span><a class="headerlink" href="#PyPtt.UserField.mail" title="本定義的永久連結">¶</a></dt>
+<dd><p>信箱狀態</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.last_login_date">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">last_login_date</span></span><a class="headerlink" href="#PyPtt.UserField.last_login_date" title="本定義的永久連結">¶</a></dt>
+<dd><p>最後登入時間</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.last_login_ip">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">last_login_ip</span></span><a class="headerlink" href="#PyPtt.UserField.last_login_ip" title="本定義的永久連結">¶</a></dt>
+<dd><p>最後登入 IP</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.five_chess">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">five_chess</span></span><a class="headerlink" href="#PyPtt.UserField.five_chess" title="本定義的永久連結">¶</a></dt>
+<dd><p>五子棋戰積</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.chess">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">chess</span></span><a class="headerlink" href="#PyPtt.UserField.chess" title="本定義的永久連結">¶</a></dt>
+<dd><p>象棋戰積</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.UserField.signature_file">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.UserField.</span></span><span class="sig-name descname"><span class="pre">signature_file</span></span><a class="headerlink" href="#PyPtt.UserField.signature_file" title="本定義的永久連結">¶</a></dt>
+<dd><p>簽名檔</p>
+</dd></dl>
+
+</section>
+<section id="commentfield">
+<span id="comment-field"></span><h2>CommentField<a class="headerlink" href="#commentfield" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>推文資料欄位。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.CommentField.type">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.CommentField.</span></span><span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#PyPtt.CommentField.type" title="本定義的永久連結">¶</a></dt>
+<dd><p>推文類型，推噓箭頭，詳見 <a class="reference internal" href="#comment-type"><span class="std std-ref">CommentType</span></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.CommentField.author">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.CommentField.</span></span><span class="sig-name descname"><span class="pre">author</span></span><a class="headerlink" href="#PyPtt.CommentField.author" title="本定義的永久連結">¶</a></dt>
+<dd><p>推文作者</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.CommentField.content">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.CommentField.</span></span><span class="sig-name descname"><span class="pre">content</span></span><a class="headerlink" href="#PyPtt.CommentField.content" title="本定義的永久連結">¶</a></dt>
+<dd><p>推文內容</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.CommentField.ip">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.CommentField.</span></span><span class="sig-name descname"><span class="pre">ip</span></span><a class="headerlink" href="#PyPtt.CommentField.ip" title="本定義的永久連結">¶</a></dt>
+<dd><p>推文 IP (如果存在)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.CommentField.time">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.CommentField.</span></span><span class="sig-name descname"><span class="pre">time</span></span><a class="headerlink" href="#PyPtt.CommentField.time" title="本定義的永久連結">¶</a></dt>
+<dd><p>推文時間</p>
+</dd></dl>
+
+</section>
+<section id="boardfield">
+<h2>BoardField<a class="headerlink" href="#boardfield" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>看板資料欄位。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.board">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">board</span></span><a class="headerlink" href="#PyPtt.BoardField.board" title="本定義的永久連結">¶</a></dt>
+<dd><p>看板名稱</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.online_user">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">online_user</span></span><a class="headerlink" href="#PyPtt.BoardField.online_user" title="本定義的永久連結">¶</a></dt>
+<dd><p>在線人數</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.chinese_des">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">chinese_des</span></span><a class="headerlink" href="#PyPtt.BoardField.chinese_des" title="本定義的永久連結">¶</a></dt>
+<dd><p>看板中文名稱</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.moderators">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">moderators</span></span><a class="headerlink" href="#PyPtt.BoardField.moderators" title="本定義的永久連結">¶</a></dt>
+<dd><p>看板板主清單</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.open_status">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">open_status</span></span><a class="headerlink" href="#PyPtt.BoardField.open_status" title="本定義的永久連結">¶</a></dt>
+<dd><p>看板公開狀態，是否隱板</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.into_top_ten_when_hide">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">into_top_ten_when_hide</span></span><a class="headerlink" href="#PyPtt.BoardField.into_top_ten_when_hide" title="本定義的永久連結">¶</a></dt>
+<dd><p>隱板時是否可以進入十大排行榜</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.can_non_board_members_post">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">can_non_board_members_post</span></span><a class="headerlink" href="#PyPtt.BoardField.can_non_board_members_post" title="本定義的永久連結">¶</a></dt>
+<dd><p>非看板成員是否可以發文</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.can_reply_post">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">can_reply_post</span></span><a class="headerlink" href="#PyPtt.BoardField.can_reply_post" title="本定義的永久連結">¶</a></dt>
+<dd><p>非看板成員是否可以發文</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.self_del_post">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">self_del_post</span></span><a class="headerlink" href="#PyPtt.BoardField.self_del_post" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否可以自刪文章</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.can_comment_post">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">can_comment_post</span></span><a class="headerlink" href="#PyPtt.BoardField.can_comment_post" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否可以推文</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.can_boo_post">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">can_boo_post</span></span><a class="headerlink" href="#PyPtt.BoardField.can_boo_post" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否可以噓文</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.can_fast_push">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">can_fast_push</span></span><a class="headerlink" href="#PyPtt.BoardField.can_fast_push" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否可以快速推文</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.min_interval_between_comments">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">min_interval_between_comments</span></span><a class="headerlink" href="#PyPtt.BoardField.min_interval_between_comments" title="本定義的永久連結">¶</a></dt>
+<dd><p>推文間隔時間</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.is_comment_record_ip">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">is_comment_record_ip</span></span><a class="headerlink" href="#PyPtt.BoardField.is_comment_record_ip" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否記錄推文 IP</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.is_comment_aligned">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">is_comment_aligned</span></span><a class="headerlink" href="#PyPtt.BoardField.is_comment_aligned" title="本定義的永久連結">¶</a></dt>
+<dd><p>推文是否對齊</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.can_moderators_del_illegal_content">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">can_moderators_del_illegal_content</span></span><a class="headerlink" href="#PyPtt.BoardField.can_moderators_del_illegal_content" title="本定義的永久連結">¶</a></dt>
+<dd><p>板主是否可以刪除違規文字</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.does_tran_post_auto_recorded_and_require_post_permissions">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">does_tran_post_auto_recorded_and_require_post_permissions</span></span><a class="headerlink" href="#PyPtt.BoardField.does_tran_post_auto_recorded_and_require_post_permissions" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否自動記錄轉錄文章並需要發文權限</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.is_cool_mode">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">is_cool_mode</span></span><a class="headerlink" href="#PyPtt.BoardField.is_cool_mode" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否為冷板模式</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.is_require18">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">is_require18</span></span><a class="headerlink" href="#PyPtt.BoardField.is_require18" title="本定義的永久連結">¶</a></dt>
+<dd><p>是否為 18 禁看板</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.require_login_time">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">require_login_time</span></span><a class="headerlink" href="#PyPtt.BoardField.require_login_time" title="本定義的永久連結">¶</a></dt>
+<dd><p>發文需要登入次數</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.require_illegal_post">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">require_illegal_post</span></span><a class="headerlink" href="#PyPtt.BoardField.require_illegal_post" title="本定義的永久連結">¶</a></dt>
+<dd><p>發文需要最低退文數量</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.BoardField.post_kind_list">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.BoardField.</span></span><span class="sig-name descname"><span class="pre">post_kind_list</span></span><a class="headerlink" href="#PyPtt.BoardField.post_kind_list" title="本定義的永久連結">¶</a></dt>
+<dd><p>發文類別，例如 [公告] [問卦] 等</p>
+</dd></dl>
+
+</section>
+<section id="postfield">
+<h2>PostField<a class="headerlink" href="#postfield" title="本標頭的永久連結">¶</a></h2>
+<ul class="simple">
+<li><p>文章資料欄位。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.board">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">board</span></span><a class="headerlink" href="#PyPtt.PostField.board" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章所在看板</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.aid">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">aid</span></span><a class="headerlink" href="#PyPtt.PostField.aid" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章 ID，例如：<cite>#1Z69g2ts</cite></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.index">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">index</span></span><a class="headerlink" href="#PyPtt.PostField.index" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章編號，例如：906</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.author">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">author</span></span><a class="headerlink" href="#PyPtt.PostField.author" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章作者</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.date">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#PyPtt.PostField.date" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章日期</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.title">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#PyPtt.PostField.title" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章標題</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.content">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">content</span></span><a class="headerlink" href="#PyPtt.PostField.content" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章內容</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.money">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">money</span></span><a class="headerlink" href="#PyPtt.PostField.money" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章稿酬，P 幣</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.url">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">url</span></span><a class="headerlink" href="#PyPtt.PostField.url" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章網址</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.ip">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">ip</span></span><a class="headerlink" href="#PyPtt.PostField.ip" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章 IP</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.comment_list">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">comment_list</span></span><a class="headerlink" href="#PyPtt.PostField.comment_list" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章推文清單，詳見 <a class="reference internal" href="#comment-field"><span class="std std-ref">CommentField</span></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.post_status">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">post_status</span></span><a class="headerlink" href="#PyPtt.PostField.post_status" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章狀態，詳見 <a class="reference internal" href="#post-status"><span class="std std-ref">PostStatus</span></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.list_date">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">list_date</span></span><a class="headerlink" href="#PyPtt.PostField.list_date" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章列表日期</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.has_control_code">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">has_control_code</span></span><a class="headerlink" href="#PyPtt.PostField.has_control_code" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章是否有控制碼</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.pass_format_check">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">pass_format_check</span></span><a class="headerlink" href="#PyPtt.PostField.pass_format_check" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章是否通過格式檢查</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.location">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">location</span></span><a class="headerlink" href="#PyPtt.PostField.location" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章 IP 位置</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.push_number">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">push_number</span></span><a class="headerlink" href="#PyPtt.PostField.push_number" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章推文數量</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.is_lock">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">is_lock</span></span><a class="headerlink" href="#PyPtt.PostField.is_lock" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章是否鎖定</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.full_content">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">full_content</span></span><a class="headerlink" href="#PyPtt.PostField.full_content" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章完整內容</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.PostField.is_unconfirmed">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.PostField.</span></span><span class="sig-name descname"><span class="pre">is_unconfirmed</span></span><a class="headerlink" href="#PyPtt.PostField.is_unconfirmed" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章是否為未確認文章</p>
+</dd></dl>
+
+</section>
 </section>
 
 
@@ -62,15 +631,36 @@
 
 
 <h3>瀏覽</h3>
-<p class="caption" role="heading"><span class="caption-text">教學</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<p class="caption" role="heading"><span class="caption-text">目錄</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">如何安裝 PyPtt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">APIs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">參數型態</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#host">HOST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#language">Language</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#connectmode">ConnectMode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#newindex">NewIndex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#searchtype">SearchType</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#replyto">ReplyTo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commenttype">CommentType</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#poststatus">PostStatus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#userfield">UserField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commentfield">CommentField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#boardfield">BoardField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#postfield">PostField</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">應用範例</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/PyPtt">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyPtt/">PyPI</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="api/login_logout.html" title="上一章">登入與登出</a></li>
+      <li>Next: <a href="examples.html" title="下一章">應用範例</a></li>
   </ul></li>
 </ul>
 </div>

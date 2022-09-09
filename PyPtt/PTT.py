@@ -49,16 +49,23 @@ class API:
         初始化 PyPtt.
 
         Args:
-            language: PyPtt 顯示訊息的語言。預設為繁體中文。
-            log_level: PyPtt 顯示訊息的等級。預設為 INFO。
-            screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 3 秒。
-            screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 10 秒。
-            screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 60 秒。
-            connect_mode: PyPtt 連線的模式。預設為 WEBSOCKETS。
+            language (Language): PyPtt 顯示訊息的語言。預設為 **Language.MANDARIN**。
+            log_level: PyPtt 顯示訊息的等級。預設為 **LogLevel.INFO**。
+            screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 **3 秒**。
+            screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 **10 秒**。
+            screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 **60 秒**。
+            connect_mode: PyPtt 連線的模式。預設為 **ConnectMode.WEBSOCKETS**。
             logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。
+            host: PyPtt 連線的 PTT 伺服器。預設為 **HOST.PTT1**。
 
         Returns:
             None
+
+        範例::
+
+            import PyPtt
+            ptt_bot = PyPtt.API()
+
         """
 
         self.logger = None
@@ -170,12 +177,32 @@ class API:
         登入 PTT。
 
         Args:
-            ptt_id: PTT ID。
-            ptt_pw: PTT 密碼。
-            kick_other_session: 是否踢掉其他登入的 session。預設為 False。
+            ptt_id (str): PTT ID。
+            ptt_pw (str): PTT 密碼。
+            kick_other_session (bool): 是否踢掉其他登入的 session。預設為 False。
 
         Returns:
             None
+
+        Raises:
+            PyPtt.LoginError: 登入失敗。
+            PyPtt.WrongIDorPassword: 帳號或密碼錯誤。
+            PyPtt.LoginTooOften: 登入太頻繁。
+
+        範例::
+
+            from PyPtt import PTT
+            ptt_bot = PTT.API()
+
+            try:
+                ptt_bot.login(
+                    ptt_id='ptt_id', ptt_pw='ptt_pw', kick_other_session=True)
+            except PyPtt.LoginError:
+                logger.info('登入失敗')
+            except PyPtt.WrongIDorPassword:
+                logger.info('帳號密碼錯誤')
+            except PyPtt.LoginTooOften:
+                logger.info('請稍等一下再登入')
 
         """
 
@@ -187,6 +214,13 @@ class API:
 
         Returns:
             None
+
+        範例::
+
+            import PyPtt
+            ptt_bot = PyPtt.API()
+
+            ptt_bot.logout()
         """
 
         _api_loginout.logout(self)
