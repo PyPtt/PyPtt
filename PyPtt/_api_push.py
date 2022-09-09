@@ -144,7 +144,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     check_value.check_type(board, str, 'board')
 

@@ -9,7 +9,7 @@ def get_favourite_board(api) -> list:
     _api_util.one_thread(api)
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     cmd_list = [command.go_main_menu, 'F', command.enter, '0']
     cmd = ''.join(cmd_list)

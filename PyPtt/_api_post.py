@@ -167,7 +167,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     check_value.check_type(board, str, 'board')
     check_value.check_type(title_index, int, 'title_index')

@@ -18,7 +18,7 @@ class UnknownError(Exception):
         return self.message
 
 
-class Requirelogin(Exception):
+class RequireLogin(Exception):
     def __init__(self, message):
         self.message = message
 

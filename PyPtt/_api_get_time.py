@@ -15,7 +15,7 @@ pattern = re.compile('[\d]+:[\d][\d]')
 def get_time(api) -> str:
     _api_util.one_thread(api)
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     cmd_list = []
     cmd_list.append(command.go_main_menu)

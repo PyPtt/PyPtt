@@ -66,7 +66,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
     _api_util.one_thread(api)
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     check_value.check_type(index_type, data_type.NewIndex, 'index_type')
     check_value.check_type(search_type, data_type.SearchType, 'search_type')
