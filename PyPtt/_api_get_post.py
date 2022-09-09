@@ -88,7 +88,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     if search_condition is not None and search_type == 0:
         raise ValueError('wrong parameter search_type must input')
 
-    if search_type == st.PUSH:
+    if search_type == st.COMMENT:
         try:
             S = int(search_condition)
         except ValueError:
@@ -125,7 +125,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
                 cmd_list.append('/')
             elif search_type == data_type.SearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.SearchType.PUSH:
+            elif search_type == data_type.SearchType.COMMENT:
                 cmd_list.append('Z')
             elif search_type == data_type.SearchType.MARK:
                 cmd_list.append('G')
@@ -142,7 +142,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
                     cmd_list.append('/')
                 elif search_type_ == data_type.SearchType.AUTHOR:
                     cmd_list.append('a')
-                elif search_type_ == data_type.SearchType.PUSH:
+                elif search_type_ == data_type.SearchType.COMMENT:
                     cmd_list.append('Z')
                 elif search_type_ == data_type.SearchType.MARK:
                     cmd_list.append('G')

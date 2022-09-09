@@ -341,7 +341,7 @@ boo_count = 0
 arrow_count = 0
 
 for push_info in post_info.push_list:
-    if push_info.type == PTT.data_type.push_type.PUSH:
+    if push_info.type == PTT.data_type.push_type.COMMENT:
         push_type = '推'
         push_count += 1
     if push_info.type == PTT.data_type.push_type.BOO:
@@ -481,7 +481,7 @@ for test_board in test_board_list:
 ```python
 test_list = [
     ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
-    ('Baseball', PTT.data_type.post_search_type.PUSH, '20')
+    ('Baseball', PTT.data_type.post_search_type.COMMENT, '20')
 ]
 
 for (test_board, search_type, condition) in test_list:
@@ -623,7 +623,7 @@ def show_condition(board, search_type, condition):
         condition_type = '關鍵字'
     if search_type == PTT.data_type.post_search_type.AUTHOR:
         condition_type = '作者'
-    if search_type == PTT.data_type.post_search_type.PUSH:
+    if search_type == PTT.data_type.post_search_type.COMMENT:
         condition_type = '推文數'
     if search_type == PTT.data_type.post_search_type.MARK:
         condition_type = '標記'
@@ -638,15 +638,15 @@ test_range = 10
 test_list = [
     ('Wanted', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
     ('Wanted', PTT.data_type.post_search_type.AUTHOR, 'gogin'),
-    ('Wanted', PTT.data_type.post_search_type.PUSH, '10'),
+    ('Wanted', PTT.data_type.post_search_type.COMMENT, '10'),
     ('Wanted', PTT.data_type.post_search_type.MARK, 'm'),
     ('Wanted', PTT.data_type.post_search_type.MONEY, '5'),
     ('Gossiping', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
     ('Gossiping', PTT.data_type.post_search_type.AUTHOR, 'ReDmango'),
-    ('Gossiping', PTT.data_type.post_search_type.PUSH, '10'),
+    ('Gossiping', PTT.data_type.post_search_type.COMMENT, '10'),
     ('Gossiping', PTT.data_type.post_search_type.MARK, 'm'),
     ('Gossiping', PTT.data_type.post_search_type.MONEY, '5'),
-    ('Gossiping', PTT.data_type.post_search_type.PUSH, '-100'),
+    ('Gossiping', PTT.data_type.post_search_type.COMMENT, '-100'),
 ]
 
 for (test_board, search_type, condition) in test_list:
@@ -759,7 +759,7 @@ What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-ptt_bot.push(test_board, PTT.data_type.push_type.PUSH, content, post_index=test_index)
+ptt_bot.push(test_board, PTT.data_type.push_type.COMMENT, content, post_index=test_index)
 ```
 執行結果
 

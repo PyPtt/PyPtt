@@ -35,7 +35,7 @@ class SearchType(AutoStrEnum):
     # 搜尋作者      a
     AUTHOR = auto()
     # 搜尋推文數    Z
-    PUSH = auto()
+    COMMENT = auto()
     # 搜尋標記      G
     MARK = auto()
     # 搜尋稿酬      A
