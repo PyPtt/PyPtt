@@ -3,12 +3,14 @@
 
 Python 版本
 --------------
-建議你使用 Python 3.8 以上的版本。
-因為所有測試都建立在 Python 3.8 以上的版本上。
+| 建議你使用 CPython_ 3.8 以上的版本。
+| 因為我們僅支援 CPython_ 3.8 或更新的版本。
+
+.. _CPython: https://www.python.org/
 
 相依套件
 --------------
-PyPtt 目前相依於以下套件，這些套件都會在安裝 PyPtt 的過程被自動安裝。
+PyPtt 目前相依於以下套件，這些套件都會在安裝的過程中被自動安裝。
 
 * websockets_ is a library for building WebSocket_ servers and clients in Python with a focus on correctness, simplicity, robustness, and performance.
 * uao_ is a pure Python implementation of the Unicode encoder/decoder.
@@ -22,6 +24,14 @@ PyPtt 目前相依於以下套件，這些套件都會在安裝 PyPtt 的過程�
 .. _SingleLog: https://github.com/PttCodingMan/SingleLog
 .. _requests: https://requests.readthedocs.io/en/master/
 .. _AutoStrEnum: https://github.com/PttCodingMan/PttCodingMan
+
+使用虛擬環境安裝 (建議)
+-------------------------
+| 我們建議各位使用虛擬環境來安裝 PyPtt，因為如此可以最大程度地避免套件衝突。
+|
+| 你可以從 `Virtual Environments and Packages`_ 中了解，更多關於使用虛擬環境的理由與如何建立你的虛擬環境。
+
+.. _`Virtual Environments and Packages`: https://docs.python.org/3/tutorial/venv.html#tut-venv
 
 從 PyPi 安裝
 ----------------
