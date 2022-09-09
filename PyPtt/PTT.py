@@ -49,14 +49,16 @@ class API:
         初始化 PyPtt.
 
         Args:
-            language (Language): PyPtt 顯示訊息的語言。預設為 **Language.MANDARIN**。
-            log_level: PyPtt 顯示訊息的等級。預設為 **LogLevel.INFO**。
+            language (Language): PyPtt 顯示訊息的語言。預設為 **Language.MANDARIN**，詳見 :ref:`language`。
+            log_level: PyPtt 顯示訊息的等級。預設為 **LogLevel.INFO**，詳見 LogLevel_。
             screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 **3 秒**。
             screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 **10 秒**。
             screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 **60 秒**。
-            connect_mode: PyPtt 連線的模式。預設為 **ConnectMode.WEBSOCKETS**。
+            connect_mode: PyPtt 連線的模式。預設為 **ConnectMode.WEBSOCKETS**，詳見 :ref:`connect-mode`。
             logger_callback: PyPtt 顯示訊息的 callback function。預設為 None。
-            host: PyPtt 連線的 PTT 伺服器。預設為 **HOST.PTT1**。
+            host: PyPtt 連線的 PTT 伺服器。預設為 **HOST.PTT1**，詳見 :ref:`host`。
+
+        .. _LogLevel: https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22
 
         Returns:
             None
@@ -220,7 +222,10 @@ class API:
             import PyPtt
             ptt_bot = PyPtt.API()
 
-            ptt_bot.logout()
+            try:
+                # .. login ..
+            finally:
+                ptt_bot.logout()
         """
 
         _api_loginout.logout(self)
@@ -253,6 +258,9 @@ class API:
 
         Returns:
             Dict，文章內容。
+
+        Raises:
+            PyPtt.: 文章不存在。
 
         """
         return _api_get_post.get_post(
