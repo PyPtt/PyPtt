@@ -21,7 +21,7 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜尋" href="../search.html" />
-    <link rel="next" title="登入與登出" href="login_logout.html" />
+    <link rel="next" title="login, logout" href="login_logout.html" />
     <link rel="prev" title="APIs" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -41,26 +41,27 @@
             
   <section id="init">
 <h1>init<a class="headerlink" href="#init" title="本標頭的永久連結">¶</a></h1>
-<span class="target" id="module-PyPtt.API"><span id="api-init"></span></span><p>這個 API 類別實作了目前 PyPtt 支援 PTT 與 PTT2 的所有操作</p>
-<dl class="py function">
+<span class="target" id="module-PyPtt.API"><span id="api-init"></span></span><dl class="py function">
 <dt class="sig sig-object py" id="PyPtt.API.__init__">
 <span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Language</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'MANDARIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LogLevel</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">LogLevel.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_long_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_post_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connect_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ConnectMode</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'WEBSOCKETS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PTT1'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyPtt.API.__init__" title="本定義的永久連結">¶</a></dt>
 <dd><p>初始化 PyPtt.</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>language</strong> (<em>Language</em>) – PyPtt 顯示訊息的語言。預設為 <strong>Language.MANDARIN</strong>。</p></li>
-<li><p><strong>log_level</strong> – PyPtt 顯示訊息的等級。預設為 <strong>LogLevel.INFO</strong>。</p></li>
+<li><p><strong>language</strong> (<em>Language</em>) – PyPtt 顯示訊息的語言。預設為 <strong>Language.MANDARIN</strong>，詳見 <a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>。</p></li>
+<li><p><strong>log_level</strong> – PyPtt 顯示訊息的等級。預設為 <strong>LogLevel.INFO</strong>，詳見 <a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>。</p></li>
 <li><p><strong>screen_timeout</strong> – 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 <strong>3 秒</strong>。</p></li>
 <li><p><strong>screen_long_timeout</strong> – 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 <strong>10 秒</strong>。</p></li>
 <li><p><strong>screen_post_timeout</strong> – 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 <strong>60 秒</strong>。</p></li>
-<li><p><strong>connect_mode</strong> – PyPtt 連線的模式。預設為 <strong>ConnectMode.WEBSOCKETS</strong>。</p></li>
+<li><p><strong>connect_mode</strong> – PyPtt 連線的模式。預設為 <strong>ConnectMode.WEBSOCKETS</strong>，詳見 <a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>。</p></li>
 <li><p><strong>logger_callback</strong> – PyPtt 顯示訊息的 callback function。預設為 None。</p></li>
-<li><p><strong>host</strong> – PyPtt 連線的 PTT 伺服器。預設為 <strong>HOST.PTT1</strong>。</p></li>
+<li><p><strong>host</strong> – PyPtt 連線的 PTT 伺服器。預設為 <strong>HOST.PTT1</strong>，詳見 <a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a>。</p></li>
 </ul>
 </dd>
-<dt class="field-even">回傳<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">回傳<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 <p>範例:</p>
@@ -94,7 +95,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../install.html">如何安裝 PyPtt</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">APIs</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">init</a></li>
-<li class="toctree-l2"><a class="reference internal" href="login_logout.html">登入與登出</a></li>
+<li class="toctree-l2"><a class="reference internal" href="login_logout.html">login, logout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_post.html">get_post</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_newest_index.html">get_newest_index</a></li>
+<li class="toctree-l2"><a class="reference internal" href="post.html">post</a></li>
+<li class="toctree-l2"><a class="reference internal" href="comment.html">comment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_time.html">get_time</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../type.html">參數型態</a></li>
@@ -109,7 +115,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">APIs</a><ul>
       <li>Previous: <a href="index.html" title="上一章">APIs</a></li>
-      <li>Next: <a href="login_logout.html" title="下一章">登入與登出</a></li>
+      <li>Next: <a href="login_logout.html" title="下一章">login, logout</a></li>
   </ul></li>
   </ul></li>
 </ul>
