@@ -48,7 +48,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
     if search_condition is not None and search_type == 0:
         raise ValueError('wrong parameter index or aid must input')
 
-    if search_type == data_type.SearchType.PUSH:
+    if search_type == data_type.SearchType.COMMENT:
         try:
             S = int(search_condition)
         except ValueError:
@@ -93,7 +93,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
                 cmd_list.append('/')
             elif search_type == data_type.SearchType.AUTHOR:
                 cmd_list.append('a')
-            elif search_type == data_type.SearchType.PUSH:
+            elif search_type == data_type.SearchType.COMMENT:
                 cmd_list.append('Z')
             elif search_type == data_type.SearchType.MARK:
                 cmd_list.append('G')

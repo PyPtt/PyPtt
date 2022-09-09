@@ -395,7 +395,7 @@ def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | 
             cmd_list.append('G')
 
         if index_type == data_type.NewIndex.BOARD:
-            if search_type == data_type.SearchType.PUSH:
+            if search_type == data_type.SearchType.COMMENT:
                 cmd_list.append('Z')
             elif search_type == data_type.SearchType.MONEY:
                 cmd_list.append('A')
@@ -422,7 +422,7 @@ def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | 
             elif search_type_ == data_type.SearchType.MARK:
                 cmd_list.append('G')
             elif index_type == data_type.NewIndex.BOARD:
-                if search_type_ == data_type.SearchType.PUSH:
+                if search_type_ == data_type.SearchType.COMMENT:
                     cmd_list.append('Z')
                 elif search_type_ == data_type.SearchType.MONEY:
                     cmd_list.append('A')
