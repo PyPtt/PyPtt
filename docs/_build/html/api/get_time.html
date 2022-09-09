@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>APIs &#8212; PyPtt 1.0.0 說明文件</title>
+    <title>get_time &#8212; PyPtt 1.0.0 說明文件</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -21,8 +21,8 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜尋" href="../search.html" />
-    <link rel="next" title="init" href="init.html" />
-    <link rel="prev" title="如何安裝 PyPtt" href="../install.html" />
+    <link rel="next" title="參數型態" href="../type.html" />
+    <link rel="prev" title="comment" href="comment.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -39,21 +39,31 @@
 
           <div class="body" role="main">
             
-  <section id="apis">
-<h1>APIs<a class="headerlink" href="#apis" title="本標頭的永久連結">¶</a></h1>
-<div class="line-block">
-<div class="line">這是 PyPtt 的 API 文件。</div>
-<div class="line">在這裡我們說明了 PyPtt 目前所有支援 PTT, PTT2 的功能。</div>
+  <section id="get-time">
+<h1>get_time<a class="headerlink" href="#get-time" title="本標頭的永久連結">¶</a></h1>
+<span class="target" id="api-get-time"></span><dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span></dt>
+<dd><p>取得 PTT 系統時間。</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p>範例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># .. login ..</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span>
+    <span class="c1"># .. do something ..</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+</pre></div>
 </div>
-<p><a class="reference internal" href="init.html"><span class="doc">初始化</span></a></p>
-<p><a class="reference internal" href="login_logout.html"><span class="doc">登入、登出</span></a></p>
-<p><a class="reference internal" href="get_post.html"><span class="doc">取得 PTT 文章</span></a></p>
-<p><a class="reference internal" href="get_newest_index.html"><span class="doc">取得看板最新編號</span></a></p>
-<p><a class="reference internal" href="post.html"><span class="doc">發佈文章</span></a></p>
-<p><a class="reference internal" href="comment.html"><span class="doc">推文</span></a></p>
-<p><a class="reference internal" href="get_time.html"><span class="doc">取得 PTT 時間</span></a></p>
-<div class="toctree-wrapper compound">
-</div>
+</dd></dl>
+
 </section>
 
 
@@ -76,14 +86,14 @@
 <p class="caption" role="heading"><span class="caption-text">目錄</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">如何安裝 PyPtt</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">APIs</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">APIs</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="init.html">init</a></li>
 <li class="toctree-l2"><a class="reference internal" href="login_logout.html">login, logout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_post.html">get_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_newest_index.html">get_newest_index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="post.html">post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="comment.html">comment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="get_time.html">get_time</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">get_time</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../type.html">參數型態</a></li>
@@ -96,8 +106,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../install.html" title="上一章">如何安裝 PyPtt</a></li>
-      <li>Next: <a href="init.html" title="下一章">init</a></li>
+  <li><a href="index.html">APIs</a><ul>
+      <li>Previous: <a href="comment.html" title="上一章">comment</a></li>
+      <li>Next: <a href="../type.html" title="下一章">參數型態</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -131,7 +143,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/api/index.rst.txt"
+      <a href="../_sources/api/get_time.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

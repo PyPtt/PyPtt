@@ -1,7 +1,7 @@
-登入與登出
-==========
+login, logout
+================
 
-.. _api-init:
+.. _api-login-logout:
 
 .. automodule:: PyPtt.API
    :members: login, logout

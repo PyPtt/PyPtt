@@ -2,6 +2,8 @@
 ===========
 這裡介紹 PyPtt 的參數型態
 
+.. _host:
+
 HOST
 -----------
 * 連線的 PTT 伺服器。預設為 **PTT1**。
@@ -13,6 +15,8 @@ HOST
 .. py:attribute:: PyPtt.HOST.PTT2
 
     批踢踢兔
+
+.. _language:
 
 Language
 -----------
@@ -26,6 +30,8 @@ Language
 
     英文
 
+.. _connect-mode:
+
 ConnectMode
 -----------
 * 連線的模式。預設為 **WEBSOCKETS**。
@@ -37,6 +43,8 @@ ConnectMode
 .. py:attribute:: PyPtt.ConnectMode.TELNET
 
     使用 TELNET 連線
+
+.. _new-index:
 
 NewIndex
 -----------
@@ -189,7 +197,7 @@ UserField
 .. _comment-field:
 
 CommentField
------------
+--------------
 * 推文資料欄位。
 
 .. py:attribute:: PyPtt.CommentField.type
@@ -303,6 +311,8 @@ BoardField
 .. py:attribute:: PyPtt.BoardField.post_kind_list
 
     發文類別，例如 [公告] [問卦] 等
+
+.. _post-field:
 
 PostField
 -----------
