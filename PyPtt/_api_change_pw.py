@@ -12,7 +12,7 @@ def change_pw(api, new_password: str) -> None:
     logger = Logger('api', api.config.log_level)
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     logger.info(i18n.change_pw)
 

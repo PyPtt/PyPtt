@@ -61,7 +61,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     _api_util.one_thread(api)
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     check_value.check_type(board, str, 'board')
     if post_aid is not None:

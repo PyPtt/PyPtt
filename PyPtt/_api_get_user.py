@@ -23,7 +23,7 @@ def get_user(api, ptt_id: str) -> Dict:
     _api_util.one_thread(api)
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())

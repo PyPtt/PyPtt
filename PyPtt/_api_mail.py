@@ -29,7 +29,7 @@ def mail(api,
     _api_util.one_thread(api)
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -153,7 +153,7 @@ def get_mail(api, index: int, search_type: int = 0, search_condition: [str | Non
     _api_util.one_thread(api)
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -308,7 +308,7 @@ def del_mail(api, index) -> None:
     _api_util.one_thread(api)
 
     if not api._is_login:
-        raise exceptions.Requirelogin(i18n.require_login)
+        raise exceptions.RequireLogin(i18n.require_login)
 
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
