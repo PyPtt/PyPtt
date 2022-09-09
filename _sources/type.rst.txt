@@ -82,6 +82,8 @@ SearchType
 
     搜尋稿酬
 
+.. _reply-to:
+
 ReplyTo
 -----------
 * 回文的方式。
@@ -137,6 +139,8 @@ PostStatus
 .. py:attribute:: PyPtt.PostStatus.DELETED_BY_UNKNOWN
 
     無法判斷，被如何刪除
+
+.. _user-field:
 
 UserField
 -----------
