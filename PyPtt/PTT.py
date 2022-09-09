@@ -36,10 +36,6 @@ from . import version
 
 
 class API:
-    """
-    這個 API 類別實作了目前 PyPtt 支援 PTT 與 PTT2 的所有操作
-    """
-
     def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LogLevel = LogLevel.INFO,
                  screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
@@ -237,6 +233,18 @@ class API:
 
         Returns:
             None
+
+        範例::
+
+            import PyPtt
+            ptt_bot = PyPtt.API()
+
+            try:
+                # .. login ..
+                time = ptt_bot.get_time()
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
         """
 
         return _api_get_time.get_time(self)
@@ -257,11 +265,37 @@ class API:
             query: 是否為查詢模式。
 
         Returns:
-            Dict，文章內容。
+            Dict，文章內容。詳見 :ref:`post-field`
 
         Raises:
-            PyPtt.: 文章不存在。
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchBoard: 看板不存在。
 
+        使用 AID 範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                post_info = ptt_bot.get_post('Python', aid='1TJH_XY0')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        使用 index 範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                post_info = ptt_bot.get_post('Python', index=1)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        參考 :ref:`取得最新文章編號 <api-get-newest-index>`
         """
         return _api_get_post.get_post(
             self, board, aid=aid, index=index, search_type=search_type, search_condition=search_condition,
@@ -284,6 +318,38 @@ class API:
         Returns:
             int，最新文章或信箱編號。
 
+        Raises:
+            PyPtt.RequireLogin: 需要登入。
+
+        取得最新看板編號::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+
+            # get newest index of board
+            try:
+                # .. login ..
+                newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, 'Python')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        取得最新信箱編號::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+
+            # get newest index of mail
+            try:
+                # .. login ..
+                newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        參考 :ref:`搜尋編號種類 <new-index>`、:ref:`取得文章 <api-get-post>`
         """
 
         return _api_get_newest_index.get_newest_index(
@@ -302,6 +368,24 @@ class API:
 
         Returns:
             None
+
+        Raises:
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchBoard: 看板不存在。
+            PyPtt.NoPermission: 沒有發佈權限。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.post(board='Test', title_index=1, title='PyPtt 程式貼文測試', content='測試內容', sign_file=0)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
 
         """
 
@@ -322,6 +406,27 @@ class API:
         Returns:
             None
 
+        Raises:
+            PyPtt.UnregisteredUser: 未註冊使用者。
+            PyPtt.RequireLogin: 需要登入。
+            PyPtt.NoSuchBoard: 看板不存在。
+            PyPtt.NoSuchPost: 文章不存在。
+            PyPtt.NoPermission: 沒有推文權限。
+            PyPtt.NoFastComment: 推文間隔太短。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.comment(board='Test', comment_type=PyPtt.CommentType.PUSH, comment_content='PyPtt 程式推文測試', index=123)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        參考 :ref:`推文類型 <comment-type>`、:ref:`取得最新文章編號 <api-get-newest-index>`
         """
 
         _api_push.push(self, board, comment_type, comment_content, aid, index)
