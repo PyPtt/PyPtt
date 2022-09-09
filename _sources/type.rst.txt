@@ -58,6 +58,8 @@ NewIndex
 
     搜尋信箱 Index
 
+.. _search-type:
+
 SearchType
 -----------
 * 搜尋看板的方式。
@@ -139,6 +141,33 @@ PostStatus
 .. py:attribute:: PyPtt.PostStatus.DELETED_BY_UNKNOWN
 
     無法判斷，被如何刪除
+
+.. _mark-type:
+
+MarkType
+-----------
+* 版主標記文章種類
+
+.. py:attribute:: PyPtt.MarkType.S
+
+    S 文章
+
+.. py:attribute:: PyPtt.MarkType.D
+
+    標記文章
+
+.. py:attribute:: PyPtt.MarkType.DELETE_D
+
+    刪除標記文章
+
+.. py:attribute:: PyPtt.MarkType.M
+
+    M 起來
+
+.. py:attribute:: PyPtt.MarkType.UNCONFIRMED
+
+    待證實文章
+
 
 .. _user-field:
 
@@ -223,6 +252,64 @@ CommentField
 .. py:attribute:: PyPtt.CommentField.time
 
     推文時間
+
+.. _favorite-board-field:
+
+FavouriteBoardField
+--------------------
+* 我的最愛資料欄位。
+
+.. py:attribute:: PyPtt.FavouriteBoardField.board
+
+    看板名稱
+
+.. py:attribute:: PyPtt.FavouriteBoardField.title
+
+    看板標題
+
+.. py:attribute:: PyPtt.FavouriteBoardField.type
+
+    類別
+
+.. _mail-field:
+
+MailField
+----------
+* 信件資料欄位。
+
+.. py:attribute:: PyPtt.MailField.origin_mail
+
+    原始信件全文
+
+.. py:attribute:: PyPtt.MailField.author
+
+    信件作者
+
+.. py:attribute:: PyPtt.MailField.title
+
+    信件標題
+
+.. py:attribute:: PyPtt.MailField.date
+
+    信件日期
+
+.. py:attribute:: PyPtt.MailField.content
+
+    信件內容
+
+.. py:attribute:: PyPtt.MailField.ip
+
+    信件 IP
+
+.. py:attribute:: PyPtt.MailField.location
+
+    信件位置
+
+.. py:attribute:: PyPtt.MailField.is_red_envelope
+
+    是否為紅包
+
+.. _board-field:
 
 BoardField
 -----------

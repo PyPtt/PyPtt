@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>post &#8212; PyPtt 1.0.0 說明文件</title>
+    <title>get_bottom_post_list &#8212; PyPtt 1.0.0 說明文件</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -21,8 +21,8 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜尋" href="../search.html" />
-    <link rel="next" title="reply_post" href="reply_post.html" />
-    <link rel="prev" title="get_newest_index" href="get_newest_index.html" />
+    <link rel="next" title="set_board_title" href="set_board_title.html" />
+    <link rel="prev" title="get_aid_from_url" href="get_aid_from_url.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -39,31 +39,23 @@
 
           <div class="body" role="main">
             
-  <section id="post">
-<h1>post<a class="headerlink" href="#post" title="本標頭的永久連結">¶</a></h1>
-<span class="target" id="api-post"></span><dl class="py function">
+  <section id="get-bottom-post-list">
+<h1>get_bottom_post_list<a class="headerlink" href="#get-bottom-post-list" title="本標頭的永久連結">¶</a></h1>
+<dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
-<dd><p>發文。</p>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_bottom_post_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>取得看板置底文章清單。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>board</strong> (<em>str</em>) – 看板名稱。</p></li>
-<li><p><strong>title_index</strong> (<em>int</em>) – 文章標題編號。</p></li>
-<li><p><strong>title</strong> (<em>str</em>) – 文章標題。</p></li>
-<li><p><strong>content</strong> (<em>str</em>) – 文章內容。</p></li>
-<li><p><strong>sign_file</strong> (<em>str</em><em> | </em><em>int</em>) – 編號或隨機簽名檔 (x)，預設為 0 (不選)。</p></li>
-</ul>
+<dd class="field-odd"><p><strong>board</strong> (<em>str</em>) – 看板名稱。</p>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p>List[post]，置底文章清單，詳見 <a class="reference internal" href="../type.html#post-field"><span class="std std-ref">PostField</span></a>。</p>
 </dd>
 <dt class="field-odd">引發<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>PyPtt.UnregisteredUser</strong> – 未註冊使用者。</p></li>
 <li><p><strong>PyPtt.RequireLogin</strong> – 需要登入。</p></li>
 <li><p><strong>PyPtt.NoSuchBoard</strong> – 看板不存在。</p></li>
-<li><p><strong>PyPtt.NoPermission</strong> – 沒有發佈權限。</p></li>
 </ul>
 </dd>
 </dl>
@@ -71,9 +63,10 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
 
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
-    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">title_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;PyPtt 程式貼文測試&#39;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s1">&#39;測試內容&#39;</span><span class="p">,</span> <span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">bottom_post_list</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_bottom_post_list</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Python&#39;</span><span class="p">)</span>
     <span class="c1"># .. do something ..</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
@@ -105,18 +98,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">APIs</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="index.html#id1">基本功能</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#id2">文章相關</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="get_post.html">get_post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_newest_index.html">get_newest_index</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reply_post.html">reply_post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="del_post.html">del_post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="comment.html">comment</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id2">文章相關</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#id3">信箱相關</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用者相關</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#ptt">取得 PTT 資訊</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#ptt">取得 PTT 資訊</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="get_time.html">get_time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="get_board_list.html">get_board_list</a></li>
+<li class="toctree-l3"><a class="reference internal" href="get_favourite_boards.html">get_favourite_boards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="get_board_info.html">get_board_info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="get_aid_from_url.html">get_aid_from_url</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">get_bottom_post_list</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#id5">版主相關</a></li>
 </ul>
 </li>
@@ -131,8 +124,8 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">APIs</a><ul>
-      <li>Previous: <a href="get_newest_index.html" title="上一章">get_newest_index</a></li>
-      <li>Next: <a href="reply_post.html" title="下一章">reply_post</a></li>
+      <li>Previous: <a href="get_aid_from_url.html" title="上一章">get_aid_from_url</a></li>
+      <li>Next: <a href="set_board_title.html" title="下一章">set_board_title</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -167,7 +160,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/api/post.rst.txt"
+      <a href="../_sources/api/get_bottom_post_list.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
