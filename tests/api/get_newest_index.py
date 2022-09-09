@@ -14,7 +14,7 @@ def test(ptt_bot: PyPtt.API):
     else:
         test_list = [
             ('PttSuggest', PyPtt.SearchType.KEYWORD, '[問題]'),
-            # ('PttSuggest', PyPtt.SearchType.PUSH, '10'),
+            # ('PttSuggest', PyPtt.SearchType.COMMENT, '10'),
         ]
 
     for board, search_type, search_condition in test_list:

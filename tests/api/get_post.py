@@ -68,7 +68,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             type_str = '關鍵字'
         if search_type == PyPtt.search_type.AUTHOR:
             type_str = '作者'
-        if search_type == PyPtt.search_type.PUSH:
+        if search_type == PyPtt.search_type.COMMENT:
             type_str = '推文數'
         if search_type == PyPtt.search_type.MARK:
             type_str = '標記'
@@ -88,7 +88,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
     else:
         test_list = [
             ('PttSuggest', PyPtt.search_type.KEYWORD, '[問題]'),
-            ('PttSuggest', PyPtt.search_type.PUSH, '10'),
+            ('PttSuggest', PyPtt.search_type.COMMENT, '10'),
         ]
 
     result = []

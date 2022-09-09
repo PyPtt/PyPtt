@@ -253,7 +253,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     # board_info = data_type.BoardInfo(
     #     boardname,
     #     online_user,
-    #     chinese_des,
+    #     mandarin_des,
     #     moderators,
     #     open_status,
     #     into_top_ten_when_hide,
@@ -276,7 +276,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     return {
         BoardField.board: boardname,
         BoardField.online_user: online_user,
-        BoardField.chinese_des: chinese_des,
+        BoardField.mandarin_des: chinese_des,
         BoardField.moderators: moderators,
         BoardField.open_status: open_status,
         BoardField.into_top_ten_when_hide: into_top_ten_when_hide,
