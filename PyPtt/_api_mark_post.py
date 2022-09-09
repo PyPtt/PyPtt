@@ -38,7 +38,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')
 
-    if mark_type != data_type.MarkType.DeleteD:
+    if mark_type != data_type.MarkType.DELETE_D:
         if post_index != 0 and isinstance(post_aid, str):
             raise ValueError('wrong parameter index and aid can\'t both input')
 
@@ -111,7 +111,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
         cmd_list.append('L')
     elif mark_type == data_type.MarkType.D:
         cmd_list.append('t')
-    elif mark_type == data_type.MarkType.DeleteD:
+    elif mark_type == data_type.MarkType.DELETE_D:
         cmd_list.append(command.ctrl_d)
     elif mark_type == data_type.MarkType.M:
         cmd_list.append('m')

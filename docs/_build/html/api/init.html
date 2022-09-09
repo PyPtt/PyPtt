@@ -48,14 +48,15 @@
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>language</strong> (<em>Language</em>) – PyPtt 顯示訊息的語言。預設為 <strong>Language.MANDARIN</strong>，詳見 <a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>。</p></li>
-<li><p><strong>log_level</strong> – PyPtt 顯示訊息的等級。預設為 <strong>LogLevel.INFO</strong>，詳見 <a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>。</p></li>
+<li><p><strong>language</strong> (<a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>) – PyPtt 顯示訊息的語言。預設為 <strong>MANDARIN</strong>。</p></li>
+<li><p><strong>log_level</strong> (<a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>) – PyPtt 顯示訊息的等級。預設為 <strong>INFO</strong>。</p></li>
 <li><p><strong>screen_timeout</strong> – 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 <strong>3 秒</strong>。</p></li>
 <li><p><strong>screen_long_timeout</strong> – 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 <strong>10 秒</strong>。</p></li>
 <li><p><strong>screen_post_timeout</strong> – 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 <strong>60 秒</strong>。</p></li>
-<li><p><strong>connect_mode</strong> – PyPtt 連線的模式。預設為 <strong>ConnectMode.WEBSOCKETS</strong>，詳見 <a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>。</p></li>
-<li><p><strong>logger_callback</strong> – PyPtt 顯示訊息的 callback function。預設為 None。</p></li>
-<li><p><strong>host</strong> – PyPtt 連線的 PTT 伺服器。預設為 <strong>HOST.PTT1</strong>，詳見 <a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a>。</p></li>
+<li><p><strong>connect_mode</strong> (<a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>) – PyPtt 連線的模式。預設為 <strong>WEBSOCKETS</strong>。</p></li>
+<li><p><strong>logger_callback</strong> (<em>Callable</em>) – PyPtt 顯示訊息的 callback。預設為 None。</p></li>
+<li><p><strong>port</strong> (<em>int</em>) – PyPtt 連線的 port。預設為 <strong>23</strong>。</p></li>
+<li><p><strong>host</strong> (<a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a>) – PyPtt 連線的 PTT 伺服器。預設為 <strong>PTT1</strong>。</p></li>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
@@ -91,22 +92,18 @@
 <h3>瀏覽</h3>
 <p class="caption" role="heading"><span class="caption-text">目錄</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../install.html">如何安裝 PyPtt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">APIs</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="index.html#id1">基本功能</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#id2">文章相關</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#ptt">取得 PTT 系統資訊</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#id1">基本功能</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">init</a></li>
 <li class="toctree-l3"><a class="reference internal" href="login_logout.html">login, logout</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_post.html">get_post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_newest_index.html">get_newest_index</a></li>
-<li class="toctree-l3"><a class="reference internal" href="post.html">post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="comment.html">comment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reply_post.html">reply_post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_time.html">get_time</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_user.html">get_user</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id2">文章相關</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id3">信箱相關</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用者相關</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#ptt">取得 PTT 資訊</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id5">版主相關</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../type.html">參數型態</a></li>

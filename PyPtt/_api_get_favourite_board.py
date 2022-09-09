@@ -3,6 +3,7 @@ from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n
+from .data_type import FavouriteBoardField
 
 
 def get_favourite_board(api) -> list:
@@ -73,13 +74,13 @@ def get_favourite_board(api) -> list:
             board_list.append(board)
             #
             # print('board', board)
-            # print('board_type', board_type)
+            # print('type', type)
             # print('board_title', board_title)
 
             f_board = {
-                'board': board,
-                'type': board_type,
-                'title': board_title}
+                FavouriteBoardField.board: board,
+                FavouriteBoardField.type: board_type,
+                FavouriteBoardField.title: board_title}
             favourite_board_list.append(f_board)
 
         # print(len(favourite_board_list))

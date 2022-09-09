@@ -1,5 +1,3 @@
-import inspect
-import sys
 from enum import auto
 
 from AutoStrEnum import AutoStrEnum
@@ -161,18 +159,28 @@ class MarkType(AutoStrEnum):
     # 標記文章
     D = auto()
     # 刪除標記文章
-    DeleteD = auto()
+    DELETE_D = auto()
     # M 起來
     M = auto()
     # 待證實文章
     UNCONFIRMED = auto()
 
 
-class FavouriteBoard:
-    def __init__(self, board, board_type, board_title):
-        self.board: str = parse_para(str, board)
-        self.type: str = parse_para(str, board_type)
-        self.title: str = parse_para(str, board_title)
+class FavouriteBoardField(AutoStrEnum):
+    board = auto()
+    type = auto()
+    title = auto()
+
+
+class MailField(AutoStrEnum):
+    origin_mail = auto()
+    author = auto()
+    title = auto()
+    date = auto()
+    content = auto()
+    ip = auto()
+    location = auto()
+    is_red_envelope = auto()
 
 
 class BoardField(AutoStrEnum):
@@ -206,7 +214,6 @@ class Compare(AutoStrEnum):
     SAME = auto()
     SMALLER = auto()
     UNKNOWN = auto()
-
 
 # class_list = inspect.getmembers(sys.modules['PyPtt.data_type'], inspect.isclass)
 # class_list = set([name[0] for name in class_list])

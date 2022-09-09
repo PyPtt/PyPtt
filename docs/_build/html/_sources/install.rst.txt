@@ -1,10 +1,10 @@
-如何安裝 PyPtt
+安裝 PyPtt
 ===================
 
 Python 版本
 --------------
-| 建議你使用 CPython_ 3.8 以上的版本。
-| 因為我們僅支援 CPython_ 3.8 或更新的版本。
+| 因為我們支援 CPython_ 3.8+。
+| 因此推薦你使用 CPython_ 3.8+。
 
 .. _CPython: https://www.python.org/
 
@@ -29,13 +29,13 @@ PyPtt 目前相依於以下套件，這些套件都會在安裝的過程中被�
 -------------------------
 | 我們推薦各位使用虛擬環境來安裝 PyPtt，因為如此可以最大程度地避免套件衝突。
 |
-| 你可以從 `Virtual Environments and Packages`_ 中了解，更多關於使用虛擬環境的理由與如何建立你的虛擬環境。
+| 你可以從 `Virtual Environments and Packages`_ 中了解，更多關於使用虛擬環境的理由以及如何建立你的虛擬環境。
 
 .. _`Virtual Environments and Packages`: https://docs.python.org/3/tutorial/venv.html#tut-venv
 
-從 PyPi 安裝
+安裝指令
 ----------------
-你可以使用以下指令來安裝 PyPtt
+你可以使用以下指令來安裝 PyPtt。
 
 .. code-block:: bash
 

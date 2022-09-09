@@ -26,22 +26,22 @@ PyPtt
 |
 | 本文件的內容會隨著 PyPtt_ 的更新而更新，如果你發現任何錯誤，歡迎到 PyPtt_ 發 issue 或者加入 `PyPtt Telegram 社群`_ 一起討論。
 |
-| PyPtt 由 CodingMan_ 與 `其他許多貢獻者`_ 共同維護。
+| PyPtt 由 CodingMan_ 與其他許多的 `貢獻者們`_ 共同維護。
 
 .. _PyPTt: https://github.com/PyPtt/PyPtt
 .. _`PyPtt Telegram 社群`: https://t.me/PyPtt
 .. _CodingMan: https://github.com/PttCodingMan
-.. _`其他許多貢獻者`: https://github.com/PyPtt/PyPtt/graphs/contributors
+.. _`貢獻者們`: https://github.com/PyPtt/PyPtt/graphs/contributors
 
 文件
 ----------------
-:doc:`安裝指南 <install>`
+:doc:`安裝 PyPtt <install>`
     如何把 PyPtt 安裝到你的環境中。
 
-:doc:`API 說明 <api/index>`
+:doc:`APIs <api/index>`
     PyPtt 的所有 API 說明。
 
-:doc:`使用範例 <examples>`
+:doc:`examples`
     一些使用 PyPtt 的範例。
 
 .. toctree::

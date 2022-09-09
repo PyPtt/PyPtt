@@ -21,8 +21,8 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜尋" href="../search.html" />
-    <link rel="next" title="reply_post" href="reply_post.html" />
-    <link rel="prev" title="post" href="post.html" />
+    <link rel="next" title="mail" href="mail.html" />
+    <link rel="prev" title="del_post" href="del_post.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -43,16 +43,16 @@
 <h1>comment<a class="headerlink" href="#comment" title="本標頭的永久連結">¶</a></h1>
 <span class="target" id="api-comment"></span><dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">data_type.CommentType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CommentType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
 <dd><p>推文。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>board</strong> – 看板名稱。</p></li>
-<li><p><strong>comment_type</strong> – 推文類型。</p></li>
-<li><p><strong>comment_content</strong> – 推文內容。</p></li>
-<li><p><strong>aid</strong> – 文章編號。</p></li>
-<li><p><strong>index</strong> – 文章編號。</p></li>
+<li><p><strong>board</strong> (<em>str</em>) – 看板名稱。</p></li>
+<li><p><strong>comment_type</strong> (<a class="reference internal" href="../type.html#comment-type"><span class="std std-ref">CommentType</span></a>) – 推文類型。</p></li>
+<li><p><strong>content</strong> (<em>str</em>) – 推文內容。</p></li>
+<li><p><strong>aid</strong> (<em>str</em>) – 文章編號。</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – 文章編號。</p></li>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
@@ -105,22 +105,22 @@
 <h3>瀏覽</h3>
 <p class="caption" role="heading"><span class="caption-text">目錄</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../install.html">如何安裝 PyPtt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">APIs</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="index.html#id1">基本功能</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#id2">文章相關</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#ptt">取得 PTT 系統資訊</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="init.html">init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="login_logout.html">login, logout</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#id2">文章相關</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="get_post.html">get_post</a></li>
 <li class="toctree-l3"><a class="reference internal" href="get_newest_index.html">get_newest_index</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post.html">post</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">comment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reply_post.html">reply_post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_time.html">get_time</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_user.html">get_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="del_post.html">del_post</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">comment</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id3">信箱相關</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用者相關</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#ptt">取得 PTT 資訊</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id5">版主相關</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../type.html">參數型態</a></li>
@@ -134,8 +134,8 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">APIs</a><ul>
-      <li>Previous: <a href="post.html" title="上一章">post</a></li>
-      <li>Next: <a href="reply_post.html" title="下一章">reply_post</a></li>
+      <li>Previous: <a href="del_post.html" title="上一章">del_post</a></li>
+      <li>Next: <a href="mail.html" title="下一章">mail</a></li>
   </ul></li>
   </ul></li>
 </ul>

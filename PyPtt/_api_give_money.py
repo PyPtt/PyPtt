@@ -76,7 +76,7 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
             i18n.no_money,
             '金額過少，交易取消!',
             break_detect=True,
-            exceptions_=exceptions.MoneyTooFew()
+            exceptions_=exceptions.NoMoney()
         ),
         connect_core.TargetUnit(
             i18n.transaction_cancelled,

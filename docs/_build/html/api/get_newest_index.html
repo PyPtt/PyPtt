@@ -43,23 +43,26 @@
 <h1>get_newest_index<a class="headerlink" href="#get-newest-index" title="本標頭的永久連結">¶</a></h1>
 <span class="target" id="api-get-newest-index"></span><dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_newest_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">data_type.NewIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">data_type.SearchType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'NOPE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_newest_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NewIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">SearchType</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span></dt>
 <dd><p>取得最新文章或信箱編號。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>index_type</strong> – 編號類型。NewIndex.BOARD 或 NewIndex.MAIL。詳見 <a class="reference internal" href="../type.html#new-index"><span class="std std-ref">NewIndex</span></a></p></li>
-<li><p><strong>board</strong> – 看板名稱。</p></li>
-<li><p><strong>search_type</strong> – 搜尋類型。</p></li>
-<li><p><strong>search_list</strong> – 搜尋清單。</p></li>
-<li><p><strong>search_condition</strong> – 搜尋條件。</p></li>
+<li><p><strong>index_type</strong> (<a class="reference internal" href="../type.html#new-index"><span class="std std-ref">NewIndex</span></a>) – 編號類型。</p></li>
+<li><p><strong>board</strong> (<em>str</em>) – 看板名稱。</p></li>
+<li><p><strong>search_type</strong> (<a class="reference internal" href="../type.html#search-type"><span class="std std-ref">SearchType</span></a>) – </p></li>
+<li><p><strong>search_condition</strong> (<em>str</em>) – 搜尋條件。</p></li>
+<li><p><strong>search_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – 搜尋清單。</p></li>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
 <dd class="field-even"><p>int，最新文章或信箱編號。</p>
 </dd>
 <dt class="field-odd">引發<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>PyPtt.RequireLogin</strong> – 需要登入。</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>PyPtt.RequireLogin</strong> – 需要登入。</p></li>
+<li><p><strong>PyPtt.NoSuchBoard</strong> – 看板不存在。</p></li>
+</ul>
 </dd>
 </dl>
 <p>取得最新看板編號:</p>
@@ -114,22 +117,22 @@
 <h3>瀏覽</h3>
 <p class="caption" role="heading"><span class="caption-text">目錄</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../install.html">如何安裝 PyPtt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">APIs</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="index.html#id1">基本功能</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#id2">文章相關</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#ptt">取得 PTT 系統資訊</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="init.html">init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="login_logout.html">login, logout</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#id2">文章相關</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="get_post.html">get_post</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">get_newest_index</a></li>
 <li class="toctree-l3"><a class="reference internal" href="post.html">post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="comment.html">comment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reply_post.html">reply_post</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_time.html">get_time</a></li>
-<li class="toctree-l3"><a class="reference internal" href="get_user.html">get_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="del_post.html">del_post</a></li>
+<li class="toctree-l3"><a class="reference internal" href="comment.html">comment</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id3">信箱相關</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用者相關</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#ptt">取得 PTT 資訊</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id5">版主相關</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../type.html">參數型態</a></li>

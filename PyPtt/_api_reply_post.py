@@ -10,7 +10,7 @@ from . import exceptions
 from . import i18n
 
 
-def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid: str,
+def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_file, post_aid: str,
                post_index: int) -> None:
     logger = Logger('reply_post')
 
@@ -19,7 +19,7 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
     if not api._is_login:
         raise exceptions.RequireLogin(i18n.require_login)
 
-    if not isinstance(ReplyTo, data_type.ReplyTo):
+    if not isinstance(reply_to, data_type.ReplyTo):
         raise TypeError(f'ReplyTo must be data_type.ReplyTo')
 
     check_value.check_type(board, str, 'board')
@@ -56,21 +56,21 @@ def reply_post(api, ReplyTo: int, board: str, content: str, sign_file, post_aid:
     cmd_list.append(command.enter * 2)
     cmd_list.append('r')
 
-    if ReplyTo == data_type.ReplyTo.BOARD:
+    if reply_to == data_type.ReplyTo.BOARD:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_board,
             '▲ 回應至',
             log_level=LogLevel.INFO,
             response='F' + command.enter
         )
-    elif ReplyTo == data_type.ReplyTo.MAIL:
+    elif reply_to == data_type.ReplyTo.MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_mail,
             '▲ 回應至',
             log_level=LogLevel.INFO,
             response='M' + command.enter
         )
-    elif ReplyTo == data_type.ReplyTo.BOARD_MAIL:
+    elif reply_to == data_type.ReplyTo.BOARD_MAIL:
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_board_mail,
             '▲ 回應至',
