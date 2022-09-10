@@ -54,20 +54,20 @@ class NoSuchUser(Exception):
         return self.message
 
 
-class UserOffline(Exception):
-    def __init__(self, user):
-        self.message = i18n.user_offline + ': ' + user
+# class UserOffline(Exception):
+#     def __init__(self, user):
+#         self.message = i18n.user_offline + ': ' + user
+#
+#     def __str__(self):
+#         return self.message
 
-    def __str__(self):
-        return self.message
 
-
-class ParseError(Exception):
-    def __init__(self, screen):
-        self.message = screen
-
-    def __str__(self):
-        return self.message
+# class ParseError(Exception):
+#     def __init__(self, screen):
+#         self.message = screen
+#
+#     def __str__(self):
+#         return self.message
 
 
 class NoMoney(Exception):
@@ -164,7 +164,7 @@ class HostNotSupport(Exception):
         return self.message
 
 
-class NoPush(Exception):
+class NoComment(Exception):
     def __init__(self):
         self.message = i18n.no_comment
 
@@ -196,15 +196,6 @@ class ConnectError(Exception):
         return self.message
 
 
-class NoMatchTargetError(Exception):
-    def __init__(self, screen_queue: list):
-        self.ScreenQueue = screen_queue
-
-    def __str__(self):
-        screens = ('\n' + '-' * 50 + '\n').join(self.ScreenQueue.get(3))
-        return screens + '\n' + i18n.screen_no_match_target
-
-
 class NoSuchPost(Exception):
     def __init__(self, board, aid):
         self.message = i18n.replace(
@@ -220,6 +211,7 @@ class CanNotUseSearchPostCode(Exception):
     """
     此狀態下無法使用搜尋文章代碼(AID)功能
     """
+
     def __init__(self):
         self.message = i18n.can_not_use_search_post_code_f
 
@@ -243,14 +235,6 @@ class MailboxFull(Exception):
         return self.message
 
 
-class Timeout(Exception):
-    def __init__(self):
-        self.message = i18n.timeout
-
-    def __str__(self):
-        return self.message
-
-
 class NoSearchResult(Exception):
     def __init__(self):
         self.message = i18n.no_search_result
@@ -269,27 +253,9 @@ class OnlySecureConnection(Exception):
         return self.message
 
 
-class DeletedPost(Exception):
-    def __init__(self, board, aid):
-        self.message = i18n.replace(
-            i18n.deleted_post,
-            board,
-            aid)
-
-    def __str__(self):
-        return self.message
-
-
 class SetConnectMailFirst(Exception):
     def __init__(self):
         self.message = i18n.set_connect_mail_first
 
     def __str__(self):
         return self.message
-
-# class SystemOverload(Exception):
-#     def __init__(self):
-#         self.message = i18n.system_busy_try_later
-#
-#     def __str__(self):
-#         return self.message

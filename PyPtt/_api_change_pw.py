@@ -65,9 +65,10 @@ def change_pw(api, new_password: str) -> None:
     index = api.connect_core.send(
         cmd,
         target_list,
-    )
+        screen_timeout=api.config.screen_long_timeout)
     if index < 0:
-        raise exceptions.Timeout
+        ori_screen = api.connect_core.get_screen_queue()[-1]
+        raise exceptions.UnknownError(ori_screen)
 
     api._ptt_pw = new_password
 

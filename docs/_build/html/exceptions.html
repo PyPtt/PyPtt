@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>例外 &#8212; PyPtt 1.0.0 說明文件</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜尋" href="search.html" />
+    <link rel="next" title="應用範例" href="examples.html" />
+    <link rel="prev" title="參數型態" href="type.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1>例外<a class="headerlink" href="#id1" title="本標頭的永久連結">¶</a></h1>
+<div class="line-block">
+<div class="line">這裡介紹 PyPtt 的例外。</div>
+<div class="line">可以用 try…except… 來處理。</div>
+</div>
+<div class="line-block">
+<div class="line">例外的種類</div>
+</div>
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.RequireLogin">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">RequireLogin</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.RequireLogin" title="本定義的永久連結">¶</a></dt>
+<dd><p>需要登入時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoPermission">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoPermission</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoPermission" title="本定義的永久連結">¶</a></dt>
+<dd><p>沒有權限時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.LoginError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">LoginError</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.LoginError" title="本定義的永久連結">¶</a></dt>
+<dd><p>登入失敗時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoFastComment">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoFastComment</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoFastComment" title="本定義的永久連結">¶</a></dt>
+<dd><p>無法快速推文時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoSuchUser">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchUser</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoSuchUser" title="本定義的永久連結">¶</a></dt>
+<dd><p>查無此使用者時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoMoney">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoMoney</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoMoney" title="本定義的永久連結">¶</a></dt>
+<dd><p>餘額不足時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoSuchBoard">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchBoard</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoSuchBoard" title="本定義的永久連結">¶</a></dt>
+<dd><p>查無此看板時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.ConnectionClosed">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConnectionClosed</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.ConnectionClosed" title="本定義的永久連結">¶</a></dt>
+<dd><p>連線已關閉時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.UnregisteredUser">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">UnregisteredUser</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.UnregisteredUser" title="本定義的永久連結">¶</a></dt>
+<dd><p>未註冊使用者時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.MultiThreadOperated">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">MultiThreadOperated</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.MultiThreadOperated" title="本定義的永久連結">¶</a></dt>
+<dd><p>同時使用多個 thread 呼叫 PyPtt 時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.WrongIDorPassword">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">WrongIDorPassword</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.WrongIDorPassword" title="本定義的永久連結">¶</a></dt>
+<dd><p>帳號或密碼錯誤時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.WrongPassword">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">WrongPassword</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.WrongPassword" title="本定義的永久連結">¶</a></dt>
+<dd><p>密碼錯誤時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.LoginTooOften">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">LoginTooOften</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.LoginTooOften" title="本定義的永久連結">¶</a></dt>
+<dd><p>登入太頻繁時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.UseTooManyResources">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">UseTooManyResources</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.UseTooManyResources" title="本定義的永久連結">¶</a></dt>
+<dd><p>使用過多資源時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.HostNotSupport">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">HostNotSupport</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.HostNotSupport" title="本定義的永久連結">¶</a></dt>
+<dd><p>主機不支援時會拋出的例外。詳見 <a class="reference internal" href="type.html#host"><span class="std std-ref">HOST</span></a>。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoComment">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoComment</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoComment" title="本定義的永久連結">¶</a></dt>
+<dd><p>禁止推薦時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.CantResponse">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">CantResponse</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.CantResponse" title="本定義的永久連結">¶</a></dt>
+<dd><p>已結案並標記, 不得回應時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NeedModeratorPermission">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NeedModeratorPermission</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NeedModeratorPermission" title="本定義的永久連結">¶</a></dt>
+<dd><p>需要版主權限時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.ConnectError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">ConnectError</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.ConnectError" title="本定義的永久連結">¶</a></dt>
+<dd><p>連線失敗時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoSuchPost">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchPost</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoSuchPost" title="本定義的永久連結">¶</a></dt>
+<dd><p>文章不存在時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.CanNotUseSearchPostCode">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">CanNotUseSearchPostCode</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.CanNotUseSearchPostCode" title="本定義的永久連結">¶</a></dt>
+<dd><p>無法使用搜尋文章代碼時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.UserHasPreviouslyBeenBanned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">UserHasPreviouslyBeenBanned</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.UserHasPreviouslyBeenBanned" title="本定義的永久連結">¶</a></dt>
+<dd><p>水桶使用者，但已經被水桶時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.MailboxFull">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxFull</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.MailboxFull" title="本定義的永久連結">¶</a></dt>
+<dd><p>信箱已滿時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoSearchResult">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSearchResult</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoSearchResult" title="本定義的永久連結">¶</a></dt>
+<dd><p>搜尋結果為空時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.OnlySecureConnection">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">OnlySecureConnection</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.OnlySecureConnection" title="本定義的永久連結">¶</a></dt>
+<dd><p>只能使用安全連線時會拋出的例外。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.SetConnectMailFirst">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">SetConnectMailFirst</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.SetConnectMailFirst" title="本定義的永久連結">¶</a></dt>
+<dd><p>請先設定聯絡信箱時會拋出的例外。</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PyPtt</a></h1>
+
+
+
+
+
+
+
+
+<h3>瀏覽</h3>
+<p class="caption" role="heading"><span class="caption-text">目錄</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">安裝 PyPtt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type.html">參數型態</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">例外</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">應用範例</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/PyPtt">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyPtt/">PyPI</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="type.html" title="上一章">參數型態</a></li>
+      <li>Next: <a href="examples.html" title="下一章">應用範例</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜尋</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="前往" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017 ~ 2022, CodingMan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/exceptions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -189,6 +189,7 @@ class API:
             LoginError: 登入失敗。
             WrongIDorPassword: 帳號或密碼錯誤。
             LoginTooOften: 登入太頻繁。
+            OnlySecureConnection: 只能使用安全連線。
 
         範例::
 
@@ -973,7 +974,6 @@ class API:
             UnregisteredUser: 未註冊使用者。
             NoSuchBoard: 看板不存在。
             NoSuchPost: 文章不存在。
-            DeletedPost: 文章已被刪除，所以無法刪除。
             NoPermission: 沒有權限。
 
         範例::
