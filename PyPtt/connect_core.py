@@ -143,7 +143,7 @@ class API(object):
         self._UseTooManyResources = TargetUnit(
             i18n.use_too_many_resources,
             screens.Target.use_too_many_resources,
-            exceptions_=exceptions.use_too_many_resources())
+            exceptions_=exceptions.UseTooManyResources())
 
         self.logger = Logger('connect', self.config.log_level)
         self.ptt_logger = Logger(i18n.PTT if self.config.host == data_type.HOST.PTT1 else i18n.PTT2,
@@ -370,7 +370,7 @@ class API(object):
                         # print(f'0.1 {use_too_many_res}')
                         if use_too_many_res:
                             # print(f'0.2 {use_too_many_res}')
-                            raise exceptions.use_too_many_resources()
+                            raise exceptions.UseTooManyResources()
                         # print(f'0.3 {use_too_many_res}')
                         raise exceptions.ConnectionClosed()
                     except websockets.exceptions.ConnectionClosedOK:

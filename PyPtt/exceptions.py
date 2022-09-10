@@ -2,12 +2,8 @@ from . import data_type
 from . import i18n
 
 
-class Error(Exception):
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return self.message
+class PyPttError(Exception):
+    pass
 
 
 class UnknownError(Exception):
@@ -77,14 +73,6 @@ class ParseError(Exception):
 class NoMoney(Exception):
     def __init__(self):
         self.message = i18n.no_money
-
-    def __str__(self):
-        return self.message
-
-
-class MoneyTooFew(Exception):
-    def __init__(self):
-        self.message = i18n.money_too_few
 
     def __str__(self):
         return self.message
@@ -160,7 +148,7 @@ class LoginTooOften(Exception):
         return self.message
 
 
-class use_too_many_resources(Exception):
+class UseTooManyResources(Exception):
     def __init__(self):
         self.message = i18n.use_too_many_resources
 
@@ -229,6 +217,9 @@ class NoSuchPost(Exception):
 
 
 class CanNotUseSearchPostCode(Exception):
+    """
+    此狀態下無法使用搜尋文章代碼(AID)功能
+    """
     def __init__(self):
         self.message = i18n.can_not_use_search_post_code_f
 
