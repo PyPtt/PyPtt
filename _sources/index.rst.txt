@@ -62,7 +62,7 @@ PyPtt
     type
     exceptions
     examples
-    faq
+    常見問題 <faq>
 
     Github <https://github.com/PyPtt/PyPtt>
     PyPI <https://pypi.org/project/PyPtt/>
