@@ -35,16 +35,10 @@ def get_post(api, board: str, aid: [str | None] = None, index: int = 0, search_l
                 pass
             else:
                 break
-        except exceptions.ParseError:
-            if i == max_retry - 1:
-                raise
         except exceptions.UnknownError:
             if i == max_retry - 1:
                 raise
         except exceptions.NoSuchBoard:
-            if i == max_retry - 1:
-                raise
-        except exceptions.NoMatchTargetError:
             if i == max_retry - 1:
                 raise
 

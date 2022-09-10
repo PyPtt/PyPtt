@@ -72,7 +72,7 @@ def _push(api,
             '◆ 抱歉, 禁止推薦',
             log_level=LogLevel.INFO,
             break_detect=True,
-            exceptions_=exceptions.NoPush()
+            exceptions_=exceptions.NoComment()
         ),
     ]
 

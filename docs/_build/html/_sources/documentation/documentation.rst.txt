@@ -1,8 +1,0 @@
-API
-=============
-
-
-.. automodule:: PyPtt.PTT
-   :members:
-   :inherited-members:
-

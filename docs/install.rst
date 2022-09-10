@@ -3,8 +3,7 @@
 
 Python 版本
 --------------
-| 因為我們支援 CPython_ 3.8+。
-| 因此推薦你使用 CPython_ 3.8+。
+| 推薦使用 CPython_ 3.8+。
 
 .. _CPython: https://www.python.org/
 
@@ -27,11 +26,12 @@ PyPtt 目前相依於以下套件，這些套件都會在安裝的過程中被�
 
 使用虛擬環境安裝 (推薦)
 -------------------------
-| 我們推薦各位使用虛擬環境來安裝 PyPtt，因為如此可以最大程度地避免套件衝突。
+| 我們推薦各位使用虛擬環境 venv_ 來安裝 PyPtt，因為可以盡可能地避免套件衝突。
 |
 | 你可以從 `Virtual Environments and Packages`_ 中了解，更多關於使用虛擬環境的理由以及如何建立你的虛擬環境。
 
 .. _`Virtual Environments and Packages`: https://docs.python.org/3/tutorial/venv.html#tut-venv
+.. _venv: https://docs.python.org/3/library/venv.html
 
 安裝指令
 ----------------

@@ -1,5 +1,0 @@
-PTT API
-=======
-
-.. automodule:: PyPtt.API
-   :members: __init__

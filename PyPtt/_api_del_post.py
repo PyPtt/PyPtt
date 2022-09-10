@@ -53,10 +53,8 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
 
     post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
     if post_info['status'] != data_type.PostStatus.EXISTS:
-        if post_aid is not None:
-            raise exceptions.DeletedPost(board, post_aid)
-        else:
-            raise exceptions.DeletedPost(board, post_index)
+        # delete success
+        return
 
     if check_author:
         if api._ptt_id.lower() != post_info['author'].lower():
