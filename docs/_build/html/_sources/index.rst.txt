@@ -43,8 +43,14 @@ PyPtt
 :doc:`參數型態 <type>`
     PyPtt 的所有參數型態選項。
 
-:doc:`examples`
+:doc:`例外 <exceptions>`
+    PyPtt 所有你可能遭遇到的錯誤。
+
+:doc:`使用範例 <examples>`
     一些使用 PyPtt 的範例。
+
+:doc:`常見問題 <faq>`
+    任何常見問題都可以在這找到解答。
 
 .. toctree::
     :maxdepth: 3
@@ -56,6 +62,7 @@ PyPtt
     type
     exceptions
     examples
+    faq
 
     Github <https://github.com/PyPtt/PyPtt>
     PyPI <https://pypi.org/project/PyPtt/>
