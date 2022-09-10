@@ -186,9 +186,9 @@ class API:
             None
 
         Raises:
-            PyPtt.LoginError: 登入失敗。
-            PyPtt.WrongIDorPassword: 帳號或密碼錯誤。
-            PyPtt.LoginTooOften: 登入太頻繁。
+            LoginError: 登入失敗。
+            WrongIDorPassword: 帳號或密碼錯誤。
+            LoginTooOften: 登入太頻繁。
 
         範例::
 
@@ -271,8 +271,8 @@ class API:
             Dict，文章內容。詳見 :ref:`post-field`
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchBoard: 看板不存在。
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
 
         使用 AID 範例::
 
@@ -321,8 +321,8 @@ class API:
             int，最新文章或信箱編號。
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchBoard: 看板不存在。
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
 
         取得最新看板編號::
 
@@ -373,10 +373,10 @@ class API:
             None
 
         Raises:
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchBoard: 看板不存在。
-            PyPtt.NoPermission: 沒有發佈權限。
+            UnregisteredUser: 未註冊使用者。
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
+            NoPermission: 沒有發佈權限。
 
         範例::
 
@@ -410,12 +410,12 @@ class API:
             None
 
         Raises:
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchBoard: 看板不存在。
-            PyPtt.NoSuchPost: 文章不存在。
-            PyPtt.NoPermission: 沒有推文權限。
-            PyPtt.NoFastComment: 推文間隔太短。
+            UnregisteredUser: 未註冊使用者。
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
+            NoSuchPost: 文章不存在。
+            NoPermission: 沒有推文權限。
+            NoFastComment: 推文間隔太短。
 
         範例::
 
@@ -446,8 +446,8 @@ class API:
             Dict，使用者資訊。詳見 :ref:`使用者資料欄位 <user-field>`
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchUser: 使用者不存在。
+            RequireLogin: 需要登入。
+            NoSuchUser: 使用者不存在。
 
         範例::
 
@@ -483,10 +483,10 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.NoSuchUser: 使用者不存在。
-            PyPtt.NoMoney: 餘額不足。
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            NoSuchUser: 使用者不存在。
+            NoMoney: 餘額不足。
 
         範例::
 
@@ -523,9 +523,9 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.NoSuchUser: 使用者不存在。
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            NoSuchUser: 使用者不存在。
 
         範例::
 
@@ -551,7 +551,7 @@ class API:
             List[str]，看板清單。
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
+            RequireLogin: 需要登入。
 
         範例::
 
@@ -586,11 +586,11 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchBoard: 看板不存在。
-            PyPtt.NoSuchPost: 文章不存在。
-            PyPtt.NoPermission: 沒有回覆權限。
-            PyPtt.CantResponse: 已結案並標記, 不得回應。
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
+            NoSuchPost: 文章不存在。
+            NoPermission: 沒有回覆權限。
+            CantResponse: 已結案並標記, 不得回應。
 
         範例::
 
@@ -621,10 +621,10 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.NoSuchBoard: 看板不存在。
-            PyPtt.NeedModeratorPermission: 需要看板管理員權限。
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            NoSuchBoard: 看板不存在。
+            NeedModeratorPermission: 需要看板管理員權限。
 
         範例::
 
@@ -659,11 +659,11 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.NoSuchBoard: 看板不存在。
-            PyPtt.NoSuchPost: 文章不存在。
-            PyPtt.NeedModeratorPermission: 需要看板管理員權限。
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            NoSuchBoard: 看板不存在。
+            NoSuchPost: 文章不存在。
+            NeedModeratorPermission: 需要看板管理員權限。
 
         範例::
 
@@ -688,7 +688,7 @@ class API:
             List[dict]，收藏看板清單，詳見 :ref:`favorite-board-field`。
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
+            RequireLogin: 需要登入。
 
         範例::
 
@@ -720,11 +720,11 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.NoSuchBoard: 看板不存在。
-            PyPtt.NoSuchUser: 使用者不存在。
-            PyPtt.NeedModeratorPermission: 需要看板管理員權限。
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            NoSuchBoard: 看板不存在。
+            NoSuchUser: 使用者不存在。
+            NeedModeratorPermission: 需要看板管理員權限。
 
         範例::
 
@@ -755,8 +755,8 @@ class API:
             List[str]，搜尋結果。
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.UnregisteredUser: 未註冊使用者。
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
 
         範例::
 
@@ -785,9 +785,9 @@ class API:
             Dict，看板資訊，詳見 :ref:`board-field`。
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchBoard: 看板不存在。
-            PyPtt.NoPermission: 沒有權限。
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
+            NoPermission: 沒有權限。
 
         範例::
 
@@ -819,9 +819,9 @@ class API:
             Dict，信件資訊，詳見 :ref:`mail-field`。
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchMail: 信件不存在。
-            PyPtt.NoPermission: 沒有權限。
+            RequireLogin: 需要登入。
+            NoSuchMail: 信件不存在。
+            NoPermission: 沒有權限。
 
         範例::
 
@@ -851,9 +851,9 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.MailboxFull: 信箱已滿。
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            MailboxFull: 信箱已滿。
 
         範例::
 
@@ -883,9 +883,9 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.SetConnectMailFirst: 需要先設定聯絡信箱。
-            PyPtt.WrongPassword: 密碼錯誤。
+            RequireLogin: 需要登入。
+            SetConnectMailFirst: 需要先設定聯絡信箱。
+            WrongPassword: 密碼錯誤。
 
         範例::
 
@@ -913,7 +913,7 @@ class API:
             Tuple[str, str]，看板名稱與文章編號。
 
         Raises:
-            PyPtt.NoSuchURL: 網址不存在。
+            NoSuchURL: 網址不存在。
 
         範例::
 
@@ -937,8 +937,8 @@ class API:
             List[post]，置底文章清單，詳見 :ref:`post-field`。
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.NoSuchBoard: 看板不存在。
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
 
         範例::
 
@@ -969,12 +969,12 @@ class API:
             None
 
         Raises:
-            PyPtt.RequireLogin: 需要登入。
-            PyPtt.UnregisteredUser: 未註冊使用者。
-            PyPtt.NoSuchBoard: 看板不存在。
-            PyPtt.NoSuchPost: 文章不存在。
-            PyPtt.DeletedPost: 文章已被刪除，所以無法刪除。
-            PyPtt.NoPermission: 沒有權限。
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            NoSuchBoard: 看板不存在。
+            NoSuchPost: 文章不存在。
+            DeletedPost: 文章已被刪除，所以無法刪除。
+            NoPermission: 沒有權限。
 
         範例::
 
