@@ -49,9 +49,15 @@
 <div class="line">Q: 我使用 jupyter，遭遇 the event loop is already running 錯誤</div>
 <div class="line">A: 因為 jupyter 內部也使用了 asyncio 作為協程管理工具，會跟 PyPtt 內部的 asyncio 衝突，所以如果想要在 jypyter 內使用，請在你的程式碼中加入以下程式碼</div>
 </div>
+<ul class="simple">
+<li><p>安裝 nest_asyncio</p></li>
+</ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>! pip install nest_asyncio
 </pre></div>
 </div>
+<ul class="simple">
+<li><p>在程式碼中引用 nest_asyncio</p></li>
+</ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nest_asyncio</span>
 <span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
 </pre></div>
@@ -60,6 +66,9 @@
 <div class="line">Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤</div>
 <div class="line">A: 請參考以下指令，安裝 Python 的 SSL 憑證</div>
 </div>
+<ul class="simple">
+<li><p>以 Python 3.10 為例</p></li>
+</ul>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sh /Applications/Python<span class="se">\ </span><span class="m">3</span>.10/Install<span class="se">\ </span>Certificates.command
 </pre></div>
 </div>
@@ -89,7 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="type.html">參數型態</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">應用範例</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">常見問題</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/PyPtt">Github</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyPtt/">PyPI</a></li>
 </ul>
