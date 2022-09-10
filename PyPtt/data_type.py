@@ -3,17 +3,6 @@ from enum import auto
 from AutoStrEnum import AutoStrEnum
 
 
-def parse_para(value_type, parameter):
-    if parameter is None:
-        if value_type is list:
-            return []
-        return None
-    result = value_type(parameter)
-    if isinstance(result, str):
-        result = result.rstrip()
-    return result
-
-
 class Language(AutoStrEnum):
     MANDARIN = auto()
     ENGLISH = auto()
@@ -120,12 +109,12 @@ class PostField(AutoStrEnum):
     is_unconfirmed = auto()
 
 
-class WaterballInfo:
-    def __init__(self, waterball_type, target, content, date):
-        self.type: int = parse_para(int, waterball_type)
-        self.target: str = parse_para(str, target)
-        self.content: str = parse_para(str, content)
-        self.date: str = parse_para(str, date)
+# class WaterballInfo:
+#     def __init__(self, waterball_type, target, content, date):
+#         self.type: int = parse_para(int, waterball_type)
+#         self.target: str = parse_para(str, target)
+#         self.content: str = parse_para(str, content)
+#         self.date: str = parse_para(str, date)
 
 
 class Cursor:
