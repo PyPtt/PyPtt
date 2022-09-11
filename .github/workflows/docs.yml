@@ -26,7 +26,6 @@ jobs:
       uses: sphinx-notes/pages@v2
       with:
         requirements_path: docs/requirements.txt
-      steps:
     - name: move CNAME
       run: cp docs/CNAME docs/_build/html/
     - name: Push changes
