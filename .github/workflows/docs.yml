@@ -31,3 +31,5 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages
+      steps:
+      - run: mv docs/CNAME docs/_build/html/CNAME
