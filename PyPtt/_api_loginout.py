@@ -133,8 +133,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         connect_core.TargetUnit(
             i18n.login_too_often,
             '登入太頻繁',
-            break_detect=True,
-            exceptions_=exceptions.LoginTooOften()),
+            response=' '),
         connect_core.TargetUnit(
             i18n.system_busy_try_later,
             '系統過載',
