@@ -2,11 +2,11 @@ from . import data_type
 from . import i18n
 
 
-class PyPttError(Exception):
+class Error(Exception):
     pass
 
 
-class UnknownError(PyPttError):
+class UnknownError(Error):
     def __init__(self, message):
         self.message = message
 
@@ -14,7 +14,7 @@ class UnknownError(PyPttError):
         return self.message
 
 
-class RequireLogin(PyPttError):
+class RequireLogin(Error):
     def __init__(self, message):
         self.message = message
 
@@ -22,7 +22,7 @@ class RequireLogin(PyPttError):
         return self.message
 
 
-class NoPermission(PyPttError):
+class NoPermission(Error):
     def __init__(self, message):
         self.message = message
 
@@ -30,7 +30,7 @@ class NoPermission(PyPttError):
         return self.message
 
 
-class LoginError(PyPttError):
+class LoginError(Error):
     def __init__(self):
         self.message = i18n.login_fail
 
@@ -38,7 +38,7 @@ class LoginError(PyPttError):
         return self.message
 
 
-class NoFastComment(PyPttError):
+class NoFastComment(Error):
     def __init__(self):
         self.message = i18n.no_fast_comment
 
@@ -46,7 +46,7 @@ class NoFastComment(PyPttError):
         return self.message
 
 
-class NoSuchUser(PyPttError):
+class NoSuchUser(Error):
     def __init__(self, user):
         self.message = i18n.no_such_user + ': ' + user
 
@@ -54,7 +54,7 @@ class NoSuchUser(PyPttError):
         return self.message
 
 
-# class UserOffline(PyPttError):
+# class UserOffline(Error):
 #     def __init__(self, user):
 #         self.message = i18n.user_offline + ': ' + user
 #
@@ -62,7 +62,7 @@ class NoSuchUser(PyPttError):
 #         return self.message
 
 
-# class ParseError(PyPttError):
+# class ParseError(Error):
 #     def __init__(self, screen):
 #         self.message = screen
 #
@@ -70,7 +70,7 @@ class NoSuchUser(PyPttError):
 #         return self.message
 
 
-class NoMoney(PyPttError):
+class NoMoney(Error):
     def __init__(self):
         self.message = i18n.no_money
 
@@ -78,7 +78,7 @@ class NoMoney(PyPttError):
         return self.message
 
 
-class NoSuchBoard(PyPttError):
+class NoSuchBoard(Error):
     def __init__(self, config, board):
         if config.host == data_type.HOST.PTT1:
             self.message = [
@@ -100,7 +100,7 @@ class NoSuchBoard(PyPttError):
         return self.message
 
 
-class ConnectionClosed(PyPttError):
+class ConnectionClosed(Error):
     def __init__(self):
         self.message = i18n.connection_closed
 
@@ -108,7 +108,7 @@ class ConnectionClosed(PyPttError):
         return self.message
 
 
-class UnregisteredUser(PyPttError):
+class UnregisteredUser(Error):
     def __init__(self, api_name):
         self.message = i18n.unregistered_user_cant_use_this_api + ': ' + api_name
 
@@ -116,7 +116,7 @@ class UnregisteredUser(PyPttError):
         return self.message
 
 
-class MultiThreadOperated(PyPttError):
+class MultiThreadOperated(Error):
     def __init__(self):
         self.message = i18n.multi_thread_operate
 
@@ -124,7 +124,7 @@ class MultiThreadOperated(PyPttError):
         return self.message
 
 
-class WrongIDorPassword(PyPttError):
+class WrongIDorPassword(Error):
     def __init__(self):
         self.message = i18n.wrong_id_pw
 
@@ -132,7 +132,7 @@ class WrongIDorPassword(PyPttError):
         return self.message
 
 
-class WrongPassword(PyPttError):
+class WrongPassword(Error):
     def __init__(self):
         self.message = i18n.error_pw
 
@@ -140,7 +140,7 @@ class WrongPassword(PyPttError):
         return self.message
 
 
-class LoginTooOften(PyPttError):
+class LoginTooOften(Error):
     def __init__(self):
         self.message = i18n.login_too_often
 
@@ -148,7 +148,7 @@ class LoginTooOften(PyPttError):
         return self.message
 
 
-class UseTooManyResources(PyPttError):
+class UseTooManyResources(Error):
     def __init__(self):
         self.message = i18n.use_too_many_resources
 
@@ -156,7 +156,7 @@ class UseTooManyResources(PyPttError):
         return self.message
 
 
-class HostNotSupport(PyPttError):
+class HostNotSupport(Error):
     def __init__(self, api):
         self.message = f'{i18n.ptt2_not_support}: {api}'
 
@@ -164,7 +164,7 @@ class HostNotSupport(PyPttError):
         return self.message
 
 
-class NoComment(PyPttError):
+class NoComment(Error):
     def __init__(self):
         self.message = i18n.no_comment
 
@@ -172,7 +172,7 @@ class NoComment(PyPttError):
         return self.message
 
 
-class CantResponse(PyPttError):
+class CantResponse(Error):
     def __init__(self):
         self.message = i18n.no_response
 
@@ -180,7 +180,7 @@ class CantResponse(PyPttError):
         return self.message
 
 
-class NeedModeratorPermission(PyPttError):
+class NeedModeratorPermission(Error):
     def __init__(self, board):
         self.message = f'{i18n.need_moderator_permission}: {board}'
 
@@ -188,7 +188,7 @@ class NeedModeratorPermission(PyPttError):
         return self.message
 
 
-class ConnectError(PyPttError):
+class ConnectError(Error):
     def __init__(self, config):
         self.message = i18n.connect_fail
 
@@ -196,7 +196,7 @@ class ConnectError(PyPttError):
         return self.message
 
 
-class NoSuchPost(PyPttError):
+class NoSuchPost(Error):
     def __init__(self, board, aid):
         self.message = i18n.replace(
             i18n.no_such_post,
@@ -207,7 +207,7 @@ class NoSuchPost(PyPttError):
         return self.message
 
 
-class CanNotUseSearchPostCode(PyPttError):
+class CanNotUseSearchPostCode(Error):
     """
     此狀態下無法使用搜尋文章代碼(AID)功能
     """
@@ -219,7 +219,7 @@ class CanNotUseSearchPostCode(PyPttError):
         return self.message
 
 
-class UserHasPreviouslyBeenBanned(PyPttError):
+class UserHasPreviouslyBeenBanned(Error):
     def __init__(self):
         self.message = i18n.user_has_previously_been_banned
 
@@ -227,7 +227,7 @@ class UserHasPreviouslyBeenBanned(PyPttError):
         return self.message
 
 
-class MailboxFull(PyPttError):
+class MailboxFull(Error):
     def __init__(self):
         self.message = i18n.mail_box_full
 
@@ -235,7 +235,7 @@ class MailboxFull(PyPttError):
         return self.message
 
 
-class NoSearchResult(PyPttError):
+class NoSearchResult(Error):
     def __init__(self):
         self.message = i18n.no_search_result
 
@@ -245,7 +245,7 @@ class NoSearchResult(PyPttError):
 
 # 此帳號已設定為只能使用安全連線
 
-class OnlySecureConnection(PyPttError):
+class OnlySecureConnection(Error):
     def __init__(self):
         self.message = i18n.only_secure_connection
 
@@ -253,7 +253,7 @@ class OnlySecureConnection(PyPttError):
         return self.message
 
 
-class SetConnectMailFirst(PyPttError):
+class SetConnectMailFirst(Error):
     def __init__(self):
         self.message = i18n.set_connect_mail_first
 
