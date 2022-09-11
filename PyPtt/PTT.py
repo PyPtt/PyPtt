@@ -188,7 +188,6 @@ class API:
         Raises:
             LoginError: 登入失敗。
             WrongIDorPassword: 帳號或密碼錯誤。
-            LoginTooOften: 登入太頻繁。
             OnlySecureConnection: 只能使用安全連線。
 
         範例::
