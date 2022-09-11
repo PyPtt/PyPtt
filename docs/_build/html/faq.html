@@ -21,7 +21,7 @@
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜尋" href="search.html" />
-    <link rel="prev" title="應用範例" href="examples.html" />
+    <link rel="prev" title="使用範例" href="examples.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -41,37 +41,57 @@
   <section id="faq">
 <h1>FAQ<a class="headerlink" href="#faq" title="本標頭的永久連結">¶</a></h1>
 <p>這裡搜集了一些常見問題的解答，如果你有任何問題，請先看看這裡。</p>
+<section id="q">
+<h2>Q: 我該如何使用這個腳本？<a class="headerlink" href="#q" title="本標頭的永久連結">¶</a></h2>
 <div class="line-block">
-<div class="line">Q: 我該如何使用這個腳本？</div>
-<div class="line">A: 請參考 <a class="reference internal" href="install.html"><span class="doc">安裝 PyPtt</span></a>、<a class="reference internal" href="api/index.html"><span class="doc">APIs</span></a> 與 <a class="reference internal" href="examples.html"><span class="doc">應用範例</span></a>。</div>
+<div class="line">A: 可以先參考 <a class="reference internal" href="install.html"><span class="doc">安裝 PyPtt</span></a>、<a class="reference internal" href="api/index.html"><span class="doc">APIs</span></a> 與 <a class="reference internal" href="examples.html"><span class="doc">使用範例</span></a>。</div>
 </div>
+</section>
+<section id="id1">
+<h2>Q: 我該如何提出問題？<a class="headerlink" href="#id1" title="本標頭的永久連結">¶</a></h2>
+<ol class="arabic simple">
+<li><p>請先確認你使用的版本是否為 <a class="reference external" href="https://pypi.org/project/PyPtt/"><img alt="version_pic" src="https://img.shields.io/pypi/v/PyPtt.svg" /></a>，如果不是，請更新到最新版本。</p></li>
+<li><p>如果你使用的是最新版本，請確認你的問題是否已經在這裡被回答過了。如果你的問題還沒有被回答過，請依照以下程式碼將 <a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a> 設定為 <cite>TRACE</cite>，並附上 <strong>可以重現問題的程式碼</strong>。</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PyPtt</span>
+
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">LogLevel</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">TRACE</span><span class="p">)</span>
+
+<span class="c1"># 你的程式碼</span>
+</pre></div>
+</div>
+</section>
+<section id="q-jupyter-the-event-loop-is-already-running">
+<h2>Q: 在 jupyter 遭遇 <cite>the event loop is already running</cite> 錯誤<a class="headerlink" href="#q-jupyter-the-event-loop-is-already-running" title="本標頭的永久連結">¶</a></h2>
 <div class="line-block">
-<div class="line">Q: 我使用 jupyter，遭遇 the event loop is already running 錯誤</div>
 <div class="line">A: 因為 jupyter 內部也使用了 asyncio 作為協程管理工具，會跟 PyPtt 內部的 asyncio 衝突，所以如果想要在 jypyter 內使用，請在你的程式碼中加入以下程式碼</div>
 </div>
-<ul class="simple">
-<li><p>安裝 nest_asyncio</p></li>
-</ul>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">安裝 nest_asyncio</span><a class="headerlink" href="#id2" title="本原始碼的永久連結">¶</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>! pip install nest_asyncio
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>在程式碼中引用 nest_asyncio</p></li>
-</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">在程式碼中引用 nest_asyncio</span><a class="headerlink" href="#id3" title="本原始碼的永久連結">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nest_asyncio</span>
 <span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+</section>
+<section id="q-mac-websocket-ssl">
+<h2>Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤<a class="headerlink" href="#q-mac-websocket-ssl" title="本標頭的永久連結">¶</a></h2>
 <div class="line-block">
-<div class="line">Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤</div>
 <div class="line">A: 請參考以下指令，安裝 Python 的 SSL 憑證</div>
 </div>
-<ul class="simple">
-<li><p>以 Python 3.10 為例</p></li>
-</ul>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">以 Python 3.10 為例</span><a class="headerlink" href="#id4" title="本原始碼的永久連結">¶</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sh /Applications/Python<span class="se">\ </span><span class="m">3</span>.10/Install<span class="se">\ </span>Certificates.command
 </pre></div>
 </div>
+</div>
+</section>
 </section>
 
 
@@ -97,8 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">APIs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type.html">參數型態</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">應用範例</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">常見問題</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">使用範例</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">常見問題</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#q">Q: 我該如何使用這個腳本？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Q: 我該如何提出問題？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#q-jupyter-the-event-loop-is-already-running">Q: 在 jupyter 遭遇 <cite>the event loop is already running</cite> 錯誤</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#q-mac-websocket-ssl">Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/PyPtt">Github</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyPtt/">PyPI</a></li>
 </ul>
@@ -107,7 +133,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="examples.html" title="上一章">應用範例</a></li>
+      <li>Previous: <a href="examples.html" title="上一章">使用範例</a></li>
   </ul></li>
 </ul>
 </div>
