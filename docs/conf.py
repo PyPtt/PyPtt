@@ -37,6 +37,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 language = 'zh_TW'
 
+html_extra_path = ['CNAME']
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
