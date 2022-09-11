@@ -60,7 +60,7 @@ github: https://github.com/PttCodingMan/PyPtt
 
     comment_check = []
     for index in post_list:
-        for i in range(3):
+        for i in range(5):
             comment_check.append(f'={i}=')
             ptt_bot.comment(board='Test', comment_type=PyPtt.CommentType.ARROW, content=f'={i}=', index=index)
     comment_check = list(set(comment_check))
@@ -95,18 +95,15 @@ github: https://github.com/PttCodingMan/PyPtt
             print(f'Post {index} content not match')
             break
 
-        cur_comment_check = [False] * len(comment_check)
+        cur_comment_check = set()
         for comment in post[PostField.comments]:
 
-            util.logger.info('comment!!!!', comment[PyPtt.CommentField.content])
             if comment[PyPtt.CommentField.content] in comment_check:
-                util.logger.info('cur_comment_check!!!!', cur_comment_check)
-                cur_comment_check[comment_check.index(comment[PyPtt.CommentField.content])] = True
-                util.logger.info('cur_comment_check!!!!', cur_comment_check)
+                cur_comment_check.add(comment[PyPtt.CommentField.content])
             else:
                 util.logger.info('comment', comment[PyPtt.CommentField.content])
 
-        if cur_comment_check.count(True) != len(comment_check):
+        if len(cur_comment_check) != len(comment_check):
             util.logger.stage('fail')
             print(f'Post {index} comment not match')
             break
@@ -158,8 +155,8 @@ def func():
 
         current_id = config.PTT1_ID if ptt_bot.host == PyPtt.HOST.PTT1 else config.PTT2_ID
 
-        # test(ptt_bot)
-        del_all_post(ptt_bot)
+        test(ptt_bot)
+        # del_all_post(ptt_bot)
 
         ptt_bot.logout()
 
