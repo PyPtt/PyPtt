@@ -26,10 +26,10 @@ jobs:
       uses: sphinx-notes/pages@v2
       with:
         requirements_path: docs/requirements.txt
+      steps:
+      - run: mv docs/CNAME docs/_build/html/CNAME
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages
-      steps:
-      - run: mv docs/CNAME docs/_build/html/CNAME
