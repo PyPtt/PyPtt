@@ -6,7 +6,7 @@
 
 HOST
 -----------
-* 連線的 PTT 伺服器。預設為 **PTT1**。
+* 連線的 PTT 伺服器。
 
 .. py:attribute:: PyPtt.HOST.PTT1
 
@@ -20,7 +20,7 @@ HOST
 
 Language
 -----------
-* 顯示訊息的語言。預設為 **MANDARIN**。
+* 顯示訊息的語言。
 
 .. py:attribute:: PyPtt.Language.MANDARIN
 
@@ -34,7 +34,7 @@ Language
 
 ConnectMode
 -----------
-* 連線的模式。預設為 **WEBSOCKETS**。
+* 連線的模式。
 
 .. py:attribute:: PyPtt.ConnectMode.WEBSOCKETS
 
