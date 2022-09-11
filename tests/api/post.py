@@ -5,6 +5,8 @@ import config
 from PyPtt import PostField
 from tests import util
 
+current_id = None
+
 
 def test(ptt_bot: PyPtt.API):
     content = '''
@@ -28,7 +30,6 @@ github: https://github.com/PttCodingMan/PyPtt
     ]
 
     check_range = 3
-    current_id = config.PTT1_ID if ptt_bot.host == PyPtt.HOST.PTT1 else config.PTT2_ID
 
     for _ in range(check_range):
         ptt_bot.post(board='Test', title_index=1, title='PyPtt 程式貼文測試', content=content, sign_file=0)
@@ -37,7 +38,9 @@ github: https://github.com/PttCodingMan/PyPtt
 
     newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Test')
 
-    check_count = 0
+    global current_id
+    # find post what we post
+    post_list = []
     for i in range(10):
         post = ptt_bot.get_post(board='Test', index=newest_index - i)
 
@@ -51,26 +54,99 @@ github: https://github.com/PttCodingMan/PyPtt
             print(f'Post {newest_index - i} author not match', post_author)
             continue
 
-        util.logger.info('test ', check_count)
+        post_list.append(newest_index - i)
+        if len(post_list) == check_range:
+            break
+
+    comment_check = []
+    for index in post_list:
+        for i in range(3):
+            comment_check.append(f'={i}=')
+            ptt_bot.comment(board='Test', comment_type=PyPtt.CommentType.ARROW, content=f'={i}=', index=index)
+    comment_check = list(set(comment_check))
+
+    time.sleep(1)
+
+    for i, index in enumerate(post_list):
+
+        util.logger.info('test', i)
+
+        post = ptt_bot.get_post(board='Test', index=index)
+
+        if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
+            util.logger.stage('fail')
+            print(f'Post {index} not exists')
+            break
+
+        post_author = post[PostField.author]
+        post_author = post_author.split(' ')[0]
+        if post_author != current_id:
+            util.logger.stage('fail')
+            print(f'Post {index} author not match', post_author)
+            break
 
         check = True
         for c in check_:
             if c not in post[PostField.content]:
                 check = False
                 break
-        util.logger.stage('pass' if check else 'fail')
-
-        ptt_bot.del_post(board='Test', index=newest_index - i)
-
-        check_count += 1
-        if check_count == check_range:
+        if not check:
+            util.logger.stage('fail')
+            print(f'Post {index} content not match')
             break
+
+        cur_comment_check = [False] * len(comment_check)
+        for comment in post[PostField.comments]:
+
+            util.logger.info('comment!!!!', comment[PyPtt.CommentField.content])
+            if comment[PyPtt.CommentField.content] in comment_check:
+                util.logger.info('cur_comment_check!!!!', cur_comment_check)
+                cur_comment_check[comment_check.index(comment[PyPtt.CommentField.content])] = True
+                util.logger.info('cur_comment_check!!!!', cur_comment_check)
+            else:
+                util.logger.info('comment', comment[PyPtt.CommentField.content])
+
+        if cur_comment_check.count(True) != len(comment_check):
+            util.logger.stage('fail')
+            print(f'Post {index} comment not match')
+            break
+
+        util.logger.stage('pass')
+
+    for index in post_list:
+        ptt_bot.del_post(board='Test', index=index)
+
+
+def del_all_post(ptt_bot: PyPtt.API):
+    global current_id
+    newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Test')
+
+    post_list = []
+    for i in range(20):
+        post = ptt_bot.get_post(board='Test', index=newest_index - i)
+
+        if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
+            print(f'Post {newest_index - i} not exists')
+            continue
+
+        post_author = post[PostField.author]
+        post_author = post_author.split(' ')[0]
+        if post_author != current_id:
+            print(f'Post {newest_index - i} author not match', post_author)
+            continue
+
+        post_list.append(newest_index - i)
+
+
+    for index in post_list:
+        ptt_bot.del_post(board='Test', index=index)
 
 
 def func():
+    global current_id
     host_list = [
         PyPtt.HOST.PTT1,
-        PyPtt.HOST.PTT2
+        # PyPtt.HOST.PTT2
     ]
 
     for host in host_list:
@@ -80,7 +156,10 @@ def func():
         )
         util.login(ptt_bot)
 
-        test(ptt_bot)
+        current_id = config.PTT1_ID if ptt_bot.host == PyPtt.HOST.PTT1 else config.PTT2_ID
+
+        # test(ptt_bot)
+        del_all_post(ptt_bot)
 
         ptt_bot.logout()
 

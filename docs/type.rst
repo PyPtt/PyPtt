@@ -449,7 +449,7 @@ PostField
 
     文章 IP
 
-.. py:attribute:: PyPtt.PostField.comment_list
+.. py:attribute:: PyPtt.PostField.comments
 
     文章推文清單，詳見 :ref:`comment-field`
 
