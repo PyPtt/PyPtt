@@ -94,11 +94,11 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     logger.info(i18n.update_remote_version)
 
     r = None
-    for i in range(5):
+    for i in range(3):
         try:
             r = requests.get(
                 'https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/PyPtt/__init__.py',
-                timeout=2)
+                timeout=3)
             break
         except requests.exceptions.ReadTimeout:
             # print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')

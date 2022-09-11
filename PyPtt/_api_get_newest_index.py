@@ -61,12 +61,15 @@ def _get_newest_index(api) -> int:
 
 
 def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = None,
-                     search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: [str | None] = None,
+                     search_type: data_type.SearchType = None, search_condition: [str | None] = None,
                      search_list: [list | None] = None) -> int:
     _api_util.one_thread(api)
 
     if not api._is_login:
         raise exceptions.RequireLogin(i18n.require_login)
+
+    if search_type is None:
+        search_type = data_type.SearchType.NOPE
 
     check_value.check_type(index_type, data_type.NewIndex, 'index_type')
     check_value.check_type(search_type, data_type.SearchType, 'search_type')

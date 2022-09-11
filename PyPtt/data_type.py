@@ -97,7 +97,7 @@ class PostField(AutoStrEnum):
     money = auto()
     url = auto()
     ip = auto()
-    comment_list = auto()
+    comments = auto()
     post_status = auto()
     list_date = auto()
     has_control_code = auto()

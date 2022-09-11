@@ -16,12 +16,10 @@ from . import screens
 
 def _push(api,
           board: str,
-          push_type: int,
+          push_type: data_type.CommentType,
           push_content: str,
           post_aid: str,
           post_index: int) -> None:
-    logger = Logger('push')
-
     cmd_list = []
 
     if post_aid is not None:
@@ -92,15 +90,15 @@ def _push(api,
         push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
 
-        logger.debug('comment option line', push_option_line)
+        api.logger.debug('comment option line', push_option_line)
 
         enable_push = '值得推薦' in push_option_line
         enable_boo = '給它噓聲' in push_option_line
         enable_arrow = '只加→註解' in push_option_line
 
-        logger.debug('comment', enable_push)
-        logger.debug('Boo', enable_boo)
-        logger.debug('Arrow', enable_arrow)
+        api.logger.debug('comment', enable_push)
+        api.logger.debug('Boo', enable_boo)
+        api.logger.debug('Arrow', enable_arrow)
 
         if push_type == data_type.CommentType.PUSH and not enable_push:
             push_type = data_type.CommentType.ARROW
@@ -175,22 +173,22 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
 
     board_info = api._board_info_list[board.lower()]
 
-    if board_info.is_push_record_ip:
-        api.logger.info(i18n.record_ip)
-        if board_info.is_push_aligned:
-            api.logger.info(i18n.push_aligned)
+    if board_info[data_type.BoardField.is_comment_record_ip]:
+        api.logger.debug(i18n.record_ip)
+        if board_info[data_type.BoardField.is_comment_aligned]:
+            api.logger.debug(i18n.push_aligned)
             max_push_length = 32
         else:
-            api.logger.info(i18n.not_push_aligned)
+            api.logger.debug(i18n.not_push_aligned)
             max_push_length = 43 - len(api._ptt_id)
     else:
-        api.logger.info(i18n.not_record_ip)
+        api.logger.debug(i18n.not_record_ip)
         #     推文對齊
-        if board_info.is_push_aligned:
-            api.logger.info(i18n.push_aligned)
+        if board_info[data_type.BoardField.is_comment_aligned]:
+            api.logger.debug(i18n.push_aligned)
             max_push_length = 46
         else:
-            api.logger.info(i18n.not_push_aligned)
+            api.logger.debug(i18n.not_push_aligned)
             max_push_length = 58 - len(api._ptt_id)
 
     push_content = push_content.strip()
@@ -221,14 +219,11 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
 
         for _ in range(2):
             try:
-                _push(
-                    board,
-                    push_type,
-                    comment,
-                    post_aid=post_aid,
-                    post_index=post_index)
+                _push(api, board, push_type, comment, post_aid=post_aid, post_index=post_index)
                 break
             except exceptions.NoFastComment:
                 # screens.show(api.config, api.connect_core.getScreenQueue())
                 api.logger.info(i18n.wait_for_no_fast_comment)
                 time.sleep(5.2)
+
+        api.logger.stage(i18n.success)

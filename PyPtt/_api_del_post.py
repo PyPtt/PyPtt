@@ -52,12 +52,12 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
             break
 
     post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
-    if post_info['status'] != data_type.PostStatus.EXISTS:
+    if post_info[data_type.PostField.post_status] != data_type.PostStatus.EXISTS:
         # delete success
         return
 
     if check_author:
-        if api._ptt_id.lower() != post_info['author'].lower():
+        if api._ptt_id.lower() != post_info[data_type.PostField.author].lower():
             raise exceptions.NoPermission(i18n.no_permission)
 
     _api_util.goto_board(api, board)
@@ -109,7 +109,9 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
             raise exceptions.NoPermission(i18n.no_permission)
 
     if index == -1:
-        if post_aid is not None:
-            raise exceptions.NoSuchPost(board, post_aid)
-        else:
-            raise exceptions.NoSuchPost(board, post_index)
+        # if post_aid is not None:
+        #     raise exceptions.NoSuchPost(board, post_aid)
+        # else:
+        #     raise exceptions.NoSuchPost(board, post_index)
+        # delete success
+        return
