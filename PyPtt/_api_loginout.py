@@ -92,7 +92,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     ptt_id = ptt_id.strip()
     ptt_pw = ptt_pw.strip()
 
-    api._ptt_id = ptt_id
+    api.ptt_id = ptt_id
     api._ptt_pw = ptt_pw
 
     api.connect_core.connect()

@@ -12,8 +12,6 @@ from . import i18n
 
 def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_file, post_aid: str,
                post_index: int) -> None:
-    logger = Logger('reply_post')
-
     _api_util.one_thread(api)
 
     if not api._is_login:
@@ -36,7 +34,9 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
             post_index,
             max_value=newest_index)
 
-    sign_file_list = [str(x) for x in range(0, 10)].append('x')
+    sign_file_list = ['x']
+    sign_file_list.extend([str(x) for x in range(0, 10)])
+
     if str(sign_file).lower() not in sign_file_list:
         raise ValueError(f'wrong parameter sign_file: {sign_file}')
 
@@ -57,6 +57,7 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
     cmd_list.append('r')
 
     if reply_to == data_type.ReplyTo.BOARD:
+        api.logger.info(i18n.reply_board)
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_board,
             '▲ 回應至',
@@ -64,6 +65,7 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
             response='F' + command.enter
         )
     elif reply_to == data_type.ReplyTo.MAIL:
+        api.logger.info(i18n.reply_mail)
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_mail,
             '▲ 回應至',
@@ -71,6 +73,7 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
             response='M' + command.enter
         )
     elif reply_to == data_type.ReplyTo.BOARD_MAIL:
+        api.logger.info(i18n.reply_board_mail)
         reply_target_unit = connect_core.TargetUnit(
             i18n.reply_board_mail,
             '▲ 回應至',
@@ -127,7 +130,7 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         ),
         reply_target_unit,
         connect_core.TargetUnit(
-            i18n.api_save_draft,
+            '',
             '已順利寄出，是否自存底稿',
             log_level=LogLevel.DEBUG,
             response='Y' + command.enter
@@ -139,4 +142,4 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         target_list,
         screen_timeout=api.config.screen_long_timeout)
 
-    logger.info(i18n.respond_success)
+    api.logger.stage(i18n.success)

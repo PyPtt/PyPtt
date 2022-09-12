@@ -98,7 +98,7 @@ class API:
         self.is_registered_user: bool = False
         self.process_picks: int = 0
 
-        self._ptt_id: str = ''
+        self.ptt_id: str = ''
         self._ptt_pw: str = ''
         self._is_login: bool = False
 
@@ -602,7 +602,7 @@ class API:
             ptt_bot = PyPtt.API()
             try:
                 # .. login ..
-                ptt_bot.reply_post(reply_to=PyPtt.reply_to.BOARD, board='Test', content='PyPtt 程式回覆測試', index=123)
+                ptt_bot.reply_post(reply_to=PyPtt.ReplyTo.BOARD, board='Test', content='PyPtt 程式回覆測試', index=123)
                 # .. do something ..
             finally:
                 ptt_bot.logout()
