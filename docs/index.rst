@@ -1,7 +1,7 @@
 PyPtt
 ====================
 
-.. image:: https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_cover_photo_2.png
+.. image:: _static/logo_cover.png
     :alt: PyPtt: PTT bot library for Python
     :align: center
 
