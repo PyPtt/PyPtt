@@ -21,3 +21,4 @@ PyPtt.egg-info/
 /test_result.txt
 *.json
 tests/ptt.sh
+docs/_build/
