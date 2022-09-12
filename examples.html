@@ -128,11 +128,11 @@
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
 </div>
-<img alt="https://i.imgur.com/TOskgf0.png" src="https://i.imgur.com/TOskgf0.png" />
+<img alt="_images/color_demo.png" src="_images/color_demo.png" />
 </section>
-<section id="id4">
-<h2>如何判斷文章資料是否可以使用<a class="headerlink" href="#id4" title="本標頭的永久連結">¶</a></h2>
-<p>當 get_post 回傳文章資料回來時，這時需要一些判斷來決定是否要使用這些資料</p>
+<section id="check-post-status">
+<span id="id4"></span><h2>如何判斷文章資料是否可以使用<a class="headerlink" href="#check-post-status" title="本標頭的永久連結">¶</a></h2>
+<p>當 <a class="reference internal" href="api/get_post.html"><span class="doc">get_post</span></a> 回傳文章資料回來時，這時需要一些判斷來決定是否要使用這些資料</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
 
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
@@ -155,7 +155,7 @@
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;未通過格式檢查&#39;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;文章可用！&#39;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;文章資料可以使用&#39;</span><span class="p">)</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
@@ -189,7 +189,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">使用範例</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id2">保持登入</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">幫你的文章上色</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">如何判斷文章資料是否可以使用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-post-status">如何判斷文章資料是否可以使用</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常見問題</a></li>
