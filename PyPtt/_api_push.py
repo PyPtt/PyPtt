@@ -182,7 +182,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
             max_push_length = 32
         else:
             api.logger.debug(i18n.not_push_aligned)
-            max_push_length = 43 - len(api._ptt_id)
+            max_push_length = 43 - len(api.ptt_id)
     else:
         api.logger.debug(i18n.not_record_ip)
         #     推文對齊
@@ -191,7 +191,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
             max_push_length = 46
         else:
             api.logger.debug(i18n.not_push_aligned)
-            max_push_length = 58 - len(api._ptt_id)
+            max_push_length = 58 - len(api.ptt_id)
 
     push_content = push_content.strip()
 

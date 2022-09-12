@@ -47,7 +47,7 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
 
     check_author = True
     for moderator in board_info[data_type.BoardField.moderators]:
-        if api._ptt_id.lower() == moderator.lower():
+        if api.ptt_id.lower() == moderator.lower():
             check_author = False
             break
 
@@ -60,7 +60,7 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
         return
 
     if check_author:
-        if api._ptt_id.lower() != post_info[data_type.PostField.author].lower():
+        if api.ptt_id.lower() != post_info[data_type.PostField.author].lower():
             raise exceptions.NoPermission(i18n.no_permission)
 
     _api_util.goto_board(api, board)
