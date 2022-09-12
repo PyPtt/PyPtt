@@ -164,7 +164,7 @@ class HostNotSupport(Error):
         return self.message
 
 
-class NoComment(Error):
+class CantComment(Error):
     def __init__(self):
         self.message = i18n.no_comment
 
