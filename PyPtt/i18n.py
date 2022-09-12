@@ -146,7 +146,7 @@ not_record_ip: str = ''
 record_ip: str = ''
 push_aligned: str = ''
 not_push_aligned: str = ''
-has_push_permission: str = ''
+has_comment_permission: str = ''
 only_arrow: str = ''
 error_parameter: str = ''
 wait_for_no_fast_comment: str = ''
@@ -220,6 +220,7 @@ change_pw: str = ''
 post: str = ''
 red_bag_no_edition: str = ''
 edit_red_bag: str = ''
+delete_post: str = ''
 
 goodbye_en = [
     'goodbye',
@@ -242,6 +243,12 @@ goodbye_mandarin = [
 def load(lang):
     if not isinstance(lang, data_type.Language):
         raise ValueError('Unknown language', lang)
+
+    global delete_post
+    delete_post = specific_load(lang, [
+        '刪除文章',
+        'Delete post',
+    ])
 
     global red_bag_no_edition
     red_bag_no_edition = specific_load(lang, [
@@ -693,10 +700,10 @@ def load(lang):
         'Arrow Only in Push',
     ])
 
-    global has_push_permission
-    has_push_permission = specific_load(lang, [
-        '使用者擁有推文權限',
-        'user has comment permission',
+    global has_comment_permission
+    has_comment_permission = specific_load(lang, [
+        '確認擁有推文權限',
+        'user has permission to comment',
     ])
 
     global push_aligned

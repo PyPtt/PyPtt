@@ -33,7 +33,7 @@ def _push(api,
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.has_push_permission,
+            i18n.has_comment_permission,
             '您覺得這篇',
             log_level=LogLevel.DEBUG,
             break_detect=True
@@ -70,7 +70,7 @@ def _push(api,
             '◆ 抱歉, 禁止推薦',
             log_level=LogLevel.INFO,
             break_detect=True,
-            exceptions_=exceptions.NoComment()
+            exceptions_=exceptions.CantComment()
         ),
     ]
 
@@ -83,6 +83,8 @@ def _push(api,
             raise exceptions.NoSuchPost(board, post_aid)
         else:
             raise exceptions.NoSuchPost(board, post_index)
+
+    api.logger.stage(i18n.has_comment_permission)
 
     cmd_list = []
 
@@ -215,7 +217,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
 
     for comment in push_list:
 
-        api.logger.info(i18n.comment, comment)
+        api.logger.info(i18n.comment)
 
         for _ in range(2):
             try:
