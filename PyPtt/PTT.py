@@ -298,7 +298,8 @@ class API:
             finally:
                 ptt_bot.logout()
 
-        參考 :ref:`取得最新文章編號 <api-get-newest-index>`
+        | 更多範例參考 :ref:`取得文章 <check_post_status>`
+        | 參考 :ref:`取得最新文章編號 <api-get-newest-index>`
         """
         return _api_get_post.get_post(
             self, board, aid=aid, index=index, search_type=search_type, search_condition=search_condition,
@@ -471,7 +472,9 @@ class API:
                    red_bag_content: Optional[str] = None) -> None:
 
         """
-        轉帳。
+        轉帳，詳見 `P 幣`_。
+
+        .. _`P 幣`: https://pttpedia.fandom.com/zh/wiki/P%E5%B9%A3
 
         Args:
             ptt_id (str): PTT ID。
@@ -875,6 +878,7 @@ class API:
     def change_pw(self, new_password: str) -> None:
         """
         更改密碼。
+        備註：因批踢踢系統限制，最長密碼為 8 碼。
 
         Args:
             new_password (str): 新密碼。
@@ -911,9 +915,6 @@ class API:
 
         Returns:
             Tuple[str, str]，看板名稱與文章編號。
-
-        Raises:
-            NoSuchURL: 網址不存在。
 
         範例::
 
