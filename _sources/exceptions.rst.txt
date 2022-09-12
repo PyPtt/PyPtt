@@ -80,7 +80,7 @@
 
     主機不支援。詳見 :ref:`host`。
 
-.. py:exception:: PyPtt.exceptions.NoComment
+.. py:exception:: PyPtt.exceptions.CantComment
     :module: PyPtt
 
     禁止推薦。
