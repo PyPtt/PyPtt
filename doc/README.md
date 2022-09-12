@@ -74,7 +74,7 @@ pip install PyPtt==VERSION
 ###### PTT.exceptions.HostNotSupport
     Since 0.8.25
     批踢踢萬或批踢踢兔不支援這個操作
-###### PTT.exceptions.NoComment
+###### PTT.exceptions.CantComment
     Since 0.8.25
     禁止推文
 ###### PTT.exceptions.CantResponse
