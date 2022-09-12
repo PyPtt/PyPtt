@@ -3,6 +3,7 @@ import json
 from SingleLog import Logger
 
 import PyPtt
+from PyPtt import PostField
 from . import config
 
 
@@ -58,3 +59,24 @@ def login(ptt_bot: PyPtt.API, kick: bool = True):
 def show_data(data, key: str = None):
     if isinstance(data, dict):
         logger.info(f'{key}: {data[key]}')
+
+
+def del_all_post(ptt_bot: PyPtt.API):
+    newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Test')
+
+    post_list = []
+    for i in range(20):
+        post = ptt_bot.get_post(board='Test', index=newest_index - i)
+
+        if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
+            continue
+
+        post_author = post[PostField.author]
+        post_author: str = post_author.split(' ')[0]
+        if post_author.lower() != ptt_bot.ptt_id.lower():
+            continue
+
+        post_list.append(newest_index - i)
+
+    for index in post_list:
+        ptt_bot.del_post(board='Test', index=index)
