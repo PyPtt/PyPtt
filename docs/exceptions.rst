@@ -83,7 +83,7 @@
 .. py:exception:: PyPtt.exceptions.CantComment
     :module: PyPtt
 
-    禁止推薦。
+    禁止推文。
 
 .. py:exception:: PyPtt.exceptions.CantResponse
     :module: PyPtt
@@ -113,7 +113,7 @@
 .. py:exception:: PyPtt.exceptions.UserHasPreviouslyBeenBanned
     :module: PyPtt
 
-    水桶使用者，但已經被水桶。
+    `水桶`_ 使用者，但已經被 `水桶`_。
 
 .. py:exception:: PyPtt.exceptions.MailboxFull
     :module: PyPtt
@@ -134,3 +134,5 @@
     :module: PyPtt
 
     請先設定聯絡信箱。
+
+.. _水桶: https://pttpedia.fandom.com/zh/wiki/%E6%B0%B4%E6%A1%B6

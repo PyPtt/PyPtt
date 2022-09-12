@@ -89,11 +89,13 @@
     finally:
         ptt_bot.logout()
 
-.. image:: https://i.imgur.com/TOskgf0.png
+.. image:: _static/color_demo.png
+
+.. _check_post_status:
 
 如何判斷文章資料是否可以使用
 ------------------------------
-當 get_post 回傳文章資料回來時，這時需要一些判斷來決定是否要使用這些資料
+當 :doc:`api/get_post` 回傳文章資料回來時，這時需要一些判斷來決定是否要使用這些資料
 
 .. code-block:: python
 
@@ -119,6 +121,6 @@
             print('未通過格式檢查')
             sys.exit()
 
-        print('文章可用！')
+        print('文章資料可以使用')
     finally:
         ptt_bot.logout()
