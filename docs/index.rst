@@ -20,6 +20,9 @@ PyPtt
 .. image:: https://img.shields.io/badge/License-LGPL%20v3-blue.svg
     :target: https://www.gnu.org/licenses/lgpl-3.0
 
+此文件的程式版本，還沒推上 PyPI，所以無法用 pip 安裝。
+========================================================
+
 | 歡迎來到 PyPtt_ 的官方文件
 | 本文件將會詳細介紹如何使用 PyPtt_ 來開發你的 PTT 機器人。
 |
