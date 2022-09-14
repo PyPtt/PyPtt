@@ -20,8 +20,8 @@ PyPtt
 .. image:: https://img.shields.io/badge/License-LGPL%20v3-blue.svg
     :target: https://www.gnu.org/licenses/lgpl-3.0
 
-此文件的程式版本，還沒推上 PyPI，所以無法用 pip 安裝。
-========================================================
+此網站是預覽版本，程式碼還沒推上 PyPI，所以無法用 pip 安裝。
+================================================================
 
 | 歡迎來到 PyPtt_ 的官方文件
 | 本文件將會詳細介紹如何使用 PyPtt_ 來開發你的 PTT 機器人。
@@ -34,6 +34,13 @@ PyPtt
 .. _`PyPtt Telegram 社群`: https://t.me/PyPtt
 .. _CodingMan: https://github.com/PttCodingMan
 .. _`貢獻者`: https://github.com/PyPtt/PyPtt/graphs/contributors
+
+最新消息
+====================
+* 2022.09.14 - :doc:`太好了！我們終於有更新日誌了！ <changelog>`
+
+
+
 
 文件
 ----------------
@@ -55,6 +62,10 @@ PyPtt
 :doc:`常見問題 <faq>`
     任何常見問題都可以在這找到解答。
 
+:doc:`開發進度 <develop>`
+    | 這裡列了我們正在做什麼與打算做什麼。
+    | 如果你想要貢獻 PyPtt，可以看看這裡。
+
 .. toctree::
     :maxdepth: 3
     :caption: 目錄
@@ -66,6 +77,8 @@ PyPtt
     exceptions
     examples
     常見問題 <faq>
+    ChangeLog <changelog>
+    develop
 
     Github <https://github.com/PyPtt/PyPtt>
     PyPI <https://pypi.org/project/PyPtt/>
