@@ -65,7 +65,7 @@ def del_all_post(ptt_bot: PyPtt.API):
     newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Test')
 
     post_list = []
-    for i in range(20):
+    for i in range(30):
         post = ptt_bot.get_post(board='Test', index=newest_index - i)
 
         if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
