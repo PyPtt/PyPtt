@@ -36,10 +36,6 @@ github: https://github.com/PttCodingMan/PyPtt
 
     newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Test')
 
-    for i in range(10):
-        ptt_bot.reply_post(
-            reply_to=PyPtt.ReplyTo.BOARD, board='Test', index=newest_index - i, content='PyPtt 程式回覆測試')
-
     # find post what we post
     post_list = []
     for i in range(10):
@@ -117,7 +113,7 @@ github: https://github.com/PttCodingMan/PyPtt
 
 def func():
     host_list = [
-        # PyPtt.HOST.PTT1,
+        PyPtt.HOST.PTT1,
         PyPtt.HOST.PTT2
     ]
 
@@ -129,7 +125,7 @@ def func():
         util.login(ptt_bot)
 
         test(ptt_bot)
-        # del_all_post(ptt_bot)
+        # util.del_all_post(ptt_bot)
 
         ptt_bot.logout()
 
