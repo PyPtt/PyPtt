@@ -14,12 +14,12 @@ from . import lib_util
 from . import screens
 
 
-def _push(api,
-          board: str,
-          push_type: data_type.CommentType,
-          push_content: str,
-          post_aid: str,
-          post_index: int) -> None:
+def _comment(api,
+             board: str,
+             push_type: data_type.CommentType,
+             push_content: str,
+             post_aid: str,
+             post_index: int) -> None:
     cmd_list = []
 
     if post_aid is not None:
@@ -137,7 +137,7 @@ def _push(api,
         target_list)
 
 
-def push(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str, post_index: int) -> None:
+def comment(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str, post_index: int) -> None:
     _api_util.goto_board(api, board)
 
     if not api.is_registered_user:
@@ -221,7 +221,7 @@ def push(api, board: str, push_type: data_type.CommentType, push_content: str, p
 
         for _ in range(2):
             try:
-                _push(api, board, push_type, comment, post_aid=post_aid, post_index=post_index)
+                _comment(api, board, push_type, comment, post_aid=post_aid, post_index=post_index)
                 break
             except exceptions.NoFastComment:
                 # screens.show(api.config, api.connect_core.getScreenQueue())

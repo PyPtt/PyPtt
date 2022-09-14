@@ -8,6 +8,7 @@ from SingleLog import Logger
 
 from . import _api_bucket
 from . import _api_change_pw
+from . import _api_comment
 from . import _api_del_post
 from . import _api_get_board_info
 from . import _api_get_board_list
@@ -22,7 +23,6 @@ from . import _api_loginout
 from . import _api_mail
 from . import _api_mark_post
 from . import _api_post
-from . import _api_push
 from . import _api_reply_post
 from . import _api_search_user
 from . import _api_set_board_title
@@ -39,7 +39,8 @@ class API:
     def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LogLevel = LogLevel.INFO,
                  screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
-                 logger_callback: Optional[Callable] = None, host=data_type.HOST.PTT1):
+                 logger_callback: Optional[Callable] = None, host=data_type.HOST.PTT1,
+                 check_update: bool = True) -> None:
 
         """
 
@@ -55,6 +56,7 @@ class API:
             logger_callback (Callable): PyPtt 顯示訊息的 callback。預設為 None。
             port (int): PyPtt 連線的 port。預設為 **23**。
             host (:ref:`host`): PyPtt 連線的 PTT 伺服器。預設為 **PTT1**。
+            check_update (bool): 是否檢查 PyPtt 的更新。預設為 **True**。
 
         Returns:
             None
@@ -158,15 +160,18 @@ class API:
         else:
             self.logger.info(i18n.set_connect_host, self.config.host)
 
-        version_compare, remote_version = lib_util.sync_version()
+        if check_update:
+            version_compare, remote_version = lib_util.sync_version()
 
-        if version_compare is data_type.Compare.SMALLER:
-            self.logger.info(i18n.current_version, version)
-            self.logger.info(i18n.new_version, remote_version)
-        elif version_compare is data_type.Compare.BIGGER:
-            self.logger.info(i18n.development_version, version)
+            if version_compare is data_type.Compare.SMALLER:
+                self.logger.info(i18n.current_version, version)
+                self.logger.info(i18n.new_version, remote_version)
+            elif version_compare is data_type.Compare.BIGGER:
+                self.logger.info(i18n.development_version, version)
+            else:
+                self.logger.info(i18n.latest_version, version)
         else:
-            self.logger.info(i18n.latest_version, version)
+            self.logger.info(i18n.current_version, version)
 
     def __del__(self):
         if self.logger:
@@ -433,7 +438,7 @@ class API:
         參考 :ref:`推文類型 <comment-type>`、:ref:`取得最新文章編號 <api-get-newest-index>`
         """
 
-        _api_push.push(self, board, comment_type, content, aid, index)
+        _api_comment.comment(self, board, comment_type, content, aid, index)
 
     def get_user(self, user_id: str) -> Dict:
 
@@ -807,7 +812,8 @@ class API:
 
         return _api_get_board_info.get_board_info(self, board, get_post_types, call_by_others=False)
 
-    def get_mail(self, index: int, search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
+    def get_mail(self, index: int, search_type: Optional[data_type.SearchType] = None,
+                 search_condition: Optional[str] = None,
                  search_list: Optional[list] = None) -> Dict:
         """
         取得信件。

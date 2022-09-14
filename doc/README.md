@@ -759,7 +759,7 @@ What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-ptt_bot.push(test_board, PTT.data_type.push_type.COMMENT, content, post_index=test_index)
+ptt_bot.comment(test_board, PTT.data_type.push_type.COMMENT, content, post_index=test_index)
 ```
 執行結果
 
