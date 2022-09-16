@@ -74,10 +74,10 @@ pip install PyPtt==VERSION
 ###### PTT.exceptions.HostNotSupport
     Since 0.8.25
     批踢踢萬或批踢踢兔不支援這個操作
-###### PTT.exceptions.CantComment
+###### PTT.exceptions.NoPush
     Since 0.8.25
     禁止推文
-###### PTT.exceptions.CantResponse
+###### PTT.exceptions.NoResponse
     Since 0.8.26
     禁止回應
 ###### PTT.exceptions.NeedModeratorPermission
@@ -341,7 +341,7 @@ boo_count = 0
 arrow_count = 0
 
 for push_info in post_info.push_list:
-    if push_info.type == PTT.data_type.push_type.COMMENT:
+    if push_info.type == PTT.data_type.push_type.PUSH:
         push_type = '推'
         push_count += 1
     if push_info.type == PTT.data_type.push_type.BOO:
@@ -481,7 +481,7 @@ for test_board in test_board_list:
 ```python
 test_list = [
     ('Stock', PTT.data_type.post_search_type.KEYWORD, '盤中閒聊'),
-    ('Baseball', PTT.data_type.post_search_type.COMMENT, '20')
+    ('Baseball', PTT.data_type.post_search_type.PUSH, '20')
 ]
 
 for (test_board, search_type, condition) in test_list:
@@ -623,7 +623,7 @@ def show_condition(board, search_type, condition):
         condition_type = '關鍵字'
     if search_type == PTT.data_type.post_search_type.AUTHOR:
         condition_type = '作者'
-    if search_type == PTT.data_type.post_search_type.COMMENT:
+    if search_type == PTT.data_type.post_search_type.PUSH:
         condition_type = '推文數'
     if search_type == PTT.data_type.post_search_type.MARK:
         condition_type = '標記'
@@ -638,15 +638,15 @@ test_range = 10
 test_list = [
     ('Wanted', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
     ('Wanted', PTT.data_type.post_search_type.AUTHOR, 'gogin'),
-    ('Wanted', PTT.data_type.post_search_type.COMMENT, '10'),
+    ('Wanted', PTT.data_type.post_search_type.PUSH, '10'),
     ('Wanted', PTT.data_type.post_search_type.MARK, 'm'),
     ('Wanted', PTT.data_type.post_search_type.MONEY, '5'),
     ('Gossiping', PTT.data_type.post_search_type.KEYWORD, '[公告]'),
     ('Gossiping', PTT.data_type.post_search_type.AUTHOR, 'ReDmango'),
-    ('Gossiping', PTT.data_type.post_search_type.COMMENT, '10'),
+    ('Gossiping', PTT.data_type.post_search_type.PUSH, '10'),
     ('Gossiping', PTT.data_type.post_search_type.MARK, 'm'),
     ('Gossiping', PTT.data_type.post_search_type.MONEY, '5'),
-    ('Gossiping', PTT.data_type.post_search_type.COMMENT, '-100'),
+    ('Gossiping', PTT.data_type.post_search_type.PUSH, '-100'),
 ]
 
 for (test_board, search_type, condition) in test_list:
@@ -759,7 +759,7 @@ What is Ptt?
 批踢踢 (Ptt) 是以學術性質為目的，提供各專業學生實習的平台，而以電子佈告欄系統 (BBS, Bulletin Board System) 為主的一系列服務。
 期許在網際網路上建立起一個快速、即時、平等、免費，開放且自由的言論空間。批踢踢實業坊同時承諾永久學術中立，絕不商業化、絕不營利。
 '''
-ptt_bot.comment(test_board, PTT.data_type.push_type.COMMENT, content, post_index=test_index)
+ptt_bot.push(test_board, PTT.data_type.push_type.PUSH, content, post_index=test_index)
 ```
 執行結果
 
@@ -785,7 +785,7 @@ try:
     ptt_bot.log('登入次數: ' + str(user.login_time))
     ptt_bot.log('有效文章數: ' + str(user.legal_post))
     ptt_bot.log('退文文章數: ' + str(user.illegal_post))
-    ptt_bot.log('目前動態: ' + user.activity)
+    ptt_bot.log('目前動態: ' + user.status)
     ptt_bot.log('信箱狀態: ' + user.mail_status)
     ptt_bot.log('最後登入時間: ' + user.last_login)
     ptt_bot.log('上次故鄉: ' + user.last_ip)
@@ -907,11 +907,10 @@ ptt_bot.give_money('CodingMan', 100)
 ```
 
 給予 P 幣的同時也可以修改紅包袋的標題或內容
-
 ```python
-ptt_bot.give_money('CodingMan', 100, red_bag_title='紅包袋標題')
-ptt_bot.give_money('CodingMan', 100, red_bag_content='紅包袋內文')
-ptt_bot.give_money('CodingMan', 100, red_bag_title='紅包袋標題', red_bag_content='紅包袋內文')
+ptt_bot.give_money('CodingMan', 100, title='紅包袋標題')
+ptt_bot.give_money('CodingMan', 100, content='紅包袋內文')
+ptt_bot.give_money('CodingMan', 100, title='紅包袋標題', content='紅包袋內文')
 ```
 
 ---
@@ -1140,7 +1139,7 @@ else:
     board_info = ptt_bot.get_board_info('WhoAmI', get_post_kind=get_post_kind)
 print('板名: ', board_info.board)
 print('線上人數: ', board_info.online_user)
-print('中文敘述: ', board_info.mandarin_des)
+print('中文敘述: ', board_info.chinese_des)
 print('板主: ', board_info.moderators)
 print('公開狀態(是否隱形): ', board_info.is_open)
 print('隱板時是否可進入十大排行榜: ', board_info.is_into_top_ten_when_hide)
@@ -1320,7 +1319,7 @@ mark_type = PTT.data_type.mark_type.S
 # 標記文章
 mark_type = PTT.data_type.mark_type.D
 # 刪除標記文章
-mark_type = PTT.data_type.mark_type.DELETE_D
+mark_type = PTT.data_type.mark_type.DeleteD
 # M 起來
 # Since 0.8.27
 mark_type = PTT.data_type.mark_type.M
