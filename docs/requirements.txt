@@ -1,4 +1,5 @@
 PyPtt
 sphinx
 sphinx-copybutton
-furosphinx-sitemap
+furo
+sphinx-sitemap

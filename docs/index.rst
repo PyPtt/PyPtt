@@ -37,7 +37,10 @@ PyPtt
 
 最新消息
 --------------------
-| 2022.09.14 - :doc:`太好了！我們終於有更新日誌了！ <changelog>`
+| 2022.09.19 更換主題為 furo_。
+| 2022.09.14 :doc:`太好了！我們終於有更新日誌了！ <changelog>`
+
+.. _furo: https://sphinx-themes.org/sample-sites/furo/
 
 文件
 ----------------
