@@ -20,6 +20,8 @@ author = 'CodingMan'
 version = PyPtt.version
 release = PyPtt.version
 
+html_title = f'PyPtt.cc'
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -27,9 +29,11 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx_copybutton',
-    'sphinx.ext.autosectionlabel'
+    'sphinx.ext.autosectionlabel',
+    'sphinx_sitemap',
 ]
 autosectionlabel_prefix_document = True
+html_baseurl = 'https://pyptt.cc/'
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
