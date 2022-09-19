@@ -1,5 +1,5 @@
 PyPtt
 sphinx
 sphinx-copybutton
-furo
+Furo==2022.4.7
 sphinx-sitemap
