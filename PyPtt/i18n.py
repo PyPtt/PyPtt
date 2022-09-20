@@ -191,7 +191,7 @@ edit_post: str = ''
 use_the_original_title: str = ''
 quote_original: str = ''
 respond_success: str = ''
-favourite_board_list: str = ''
+get_favourite_board_list: str = ''
 confirm: str = ''
 input_origin_password: str = ''
 input_new_password: str = ''
@@ -436,10 +436,10 @@ def load(lang):
         'confirm',
     ])
 
-    global favourite_board_list
-    favourite_board_list = specific_load(lang, [
-        '我的最愛',
-        'favourite board list',
+    global get_favourite_board_list
+    get_favourite_board_list = specific_load(lang, [
+        '取得我的最愛',
+        'Query favourite board list',
     ])
 
     global respond_success

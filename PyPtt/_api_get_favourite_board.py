@@ -17,11 +17,13 @@ def get_favourite_board(api) -> list:
 
     target_list = [
         connect_core.TargetUnit(
-            i18n.favourite_board_list,
+            i18n.get_favourite_board_list,
             '選擇看板',
             break_detect=True
         )
     ]
+
+    api.logger.info(i18n.get_favourite_board_list)
 
     board_list = []
     favourite_board_list = []
@@ -40,9 +42,6 @@ def get_favourite_board(api) -> list:
 
         min_len = 47
 
-        # for line in ScreenBuf:
-        #     print(line[:MinLen - len(line)])
-        #     print(len(line))
         for i, line in enumerate(screen_buf):
             if len(screen_buf[i]) == 0:
                 continue
@@ -55,42 +54,36 @@ def get_favourite_board(api) -> list:
         for i, line in enumerate(screen_buf):
             if '------------' in line:
                 continue
-            # 16 = line.find('◎')
-            linebuff = line[:16].strip()
 
-            board_type = linebuff[-2:]
-            board = linebuff[:-2].strip()
+            temp = line.strip().split(' ')
+            no_space_temp = list(filter(None, temp))
+
+            board = no_space_temp[0]
             if board.startswith('ˇ'):
                 board = board[1:]
 
-            board_title = line[17:].strip()
-            # print(line)
-            # print('\t' + Type)
-            # print('\t' + board)
-            # print('\t' + BoardTitle)
+            board_type = no_space_temp[1]
+
+            title_start_index = temp.index(board_type) + 1
+            board_title = ' '.join(temp[title_start_index:])
+            # remove ◎
+            board_title = board_title[1:]
+
 
             if board in board_list:
+                api.logger.stage(i18n.success)
                 return favourite_board_list
             board_list.append(board)
-            #
-            # print('board', board)
-            # print('type', type)
-            # print('board_title', board_title)
 
-            f_board = {
+            favourite_board_list.append({
                 FavouriteBoardField.board: board,
                 FavouriteBoardField.type: board_type,
-                FavouriteBoardField.title: board_title}
-            favourite_board_list.append(f_board)
+                FavouriteBoardField.title: board_title})
 
-        # print(len(favourite_board_list))
-        # print(len(screen_buf))
         if len(screen_buf) < 20:
             break
 
         cmd = command.ctrl_f
 
-    # ScreenBuf = '\n'.join(ScreenBuf)
-    # print(ScreenBuf)
-    # print(len(favourite_board_list))
+    api.logger.stage(i18n.success)
     return favourite_board_list
