@@ -345,7 +345,7 @@ BoardField
 
 .. py:attribute:: PyPtt.BoardField.can_reply_post
 
-    非看板成員是否可以發文
+    是否可以回覆文章
 
 .. py:attribute:: PyPtt.BoardField.self_del_post
 
