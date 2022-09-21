@@ -28,21 +28,10 @@ ssl_context = ssl.create_default_context()
 
 
 class TargetUnit:
-    def __init__(
-            self,
-            display_msg,
-            detect_target,
-            log_level: LogLevel = None,
-            response: [Any | str] = '',
-            break_detect=False,
-            break_detect_after_send=False,
-            exceptions_=None,
-            refresh=True,
-            secret=False,
-            handler=None,
-            max_match: int = 0):
+    def __init__(self, detect_target, log_level: LogLevel = None, response: [Any | str] = '', break_detect=False,
+                 break_detect_after_send=False, exceptions_=None, refresh=True, secret=False, handler=None,
+                 max_match: int = 0):
 
-        self._DisplayMsg = display_msg
         self._DetectTarget = detect_target
         if log_level is None:
             self._log_level = LogLevel.INFO
@@ -72,11 +61,6 @@ class TargetUnit:
                     return False
             self._current_match += 1
             return True
-
-    def get_display_msg(self) -> str:
-        if callable(self._DisplayMsg):
-            return self._DisplayMsg()
-        return self._DisplayMsg
 
     def get_detect_target(self):
         return self._DetectTarget
@@ -140,10 +124,8 @@ class API(object):
         self.current_encoding = 'big5uao'
         self.config = config
         self._RDQ = ReceiveDataQueue()
-        self._UseTooManyResources = TargetUnit(
-            i18n.use_too_many_resources,
-            screens.Target.use_too_many_resources,
-            exceptions_=exceptions.UseTooManyResources())
+        self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
+                                               exceptions_=exceptions.UseTooManyResources())
 
         self.logger = Logger('connect', self.config.log_level)
         self.ptt_logger = Logger(i18n.PTT if self.config.host == data_type.HOST.PTT1 else i18n.PTT2,
@@ -346,7 +328,6 @@ class API(object):
             msg = ''
             receive_data_buffer = bytes()
 
-            # print(f'0 {use_too_many_res}')
             start_time = time.time()
             mid_time = time.time()
             while mid_time - start_time < current_screen_timeout:
@@ -367,11 +348,8 @@ class API(object):
                                 self._core, current_screen_timeout, recv_data_obj))
 
                     except websockets.exceptions.ConnectionClosed:
-                        # print(f'0.1 {use_too_many_res}')
                         if use_too_many_res:
-                            # print(f'0.2 {use_too_many_res}')
                             raise exceptions.UseTooManyResources()
-                        # print(f'0.3 {use_too_many_res}')
                         raise exceptions.ConnectionClosed()
                     except websockets.exceptions.ConnectionClosedOK:
                         raise exceptions.ConnectionClosed()
@@ -406,14 +384,11 @@ class API(object):
                 if len(screen) > 0:
                     screens.show(self.config, screen)
                     self._RDQ.add(screen)
-                    # self._ReceiveDataQueue.append(screen)
 
                 mid_time = time.time()
 
             if not find_target:
-                # raise exceptions.NoMatchTargetError(self._RDQ)
                 return -1
-        # raise exceptions.NoMatchTargetError(self._RDQ)
         return -2
 
     def close(self):

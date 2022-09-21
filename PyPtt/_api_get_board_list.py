@@ -27,10 +27,7 @@ def get_board_list(api) -> list:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.board_list,
-            screens.Target.InBoardList,
-            break_detect=True)
+        connect_core.TargetUnit(screens.Target.InBoardList, break_detect=True)
     ]
 
     api.connect_core.send(

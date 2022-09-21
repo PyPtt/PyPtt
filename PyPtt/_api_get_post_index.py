@@ -22,41 +22,15 @@ def get_post_index(api, board: str, aid: str) -> int:
     no_such_post = i18n.replace(no_such_post, board, aid)
 
     target_list = [
-        connect_core.TargetUnit(
-            no_such_post,
-            '找不到這個文章代碼',
-            log_level=LogLevel.DEBUG,
-            exceptions_=exceptions.NoSuchPost(board, aid)
-        ),
+        connect_core.TargetUnit('找不到這個文章代碼', log_level=LogLevel.DEBUG,
+                                exceptions_=exceptions.NoSuchPost(board, aid)),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
-        connect_core.TargetUnit(
-            i18n.can_not_use_search_post_code_f,
-            '此狀態下無法使用搜尋文章代碼(AID)功能',
-            exceptions_=exceptions.CanNotUseSearchPostCode()
-        ),
-        connect_core.TargetUnit(
-            i18n.no_post,
-            '沒有文章...',
-            exceptions_=exceptions.NoSuchPost(board, aid)
-        ),
-        connect_core.TargetUnit(
-            i18n.success,
-            screens.Target.InBoard,
-            break_detect=True,
-            log_level=LogLevel.DEBUG
-        ),
-        connect_core.TargetUnit(
-            i18n.success,
-            screens.Target.InBoardWithCursor,
-            break_detect=True,
-            log_level=LogLevel.DEBUG
-        ),
-        connect_core.TargetUnit(
-            i18n.no_such_board,
-            screens.Target.MainMenu_Exiting,
-            exceptions_=exceptions.NoSuchBoard(api.config, board)
-            # BreakDetect=True,
-        )
+        connect_core.TargetUnit('此狀態下無法使用搜尋文章代碼(AID)功能',
+                                exceptions_=exceptions.CanNotUseSearchPostCode()),
+        connect_core.TargetUnit('沒有文章...', exceptions_=exceptions.NoSuchPost(board, aid)),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board))
     ]
 
     index = api.connect_core.send(

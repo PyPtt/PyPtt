@@ -46,11 +46,7 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
     cmdtemp = cmd + appendstr
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '任意鍵',
-            break_detect=True,
-        )]
+        connect_core.TargetUnit('任意鍵', break_detect=True)]
 
     resultlist = []
 
@@ -103,18 +99,8 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
         command.enter,
         [
             # 《ＩＤ暱稱》
-            connect_core.TargetUnit(
-                i18n.quit_user_profile,
-                '《ＩＤ暱稱》',
-                response=command.enter,
-                # log_level=LogLevel.DEBUG
-            ),
-            connect_core.TargetUnit(
-                i18n.done,
-                '查詢網友',
-                break_detect=True,
-                # log_level=LogLevel.DEBUG
-            )
+            connect_core.TargetUnit('《ＩＤ暱稱》', response=command.enter),
+            connect_core.TargetUnit('查詢網友', break_detect=True)
         ]
     )
 

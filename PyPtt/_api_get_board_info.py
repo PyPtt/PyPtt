@@ -62,12 +62,8 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     logger.debug('人氣', online_user)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.reading_board_info,
-            '任意鍵繼續',
-            break_detect=True,
-            log_level=LogLevel.DEBUG if call_by_others else LogLevel.INFO
-        ),
+        connect_core.TargetUnit('任意鍵繼續', log_level=LogLevel.DEBUG if call_by_others else LogLevel.INFO,
+                                break_detect=True),
     ]
 
     api.connect_core.send(
@@ -203,16 +199,8 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         cmd = ''.join(cmd_list)
 
         target_list = [
-            connect_core.TargetUnit(
-                i18n.no_permission,
-                '無法發文: 未達看板要求權限',
-                break_detect=True
-            ),
-            connect_core.TargetUnit(
-                i18n.complete,
-                '或不選)',
-                break_detect=True
-            )
+            connect_core.TargetUnit('無法發文: 未達看板要求權限', break_detect=True),
+            connect_core.TargetUnit('或不選)', break_detect=True)
         ]
 
         index = api.connect_core.send(
@@ -240,11 +228,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         cmd = ''.join(cmd_list)
 
         target_list = [
-            connect_core.TargetUnit(
-                i18n.complete,
-                screens.Target.InBoard,
-                break_detect=True
-            )
+            connect_core.TargetUnit(screens.Target.InBoard, break_detect=True)
         ]
         api.connect_core.send(
             cmd,

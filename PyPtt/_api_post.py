@@ -25,31 +25,11 @@ def fast_post_step0(api, board: str, title: str, content: str, post_type: int) -
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.has_post_permission,
-            '發表文章於【',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '使用者不可發言',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '無法發文: 未達看板要求權限',
-            break_detect=True
-        ),
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '任意鍵繼續',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.save_file,
-            '確定要儲存檔案嗎',
-            break_detect=True,
-        )
+        connect_core.TargetUnit('發表文章於【', break_detect=True),
+        connect_core.TargetUnit('使用者不可發言', break_detect=True),
+        connect_core.TargetUnit('無法發文: 未達看板要求權限', break_detect=True),
+        connect_core.TargetUnit('任意鍵繼續', break_detect=True),
+        connect_core.TargetUnit('確定要儲存檔案嗎', break_detect=True)
     ]
     index = api.connect_core.fast_send(cmd, target_list)
     if index < 0:
@@ -62,36 +42,12 @@ def fast_post_step1(api: object, sign_file) -> None:
     cmd = '\r'
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.has_post_permission,
-            '發表文章於【',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '使用者不可發言',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '無法發文: 未達看板要求權限',
-            break_detect=True
-        ),
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '任意鍵繼續',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.save_file,
-            '確定要儲存檔案嗎',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.select_signature,
-            'x=隨機',
-            response=str(sign_file) + '\r',
-        ),
+        connect_core.TargetUnit('發表文章於【', break_detect=True),
+        connect_core.TargetUnit('使用者不可發言', break_detect=True),
+        connect_core.TargetUnit('無法發文: 未達看板要求權限', break_detect=True),
+        connect_core.TargetUnit('任意鍵繼續', break_detect=True),
+        connect_core.TargetUnit('確定要儲存檔案嗎', break_detect=True),
+        connect_core.TargetUnit('x=隨機', response=str(sign_file) + '\r'),
     ]
     index = api.connect_core.fast_send(cmd, target_list)
     if index < 0:
@@ -118,36 +74,12 @@ def fast_post(
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.has_post_permission,
-            '發表文章於【',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '使用者不可發言',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '無法發文: 未達看板要求權限',
-            break_detect=True
-        ),
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '任意鍵繼續',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.save_file,
-            '確定要儲存檔案嗎',
-            response='s' + command.enter,
-        ),
-        connect_core.TargetUnit(
-            i18n.select_signature,
-            'x=隨機',
-            response=str(sign_file) + command.enter,
-        ),
+        connect_core.TargetUnit('發表文章於【', break_detect=True),
+        connect_core.TargetUnit('使用者不可發言', break_detect=True),
+        connect_core.TargetUnit('無法發文: 未達看板要求權限', break_detect=True),
+        connect_core.TargetUnit('任意鍵繼續', break_detect=True),
+        connect_core.TargetUnit('確定要儲存檔案嗎', response='s' + command.enter),
+        connect_core.TargetUnit('x=隨機', response=str(sign_file) + command.enter),
     ]
     index = api.connect_core.fast_send(cmd, target_list)
     if index < 0:
@@ -188,21 +120,9 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.has_post_permission,
-            '發表文章於【',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '使用者不可發言',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '無法發文: 未達看板要求權限',
-            break_detect=True
-        ),
+        connect_core.TargetUnit('發表文章於【', break_detect=True),
+        connect_core.TargetUnit('使用者不可發言', break_detect=True),
+        connect_core.TargetUnit('無法發文: 未達看板要求權限', break_detect=True),
     ]
     index = api.connect_core.send(cmd, target_list)
     if index < 0:
@@ -227,21 +147,9 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '任意鍵繼續',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.save_file,
-            '確定要儲存檔案嗎',
-            response='s' + command.enter,
-        ),
-        connect_core.TargetUnit(
-            i18n.select_signature,
-            'x=隨機',
-            response=str(sign_file) + command.enter,
-        ),
+        connect_core.TargetUnit('任意鍵繼續', break_detect=True),
+        connect_core.TargetUnit('確定要儲存檔案嗎', response='s' + command.enter),
+        connect_core.TargetUnit('x=隨機', response=str(sign_file) + command.enter),
     ]
     api.connect_core.send(
         cmd,

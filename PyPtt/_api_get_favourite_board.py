@@ -16,11 +16,7 @@ def get_favourite_board(api) -> list:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.get_favourite_board_list,
-            '選擇看板',
-            break_detect=True
-        )
+        connect_core.TargetUnit('選擇看板', break_detect=True)
     ]
 
     api.logger.info(i18n.get_favourite_board_list)

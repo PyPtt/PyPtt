@@ -32,46 +32,16 @@ def _comment(api,
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.has_comment_permission,
-            '您覺得這篇',
-            log_level=LogLevel.DEBUG,
-            break_detect=True
-        ),
-        connect_core.TargetUnit(
-            i18n.only_arrow,
-            '加註方式',
-            log_level=LogLevel.DEBUG,
-            break_detect=True
-        ),
-        connect_core.TargetUnit(
-            i18n.no_fast_comment,
-            '禁止快速連續推文',
-            log_level=LogLevel.INFO,
-            break_detect=True,
-            exceptions_=exceptions.NoFastComment()
-        ),
-        connect_core.TargetUnit(
-            i18n.no_fast_comment,
-            '禁止短時間內大量推文',
-            log_level=LogLevel.INFO,
-            break_detect=True,
-            exceptions_=exceptions.NoFastComment()
-        ),
-        connect_core.TargetUnit(
-            i18n.no_permission,
-            '使用者不可發言',
-            log_level=LogLevel.INFO,
-            break_detect=True,
-            exceptions_=exceptions.NoPermission(i18n.no_permission)
-        ),
-        connect_core.TargetUnit(
-            i18n.no_comment,
-            '◆ 抱歉, 禁止推薦',
-            log_level=LogLevel.INFO,
-            break_detect=True,
-            exceptions_=exceptions.CantComment()
-        ),
+        connect_core.TargetUnit('您覺得這篇', log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit('加註方式', log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit('禁止快速連續推文', log_level=LogLevel.INFO, break_detect=True,
+                                exceptions_=exceptions.NoFastComment()),
+        connect_core.TargetUnit('禁止短時間內大量推文', log_level=LogLevel.INFO, break_detect=True,
+                                exceptions_=exceptions.NoFastComment()),
+        connect_core.TargetUnit('使用者不可發言', log_level=LogLevel.INFO, break_detect=True,
+                                exceptions_=exceptions.NoPermission(i18n.no_permission)),
+        connect_core.TargetUnit('◆ 抱歉, 禁止推薦', log_level=LogLevel.INFO, break_detect=True,
+                                exceptions_=exceptions.CantComment()),
     ]
 
     index = api.connect_core.send(
@@ -121,15 +91,7 @@ def _comment(api,
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            [
-                i18n.comment,
-                i18n.success,
-            ],
-            screens.Target.InBoard,
-            break_detect=True,
-            log_level=LogLevel.DEBUG
-        ),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
     ]
 
     api.connect_core.send(

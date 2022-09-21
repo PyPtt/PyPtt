@@ -121,16 +121,8 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            [i18n.del_all_mark_post],
-            '刪除所有標記',
-            response='y' + command.enter,
-            log_level=LogLevel.INFO),
-        connect_core.TargetUnit(
-            [i18n.mark_success],
-            screens.Target.InBoard,
-            break_detect=True,
-            log_level=LogLevel.INFO),
+        connect_core.TargetUnit('刪除所有標記', log_level=LogLevel.INFO, response='y' + command.enter),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.INFO, break_detect=True),
     ]
 
     api.connect_core.send(cmd, target_list)

@@ -44,14 +44,8 @@ def get_user(api, ptt_id: str) -> Dict:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.get_user_success,
-            screens.Target.AnyKey,
-            break_detect=True),
-        connect_core.TargetUnit(
-            i18n.get_user_fail,
-            screens.Target.InTalk,
-            break_detect=True),
+        connect_core.TargetUnit(screens.Target.AnyKey, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InTalk, break_detect=True),
     ]
 
     index = api.connect_core.send(

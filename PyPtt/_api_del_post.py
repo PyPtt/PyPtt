@@ -82,20 +82,10 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
         api.confirm = True
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '請按任意鍵繼續',
-            response=' '),
-        connect_core.TargetUnit(
-            i18n.confirm_delete,
-            '請確定刪除(Y/N)?[N]',
-            response='y' + command.enter,
-            max_match=1,
-            handler=confirm_delete_handler),
-        connect_core.TargetUnit(
-            i18n.delete_success,
-            screens.Target.InBoard,
-            break_detect=True),
+        connect_core.TargetUnit('請按任意鍵繼續', response=' '),
+        connect_core.TargetUnit('請確定刪除(Y/N)?[N]', response='y' + command.enter, handler=confirm_delete_handler,
+                                max_match=1),
+        connect_core.TargetUnit(screens.Target.InBoard, break_detect=True),
     ]
 
     index = api.connect_core.send(
