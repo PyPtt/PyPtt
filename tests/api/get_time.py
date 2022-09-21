@@ -29,8 +29,4 @@ def func():
 
 
 if __name__ == '__main__':
-    # func(
-
-    ptt_bot = PyPtt.API()
-
-    util.login(ptt_bot)
+    func()
