@@ -55,7 +55,7 @@ def _get_newest_index(api) -> int:
     if newest_index == 0:
         last_screen = api.connect_core.get_screen_queue()[-1]
         print(last_screen)
-        raise exceptions.UnknownError(i18n.UnknownError)
+        raise exceptions.UnknownError('UnknownError')
 
     return newest_index
 

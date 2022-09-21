@@ -2,7 +2,7 @@ import PyPtt
 from tests import util
 
 
-def test(ptt_bot: PyPtt.API):
+def test_board_index(ptt_bot: PyPtt.API):
     if ptt_bot.host == PyPtt.HOST.PTT1:
         test_list = [
             ('Python', PyPtt.SearchType.KEYWORD, '[公告]'),
@@ -32,6 +32,14 @@ def test(ptt_bot: PyPtt.API):
             util.logger.info(f'{board} newest index with search', index)
 
 
+def test_mail_index(ptt_bot: PyPtt.API):
+    for _ in range(3):
+        index = ptt_bot.get_newest_index(
+            PyPtt.NewIndex.MAIL)
+        util.logger.info('mail newest index', index)
+
+
+
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
@@ -45,7 +53,7 @@ def func():
         )
         util.login(ptt_bot)
 
-        test(ptt_bot)
+        test_mail_index(ptt_bot)
 
         ptt_bot.logout()
 
