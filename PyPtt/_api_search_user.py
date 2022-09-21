@@ -10,7 +10,6 @@ from . import lib_util
 
 
 def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
-    logger = Logger('search_user')
 
     _api_util.one_thread(api)
 
@@ -50,13 +49,14 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
 
     resultlist = []
 
+    api.logger.info(i18n.search_user)
+
     while True:
 
         api.connect_core.send(
             cmdtemp,
             target_list)
         ori_screen = api.connect_core.get_screen_queue()[-1]
-        logger.info(i18n.reading)
         # print(OriScreen)
         # print(len(OriScreen.split('\n')))
 
@@ -93,8 +93,6 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
 
             cmdtemp = ' '
 
-    logger.info(i18n.read_complete)
-
     api.connect_core.send(
         command.enter,
         [
@@ -103,5 +101,6 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
             connect_core.TargetUnit('查詢網友', break_detect=True)
         ]
     )
+    api.logger.stage(i18n.success)
 
     return list(filter(None, resultlist))
