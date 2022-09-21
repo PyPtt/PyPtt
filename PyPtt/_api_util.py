@@ -30,37 +30,14 @@ def get_content(api, post_mode: bool = True):
 
     target_list = [
         # 待證實文章
-        connect_core.TargetUnit(
-            i18n.unconfirmed_post,
-            '本篇文章內容經站方授權之板務管理人員判斷有尚待證實之處',
-            response=' ',
-            handler=is_unconfirmed_handler
-        ),
-        connect_core.TargetUnit(
-            i18n.browse_post_done,
-            screens.Target.PostEnd,
-            break_detect=True,
-            log_level=LogLevel.DEBUG
-        ),
-        connect_core.TargetUnit(
-            i18n.browse_post,
-            screens.Target.InPost,
-            break_detect=True,
-            log_level=LogLevel.DEBUG
-        ),
-        connect_core.TargetUnit(
-            i18n.post_no_content,
-            screens.Target.PostNoContent,
-            break_detect=True,
-            log_level=LogLevel.DEBUG
-        ),
+        connect_core.TargetUnit('本篇文章內容經站方授權之板務管理人員判斷有尚待證實之處', response=' ',
+                                handler=is_unconfirmed_handler),
+        connect_core.TargetUnit(screens.Target.PostEnd, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InPost, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.PostNoContent, log_level=LogLevel.DEBUG, break_detect=True),
         # 動畫文章
-        connect_core.TargetUnit(
-            i18n.animation_post,
-            screens.Target.Animation,
-            response=command.go_main_menu_type_q,
-            break_detect_after_send=True
-        ),
+        connect_core.TargetUnit(screens.Target.Animation, response=command.go_main_menu_type_q,
+                                break_detect_after_send=True),
     ]
 
     line_from_pattern = re.compile('[\d]+~[\d]+')
@@ -448,24 +425,9 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '任意鍵',
-            response=' ',
-            log_level=LogLevel.DEBUG
-        ),
-        connect_core.TargetUnit(
-            '動畫播放中',
-            '互動式動畫播放中',
-            response=command.ctrl_c,
-            log_level=LogLevel.DEBUG
-        ),
-        connect_core.TargetUnit(
-            '進板成功',
-            screens.Target.InBoard,
-            break_detect=True,
-            log_level=LogLevel.DEBUG
-        ),
+        connect_core.TargetUnit('任意鍵', log_level=LogLevel.DEBUG, response=' '),
+        connect_core.TargetUnit('互動式動畫播放中', log_level=LogLevel.DEBUG, response=command.ctrl_c),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
     ]
 
     if refresh:
@@ -486,12 +448,7 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
         cmd = ''.join(cmd_list)
 
         target_list = [
-            connect_core.TargetUnit(
-                '',
-                screens.Target.InBoard,
-                break_detect=True,
-                log_level=LogLevel.DEBUG
-            ),
+            connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
         ]
 
         api.connect_core.send(cmd, target_list)

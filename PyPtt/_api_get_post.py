@@ -156,21 +156,9 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.query_post_success,
-            screens.Target.QueryPost,
-            break_detect=True,
-            refresh=False,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.post_deleted,
-            screens.Target.InBoard,
-            break_detect=True,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.no_such_board,
-            screens.Target.MainMenu_Exiting,
-            exceptions_=exceptions.NoSuchBoard(api.config, board)),
+        connect_core.TargetUnit(screens.Target.QueryPost, log_level=LogLevel.DEBUG, break_detect=True, refresh=False),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
 
     index = api.connect_core.send(cmd, target_list)

@@ -21,36 +21,12 @@ def get_call_status(api) -> None:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.get_call_status_success,
-            '[呼叫器]打開',
-            break_detect=True,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.get_call_status_success,
-            '[呼叫器]拔掉',
-            break_detect=True,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.get_call_status_success,
-            '[呼叫器]防水',
-            break_detect=True,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.get_call_status_success,
-            '[呼叫器]好友',
-            break_detect=True,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.get_call_status_success,
-            '[呼叫器]關閉',
-            break_detect=True,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.get_call_status,
-            '★',
-            response=cmd,
-            log_level=LogLevel.DEBUG),
+        connect_core.TargetUnit('[呼叫器]打開', log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit('[呼叫器]拔掉', log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit('[呼叫器]防水', log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit('[呼叫器]好友', log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit('[呼叫器]關閉', log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit('★', log_level=LogLevel.DEBUG, response=cmd),
     ]
 
     for i in range(2):
@@ -88,10 +64,7 @@ def set_call_status(api, call_status) -> None:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.set_call_status_success,
-            screens.Target.InUserList,
-            break_detect=True)]
+        connect_core.TargetUnit(screens.Target.InUserList, break_detect=True)]
 
     while current_call_status != call_status:
         api.connect_core.send(

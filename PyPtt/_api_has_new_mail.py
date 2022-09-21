@@ -24,12 +24,7 @@ def has_new_mail(api) -> int:
     break_detect = False
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.mail_box,
-            screens.Target.InMailBox,
-            break_detect=True,
-            log_level=LogLevel.DEBUG
-        )
+        connect_core.TargetUnit(screens.Target.InMailBox, log_level=LogLevel.DEBUG, break_detect=True)
     ]
 
     api.connect_core.send(

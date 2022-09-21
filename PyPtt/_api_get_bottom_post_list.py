@@ -39,22 +39,9 @@ def get_bottom_post_list(api, board):
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.catch_post_success,
-            screens.Target.QueryPost,
-            break_detect=True,
-            refresh=False,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.post_deleted,
-            screens.Target.InBoard,
-            break_detect=True,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.no_such_board,
-            screens.Target.MainMenu_Exiting,
-            exceptions_=exceptions.NoSuchBoard(api.config, board)
-        ),
+        connect_core.TargetUnit(screens.Target.QueryPost, log_level=LogLevel.DEBUG, break_detect=True, refresh=False),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
 
     result = []

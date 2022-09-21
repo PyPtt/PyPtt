@@ -68,14 +68,8 @@ def mail(api,
 
     # 定義如何根據情況回覆訊息
     target_list = [
-        connect_core.TargetUnit(
-            i18n.send_mail,
-            '主題：',
-            break_detect=True),
-        connect_core.TargetUnit(
-            i18n.no_such_user,
-            '【電子郵件】',
-            exceptions_=exceptions.NoSuchUser(ptt_id))
+        connect_core.TargetUnit('主題：', break_detect=True),
+        connect_core.TargetUnit('【電子郵件】', exceptions_=exceptions.NoSuchUser(ptt_id))
     ]
 
     api.connect_core.send(
@@ -102,27 +96,11 @@ def mail(api,
         sing_file_selection = i18n.replace(i18n.select_sign_file, str(sign_file))
     # 定義如何根據情況回覆訊息
     target_list = [
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '請按任意鍵繼續',
-            break_detect_after_send=True,
-            response=command.enter),
-        connect_core.TargetUnit(
-            i18n.save_file,
-            '確定要儲存檔案嗎',
-            response='s' + command.enter, ),
-        connect_core.TargetUnit(
-            i18n.api_save_draft if backup else i18n.not_api_save_draft,
-            '是否自存底稿',
-            response=('y' if backup else 'n') + command.enter),
-        connect_core.TargetUnit(
-            sing_file_selection,
-            '選擇簽名檔',
-            response=str(sign_file) + command.enter),
-        connect_core.TargetUnit(
-            sing_file_selection,
-            'x=隨機',
-            response=str(sign_file) + command.enter),
+        connect_core.TargetUnit('請按任意鍵繼續', response=command.enter, break_detect_after_send=True),
+        connect_core.TargetUnit('確定要儲存檔案嗎', response='s' + command.enter),
+        connect_core.TargetUnit('是否自存底稿', response=('y' if backup else 'n') + command.enter),
+        connect_core.TargetUnit('選擇簽名檔', response=str(sign_file) + command.enter),
+        connect_core.TargetUnit('x=隨機', response=str(sign_file) + command.enter),
     ]
 
     # 送出訊息
@@ -191,16 +169,8 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
 
     # 定義如何根據情況回覆訊息
     target_list = [
-        connect_core.TargetUnit(
-            i18n.mail_box,
-            screens.Target.InMailBox,
-            break_detect=True,
-            log_level=LogLevel.DEBUG),
-        connect_core.TargetUnit(
-            i18n.mail_box,
-            fast_target,
-            break_detect=True,
-            log_level=LogLevel.DEBUG)
+        connect_core.TargetUnit(screens.Target.InMailBox, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(fast_target, log_level=LogLevel.DEBUG, break_detect=True)
     ]
 
     # 送出訊息
@@ -338,11 +308,7 @@ def del_mail(api, index) -> None:
 
     # 定義如何根據情況回覆訊息
     target_list = [
-        connect_core.TargetUnit(
-            i18n.mail_box,
-            screens.Target.InMailBox,
-            break_detect=True,
-            log_level=LogLevel.DEBUG)
+        connect_core.TargetUnit(screens.Target.InMailBox, log_level=LogLevel.DEBUG, break_detect=True)
     ]
 
     # 送出

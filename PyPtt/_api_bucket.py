@@ -53,36 +53,12 @@ def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
     cmd_part2 = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.bucket_fail,
-            '◆ 使用者之前已被禁言',
-            exceptions_=exceptions.UserHasPreviouslyBeenBanned()
-        ),
-        connect_core.TargetUnit(
-            i18n.input_bucket_days_reason,
-            '請以數字跟單位(預設為天)輸入期限',
-            response=cmd_part2,
-        ),
-        connect_core.TargetUnit(
-            i18n.bucket_success,
-            '其它鍵結束',
-            response=command.enter,
-        ),
-        connect_core.TargetUnit(
-            i18n.bucket_success,
-            '權限設定系統',
-            response=command.enter,
-        ),
-        connect_core.TargetUnit(
-            i18n.bucket_success,
-            '任意鍵',
-            response=command.space,
-        ),
-        connect_core.TargetUnit(
-            i18n.bucket_success,
-            screens.Target.InBoard,
-            break_detect=True
-        ),
+        connect_core.TargetUnit('◆ 使用者之前已被禁言', exceptions_=exceptions.UserHasPreviouslyBeenBanned()),
+        connect_core.TargetUnit('請以數字跟單位(預設為天)輸入期限', response=cmd_part2),
+        connect_core.TargetUnit('其它鍵結束', response=command.enter),
+        connect_core.TargetUnit('權限設定系統', response=command.enter),
+        connect_core.TargetUnit('任意鍵', response=command.space),
+        connect_core.TargetUnit(screens.Target.InBoard, break_detect=True),
     ]
 
     api.connect_core.send(

@@ -29,10 +29,7 @@ def logout(api) -> None:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.logout_success,
-            '任意鍵',
-            break_detect=True),
+        connect_core.TargetUnit('任意鍵', break_detect=True),
     ]
 
     api.logger.info(i18n.logout)
@@ -100,117 +97,43 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     api.logger.info(i18n.login_id, ptt_id)
 
     target_list = [
-        connect_core.TargetUnit(
-            # i18n.HasNewMailGotoMainMenu,
-            i18n.mail_box,
-            screens.Target.InMailBox,
-            # 加個進去 A 選單再出來的動作，讓畫面更新最底下一行
-            response=command.go_main_menu + 'A' + command.right + command.left,
-            break_detect=True),
-        connect_core.TargetUnit(
-            i18n.mail_box,
-            screens.Target.InMailMenu,
-            response=command.go_main_menu),
-        connect_core.TargetUnit(
-            i18n.login_success,
-            screens.Target.MainMenu,
-            break_detect=True),
-        connect_core.TargetUnit(
-            i18n.go_main_menu,
-            '【看板列表】',
-            response=command.go_main_menu),
-        connect_core.TargetUnit(
-            i18n.wrong_id_pw,
-            '密碼不對',
-            break_detect=True,
-            exceptions_=exceptions.WrongIDorPassword()),
-        connect_core.TargetUnit(
-            i18n.wrong_id_pw,
-            '請重新輸入',
-            break_detect=True,
-            exceptions_=exceptions.WrongIDorPassword()
-        ),
-        connect_core.TargetUnit(
-            i18n.login_too_often,
-            '登入太頻繁',
-            response=' '),
-        connect_core.TargetUnit(
-            i18n.system_busy_try_later,
-            '系統過載',
-            break_detect=True),
-        connect_core.TargetUnit(
-            i18n.del_wrong_pw_record,
-            '您要刪除以上錯誤嘗試的記錄嗎',
-            response='y' + command.enter),
-        connect_core.TargetUnit(
-            i18n.post_not_finish,
-            '請選擇暫存檔 (0-9)[0]',
-            response=command.enter),
-        connect_core.TargetUnit(
-            i18n.post_not_finish,
-            '有一篇文章尚未完成',
-            response='Q' + command.enter),
+        connect_core.TargetUnit(screens.Target.InMailBox,
+                                response=command.go_main_menu + 'A' + command.right + command.left, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InMailMenu, response=command.go_main_menu),
+        connect_core.TargetUnit(screens.Target.MainMenu, break_detect=True),
+        connect_core.TargetUnit('【看板列表】', response=command.go_main_menu),
+        connect_core.TargetUnit('密碼不對', break_detect=True, exceptions_=exceptions.WrongIDorPassword()),
+        connect_core.TargetUnit('請重新輸入', break_detect=True, exceptions_=exceptions.WrongIDorPassword()),
+        connect_core.TargetUnit('登入太頻繁', response=' '),
+        connect_core.TargetUnit('系統過載', break_detect=True),
+        connect_core.TargetUnit('您要刪除以上錯誤嘗試的記錄嗎', response='y' + command.enter),
+        connect_core.TargetUnit('請選擇暫存檔 (0-9)[0]', response=command.enter),
+        connect_core.TargetUnit('有一篇文章尚未完成', response='Q' + command.enter),
         # connect_core.TargetUnit(
         #     i18n.in_login_process_please_wait,
         #     '登入中，請稍候'),
-        connect_core.TargetUnit(
-            i18n.in_login_process_please_wait,
-            '密碼正確'
-        ),
+        connect_core.TargetUnit('密碼正確'),
         # 密碼正確
-        connect_core.TargetUnit(
-            kick_other_login_display_msg,
-            '您想刪除其他重複登入的連線嗎',
-            response=kick_other_login_response),
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '◆ 您的註冊申請單尚在處理中',
-            response=command.enter,
-            handler=register_processing),
-        connect_core.TargetUnit(
-            i18n.any_key_continue,
-            '任意鍵',
-            response=' '),
-        connect_core.TargetUnit(
-            i18n.update_sync_online_user_friend_list,
-            '正在更新與同步線上使用者及好友名單'),
-        connect_core.TargetUnit(
-            i18n.go_main_menu,
-            '【分類看板】',
-            response=command.go_main_menu),
-        connect_core.TargetUnit(
-            i18n.error_login_rich_people_go_main_menu,
-            [
-                '大富翁',
-                '排行榜',
-                '名次',
-                '代號',
-                '暱稱',
-                '數目'
-            ],
-            response=command.go_main_menu),
-        connect_core.TargetUnit(
-            i18n.error_login_rich_people_go_main_menu,
-            [
-                '熱門話題'
-            ],
-            response=command.go_main_menu),
-        connect_core.TargetUnit(
-            i18n.skip_registration_form,
-            '您確定要填寫註冊單嗎',
-            response=command.enter * 3),
-        connect_core.TargetUnit(
-            i18n.skip_registration_form,
-            '以上資料是否正確',
-            response='y' + command.enter),
-        connect_core.TargetUnit(
-            i18n.skip_registration_form,
-            '另外若輸入後發生認證碼錯誤請先確認輸入是否為最後一封',
-            response='x' + command.enter),
-        connect_core.TargetUnit(
-            i18n.skip_registration_form,
-            '此帳號已設定為只能使用安全連線',
-            exceptions_=exceptions.OnlySecureConnection())
+        connect_core.TargetUnit('您想刪除其他重複登入的連線嗎', response=kick_other_login_response),
+        connect_core.TargetUnit('◆ 您的註冊申請單尚在處理中', response=command.enter, handler=register_processing),
+        connect_core.TargetUnit('任意鍵', response=' '),
+        connect_core.TargetUnit('正在更新與同步線上使用者及好友名單'),
+        connect_core.TargetUnit('【分類看板】', response=command.go_main_menu),
+        connect_core.TargetUnit([
+            '大富翁',
+            '排行榜',
+            '名次',
+            '代號',
+            '暱稱',
+            '數目'
+        ], response=command.go_main_menu),
+        connect_core.TargetUnit([
+            '熱門話題'
+        ], response=command.go_main_menu),
+        connect_core.TargetUnit('您確定要填寫註冊單嗎', response=command.enter * 3),
+        connect_core.TargetUnit('以上資料是否正確', response='y' + command.enter),
+        connect_core.TargetUnit('另外若輸入後發生認證碼錯誤請先確認輸入是否為最後一封', response='x' + command.enter),
+        connect_core.TargetUnit('此帳號已設定為只能使用安全連線', exceptions_=exceptions.OnlySecureConnection())
     ]
     #
     # #
@@ -250,10 +173,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
             api.logger.info(i18n.use_mailbox_api_will_logout_after_execution)
 
         target_list = [
-            connect_core.TargetUnit(
-                i18n.login_success,
-                screens.Target.MainMenu,
-                break_detect=True)
+            connect_core.TargetUnit(screens.Target.MainMenu, break_detect=True)
         ]
 
         cmd = command.go_main_menu + 'A' + command.right + command.left
@@ -263,12 +183,17 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
             target_list,
             screen_timeout=api.config.screen_long_timeout,
             secret=True)
-        ori_screen = api.connect_core.get_screen_queue()[-1]
 
-    login_result = target_list[index].get_display_msg()
-    if login_result != i18n.login_success:
-        # print(ori_screen)
-        api.logger.info('reason', login_result)
+    ori_screen = api.connect_core.get_screen_queue()[-1]
+
+    is_login = True
+
+    for t in screens.Target.MainMenu:
+        if t not in ori_screen:
+            is_login = False
+            break
+
+    if not is_login:
         raise exceptions.LoginError()
 
     if '> (' in ori_screen:

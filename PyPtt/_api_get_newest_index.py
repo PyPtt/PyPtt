@@ -104,25 +104,11 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
         cmd = ''.join(cmd_list)
 
         target_list = [
-            connect_core.TargetUnit(
-                i18n.no_post,
-                '沒有文章...',
-                break_detect=True,
-                log_level=LogLevel.DEBUG),
-            connect_core.TargetUnit(
-                i18n.complete,
-                screens.Target.InBoard,
-                break_detect=True,
-                log_level=LogLevel.DEBUG),
-            connect_core.TargetUnit(
-                i18n.complete,
-                screens.Target.InBoardWithCursor,
-                break_detect=True,
-                log_level=LogLevel.DEBUG),
-            connect_core.TargetUnit(
-                i18n.no_such_board,
-                screens.Target.MainMenu_Exiting,
-                exceptions_=exceptions.NoSuchBoard(api.config, board)),
+            connect_core.TargetUnit('沒有文章...', log_level=LogLevel.DEBUG, break_detect=True),
+            connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+            connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=LogLevel.DEBUG, break_detect=True),
+            connect_core.TargetUnit(screens.Target.MainMenu_Exiting,
+                                    exceptions_=exceptions.NoSuchBoard(api.config, board)),
         ]
         index = api.connect_core.send(cmd, target_list)
         if index < 0:
@@ -155,15 +141,8 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
         cmd = ''.join(cmd_list)
 
         target_list = [
-            connect_core.TargetUnit(
-                i18n.mail_box,
-                screens.Target.InMailBox,
-                break_detect=True),
-            connect_core.TargetUnit(
-                i18n.no_mail,
-                screens.Target.CursorToGoodbye,
-                break_detect=True,
-                log_level=LogLevel.DEBUG),
+            connect_core.TargetUnit(screens.Target.InMailBox, break_detect=True),
+            connect_core.TargetUnit(screens.Target.CursorToGoodbye, log_level=LogLevel.DEBUG, break_detect=True),
         ]
 
         def get_index(api):

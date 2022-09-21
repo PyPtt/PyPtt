@@ -38,16 +38,8 @@ def set_board_title(api, board: str, new_title: str) -> None:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.new_settings_have_been_saved,
-            '◆ 已儲存新設定',
-            break_detect=True,
-        ),
-        connect_core.TargetUnit(
-            i18n.no_changes,
-            '◆ 未改變任何設定',
-            break_detect=True,
-        ),
+        connect_core.TargetUnit('◆ 已儲存新設定', break_detect=True),
+        connect_core.TargetUnit('◆ 未改變任何設定', break_detect=True),
     ]
 
     api.connect_core.send(

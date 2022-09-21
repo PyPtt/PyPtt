@@ -26,11 +26,7 @@ def get_time(api) -> str:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(
-            i18n.query_ptt_time_success,
-            screens.Target.MainMenu,
-            log_level=LogLevel.DEBUG,
-            break_detect=True),
+        connect_core.TargetUnit(screens.Target.MainMenu, log_level=LogLevel.DEBUG, break_detect=True),
     ]
 
     index = api.connect_core.send(cmd, target_list)
