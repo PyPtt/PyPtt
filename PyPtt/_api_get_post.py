@@ -297,16 +297,6 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
         })
         return post
 
-    # print('=' * 20)
-    # print(origin_post)
-    # print('=' * 20)
-
-    content_start = '─── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──'
-    content_end = []
-    content_end.append('--\n※ 發信站: 批踢踢實業坊')
-    content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
-    content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
-
     post_author_pattern_new = re.compile('作者  (.+) 看板')
     post_author_pattern_old = re.compile('作者  (.+)')
     board_pattern = re.compile('看板  (.+)')
@@ -434,15 +424,16 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     logger.debug(i18n.date, post_date)
 
     content_fail = True
-    if content_start not in origin_post:
+    if screens.Target.ContentStart not in origin_post:
         # print('Type 1')
         content_fail = True
     else:
         post_content = origin_post
-        post_content = post_content[post_content.find(content_start) + len(content_start) + 1:]
+        post_content = post_content[
+                       post_content.find(screens.Target.ContentStart) + len(screens.Target.ContentStart) + 1:]
         # print('Type 2')
         # print(f'PostContent [{PostContent}]')
-        for EC in content_end:
+        for EC in screens.Target.ContentEnd:
             # + 3 = 把 --\n 拿掉
             # print(f'EC [{EC}]')
             if EC in post_content:

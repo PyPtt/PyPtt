@@ -127,7 +127,6 @@ ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None, search_condition: [str | None] = None,
              search_list: [list | None] = None) -> Dict:
-    logger = Logger('get_mail')
 
     _api_util.one_thread(api)
 
@@ -139,8 +138,10 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
 
     if index == 0:
         return {}
+
+    api.logger.info(i18n.get_mail)
+
     current_index = api.get_newest_index(data_type.NewIndex.MAIL)
-    api.logger.info('current_index', current_index)
     check_value.check_index('index', index, current_index)
 
     cmd_list = []
@@ -188,8 +189,6 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     else:
         mail_author = pattern_result.group(0)[2:].strip()
 
-    logger.debug(i18n.author, mail_author)
-
     # 使用表示式分析信件標題
     pattern_result = mail_title_pattern.search(origin_mail)
     if pattern_result is None:
@@ -197,18 +196,23 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     else:
         mail_title = pattern_result.group(0)[2:].strip()
 
-    logger.debug(i18n.title, mail_title)
-
     # 使用表示式分析信件日期
     pattern_result = mail_date_pattern.search(origin_mail)
     if pattern_result is None:
         mail_date = None
     else:
         mail_date = pattern_result.group(0)[2:].strip()
-    logger.debug(i18n.date, mail_date)
 
     # 從全文拿掉信件開頭作為信件內文
     mail_content = origin_mail[origin_mail.find(content_start) + len(content_start) + 1:]
+
+    mail_content = mail_content[mail_content.find(screens.Target.ContentStart) + len(screens.Target.ContentStart) + 1:]
+
+    for EC in screens.Target.ContentEnd:
+        # + 3 = 把 --\n 拿掉
+        if EC in mail_content:
+            mail_content = mail_content[:mail_content.rfind(EC) + 3].rstrip()
+            break
 
     # 紅包偵測
     red_envelope = False
@@ -218,8 +222,6 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     else:
 
         mail_content = mail_content[:mail_content.rfind(content_end) + 3]
-
-    logger.debug(i18n.content, mail_content)
 
     if red_envelope:
         mail_ip = None
@@ -253,8 +255,6 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
             else:
                 mail_ip = result.group(0)
 
-            logger.debug('IP', mail_ip)
-
             location = ip_line[ip_line.find(mail_ip) + len(mail_ip):].strip()
             if len(location) == 0:
                 mail_location = None
@@ -262,7 +262,7 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
                 # print(location)
                 mail_location = location[1:-1]
 
-                logger.debug('location', mail_location)
+    api.logger.stage(i18n.success)
 
     return {
         MailField.origin_mail: origin_mail,

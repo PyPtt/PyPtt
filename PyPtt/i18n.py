@@ -222,6 +222,7 @@ red_bag_no_edition: str = ''
 edit_red_bag: str = ''
 delete_post: str = ''
 search_user: str = ''
+get_mail: str = ''
 
 goodbye_en = [
     'goodbye',
@@ -244,6 +245,12 @@ goodbye_mandarin = [
 def load(lang):
     if not isinstance(lang, data_type.Language):
         raise ValueError('Unknown language', lang)
+
+    global get_mail
+    get_mail = specific_load(lang, [
+        '取得信件',
+        'Get mail',
+    ])
 
     global search_user
     search_user = specific_load(lang, [

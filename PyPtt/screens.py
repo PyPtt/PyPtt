@@ -140,6 +140,13 @@ class Target:
 
     CursorToGoodbye = MainMenu.copy()
 
+    ContentStart = '─── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──'
+    ContentEnd = [
+        '--\n※ 發信站: 批踢踢實業坊',
+        '--\n※ 發信站: 批踢踢兔(ptt2.cc)',
+        '--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)'
+    ]
+
 
 def show(config, screen_queue, function_name=None):
     if config.log_level != LogLevel.TRACE:
