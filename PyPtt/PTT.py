@@ -553,7 +553,7 @@ class API:
     def get_board_list(self) -> List[str]:
 
         """
-        取得看板清單。
+        取得全站看板清單。
 
         Returns:
             List[str]，看板清單。
