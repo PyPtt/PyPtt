@@ -32,7 +32,9 @@ def get_favourite_board(api) -> list:
         ori_screen = api.connect_core.get_screen_queue()[-1]
         # print(OriScreen)
         screen_buf = ori_screen
-        screen_buf = [x for x in screen_buf.split('\n')][3:][:-1]
+        screen_buf = [x for x in screen_buf.split('\n')][3:-1]
+
+        # adjust for cursor
         screen_buf[0] = '  ' + screen_buf[0][1:]
         screen_buf = [x for x in screen_buf]
 
