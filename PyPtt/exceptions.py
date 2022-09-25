@@ -54,6 +54,14 @@ class NoSuchUser(Error):
         return self.message
 
 
+class NoSuchMail(Error):
+    def __init__(self):
+        self.message = i18n.no_such_mail
+
+    def __str__(self):
+        return self.message
+
+
 # class UserOffline(Error):
 #     def __init__(self, user):
 #         self.message = i18n.user_offline + ': ' + user

@@ -136,13 +136,15 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    if index == 0:
-        return {}
-
     api.logger.info(i18n.get_mail)
 
+    if not isinstance(index, int):
+        raise ValueError('index must be int')
+
     current_index = api.get_newest_index(data_type.NewIndex.MAIL)
-    check_value.check_index('index', index, current_index)
+    if index <= 0 or current_index < index:
+        raise exceptions.NoSuchMail()
+    # check_value.check_index('index', index, current_index)
 
     cmd_list = []
     # 回到主選單
