@@ -30,6 +30,11 @@
 
     查無此使用者。
 
+.. py:exception:: PyPtt.exceptions.NoSuchMail
+    :module: PyPtt
+
+    查無此信件。
+
 .. py:exception:: PyPtt.exceptions.NoMoney
     :module: PyPtt
 
