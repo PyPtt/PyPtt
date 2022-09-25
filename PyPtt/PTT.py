@@ -49,9 +49,9 @@ class API:
         Args:
             language (:ref:`language`): PyPtt 顯示訊息的語言。預設為 **MANDARIN**。
             log_level (LogLevel_): PyPtt 顯示訊息的等級。預設為 **INFO**。
-            screen_timeout: 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 **3 秒**。
-            screen_long_timeout: 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 **10 秒**。
-            screen_post_timeout: 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 **60 秒**。
+            screen_timeout (int): 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 **3 秒**。
+            screen_long_timeout (int): 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 **10 秒**。
+            screen_post_timeout (int): 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 **60 秒**。
             connect_mode (:ref:`connect-mode`): PyPtt 連線的模式。預設為 **WEBSOCKETS**。
             logger_callback (Callable): PyPtt 顯示訊息的 callback。預設為 None。
             port (int): PyPtt 連線的 port。預設為 **23**。
@@ -197,8 +197,8 @@ class API:
 
         範例::
 
-            from PyPtt import PTT
-            ptt_bot = PTT.API()
+            from PyPtt
+            ptt_bot = PyPtt.API()
 
             try:
                 ptt_bot.login(
@@ -550,7 +550,7 @@ class API:
 
         _api_mail.mail(self, ptt_id, title, content, sign_file, backup)
 
-    def get_board_list(self) -> List[str]:
+    def get_all_boards(self) -> List[str]:
 
         """
         取得全站看板清單。
@@ -568,7 +568,7 @@ class API:
             ptt_bot = PyPtt.API()
             try:
                 # .. login ..
-                board_list = ptt_bot.get_board_list()
+                board_list = ptt_bot.get_all_boards()
                 # .. do something ..
             finally:
                 ptt_bot.logout()

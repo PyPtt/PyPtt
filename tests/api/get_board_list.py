@@ -5,7 +5,7 @@ from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
-    board_list = ptt_bot.get_board_list()
+    board_list = ptt_bot.get_all_boards()
 
     with open('board_list.json', 'w') as f:
         json.dump(board_list, f, indent=4, ensure_ascii=False)
@@ -14,7 +14,7 @@ def test(ptt_bot: PyPtt.API):
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
-        # PyPtt.HOST.PTT2
+        PyPtt.HOST.PTT2
     ]
 
     for host in host_list:

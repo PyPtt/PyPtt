@@ -1,8 +1,6 @@
-get_board_list
+get_all_boards
 =================
 
-.. _api-get-board-list:
-
 .. automodule:: PyPtt.API
-   :members: get_board_list
+   :members: get_all_boards
    :noindex:

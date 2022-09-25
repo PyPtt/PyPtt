@@ -43,7 +43,7 @@ APIs
 .. toctree::
 
    get_time
-   get_board_list
+   get_all_boards
    get_favourite_boards
    get_board_info
    get_aid_from_url
