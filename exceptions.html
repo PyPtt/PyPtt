@@ -6,7 +6,7 @@
 <link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" /><link rel="next" title="使用範例" href="examples.html" /><link rel="prev" title="參數型態" href="type.html" />
         <link rel="canonical" href="https://pyptt.cc/exceptions.html" />
 
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><meta name="generator" content="sphinx-5.2.0.post0, furo 2022.09.15"/>
         <title>例外 - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -176,7 +176,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api/search_user.html">search_user</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/change_pw.html">change_pw</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_time.html">get_time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/get_board_list.html">get_board_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/get_all_boards.html">get_all_boards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_favourite_boards.html">get_favourite_boards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_board_info.html">get_board_info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_aid_from_url.html">get_aid_from_url</a></li>
@@ -221,7 +221,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -264,6 +264,12 @@
 <dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoSuchUser">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchUser</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoSuchUser" title="本定義的永久連結">#</a></dt>
 <dd><p>查無此使用者。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoSuchMail">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchMail</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoSuchMail" title="本定義的永久連結">#</a></dt>
+<dd><p>查無此信件。</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -439,8 +445,53 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">例外</a><ul>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.RequireLogin"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.RequireLogin</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoPermission"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoPermission</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.LoginError"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.LoginError</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoFastComment"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoFastComment</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchUser"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchUser</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchMail"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchMail</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoMoney"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoMoney</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchBoard"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchBoard</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.ConnectionClosed"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.ConnectionClosed</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.UnregisteredUser"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.UnregisteredUser</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.MultiThreadOperated"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.MultiThreadOperated</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.WrongIDorPassword"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.WrongIDorPassword</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.WrongPassword"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.WrongPassword</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.LoginTooOften"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.LoginTooOften</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.UseTooManyResources"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.UseTooManyResources</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.HostNotSupport"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.HostNotSupport</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.CantComment"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.CantComment</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.CantResponse"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.CantResponse</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NeedModeratorPermission"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NeedModeratorPermission</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.ConnectError"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.ConnectError</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchPost"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchPost</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.CanNotUseSearchPostCode"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.CanNotUseSearchPostCode</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.UserHasPreviouslyBeenBanned"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.UserHasPreviouslyBeenBanned</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.MailboxFull"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.MailboxFull</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSearchResult"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSearchResult</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.OnlySecureConnection"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.OnlySecureConnection</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.SetConnectMailFirst"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.SetConnectMailFirst</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -450,6 +501,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>

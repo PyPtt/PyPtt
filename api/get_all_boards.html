@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="索引" href="../genindex.html" /><link rel="search" title="搜尋" href="../search.html" /><link rel="next" title="get_favourite_boards" href="get_favourite_boards.html" /><link rel="prev" title="get_time" href="get_time.html" />
-        <link rel="canonical" href="https://pyptt.cc/api/get_board_list.html" />
+        <link rel="canonical" href="https://pyptt.cc/api/get_all_boards.html" />
 
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
-        <title>get_board_list - PyPtt.cc</title>
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><meta name="generator" content="sphinx-5.2.0.post0, furo 2022.09.15"/>
+        <title>get_all_boards - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -176,7 +176,7 @@
 <li class="toctree-l2"><a class="reference internal" href="search_user.html">search_user</a></li>
 <li class="toctree-l2"><a class="reference internal" href="change_pw.html">change_pw</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_time.html">get_time</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">get_board_list</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">get_all_boards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_favourite_boards.html">get_favourite_boards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_board_info.html">get_board_info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_aid_from_url.html">get_aid_from_url</a></li>
@@ -227,11 +227,11 @@
           </label>
         </div>
         <article role="main">
-          <section id="get-board-list">
-<h1>get_board_list<a class="headerlink" href="#get-board-list" title="本標頭的永久連結">#</a></h1>
-<span class="target" id="api-get-board-list"></span><dl class="py function">
+          <section id="get-all-boards">
+<h1>get_all_boards<a class="headerlink" href="#get-all-boards" title="本標頭的永久連結">#</a></h1>
+<dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_board_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_all_boards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span></dt>
 <dd><p>取得全站看板清單。</p>
 <dl class="field-list simple">
 <dt class="field-odd">回傳<span class="colon">:</span></dt>
@@ -247,7 +247,7 @@
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
-    <span class="n">board_list</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_board_list</span><span class="p">()</span>
+    <span class="n">board_list</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_all_boards</span><span class="p">()</span>
     <span class="c1"># .. do something ..</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
@@ -313,6 +313,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

@@ -82,5 +82,3 @@ PyPtt
 
     Github <https://github.com/PyPtt/PyPtt>
     PyPI <https://pypi.org/project/PyPtt/>
-
-
