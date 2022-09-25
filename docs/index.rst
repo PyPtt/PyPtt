@@ -30,10 +30,6 @@ PyPtt
 |
 | PyPtt 由 CodingMan_ 與其他許多的 `貢獻者`_ 共同維護。
 
-.. image:: _static/login_1.0.gif
-    :alt: PyPtt: PTT bot library for Python
-    :align: center
-
 .. _PyPTt: https://github.com/PyPtt/PyPtt
 .. _`PyPtt Telegram 社群`: https://t.me/PyPtt
 .. _CodingMan: https://github.com/PttCodingMan
@@ -86,5 +82,3 @@ PyPtt
 
     Github <https://github.com/PyPtt/PyPtt>
     PyPI <https://pypi.org/project/PyPtt/>
-
-
