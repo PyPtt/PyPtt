@@ -33,7 +33,9 @@ extensions = [
     'sphinx_sitemap',
 ]
 autosectionlabel_prefix_document = True
+
 html_baseurl = 'https://pyptt.cc/'
+sitemap_url_scheme = "{link}"
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
