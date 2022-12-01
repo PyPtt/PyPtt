@@ -127,7 +127,6 @@ ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None, search_condition: [str | None] = None,
              search_list: [list | None] = None) -> Dict:
-
     _api_util.one_thread(api)
 
     if not api._is_login:

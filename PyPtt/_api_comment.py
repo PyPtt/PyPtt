@@ -1,7 +1,6 @@
 import time
 
 from SingleLog import LogLevel
-from SingleLog import Logger
 
 from . import _api_util
 from . import check_value
@@ -99,7 +98,8 @@ def _comment(api,
         target_list)
 
 
-def comment(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str, post_index: int) -> None:
+def comment(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str,
+            post_index: int) -> None:
     _api_util.goto_board(api, board)
 
     if not api.is_registered_user:

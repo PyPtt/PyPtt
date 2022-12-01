@@ -1,11 +1,8 @@
 import re
 
-from SingleLog import Logger
-
 from . import _api_util
 from . import check_value
 from . import command
-from . import config
 from . import connect_core
 from . import data_type
 from . import exceptions
@@ -48,7 +45,6 @@ def logout(api) -> None:
 
 
 def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
-
     _api_util.one_thread(api)
 
     check_value.check_type(ptt_id, str, 'ptt_id')

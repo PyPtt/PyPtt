@@ -6,6 +6,7 @@ from typing import Dict, Tuple, Callable, List, Optional
 from SingleLog import LogLevel
 from SingleLog import Logger
 
+from PyPtt import version
 from . import _api_bucket
 from . import _api_change_pw
 from . import _api_comment
@@ -32,7 +33,6 @@ from . import connect_core
 from . import data_type
 from . import i18n
 from . import lib_util
-from .version import version
 
 
 class API:
