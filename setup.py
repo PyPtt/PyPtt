@@ -1,8 +1,9 @@
 # Always prefer setuptools over distlib_utils
+
 from setuptools import setup
 
-version = open('./PyPtt/version.py').read().strip()
-version = version[version.find("'") + 1:-1]
+# sync with PyPtt/__init__.py
+version = '1.0.0'
 
 setup(
     name='PyPtt',  # Required
