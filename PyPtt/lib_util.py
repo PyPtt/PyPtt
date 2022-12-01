@@ -12,7 +12,7 @@ from SingleLog import Logger
 from . import check_value
 from . import config, i18n
 from . import data_type
-from . import version
+from .version import version
 
 
 def get_file_name(path_str: str) -> str:
@@ -115,7 +115,7 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     remote_version = [line for line in text.split('\n') if line.startswith('version')][0]
     remote_version = remote_version[remote_version.find("'") + 1:]
     remote_version = remote_version[:remote_version.find("'")]
-
+    
     version_list = [int(v) for v in version.split('.')]
     remote_version_list = [int(v) for v in remote_version.split('.')]
 
