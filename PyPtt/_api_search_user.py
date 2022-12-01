@@ -1,5 +1,3 @@
-from SingleLog import Logger
-
 from . import _api_util
 from . import check_value
 from . import command
@@ -10,7 +8,6 @@ from . import lib_util
 
 
 def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
-
     _api_util.one_thread(api)
 
     if not api._is_login:

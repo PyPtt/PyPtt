@@ -1,7 +1,7 @@
 import random
 
+from PyPtt import version
 from . import data_type
-from .version import version
 
 languageList = [
     data_type.Language.MANDARIN,
@@ -224,7 +224,6 @@ delete_post: str = ''
 search_user: str = ''
 get_mail: str = ''
 no_such_mail: str = ''
-
 
 goodbye_en = [
     'goodbye',

@@ -67,7 +67,6 @@ def get_favourite_board(api) -> list:
             # remove ◎
             board_title = board_title[1:]
 
-
             if board in board_list:
                 api.logger.stage(i18n.success)
                 return favourite_board_list

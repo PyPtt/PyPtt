@@ -10,7 +10,6 @@ from . import screens
 
 
 def get_board_list(api) -> list:
-
     _api_util.one_thread(api)
 
     if not api._is_login:

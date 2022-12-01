@@ -9,10 +9,10 @@ from typing import Tuple
 import requests
 from SingleLog import Logger
 
+from PyPtt import version
 from . import check_value
 from . import config, i18n
 from . import data_type
-from .version import version
 
 
 def get_file_name(path_str: str) -> str:
