@@ -97,7 +97,7 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     for i in range(3):
         try:
             r = requests.get(
-                'https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/PyPtt/__init__.py',
+                'https://raw.githubusercontent.com/PyPtt/PyPtt/master/PyPtt/__init__.py',
                 timeout=3)
             break
         except requests.exceptions.ReadTimeout:
@@ -115,7 +115,7 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     remote_version = [line for line in text.split('\n') if line.startswith('version')][0]
     remote_version = remote_version[remote_version.find("'") + 1:]
     remote_version = remote_version[:remote_version.find("'")]
-    
+
     version_list = [int(v) for v in version.split('.')]
     remote_version_list = [int(v) for v in remote_version.split('.')]
 
