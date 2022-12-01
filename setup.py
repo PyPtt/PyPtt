@@ -1,15 +1,16 @@
 # Always prefer setuptools over distlib_utils
 from setuptools import setup
 
-from PyPtt.version import version
+version = open('./PyPtt/version.py').read().strip()
+version = version[version.find("'") + 1:-1]
 
 setup(
     name='PyPtt',  # Required
     version=version,  # Required
-    description='PyPtt\ngithub: https://github.com/PttCodingMan/PyPtt',  # Required
+    description='PyPtt\ngithub: https://github.com/PyPtt/PyPtt',  # Required
     long_description=open('README.md', encoding="utf-8").read(),  # Optional
     long_description_content_type='text/markdown',
-    url='https://github.com/PttCodingMan/PyPtt',  # Optional
+    url='https://github.com/PyPtt/PyPtt',  # Optional
 
     author='CodingMan',  # Optional
     author_email='pttcodingman@gmail.com',  # Optional
