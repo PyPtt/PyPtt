@@ -36,8 +36,7 @@ PyPtt
 
 最新消息
 --------------------
-| 2022.09.19 更換主題為 furo_。
-| 2022.09.14 :doc:`太好了！我們終於有更新日誌了！ <changelog>`
+| 2022.12.01 開發 頁面改名為 Roadmap
 
 .. _furo: https://sphinx-themes.org/sample-sites/furo/
 
@@ -61,7 +60,7 @@ PyPtt
 :doc:`常見問題 <faq>`
     任何常見問題都可以在這找到解答。
 
-:doc:`開發 <develop>`
+:doc:`Roadmap <roadmap>`
     | 這裡列了我們正在做什麼與打算做什麼。
     | 如果你想要貢獻 PyPtt，可以看看這裡。
 
@@ -76,6 +75,7 @@ PyPtt
     exceptions
     examples
     常見問題 <faq>
+    Roadmap <roadmap>
     ChangeLog <changelog>
     develop
 

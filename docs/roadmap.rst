@@ -12,6 +12,8 @@
 * PyPtt Service image
     | 期待 PyPtt 在未來可以有 API 形式的服務，讓大家可以透過 API 呼叫來使用 PyPtt。
     | 這樣其實在某個層面也上可以達到使用 Tor or Proxy 的目的。
+* AnyPtt
+    | 希望讓大家可以透過任何語言來使用 PyPtt。
 
 開發中
 --------------------
