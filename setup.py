@@ -1,11 +1,11 @@
 # Always prefer setuptools over distlib_utils
 from setuptools import setup
 
-import PyPtt
+from PyPtt.version import version
 
 setup(
     name='PyPtt',  # Required
-    version=PyPtt.version,  # Required
+    version=version,  # Required
     description='PyPtt\ngithub: https://github.com/PttCodingMan/PyPtt',  # Required
     long_description=open('README.md', encoding="utf-8").read(),  # Optional
     long_description_content_type='text/markdown',

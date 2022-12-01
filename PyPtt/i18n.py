@@ -1,7 +1,7 @@
 import random
 
 from . import data_type
-from . import version
+from .version import version
 
 languageList = [
     data_type.Language.MANDARIN,

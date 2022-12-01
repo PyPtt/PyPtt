@@ -32,7 +32,7 @@ from . import connect_core
 from . import data_type
 from . import i18n
 from . import lib_util
-from . import version
+from .version import version
 
 
 class API:
