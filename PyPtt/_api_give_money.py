@@ -18,8 +18,16 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
 
     check_value.check_type(ptt_id, str, 'ptt_id')
     check_value.check_type(money, int, 'money')
-    check_value.check_type(red_bag_title, str, 'red_bag_title')
-    check_value.check_type(red_bag_content, str, 'red_bag_content')
+
+    if red_bag_title is not None:
+        check_value.check_type(red_bag_title, str, 'red_bag_title')
+    else:
+        red_bag_title = ''
+
+    if red_bag_content is not None:
+        check_value.check_type(red_bag_content, str, 'red_bag_content')
+    else:
+        red_bag_content = ''
     # Check data_type.user
     api.get_user(ptt_id)
 
