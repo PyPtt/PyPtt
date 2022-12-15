@@ -787,7 +787,7 @@ class API:
 
         Args:
             board (str): 看板名稱。
-            get_post_types (bool): 是否取得文章類型。
+            get_post_types (bool): 是否取得文章類型，例如：八卦板的「問卦」。
 
         Returns:
             Dict，看板資訊，詳見 :ref:`board-field`。
