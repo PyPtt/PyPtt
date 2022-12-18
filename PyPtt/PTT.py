@@ -44,7 +44,7 @@ class API:
 
         """
 
-        初始化 PyPtt.
+        初始化 PyPtt。
 
         Args:
             language (:ref:`language`): PyPtt 顯示訊息的語言。預設為 **MANDARIN**。
