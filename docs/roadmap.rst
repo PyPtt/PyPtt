@@ -9,17 +9,22 @@
 --------------------
 * WebSocket 支援 Tor or Proxy
     期待有一天可以透過 Tor 或 Proxy 來連接到 PTT，讓 PyPtt 可以自由地在雲端伺服器運作。
-* PyPtt Service image
-    | 期待 PyPtt 在未來可以有 API 形式的服務，讓大家可以透過 API 呼叫來使用 PyPtt。
-    | 這樣其實在某個層面也上可以達到使用 Tor or Proxy 的目的。
 * AnyPtt
     | 希望讓大家可以透過任何語言來使用 PyPtt。
 
 開發中
 --------------------
-* 官方網站的建置
+* PyPtt Service docker
+    | 期待 PyPtt 在未來可以有 API 形式的服務，讓大家可以透過 API 呼叫來使用 PyPtt。
+    | 這樣其實在某個層面也上可以達到使用 Tor or Proxy 的目的。
+
+    * PyPtt :doc:`service` 2022.12.18 完成
+    * Docker
+        Work in Progress
+
+已完成
+--------------------
+* 官方網站的建置 2022.12.18 完成
      使用 sphinx 來建置官方網站，讓大家可以更方便地了解 PyPtt。
-* 測試案例
-     目前正在如火如荼地開發中，希望可以盡快完成。
-* 重構
-     目前已經完成了一個版本的重構。
+* 測試案例 2022.12.15 完成
+* 重構 2022.11.15 完成
