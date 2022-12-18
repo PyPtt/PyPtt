@@ -9,11 +9,13 @@ import PyPtt
 
 class Service:
 
-    def __init__(self, ):
+    def __init__(self, pyptt_init_config: dict = {}):
         self._log = Logger('Service')
         self._log.info('init')
 
         self._api = None
+        self._api_init_config = pyptt_init_config
+
         self._call_queue = []
         self._call_result = {}
 
@@ -31,7 +33,7 @@ class Service:
             self._api.logout()
             self._api = None
 
-        self._api = PyPtt.API()
+        self._api = PyPtt.API(**self._api_init_config)
 
         self._log.info('start')
 
@@ -90,3 +92,6 @@ class Service:
     def close(self):
         self._log.info('close')
         self._close = True
+        self._thread.join()
+
+        self._log.stage('done')
