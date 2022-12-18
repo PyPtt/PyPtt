@@ -81,6 +81,9 @@ class Service:
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
 
+        while self._api is None:
+            time.sleep(0.01)
+
     def _run(self):
 
         if self._api is not None:
@@ -137,7 +140,7 @@ class Service:
         self._call_queue.append(call)
 
         while call['id'] not in self._call_result:
-            time.sleep(0.1)
+            time.sleep(0.01)
 
         call_result = self._call_result[call['id']]
         del self._call_result[call['id']]
