@@ -71,13 +71,13 @@ PyPtt
 
     install
     api/index
+    service
     type
     exceptions
     examples
     常見問題 <faq>
     Roadmap <roadmap>
     ChangeLog <changelog>
-    develop
 
     Github <https://github.com/PyPtt/PyPtt>
     PyPI <https://pypi.org/project/PyPtt/>
