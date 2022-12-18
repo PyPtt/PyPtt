@@ -20,8 +20,6 @@ PyPtt
 .. image:: https://img.shields.io/badge/License-LGPL%20v3-blue.svg
     :target: https://www.gnu.org/licenses/lgpl-3.0
 
-此網站是預覽版本，程式碼還沒推上 PyPI。
---------------------------------------------------------------------------------
 
 | PyPtt_ 是時下最流行的 PTT Library，你可以在 Python 程式碼裡面使用 PTT 常見的操作，例如：:doc:`推文 <api/comment>`、:doc:`發文 <api/post>`、:doc:`寄信 <api/mail>`、:doc:`讀取信件 <api/get_mail>`、:doc:`讀取文章 <api/get_post>` 等等操作。
 |
@@ -36,9 +34,10 @@ PyPtt
 
 最新消息
 --------------------
+| 2022.12.08 PyPtt 1.0.0 正式發布
+| 2021.12.08 PyPtt 新增 :doc:`service` 功能
 | 2022.12.01 開發 頁面改名為 Roadmap
 
-.. _furo: https://sphinx-themes.org/sample-sites/furo/
 
 文件
 ----------------
@@ -47,6 +46,9 @@ PyPtt
 
 :doc:`APIs <api/index>`
     PyPtt 的所有 API 說明。
+
+:doc:`Service <service>`
+    如何在多線程的情況，安全地使用 PyPtt。
 
 :doc:`參數型態 <type>`
     PyPtt 的所有參數型態選項。
@@ -63,6 +65,9 @@ PyPtt
 :doc:`Roadmap <roadmap>`
     | 這裡列了我們正在做什麼與打算做什麼。
     | 如果你想要貢獻 PyPtt，可以看看這裡。
+
+:doc:`ChangeLog <changelog>`
+    | 我們曾經做了什麼。
 
 .. toctree::
     :maxdepth: 3
