@@ -9,7 +9,7 @@ from tests import config
 
 def api_test(thread_id, service):
 
-    result = service.call('get_timesdfsdf')
+    result = service.call('get_time')
     print(f'thread id {thread_id}', 'get_time', result)
 
     result = service.call('get_aid_from_url', {'url': 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'})
