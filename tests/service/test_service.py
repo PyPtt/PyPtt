@@ -8,16 +8,15 @@ from tests import config
 
 
 def api_test(thread_id, service):
-    logger = Logger(f'api_test_{thread_id}')
 
-    result = service.call('get_time')
-    logger.info('get_time', result)
+    result = service.call('get_timesdfsdf')
+    print(f'thread id {thread_id}', 'get_time', result)
 
     result = service.call('get_aid_from_url', {'url': 'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'})
-    logger.info('get_aid_from_url', result)
+    print(f'thread id {thread_id}', 'get_aid_from_url', result)
 
     result = service.call('get_newest_index', {'index_type': PyPtt.NewIndex.BOARD, 'board': 'Python'})
-    logger.info('get_newest_index', result)
+    print(f'thread id {thread_id}', 'get_newest_index', result)
 
 
 def test():
