@@ -7,6 +7,7 @@
 
 未來開發計劃
 --------------------
+* 支援 PTT 官方 APP API
 * WebSocket 支援 Tor or Proxy
     期待有一天可以透過 Tor 或 Proxy 來連接到 PTT，讓 PyPtt 可以自由地在雲端伺服器運作。
 * AnyPtt
