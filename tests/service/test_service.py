@@ -21,10 +21,14 @@ def api_test(thread_id, service):
 
 
 def test():
-    service = Service()
+
+    pyptt_init_config = {
+        # 'language': PyPtt.Language.ENGLISH,
+    }
+
+    service = Service(pyptt_init_config)
 
     try:
-        service = Service()
 
         service.call('login', {'ptt_id': config.PTT1_ID, 'ptt_pw': config.PTT1_PW})
 
@@ -44,3 +48,4 @@ def test():
 
 if __name__ == '__main__':
     test()
+    # pass
