@@ -3,11 +3,11 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" /><link rel="next" title="安裝 PyPtt" href="install.html" />
-        <link rel="canonical" href="https://pyptt.cc/index.html" />
+<link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" /><link rel="next" title="FAQ" href="faq.html" /><link rel="prev" title="使用範例" href="examples.html" />
+        <link rel="canonical" href="https://pyptt.cc/docker.html" />
 
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 5.1.1 and Furo 2022.12.07 -->
-        <title>PyPtt.cc</title>
+        <title>Docker Image - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -125,7 +125,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">PyPtt.cc</div></a>
+      <a href="index.html"><div class="brand">PyPtt.cc</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -145,7 +145,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
   <span class="sidebar-brand-text">PyPtt.cc</span>
@@ -157,7 +157,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">目錄</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">APIs</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/init.html">init</a></li>
@@ -190,8 +190,8 @@
 <li class="toctree-l1"><a class="reference internal" href="type.html">參數型態</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">使用範例</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker Image</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker.html#id1">如何使用</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Docker Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id1">如何使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常見問題</a></li>
 <li class="toctree-l1"><a class="reference internal" href="roadmap.html">Roadmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">ChangeLog</a></li>
@@ -225,65 +225,98 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="pyptt">
-<h1>PyPtt<a class="headerlink" href="#pyptt" title="本標頭的永久連結">#</a></h1>
-<img alt="PyPtt: PTT bot library for Python" class="align-center" src="_images/logo_cover.png" />
-<a class="reference external image-reference" href="https://pypi.org/project/PyPtt/"><img alt="https://img.shields.io/pypi/v/PyPtt.svg" src="https://img.shields.io/pypi/v/PyPtt.svg" /></a>
-<a class="reference external image-reference" href="https://pypi.org/project/PyPtt/"><img alt="https://img.shields.io/pypi/dm/PyPtt" src="https://img.shields.io/pypi/dm/PyPtt" /></a>
-<a class="reference external image-reference" href="https://github.com/PyPtt/PyPtt/actions/workflows/test.yml"><img alt="https://github.com/PyPtt/PyPtt/actions/workflows/test.yml/badge.svg" src="https://github.com/PyPtt/PyPtt/actions/workflows/test.yml/badge.svg" /></a>
-<a class="reference external image-reference" href="https://pypi.org/project/PyPtt/"><img alt="https://img.shields.io/pypi/pyversions/PyPtt" src="https://img.shields.io/pypi/pyversions/PyPtt" /></a>
-<a class="reference external image-reference" href="https://www.gnu.org/licenses/lgpl-3.0"><img alt="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" /></a>
+          <section id="docker-image">
+<h1>Docker Image<a class="headerlink" href="#docker-image" title="本標頭的永久連結">#</a></h1>
 <div class="line-block">
-<div class="line"><a class="reference external" href="https://github.com/PyPtt/PyPtt">PyPtt</a> 是時下最流行的 PTT Library，你可以在 Python 程式碼裡面使用 PTT 常見的操作，例如：<a class="reference internal" href="api/comment.html"><span class="doc">推文</span></a>、<a class="reference internal" href="api/post.html"><span class="doc">發文</span></a>、<a class="reference internal" href="api/mail.html"><span class="doc">寄信</span></a>、<a class="reference internal" href="api/get_mail.html"><span class="doc">讀取信件</span></a>、<a class="reference internal" href="api/get_post.html"><span class="doc">讀取文章</span></a> 等等操作。</div>
-<div class="line"><br /></div>
-<div class="line">本文件的內容會隨著 <a class="reference external" href="https://github.com/PyPtt/PyPtt">PyPtt</a> 的更新而更新，如果你發現任何錯誤，歡迎到 <a class="reference external" href="https://github.com/PyPtt/PyPtt">PyPtt</a> 發 issue 或者加入 <a class="reference external" href="https://t.me/PyPtt">PyPtt Telegram 社群</a> 一起討論。</div>
-<div class="line"><br /></div>
-<div class="line">PyPtt 由 <a class="reference external" href="https://github.com/PttCodingMan">CodingMan</a> 與其他許多的 <a class="reference external" href="https://github.com/PyPtt/PyPtt/graphs/contributors">貢獻者</a> 共同維護。</div>
+<div class="line">是的，PyPtt 也支援 Docker Image。</div>
+<div class="line">只要一行指令就可以啟動一個 PyPtt 的 Docker Image，並且可以在 Docker Image 中使用 PyPtt。</div>
 </div>
+</section>
+<section id="id1">
+<h1>如何使用<a class="headerlink" href="#id1" title="本標頭的永久連結">#</a></h1>
+<section id="id2">
+<h2>安裝<a class="headerlink" href="#id2" title="本標頭的永久連結">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull codingman000/pyptt:latest
+</pre></div>
+</div>
+</section>
 <section id="id3">
-<h2>最新消息<a class="headerlink" href="#id3" title="本標頭的永久連結">#</a></h2>
-<div class="line-block">
-<div class="line">2022.12.08 PyPtt 1.0.0 正式發布</div>
-<div class="line">2021.12.08 PyPtt 新增 <a class="reference internal" href="service.html"><span class="doc">Service</span></a> 功能</div>
-<div class="line">2022.12.01 開發 頁面改名為 Roadmap</div>
+<h2>啟動<a class="headerlink" href="#id3" title="本標頭的永久連結">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -d -p <span class="m">8787</span>:8787 codingman000/pyptt:latest
+</pre></div>
 </div>
 </section>
 <section id="id4">
-<h2>文件<a class="headerlink" href="#id4" title="本標頭的永久連結">#</a></h2>
-<dl>
-<dt><a class="reference internal" href="install.html"><span class="doc">安裝 PyPtt</span></a></dt><dd><p>如何把 PyPtt 安裝到你的環境中。</p>
-</dd>
-<dt><a class="reference internal" href="api/index.html"><span class="doc">APIs</span></a></dt><dd><p>PyPtt 的所有 API 說明。</p>
-</dd>
-<dt><a class="reference internal" href="service.html"><span class="doc">Service</span></a></dt><dd><p>如何在多線程的情況，安全地使用 PyPtt。</p>
-</dd>
-<dt><a class="reference internal" href="type.html"><span class="doc">參數型態</span></a></dt><dd><p>PyPtt 的所有參數型態選項。</p>
-</dd>
-<dt><a class="reference internal" href="exceptions.html"><span class="doc">例外</span></a></dt><dd><p>PyPtt 所有你可能遭遇到的錯誤。</p>
-</dd>
-<dt><a class="reference internal" href="examples.html"><span class="doc">使用範例</span></a></dt><dd><p>一些使用 PyPtt 的範例。</p>
-</dd>
-<dt><a class="reference internal" href="docker.html"><span class="doc">Docker Image</span></a></dt><dd><p>如何使用 Docker Image 來使用 PyPtt。</p>
-</dd>
-<dt><a class="reference internal" href="faq.html"><span class="doc">常見問題</span></a></dt><dd><p>任何常見問題都可以在這找到解答。</p>
-</dd>
-<dt><a class="reference internal" href="roadmap.html"><span class="doc">Roadmap</span></a></dt><dd><div class="line-block">
-<div class="line">這裡列了我們正在做什麼與打算做什麼。</div>
-<div class="line">如果你想要貢獻 PyPtt，可以看看這裡。</div>
-</div>
-</dd>
-<dt><a class="reference internal" href="changelog.html"><span class="doc">ChangeLog</span></a></dt><dd><div class="line-block">
-<div class="line">我們曾經做了什麼。</div>
-</div>
-</dd>
-</dl>
-<div class="toctree-wrapper compound">
+<h2>連線<a class="headerlink" href="#id4" title="本標頭的永久連結">#</a></h2>
+<p>物件編碼的方法你可以在這裏了解 <a class="reference external" href="https://github.com/PyPtt/PyPtt_image/blob/main/src/utils.py#L4">程式碼</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">object_encode</span>
+<span class="kn">from</span> <span class="nn">tests</span> <span class="kn">import</span> <span class="n">config</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="s2">&quot;login&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">object_encode</span><span class="p">({</span>
+            <span class="s1">&#39;ptt_id&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">PTT_ID</span><span class="p">,</span>
+            <span class="s1">&#39;ptt_pw&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">PTT_PW</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:8787/api&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="s2">&quot;get_time&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:8787/api&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="s2">&quot;get_newest_index&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">object_encode</span><span class="p">({</span>
+            <span class="s1">&#39;board&#39;</span><span class="p">:</span> <span class="s1">&#39;Gossiping&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;index_type&#39;</span><span class="p">:</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:8787/api&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+    <span class="c1">##############################</span>
+
+    <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;此內容由 PyPtt image 執行 PO 文</span>
+
+<span class="s2">    測試換行 123</span>
+<span class="s2">    測試換行 456</span>
+<span class="s2">    測試換行 789</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="s2">&quot;post&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">object_encode</span><span class="p">({</span>
+            <span class="s1">&#39;board&#39;</span><span class="p">:</span> <span class="s1">&#39;Test&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;title_index&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:8787/api&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+    <span class="c1">##############################</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="s2">&quot;logout&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:8787/api&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</pre></div>
 </div>
 </section>
 </section>
@@ -293,16 +326,26 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="install.html">
+          <a class="next-page" href="faq.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">安裝 PyPtt</div>
+                <div class="title">FAQ</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
+          <a class="prev-page" href="examples.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">使用範例</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -321,28 +364,8 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">PyPtt</a><ul>
-<li><a class="reference internal" href="#id3">最新消息</a></li>
-<li><a class="reference internal" href="#id4">文件</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
