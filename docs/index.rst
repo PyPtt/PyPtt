@@ -59,6 +59,9 @@ PyPtt
 :doc:`使用範例 <examples>`
     一些使用 PyPtt 的範例。
 
+:doc:`Docker Image <docker>`
+    如何使用 Docker Image 來使用 PyPtt。
+
 :doc:`常見問題 <faq>`
     任何常見問題都可以在這找到解答。
 
@@ -80,6 +83,7 @@ PyPtt
     type
     exceptions
     examples
+    docker
     常見問題 <faq>
     Roadmap <roadmap>
     ChangeLog <changelog>
