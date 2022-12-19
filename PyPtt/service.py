@@ -126,6 +126,9 @@ class Service:
 
     def call(self, api: str, args: dict = {}):
 
+        if args is None:
+            args = {}
+
         check_value.check_type(api, str, 'api')
         check_value.check_type(args, dict, 'args')
 
