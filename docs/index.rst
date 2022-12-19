@@ -32,11 +32,11 @@ PyPtt
 .. _CodingMan: https://github.com/PttCodingMan
 .. _`貢獻者`: https://github.com/PyPtt/PyPtt/graphs/contributors
 
-最新消息
+重要消息
 --------------------
+| 2022.12.19 發佈 :doc:`Docker Image <docker>`。
 | 2022.12.08 PyPtt 1.0.0 正式發布
 | 2021.12.08 PyPtt 新增 :doc:`service` 功能
-| 2022.12.01 開發 頁面改名為 Roadmap
 
 
 文件
