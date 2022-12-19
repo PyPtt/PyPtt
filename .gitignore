@@ -22,3 +22,4 @@ PyPtt.egg-info/
 *.json
 tests/ptt.sh
 docs/_build/
+.DS_Store
