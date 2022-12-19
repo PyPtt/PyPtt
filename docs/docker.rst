@@ -2,8 +2,10 @@ Docker Image
 =================
 | 是的，PyPtt 也支援 Docker Image。
 | 只要一行指令就可以啟動一個 PyPtt 的 Docker Image，並且可以在 Docker Image 中使用 PyPtt。
-
+|
+| Doc: https://pyptt.cc/docker.html
 | Docker hub: https://hub.docker.com/r/codingman000/pyptt
+| Github: https://github.com/PyPtt/PyPtt_image
 
 如何使用
 =================
