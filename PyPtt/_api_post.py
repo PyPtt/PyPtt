@@ -95,11 +95,11 @@ sign_file_list.append('x')
 def post(api, board: str, title: str, content: str, title_index: int, sign_file: [str | int]) -> None:
     _api_util.one_thread(api)
 
-    if not api.is_registered_user:
-        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
     if not api._is_login:
         raise exceptions.RequireLogin(i18n.require_login)
+
+    if not api.is_registered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     check_value.check_type(board, str, 'board')
     check_value.check_type(title_index, int, 'title_index')
