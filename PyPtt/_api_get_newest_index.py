@@ -87,7 +87,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
     if search_list is not None:
         check_value.check_type(search_list, list, 'search_list')
 
-    if index_type is data_type.NewIndex.BOARD:
+    if index_type == data_type.NewIndex.BOARD:
 
         check_value.check_type(board, str, 'board')
 
