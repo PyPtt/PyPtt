@@ -3,7 +3,7 @@
 from setuptools import setup
 
 # sync with PyPtt/__init__.py
-version = '1.0.0'
+version = '1.0.2'
 
 setup(
     name='PyPtt',  # Required
