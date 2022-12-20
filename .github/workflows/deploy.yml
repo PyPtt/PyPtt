@@ -18,8 +18,7 @@ jobs:
       - run: echo 'Don't worry, everything will be fine.'
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }} ||
-      "contains(github.event.head_commit.message, '[deploy]')"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} && "contains(github.event.head_commit.message, '[deploy]')"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python

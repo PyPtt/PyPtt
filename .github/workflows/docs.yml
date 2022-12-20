@@ -13,14 +13,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  on-test-failure:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'Don't worry, everything will be fine.'
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: "contains(github.event.head_commit.message, '[update-docs]')"
     steps:
     - uses: actions/setup-python@master
     - uses: actions/checkout@master
