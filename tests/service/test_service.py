@@ -1,6 +1,6 @@
 import threading
 
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 import PyPtt
 from PyPtt import Service

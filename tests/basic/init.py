@@ -13,8 +13,6 @@ def test():
     PyPtt.API(log_level=PyPtt.LOG_LEVEL.DEBUG)
     util.logger.info('===log INFO===')
     PyPtt.API(log_level=PyPtt.LOG_LEVEL.INFO)
-    util.logger.info('===log SLIENT===')
-    PyPtt.API(log_level=PyPtt.LOG_LEVEL.SILENT)
 
     util.logger.info('===set host with PTT===')
     ptt_bot = PyPtt.API(host=PyPtt.HOST.PTT1)

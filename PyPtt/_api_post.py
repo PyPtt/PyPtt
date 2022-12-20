@@ -130,7 +130,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     if index == 1 or index == 2:
         raise exceptions.NoPermission(i18n.no_permission)
 
-    api.logger.stage(i18n.has_post_permission)
+    api.logger.info(i18n.has_post_permission)
 
     screens.show(api.config, api.connect_core.get_screen_queue())
 
@@ -156,4 +156,4 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
         target_list,
         screen_timeout=api.config.screen_post_timeout)
 
-    api.logger.stage(i18n.success)
+    api.logger.info(i18n.success)

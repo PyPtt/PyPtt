@@ -7,9 +7,9 @@ import traceback
 from typing import Tuple
 
 import requests
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
-from PyPtt import version
+from PyPtt import __version__
 from . import check_value
 from . import config, i18n
 from . import data_type
@@ -90,7 +90,7 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     if sync_version_compare is not data_type.Compare.UNKNOWN:
         return sync_version_compare, sync_version_result
 
-    logger = Logger('PyPtt', **config.LOGGER_CONFIG)
+    logger = DefaultLogger('PyPtt', **config.LOGGER_CONFIG)
     logger.info(i18n.update_remote_version)
 
     r = None
@@ -102,13 +102,16 @@ def sync_version() -> Tuple[data_type.Compare, str]:
             break
         except requests.exceptions.ReadTimeout:
             # print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
-            logger.stage(i18n.retry)
+            logger.info(i18n.retry)
+            # print(f'retry version [{i18n.retry}]')
             time.sleep(0.5)
 
     if r is None:
-        logger.stage(i18n.fail)
+        # print(f'sync version [{i18n.fail}]')
+        logger.info(i18n.fail)
         return data_type.Compare.SAME, ''
-    logger.stage(i18n.success)
+
+    logger.info(i18n.success)
 
     text = r.text
 
@@ -116,7 +119,7 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     remote_version = remote_version[remote_version.find("'") + 1:]
     remote_version = remote_version[:remote_version.find("'")]
 
-    version_list = [int(v) for v in version.split('.')]
+    version_list = [int(v) for v in __version__.split('.')]
     remote_version_list = [int(v) for v in remote_version.split('.')]
 
     sync_version_compare = data_type.Compare.SAME

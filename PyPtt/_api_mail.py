@@ -4,7 +4,7 @@ import re
 from typing import Dict, Optional
 
 from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import _api_util
 from . import check_value
@@ -25,7 +25,7 @@ def mail(api,
          content: str,
          sign_file,
          backup: bool = True) -> None:
-    logger = Logger('main')
+    logger = DefaultLogger('main')
 
     _api_util.one_thread(api)
 
@@ -263,7 +263,7 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
                 # print(location)
                 mail_location = location[1:-1]
 
-    api.logger.stage(i18n.success)
+    api.logger.info(i18n.success)
 
     return {
         MailField.origin_mail: origin_mail,

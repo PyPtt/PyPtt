@@ -51,7 +51,7 @@ def test(ptt_bot: PyPtt.API):
 
     util.logger.info('test')
     if len(posts) < 2:
-        util.logger.stage('len(posts) < 2, fail')
+        util.logger.info('len(posts) < 2, fail')
         return
 
     check = [
@@ -64,21 +64,21 @@ def test(ptt_bot: PyPtt.API):
         post = ptt_bot.get_post(board='Test', aid=aid)
 
         if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
-            util.logger.stage('post[PostField.post_status] != PyPtt.PostStatus.EXISTS, fail')
+            util.logger.info('post[PostField.post_status] != PyPtt.PostStatus.EXISTS, fail')
             check_result = False
             break
 
         if post[PostField.title] not in check:
-            util.logger.stage('post[PostField.title] not in check, fail')
+            util.logger.info('post[PostField.title] not in check, fail')
             check_result = False
             break
 
         check.remove(post[PostField.title])
 
     if check_result:
-        util.logger.stage('pass')
+        util.logger.info('pass')
     else:
-        util.logger.stage('fail')
+        util.logger.info('fail')
 
     util.del_all_post(ptt_bot)
 

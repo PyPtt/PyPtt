@@ -2,7 +2,7 @@ import threading
 import time
 import uuid
 
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 import PyPtt
 from PyPtt import check_value
@@ -64,7 +64,7 @@ class Service:
                     service.close()
         """
 
-        self._log = Logger('Service')
+        self._log = DefaultLogger('Service')
         self._log.info('init')
 
         self._api = None
@@ -161,4 +161,4 @@ class Service:
         self._close = True
         self._thread.join()
 
-        self._log.stage('done')
+        self._log.info('done')
