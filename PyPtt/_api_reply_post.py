@@ -86,4 +86,4 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         target_list,
         screen_timeout=api.config.screen_long_timeout)
 
-    api.logger.stage(i18n.success)
+    api.logger.info(i18n.success)

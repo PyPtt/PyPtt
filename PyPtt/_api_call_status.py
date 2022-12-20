@@ -8,7 +8,7 @@ from . import screens
 
 
 def get_call_status(api) -> None:
-    # logger = Logger('api', api.config.log_level)
+    # log.py = DefaultLogger('api', api.config.log_level)
 
     cmd_list = []
     cmd_list.append(command.go_main_menu)

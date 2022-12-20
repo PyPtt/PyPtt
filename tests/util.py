@@ -1,8 +1,9 @@
 import json
 
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 import PyPtt
+from PyPtt import LogLevel
 from PyPtt import PostField
 from . import config
 
@@ -12,7 +13,7 @@ def log_to_file(msg: str):
         f.write(f'{msg}\n')
 
 
-logger = Logger('Test')
+logger = DefaultLogger('test', LogLevel.DEBUG)
 
 
 def get_id_pw(password_file):

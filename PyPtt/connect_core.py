@@ -12,8 +12,7 @@ from typing import Any
 import websockets
 import websockets.exceptions
 import websockets.http
-from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import LogLevel, DefaultLogger
 
 import PyPtt
 from . import command
@@ -22,7 +21,7 @@ from . import exceptions
 from . import i18n
 from . import screens
 
-websockets.http.USER_AGENT += f' PyPtt/{PyPtt.version}'
+websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
 
 ssl_context = ssl.create_default_context()
 
@@ -127,9 +126,9 @@ class API(object):
         self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
                                                exceptions_=exceptions.UseTooManyResources())
 
-        self.logger = Logger('connect', self.config.log_level)
-        self.ptt_logger = Logger(i18n.PTT if self.config.host == data_type.HOST.PTT1 else i18n.PTT2,
-                                 self.config.log_level, skip_repeat=True, stage_sep='.')
+        self.logger = DefaultLogger('connect', self.config.log_level)
+        self.ptt_logger = DefaultLogger(i18n.PTT if self.config.host == data_type.HOST.PTT1 else i18n.PTT2,
+                                     self.config.log_level)
 
     def connect(self) -> None:
         def _wait():
@@ -149,7 +148,7 @@ class API(object):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
         self.current_encoding = 'big5uao'
-        # self.logger.info(i18n.connect_core, i18n.active)
+        # self.log.py.info(i18n.connect_core, i18n.active)
 
         if self.config.host == data_type.HOST.PTT1:
             telnet_host = 'ptt.cc'
@@ -332,6 +331,7 @@ class API(object):
             mid_time = time.time()
             while mid_time - start_time < current_screen_timeout:
 
+                # print(1)
                 recv_data_obj = RecvData()
 
                 if self.config.connect_mode == data_type.ConnectMode.TELNET:
@@ -373,6 +373,7 @@ class API(object):
                     else:
                         self.current_encoding = 'big5uao'
 
+                # print(4)
                 if target_index != -1:
                     return target_index
 
@@ -384,6 +385,8 @@ class API(object):
                 if len(screen) > 0:
                     screens.show(self.config, screen)
                     self._RDQ.add(screen)
+
+                # print(6)
 
                 mid_time = time.time()
 

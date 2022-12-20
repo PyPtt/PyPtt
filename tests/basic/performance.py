@@ -16,9 +16,9 @@ def test(ptt_bot):
         assert ptt_time is not None
 
         # if ptt_time is None:
-        #     util.logger.info('PTT_TIME is None')
+        #     util.log.py.info('PTT_TIME is None')
         #     break
-        # util.logger.info(ptt_time)
+        # util.log.py.info(ptt_time)
     end_time = time.time()
     util.logger.info(
         F'Performance Test get_time {end_time - start_time} s')

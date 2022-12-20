@@ -56,7 +56,7 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
     post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
     if post_info[data_type.PostField.post_status] != data_type.PostStatus.EXISTS:
         # delete success
-        api.logger.stage(i18n.success)
+        api.logger.info(i18n.success)
         return
 
     if check_author:
@@ -101,4 +101,4 @@ def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0
         if not api.confirm:
             raise exceptions.NoPermission(i18n.no_permission)
 
-    api.logger.stage(i18n.success)
+    api.logger.info(i18n.success)
