@@ -2,6 +2,10 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 |
+| 2022.12.20 PyPtt 1.0.3，logger 改採用以 logging_ 為基底。
+
+.. _logging: https://docs.python.org/3/howto/logging.html
+
 | 2022.12.19 發佈 :doc:`Docker Image <docker>`。
 
 | 2022.12.08 PyPtt 1.0.1, 1.0.2，修正一些小錯誤
