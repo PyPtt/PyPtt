@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import _api_util
 from . import check_value
@@ -16,7 +16,7 @@ from . import screens
 
 
 def _get_newest_index(api) -> int:
-    logger = Logger('api', api.config.log_level)
+    logger = DefaultLogger('api', api.config.log_level)
 
     last_screen = api.connect_core.get_screen_queue()[-1]
     # print(last_screen)

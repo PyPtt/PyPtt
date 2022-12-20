@@ -2,7 +2,7 @@ import re
 import sys
 
 from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 from uao import register_uao
 
 register_uao()
@@ -177,7 +177,7 @@ def show(config, screen_queue, function_name=None):
     print('-' * 50)
 
 
-logger = Logger('screen')
+logger = DefaultLogger('screen')
 
 xy_pattern_h = re.compile('^=ESC=\[[\d]+;[\d]+H')
 xy_pattern_s = re.compile('^=ESC=\[[\d]+;[\d]+s')
@@ -266,7 +266,7 @@ class VT100Parser:
 
                 new_y = int(xy_part[6:xy_part.find(';')]) - 1
                 new_x = int(xy_part[xy_part.find(';') + 1: -1])
-                # logger.info('xy', xy_part, new_x, new_y)
+                # log.py.info('xy', xy_part, new_x, new_y)
                 self._move(new_x, new_y)
 
                 data = data[len(xy_part):]

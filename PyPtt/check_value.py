@@ -1,8 +1,8 @@
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import i18n
 
-logger = Logger('check value')
+logger = DefaultLogger('check value')
 
 
 def check_type(value, value_type, name) -> None:

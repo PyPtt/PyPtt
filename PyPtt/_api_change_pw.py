@@ -1,4 +1,4 @@
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import command, _api_util
 from . import connect_core
@@ -9,7 +9,7 @@ from . import i18n
 def change_pw(api, new_password: str) -> None:
     _api_util.one_thread(api)
 
-    logger = Logger('api', api.config.log_level)
+    logger = DefaultLogger('api', api.config.log_level)
 
     if not api._is_login:
         raise exceptions.RequireLogin(i18n.require_login)
@@ -48,4 +48,4 @@ def change_pw(api, new_password: str) -> None:
 
     api._ptt_pw = new_password
 
-    logger.stage(i18n.success)
+    logger.info(i18n.success)

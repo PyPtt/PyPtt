@@ -5,7 +5,7 @@ import threading
 from typing import Dict
 
 from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import _api_get_board_info
 from . import command
@@ -16,7 +16,7 @@ from . import screens
 
 
 def get_content(api, post_mode: bool = True):
-    logger = Logger('get_content')
+    logger = DefaultLogger('get_content')
     api.Unconfirmed = False
 
     def is_unconfirmed_handler(screen):
@@ -193,7 +193,7 @@ def get_mailbox_capacity(api):
     last_screen = api.connect_core.get_screen_queue()[-1]
     capacity_line = last_screen.split('\n')[2]
 
-    logger = Logger('get_mailbox_capacity')
+    logger = DefaultLogger('get_mailbox_capacity')
     logger.debug('capacity_line', capacity_line)
 
     pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
@@ -217,7 +217,7 @@ def get_mailbox_capacity(api):
 # └── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┘
 
 def parse_query_post(api, ori_screen):
-    logger = Logger('parse_query_post')
+    logger = DefaultLogger('parse_query_post')
     lock_post = False
     try:
         cursor_line = [line for line in ori_screen.split(
@@ -352,7 +352,7 @@ def parse_query_post(api, ori_screen):
 def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | None] = None,
                              search_type: data_type.SearchType = data_type.SearchType.NOPE,
                              search_condition: [str | None] = None, search_list: [list | None] = None):
-    # logger = Logger('get_search_condition_cmd')
+    # log.py = DefaultLogger('get_search_condition_cmd')
     cmd_list = []
 
     normal_newest_index = -1

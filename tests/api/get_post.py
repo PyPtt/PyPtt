@@ -57,8 +57,8 @@ def test_no_condition(ptt_bot: PyPtt.API):
                 query=True)
 
         result.append(post)
-        # util.logger.info('+==+' * 10)
-        # util.logger.info(post[PyPtt.PostField.content])
+        # util.log.py.info('+==+' * 10)
+        # util.log.py.info(post[PyPtt.PostField.content])
 
     return result
 
@@ -124,7 +124,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
             if post.get('post_status') == PyPtt.PostStatus.EXISTS:
                 pass
                 # if not query:
-                #     util.logger.info('內文', post.get('content'))
+                #     util.log.py.info('內文', post.get('content'))
             elif post.get('post_status') == PyPtt.PostStatus.DELETED_BY_AUTHOR:
                 util.logger.info('文章被作者刪除')
             elif post.get('post_status') == PyPtt.PostStatus.DELETED_BY_MODERATOR:
@@ -143,7 +143,7 @@ def test(ptt_bot: PyPtt.API):
     util.logger.info(json.dumps(result, indent=4, ensure_ascii=False))
 
     # result = get_post_with_condition(ptt_bot)
-    # util.logger.info(json.dumps(result, ensure_ascii=False, indent=4))
+    # util.log.py.info(json.dumps(result, ensure_ascii=False, indent=4))
 
 
 def func():
@@ -167,7 +167,7 @@ def func():
 
 
 if __name__ == '__main__':
-    util.logger.info('PyPtt version', PyPtt.version)
+    util.logger.info('PyPtt version', PyPtt.__version__)
     # func()
 
     import PyPtt

@@ -1,6 +1,6 @@
 import random
 
-from PyPtt import version
+from PyPtt import __version__
 from . import data_type
 
 languageList = [
@@ -321,8 +321,8 @@ def load(lang):
 
     global welcome
     welcome = specific_load(lang, [
-        f'PyPtt v {version} 由 CodingMan 開發',
-        f'PyPtt v {version} developed by CodingMan',
+        f'PyPtt v {__version__} 由 CodingMan 開發',
+        f'PyPtt v {__version__} developed by CodingMan',
     ])
 
     global set_up_lang_module

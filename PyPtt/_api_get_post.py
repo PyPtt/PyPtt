@@ -7,7 +7,7 @@ from typing import Dict
 
 from AutoStrEnum import AutoJsonEncoder
 from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import _api_util
 from . import check_value
@@ -106,7 +106,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     _api_util.check_board(api, board)
     _api_util.goto_board(api, board)
 
-    logger = Logger('get_post')
+    logger = DefaultLogger('get_post')
 
     cmd_list = []
 

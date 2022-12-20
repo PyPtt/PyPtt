@@ -98,6 +98,6 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
             connect_core.TargetUnit('查詢網友', break_detect=True)
         ]
     )
-    api.logger.stage(i18n.success)
+    api.logger.info(i18n.success)
 
     return list(filter(None, resultlist))

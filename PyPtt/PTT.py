@@ -1,13 +1,12 @@
 ﻿from __future__ import annotations
 
+import logging
 import threading
 from typing import Dict, Tuple, Callable, List, Optional
 
-from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import LogLevel, DefaultLogger
 
-from PyPtt import version
-from . import _api_bucket
+from . import _api_bucket, __version__
 from . import _api_change_pw
 from . import _api_comment
 from . import _api_del_post
@@ -76,12 +75,10 @@ class API:
         if not isinstance(log_level, LogLevel):
             raise TypeError('[PyPtt] log_level must be LogLevel')
 
-        self.logger = Logger('PyPtt', log_level)
-
         if logger_callback is not None and not callable(logger_callback):
             raise TypeError('[PyPtt] logger_callback must be callable')
 
-        self.logger = Logger('PyPtt', log_level, callback=logger_callback, **config.LOGGER_CONFIG)
+        self.logger = DefaultLogger('PyPtt', log_level, handler=logger_callback, **config.LOGGER_CONFIG)
 
         if not isinstance(language, data_type.Language):
             raise TypeError('[PyPtt] language must be PyPtt.Language')
@@ -91,10 +88,6 @@ class API:
 
         self.config.language = language
         i18n.load(self.config.language)
-
-        config.LOGGER_CONFIG['key_word_success'].append(i18n.success)
-
-        config.LOGGER_CONFIG['key_word_fails'].append(i18n.retry)
 
         self.is_mailbox_full: bool = False
         self.is_registered_user: bool = False
@@ -139,6 +132,7 @@ class API:
         self.logger.debug('ThreadID', self._thread_id)
 
         self.logger.info(i18n.welcome)
+
         self.logger.info('PyPtt', i18n.init)
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
@@ -164,14 +158,14 @@ class API:
             version_compare, remote_version = lib_util.sync_version()
 
             if version_compare is data_type.Compare.SMALLER:
-                self.logger.info(i18n.current_version, version)
+                self.logger.info(i18n.current_version, __version__)
                 self.logger.info(i18n.new_version, remote_version)
             elif version_compare is data_type.Compare.BIGGER:
-                self.logger.info(i18n.development_version, version)
+                self.logger.info(i18n.development_version, __version__)
             else:
-                self.logger.info(i18n.latest_version, version)
+                self.logger.info(i18n.latest_version, __version__)
         else:
-            self.logger.info(i18n.current_version, version)
+            self.logger.info(i18n.current_version, __version__)
 
     def __del__(self):
         if self.logger:
@@ -204,11 +198,11 @@ class API:
                 ptt_bot.login(
                     ptt_id='ptt_id', ptt_pw='ptt_pw', kick_other_session=True)
             except PyPtt.LoginError:
-                logger.info('登入失敗')
+                log.py.info('登入失敗')
             except PyPtt.WrongIDorPassword:
-                logger.info('帳號密碼錯誤')
+                log.py.info('帳號密碼錯誤')
             except PyPtt.LoginTooOften:
-                logger.info('請稍等一下再登入')
+                log.py.info('請稍等一下再登入')
 
         """
 
@@ -1005,5 +999,5 @@ class API:
 
 
 if __name__ == '__main__':
-    print('PyPtt v ' + version)
+    print('PyPtt v ' + __version__)
     print('Maintained by CodingMan')

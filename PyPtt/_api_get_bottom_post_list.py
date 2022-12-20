@@ -1,5 +1,5 @@
 from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import _api_util
 from . import check_value
@@ -21,7 +21,7 @@ def get_bottom_post_list(api, board):
 
     _api_util.goto_board(api, board, end=True)
 
-    logger = Logger('get_bottom_post_list')
+    logger = DefaultLogger('get_bottom_post_list')
 
     last_screen = api.connect_core.get_screen_queue()[-1]
 

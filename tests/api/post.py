@@ -1,7 +1,7 @@
 import time
 
 import PyPtt
-import config
+
 from PyPtt import PostField
 from tests import util
 
@@ -71,14 +71,14 @@ github: https://github.com/PttCodingMan/PyPtt
         post = ptt_bot.get_post(board='Test', index=index)
 
         if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
-            util.logger.stage('fail')
+            util.logger.info('fail')
             print(f'Post {index} not exists')
             break
 
         post_author = post[PostField.author]
         post_author = post_author.split(' ')[0]
         if post_author != ptt_bot.ptt_id:
-            util.logger.stage('fail')
+            util.logger.info('fail')
             print(f'Post {index} author not match', post_author)
             break
 
@@ -88,7 +88,7 @@ github: https://github.com/PttCodingMan/PyPtt
                 check = False
                 break
         if not check:
-            util.logger.stage('fail')
+            util.logger.info('fail')
             print(f'Post {index} content not match')
             break
 
@@ -101,11 +101,11 @@ github: https://github.com/PttCodingMan/PyPtt
                 util.logger.info('comment', comment[PyPtt.CommentField.content])
 
         if len(cur_comment_check) != len(comment_check):
-            util.logger.stage('fail')
+            util.logger.info('fail')
             print(f'Post {index} comment not match')
             break
 
-        util.logger.stage('pass')
+        util.logger.info('pass')
 
     for index in post_list:
         ptt_bot.del_post(board='Test', index=index)
