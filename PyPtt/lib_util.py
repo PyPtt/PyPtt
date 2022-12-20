@@ -115,7 +115,7 @@ def sync_version() -> Tuple[data_type.Compare, str]:
 
     text = r.text
 
-    remote_version = [line for line in text.split('\n') if line.startswith('version')][0]
+    remote_version = [line for line in text.split('\n') if line.startswith('__version__')][0]
     remote_version = remote_version[remote_version.find("'") + 1:]
     remote_version = remote_version[:remote_version.find("'")]
 
