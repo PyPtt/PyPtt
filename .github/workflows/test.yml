@@ -11,6 +11,13 @@ on:
       - 'PyPtt/**'
       - '.github/workflows/test.yml'
       - 'tests/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'PyPtt/**'
+      - '.github/workflows/test.yml'
+      - 'tests/**'
   workflow_dispatch:
 
 jobs:
