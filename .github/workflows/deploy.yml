@@ -8,10 +8,6 @@ on:
     workflows: [ test ]
     types:
       - completed
-    paths:
-      - 'setup.py'
-      - '.github/workflows/deploy.yml'
-      - 'PyPtt/__init__.py'
   workflow_dispatch:
 
 jobs:
@@ -22,7 +18,8 @@ jobs:
       - run: echo 'Don't worry, everything will be fine.'
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} ||
+      "contains(github.event.head_commit.message, '[deploy]')"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
