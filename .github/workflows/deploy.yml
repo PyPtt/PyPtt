@@ -33,3 +33,12 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Trigger Docker build
+        uses: InformaticsMatters/trigger-ci-action@1.0.1
+        with:
+          ci-owner: PyPtt
+          ci-repository: PyPtt_image
+          ci-user: PttCodingMan
+          ci-ref: refs/heads/main
+          ci-user-token: ${{ secrets.ACCESS_TOKEN }}
+          ci-name: build PyPtt image
