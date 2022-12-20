@@ -2,19 +2,16 @@
 name: docs
 
 on:
-  workflow_run:
-    workflows: [ test ]
-    types:
-      - completed
+  push:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
-  on-test-failure:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'Don't worry, everything will be fine.'
   build:
+    changes:
+      - PyPtt/*.py
+      - docs/*
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:

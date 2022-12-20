@@ -8,6 +8,8 @@ on:
     workflows: [ test ]
     types:
       - completed
+  workflow_dispatch:
+
 jobs:
   on-test-failure:
     runs-on: ubuntu-latest
