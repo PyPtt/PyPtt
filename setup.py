@@ -2,8 +2,13 @@
 
 from setuptools import setup
 
-# sync with PyPtt/__init__.py
-version = '1.0.2'
+# get version from __init__.py
+with open('PyPtt/__init__.py') as f:
+    text = f.read()
+
+version = [line for line in text.split('\n') if line.startswith('__version__')][0]
+version = version[version.find("'") + 1:]
+version = version[:version.find("'")]
 
 setup(
     name='PyPtt',  # Required
