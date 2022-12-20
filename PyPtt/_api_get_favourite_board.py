@@ -68,7 +68,7 @@ def get_favourite_board(api) -> list:
             board_title = board_title[1:]
 
             if board in board_list:
-                api.logger.stage(i18n.success)
+                api.logger.info(i18n.success)
                 return favourite_board_list
             board_list.append(board)
 
@@ -82,5 +82,5 @@ def get_favourite_board(api) -> list:
 
         cmd = command.ctrl_f
 
-    api.logger.stage(i18n.success)
+    api.logger.info(i18n.success)
     return favourite_board_list

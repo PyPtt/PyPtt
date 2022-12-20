@@ -41,7 +41,7 @@ def logout(api) -> None:
 
     api._is_login = False
 
-    api.logger.stage(i18n.success)
+    api.logger.info(i18n.success)
 
 
 def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
@@ -225,4 +225,4 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         api.logger.info(i18n.picks_in_register, api.process_picks)
 
     api._is_login = True
-    api.logger.stage(i18n.success)
+    api.logger.info(i18n.success)

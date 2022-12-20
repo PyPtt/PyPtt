@@ -3,7 +3,7 @@ import re
 from typing import Dict
 
 from AutoStrEnum import AutoJsonEncoder
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import _api_util
 from . import check_value
@@ -18,7 +18,7 @@ from .data_type import UserField
 
 
 def get_user(api, ptt_id: str) -> Dict:
-    logger = Logger('get_user')
+    logger = DefaultLogger('get_user')
 
     _api_util.one_thread(api)
 

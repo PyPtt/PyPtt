@@ -17,8 +17,8 @@ project = 'PyPtt'
 copyright = f'2017 ~ {datetime.now().year}, CodingMan'
 author = 'CodingMan'
 
-version = PyPtt.version
-release = PyPtt.version
+version = PyPtt.__version__
+release = PyPtt.__version__
 
 html_title = f'PyPtt.cc'
 

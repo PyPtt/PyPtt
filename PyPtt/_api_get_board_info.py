@@ -2,7 +2,7 @@ import re
 from typing import Dict
 
 from SingleLog import LogLevel
-from SingleLog import Logger
+from SingleLog import DefaultLogger
 
 from . import _api_util
 from . import check_value
@@ -15,7 +15,7 @@ from .data_type import BoardField
 
 
 def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -> Dict:
-    logger = Logger('get_board_info', LogLevel.DEBUG if call_by_others else LogLevel.INFO)
+    logger = DefaultLogger('get_board_info', LogLevel.DEBUG if call_by_others else LogLevel.INFO)
 
     _api_util.one_thread(api)
 

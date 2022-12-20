@@ -53,7 +53,7 @@ def _comment(api,
         else:
             raise exceptions.NoSuchPost(board, post_index)
 
-    api.logger.stage(i18n.has_comment_permission)
+    api.logger.info(i18n.has_comment_permission)
 
     cmd_list = []
 
@@ -190,4 +190,4 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
                 api.logger.info(i18n.wait_for_no_fast_comment)
                 time.sleep(5.2)
 
-        api.logger.stage(i18n.success)
+        api.logger.info(i18n.success)
