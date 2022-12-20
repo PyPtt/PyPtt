@@ -2,14 +2,14 @@
 name: docs
 
 on:
-  workflow_run:
-    workflows: [ test ]
-    types:
-      - completed
+  push:
     paths:
-      - 'PyPtt/**'
+      - 'PyPtt/*.py'
       - '.github/workflows/docs.yml'
-      - 'docs/**'
+  pull_request:
+    paths:
+      - 'PyPtt/*.py'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 jobs:

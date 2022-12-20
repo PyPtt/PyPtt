@@ -5,19 +5,13 @@ name: test
 
 on:
   push:
-    branches:
-      - master
     paths:
-      - 'PyPtt/**'
+      - 'PyPtt/*.py'
       - '.github/workflows/test.yml'
-      - 'tests/**'
   pull_request:
-    branches:
-      - master
     paths:
-      - 'PyPtt/**'
+      - 'PyPtt/*.py'
       - '.github/workflows/test.yml'
-      - 'tests/**'
   workflow_dispatch:
 
 jobs:
