@@ -7,6 +7,10 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'PyPtt/**'
+      - '.github/workflows/test.yml'
+      - 'tests/**'
   workflow_dispatch:
 
 jobs:

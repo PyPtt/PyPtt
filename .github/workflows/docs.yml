@@ -6,6 +6,10 @@ on:
     workflows: [ test ]
     types:
       - completed
+    paths:
+      - 'PyPtt/**'
+      - '.github/workflows/docs.yml'
+      - 'docs/**'
   workflow_dispatch:
 
 jobs:
