@@ -8,10 +8,13 @@ PyPtt
 .. image:: https://img.shields.io/pypi/v/PyPtt.svg
     :target: https://pypi.org/project/PyPtt/
 
-.. image:: https://img.shields.io/pypi/dm/PyPtt
+.. image:: https://img.shields.io/github/last-commit/pyptt/pyptt.svg?color=green
+    :target: https://github.com/PyPtt/PyPtt/commits/
+
+.. image:: https://img.shields.io/pypi/dm/PyPtt?color=ocean
     :target: https://pypi.org/project/PyPtt/
 
-.. image:: https://github.com/PyPtt/PyPtt/actions/workflows/test.yml/badge.svg
+.. image:: https://github.com/PyPtt/PyPtt/actions/workflows/test.yml/badge.svg?branch=master&color=yellogreen
     :target: https://github.com/PyPtt/PyPtt/actions/workflows/test.yml
 
 .. image:: https://img.shields.io/pypi/pyversions/PyPtt
@@ -19,6 +22,9 @@ PyPtt
 
 .. image:: https://img.shields.io/badge/License-LGPL%20v3-blue.svg
     :target: https://www.gnu.org/licenses/lgpl-3.0
+
+.. image:: https://img.shields.io/github/stars/pyptt/pyptt?style=social
+    :target: https://github.com/PyPtt/PyPtt/stargazers
 
 
 | PyPtt_ 是時下最流行的 PTT Library，你可以在 Python 程式碼裡面使用 PTT 常見的操作，例如：:doc:`推文 <api/comment>`、:doc:`發文 <api/post>`、:doc:`寄信 <api/mail>`、:doc:`讀取信件 <api/get_mail>`、:doc:`讀取文章 <api/get_post>` 等等操作。

@@ -4,10 +4,12 @@ name: docs
 on:
   push:
     paths:
+      - 'docs/**'
       - 'PyPtt/*.py'
       - '.github/workflows/docs.yml'
   pull_request:
     paths:
+      - 'docs/**'
       - 'PyPtt/*.py'
       - '.github/workflows/docs.yml'
   workflow_dispatch:

@@ -1,5 +1,20 @@
 Docker Image
 =================
+
+.. image:: https://img.shields.io/docker/v/codingman000/pyptt/latest
+   :target: https://hub.docker.com/r/codingman000/pyptt
+
+.. image:: https://img.shields.io/docker/pulls/codingman000/pyptt?color=orange
+    :target: https://hub.docker.com/r/codingman000/pyptt
+
+.. image:: https://img.shields.io/docker/image-size/codingman000/pyptt/latest?color=green
+    :target: https://hub.docker.com/r/codingman000/pyptt
+
+.. image:: https://img.shields.io/docker/stars/codingman000/pyptt?color=succes
+    :target: https://hub.docker.com/r/codingman000/pyptt
+
+
+
 | 是的，PyPtt 也支援 Docker Image。
 | 只要一行指令就可以啟動一個 PyPtt 的 Docker Image，並且可以在 Docker Image 中使用 PyPtt。
 |
