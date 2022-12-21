@@ -13,6 +13,9 @@
 開發中
 --------------------
 * 支援 PTT 官方 APP API
+    你可以在 ptt-app-api_ 分支上找到目前的進度。
+
+.. _ptt-app-api: https://github.com/PyPtt/PyPtt/tree/ptt-app-api
 
 已完成
 --------------------
