@@ -3,11 +3,13 @@ name: docs
 
 on:
   push:
+    branches: [ master ]
     paths:
       - 'docs/**'
       - 'PyPtt/*.py'
       - '.github/workflows/docs.yml'
   pull_request:
+    branches: [ master ]
     paths:
       - 'docs/**'
       - 'PyPtt/*.py'
