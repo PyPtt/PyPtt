@@ -10,7 +10,7 @@
 
 #### PyPtt (PTT Library) 是一套 Pure Python PTT API。具備大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號
 你都可以在這裡找到完整的使用範例
-#### API 的詳細範例與參數說明 PyPtt 文件 [0.9 版本](https://github.com/PttCodingMan/PyPtt/tree/master/doc), [1.0 版本](https://pyptt.cc/)
+#### API 的詳細範例與參數說明 PyPtt 文件 [0.9 版本(封存)](https://github.com/PyPtt/PyPtt/tree/1700147753fde9c920cab8c2e484384f6cedd6f3/doc), [1.0 版本](https://pyptt.cc/)
 #### Pypi: https://pypi.org/project/PyPtt/
 <img src="https://raw.githubusercontent.com/PyPtt/PyPtt/master/docs/_static/login_1.0.gif" width="560">
 
