@@ -13,6 +13,9 @@ on:
       - 'PyPtt/*.py'
       - '.github/workflows/test.yml'
   workflow_dispatch:
+  
+env:
+  DEP_PATH: requirements.txt
 
 jobs:
   check:
