@@ -191,7 +191,7 @@ class API:
 
         範例::
 
-            from PyPtt
+            import PyPtt
             ptt_bot = PyPtt.API()
 
             try:
@@ -222,8 +222,10 @@ class API:
 
             try:
                 # .. login ..
+                # .. do something ..
             finally:
                 ptt_bot.logout()
+
         """
 
         _api_loginout.logout(self)
