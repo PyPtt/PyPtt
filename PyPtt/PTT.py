@@ -191,7 +191,7 @@ class API:
 
         範例::
 
-            from PyPtt
+            import PyPtt
             ptt_bot = PyPtt.API()
 
             try:
