@@ -4,8 +4,8 @@ import re
 import threading
 from typing import Dict
 
-from SingleLog import LogLevel
 from SingleLog import DefaultLogger
+from SingleLog import LogLevel
 
 from . import _api_get_board_info
 from . import command

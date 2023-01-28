@@ -1,8 +1,8 @@
 import re
 import sys
 
-from SingleLog import LogLevel
 from SingleLog import DefaultLogger
+from SingleLog import LogLevel
 from uao import register_uao
 
 register_uao()

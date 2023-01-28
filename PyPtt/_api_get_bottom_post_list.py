@@ -1,5 +1,5 @@
-from SingleLog import LogLevel
 from SingleLog import DefaultLogger
+from SingleLog import LogLevel
 
 from . import _api_util
 from . import check_value

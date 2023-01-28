@@ -1,5 +1,4 @@
 from SingleLog import LogLevel
-from colorama import Fore
 
 from . import data_type
 
