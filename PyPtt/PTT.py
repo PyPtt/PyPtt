@@ -892,7 +892,7 @@ class API:
 
         Raises:
             RequireLogin: 需要登入。
-            SetConnectMailFirst: 需要先設定聯絡信箱。
+            SetContactMailFirst: 需要先設定聯絡信箱。
             WrongPassword: 密碼錯誤。
 
         範例::

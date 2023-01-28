@@ -92,7 +92,7 @@ picks_in_register: str = ''
 reading_board_info: str = ''
 no_permission: str = ''
 no_post: str = ''
-set_connect_mail_first: str = ''
+set_contact_mail_first: str = ''
 no_such_board: str = ''
 no_mail: str = ''
 find_newest_index: str = ''
@@ -1046,9 +1046,9 @@ def load(lang):
         'no post',
     ])
 
-    global set_connect_mail_first
-    set_connect_mail_first = specific_load(lang, [
-        '設定聯絡信箱後才能修改密碼',
+    global set_contact_mail_first
+    set_contact_mail_first = specific_load(lang, [
+        '請先設定聯絡信箱後才能修改密碼',
         'password can only be changed after setting the contact mailbox',
     ])
 

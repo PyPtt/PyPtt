@@ -261,9 +261,9 @@ class OnlySecureConnection(Error):
         return self.message
 
 
-class SetConnectMailFirst(Error):
+class SetContactMailFirst(Error):
     def __init__(self):
-        self.message = i18n.set_connect_mail_first
+        self.message = i18n.set_contact_mail_first
 
     def __str__(self):
         return self.message

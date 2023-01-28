@@ -135,9 +135,14 @@
 
     只能使用安全連線。
 
-.. py:exception:: PyPtt.exceptions.SetConnectMailFirst
+.. py:exception:: PyPtt.exceptions.SetContactMailFirst
     :module: PyPtt
 
     請先設定聯絡信箱。
+
+.. py:exception:: PyPtt.exceptions.ResetYourContactEmail
+    :module: PyPtt
+
+    請重新設定聯絡信箱。
 
 .. _水桶: https://pttpedia.fandom.com/zh/wiki/%E6%B0%B4%E6%A1%B6
