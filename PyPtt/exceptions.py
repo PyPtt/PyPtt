@@ -267,3 +267,11 @@ class SetConnectMailFirst(Error):
 
     def __str__(self):
         return self.message
+
+
+class ResetYourContactEmail(Error):
+    def __init__(self):
+        self.message = i18n.reset_your_contact_email
+
+    def __str__(self):
+        return self.message
