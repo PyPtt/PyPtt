@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -191,7 +191,6 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">使用範例</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Docker Image</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#id1">如何使用</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常見問題</a></li>
 <li class="toctree-l1"><a class="reference internal" href="roadmap.html">Roadmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">ChangeLog</a></li>
@@ -225,7 +224,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -245,23 +244,20 @@
 <div class="line">Docker hub: <a class="reference external" href="https://hub.docker.com/r/codingman000/pyptt">https://hub.docker.com/r/codingman000/pyptt</a></div>
 <div class="line">Github: <a class="reference external" href="https://github.com/PyPtt/PyPtt_image">https://github.com/PyPtt/PyPtt_image</a></div>
 </div>
-</section>
 <section id="id1">
-<h1>如何使用<a class="headerlink" href="#id1" title="本標頭的永久連結">#</a></h1>
-<section id="id2">
-<h2>安裝<a class="headerlink" href="#id2" title="本標頭的永久連結">#</a></h2>
+<h2>安裝<a class="headerlink" href="#id1" title="本標頭的永久連結">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull codingman000/pyptt:latest
 </pre></div>
 </div>
 </section>
-<section id="id3">
-<h2>啟動<a class="headerlink" href="#id3" title="本標頭的永久連結">#</a></h2>
+<section id="id2">
+<h2>啟動<a class="headerlink" href="#id2" title="本標頭的永久連結">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -d -p <span class="m">8787</span>:8787 codingman000/pyptt:latest
 </pre></div>
 </div>
 </section>
-<section id="id4">
-<h2>連線<a class="headerlink" href="#id4" title="本標頭的永久連結">#</a></h2>
+<section id="id3">
+<h2>連線<a class="headerlink" href="#id3" title="本標頭的永久連結">#</a></h2>
 <p>物件編碼的方法你可以在這裏了解 <a class="reference external" href="https://github.com/PyPtt/PyPtt_image/blob/main/src/utils.py#L4">程式碼</a></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
 <span class="kn">import</span> <span class="nn">requests</span>
@@ -372,8 +368,29 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Docker Image</a><ul>
+<li><a class="reference internal" href="#id1">安裝</a></li>
+<li><a class="reference internal" href="#id2">啟動</a></li>
+<li><a class="reference internal" href="#id3">連線</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
