@@ -140,8 +140,8 @@ class Target:
 
     CursorToGoodbye = MainMenu.copy()
 
-    ContentStart = '─── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──'
-    ContentEnd = [
+    content_start = '─── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──'
+    content_end_list = [
         '--\n※ 發信站: 批踢踢實業坊',
         '--\n※ 發信站: 批踢踢兔(ptt2.cc)',
         '--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)'

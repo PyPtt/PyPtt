@@ -281,6 +281,9 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     origin_post, has_control_code = _api_util.get_content(api)
 
     if origin_post is None:
+
+        logger.info(i18n.post_deleted)
+
         post.update({
             PostField.board: board,
             PostField.aid: post_aid,
@@ -329,7 +332,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     else:
         pattern_result = post_author_pattern_old.search(author_line)
         if pattern_result is None:
-            logger.debug(i18n.substandard_post, i18n.author)
+            logger.info(i18n.substandard_post, i18n.author)
 
             post.update({
                 PostField.board: board,
@@ -363,7 +366,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     title_line = origin_post_lines[1]
     pattern_result = post_title_pattern.search(title_line)
     if pattern_result is None:
-        logger.debug(i18n.substandard_post, i18n.title)
+        logger.info(i18n.substandard_post, i18n.title)
 
         post.update({
             PostField.board: board,
@@ -395,7 +398,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     date_line = origin_post_lines[2]
     pattern_result = post_date_pattern.search(date_line)
     if pattern_result is None:
-        logger.debug(i18n.substandard_post, i18n.date)
+        logger.info(i18n.substandard_post, i18n.date)
 
         post.update({
             PostField.board: board,
@@ -424,29 +427,29 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     logger.debug(i18n.date, post_date)
 
     content_fail = True
-    if screens.Target.ContentStart not in origin_post:
+    if screens.Target.content_start not in origin_post:
         # print('Type 1')
         content_fail = True
     else:
         post_content = origin_post
         post_content = post_content[
-                       post_content.find(screens.Target.ContentStart) + len(screens.Target.ContentStart) + 1:]
+                       post_content.find(screens.Target.content_start) + len(screens.Target.content_start) + 1:]
         # print('Type 2')
         # print(f'PostContent [{PostContent}]')
-        for EC in screens.Target.ContentEnd:
+        for content_end in screens.Target.content_end_list:
             # + 3 = 把 --\n 拿掉
             # print(f'EC [{EC}]')
-            if EC in post_content:
+            if content_end in post_content:
                 content_fail = False
 
-                post_content = post_content[:post_content.rfind(EC) + 3]
-                origin_post_lines = origin_post[origin_post.find(EC):]
+                post_content = post_content[:post_content.rfind(content_end) + 3]
+                origin_post_lines = origin_post[origin_post.find(content_end):]
                 # post_content = post_content.strip()
                 origin_post_lines = origin_post_lines.split('\n')
                 break
 
     if content_fail:
-        logger.debug(i18n.substandard_post, i18n.content)
+        logger.info(i18n.substandard_post, i18n.content)
 
         post.update({
             PostField.board: board,
@@ -516,7 +519,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
             break
     if api.config.host == data_type.HOST.PTT1:
         if ip is None:
-            logger.debug(i18n.substandard_post, ip)
+            logger.info(i18n.substandard_post, ip)
 
             post.update({
                 PostField.board: board,
