@@ -207,9 +207,9 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     # 從全文拿掉信件開頭作為信件內文
     mail_content = origin_mail[origin_mail.find(content_start) + len(content_start) + 1:]
 
-    mail_content = mail_content[mail_content.find(screens.Target.ContentStart) + len(screens.Target.ContentStart) + 1:]
+    mail_content = mail_content[mail_content.find(screens.Target.content_start) + len(screens.Target.content_start) + 1:]
 
-    for EC in screens.Target.ContentEnd:
+    for EC in screens.Target.content_end_list:
         # + 3 = 把 --\n 拿掉
         if EC in mail_content:
             mail_content = mail_content[:mail_content.rfind(EC) + 3].rstrip()
