@@ -224,6 +224,7 @@ delete_post: str = ''
 search_user: str = ''
 get_mail: str = ''
 no_such_mail: str = ''
+reset_your_contact_email: str = ''
 
 goodbye_en = [
     'goodbye',
@@ -246,6 +247,12 @@ goodbye_mandarin = [
 def load(lang):
     if not isinstance(lang, data_type.Language):
         raise ValueError('Unknown language', lang)
+
+    global reset_your_contact_email
+    reset_your_contact_email = specific_load(lang, [
+        '請重新設定您的聯絡信箱',
+        'Please reset your contact email'
+    ])
 
     global no_such_mail
     no_such_mail = specific_load(lang, [
