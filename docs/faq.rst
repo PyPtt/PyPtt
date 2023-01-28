@@ -13,7 +13,7 @@ Q: 我該如何提出問題？
 
 .. code-block:: python
 
-    from PyPtt
+    import PyPtt
 
     ptt_bot = PyPtt.API(LogLevel=PyPtt.LogLevel.TRACE)
 
