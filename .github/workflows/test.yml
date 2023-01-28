@@ -13,9 +13,12 @@ on:
       - 'PyPtt/*.py'
       - '.github/workflows/test.yml'
   workflow_dispatch:
+  
+env:
+  DEP_PATH: requirements.txt
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -39,3 +42,12 @@ jobs:
           flake8 PyPtt/ --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 PyPtt/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out master
+        uses: actions/checkout@master
+
+      - name: Security vulnerabilities scan
+        uses: aufdenpunkt/python-safety-check@master
+    
