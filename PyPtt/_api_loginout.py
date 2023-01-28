@@ -105,6 +105,8 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         connect_core.TargetUnit('您要刪除以上錯誤嘗試的記錄嗎', response='y' + command.enter),
         connect_core.TargetUnit('請選擇暫存檔 (0-9)[0]', response=command.enter),
         connect_core.TargetUnit('有一篇文章尚未完成', response='Q' + command.enter),
+        connect_core.TargetUnit(
+            '請重新設定您的聯絡信箱', break_detect=True, exceptions_=exceptions.ResetYourContactEmail()),
         # connect_core.TargetUnit(
         #     i18n.in_login_process_please_wait,
         #     '登入中，請稍候'),
