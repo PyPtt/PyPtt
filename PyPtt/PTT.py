@@ -188,6 +188,7 @@ class API:
             LoginError: 登入失敗。
             WrongIDorPassword: 帳號或密碼錯誤。
             OnlySecureConnection: 只能使用安全連線。
+            ResetYourContactEmail: 請先至信箱設定連絡信箱。
 
         範例::
 
@@ -198,11 +199,13 @@ class API:
                 ptt_bot.login(
                     ptt_id='ptt_id', ptt_pw='ptt_pw', kick_other_session=True)
             except PyPtt.LoginError:
-                log.py.info('登入失敗')
+                print('登入失敗')
             except PyPtt.WrongIDorPassword:
-                log.py.info('帳號密碼錯誤')
-            except PyPtt.LoginTooOften:
-                log.py.info('請稍等一下再登入')
+                print('帳號密碼錯誤')
+            except PyPtt.OnlySecureConnection:
+                print('只能使用安全連線')
+            except PyPtt.ResetYourContactEmail:
+                print('請先至信箱設定連絡信箱')
 
         """
 
