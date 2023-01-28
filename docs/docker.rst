@@ -22,9 +22,6 @@ Docker Image
 | Docker hub: https://hub.docker.com/r/codingman000/pyptt
 | Github: https://github.com/PyPtt/PyPtt_image
 
-如何使用
-=================
-
 安裝
 -----------------
 
