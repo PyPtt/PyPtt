@@ -428,7 +428,8 @@ class API:
             ptt_bot = PyPtt.API()
             try:
                 # .. login ..
-                ptt_bot.comment(board='Test', comment_type=PyPtt.CommentType.PUSH, comment_content='PyPtt 程式推文測試', index=123)
+                ptt_bot.comment(board='Test', comment_type=PyPtt.CommentType.PUSH, content='Comment by index', index=123)
+                ptt_bot.comment(board='Test', comment_type=PyPtt.CommentType.PUSH, content='Comment by index', aid='17MrayxF')
                 # .. do something ..
             finally:
                 ptt_bot.logout()
