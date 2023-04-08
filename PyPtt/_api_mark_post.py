@@ -83,10 +83,8 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
 
     cmd_list = []
     if post_aid is not None:
-        cmd_list.append('#' + post_aid)
-
+        cmd_list.append(lib_util.check_aid(post_aid))
         cmd_list.append(command.enter)
-
     elif post_index != 0:
         if search_condition is not None:
             if search_type == data_type.SearchType.KEYWORD:
@@ -106,6 +104,8 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
         cmd_list.append(str(post_index))
 
         cmd_list.append(command.enter)
+    else:
+        raise ValueError('post_aid and post_index cannot be None at the same time')
 
     if mark_type == data_type.MarkType.S:
         cmd_list.append('L')
