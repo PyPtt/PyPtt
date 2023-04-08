@@ -7,6 +7,7 @@ from . import connect_core
 from . import data_type
 from . import exceptions
 from . import i18n
+from . import lib_util
 
 
 def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_file, post_aid: str,
@@ -49,9 +50,12 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
     cmd_list = []
 
     if post_aid is not None:
-        cmd_list.append('#' + post_aid)
+        cmd_list.append(lib_util.check_aid(post_aid))
     elif post_index != 0:
         cmd_list.append(str(post_index))
+    else:
+        raise ValueError('post_aid and post_index cannot be None at the same time')
+
     cmd_list.append(command.enter * 2)
     cmd_list.append('r')
 

@@ -22,9 +22,12 @@ def _comment(api,
     cmd_list = []
 
     if post_aid is not None:
-        cmd_list.append('#' + post_aid)
+        cmd_list.append(lib_util.check_aid(post_aid))
     elif post_index != 0:
         cmd_list.append(str(post_index))
+    else:
+        raise ValueError('post_aid and post_index cannot be None at the same time')
+
     cmd_list.append(command.enter)
     cmd_list.append(command.comment)
 
