@@ -27,6 +27,9 @@ def _comment(api,
              push_content: str,
              post_aid: str,
              post_index: int) -> None:
+
+    _api_util.goto_board(api, board)
+
     cmd_list = []
 
     if post_aid is not None:
@@ -120,7 +123,6 @@ def _comment(api,
 
 def comment(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str,
             post_index: int) -> None:
-    _api_util.goto_board(api, board)
 
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())

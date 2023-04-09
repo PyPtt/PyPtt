@@ -3,9 +3,16 @@ from tests import util
 
 
 def test(ptt_bot):
-    test_list = [
-        ('Test', None)
-    ]
+    if ptt_bot.host == PyPtt.HOST.PTT1:
+        test_list = [
+            # comment the newest post
+            ('Test', None),
+        ]
+    else:
+        test_list = [
+            # comment the newest post
+            ('Test', None),
+        ]
 
     for board, post_id in test_list:
         if post_id is None:
@@ -14,16 +21,15 @@ def test(ptt_bot):
             for i in range(100):
                 post_info = ptt_bot.get_post(board, index=newest_index - i)
 
-                # if the post is deleted, save the post
+                # if the post is not deleted, save the post
                 if post_info[PyPtt.PostField.post_status] == PyPtt.PostStatus.EXISTS:
-                    newest_index = newest_index - i
                     break
 
             print('post_id', post_id)
         elif isinstance(post_id, int):
-            post_info = ptt_bot.get_post(board, index=post_id)
+            post_info = ptt_bot.get_post(board, index=post_id, query=True)
         elif isinstance(post_id, str):
-            post_info = ptt_bot.get_post(board, aid=post_id)
+            post_info = ptt_bot.get_post(board, aid=post_id, query=True)
 
         print(post_info)
 
