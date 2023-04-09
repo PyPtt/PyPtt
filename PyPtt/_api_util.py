@@ -469,11 +469,11 @@ def check_board(api, board: str, check_moderator: bool = False) -> Dict:
 
         moderators = board_info[data_type.BoardField.moderators]
         moderators = [x.lower() for x in moderators]
-        api._ModeratorList[board.lower()] = moderators
+        api._moderators[board.lower()] = moderators
         api._board_info_list[board.lower()] = board_info
 
     if check_moderator:
-        if api.ptt_id.lower() not in api._ModeratorList[board.lower()]:
+        if api.ptt_id.lower() not in api._moderators[board.lower()]:
             raise exceptions.NeedModeratorPermission(board)
 
     return api._board_info_list[board.lower()]
