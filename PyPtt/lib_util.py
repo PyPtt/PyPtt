@@ -36,6 +36,11 @@ def get_random_str(length) -> str:
     return ''.join(random.choices(string.hexdigits, k=length))
 
 
+# 演算法參考 https://www.ptt.cc/man/C_Chat/DE98/DFF5/DB61/M.1419434423.A.DF0.html
+# aid 字元表
+aid_table = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
+
+
 def get_aid_from_url(url: str) -> Tuple[str, str]:
     # 檢查是否為字串
     check_value.check_type(url, str, 'url')
@@ -45,10 +50,6 @@ def get_aid_from_url(url: str) -> Tuple[str, str]:
     r = pattern.search(url)
     if r is None:
         raise ValueError('wrong parameter url must be www.ptt.cc post url')
-
-    # 演算法參考 https://www.ptt.cc/man/C_Chat/DE98/DFF5/DB61/M.1419434423.A.DF0.html
-    # aid 字元表
-    aid_table = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
 
     board = url[23:]
     board = board[:board.find('/')]
@@ -143,6 +144,26 @@ def uniform_new_line(text: str) -> str:
     return text
 
 
+def check_aid(aid: str) -> str:
+    if aid is None:
+        raise ValueError('aid is None')
+
+    if not isinstance(aid, str):
+        raise TypeError('aid is not str')
+
+    if aid.startswith('#'):
+        aid = aid[1:]
+
+    if len(aid) != 8:
+        raise ValueError('aid is not valid')
+
+    # check the char of aid is in aid_table or not
+    for char in aid:
+        if char not in aid_table:
+            raise ValueError('aid is not valid')
+
+    return f'#{aid}'
+
+
 if __name__ == '__main__':
-    for _ in range(5):
-        print(get_random_str(10))
+    check_aid('#1aBzRW4z')

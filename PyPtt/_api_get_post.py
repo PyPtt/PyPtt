@@ -16,6 +16,7 @@ from . import connect_core
 from . import data_type
 from . import exceptions
 from . import i18n
+from . import lib_util
 from . import screens
 from .data_type import PostField, CommentField, NewIndex
 from .data_type import SearchType as st
@@ -111,7 +112,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     cmd_list = []
 
     if post_aid is not None:
-        cmd_list.append('#' + post_aid)
+        cmd_list.append(lib_util.check_aid(post_aid))
 
     elif post_index != 0:
         if search_condition is not None:
@@ -149,6 +150,8 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
         cmd_list.append(str(max(1, post_index - 100)))
         cmd_list.append(command.enter)
         cmd_list.append(str(post_index))
+    else:
+        raise ValueError('post_aid and post_index cannot be None at the same time')
 
     cmd_list.append(command.enter)
     cmd_list.append(command.query_post)
@@ -281,7 +284,6 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     origin_post, has_control_code = _api_util.get_content(api)
 
     if origin_post is None:
-
         logger.info(i18n.post_deleted)
 
         post.update({

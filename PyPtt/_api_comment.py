@@ -1,3 +1,4 @@
+import collections
 import time
 
 from SingleLog import LogLevel
@@ -12,6 +13,13 @@ from . import i18n
 from . import lib_util
 from . import screens
 
+comment_option = [
+    None,
+    data_type.CommentType.PUSH,
+    data_type.CommentType.BOO,
+    data_type.CommentType.ARROW,
+]
+
 
 def _comment(api,
              board: str,
@@ -19,12 +27,18 @@ def _comment(api,
              push_content: str,
              post_aid: str,
              post_index: int) -> None:
+
+    _api_util.goto_board(api, board)
+
     cmd_list = []
 
     if post_aid is not None:
-        cmd_list.append('#' + post_aid)
+        cmd_list.append(lib_util.check_aid(post_aid))
     elif post_index != 0:
         cmd_list.append(str(post_index))
+    else:
+        raise ValueError('post_aid and post_index cannot be None at the same time')
+
     cmd_list.append(command.enter)
     cmd_list.append(command.comment)
 
@@ -32,6 +46,7 @@ def _comment(api,
 
     target_list = [
         connect_core.TargetUnit('您覺得這篇', log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(f'→ {api.ptt_id}: ', log_level=LogLevel.DEBUG, break_detect=True),
         connect_core.TargetUnit('加註方式', log_level=LogLevel.DEBUG, break_detect=True),
         connect_core.TargetUnit('禁止快速連續推文', log_level=LogLevel.INFO, break_detect=True,
                                 exceptions_=exceptions.NoFastComment()),
@@ -48,39 +63,47 @@ def _comment(api,
         target_list)
 
     if index == -1:
-        if post_aid is not None:
-            raise exceptions.NoSuchPost(board, post_aid)
-        else:
-            raise exceptions.NoSuchPost(board, post_index)
+        raise exceptions.UnknownError('unknown error in comment')
 
     api.logger.info(i18n.has_comment_permission)
 
     cmd_list = []
 
-    if index == 0:
+    if index == 0 or index == 1:
         push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
 
         api.logger.debug('comment option line', push_option_line)
 
-        enable_push = '值得推薦' in push_option_line
-        enable_boo = '給它噓聲' in push_option_line
-        enable_arrow = '只加→註解' in push_option_line
+        available_push_type = collections.defaultdict(lambda: False)
+        first_available_push_type = None
 
-        api.logger.debug('comment', enable_push)
-        api.logger.debug('Boo', enable_boo)
-        api.logger.debug('Arrow', enable_arrow)
+        if '值得推薦' in push_option_line:
+            available_push_type[data_type.CommentType.PUSH] = True
 
-        if push_type == data_type.CommentType.PUSH and not enable_push:
-            push_type = data_type.CommentType.ARROW
-        elif push_type == data_type.CommentType.BOO and not enable_boo:
-            push_type = data_type.CommentType.ARROW
-        elif push_type == data_type.CommentType.ARROW and not enable_arrow:
-            push_type = data_type.CommentType.PUSH
+            if first_available_push_type is None:
+                first_available_push_type = data_type.CommentType.PUSH
 
-        cmd_list.append(str(push_type))
-    # elif index == 1:
-    #     push_type = data_type.push_type.ARROW
+        if '只加→註解' in push_option_line:
+            available_push_type[data_type.CommentType.ARROW] = True
+
+            if first_available_push_type is None:
+                first_available_push_type = data_type.CommentType.ARROW
+
+        if '給它噓聲' in push_option_line:
+            available_push_type[data_type.CommentType.BOO] = True
+
+            if first_available_push_type is None:
+                first_available_push_type = data_type.CommentType.BOO
+
+        api.logger.debug('available_push_type', available_push_type)
+
+        if available_push_type[push_type] is False:
+            if first_available_push_type:
+                push_type = first_available_push_type
+
+        if True in available_push_type.values():
+            cmd_list.append(str(comment_option.index(push_type)))
 
     cmd_list.append(push_content)
     cmd_list.append(command.enter)
@@ -100,7 +123,6 @@ def _comment(api,
 
 def comment(api, board: str, push_type: data_type.CommentType, push_content: str, post_aid: str,
             post_index: int) -> None:
-    _api_util.goto_board(api, board)
 
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
@@ -147,7 +169,6 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
             max_push_length = 43 - len(api.ptt_id)
     else:
         api.logger.debug(i18n.not_record_ip)
-        #     推文對齊
         if board_info[data_type.BoardField.is_comment_aligned]:
             api.logger.debug(i18n.push_aligned)
             max_push_length = 46
