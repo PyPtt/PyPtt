@@ -234,29 +234,6 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
             cmd,
             target_list)
 
-    # board_info = data_type.BoardInfo(
-    #     boardname,
-    #     online_user,
-    #     mandarin_des,
-    #     moderators,
-    #     open_status,
-    #     into_top_ten_when_hide,
-    #     can_non_board_members_post,
-    #     can_reply_post,
-    #     self_del_post,
-    #     can_comment_post,
-    #     can_boo_post,
-    #     can_fast_push,
-    #     min_interval_between_comments,
-    #     is_comment_record_ip,
-    #     is_comment_aligned,
-    #     can_moderators_del_illegal_content,
-    #     does_tran_post_auto_recorded_and_require_post_permissions,
-    #     is_cool_mode,
-    #     is_require18,
-    #     require_login_time,
-    #     require_illegal_post,
-    #     post_kind_list)
     return {
         BoardField.board: boardname,
         BoardField.online_user: online_user,

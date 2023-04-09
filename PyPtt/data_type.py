@@ -29,18 +29,6 @@ class SearchType(AutoStrEnum):
     MONEY = auto()
 
 
-# class MailSearchType(IntEnum):
-#     """信件搜尋類型"""
-#
-#     NOPE = auto()
-#     # 搜尋關鍵字    / ?
-#     KEYWORD = auto()
-#     # 搜尋作者      a
-#     AUTHOR = auto()
-#     # 搜尋標記      G
-#     MARK = auto()
-
-
 class ReplyTo(AutoStrEnum):
     # 回文類型
 
