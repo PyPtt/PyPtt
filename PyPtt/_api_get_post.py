@@ -69,7 +69,7 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
         check_value.check_type(search_condition, str, 'SearchCondition')
 
     if search_list is not None:
-        check_value.check_type(search_condition, list, 'search_list')
+        check_value.check_type(search_list, list, 'search_list')
 
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')
