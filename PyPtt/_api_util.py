@@ -46,6 +46,7 @@ def get_content(api, post_mode: bool = True):
     content_end.append('--\n※ 發信站: 批踢踢實業坊')
     content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
     content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
+    content_end.append('--\n※ 文章網址:')
 
     has_control_code = False
     control_code_mode = False
