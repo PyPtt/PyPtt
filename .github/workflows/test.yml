@@ -27,10 +27,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: detect-secrets
-        uses: reviewdog/action-detect-secrets@master
-        with:
-          reporter: github-pr-review
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -51,6 +47,11 @@ jobs:
     steps:
       - name: Check out master
         uses: actions/checkout@master
+
+      - name: detect-secrets
+        uses: reviewdog/action-detect-secrets@master
+        with:
+          reporter: github-pr-review
 
       - name: Security vulnerabilities scan
         uses: aufdenpunkt/python-safety-check@master
