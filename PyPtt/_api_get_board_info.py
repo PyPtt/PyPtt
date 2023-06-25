@@ -98,12 +98,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         else:
             moderators = moderator_line.split('/')
             for moderator in moderators.copy():
-                check = True
-                for c in moderator:
-                    if len(c.encode('big5')) > 1:
-                        check = False
-                        break
-                if not check:
+                if moderator == '徵求中':
                     moderators.remove(moderator)
     logger.debug('板主名單', moderators)
 
