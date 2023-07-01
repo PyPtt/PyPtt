@@ -41,12 +41,6 @@ def get_content(api, post_mode: bool = True):
 
     line_from_pattern = re.compile('[\d]+~[\d]+')
 
-    content_start = '───────────────────────────────────────'
-    content_end = []
-    content_end.append('--\n※ 發信站: 批踢踢實業坊')
-    content_end.append('--\n※ 發信站: 批踢踢兔(ptt2.cc)')
-    content_end.append('--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)')
-
     has_control_code = False
     control_code_mode = False
     push_start = False
@@ -69,12 +63,12 @@ def get_content(api, post_mode: bool = True):
         lines.pop()
         last_screen = '\n'.join(lines)
 
-        if content_start in last_screen and not content_start_exist:
+        if screens.Target.content_start in last_screen and not content_start_exist:
             content_start_exist = True
 
         if content_start_exist:
             if not content_start_jump_set:
-                if content_start not in last_screen:
+                if screens.Target.content_start not in last_screen:
                     content_start_jump = True
                     content_start_jump_set = True
             else:
@@ -97,6 +91,12 @@ def get_content(api, post_mode: bool = True):
             first_page = False
             origin_post.append(last_screen)
         else:
+            # 這裡是根據觀察畫面行數的變化歸納出的神奇公式...
+            # 輸出的結果是要判斷出畫面的最後 x 行是新的文章內容
+            # 這裡的一切都太可怕，每除完一次錯誤，我的腦袋會選擇 flush 掉一次
+            # 所以這裡的變數名稱都是很亂的，請見諒
+            # but it works!
+
             # print(LastScreen)
             # print(f'last_read_line_a_temp [{last_read_line_a_temp}]')
             # print(f'last_read_line_b_temp [{last_read_line_b_temp}]')
@@ -115,23 +115,14 @@ def get_content(api, post_mode: bool = True):
                     get_line_b = last_read_line_b_temp - last_read_line_b
                     if get_line_b > 0:
                         # print('Type 1')
-                        # print(f'Type 1 line_dis [{line_dis}]')
-                        # print(f'Type 1 get_line_b [{get_line_b}]')
-                        # print('index', index)
                         new_content_part = '\n'.join(lines[-get_line_b:])
                         if index == 1 and len(new_content_part) == get_line_b - 1:
-                            # print(1)
                             new_content_part = '\n'.join(lines[-(get_line_b * 2):])
                         elif origin_post:
-                            # print(2)
                             last_line_temp = origin_post[-1].strip()
                             try_line = lines[-(get_line_b + 1)].strip()
 
                             if not last_line_temp.endswith(try_line):
-                                # print(3)
-                                # print('=====' * 20)
-                                # print('== last line [', last_line_temp, ']')
-                                # print('== try_line [', try_line, ']')
                                 new_content_part = try_line + '\n' + new_content_part
                         stop_dict = dict()
                     else:
@@ -157,10 +148,9 @@ def get_content(api, post_mode: bool = True):
 
         if index == 1:
             if content_start_jump and len(new_content_part) == 0:
-                # print(f'!!!GetLineB {GetLineB}')
                 get_line_b += 1
                 new_content_part = '\n'.join(lines[-get_line_b:])
-                # print(f'!!!NewContentPart {NewContentPart}')
+
                 origin_post.pop()
                 origin_post.append(new_content_part)
             break
@@ -169,15 +159,15 @@ def get_content(api, post_mode: bool = True):
             last_read_line_a = last_read_line_a_temp
             last_read_line_b = last_read_line_b_temp
 
-        for EC in content_end:
+        for EC in screens.Target.content_end_list:
             if EC in last_screen:
                 push_start = True
                 break
 
-        if not push_start:
-            cmd = command.down
-        else:
+        if push_start:
             cmd = command.right
+        else:
+            cmd = command.down
 
     # print(api.Unconfirmed)
     origin_post = '\n'.join(origin_post)
@@ -303,13 +293,9 @@ def parse_query_post(api, ori_screen):
         post_index = int(pattern_result.group(0))
 
     push_number = cursor_line
-    # print(f'2>{push_number}<')
     push_number = push_number[7:11]
-    # print(push_number)
     push_number = push_number.split(' ')
-    # print(PushNumber)
     push_number = list(filter(None, push_number))
-    # print(push_number)
 
     if len(push_number) == 0:
         push_number = None
@@ -320,10 +306,10 @@ def parse_query_post(api, ori_screen):
 
         if push_number.startswith('+') or push_number.startswith('~'):
             push_number = push_number[1:]
-            # print(PushNumber)
+
         if push_number.lower().startswith('m'):
             push_number = push_number[1:]
-            # print(PushNumber)
+
         if push_number.lower().startswith('!'):
             push_number = push_number[1:]
 
@@ -335,8 +321,6 @@ def parse_query_post(api, ori_screen):
 
         if len(push_number) == 0:
             push_number = None
-
-    # print(PushNumber)
 
     logger.debug('PostAuthor', post_author)
     logger.debug('PostTitle', post_title)
@@ -455,10 +439,8 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
 
 def one_thread(api):
     current_thread_id = threading.get_ident()
-    if current_thread_id == api._thread_id:
-        return
-
-    raise exceptions.MultiThreadOperated()
+    if current_thread_id != api._thread_id:
+        raise exceptions.MultiThreadOperated()
 
 
 def check_board(api, board: str, check_moderator: bool = False) -> Dict:
