@@ -4,10 +4,6 @@
 name: test
 
 on:
-  push:
-    paths:
-      - 'PyPtt/*.py'
-      - '.github/workflows/test.yml'
   pull_request:
     paths:
       - 'PyPtt/*.py'
