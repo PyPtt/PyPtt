@@ -150,7 +150,8 @@ def func():
 
     host_list = [
         PyPtt.HOST.PTT1,
-        PyPtt.HOST.PTT2]
+        PyPtt.HOST.PTT2
+    ]
 
     for host in host_list:
         ptt_bot = PyPtt.API(
@@ -167,30 +168,4 @@ def func():
 
 
 if __name__ == '__main__':
-    util.logger.info('PyPtt version', PyPtt.__version__)
-    # func()
-
-    import PyPtt
-
-    ptt_bot = PyPtt.API()
-    try:
-        util.login(ptt_bot)
-        post_info = ptt_bot.get_post('Python', index=1)
-
-        print(post_info)
-
-        if post_info[PyPtt.PostField.post_status] == PyPtt.PostStatus.EXISTS:
-            print('文章存在！')
-        elif post_info[PyPtt.PostField.post_status] == PyPtt.PostStatus.DELETED_BY_AUTHOR:
-            print('文章被作者刪除')
-            sys.exit()
-        elif post_info[PyPtt.PostField.post_status] == PyPtt.PostStatus.DELETED_BY_MODERATOR:
-            print('文章被版主刪除')
-            sys.exit()
-
-        if not post_info[PyPtt.PostField.pass_format_check]:
-            print('未通過格式檢查')
-            sys.exit()
-
-    finally:
-        ptt_bot.logout()
+    func()
