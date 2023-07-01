@@ -35,6 +35,7 @@ class Target:
         '【',
         '看板資訊/設定',
     ]
+    InBoardWithCursorLen = len(InBoardWithCursor)
 
     # (h)說明 (←/q)離開
     # (y)回應(X%)推文(h)說明(←)離開

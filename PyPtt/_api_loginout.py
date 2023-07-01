@@ -155,7 +155,6 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         screen_timeout=api.config.screen_long_timeout,
         refresh=False,
         secret=True)
-    ori_screen = api.connect_core.get_screen_queue()[-1]
     if index == 0:
 
         current_capacity, max_capacity = _api_util.get_mailbox_capacity(api)
@@ -197,18 +196,20 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     if '> (' in ori_screen:
         api.cursor = data_type.Cursor.NEW
         api.logger.debug(i18n.new_cursor)
-    else:
+    elif '●(' in ori_screen:
         api.cursor = data_type.Cursor.OLD
         api.logger.debug(i18n.old_cursor)
+    else:
+        raise exceptions.UnknownError()
 
-    if api.cursor not in screens.Target.InBoardWithCursor:
-        screens.Target.InBoardWithCursor.append('\n' + api.cursor)
+    screens.Target.InBoardWithCursor = screens.Target.InBoardWithCursor[:screens.Target.InBoardWithCursorLen]
+    screens.Target.InBoardWithCursor.append(api.cursor)
 
-    if len(screens.Target.MainMenu) == len(screens.Target.CursorToGoodbye):
-        if api.cursor == '>':
-            screens.Target.CursorToGoodbye.append('> (G)oodbye')
-        else:
-            screens.Target.CursorToGoodbye.append('●(G)oodbye')
+    screens.Target.CursorToGoodbye = screens.Target.CursorToGoodbye[:len(screens.Target.MainMenu)]
+    if api.cursor == '>':
+        screens.Target.CursorToGoodbye.append('> (G)oodbye')
+    else:
+        screens.Target.CursorToGoodbye.append('●(G)oodbye')
 
     unregistered_user = True
     if '(T)alk' in ori_screen:
