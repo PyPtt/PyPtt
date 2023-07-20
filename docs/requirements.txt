@@ -1,6 +1,6 @@
 PyPtt
 sphinx
 sphinx-copybutton
-pygments==2.11.2
+pygments==2.15.0
 Furo
 sphinx-sitemap
