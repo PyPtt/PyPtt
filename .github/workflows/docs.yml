@@ -19,7 +19,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, '[update-docs]')"
     steps:
     - uses: actions/setup-python@master
     - uses: actions/checkout@master
