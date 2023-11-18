@@ -10,6 +10,7 @@ def test_board_index(ptt_bot: PyPtt.API):
             ('Wanted', PyPtt.SearchType.KEYWORD, '(本文已被刪除)'),
             ('ALLPOST', PyPtt.SearchType.KEYWORD, '(Gossiping)'),
             ('Gossiping', PyPtt.SearchType.KEYWORD, '普悠瑪'),
+            ('book', PyPtt.SearchType.KEYWORD, 'AWS'),
         ]
     else:
         test_list = [
@@ -53,7 +54,8 @@ def func():
         )
         util.login(ptt_bot)
 
-        test_mail_index(ptt_bot)
+        # test_mail_index(ptt_bot)
+        test_board_index(ptt_bot)
 
         ptt_bot.logout()
 
