@@ -1,3 +1,4 @@
+import functools
 import os
 import random
 import re
@@ -143,7 +144,7 @@ def uniform_new_line(text: str) -> str:
 
     return text
 
-
+@functools.cache
 def check_aid(aid: str) -> str:
     if aid is None:
         raise ValueError('aid is None')

@@ -27,8 +27,6 @@ def get_bottom_post_list(api, board):
 
     bottom_screen = [line for line in last_screen.split('\n') if '★' in line[:8]]
     bottom_length = len(bottom_screen)
-    # bottom_screen = '\n'.join(bottom_screen)
-    # print(bottom_screen)
 
     if bottom_length == 0:
         logger.info(i18n.catch_bottom_post_success)
@@ -44,8 +42,10 @@ def get_bottom_post_list(api, board):
         connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
 
+    aid_list = []
+
     result = []
-    for _ in range(0, bottom_length):
+    for _ in range(bottom_length):
         api.connect_core.send(cmd, target_list)
         last_screen = api.connect_core.get_screen_queue()[-1]
 
@@ -54,19 +54,19 @@ def get_bottom_post_list(api, board):
                 api,
                 last_screen)
 
-        current_post = api.get_post(board, aid=post_aid, query=True)
-
-        # print(current_post.aid)
-        # print(current_post.title)
-        # print('==========================')
-
-        result.append(current_post)
+        aid_list.append(post_aid)
 
         cmd_list = []
         cmd_list.append(command.enter)
         cmd_list.append(command.up)
         cmd_list.append(command.query_post)
         cmd = ''.join(cmd_list)
+
+    aid_list.reverse()
+
+    for post_aid in aid_list:
+        current_post = api.get_post(board=board, aid=post_aid, query=True)
+        result.append(current_post)
 
     logger.info(i18n.catch_bottom_post_success)
 
