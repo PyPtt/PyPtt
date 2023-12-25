@@ -22,7 +22,8 @@ class Target:
 
     QueryPost = [
         '請按任意鍵繼續',
-        '這一篇文章值',
+        '文章代碼(AID):',
+        '文章網址:'
     ]
 
     InBoard = [

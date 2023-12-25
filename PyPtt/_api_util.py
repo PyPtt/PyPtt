@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import re
 import threading
 from typing import Dict
@@ -287,6 +288,7 @@ def parse_query_post(api, ori_screen):
 
     pattern = re.compile('[\d]+')
     pattern_result = pattern.search(cursor_line)
+    post_index = 0
     if pattern_result is not None:
         post_index = int(pattern_result.group(0))
 
