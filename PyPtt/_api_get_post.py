@@ -113,7 +113,6 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
 
     if post_aid is not None:
         cmd_list.append(lib_util.check_aid(post_aid))
-
     elif post_index != 0:
         if search_condition is not None:
             if search_type == data_type.SearchType.KEYWORD:

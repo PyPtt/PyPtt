@@ -235,10 +235,8 @@ def parse_query_post(api, ori_screen):
     elif ' R:' in post_title:
         post_title = post_title[post_title.find('R:'):].strip()
     elif ' 轉 ' in post_title:
-        # print(f'[{PostTitle}]=========>')
         post_title = post_title[post_title.find('轉') + 1:].strip()
         post_title = f'Fw: {post_title}'
-        # print(f'=========>[{PostTitle}]')
     elif ' 鎖 ' in post_title:
         post_title = post_title[post_title.find('鎖') + 1:].strip()
 
@@ -442,7 +440,7 @@ def one_thread(api):
     if current_thread_id != api._thread_id:
         raise exceptions.MultiThreadOperated()
 
-
+@functools.cache
 def check_board(api, board: str, check_moderator: bool = False) -> Dict:
     if board.lower() not in api._exist_board_list:
         board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)
