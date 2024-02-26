@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append('../../')
+
 import PyPtt
 from tests import util
 
@@ -16,11 +20,11 @@ def test():
 
     util.logger.info('===set host with PTT===')
     ptt_bot = PyPtt.API(host=PyPtt.HOST.PTT1)
-    util.logger.info('host result', ptt_bot.host)
+    util.logger.info(f'host result {ptt_bot.host}')
 
     util.logger.info('===set host with PTT2===')
     ptt_bot = PyPtt.API(host=PyPtt.HOST.PTT2)
-    util.logger.info('host result', ptt_bot.host)
+    util.logger.info(f'host result {ptt_bot.host}')
 
     util.logger.info('===set host with PTT and TELNET ===')
     try:

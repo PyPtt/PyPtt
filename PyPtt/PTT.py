@@ -1,9 +1,8 @@
 ﻿from __future__ import annotations
 
+import logging
 import threading
 from typing import Dict, Tuple, Callable, List, Optional
-
-from SingleLog import LogLevel, DefaultLogger
 
 from . import _api_bucket, __version__
 from . import _api_change_pw
@@ -31,10 +30,12 @@ from . import connect_core
 from . import data_type
 from . import i18n
 from . import lib_util
+from . import log
 
 
 class API:
-    def __init__(self, language: data_type.Language = data_type.Language.MANDARIN, log_level: LogLevel = LogLevel.INFO,
+    def __init__(self, language: data_type.Language = data_type.Language.MANDARIN,
+                 log_level: log.LogLv = log.INFO,
                  screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
                  connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
                  logger_callback: Optional[Callable] = None, host=data_type.HOST.PTT1,
@@ -69,15 +70,10 @@ class API:
         .. _LogLevel: https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22
         """
 
-        self.logger = None
+        if not isinstance(log_level, log.LogLv):
+            raise TypeError('[PyPtt] log_level must be log.Level')
 
-        if not isinstance(log_level, LogLevel):
-            raise TypeError('[PyPtt] log_level must be LogLevel')
-
-        if logger_callback is not None and not callable(logger_callback):
-            raise TypeError('[PyPtt] logger_callback must be callable')
-
-        self.logger = DefaultLogger('PyPtt', log_level, handler=logger_callback, **config.LOGGER_CONFIG)
+        log.init(log_level)
 
         if not isinstance(language, data_type.Language):
             raise TypeError('[PyPtt] language must be PyPtt.Language')
@@ -128,47 +124,47 @@ class API:
         self._goto_board_list = []
         self._board_info_list = dict()
 
-        self.logger.debug('ThreadID', self._thread_id)
+        log.logger.debug('ThreadID', self._thread_id)
 
-        self.logger.info(i18n.welcome)
+        log.logger.info(i18n.welcome)
 
-        self.logger.info('PyPtt', i18n.init)
+        log.logger.info('PyPtt', i18n.init)
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
-            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
+            log.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
         elif self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
-            self.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+            log.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
 
         if self.config.language == data_type.Language.MANDARIN:
-            self.logger.info(i18n.set_up_lang_module, i18n.mandarin_module)
+            log.logger.info(i18n.set_up_lang_module, i18n.mandarin_module)
         elif self.config.language == data_type.Language.ENGLISH:
-            self.logger.info(i18n.set_up_lang_module, i18n.english_module)
+            log.logger.info(i18n.set_up_lang_module, i18n.english_module)
 
         if self.config.host == data_type.HOST.PTT1:
-            self.logger.info(i18n.set_connect_host, i18n.PTT)
+            log.logger.info(i18n.set_connect_host, i18n.PTT)
         elif self.config.host == data_type.HOST.PTT2:
-            self.logger.info(i18n.set_connect_host, i18n.PTT2)
+            log.logger.info(i18n.set_connect_host, i18n.PTT2)
         elif self.config.host == data_type.HOST.LOCALHOST:
-            self.logger.info(i18n.set_connect_host, i18n.localhost)
+            log.logger.info(i18n.set_connect_host, i18n.localhost)
         else:
-            self.logger.info(i18n.set_connect_host, self.config.host)
+            log.logger.info(i18n.set_connect_host, self.config.host)
 
         if check_update:
             version_compare, remote_version = lib_util.sync_version()
 
             if version_compare is data_type.Compare.SMALLER:
-                self.logger.info(i18n.current_version, __version__)
-                self.logger.info(i18n.new_version, remote_version)
+                log.logger.info(i18n.current_version, __version__)
+                log.logger.info(i18n.new_version, remote_version)
             elif version_compare is data_type.Compare.BIGGER:
-                self.logger.info(i18n.development_version, __version__)
+                log.logger.info(i18n.development_version, __version__)
             else:
-                self.logger.info(i18n.latest_version, __version__)
+                log.logger.info(i18n.latest_version, __version__)
         else:
-            self.logger.info(i18n.current_version, __version__)
+            log.logger.info(i18n.current_version, __version__)
 
     def __del__(self):
-        if self.logger:
-            self.logger.debug(i18n.goodbye)
+        if log.logger:
+            log.logger.debug(i18n.goodbye)
 
     def login(self, ptt_id: str, ptt_pw: str, kick_other_session: bool = False) -> None:
 

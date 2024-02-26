@@ -12,10 +12,10 @@ from typing import Any
 import websockets
 import websockets.exceptions
 import websockets.http
-from SingleLog import LogLevel, DefaultLogger
+from SingleLog import LogLevel
 
 import PyPtt
-from . import command
+from . import command, log
 from . import data_type
 from . import exceptions
 from . import i18n
@@ -126,22 +126,18 @@ class API(object):
         self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
                                                exceptions_=exceptions.UseTooManyResources())
 
-        self.logger = DefaultLogger('connect', self.config.log_level)
-        self.ptt_logger = DefaultLogger(i18n.PTT if self.config.host == data_type.HOST.PTT1 else i18n.PTT2,
-                                     self.config.log_level)
-
     def connect(self) -> None:
         def _wait():
             for i in range(self.config.retry_wait_time):
 
                 if self.config.host == data_type.HOST.PTT1:
-                    self.logger.info(i18n.prepare_connect_again, i18n.PTT, str(self.config.retry_wait_time - i))
+                    log.logger.info(i18n.prepare_connect_again, i18n.PTT, str(self.config.retry_wait_time - i))
                 elif self.config.host == data_type.HOST.PTT2:
-                    self.logger.info(i18n.prepare_connect_again, i18n.PTT2, str(self.config.retry_wait_time - i))
+                    log.logger.info(i18n.prepare_connect_again, i18n.PTT2, str(self.config.retry_wait_time - i))
                 elif self.config.host == data_type.HOST.LOCALHOST:
-                    self.logger.info(i18n.prepare_connect_again, i18n.localhost, str(self.config.retry_wait_time - i))
+                    log.logger.info(i18n.prepare_connect_again, i18n.localhost, str(self.config.retry_wait_time - i))
                 else:
-                    self.logger.info(i18n.prepare_connect_again, self.config.host, str(self.config.retry_wait_time - i))
+                    log.logger.info(i18n.prepare_connect_again, self.config.host, str(self.config.retry_wait_time - i))
 
                 time.sleep(1)
 
@@ -179,7 +175,7 @@ class API(object):
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
-                    self.logger.debug('USER_AGENT', websockets.http.USER_AGENT)
+                    log.logger.debug('USER_AGENT', websockets.http.USER_AGENT)
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             websocket_host,
@@ -192,13 +188,13 @@ class API(object):
                 print(e)
 
                 if self.config.host == data_type.HOST.PTT1:
-                    self.logger.info(i18n.connect, i18n.PTT, i18n.fail)
+                    log.logger.info(i18n.connect, i18n.PTT, i18n.fail)
                 elif self.config.host == data_type.HOST.PTT2:
-                    self.logger.info(i18n.connect, i18n.PTT2, i18n.fail)
+                    log.logger.info(i18n.connect, i18n.PTT2, i18n.fail)
                 elif self.config.host == data_type.HOST.LOCALHOST:
-                    self.logger.info(i18n.connect, i18n.localhost, i18n.fail)
+                    log.logger.info(i18n.connect, i18n.localhost, i18n.fail)
                 else:
-                    self.logger.info(i18n.connect, self.config.host, i18n.fail)
+                    log.logger.info(i18n.connect, self.config.host, i18n.fail)
 
                 _wait()
                 continue
@@ -234,14 +230,8 @@ class API(object):
 
                 find_target = True
 
-                # self.ptt_logger.info(target.get_display_msg())
-
-                # if target.get_display_msg() == '登入成功':
-                #     print(type(receive_data_buffer), receive_data_buffer)
-                #     print(receive_data_buffer == temp)
-
                 end_time = time.time()
-                self.logger.debug(i18n.spend_time, round(end_time - start_time, 3))
+                log.logger.debug(i18n.spend_time, round(end_time - start_time, 3))
 
                 if target.is_break():
                     target_index = target_list.index(target)
@@ -300,9 +290,9 @@ class API(object):
                 msg = msg.encode('utf-8', 'replace')
 
             if is_secret:
-                self.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
+                log.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
             else:
-                self.logger.debug(i18n.send_msg, str(msg))
+                log.logger.debug(i18n.send_msg, str(msg))
 
             if self.config.connect_mode == data_type.ConnectMode.TELNET:
                 try:
