@@ -8,17 +8,15 @@
 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
-#### PyPtt (PTT Library) 是一套 Pure Python PTT API 是目前支援最完整的 PTT API。具備大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球或者追蹤帳號
-你都可以在這裡找到完整的使用範例
+#### PyPtt (PTT Library) 是一套 Pure Python PTT API 是目前支援最完整的 PTT API。具備大部分常用功能，無論推文、發文、爬蟲、寄信、發 P 幣、丟水球，你都可以在這裡找到完整的使用範例
 #### 使用帳號登入，支援使用登入之後才可以使用的功能，例如：推文、發文、寄信、發 P 幣等等
-#### 本專案意旨在提供 PTT 自動化機器人函式庫，並無意違反任何 PTT 站方規範。如有牴觸，請馬上告知。
+#### 本專案意旨在提供 PTT 自動化機器人函式庫，無意違反任何 PTT 站方規範。如有牴觸，請馬上告知。
 #### 
 #### 詳細範例與參數說明，你可以參考文件 [0.9.x 版本(棄用)](https://github.com/PyPtt/PyPtt/tree/1700147753fde9c920cab8c2e484384f6cedd6f3/doc), [1.0.x 版本](https://pyptt.cc/)
 #### Pypi: https://pypi.org/project/PyPtt/
 <img src="https://raw.githubusercontent.com/PyPtt/PyPtt/master/docs/_static/login_1.0.gif" width="560">
 
 ## 安裝
-Pypi: [https://pypi.org/project/PyPtt/](https://pypi.org/project/PyPtt/)
 ```bash
 pip install PyPtt
 ```
