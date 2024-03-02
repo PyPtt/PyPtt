@@ -21,10 +21,7 @@ pip install PyPtt
 ```
 
 ## 回報問題
-#### 1. 請先閱讀文件 [0.9.x 版本(棄用)](https://github.com/PyPtt/PyPtt/tree/1700147753fde9c920cab8c2e484384f6cedd6f3/doc), [1.0.x 版本](https://pyptt.cc/)
-#### 確認使用方法無誤並確認你所使用的版本為 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt) 如果是舊版本請更新後重新測試
-#### 2. 如果問題還是存在，請參考 [如何提出問題](https://pyptt.cc/faq.html#id1) 章節
-#### 3. 無論有任何問題，都請記得到 [issue](https://github.com/PyPtt/PyPtt/issues/new) 紀錄以便追蹤問題
+#### 請參考 [常見問題](https://pyptt.cc/faq.html) 章節
 
 ## 加入 PyPtt 社群
 #### 你可以在 Telegram 上找到 PyPtt 社群 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
