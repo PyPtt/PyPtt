@@ -9,6 +9,8 @@ on:
     types: [ closed ]
     branches:
       - master
+    paths:
+      - 'PyPtt/__init__.py'
 
 jobs:
   deploy:
