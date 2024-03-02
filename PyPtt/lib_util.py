@@ -144,7 +144,7 @@ def uniform_new_line(text: str) -> str:
 
     return text
 
-@functools.cache
+@functools.lru_cache(maxsize=64)
 def check_aid(aid: str) -> str:
     if aid is None:
         raise ValueError('aid is None')

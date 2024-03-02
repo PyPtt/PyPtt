@@ -68,24 +68,19 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
     if not api._is_login:
         raise exceptions.RequireLogin(i18n.require_login)
 
-    if search_type is None:
-        search_type = data_type.SearchType.NOPE
+    if search_list is None:
+        search_list = []
+    else:
+        check_value.check_type(search_list, list, 'search_list')
 
-    check_value.check_type(index_type, data_type.NewIndex, 'index_type')
-    check_value.check_type(search_type, data_type.SearchType, 'search_type')
+    if (search_type, search_condition) != (None, None):
+        search_list.insert(0, (search_type, search_condition))
 
-    if index_type == data_type.NewIndex.MAIL:
-        if not api.is_registered_user:
-            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-        if board is not None:
-            raise ValueError('board should not input at NewIndex.MAIL.')
-
-    if search_condition is not None:
+    for search_type, search_condition in search_list:
+        check_value.check_type(search_type, data_type.SearchType, 'search_type')
         check_value.check_type(search_condition, str, 'search_condition')
 
-    if search_list is not None:
-        check_value.check_type(search_list, list, 'search_list')
+    check_value.check_type(index_type, data_type.NewIndex, 'index_type')
 
     if index_type == data_type.NewIndex.BOARD:
 
@@ -94,9 +89,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
         _api_util.check_board(api, board)
         _api_util.goto_board(api, board)
 
-        cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, index_type, board, search_type,
-                                                                           search_condition, search_list)
-
+        cmd_list = []
         cmd_list.append('1')
         cmd_list.append(command.enter)
         cmd_list.append('$')
@@ -110,34 +103,57 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
                                     exceptions_=exceptions.NoSuchBoard(api.config, board)),
         ]
 
-        if search_type != data_type.SearchType.NOPE:
-            target_list.insert(2, connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=LogLevel.DEBUG,
-                                                          break_detect=True))
-
         index = api.connect_core.send(cmd, target_list)
         if index < 0:
-            # OriScreen = api.connect_core.getScreenQueue()[-1]
-            # print(OriScreen)
             raise exceptions.NoSuchBoard(api.config, board)
 
         if index == 0:
             return 0
 
-        newest_index = _get_newest_index(api)
+        normal_newest_index = _get_newest_index(api)
 
-        if normal_newest_index == newest_index:
-            raise exceptions.NoSearchResult()
+        if search_list is not None and len(search_list) > 0:
+            target_list.insert(2,
+                               connect_core.TargetUnit(
+                                   screens.Target.InBoardWithCursor,
+                                   log_level=LogLevel.DEBUG,
+                                   break_detect=True))
+
+            cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, index_type, board, search_list)
+
+            cmd_list.append('1')
+            cmd_list.append(command.enter)
+            cmd_list.append('$')
+            cmd = ''.join(cmd_list)
+
+            index = api.connect_core.send(cmd, target_list)
+            if index < 0:
+                raise exceptions.NoSuchBoard(api.config, board)
+
+            if index == 0:
+                return 0
+
+            newest_index = _get_newest_index(api)
+
+            if normal_newest_index == newest_index:
+                raise exceptions.NoSearchResult()
+        else:
+            newest_index = normal_newest_index
 
     elif index_type == data_type.NewIndex.MAIL:
+
+        if not api.is_registered_user:
+            raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
+        if board is not None:
+            raise ValueError('board should not input at NewIndex.MAIL.')
 
         cmd_list = []
         cmd_list.append(command.go_main_menu)
         cmd_list.append(command.ctrl_z)
         cmd_list.append('m')
 
-        _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, index_type, board, search_type,
-                                                                            search_condition, search_list)
-        # print('normal_newest_index', normal_newest_index)
+        _cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, index_type, board, search_list)
 
         cmd_list.extend(_cmd_list)
         cmd_list.append(command.ctrl_f * 50)

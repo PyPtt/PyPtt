@@ -94,8 +94,10 @@ def get_content(api, post_mode: bool = True):
         else:
             # 這裡是根據觀察畫面行數的變化歸納出的神奇公式...
             # 輸出的結果是要判斷出畫面的最後 x 行是新的文章內容
-            # 這裡的一切都太可怕，每除完一次錯誤，我的腦袋會選擇 flush 掉一次
-            # 所以這裡的變數名稱都是很亂的，請見諒
+            #
+            # 這裡是 PyPtt 最黑暗最墮落的地方，所有你所知的程式碼守則，在這裡都不適用
+            # 每除完一次錯誤，我會陷入嚴重的創傷後壓力症候群，而我的腦袋會自動選擇遺忘這裡所有的一切
+            # 以確保下一個週一，我可以正常上班
             # but it works!
 
             # print(LastScreen)
@@ -189,7 +191,6 @@ def get_mailbox_capacity(api):
 
     pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
     if pattern_result is not None:
-        # print(pattern_result.group(0))
         current_capacity = int(pattern_result.group(0).split('/')[0])
         max_capacity = int(pattern_result.group(0).split('/')[1])
 
@@ -333,19 +334,9 @@ def parse_query_post(api, ori_screen):
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
 
 
-def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | None] = None,
-                             search_type: data_type.SearchType = data_type.SearchType.NOPE,
-                             search_condition: [str | None] = None, search_list: [list | None] = None):
-    # log.py = DefaultLogger('get_search_condition_cmd')
+def _get_search_condition_cmd(index_type: data_type.NewIndex, search_list: [list | None] = None):
     cmd_list = []
-
-    normal_newest_index = -1
-    if search_condition is not None:
-
-        if index_type == data_type.NewIndex.BOARD:
-            normal_newest_index = api.get_newest_index(index_type, board=board)
-        else:
-            normal_newest_index = api.get_newest_index(index_type)
+    for search_type, search_condition in search_list:
 
         if search_type == data_type.SearchType.KEYWORD:
             cmd_list.append('/')
@@ -353,46 +344,33 @@ def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | 
             cmd_list.append('a')
         elif search_type == data_type.SearchType.MARK:
             cmd_list.append('G')
-
-        if index_type == data_type.NewIndex.BOARD:
+        elif index_type == data_type.NewIndex.BOARD:
             if search_type == data_type.SearchType.COMMENT:
                 cmd_list.append('Z')
             elif search_type == data_type.SearchType.MONEY:
                 cmd_list.append('A')
+            else:
+                continue
+        else:
+            continue
 
         cmd_list.append(search_condition)
         cmd_list.append(command.enter)
 
+    return cmd_list
+
+
+def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | None] = None,
+                             search_list: [list | None] = None):
+    normal_newest_index = -1
+    cmd_list = []
     if search_list is not None:
+        if index_type == data_type.NewIndex.BOARD:
+            normal_newest_index = api.get_newest_index(index_type, board=board)
+        else:
+            normal_newest_index = api.get_newest_index(index_type)
 
-        if normal_newest_index == -1:
-            if index_type == data_type.NewIndex.BOARD:
-                normal_newest_index = api.get_newest_index(index_type, board=board)
-            else:
-                normal_newest_index = api.get_newest_index(index_type)
-
-        for search_type_, search_condition_ in search_list:
-
-            # print('==>', search_type_, search_condition_)
-
-            if search_type_ == data_type.SearchType.KEYWORD:
-                cmd_list.append('/')
-            elif search_type_ == data_type.SearchType.AUTHOR:
-                cmd_list.append('a')
-            elif search_type_ == data_type.SearchType.MARK:
-                cmd_list.append('G')
-            elif index_type == data_type.NewIndex.BOARD:
-                if search_type_ == data_type.SearchType.COMMENT:
-                    cmd_list.append('Z')
-                elif search_type_ == data_type.SearchType.MONEY:
-                    cmd_list.append('A')
-                else:
-                    continue
-            else:
-                continue
-
-            cmd_list.append(search_condition_)
-            cmd_list.append(command.enter)
+        cmd_list = _get_search_condition_cmd(index_type, search_list)
 
     return cmd_list, normal_newest_index
 
@@ -442,7 +420,8 @@ def one_thread(api):
     if current_thread_id != api._thread_id:
         raise exceptions.MultiThreadOperated()
 
-@functools.cache
+
+@functools.lru_cache(maxsize=64)
 def check_board(api, board: str, check_moderator: bool = False) -> Dict:
     if board.lower() not in api._exist_board_list:
         board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)
