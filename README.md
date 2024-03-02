@@ -2,7 +2,7 @@
 # PyPtt
 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/PyPtt)
-[![test](https://github.com/PyPtt/PyPtt/actions/workflows/flask8.yml/badge.svg)](https://github.com/PyPtt/PyPtt/actions/workflows/flask8.yml)
+[![test](https://github.com/PyPtt/PyPtt/actions/workflows/test.yml/badge.svg)](https://github.com/PyPtt/PyPtt/actions/workflows/test.yml)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/PyPtt)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
