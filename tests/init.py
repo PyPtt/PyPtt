@@ -1,6 +1,7 @@
+import os
 import sys
 
-sys.path.append('../../')
+sys.path.append(os.getcwd())
 
 import PyPtt
 from tests import util
