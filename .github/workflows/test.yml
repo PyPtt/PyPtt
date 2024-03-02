@@ -3,11 +3,11 @@
 
 name: test
 
+# run on every PR creation, or manual trigger
 on:
   pull_request:
-    paths:
-      - 'PyPtt/*.py'
-      - '.github/workflows/test.yml'
+    types:
+      - opened
   workflow_dispatch:
   
 env:
@@ -19,12 +19,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
+        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies

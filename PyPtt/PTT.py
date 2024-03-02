@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+import functools
 import logging
 import threading
 from typing import Dict, Tuple, Callable, List, Optional
@@ -313,8 +314,6 @@ class API:
         Args:
             index_type (:ref:`new-index`): 編號類型。
             board (str): 看板名稱。
-            search_type (:ref:`search-type`) 搜尋類型。
-            search_condition (str): 搜尋條件。
             search_list (List[str]): 搜尋清單。
 
         Returns:
@@ -334,6 +333,22 @@ class API:
             try:
                 # .. login ..
                 newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, 'Python')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+
+        取得最新文章編號使用搜尋::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+
+            search_list = [(PyPtt.SearchType.KEYWORD, 'PyPtt')]
+
+            try:
+                # .. login ..
+                newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, 'Python', search_list=search_list)
                 # .. do something ..
             finally:
                 ptt_bot.logout()
@@ -907,6 +922,7 @@ class API:
 
         _api_change_pw.change_pw(self, new_password)
 
+    @functools.lru_cache(maxsize=64)
     def get_aid_from_url(self, url: str) -> Tuple[str, str]:
         """
         從網址取得看板名稱與文章編號。
