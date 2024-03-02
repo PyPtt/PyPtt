@@ -317,8 +317,6 @@ class API:
         Args:
             index_type (:ref:`new-index`): 編號類型。
             board (str): 看板名稱。
-            search_type (:ref:`search-type`) 搜尋類型。
-            search_condition (str): 搜尋條件。
             search_list (List[str]): 搜尋清單。
 
         Returns:
@@ -338,6 +336,22 @@ class API:
             try:
                 # .. login ..
                 newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, 'Python')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+
+        取得最新文章編號使用搜尋::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+
+            search_list = [(PyPtt.SearchType.KEYWORD, 'PyPtt')]
+
+            try:
+                # .. login ..
+                newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, 'Python', search_list=search_list)
                 # .. do something ..
             finally:
                 ptt_bot.logout()
