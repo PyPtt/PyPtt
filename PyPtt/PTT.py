@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+import functools
 import threading
 from typing import Dict, Tuple, Callable, List, Optional
 
@@ -925,6 +926,7 @@ class API:
 
         _api_change_pw.change_pw(self, new_password)
 
+    @functools.lru_cache(maxsize=64)
     def get_aid_from_url(self, url: str) -> Tuple[str, str]:
         """
         從網址取得看板名稱與文章編號。
