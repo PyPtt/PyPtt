@@ -233,17 +233,33 @@
           <section id="faq">
 <h1>FAQ<a class="headerlink" href="#faq" title="Link to this heading">#</a></h1>
 <p>這裡搜集了一些常見問題的解答，如果你有任何問題，請先看看這裡。</p>
-<section id="q">
-<h2>Q: 我該如何使用這個腳本？<a class="headerlink" href="#q" title="Link to this heading">#</a></h2>
+<section id="q-pyptt">
+<h2>Q: 我該如何使用 PyPtt？<a class="headerlink" href="#q-pyptt" title="Link to this heading">#</a></h2>
 <div class="line-block">
 <div class="line">A: 可以先參考 <a class="reference internal" href="install.html"><span class="doc">安裝 PyPtt</span></a>、<a class="reference internal" href="api/index.html"><span class="doc">APIs</span></a> 與 <a class="reference internal" href="examples.html"><span class="doc">使用範例</span></a>。</div>
 </div>
 </section>
 <section id="id1">
-<h2>Q: 我該如何提出問題？<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>Q: 使用 PyPtt 時，遇到問題該如何解決？<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
+<li><dl class="simple">
+<dt>自己修正並提交 PR，如果沒辦法請參考步驟 2。</dt><dd><ul class="simple">
+<li><p>如果你是程式設計師，建議先試著自己修正問題。</p></li>
+<li><p>如果你修正了問題，請提交 PR，我們會盡快處理。</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>提出 issue。</dt><dd><ul class="simple">
 <li><p>請先確認你使用的版本是否為 <a class="reference external" href="https://pypi.org/project/PyPtt/"><img alt="version_pic" src="https://img.shields.io/pypi/v/PyPtt.svg" /></a>，如果不是，請更新到最新版本。</p></li>
-<li><p>如果你使用的是最新版本，請確認你的問題是否已經在這裡被回答過了。如果你的問題還沒有被回答過，請依照以下程式碼將 <a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a> 設定為 <cite>TRACE</cite>，並附上 <strong>可以重現問題的程式碼</strong>。</p></li>
+<li><p>如果你使用的是最新版本，請確認你的問題是否已經在這裡被回答過了。</p></li>
+<li><p>如果你的問題還沒有被回答過，請依照以下程式碼將 <a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a> 設定為 <cite>TRACE</cite>，並附上 <strong>可以重現問題的程式碼</strong>。</p></li>
+<li><p>並且到 GitHub 提出 <a class="reference external" href="https://github.com/PyPtt/PyPtt/issues/new">issue</a>。</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
 
@@ -342,8 +358,8 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">FAQ</a><ul>
-<li><a class="reference internal" href="#q">Q: 我該如何使用這個腳本？</a></li>
-<li><a class="reference internal" href="#id1">Q: 我該如何提出問題？</a></li>
+<li><a class="reference internal" href="#q-pyptt">Q: 我該如何使用 PyPtt？</a></li>
+<li><a class="reference internal" href="#id1">Q: 使用 PyPtt 時，遇到問題該如何解決？</a></li>
 <li><a class="reference internal" href="#q-jupyter-the-event-loop-is-already-running">Q: 在 jupyter 遭遇 <cite>the event loop is already running</cite> 錯誤</a></li>
 <li><a class="reference internal" href="#q-mac-websocket-ssl">Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤</a></li>
 </ul>
@@ -357,7 +373,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=526a41b6"></script>
+</div><script src="_static/documentation_options.js?v=40ac7dac"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
