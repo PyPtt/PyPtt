@@ -241,8 +241,6 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index_type</strong> (<a class="reference internal" href="../type.html#new-index"><span class="std std-ref">NewIndex</span></a>) – 編號類型。</p></li>
 <li><p><strong>board</strong> (<em>str</em>) – 看板名稱。</p></li>
-<li><p><strong>search_type</strong> (<a class="reference internal" href="../type.html#search-type"><span class="std std-ref">SearchType</span></a>) – </p></li>
-<li><p><strong>search_condition</strong> (<em>str</em>) – 搜尋條件。</p></li>
 <li><p><strong>search_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – 搜尋清單。</p></li>
 </ul>
 </dd>
@@ -265,6 +263,21 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
     <span class="n">newest_index</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_newest_index</span><span class="p">(</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span><span class="p">,</span> <span class="s1">&#39;Python&#39;</span><span class="p">)</span>
+    <span class="c1"># .. do something ..</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>取得最新文章編號使用搜尋:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+
+<span class="n">search_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">SearchType</span><span class="o">.</span><span class="n">KEYWORD</span><span class="p">,</span> <span class="s1">&#39;PyPtt&#39;</span><span class="p">)]</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># .. login ..</span>
+    <span class="n">newest_index</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_newest_index</span><span class="p">(</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span><span class="p">,</span> <span class="s1">&#39;Python&#39;</span><span class="p">,</span> <span class="n">search_list</span><span class="o">=</span><span class="n">search_list</span><span class="p">)</span>
     <span class="c1"># .. do something ..</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
@@ -338,7 +351,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=65200598"></script>
+</div><script src="../_static/documentation_options.js?v=526a41b6"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
