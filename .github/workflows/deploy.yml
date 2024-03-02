@@ -3,25 +3,18 @@
 
 name: deploy
 
+# run on merge to master or manual trigger
 on:
-  workflow_run:
-    workflows: [ test ]
-    types:
-      - completed
-    branches: [ master ]
-  workflow_dispatch:
+  pull_request:
+    types: [ closed ]
+    branches:
+      - master
 
 jobs:
-  on-test-failure:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'Don't worry, everything will be fine.
   deploy:
+    if: github.event.pull_request.merged == true
+    name: Deploy to PyPI and Docker
     runs-on: ubuntu-latest
-    if: |
-      ${{ github.event.workflow_run.conclusion == 'success' }} ||
-      contains(github.event.head_commit.message, '[deploy]')
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
