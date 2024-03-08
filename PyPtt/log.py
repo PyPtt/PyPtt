@@ -24,6 +24,7 @@ class Logger:
 
     def __init__(self, name: str, log_level: LogLv = INFO):
         self.level = log_level
+
         logging.basicConfig(datefmt='%m.%d %H:%M:%S',
                             format='[%(asctime)s][%(name)s][%(levelname)s] %(message)s')
 
