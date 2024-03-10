@@ -362,17 +362,12 @@ def _get_search_condition_cmd(index_type: data_type.NewIndex, search_list: [list
 
 def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | None] = None,
                              search_list: [list | None] = None):
-    normal_newest_index = -1
+
     cmd_list = []
     if search_list is not None:
-        if index_type == data_type.NewIndex.BOARD:
-            normal_newest_index = api.get_newest_index(index_type, board=board)
-        else:
-            normal_newest_index = api.get_newest_index(index_type)
-
         cmd_list = _get_search_condition_cmd(index_type, search_list)
 
-    return cmd_list, normal_newest_index
+    return cmd_list
 
 
 def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> None:

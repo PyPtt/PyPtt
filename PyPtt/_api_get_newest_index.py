@@ -119,7 +119,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
                                    log_level=LogLevel.DEBUG,
                                    break_detect=True))
 
-            cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, index_type, board, search_list)
+            cmd_list = _api_util.get_search_condition_cmd(api, index_type, board, search_list)
 
             cmd_list.append('1')
             cmd_list.append(command.enter)
