@@ -89,8 +89,8 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     return json.loads(post)
 
 
-def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0, query: bool = False,
-              search_cmd_list: [list[str] | None] = None) -> Dict:
+def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, query: bool = False,
+              search_cmd_list: Optional[list[str]] = None) -> Dict:
     _api_util.check_board(api, board)
     _api_util.goto_board(api, board)
 

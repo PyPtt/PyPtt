@@ -125,8 +125,8 @@ mail_date_pattern = re.compile('時間  (.+)')
 ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 
-def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None, search_condition: [str | None] = None,
-             search_list: [list | None] = None) -> Dict:
+def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
+             search_list: Optional[list] = None) -> Dict:
     _api_util.one_thread(api)
 
     if not api._is_login:

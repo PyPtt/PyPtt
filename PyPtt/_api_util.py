@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import re
 import threading
-from typing import Dict
+from typing import Dict, Optional
 
 from SingleLog import DefaultLogger
 from SingleLog import LogLevel
@@ -334,7 +334,7 @@ def parse_query_post(api, ori_screen):
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
 
 
-def _get_search_condition_cmd(index_type: data_type.NewIndex, search_list: [list | None] = None):
+def _get_search_condition_cmd(index_type: data_type.NewIndex, search_list: Optional[list] = None):
     cmd_list = []
     for search_type, search_condition in search_list:
 
@@ -360,8 +360,8 @@ def _get_search_condition_cmd(index_type: data_type.NewIndex, search_list: [list
     return cmd_list
 
 
-def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: [str | None] = None,
-                             search_list: [list | None] = None):
+def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: Optional[str] = None,
+                             search_list: Optional[list] = None):
 
     cmd_list = []
     if search_list is not None:
