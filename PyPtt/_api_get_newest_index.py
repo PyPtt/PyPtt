@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from typing import Optional
 
 from SingleLog import DefaultLogger
 from SingleLog import LogLevel
@@ -60,9 +61,9 @@ def _get_newest_index(api) -> int:
     return newest_index
 
 
-def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = None,
-                     search_type: data_type.SearchType = None, search_condition: [str | None] = None,
-                     search_list: [list | None] = None) -> int:
+def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] = None,
+                     search_type: data_type.SearchType = None, search_condition: Optional[str] = None,
+                     search_list: Optional[list] = None) -> int:
     _api_util.one_thread(api)
 
     if not api._is_login:
@@ -81,6 +82,10 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
         check_value.check_type(search_condition, str, 'search_condition')
 
     check_value.check_type(index_type, data_type.NewIndex, 'index_type')
+
+    data_key = f'{index_type}_{board}_{search_list}'
+    if data_key in api._newest_index_data:
+        return api._newest_index_data[data_key]
 
     if index_type == data_type.NewIndex.BOARD:
 
@@ -119,7 +124,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
                                    log_level=LogLevel.DEBUG,
                                    break_detect=True))
 
-            cmd_list, normal_newest_index = _api_util.get_search_condition_cmd(api, index_type, board, search_list)
+            cmd_list = _api_util.get_search_condition_cmd(api, index_type, board, search_list)
 
             cmd_list.append('1')
             cmd_list.append(command.enter)
@@ -201,4 +206,5 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: [str | None] = 
                 break
             newest_index = 0
 
+    api._newest_index_data[data_key] = newest_index
     return newest_index

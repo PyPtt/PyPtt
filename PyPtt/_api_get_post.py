@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 import time
-from typing import Dict
+from typing import Dict, Optional
 
 from AutoStrEnum import AutoJsonEncoder
 from SingleLog import DefaultLogger
@@ -18,18 +18,58 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
-from .data_type import PostField, CommentField, NewIndex
-from .data_type import SearchType as st
+from .data_type import PostField, CommentField
 
 
-def get_post(api, board: str, aid: [str | None] = None, index: int = 0, search_list: [list | None] = None,
-             search_type: data_type.SearchType = data_type.SearchType.NOPE,
-             search_condition: [str | None] = None, query: bool = False) -> Dict:
+def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = None, search_list: Optional[list] = None,
+             search_type: Optional[data_type.SearchType] = None,
+             search_condition: Optional[str] = None, query: bool = False) -> Dict:
+    _api_util.one_thread(api)
+
+    if not api._is_login:
+        raise exceptions.RequireLogin(i18n.require_login)
+
+    check_value.check_type(board, str, 'board')
+    if aid is not None:
+        check_value.check_type(aid, str, 'aid')
+
+    check_value.check_type(index, int, 'index')
+
+    if search_list is None:
+        search_list = []
+    else:
+        check_value.check_type(search_list, list, 'search_list')
+
+    if (search_type, search_condition) != (None, None):
+        search_list.insert(0, (search_type, search_condition))
+
+    for search_type, search_condition in search_list:
+        check_value.check_type(search_type, data_type.SearchType, 'search_type')
+        check_value.check_type(search_condition, str, 'search_condition')
+
+    if len(board) == 0:
+        raise ValueError(f'board error parameter: {board}')
+
+    if index is not None and isinstance(aid, str):
+        raise ValueError('wrong parameter index and aid can\'t both input')
+
+    if index is None and aid is None:
+        raise ValueError('wrong parameter index or aid must input')
+
+    search_cmd = None
+    if search_list is not None and len(search_list) > 0:
+        current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board, search_list=search_list)
+        search_cmd = _api_util.get_search_condition_cmd(api, data_type.NewIndex.BOARD, board, search_list)
+    else:
+        current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board)
+
+    check_value.check_index('index', index, current_index)
+
     max_retry = 2
     post = {}
     for i in range(max_retry):
         try:
-            post = _get_post(api, board, aid, index, search_type, search_condition, search_list, query)
+            post = _get_post(api, board, aid, index, query, search_cmd)
             if not post:
                 pass
             elif not post[PostField.pass_format_check]:
@@ -50,60 +90,8 @@ def get_post(api, board: str, aid: [str | None] = None, index: int = 0, search_l
     return json.loads(post)
 
 
-def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0,
-              search_type: data_type.SearchType = data_type.SearchType.NOPE,
-              search_condition: [str | None] = None, search_list: [list | None] = None, query: bool = False) -> Dict:
-    _api_util.one_thread(api)
-
-    if not api._is_login:
-        raise exceptions.RequireLogin(i18n.require_login)
-
-    check_value.check_type(board, str, 'board')
-    if post_aid is not None:
-        check_value.check_type(post_aid, str, 'aid')
-    check_value.check_type(post_index, int, 'index')
-
-    if search_type is not None and not isinstance(search_type, st):
-        raise TypeError(f'search_type must be SearchType, but got {search_type}')
-    if search_condition is not None:
-        check_value.check_type(search_condition, str, 'SearchCondition')
-
-    if search_list is not None:
-        check_value.check_type(search_list, list, 'search_list')
-
-    if len(board) == 0:
-        raise ValueError(f'board error parameter: {board}')
-
-    if post_index != 0 and isinstance(post_aid, str):
-        raise ValueError('wrong parameter index and aid can\'t both input')
-
-    if post_index == 0 and post_aid is None:
-        raise ValueError('wrong parameter index or aid must input')
-
-    if search_condition is not None and search_type == 0:
-        raise ValueError('wrong parameter search_type must input')
-
-    if search_type == st.COMMENT:
-        try:
-            S = int(search_condition)
-        except ValueError:
-            raise ValueError(f'wrong parameter search_condition: {search_condition}')
-
-        check_value.check_range(S, -100, 100, 'search_condition')
-
-    if post_aid is not None and search_condition is not None:
-        raise ValueError('wrong parameter aid and search_condition can\'t both input')
-
-    if post_index != 0:
-        newest_index = api.get_newest_index(
-            NewIndex.BOARD,
-            board=board,
-            search_type=search_type,
-            search_condition=search_condition,
-            search_list=search_list)
-
-        check_value.check_index('index', post_index, newest_index)
-
+def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, query: bool = False,
+              search_cmd_list: Optional[list[str]] = None) -> Dict:
     _api_util.check_board(api, board)
     _api_util.goto_board(api, board)
 
@@ -114,37 +102,9 @@ def _get_post(api, board: str, post_aid: [str | None] = None, post_index: int = 
     if post_aid is not None:
         cmd_list.append(lib_util.check_aid(post_aid))
     elif post_index != 0:
-        if search_condition is not None:
-            if search_type == data_type.SearchType.KEYWORD:
-                cmd_list.append('/')
-            elif search_type == data_type.SearchType.AUTHOR:
-                cmd_list.append('a')
-            elif search_type == data_type.SearchType.COMMENT:
-                cmd_list.append('Z')
-            elif search_type == data_type.SearchType.MARK:
-                cmd_list.append('G')
-            elif search_type == data_type.SearchType.MONEY:
-                cmd_list.append('A')
 
-            cmd_list.append(search_condition)
-            cmd_list.append(command.enter)
-
-        if search_list is not None:
-            for search_type_, search_condition_ in search_list:
-
-                if search_type_ == data_type.SearchType.KEYWORD:
-                    cmd_list.append('/')
-                elif search_type_ == data_type.SearchType.AUTHOR:
-                    cmd_list.append('a')
-                elif search_type_ == data_type.SearchType.COMMENT:
-                    cmd_list.append('Z')
-                elif search_type_ == data_type.SearchType.MARK:
-                    cmd_list.append('G')
-                elif search_type_ == data_type.SearchType.MONEY:
-                    cmd_list.append('A')
-
-                cmd_list.append(search_condition_)
-                cmd_list.append(command.enter)
+        if search_cmd_list is not None:
+            cmd_list.extend(search_cmd_list)
 
         cmd_list.append(str(max(1, post_index - 100)))
         cmd_list.append(command.enter)

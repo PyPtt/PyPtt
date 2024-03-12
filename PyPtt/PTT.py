@@ -2,7 +2,7 @@
 
 import functools
 import threading
-from typing import Dict, Tuple, Callable, List, Optional
+from typing import Dict, Tuple, Callable, List, Optional, Any
 
 from SingleLog import LogLevel, DefaultLogger
 
@@ -124,10 +124,10 @@ class API:
         self._exist_board_list = []
         self._board_info_list = dict()
         self._moderators = dict()
-        # self._last_throw_water_ball_time = 0
         self._thread_id = threading.get_ident()
         self._goto_board_list = []
         self._board_info_list = dict()
+        self._newest_index_data = data_type.TimedDict(timeout=3)
 
         self.logger.debug('ThreadID', self._thread_id)
 
@@ -256,8 +256,8 @@ class API:
 
         return _api_get_time.get_time(self)
 
-    def get_post(self, board: str, aid: Optional[str] = None, index: int = 0,
-                 search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: Optional[str] = None,
+    def get_post(self, board: str, aid: Optional[str] = None, index: Optional[int] = None,
+                 search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
                  search_list: Optional[List[str]] = None, query: bool = False) -> Dict:
         """
         取得文章。
@@ -311,7 +311,7 @@ class API:
 
     def get_newest_index(self, index_type: data_type.NewIndex, board: Optional[str] = None,
                          search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
-                         search_list: Optional[List[str]] = None, ) -> int:
+                         search_list: Optional[List[Tuple[Any | str]]] = None, ) -> int:
         """
         取得最新文章或信箱編號。
 
