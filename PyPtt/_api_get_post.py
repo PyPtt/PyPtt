@@ -56,6 +56,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     if index is None and aid is None:
         raise ValueError('wrong parameter index or aid must input')
 
+    search_cmd = None
     if search_list is not None and len(search_list) > 0:
         current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board, search_list=search_list)
         search_cmd = _api_util.get_search_condition_cmd(api, data_type.NewIndex.BOARD, board, search_list)
@@ -102,7 +103,8 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         cmd_list.append(lib_util.check_aid(post_aid))
     elif post_index != 0:
 
-        cmd_list.extend(search_cmd_list)
+        if search_cmd_list is not None:
+            cmd_list.extend(search_cmd_list)
 
         cmd_list.append(str(max(1, post_index - 100)))
         cmd_list.append(command.enter)

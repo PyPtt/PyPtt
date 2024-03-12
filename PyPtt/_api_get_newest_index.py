@@ -83,6 +83,10 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
 
     check_value.check_type(index_type, data_type.NewIndex, 'index_type')
 
+    data_key = f'{index_type}_{board}_{search_list}'
+    if data_key in api._newest_index_data:
+        return api._newest_index_data[data_key]
+
     if index_type == data_type.NewIndex.BOARD:
 
         check_value.check_type(board, str, 'board')
@@ -202,4 +206,5 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
                 break
             newest_index = 0
 
+    api._newest_index_data[data_key] = newest_index
     return newest_index

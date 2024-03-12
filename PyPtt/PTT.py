@@ -124,10 +124,10 @@ class API:
         self._exist_board_list = []
         self._board_info_list = dict()
         self._moderators = dict()
-        # self._last_throw_water_ball_time = 0
         self._thread_id = threading.get_ident()
         self._goto_board_list = []
         self._board_info_list = dict()
+        self._newest_index_data = data_type.TimedDict(timeout=3)
 
         self.logger.debug('ThreadID', self._thread_id)
 
