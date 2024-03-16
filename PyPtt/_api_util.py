@@ -182,7 +182,15 @@ def get_content(api, post_mode: bool = True):
     return origin_post, has_control_code
 
 
-def get_mailbox_capacity(api):
+mail_capacity: Optional[tuple[int, int]] = None
+
+
+def get_mailbox_capacity(api) -> tuple[int, int]:
+
+    global mail_capacity
+    if mail_capacity is not None:
+        return mail_capacity
+
     last_screen = api.connect_core.get_screen_queue()[-1]
     capacity_line = last_screen.split('\n')[2]
 
@@ -197,6 +205,7 @@ def get_mailbox_capacity(api):
         logger.debug('current_capacity', current_capacity)
         logger.debug('max_capacity', max_capacity)
 
+        mail_capacity = (current_capacity, max_capacity)
         return current_capacity, max_capacity
     return 0, 0
 
@@ -334,8 +343,11 @@ def parse_query_post(api, ori_screen):
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
 
 
-def _get_search_condition_cmd(index_type: data_type.NewIndex, search_list: Optional[list] = None):
+def get_search_condition_cmd(index_type: data_type.NewIndex, search_list: Optional[list] = None):
     cmd_list = []
+    if not search_list:
+        return cmd_list
+
     for search_type, search_condition in search_list:
 
         if search_type == data_type.SearchType.KEYWORD:
@@ -356,16 +368,6 @@ def _get_search_condition_cmd(index_type: data_type.NewIndex, search_list: Optio
 
         cmd_list.append(search_condition)
         cmd_list.append(command.enter)
-
-    return cmd_list
-
-
-def get_search_condition_cmd(api, index_type: data_type.NewIndex, board: Optional[str] = None,
-                             search_list: Optional[list] = None):
-
-    cmd_list = []
-    if search_list is not None:
-        cmd_list = _get_search_condition_cmd(index_type, search_list)
 
     return cmd_list
 
