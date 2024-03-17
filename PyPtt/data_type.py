@@ -195,7 +195,7 @@ class Compare(AutoStrEnum):
 
 
 class TimedDict:
-    def __init__(self, timeout):
+    def __init__(self, timeout: int = 0):
         self.timeout = timeout
         self.data = {}
         self.timestamps = {}
@@ -208,7 +208,7 @@ class TimedDict:
         if key not in self.data:
             raise KeyError(key)
         timestamp = self.timestamps[key]
-        if time.time() - timestamp > self.timeout:
+        if time.time() - timestamp > self.timeout > 0:
             del self.data[key]
             del self.timestamps[key]
             raise KeyError(key)
@@ -227,9 +227,12 @@ class TimedDict:
         return len(self.data)
 
     def cleanup(self):
+        if self.timeout == 0:
+            return
+
         now = time.time()
         to_remove = [key for key, timestamp in self.timestamps.items()
-                     if now - timestamp > self.timeout]
+                     if now - timestamp > self.timeout > 0]
         for key in to_remove:
             del self.data[key]
             del self.timestamps[key]
