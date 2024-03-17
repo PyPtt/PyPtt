@@ -10,9 +10,8 @@ on:
     types:
       - opened
   push:
-    branches:
-      - '*'
-      - '!master'
+    branches-ignore:
+      - 'master'
   workflow_dispatch:
   
 env:
