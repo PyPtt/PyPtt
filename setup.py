@@ -37,8 +37,9 @@ if version is None or pypi_version is None:
     raise ValueError('Can not get version from pypi')
 
 if branch != 'master':
-    random_version = subprocess.run(['openssl', 'rand', '-hex', '3'], capture_output=True, encoding='utf-8').stdout.strip()
-    version = f"{version}{random_version}"
+    # random version should be 5 number
+    random_version = ''.join([str(int(time.time() * 1000)) for _ in range(5)])
+    version = f"{version}.dev{random_version}"
 
 print('the next version:', version)
 
