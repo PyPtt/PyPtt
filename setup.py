@@ -47,7 +47,7 @@ setup(
     description='PyPtt\ngithub: https://github.com/PyPtt/PyPtt',  # Required
     long_description=open('README.md', encoding="utf-8").read(),  # Optional
     long_description_content_type='text/markdown',
-    url='https://github.com/PyPtt/PyPtt',  # Optional
+    url='https://pyptt.cc/',  # Optional
 
     author='CodingMan',  # Optional
     author_email='pttcodingman@gmail.com',  # Optional
