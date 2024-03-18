@@ -15,7 +15,6 @@ on:
 
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
     name: Deploy to PyPI and Docker
     runs-on: ubuntu-latest
     steps:
@@ -30,11 +29,19 @@ jobs:
           pip install build requests
       - name: Build package
         run: python -m build
+      - name: Publish package to TestPyPI
+        if: github.event.branch != 'master'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
       - name: Publish package
+        if: github.event.branch == 'master'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
       - name: Trigger Docker build
+        if: github.event.branch == 'master'
         uses: InformaticsMatters/trigger-ci-action@1.0.1
         with:
           ci-owner: PyPtt

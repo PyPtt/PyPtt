@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
+    if: github.event.branch == 'master'
     name: Build doc and Deploy
     runs-on: ubuntu-latest
     steps:
