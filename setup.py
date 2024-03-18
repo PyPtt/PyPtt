@@ -3,6 +3,11 @@ import time
 
 from setuptools import setup
 
+# rean the branch name from branch.txt
+with open('branch.txt', 'r', encoding='utf-8') as f:
+    branch = f.read().strip()
+    print('branch:', branch)
+
 # read the main version from __init__.py
 with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
     data = f.read().strip()
@@ -30,6 +35,10 @@ for i in range(5):
 
 if version is None or pypi_version is None:
     raise ValueError('Can not get version from pypi')
+
+if branch != 'master':
+    random_version = subprocess.run(['openssl', 'rand', '-hex', '3'], capture_output=True, encoding='utf-8').stdout.strip()
+    version = f"{version}-{random_version}"
 
 print('the next version:', version)
 
