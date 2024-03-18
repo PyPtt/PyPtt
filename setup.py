@@ -1,14 +1,45 @@
 # Always prefer setuptools over distlib_utils
+import time
 
+import requests
 from setuptools import setup
 
-# get version from __init__.py
-with open('PyPtt/__init__.py') as f:
-    text = f.read()
+# read the main version from __init__.py
+with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
+    data = f.read().strip()
+    main_version = data.split('_main_version = ')[1].split('\n')[0].strip().strip('\'')
+    print('main_version version:', main_version)
 
-version = [line for line in text.split('\n') if line.startswith('__version__')][0]
-version = version[version.find("'") + 1:]
-version = version[:version.find("'")]
+version = None
+pypi_version = None
+for i in range(5):
+    response = requests.get('https://pypi.org/pypi/PyPtt/json')
+
+    if response.status_code == 200:
+        pypi_version = response.json()['info']['version']
+        if pypi_version.startswith(main_version):
+            min_pypi_version = pypi_version.split('.')[-1]
+            # the next version
+            version = f"{main_version}.{int(min_pypi_version) + 1}"
+        else:
+            version = f"{main_version}.0"
+        break
+    time.sleep(1)
+
+if version is None or pypi_version is None:
+    raise ValueError('Can not get version from pypi')
+
+print('the next version:', version)
+
+if '__version__' in data:
+    current_version = data.split('__version__ = ')[1].split('\n')[0].strip().strip('\'')
+    data = data.replace(f"__version__ = '{current_version}'", f"__version__ = '{version}'")
+else:
+    data += f'\n\n__version__ = \'{version}\''
+
+with open('PyPtt/__init__.py', 'w', encoding='utf-8') as f:
+    f.write(data)
+    f.write('\n')
 
 setup(
     name='PyPtt',  # Required

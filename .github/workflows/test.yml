@@ -4,10 +4,14 @@
 name: test
 
 # run on every PR creation, or manual trigger
+# run on every push to non-master branch
 on:
   pull_request:
     types:
       - opened
+  push:
+    branches-ignore:
+      - 'master'
   workflow_dispatch:
   
 env:
