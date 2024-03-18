@@ -59,7 +59,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     search_cmd = None
     if search_list is not None and len(search_list) > 0:
         current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board, search_list=search_list)
-        search_cmd = _api_util.get_search_condition_cmd(api, data_type.NewIndex.BOARD, board, search_list)
+        search_cmd = _api_util.get_search_condition_cmd(data_type.NewIndex.BOARD, search_list)
     else:
         current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board)
 
