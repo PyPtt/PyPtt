@@ -38,7 +38,7 @@ if version is None or pypi_version is None:
 
 if branch != 'master':
     random_version = subprocess.run(['openssl', 'rand', '-hex', '3'], capture_output=True, encoding='utf-8').stdout.strip()
-    version = f"{version}.{random_version}"
+    version = f"{version}{random_version}"
 
 print('the next version:', version)
 
