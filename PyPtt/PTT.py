@@ -6,7 +6,8 @@ from typing import Dict, Tuple, Callable, List, Optional, Any
 
 from SingleLog import LogLevel, DefaultLogger
 
-from . import _api_bucket, __version__
+from . import __version__
+from . import _api_bucket
 from . import _api_change_pw
 from . import _api_comment
 from . import _api_del_post
