@@ -1,5 +1,4 @@
 import os
-import random
 import subprocess
 import time
 
@@ -43,9 +42,27 @@ if version is None or pypi_version is None:
     raise ValueError('Can not get version from pypi')
 
 if not branch_name.endswith('master') and not branch_name.endswith('main'):
-    # random version should be 5 number
-    random_version = ''.join([str(random.randint(0, 9)) for _ in range(3)])
-    version = f"{version}.dev{random_version}"
+    commit_file = '/tmp/commit_hash.txt'
+    if os.path.exists(commit_file):
+        with open(commit_file, 'r', encoding='utf-8') as f:
+            commit_hash = f.read().strip()
+    else:
+        max_hash_length = 5
+        try:
+            commit_hash = subprocess.check_output(['git', 'rev-parse', '--long', 'HEAD']).decode('utf-8').strip()
+        except subprocess.CalledProcessError:
+            commit_hash = '0' * max_hash_length
+
+        commit_hash = ''.join([x for x in list(commit_hash) if x.isdigit()])
+
+        if len(commit_hash) < max_hash_length:
+            commit_hash = commit_hash + '0' * (max_hash_length - len(commit_hash))
+        commit_hash = commit_hash[:max_hash_length]
+
+        with open(commit_file, 'w', encoding='utf-8') as f:
+            f.write(commit_hash)
+
+    version = f"{version}.dev{commit_hash}"
 
 print('the next version:', version)
 
