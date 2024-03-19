@@ -42,9 +42,9 @@ if version is None or pypi_version is None:
     raise ValueError('Can not get version from pypi')
 
 if not branch_name.endswith('master') and not branch_name.endswith('main'):
-
-    if os.path.exists('commit_hash.txt'):
-        with open('commit_hash.txt', 'r', encoding='utf-8') as f:
+    commit_file = '/tmp/commit_hash.txt'
+    if os.path.exists(commit_file):
+        with open(commit_file, 'r', encoding='utf-8') as f:
             commit_hash = f.read().strip()
     else:
         max_hash_length = 5
@@ -58,9 +58,10 @@ if not branch_name.endswith('master') and not branch_name.endswith('main'):
         if len(commit_hash) < max_hash_length:
             commit_hash = commit_hash + '0' * (max_hash_length - len(commit_hash))
         commit_hash = commit_hash[:max_hash_length]
-        with open('commit_hash.txt', 'w', encoding='utf-8') as f:
+
+        with open(commit_file, 'w', encoding='utf-8') as f:
             f.write(commit_hash)
-    
+
     version = f"{version}.dev{commit_hash}"
 
 print('the next version:', version)
