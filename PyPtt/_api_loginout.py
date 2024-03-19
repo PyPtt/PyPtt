@@ -205,6 +205,9 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     screens.Target.InBoardWithCursor = screens.Target.InBoardWithCursor[:screens.Target.InBoardWithCursorLen]
     screens.Target.InBoardWithCursor.append(api.cursor)
 
+    screens.Target.InMailBoxWithCursor = screens.Target.InMailBoxWithCursor[:screens.Target.InMailBoxWithCursorLen]
+    screens.Target.InMailBoxWithCursor.append(api.cursor)
+
     screens.Target.CursorToGoodbye = screens.Target.CursorToGoodbye[:len(screens.Target.MainMenu)]
     if api.cursor == '>':
         screens.Target.CursorToGoodbye.append('> (G)oodbye')

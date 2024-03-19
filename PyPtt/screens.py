@@ -110,8 +110,15 @@ class Target:
 
     InMailBox = [
         '【郵件選單】',
+        '[~]資源回收筒',
         '鴻雁往返'
     ]
+
+    InMailBoxWithCursor = [
+        '【郵件選單】',
+        '[~]資源回收筒',
+    ]
+    InMailBoxWithCursorLen = len(InMailBoxWithCursor)
 
     InMailMenu = [
         '【電子郵件】',

@@ -1,6 +1,6 @@
 import random
 
-from PyPtt import __version__
+from . import __version__
 from . import data_type
 
 languageList = [

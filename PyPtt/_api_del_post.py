@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from . import _api_util
 from . import check_value
 from . import command
@@ -11,7 +13,7 @@ from . import lib_util
 from . import screens
 
 
-def del_post(api, board: str, post_aid: [str | None] = None, post_index: int = 0) -> None:
+def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0) -> None:
     _api_util.one_thread(api)
 
     if not api.is_registered_user:

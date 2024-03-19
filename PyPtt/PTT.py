@@ -3,9 +3,10 @@
 import functools
 import logging
 import threading
-from typing import Dict, Tuple, Callable, List, Optional
+from typing import Dict, Tuple, Callable, List, Optional, Any
 
-from . import _api_bucket, __version__
+from . import __version__
+from . import _api_bucket
 from . import _api_change_pw
 from . import _api_comment
 from . import _api_del_post
@@ -118,12 +119,11 @@ class API:
 
         self.connect_core = connect_core.API(self.config)
         self._exist_board_list = []
-        self._board_info_list = dict()
         self._moderators = dict()
-        # self._last_throw_water_ball_time = 0
         self._thread_id = threading.get_ident()
         self._goto_board_list = []
         self._board_info_list = dict()
+        self._newest_index_data = data_type.TimedDict(timeout=2)
 
         log.logger.debug('ThreadID', self._thread_id)
 
@@ -252,8 +252,8 @@ class API:
 
         return _api_get_time.get_time(self)
 
-    def get_post(self, board: str, aid: Optional[str] = None, index: int = 0,
-                 search_type: data_type.SearchType = data_type.SearchType.NOPE, search_condition: Optional[str] = None,
+    def get_post(self, board: str, aid: Optional[str] = None, index: Optional[int] = None,
+                 search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
                  search_list: Optional[List[str]] = None, query: bool = False) -> Dict:
         """
         取得文章。
@@ -307,7 +307,7 @@ class API:
 
     def get_newest_index(self, index_type: data_type.NewIndex, board: Optional[str] = None,
                          search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
-                         search_list: Optional[List[str]] = None, ) -> int:
+                         search_list: Optional[List[Tuple[Any | str]]] = None, ) -> int:
         """
         取得最新文章或信箱編號。
 

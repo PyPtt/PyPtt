@@ -11,12 +11,12 @@ on:
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
+    if: github.event.branch == 'master'
     name: Build doc and Deploy
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-python@master
-    - uses: actions/checkout@master
+    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
     - name: Build and Commit

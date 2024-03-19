@@ -11,8 +11,6 @@ from . import screens
 def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
     _api_util.one_thread(api)
 
-    # log.py = DefaultLogger('api', api.config.log_level)
-
     if not api._is_login:
         raise exceptions.RequireLogin(i18n.require_login)
 
@@ -62,5 +60,3 @@ def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
     api.connect_core.send(
         cmd,
         target_list)
-
-    # OriScreen = api.connect_core.getScreenQueue()[-1]

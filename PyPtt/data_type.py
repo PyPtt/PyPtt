@@ -1,3 +1,4 @@
+import time
 from enum import auto
 
 from AutoStrEnum import AutoStrEnum
@@ -192,5 +193,46 @@ class Compare(AutoStrEnum):
     SMALLER = auto()
     UNKNOWN = auto()
 
-# class_list = inspect.getmembers(sys.modules['PyPtt.data_type'], inspect.isclass)
-# class_list = set([name[0] for name in class_list])
+
+class TimedDict:
+    def __init__(self, timeout: int = 0):
+        self.timeout = timeout
+        self.data = {}
+        self.timestamps = {}
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+        self.timestamps[key] = time.time()
+
+    def __getitem__(self, key):
+        if key not in self.data:
+            raise KeyError(key)
+        timestamp = self.timestamps[key]
+        if time.time() - timestamp > self.timeout > 0:
+            del self.data[key]
+            del self.timestamps[key]
+            raise KeyError(key)
+        return self.data[key]
+
+    def __contains__(self, key):
+        try:
+            self[key]
+        except KeyError:
+            return False
+        else:
+            return True
+
+    def __len__(self):
+        self.cleanup()
+        return len(self.data)
+
+    def cleanup(self):
+        if self.timeout == 0:
+            return
+
+        now = time.time()
+        to_remove = [key for key, timestamp in self.timestamps.items()
+                     if now - timestamp > self.timeout > 0]
+        for key in to_remove:
+            del self.data[key]
+            del self.timestamps[key]

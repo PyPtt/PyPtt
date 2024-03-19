@@ -10,17 +10,18 @@ on:
     branches:
       - master
     paths:
-      - 'PyPtt/__init__.py'
+      - 'PyPtt/*.py'
+      - 'setup.py'
+  workflow_dispatch:
 
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
     name: Deploy to PyPI and Docker
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
       - name: Install dependencies
@@ -28,12 +29,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install build
       - name: Build package
-        run: python -m build
+        run: |
+          python -m build
+      - name: Publish package to TestPyPI
+        if: github.event_name == 'workflow_dispatch' && github.event.pull_request.merged == false
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
       - name: Publish package
+        if: github.event_name != 'workflow_dispatch' && github.event.pull_request.merged == true
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
       - name: Trigger Docker build
+        if: github.event_name != 'workflow_dispatch' && github.event.pull_request.merged == true
         uses: InformaticsMatters/trigger-ci-action@1.0.1
         with:
           ci-owner: PyPtt
