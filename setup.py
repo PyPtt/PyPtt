@@ -1,5 +1,4 @@
 import os
-import random
 import subprocess
 import time
 
@@ -42,13 +41,20 @@ for i in range(5):
 if version is None or pypi_version is None:
     raise ValueError('Can not get version from pypi')
 
+max_hash_length = 5
 try:
-    commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').strip()
+    commit_hash = subprocess.check_output(['git', 'rev-parse', '--long', 'HEAD']).decode('utf-8').strip()
 except subprocess.CalledProcessError:
-    commit_hash = 'unknown'
+    commit_hash = '0' * max_hash_length
+
+commit_hash = ''.join([x for x in list(commit_hash) if x.isdigit()])
+
+# fill the commit hash to max_hash_length with 0
+if len(commit_hash) < max_hash_length:
+    commit_hash = commit_hash + '0' * (max_hash_length - len(commit_hash))
 
 if not branch_name.endswith('master') and not branch_name.endswith('main'):
-    version = f"{version}.dev{commit_hash[:7]}"
+    version = f"{version}.dev{commit_hash[:max_hash_length]}"
 
 print('the next version:', version)
 
