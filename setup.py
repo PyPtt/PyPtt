@@ -6,8 +6,7 @@ from setuptools import setup
 
 
 def version_automation_script():
-    is_merged = os.environ.get('GITHUB_EVENT_NAME') == 'pull_request' and os.environ.get(
-        'GITHUB_EVENT_ACTION') == 'closed'
+    is_merged = os.environ.get('GITHUB_EVENT_NAME') == 'pull_request'
     print('is_merged:', is_merged)
 
     # read the main version from __init__.py

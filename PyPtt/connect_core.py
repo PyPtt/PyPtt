@@ -128,7 +128,7 @@ class API(object):
 
         self.logger = DefaultLogger('connect', self.config.log_level)
         self.ptt_logger = DefaultLogger(i18n.PTT if self.config.host == data_type.HOST.PTT1 else i18n.PTT2,
-                                     self.config.log_level)
+                                        self.config.log_level)
 
     def connect(self) -> None:
         def _wait():
