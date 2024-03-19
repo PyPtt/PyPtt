@@ -8,6 +8,10 @@ class LogLv:
     def __init__(self, level):
         self._level = level
 
+    @property
+    def level(self):
+        return self._level
+
 
 INFO = LogLv(logging.INFO)
 DEBUG = LogLv(logging.DEBUG)
@@ -19,24 +23,16 @@ class LogLevel:
 
 
 class Logger:
-    logger: logging.Logger = None
-    level: LogLv = None
+    logger: logging.Logger
 
-    def __init__(self, name: str, log_level: LogLv = INFO):
-        self.level = log_level
-
-        logging.basicConfig(datefmt='%m.%d %H:%M:%S',
-                            format='[%(asctime)s][%(name)s][%(levelname)s] %(message)s')
-
+    def __init__(self, name: str, level: int = logging.NOTSET):
         self.logger = logging.getLogger(name)
-        self.logger.setLevel(log_level._level)
+        self.logger.setLevel(level)
 
     def info(self, *args):
         self.logger.info(' '.join([str(x) for x in args]))
 
     def debug(self, *args):
-        if self.level._level > logging.DEBUG:
-            return
         self.logger.debug(' '.join([str(x) for x in args]))
 
 
@@ -45,7 +41,7 @@ logger: Optional[Logger] = None
 
 def init(log_level: LogLv, name: Optional[str] = None) -> Logger:
     name = name or 'PyPtt'
-    current_logger = Logger(name, log_level=log_level)
+    current_logger = Logger(name, log_level.level)
 
     if name == 'PyPtt':
         global logger

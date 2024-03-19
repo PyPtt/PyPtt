@@ -3,6 +3,8 @@ import sys
 
 sys.path.append(os.getcwd())
 
+print(os.getcwd())
+
 import PyPtt
 from tests import util
 
