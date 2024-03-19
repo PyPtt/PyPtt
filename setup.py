@@ -42,7 +42,7 @@ for i in range(5):
 if version is None or pypi_version is None:
     raise ValueError('Can not get version from pypi')
 
-if branch_name != 'master':
+if not branch_name.endswith('master') and not branch_name.endswith('main'):
     # random version should be 5 number
     random_version = ''.join([str(random.randint(0, 9)) for _ in range(3)])
     version = f"{version}.dev{random_version}"
