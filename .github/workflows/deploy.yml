@@ -5,8 +5,7 @@ name: deploy
 
 # run on merge to master or manual trigger
 on:
-  pull_request:
-    types: [ closed ]
+  push:
     branches:
       - master
     paths:
