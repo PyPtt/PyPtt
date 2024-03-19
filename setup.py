@@ -1,8 +1,18 @@
-# Always prefer setuptools over distlib_utils
+import os
+import random
+import subprocess
 import time
 
-import requests
 from setuptools import setup
+
+# read the branch name from environment variable
+event_name = os.environ.get('GITHUB_EVENT_NAME')
+
+if event_name == 'pull_request':
+    branch_name = os.environ.get('GITHUB_HEAD_REF')
+else:
+    branch_name = os.environ.get('GITHUB_REF_NAME')
+print('branch_name:', branch_name)
 
 # read the main version from __init__.py
 with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
@@ -13,10 +23,12 @@ with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
 version = None
 pypi_version = None
 for i in range(5):
-    response = requests.get('https://pypi.org/pypi/PyPtt/json')
-
-    if response.status_code == 200:
-        pypi_version = response.json()['info']['version']
+    try:
+        # Use wget to retrieve the PyPI version information
+        subprocess.run(['wget', '-q', '-O', 'pypi_version.json', 'https://pypi.org/pypi/PyPtt/json'], check=True)
+        with open('pypi_version.json', 'r', encoding='utf-8') as f:
+            pypi_data = f.read()
+        pypi_version = pypi_data.split('"version":')[1].split('"')[1]
         if pypi_version.startswith(main_version):
             min_pypi_version = pypi_version.split('.')[-1]
             # the next version
@@ -24,10 +36,16 @@ for i in range(5):
         else:
             version = f"{main_version}.0"
         break
-    time.sleep(1)
+    except subprocess.CalledProcessError:
+        time.sleep(1)
 
 if version is None or pypi_version is None:
     raise ValueError('Can not get version from pypi')
+
+if not branch_name.endswith('master') and not branch_name.endswith('main'):
+    # random version should be 5 number
+    random_version = ''.join([str(random.randint(0, 9)) for _ in range(3)])
+    version = f"{version}.dev{random_version}"
 
 print('the next version:', version)
 
