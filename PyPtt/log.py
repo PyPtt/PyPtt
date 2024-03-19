@@ -3,7 +3,7 @@ from typing import Optional
 
 
 class LogLv:
-    _level: int = logging.NOTSET
+    _level: int
 
     def __init__(self, level):
         self._level = level
@@ -25,23 +25,33 @@ class LogLevel:
 class Logger:
     logger: logging.Logger
 
-    def __init__(self, name: str, level: int = logging.NOTSET):
+    def __init__(self, name: str, level: int = logging.NOTSET, logger_callback: Optional[callable] = None):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
 
+        self.logger_callback: Optional[callable] = None
+        if logger_callback and callable(logger_callback):
+            self.logger_callback = logger_callback
+
     def info(self, *args):
-        self.logger.info(' '.join([str(x) for x in args]))
+        msg = ' '.join([str(x) for x in args])
+        self.logger.info(msg)
+        if self.logger_callback:
+            self.logger_callback(msg)
 
     def debug(self, *args):
-        self.logger.debug(' '.join([str(x) for x in args]))
+        msg = ' '.join([str(x) for x in args])
+        self.logger.debug(msg)
+        if self.logger_callback:
+            self.logger_callback(msg)
 
 
 logger: Optional[Logger] = None
 
 
-def init(log_level: LogLv, name: Optional[str] = None) -> Logger:
+def init(log_level: LogLv, name: Optional[str] = None, logger_callback: Optional[callable] = None) -> Logger:
     name = name or 'PyPtt'
-    current_logger = Logger(name, log_level.level)
+    current_logger = Logger(name, log_level.level, logger_callback)
 
     if name == 'PyPtt':
         global logger
