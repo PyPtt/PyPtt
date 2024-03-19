@@ -1,12 +1,17 @@
+import os
 import subprocess
 import time
 
 from setuptools import setup
 
-# rean the branch name from branch.txt
-with open('branch.txt', 'r', encoding='utf-8') as f:
-    branch = f.read().strip()
-    print('branch:', branch)
+# read the branch name from environment variable
+event_name = os.environ.get('GITHUB_EVENT_NAME')
+
+if event_name == 'pull_request':
+    branch_name = os.environ.get('GITHUB_HEAD_REF')
+else:
+    branch_name = os.environ.get('GITHUB_REF_NAME')
+print('branch_name:', branch_name)
 
 # read the main version from __init__.py
 with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
@@ -36,7 +41,7 @@ for i in range(5):
 if version is None or pypi_version is None:
     raise ValueError('Can not get version from pypi')
 
-if branch != 'master':
+if branch_name != 'master':
     # random version should be 5 number
     random_version = ''.join([str(int(time.time() * 1000)) for _ in range(5)])
     version = f"{version}.dev{random_version}"
