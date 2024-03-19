@@ -1,4 +1,5 @@
 import os
+import random
 import subprocess
 import time
 
@@ -43,7 +44,7 @@ if version is None or pypi_version is None:
 
 if branch_name != 'master':
     # random version should be 5 number
-    random_version = ''.join([str(int(time.time() * 1000)) for _ in range(5)])
+    random_version = ''.join([str(random.randint(0, 9)) for _ in range(3)])
     version = f"{version}.dev{random_version}"
 
 print('the next version:', version)
