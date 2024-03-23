@@ -1,12 +1,10 @@
 import re
 
-from SingleLog import LogLevel
-
 from . import _api_util
 from . import command
 from . import connect_core
 from . import screens
-
+from . import log
 
 def has_new_mail(api) -> int:
     cmd_list = []
@@ -23,7 +21,7 @@ def has_new_mail(api) -> int:
     break_detect = False
 
     target_list = [
-        connect_core.TargetUnit(screens.Target.InMailBox, log_level=LogLevel.DEBUG, break_detect=True)
+        connect_core.TargetUnit(screens.Target.InMailBox, log_level=log.DEBUG, break_detect=True)
     ]
 
     api.connect_core.send(

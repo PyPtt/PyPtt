@@ -1,6 +1,5 @@
 progressbar2
 websockets
 uao
-SingleLog==2.*
-requests
+requests==2.31.0
 AutoStrEnum

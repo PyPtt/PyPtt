@@ -12,13 +12,13 @@ from typing import Any
 import websockets
 import websockets.exceptions
 import websockets.http
-from SingleLog import LogLevel
 
 import PyPtt
-from . import command, log
+from . import command
 from . import data_type
 from . import exceptions
 from . import i18n
+from . import log
 from . import screens
 
 websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
@@ -27,13 +27,13 @@ ssl_context = ssl.create_default_context()
 
 
 class TargetUnit:
-    def __init__(self, detect_target, log_level: LogLevel = None, response: [Any | str] = '', break_detect=False,
+    def __init__(self, detect_target, log_level: log.LogLevel = None, response: [Any | str] = '', break_detect=False,
                  break_detect_after_send=False, exceptions_=None, refresh=True, secret=False, handler=None,
                  max_match: int = 0):
 
         self._DetectTarget = detect_target
         if log_level is None:
-            self._log_level = LogLevel.INFO
+            self._log_level = log.INFO
         else:
             self._log_level = log_level
         self._Response = response

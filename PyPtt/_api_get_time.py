@@ -1,12 +1,11 @@
 import re
 
-from SingleLog import LogLevel
-
 from . import _api_util
 from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n
+from . import log
 from . import screens
 
 pattern = re.compile('[\d]+:[\d][\d]')
@@ -26,7 +25,7 @@ def get_time(api) -> str:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(screens.Target.MainMenu, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.MainMenu, log_level=log.DEBUG, break_detect=True),
     ]
 
     index = api.connect_core.send(cmd, target_list)

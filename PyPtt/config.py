@@ -1,6 +1,5 @@
-from SingleLog import LogLevel
-
 from . import data_type
+from . import log
 
 
 class Config:
@@ -23,7 +22,7 @@ class Config:
     language = data_type.Language.MANDARIN
 
     # 預設 log 等級
-    log_level = LogLevel.INFO
+    log_level = log.INFO
 
     # 預設不剔除其他登入
     kick_other_session = False

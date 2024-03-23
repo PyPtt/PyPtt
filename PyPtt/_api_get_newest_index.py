@@ -3,9 +3,6 @@ from __future__ import annotations
 import re
 from typing import Optional
 
-from SingleLog import DefaultLogger
-from SingleLog import LogLevel
-
 from . import _api_util
 from . import check_value
 from . import command
@@ -13,12 +10,11 @@ from . import connect_core
 from . import data_type, lib_util
 from . import exceptions
 from . import i18n
+from . import log
 from . import screens
 
 
 def _get_newest_index(api) -> int:
-    logger = DefaultLogger('api', api.config.log_level)
-
     last_screen = api.connect_core.get_screen_queue()[-1]
 
     last_screen_list = last_screen.split('\n')
@@ -49,7 +45,7 @@ def _get_newest_index(api) -> int:
                 need_continue = False
                 break
         if need_continue:
-            logger.debug(i18n.find_newest_index, index_temp)
+            log.logger.debug(i18n.find_newest_index, index_temp)
             newest_index = index_temp
             break
 
@@ -100,8 +96,8 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
         cmd = ''.join(cmd_list)
 
         target_list = [
-            connect_core.TargetUnit('沒有文章...', log_level=LogLevel.DEBUG, break_detect=True),
-            connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+            connect_core.TargetUnit('沒有文章...', log_level=log.DEBUG, break_detect=True),
+            connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
             connect_core.TargetUnit(screens.Target.MainMenu_Exiting,
                                     exceptions_=exceptions.NoSuchBoard(api.config, board)),
         ]
@@ -119,7 +115,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
             target_list.insert(2,
                                connect_core.TargetUnit(
                                    screens.Target.InBoardWithCursor,
-                                   log_level=LogLevel.DEBUG,
+                                   log_level=log.DEBUG,
                                    break_detect=True))
 
             cmd_list = _api_util.get_search_condition_cmd(index_type, search_list)
@@ -194,12 +190,13 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
             normal_newest_index = get_index(api)
 
             if search_list is not None and len(search_list) > 0:
-                target_list.insert(2,
-                                   connect_core.TargetUnit(
-                                       screens.Target.InMailBoxWithCursor,
-                                       log_level=LogLevel.DEBUG,
-                                       break_detect=True)
-                                   )
+                target_list.insert(
+                    2,
+                    connect_core.TargetUnit(
+                        screens.Target.InMailBoxWithCursor,
+                        log_level=log.DEBUG,
+                        break_detect=True)
+                )
 
                 cmd_list = []
                 cmd_list.append(command.go_main_menu)

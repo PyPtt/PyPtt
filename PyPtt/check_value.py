@@ -1,8 +1,5 @@
-from SingleLog import DefaultLogger
-
 from . import i18n
-
-logger = DefaultLogger('check value')
+from . import log
 
 
 def check_type(value, value_type, name) -> None:
@@ -34,8 +31,8 @@ def check_index(name, index, max_value=None) -> None:
 
     if max_value is not None:
         if index > max_value:
-            logger.info('index', index)
-            logger.info('max_value', max_value)
+            log.logger.info('index', index)
+            log.logger.info('max_value', max_value)
             raise ValueError(f'{name} {index} {i18n.must_between} 0 ~ {max_value}')
 
 

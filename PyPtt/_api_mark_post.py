@@ -1,5 +1,3 @@
-from SingleLog import LogLevel
-
 from . import _api_util
 from . import check_value
 from . import command
@@ -8,6 +6,7 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 from . import screens
 
 
@@ -121,8 +120,8 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit('刪除所有標記', log_level=LogLevel.INFO, response='y' + command.enter),
-        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.INFO, break_detect=True),
+        connect_core.TargetUnit('刪除所有標記', log_level=log.INFO, response='y' + command.enter),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=log.INFO, break_detect=True),
     ]
 
     api.connect_core.send(cmd, target_list)
