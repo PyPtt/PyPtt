@@ -1,21 +1,19 @@
 import re
 from typing import Dict
 
-from SingleLog import DefaultLogger
-from SingleLog import LogLevel
-
 from . import _api_util
 from . import check_value
 from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n
+from . import log
 from . import screens
 from .data_type import BoardField
 
 
 def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -> Dict:
-    logger = DefaultLogger('get_board_info', LogLevel.DEBUG if call_by_others else LogLevel.INFO)
+    logger = log.init(log.DEBUG if call_by_others else log.INFO)
 
     _api_util.one_thread(api)
 
@@ -62,7 +60,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     logger.debug('人氣', online_user)
 
     target_list = [
-        connect_core.TargetUnit('任意鍵繼續', log_level=LogLevel.DEBUG if call_by_others else LogLevel.INFO,
+        connect_core.TargetUnit('任意鍵繼續', log_level=log.DEBUG if call_by_others else log.INFO,
                                 break_detect=True),
     ]
 

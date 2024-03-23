@@ -74,7 +74,7 @@ class API:
         if not isinstance(log_level, log.LogLv):
             raise TypeError('[PyPtt] log_level must be log.Level')
 
-        log.init(log_level)
+        log.init(log_level, logger_callback=logger_callback)
 
         if not isinstance(language, data_type.Language):
             raise TypeError('[PyPtt] language must be PyPtt.Language')

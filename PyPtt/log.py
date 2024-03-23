@@ -1,4 +1,5 @@
 import logging
+from functools import lru_cache
 from typing import Optional
 
 
@@ -12,17 +13,28 @@ class LogLv:
     def level(self):
         return self._level
 
+    def __eq__(self, other):
+        return self.level == other.level
 
+
+SILENT = LogLv(logging.NOTSET)
 INFO = LogLv(logging.INFO)
 DEBUG = LogLv(logging.DEBUG)
 
 
 class LogLevel:
+    SILENT = LogLv(logging.NOTSET)
     INFO = LogLv(logging.INFO)
     DEBUG = LogLv(logging.DEBUG)
 
 
 logger_pool = {}
+formatter = logging.Formatter(
+    fmt='[%(asctime)s][%(name)s][%(levelname)s] %(message)s',
+    datefmt='%m.%d %H:%M:%S')
+
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
 
 
 class Logger:
@@ -30,32 +42,20 @@ class Logger:
 
     def __init__(self, name: str, level: int = logging.NOTSET, logger_callback: Optional[callable] = None):
 
-        global logger_pool
-
-        if name in logger_pool:
-            self.logger = logger_pool[name]
-        else:
-            self.logger = logging.getLogger(name)
-
-            formatter = logging.Formatter(
-                fmt='[%(asctime)s][%(name)s][%(levelname)s] %(message)s',
-                datefmt='%m.%d %H:%M:%S')
-
-            console_handler = logging.StreamHandler()
-            console_handler.setFormatter(formatter)
-
-            self.logger.addHandler(console_handler)
-
-            logger_pool[name] = self.logger
-
+        self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
+
+        self.logger.addHandler(console_handler)
 
         self.logger_callback: Optional[callable] = None
         if logger_callback and callable(logger_callback):
             self.logger_callback = logger_callback
 
+    @lru_cache(maxsize=512)
     def _combine_msg(self, *args):
-        return ' '.join([str(x) for x in args])
+        msg = [str(x) for x in args]
+        msg = ' '.join(msg)
+        return msg
 
     def info(self, *args):
         msg = self._combine_msg(*args)

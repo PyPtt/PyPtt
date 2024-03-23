@@ -1,4 +1,4 @@
-from SingleLog import LogLevel
+
 
 from . import _api_util
 from . import check_value
@@ -8,6 +8,7 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 
 
 def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_file, post_aid: str,
@@ -60,29 +61,29 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
     cmd_list.append('r')
 
     if reply_to == data_type.ReplyTo.BOARD:
-        api.logger.info(i18n.reply_board)
-        reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=LogLevel.INFO, response='F' + command.enter)
+        log.logger.info(i18n.reply_board)
+        reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=log.INFO, response='F' + command.enter)
     elif reply_to == data_type.ReplyTo.MAIL:
-        api.logger.info(i18n.reply_mail)
-        reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=LogLevel.INFO, response='M' + command.enter)
+        log.logger.info(i18n.reply_mail)
+        reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=log.INFO, response='M' + command.enter)
     elif reply_to == data_type.ReplyTo.BOARD_MAIL:
-        api.logger.info(i18n.reply_board_mail)
-        reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=LogLevel.INFO, response='B' + command.enter)
+        log.logger.info(i18n.reply_board_mail)
+        reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=log.INFO, response='B' + command.enter)
 
     cmd = ''.join(cmd_list)
     target_list = [
         connect_core.TargetUnit('任意鍵繼續', break_detect=True),
-        connect_core.TargetUnit('◆ 很抱歉, 此文章已結案並標記, 不得回應', log_level=LogLevel.INFO,
+        connect_core.TargetUnit('◆ 很抱歉, 此文章已結案並標記, 不得回應', log_level=log.INFO,
                                 exceptions_=exceptions.CantResponse()),
-        connect_core.TargetUnit('(E)繼續編輯 (W)強制寫入', log_level=LogLevel.INFO, response='W' + command.enter),
+        connect_core.TargetUnit('(E)繼續編輯 (W)強制寫入', log_level=log.INFO, response='W' + command.enter),
         connect_core.TargetUnit('請選擇簽名檔', response=str(sign_file) + command.enter),
         connect_core.TargetUnit('確定要儲存檔案嗎', response='s' + command.enter),
-        connect_core.TargetUnit('編輯文章', log_level=LogLevel.INFO,
+        connect_core.TargetUnit('編輯文章', log_level=log.INFO,
                                 response=str(content) + command.enter + command.ctrl_x),
-        connect_core.TargetUnit('請問要引用原文嗎', log_level=LogLevel.DEBUG, response='Y' + command.enter),
-        connect_core.TargetUnit('採用原標題[Y/n]?', log_level=LogLevel.DEBUG, response='Y' + command.enter),
+        connect_core.TargetUnit('請問要引用原文嗎', log_level=log.DEBUG, response='Y' + command.enter),
+        connect_core.TargetUnit('採用原標題[Y/n]?', log_level=log.DEBUG, response='Y' + command.enter),
         reply_target_unit,
-        connect_core.TargetUnit('已順利寄出，是否自存底稿', log_level=LogLevel.DEBUG, response='Y' + command.enter),
+        connect_core.TargetUnit('已順利寄出，是否自存底稿', log_level=log.DEBUG, response='Y' + command.enter),
     ]
 
     api.connect_core.send(
@@ -90,4 +91,4 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         target_list,
         screen_timeout=api.config.screen_long_timeout)
 
-    api.logger.info(i18n.success)
+    log.logger.info(i18n.success)

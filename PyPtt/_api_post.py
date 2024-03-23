@@ -8,6 +8,7 @@ from . import exceptions
 from . import i18n
 from . import lib_util
 from . import screens
+from . import log
 
 
 def fast_post_step0(api, board: str, title: str, content: str, post_type: int) -> None:
@@ -112,7 +113,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     _api_util.check_board(api, board)
     _api_util.goto_board(api, board)
 
-    api.logger.info(i18n.post)
+    log.logger.info(i18n.post)
 
     cmd_list = []
     cmd_list.append(command.ctrl_p)
@@ -130,9 +131,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     if index == 1 or index == 2:
         raise exceptions.NoPermission(i18n.no_permission)
 
-    api.logger.info(i18n.has_post_permission)
-
-    screens.show(api.config, api.connect_core.get_screen_queue())
+    log.logger.info(i18n.has_post_permission)
 
     content = lib_util.uniform_new_line(content)
 
@@ -156,4 +155,4 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
         target_list,
         screen_timeout=api.config.screen_post_timeout)
 
-    api.logger.info(i18n.success)
+    log.logger.info(i18n.success)

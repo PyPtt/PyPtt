@@ -1,9 +1,10 @@
+import logging
 import re
 import sys
 
-from SingleLog import DefaultLogger
-from SingleLog import LogLevel
 from uao import register_uao
+
+from . import log
 
 register_uao()
 
@@ -158,7 +159,7 @@ class Target:
 
 
 def show(config, screen_queue, function_name=None):
-    if config.log_level != LogLevel.TRACE:
+    if config.log_level != log.DEBUG:
         return
 
     if isinstance(screen_queue, list):
@@ -185,8 +186,6 @@ def show(config, screen_queue, function_name=None):
         print('錯誤在 ' + function_name + ' 函式發生')
     print('-' * 50)
 
-
-logger = DefaultLogger('screen')
 
 xy_pattern_h = re.compile('^=ESC=\[[\d]+;[\d]+H')
 xy_pattern_s = re.compile('^=ESC=\[[\d]+;[\d]+s')

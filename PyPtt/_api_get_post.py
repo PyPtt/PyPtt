@@ -17,11 +17,13 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 from . import screens
 from .data_type import PostField, CommentField
 
 
-def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = None, search_list: Optional[list] = None,
+def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = None,
+             search_list: Optional[list] = None,
              search_type: Optional[data_type.SearchType] = None,
              search_condition: Optional[str] = None, query: bool = False) -> Dict:
     _api_util.one_thread(api)
@@ -83,7 +85,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
             if i == max_retry - 1:
                 raise
 
-        api.logger.debug('Wait for retry repost')
+        log.logger.debug('Wait for retry repost')
         time.sleep(0.1)
 
     post = json.dumps(post, cls=AutoJsonEncoder)

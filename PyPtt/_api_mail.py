@@ -3,9 +3,7 @@ from __future__ import annotations
 import re
 from typing import Dict, Optional
 
-from SingleLog import DefaultLogger
-from SingleLog import LogLevel
-
+from . import log
 from . import _api_util
 from . import check_value
 from . import command
@@ -25,7 +23,6 @@ def mail(api,
          content: str,
          sign_file,
          backup: bool = True) -> None:
-    logger = DefaultLogger('main')
 
     _api_util.one_thread(api)
 
@@ -109,7 +106,7 @@ def mail(api,
         target_list,
         screen_timeout=api.config.screen_post_timeout)
 
-    logger.info(i18n.send_mail, i18n.success)
+    log.logger.info(i18n.send_mail, i18n.success)
 
 
 # --
@@ -135,7 +132,7 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    api.logger.info(i18n.get_mail)
+    log.logger.info(i18n.get_mail)
 
     if not isinstance(index, int):
         raise ValueError('index must be int')
@@ -171,8 +168,8 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
 
     # 定義如何根據情況回覆訊息
     target_list = [
-        connect_core.TargetUnit(screens.Target.InMailBox, log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit(fast_target, log_level=LogLevel.DEBUG, break_detect=True)
+        connect_core.TargetUnit(screens.Target.InMailBox, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(fast_target, log_level=log.DEBUG, break_detect=True)
     ]
 
     # 送出訊息
@@ -264,7 +261,7 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
                 # print(location)
                 mail_location = location[1:-1]
 
-    api.logger.info(i18n.success)
+    log.logger.info(i18n.success)
 
     return {
         MailField.origin_mail: origin_mail,
@@ -310,7 +307,7 @@ def del_mail(api, index) -> None:
 
     # 定義如何根據情況回覆訊息
     target_list = [
-        connect_core.TargetUnit(screens.Target.InMailBox, log_level=LogLevel.DEBUG, break_detect=True)
+        connect_core.TargetUnit(screens.Target.InMailBox, log_level=log.DEBUG, break_detect=True)
     ]
 
     # 送出
