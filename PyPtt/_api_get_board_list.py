@@ -101,14 +101,14 @@ def get_board_list(api) -> list:
 
             board_list.append(board_name)
 
-            if api.config.log_level == LogLevel.INFO:
+            if api.config.log_level == log.INFO:
                 pb.update(no)
 
         if no >= max_no:
             break
         cmd = command.ctrl_f
 
-    if api.config.log_level == LogLevel.INFO:
+    if api.config.log_level == log.INFO:
         pb.finish()
 
     return board_list

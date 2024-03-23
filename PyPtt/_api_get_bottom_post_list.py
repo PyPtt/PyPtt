@@ -63,6 +63,6 @@ def get_bottom_post_list(api, board):
         current_post = api.get_post(board=board, aid=post_aid, query=True)
         result.append(current_post)
 
-    logger.info(i18n.catch_bottom_post_success)
+    log.logger.info(i18n.catch_bottom_post_success)
 
     return list(reversed(result))
