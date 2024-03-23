@@ -1,5 +1,4 @@
 import logging
-from functools import lru_cache
 from typing import Optional
 
 
@@ -21,11 +20,15 @@ SILENT = LogLv(logging.NOTSET)
 INFO = LogLv(logging.INFO)
 DEBUG = LogLv(logging.DEBUG)
 
+# deprecated use DEBUG instead
+TRACE = DEBUG
+
 
 class LogLevel:
     SILENT = LogLv(logging.NOTSET)
     INFO = LogLv(logging.INFO)
     DEBUG = LogLv(logging.DEBUG)
+    TRACE = DEBUG
 
 
 logger_pool = {}
@@ -35,6 +38,12 @@ formatter = logging.Formatter(
 
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
+
+
+def _combine_msg(*args) -> str:
+    msg = [str(x) for x in args]
+    msg = ' '.join(msg)
+    return msg
 
 
 class Logger:
@@ -51,20 +60,22 @@ class Logger:
         if logger_callback and callable(logger_callback):
             self.logger_callback = logger_callback
 
-    @lru_cache(maxsize=512)
-    def _combine_msg(self, *args):
-        msg = [str(x) for x in args]
-        msg = ' '.join(msg)
-        return msg
-
     def info(self, *args):
-        msg = self._combine_msg(*args)
+
+        if not self.logger.isEnabledFor(logging.INFO):
+            return
+
+        msg = _combine_msg(*args)
         self.logger.info(msg)
         if self.logger_callback:
             self.logger_callback(msg)
 
     def debug(self, *args):
-        msg = self._combine_msg(*args)
+
+        if not self.logger.isEnabledFor(logging.DEBUG):
+            return
+
+        msg = _combine_msg(*args)
         self.logger.debug(msg)
         if self.logger_callback:
             self.logger_callback(msg)

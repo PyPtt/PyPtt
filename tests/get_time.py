@@ -1,4 +1,10 @@
+import os
+import sys
+
+sys.path.append(os.getcwd())
+
 import PyPtt
+from PyPtt import log
 from tests import util
 
 
@@ -8,10 +14,11 @@ def test(ptt_bot: PyPtt.API):
         result.append(ptt_bot.get_time())
         # time.sleep(1)
 
-    util.logger.info('get time result', result)
+    log.logger.info('get time result', result)
 
 
 def func():
+
     host_list = [
         PyPtt.HOST.PTT1,
         PyPtt.HOST.PTT2]
@@ -19,13 +26,14 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.TRACE,
+            # log_level=PyPtt.LOG_LEVEL.DEBUG,
         )
-        util.login(ptt_bot)
 
-        test(ptt_bot)
-
-        ptt_bot.logout()
+        try:
+            util.login(ptt_bot)
+            test(ptt_bot)
+        finally:
+            ptt_bot.logout()
 
 
 if __name__ == '__main__':
