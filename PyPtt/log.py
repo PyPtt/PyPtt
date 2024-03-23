@@ -22,25 +22,49 @@ class LogLevel:
     DEBUG = LogLv(logging.DEBUG)
 
 
+logger_pool = {}
+
+
 class Logger:
     logger: logging.Logger
 
     def __init__(self, name: str, level: int = logging.NOTSET, logger_callback: Optional[callable] = None):
-        self.logger = logging.getLogger(name)
+
+        global logger_pool
+
+        if name in logger_pool:
+            self.logger = logger_pool[name]
+        else:
+            self.logger = logging.getLogger(name)
+
+            formatter = logging.Formatter(
+                fmt='[%(asctime)s][%(name)s][%(levelname)s] %(message)s',
+                datefmt='%m.%d %H:%M:%S')
+
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(formatter)
+
+            self.logger.addHandler(console_handler)
+
+            logger_pool[name] = self.logger
+
         self.logger.setLevel(level)
 
         self.logger_callback: Optional[callable] = None
         if logger_callback and callable(logger_callback):
             self.logger_callback = logger_callback
 
+    def _combine_msg(self, *args):
+        return ' '.join([str(x) for x in args])
+
     def info(self, *args):
-        msg = ' '.join([str(x) for x in args])
+        msg = self._combine_msg(*args)
         self.logger.info(msg)
         if self.logger_callback:
             self.logger_callback(msg)
 
     def debug(self, *args):
-        msg = ' '.join([str(x) for x in args])
+        msg = self._combine_msg(*args)
         self.logger.debug(msg)
         if self.logger_callback:
             self.logger_callback(msg)
@@ -51,7 +75,7 @@ logger: Optional[Logger] = None
 
 def init(log_level: LogLv, name: Optional[str] = None, logger_callback: Optional[callable] = None) -> Logger:
     name = name or 'PyPtt'
-    current_logger = Logger(name, log_level.level, logger_callback)
+    current_logger = Logger(name, level=log_level.level, logger_callback=logger_callback)
 
     if name == 'PyPtt':
         global logger

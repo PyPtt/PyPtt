@@ -24,3 +24,4 @@ tests/ptt.sh
 docs/_build/
 .DS_Store
 test*.py
+ptt.sh

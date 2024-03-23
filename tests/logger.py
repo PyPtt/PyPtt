@@ -1,8 +1,12 @@
-from PyPtt import init, LogLevel, Logger
+import os
+import sys
+
+sys.path.append(os.getcwd())
+from PyPtt import log
 
 
 def func():
-    logger = init(LogLevel.INFO)
+    logger = log.init(log.INFO)
 
     logger.info('1')
     logger.info('1', '2')
@@ -12,9 +16,9 @@ def func():
     logger.debug('1', '2')
     logger.debug('1', '2', '3')
 
-    logger = init(LogLevel.DEBUG)
+    logger = log.init(log.DEBUG)
 
-    logger.info('1')
+    logger.info('234')
     logger.info('1', '2')
     logger.info('1', '2', '3')
 

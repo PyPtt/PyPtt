@@ -1,4 +1,8 @@
+import os
+import sys
 import time
+
+sys.path.append(os.getcwd())
 
 import PyPtt
 from tests import util
@@ -32,7 +36,7 @@ def func():
         )
         test(ptt_bot)
 
-    util.logger.info('login logout test ok')
+    print('login logout test ok')
 
 
 if __name__ == '__main__':

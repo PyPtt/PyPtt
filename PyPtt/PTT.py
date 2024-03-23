@@ -1,7 +1,6 @@
 ﻿from __future__ import annotations
 
 import functools
-import logging
 import threading
 from typing import Dict, Tuple, Callable, List, Optional, Any
 
@@ -125,7 +124,7 @@ class API:
         self._board_info_list = dict()
         self._newest_index_data = data_type.TimedDict(timeout=2)
 
-        log.logger.debug('ThreadID', self._thread_id)
+        log.logger.debug('thread_id', self._thread_id)
 
         log.logger.info(i18n.welcome)
 

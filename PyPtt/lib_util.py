@@ -102,17 +102,14 @@ def sync_version() -> Tuple[data_type.Compare, str]:
                 timeout=3)
             break
         except requests.exceptions.ReadTimeout:
-            # print('sync version', 'fail', 'retry', (i + 1), 'of', 5, 'times')
             log.logger.info(i18n.retry)
-            # print(f'retry version [{i18n.retry}]')
             time.sleep(0.5)
 
     if r is None:
-        # print(f'sync version [{i18n.fail}]')
-        log.logger.info(i18n.fail)
+        log.logger.info(i18n.update_remote_version, i18n.fail)
         return data_type.Compare.SAME, ''
 
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.update_remote_version, i18n.success)
 
     text = r.text
 

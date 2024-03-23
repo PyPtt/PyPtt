@@ -11,12 +11,6 @@ def log_to_file(msg: str):
         f.write(f'{msg}\n')
 
 
-logging.basicConfig(level=logging.INFO, format='[%(asctime)s][%(name)s][%(levelname)s] %(message)s',
-                    datefmt='%m.%d %H:%M:%S')
-
-logger = logging.getLogger(__name__)
-
-
 def get_id_pw(password_file):
     try:
         with open(password_file) as AccountFile:
