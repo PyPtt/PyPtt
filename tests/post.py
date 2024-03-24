@@ -15,9 +15,7 @@ from PyPtt import log
 def test(ptt_bot: PyPtt.API):
     content = '''
 此為 PyPtt 貼文測試內容，如有打擾請告知。
-github: https://github.com/PttCodingMan/PyPtt
-
-開發手冊: https://github.com/PttCodingMan/PyPtt/tree/master/doc
+官方網站: https://pyptt.cc
 
 測試標記
 781d16268c9f25a39142a17ff063ac029b1466ca14cb34f5d88fe8aadfeee053

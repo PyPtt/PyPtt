@@ -19,7 +19,6 @@ class LogLv:
 SILENT = LogLv(logging.NOTSET)
 INFO = LogLv(logging.INFO)
 DEBUG = LogLv(logging.DEBUG)
-
 # deprecated use DEBUG instead
 TRACE = DEBUG
 
