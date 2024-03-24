@@ -1,19 +1,22 @@
-import json
+import os
+import sys
+
+sys.path.append(os.getcwd())
 
 import PyPtt
+from PyPtt import log
 from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
     test_users = [
-        'CodingMan',
+        'Coding',
     ]
 
     for test_user in test_users:
-        user_info = ptt_bot.get_user(test_user)
+        result = ptt_bot.search_user(test_user)
 
-        # print(json.dumps(user_info, indent=4, ensure_ascii=False))
-        util.show_data(user_info, 'login_count')
+        log.logger.info('result', result)
 
 
 def func():

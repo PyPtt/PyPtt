@@ -1,4 +1,10 @@
+import os
+import sys
+
+sys.path.append(os.getcwd())
+
 import PyPtt
+from PyPtt import log
 from tests import util
 
 
@@ -61,15 +67,14 @@ def func():
             host=host,
             # log_level=PyPtt.LogLevel.TRACE,
         )
-        util.login(ptt_bot)
-
-        test(ptt_bot)
-
-        ptt_bot.logout()
+        try:
+            util.login(ptt_bot)
+            test(ptt_bot)
+        finally:
+            ptt_bot.logout()
 
     # assert (result[0] == result[1])
 
 
 if __name__ == '__main__':
-    util.logger.info('PyPtt version', PyPtt.__version__)
     func()
