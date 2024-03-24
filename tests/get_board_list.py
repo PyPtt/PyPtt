@@ -11,9 +11,7 @@ from tests import util
 
 def test(ptt_bot: PyPtt.API):
 
-    for i in range(2):
-        board_list = ptt_bot.get_all_boards()
-        print('done')
+    board_list = ptt_bot.get_all_boards()
 
     with open(f'tests/{ptt_bot.host}-board_list.json', 'w') as f:
         json.dump(board_list, f, indent=4, ensure_ascii=False)
@@ -28,7 +26,7 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.TRACE,
+            # log_level=PyPtt.LogLevel.TRACE,
         )
 
         try:

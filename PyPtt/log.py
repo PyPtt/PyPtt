@@ -40,9 +40,26 @@ console_handler.setFormatter(formatter)
 
 
 def _combine_msg(*args) -> str:
-    msg = [str(x) for x in args]
-    msg = ' '.join(msg)
-    return msg
+    """
+    將多個字串組合成一個字串。
+
+    Args:
+        args: 要組合的字串。
+
+    Returns:
+        組合後的字串。
+    """
+
+    if not args:
+        return ''
+
+    msg = list(map(str, args))
+
+    # 將第一個字串的第一個字母變大寫
+
+    msg[0] = msg[0][0].upper() + msg[0][1:]
+
+    return ' '.join(msg)
 
 
 class Logger:

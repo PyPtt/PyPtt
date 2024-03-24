@@ -1,7 +1,12 @@
-import json
+import os
 import sys
 
+sys.path.append(os.getcwd())
+
+import json
+
 import PyPtt
+from PyPtt import log
 from tests import util
 
 
@@ -76,7 +81,7 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
         if search_type == PyPtt.SearchType.MONEY:
             type_str = '稿酬'
 
-        util.logger.info(f'{test_board} 使用 {type_str} 搜尋 {condition}')
+        log.logger.info(f'{test_board} 使用 {type_str} 搜尋 {condition}')
 
     if ptt_bot.config.host == PyPtt.HOST.PTT1:
         test_list = [
@@ -117,19 +122,19 @@ def get_post_with_condition(ptt_bot: PyPtt.API):
 
             # print(json.dumps(post, indent=4))
 
-            util.logger.info('列表日期', post.get('list_date'))
-            util.logger.info('作者', post.get('author'))
-            util.logger.info('標題', post.get('title'))
+            log.logger.info('列表日期', post.get('list_date'))
+            log.logger.info('作者', post.get('author'))
+            log.logger.info('標題', post.get('title'))
 
             if post.get('post_status') == PyPtt.PostStatus.EXISTS:
                 pass
                 # if not query:
                 #     util.log.py.info('內文', post.get('content'))
             elif post.get('post_status') == PyPtt.PostStatus.DELETED_BY_AUTHOR:
-                util.logger.info('文章被作者刪除')
+                log.logger.info('文章被作者刪除')
             elif post.get('post_status') == PyPtt.PostStatus.DELETED_BY_MODERATOR:
-                util.logger.info('文章被版主刪除')
-            util.logger.info('=' * 50)
+                log.logger.info('文章被版主刪除')
+            log.logger.info('=' * 50)
 
             result.append(post)
 
@@ -140,31 +145,29 @@ def test(ptt_bot: PyPtt.API):
     result = test_no_condition(ptt_bot)
 
     print(result)
-    util.logger.info(json.dumps(result, indent=4, ensure_ascii=False))
+    log.logger.info(json.dumps(result, indent=4, ensure_ascii=False))
 
     # result = get_post_with_condition(ptt_bot)
     # util.log.py.info(json.dumps(result, ensure_ascii=False, indent=4))
 
 
 def func():
-
     host_list = [
-        PyPtt.HOST.PTT1,
+        # PyPtt.HOST.PTT1,
         PyPtt.HOST.PTT2
     ]
 
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.TRACE,
+            log_level=PyPtt.LogLevel.TRACE,
         )
-        util.login(ptt_bot)
 
-        test(ptt_bot)
-
-        ptt_bot.logout()
-
-    # assert (result[0] == result[1])
+        try:
+            util.login(ptt_bot)
+            test(ptt_bot)
+        finally:
+            ptt_bot.logout()
 
 
 if __name__ == '__main__':

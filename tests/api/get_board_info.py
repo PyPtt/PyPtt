@@ -21,7 +21,7 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.TRACE,
+            # log_level=PyPtt.LogLevel.TRACE,
         )
         util.login(ptt_bot)
 

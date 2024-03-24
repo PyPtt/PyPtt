@@ -1,4 +1,3 @@
-import logging
 import re
 import sys
 
@@ -21,10 +20,15 @@ class Target:
         '您確定要離開',
     ]
 
-    QueryPost = [
+    PTT1_QueryPost = [
         '請按任意鍵繼續',
         '文章代碼(AID):',
         '文章網址:'
+    ]
+
+    PTT2_QueryPost = [
+        '請按任意鍵繼續',
+        '文章代碼(AID):'
     ]
 
     InBoard = [

@@ -26,7 +26,7 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.DEBUG,
+            # log_level=PyPtt.LogLevel.DEBUG,
         )
 
         try:

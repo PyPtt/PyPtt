@@ -32,8 +32,8 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     check_value.check_type(board, str, 'board')
     if aid is not None:
         check_value.check_type(aid, str, 'aid')
-
-    check_value.check_type(index, int, 'index')
+    if index is not None:
+        check_value.check_type(index, int, 'index')
 
     if search_list is None:
         search_list = []
@@ -63,7 +63,8 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     else:
         current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board)
 
-    check_value.check_index('index', index, current_index)
+    if index is not None:
+        check_value.check_index('index', index, current_index)
 
     max_retry = 2
     post = {}
@@ -116,7 +117,9 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(screens.Target.QueryPost, log_level=log.DEBUG, break_detect=True, refresh=False),
+        connect_core.TargetUnit(
+            screens.Target.PTT1_QueryPost if api.config.host == data_type.HOST.PTT1 else screens.Target.PTT2_QueryPost,
+            log_level=log.DEBUG, break_detect=True, refresh=False),
         connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
         connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
