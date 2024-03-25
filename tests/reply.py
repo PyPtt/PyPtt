@@ -1,6 +1,12 @@
 import time
 
+import os
+import sys
+
+sys.path.append(os.getcwd())
+
 import PyPtt
+from PyPtt import log
 from PyPtt import PostField
 from tests import util
 
@@ -49,9 +55,9 @@ def test(ptt_bot: PyPtt.API):
 
         posts.append(cur_post[PostField.aid])
 
-    util.logger.info('test')
+    log.logger.info('test')
     if len(posts) < 2:
-        util.logger.info('len(posts) < 2, fail')
+        log.logger.info('len(posts) < 2, fail')
         return
 
     check = [
@@ -64,21 +70,21 @@ def test(ptt_bot: PyPtt.API):
         post = ptt_bot.get_post(board='Test', aid=aid)
 
         if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
-            util.logger.info('post[PostField.post_status] != PyPtt.PostStatus.EXISTS, fail')
+            log.logger.info('post[PostField.post_status] != PyPtt.PostStatus.EXISTS, fail')
             check_result = False
             break
 
         if post[PostField.title] not in check:
-            util.logger.info('post[PostField.title] not in check, fail')
+            log.logger.info('post[PostField.title] not in check, fail')
             check_result = False
             break
 
         check.remove(post[PostField.title])
 
     if check_result:
-        util.logger.info('pass')
+        log.logger.info('pass')
     else:
-        util.logger.info('fail')
+        log.logger.info('fail')
 
     util.del_all_post(ptt_bot)
 
@@ -93,13 +99,13 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LogLevel.TRACE,
+            # log_level=PyPtt.LogLevel.DEBUG,
         )
-        util.login(ptt_bot)
-
-        test(ptt_bot)
-
-        ptt_bot.logout()
+        try:
+            util.login(ptt_bot)
+            test(ptt_bot)
+        finally:
+            ptt_bot.logout()
 
 
 if __name__ == '__main__':
