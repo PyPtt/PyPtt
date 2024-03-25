@@ -2,10 +2,10 @@ import threading
 import time
 import uuid
 
-
+from . import PTT
 from . import check_value
 from . import log
-from . import PTT
+
 
 class Service:
 
@@ -62,8 +62,10 @@ class Service:
                 finally:
                     service.close()
         """
+        log_level = pyptt_init_config.get('log_level', log.INFO)
+        self.logger = log.init(log_level, 'service')
 
-        log.logger.info('init')
+        self.logger.info('init')
 
         self._api = None
         self._api_init_config = pyptt_init_config
@@ -90,7 +92,7 @@ class Service:
 
         self._api = PTT.API(**self._api_init_config)
 
-        log.logger.info('start')
+        self.logger.info('start')
 
         while not self._close:
             if len(self._call_queue) == 0:
@@ -155,8 +157,8 @@ class Service:
         return call_result['result']
 
     def close(self):
-        log.logger.info('close')
+        self.logger.info('close')
         self._close = True
         self._thread.join()
 
-        log.logger.info('done')
+        self.logger.info('done')
