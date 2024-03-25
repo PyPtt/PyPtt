@@ -30,13 +30,12 @@ class LogLevel:
     TRACE = DEBUG
 
 
-logger_pool = {}
-formatter = logging.Formatter(
-    fmt='[%(asctime)s][%(name)s][%(levelname)s] %(message)s',
-    datefmt='%m.%d %H:%M:%S')
+_logger_pool = {}
 
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(formatter)
+_console_handler = logging.StreamHandler()
+_console_handler.setFormatter(logging.Formatter(
+    fmt='[%(asctime)s][%(name)s][%(levelname)s] %(message)s',
+    datefmt='%m.%d %H:%M:%S'))
 
 
 def _combine_msg(*args) -> str:
@@ -54,9 +53,6 @@ def _combine_msg(*args) -> str:
         return ''
 
     msg = list(map(str, args))
-
-    # 將第一個字串的第一個字母變大寫
-
     msg[0] = msg[0][0].upper() + msg[0][1:]
 
     return ' '.join(msg)
@@ -70,7 +66,7 @@ class Logger:
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
 
-        self.logger.addHandler(console_handler)
+        self.logger.addHandler(_console_handler)
 
         self.logger_callback: Optional[callable] = None
         if logger_callback and callable(logger_callback):
