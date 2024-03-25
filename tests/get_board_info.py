@@ -1,19 +1,21 @@
-import json
+import os
+import sys
+
+sys.path.append(os.getcwd())
 
 import PyPtt
+from PyPtt import log
 from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
-    test_users = [
-        'Coding',
+    test_board = [
+        'SYSOP',
     ]
 
-    for test_user in test_users:
-        result = ptt_bot.search_user(test_user)
-
-        # print(json.dumps(user_info, indent=4, ensure_ascii=False))
-        util.logger.info('result', result)
+    for board in test_board:
+        result = ptt_bot.get_board_info(board)
+        log.logger.info('get board info result', result)
 
 
 def func():
@@ -25,14 +27,11 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.TRACE,
+            # log_level=PyPtt.LogLevel.DEBUG,
         )
         try:
             util.login(ptt_bot)
-
             test(ptt_bot)
-
-            ptt_bot.logout()
         finally:
             ptt_bot.logout()
 

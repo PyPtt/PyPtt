@@ -1,4 +1,10 @@
+import os
+import sys
+
+sys.path.append(os.getcwd())
+
 import PyPtt
+from PyPtt import log
 from tests import util
 
 
@@ -23,22 +29,21 @@ def test_board_index(ptt_bot: PyPtt.API):
             index = ptt_bot.get_newest_index(
                 PyPtt.NewIndex.BOARD,
                 board)
-            util.logger.info(f'{board} newest index', index)
+            log.logger.info(f'{board} newest index', index)
 
             index = ptt_bot.get_newest_index(
                 PyPtt.NewIndex.BOARD,
                 board=board,
                 search_type=search_type,
                 search_condition=search_condition)
-            util.logger.info(f'{board} newest index with search', index)
+            log.logger.info(f'{board} newest index with search', index)
 
 
 def test_mail_index(ptt_bot: PyPtt.API):
     for _ in range(3):
         index = ptt_bot.get_newest_index(
             PyPtt.NewIndex.MAIL)
-        util.logger.info('mail newest index', index)
-
+        log.logger.info('mail newest index', index)
 
 
 def func():
@@ -50,14 +55,13 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.TRACE,
+            # log_level=PyPtt.LogLevel.DEBUG,
         )
-        util.login(ptt_bot)
-
-        # test_mail_index(ptt_bot)
-        test_board_index(ptt_bot)
-
-        ptt_bot.logout()
+        try:
+            util.login(ptt_bot)
+            test_mail_index(ptt_bot)
+        finally:
+            ptt_bot.logout()
 
 
 if __name__ == '__main__':

@@ -1,4 +1,8 @@
+import os
+import sys
 import time
+
+sys.path.append(os.getcwd())
 
 import PyPtt
 from tests import util
@@ -28,11 +32,11 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.TRACE,
+            # log_level=PyPtt.LogLevel.DEBUG,
         )
         test(ptt_bot)
 
-    util.logger.info('login logout test ok')
+    print('login logout test ok')
 
 
 if __name__ == '__main__':

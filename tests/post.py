@@ -1,17 +1,21 @@
+import os
+import sys
+
+sys.path.append(os.getcwd())
+
 import time
 
 import PyPtt
 
 from PyPtt import PostField
 from tests import util
+from PyPtt import log
 
 
 def test(ptt_bot: PyPtt.API):
     content = '''
 此為 PyPtt 貼文測試內容，如有打擾請告知。
-github: https://github.com/PttCodingMan/PyPtt
-
-開發手冊: https://github.com/PttCodingMan/PyPtt/tree/master/doc
+官方網站: https://pyptt.cc
 
 測試標記
 781d16268c9f25a39142a17ff063ac029b1466ca14cb34f5d88fe8aadfeee053
@@ -66,19 +70,19 @@ github: https://github.com/PttCodingMan/PyPtt
 
     for i, index in enumerate(post_list):
 
-        util.logger.info('test', i)
+        log.logger.info('test', i)
 
         post = ptt_bot.get_post(board='Test', index=index)
 
         if post[PostField.post_status] != PyPtt.PostStatus.EXISTS:
-            util.logger.info('fail')
+            log.logger.info('fail')
             print(f'Post {index} not exists')
             break
 
         post_author = post[PostField.author]
         post_author = post_author.split(' ')[0]
         if post_author != ptt_bot.ptt_id:
-            util.logger.info('fail')
+            log.logger.info('fail')
             print(f'Post {index} author not match', post_author)
             break
 
@@ -88,7 +92,7 @@ github: https://github.com/PttCodingMan/PyPtt
                 check = False
                 break
         if not check:
-            util.logger.info('fail')
+            log.logger.info('fail')
             print(f'Post {index} content not match')
             break
 
@@ -98,14 +102,14 @@ github: https://github.com/PttCodingMan/PyPtt
             if comment[PyPtt.CommentField.content] in comment_check:
                 cur_comment_check.add(comment[PyPtt.CommentField.content])
             else:
-                util.logger.info('comment', comment[PyPtt.CommentField.content])
+                log.logger.info('comment', comment[PyPtt.CommentField.content])
 
         if len(cur_comment_check) != len(comment_check):
-            util.logger.info('fail')
+            log.logger.info('fail')
             print(f'Post {index} comment not match')
             break
 
-        util.logger.info('pass')
+        log.logger.info('pass')
 
     for index in post_list:
         ptt_bot.del_post(board='Test', index=index)
@@ -120,12 +124,11 @@ def func():
     for host in host_list:
         ptt_bot = PyPtt.API(
             host=host,
-            # log_level=PyPtt.LOG_LEVEL.TRACE,
+            # log_level=PyPtt.LogLevel.DEBUG,
         )
         util.login(ptt_bot)
 
         test(ptt_bot)
-        # util.del_all_post(ptt_bot)
 
         ptt_bot.logout()
 

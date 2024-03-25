@@ -1,12 +1,11 @@
-from SingleLog import DefaultLogger
-from SingleLog import LogLevel
-
 from . import _api_util
 from . import check_value
 from . import command
 from . import connect_core
+from . import data_type
 from . import exceptions
 from . import i18n
+from . import log
 from . import screens
 
 
@@ -21,15 +20,13 @@ def get_bottom_post_list(api, board):
 
     _api_util.goto_board(api, board, end=True)
 
-    logger = DefaultLogger('get_bottom_post_list')
-
     last_screen = api.connect_core.get_screen_queue()[-1]
 
     bottom_screen = [line for line in last_screen.split('\n') if '★' in line[:8]]
     bottom_length = len(bottom_screen)
 
     if bottom_length == 0:
-        logger.info(i18n.catch_bottom_post_success)
+        log.logger.info(i18n.catch_bottom_post_success)
         return list()
 
     cmd_list = []
@@ -37,8 +34,10 @@ def get_bottom_post_list(api, board):
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(screens.Target.QueryPost, log_level=LogLevel.DEBUG, break_detect=True, refresh=False),
-        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(
+            screens.Target.PTT1_QueryPost if api.config.host == data_type.HOST.PTT1 else screens.Target.PTT2_QueryPost,
+            log_level=log.DEBUG, break_detect=True, refresh=False),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
         connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
 
@@ -68,6 +67,6 @@ def get_bottom_post_list(api, board):
         current_post = api.get_post(board=board, aid=post_aid, query=True)
         result.append(current_post)
 
-    logger.info(i18n.catch_bottom_post_success)
+    log.logger.info(i18n.catch_bottom_post_success)
 
     return list(reversed(result))

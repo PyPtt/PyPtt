@@ -1,19 +1,14 @@
 import json
 
-from SingleLog import DefaultLogger
-
 import PyPtt
-from PyPtt import LogLevel
 from PyPtt import PostField
+from PyPtt import log
 from . import config
 
 
 def log_to_file(msg: str):
     with open('single_log.txt', 'a', encoding='utf8') as f:
         f.write(f'{msg}\n')
-
-
-logger = DefaultLogger('test', LogLevel.DEBUG)
 
 
 def get_id_pw(password_file):
@@ -41,25 +36,25 @@ def login(ptt_bot: PyPtt.API, kick: bool = True):
             ptt_bot.login(ptt_id=ptt_id, ptt_pw=ptt_pw, kick_other_session=kick)
             break
         except PyPtt.LoginError:
-            logger.info('登入失敗')
+            log.logger.info('登入失敗')
             assert False
         except PyPtt.WrongIDorPassword:
-            logger.info('帳號密碼錯誤')
+            log.logger.info('帳號密碼錯誤')
             assert False
         except PyPtt.LoginTooOften:
-            logger.info('請稍等一下再登入')
+            log.logger.info('請稍等一下再登入')
             assert False
 
     if not ptt_bot.is_registered_user:
-        logger.info('未註冊使用者')
+        log.logger.info('未註冊使用者')
 
         if ptt_bot.process_picks != 0:
-            logger.info(f'註冊單處理順位 {ptt_bot.process_picks}')
+            log.logger.info(f'註冊單處理順位 {ptt_bot.process_picks}')
 
 
 def show_data(data, key: str = None):
     if isinstance(data, dict):
-        logger.info(f'{key}: {data[key]}')
+        log.logger.info(f'{key}: {data[key]}')
 
 
 def del_all_post(ptt_bot: PyPtt.API):

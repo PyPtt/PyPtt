@@ -1,1 +1,0 @@
-flake8 --ignore F401,E501,E722,W605,F541,E402 PyPtt/

@@ -1,9 +1,8 @@
-from SingleLog import LogLevel
-
 from . import command
 from . import connect_core
 from . import data_type
 from . import exceptions
+from . import log
 from . import screens
 
 
@@ -19,12 +18,12 @@ def get_call_status(api) -> None:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit('[呼叫器]打開', log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit('[呼叫器]拔掉', log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit('[呼叫器]防水', log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit('[呼叫器]好友', log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit('[呼叫器]關閉', log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit('★', log_level=LogLevel.DEBUG, response=cmd),
+        connect_core.TargetUnit('[呼叫器]打開', log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit('[呼叫器]拔掉', log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit('[呼叫器]防水', log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit('[呼叫器]好友', log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit('[呼叫器]關閉', log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit('★', log_level=log.DEBUG, response=cmd),
     ]
 
     for i in range(2):

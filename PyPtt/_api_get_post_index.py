@@ -1,10 +1,9 @@
-from SingleLog import LogLevel
-
 from . import _api_util
 from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n
+from . import log
 from . import screens
 
 
@@ -22,14 +21,14 @@ def get_post_index(api, board: str, aid: str) -> int:
     no_such_post = i18n.replace(no_such_post, board, aid)
 
     target_list = [
-        connect_core.TargetUnit('找不到這個文章代碼', log_level=LogLevel.DEBUG,
+        connect_core.TargetUnit('找不到這個文章代碼', log_level=log.DEBUG,
                                 exceptions_=exceptions.NoSuchPost(board, aid)),
         # 此狀態下無法使用搜尋文章代碼(AID)功能
         connect_core.TargetUnit('此狀態下無法使用搜尋文章代碼(AID)功能',
                                 exceptions_=exceptions.CanNotUseSearchPostCode()),
         connect_core.TargetUnit('沒有文章...', exceptions_=exceptions.NoSuchPost(board, aid)),
-        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=log.DEBUG, break_detect=True),
         connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board))
     ]
 

@@ -3,7 +3,6 @@ import re
 from typing import Dict
 
 from AutoStrEnum import AutoJsonEncoder
-from SingleLog import DefaultLogger
 
 from . import _api_util
 from . import check_value
@@ -13,13 +12,12 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 from . import screens
 from .data_type import UserField
 
 
 def get_user(api, ptt_id: str) -> Dict:
-    logger = DefaultLogger('get_user')
-
     _api_util.one_thread(api)
 
     if not api._is_login:
@@ -107,19 +105,19 @@ def get_user(api, ptt_id: str) -> Dict:
 
     signature_file = '\n'.join(lines[5:-1]).strip('\n')
 
-    logger.debug('ptt_id', ptt_id)
-    logger.debug('money', money)
-    logger.debug('login_count', login_count)
-    logger.debug('account_verified', account_verified)
-    logger.debug('legal_post', legal_post)
-    logger.debug('illegal_post', illegal_post)
-    logger.debug('activity', activity)
-    logger.debug('mail', mail)
-    logger.debug('last_login_date', last_login_date)
-    logger.debug('last_login_ip', last_login_ip)
-    logger.debug('five_chess', five_chess)
-    logger.debug('chess', chess)
-    logger.debug('signature_file', signature_file)
+    log.logger.debug('ptt_id', ptt_id)
+    log.logger.debug('money', money)
+    log.logger.debug('login_count', login_count)
+    log.logger.debug('account_verified', account_verified)
+    log.logger.debug('legal_post', legal_post)
+    log.logger.debug('illegal_post', illegal_post)
+    log.logger.debug('activity', activity)
+    log.logger.debug('mail', mail)
+    log.logger.debug('last_login_date', last_login_date)
+    log.logger.debug('last_login_ip', last_login_ip)
+    log.logger.debug('five_chess', five_chess)
+    log.logger.debug('chess', chess)
+    log.logger.debug('signature_file', signature_file)
 
     user = {
         UserField.ptt_id: ptt_id,

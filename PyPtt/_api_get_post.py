@@ -6,8 +6,6 @@ import time
 from typing import Dict, Optional
 
 from AutoStrEnum import AutoJsonEncoder
-from SingleLog import DefaultLogger
-from SingleLog import LogLevel
 
 from . import _api_util
 from . import check_value
@@ -17,11 +15,13 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 from . import screens
 from .data_type import PostField, CommentField
 
 
-def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = None, search_list: Optional[list] = None,
+def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = None,
+             search_list: Optional[list] = None,
              search_type: Optional[data_type.SearchType] = None,
              search_condition: Optional[str] = None, query: bool = False) -> Dict:
     _api_util.one_thread(api)
@@ -32,8 +32,8 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     check_value.check_type(board, str, 'board')
     if aid is not None:
         check_value.check_type(aid, str, 'aid')
-
-    check_value.check_type(index, int, 'index')
+    if index is not None:
+        check_value.check_type(index, int, 'index')
 
     if search_list is None:
         search_list = []
@@ -63,7 +63,8 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     else:
         current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board)
 
-    check_value.check_index('index', index, current_index)
+    if index is not None:
+        check_value.check_index('index', index, current_index)
 
     max_retry = 2
     post = {}
@@ -83,7 +84,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
             if i == max_retry - 1:
                 raise
 
-        api.logger.debug('Wait for retry repost')
+        log.log.logger.debug('Wait for retry repost')
         time.sleep(0.1)
 
     post = json.dumps(post, cls=AutoJsonEncoder)
@@ -94,8 +95,6 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
               search_cmd_list: Optional[list[str]] = None) -> Dict:
     _api_util.check_board(api, board)
     _api_util.goto_board(api, board)
-
-    logger = DefaultLogger('get_post')
 
     cmd_list = []
 
@@ -118,8 +117,10 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit(screens.Target.QueryPost, log_level=LogLevel.DEBUG, break_detect=True, refresh=False),
-        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(
+            screens.Target.PTT1_QueryPost if api.config.host == data_type.HOST.PTT1 else screens.Target.PTT2_QueryPost,
+            log_level=log.DEBUG, break_detect=True, refresh=False),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
         connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
 
@@ -152,8 +153,8 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     post_title = None
     if index < 0 or index == 1:
         # 文章被刪除
-        logger.debug(i18n.post_deleted)
-        logger.debug('OriScreen', ori_screen)
+        log.logger.debug(i18n.post_deleted)
+        log.logger.debug('OriScreen', ori_screen)
 
         cursor_line = [line for line in ori_screen.split(
             '\n') if line.startswith(api.cursor)]
@@ -162,7 +163,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             raise exceptions.UnknownError(ori_screen)
 
         cursor_line = cursor_line[0]
-        logger.debug('CursorLine', cursor_line)
+        log.logger.debug('CursorLine', cursor_line)
 
         pattern = re.compile('[\d]+\/[\d]+')
         pattern_result = pattern.search(cursor_line)
@@ -190,9 +191,9 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             post_author = None
             post_del_status = data_type.PostStatus.DELETED_BY_UNKNOWN
 
-        logger.debug('ListDate', list_date)
-        logger.debug('PostAuthor', post_author)
-        logger.debug('post_del_status', post_del_status)
+        log.logger.debug('ListDate', list_date)
+        log.logger.debug('PostAuthor', post_author)
+        log.logger.debug('post_del_status', post_del_status)
 
         post.update({
             PostField.board: board,
@@ -243,7 +244,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     origin_post, has_control_code = _api_util.get_content(api)
 
     if origin_post is None:
-        logger.info(i18n.post_deleted)
+        log.logger.info(i18n.post_deleted)
 
         post.update({
             PostField.board: board,
@@ -284,7 +285,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             board_temp = board_temp[2:].strip()
             if len(board_temp) > 0:
                 board = board_temp
-                logger.debug(i18n.board, board)
+                log.logger.debug(i18n.board, board)
 
     pattern_result = post_author_pattern_new.search(author_line)
     if pattern_result is not None:
@@ -293,7 +294,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     else:
         pattern_result = post_author_pattern_old.search(author_line)
         if pattern_result is None:
-            logger.info(i18n.substandard_post, i18n.author)
+            log.logger.info(i18n.substandard_post, i18n.author)
 
             post.update({
                 PostField.board: board,
@@ -320,14 +321,14 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         post_author = post_author[:post_author.rfind(')') + 1]
     post_author = post_author[4:].strip()
 
-    logger.debug(i18n.author, post_author)
+    log.logger.debug(i18n.author, post_author)
 
     post_title_pattern = re.compile('標題  (.+)')
 
     title_line = origin_post_lines[1]
     pattern_result = post_title_pattern.search(title_line)
     if pattern_result is None:
-        logger.info(i18n.substandard_post, i18n.title)
+        log.logger.info(i18n.substandard_post, i18n.title)
 
         post.update({
             PostField.board: board,
@@ -353,13 +354,13 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     post_title = pattern_result.group(0)
     post_title = post_title[4:].strip()
 
-    logger.debug(i18n.title, post_title)
+    log.logger.debug(i18n.title, post_title)
 
     post_date_pattern = re.compile('時間  .{24}')
     date_line = origin_post_lines[2]
     pattern_result = post_date_pattern.search(date_line)
     if pattern_result is None:
-        logger.info(i18n.substandard_post, i18n.date)
+        log.logger.info(i18n.substandard_post, i18n.date)
 
         post.update({
             PostField.board: board,
@@ -385,7 +386,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     post_date = pattern_result.group(0)
     post_date = post_date[4:].strip()
 
-    logger.debug(i18n.date, post_date)
+    log.logger.debug(i18n.date, post_date)
 
     content_fail = True
     if screens.Target.content_start not in origin_post:
@@ -410,7 +411,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
                 break
 
     if content_fail:
-        logger.info(i18n.substandard_post, i18n.content)
+        log.logger.info(i18n.substandard_post, i18n.content)
 
         post.update({
             PostField.board: board,
@@ -434,7 +435,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
 
         return post
 
-    logger.debug(i18n.content, post_content)
+    log.logger.debug(i18n.content, post_content)
 
     info_lines = [line for line in origin_post_lines if line.startswith('※') or line.startswith('◆')]
 
@@ -442,7 +443,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     pattern_p2 = re.compile('[\d]+-[\d]+-[\d]+-[\d]+')
     for line in reversed(info_lines):
 
-        logger.debug('IP Line', line)
+        log.logger.debug('IP Line', line)
 
         # type 1
         # ※ 編輯: CodingMan (111.243.146.98 臺灣)
@@ -469,7 +470,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             if ' ' not in location_temp and len(location_temp) > 0:
                 location = location_temp
 
-                logger.debug('Location', location)
+                log.logger.debug('Location', location)
             break
 
         pattern_result = pattern_p2.search(line)
@@ -480,7 +481,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             break
     if api.config.host == data_type.HOST.PTT1:
         if ip is None:
-            logger.info(i18n.substandard_post, ip)
+            log.logger.info(i18n.substandard_post, ip)
 
             post.update({
                 PostField.board: board,
@@ -503,7 +504,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
                 PostField.is_unconfirmed: api.Unconfirmed, })
 
             return post
-    logger.debug('IP', ip)
+    log.logger.debug('IP', ip)
 
     push_author_pattern = re.compile('[推|噓|→] [\w| ]+:')
     push_date_pattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
@@ -527,19 +528,19 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             continue
         push_author = result.group(0)[2:-1].strip()
 
-        logger.debug(i18n.comment_id, push_author)
+        log.logger.debug(i18n.comment_id, push_author)
 
         result = push_date_pattern.search(line)
         if result is None:
             continue
         push_date = result.group(0)
-        logger.debug(i18n.comment_date, push_date)
+        log.logger.debug(i18n.comment_date, push_date)
 
         comment_ip = None
         result = push_ip_pattern.search(line)
         if result is not None:
             comment_ip = result.group(0)
-            logger.debug(f'{i18n.comment} ip', comment_ip)
+            log.logger.debug(f'{i18n.comment} ip', comment_ip)
 
         push_content = line[line.find(push_author) + len(push_author):]
         # PushContent = PushContent.replace(PushDate, '')
@@ -553,7 +554,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             push_content = push_content.replace(comment_ip, '')
         push_content = push_content[push_content.find(':') + 1:].strip()
 
-        logger.debug(i18n.comment_content, push_content)
+        log.logger.debug(i18n.comment_content, push_content)
 
         current_push = {
             CommentField.type: comment_type,

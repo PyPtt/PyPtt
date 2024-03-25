@@ -3,6 +3,7 @@ from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n
+from . import log
 from .data_type import FavouriteBoardField
 
 
@@ -19,7 +20,7 @@ def get_favourite_board(api) -> list:
         connect_core.TargetUnit('選擇看板', break_detect=True)
     ]
 
-    api.logger.info(i18n.get_favourite_board_list)
+    log.logger.info(i18n.get_favourite_board_list)
 
     board_list = []
     favourite_board_list = []
@@ -68,7 +69,7 @@ def get_favourite_board(api) -> list:
             board_title = board_title[1:]
 
             if board in board_list:
-                api.logger.info(i18n.success)
+                log.logger.info(i18n.success)
                 return favourite_board_list
             board_list.append(board)
 
@@ -82,5 +83,5 @@ def get_favourite_board(api) -> list:
 
         cmd = command.ctrl_f
 
-    api.logger.info(i18n.success)
+    log.logger.info(i18n.success)
     return favourite_board_list

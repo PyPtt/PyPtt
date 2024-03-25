@@ -10,6 +10,7 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 from . import screens
 
 
@@ -53,12 +54,12 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
             check_author = False
             break
 
-    api.logger.info(i18n.delete_post)
+    log.logger.info(i18n.delete_post)
 
     post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
     if post_info[data_type.PostField.post_status] != data_type.PostStatus.EXISTS:
         # delete success
-        api.logger.info(i18n.success)
+        log.logger.info(i18n.success)
         return
 
     if check_author:
@@ -106,4 +107,4 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
         if not api.confirm:
             raise exceptions.NoPermission(i18n.no_permission)
 
-    api.logger.info(i18n.success)
+    log.logger.info(i18n.success)

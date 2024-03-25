@@ -5,19 +5,16 @@ import re
 import threading
 from typing import Dict, Optional
 
-from SingleLog import DefaultLogger
-from SingleLog import LogLevel
-
 from . import _api_get_board_info
 from . import command
 from . import connect_core
 from . import data_type
 from . import exceptions
+from . import log
 from . import screens
 
 
 def get_content(api, post_mode: bool = True):
-    logger = DefaultLogger('get_content')
     api.Unconfirmed = False
 
     def is_unconfirmed_handler(screen):
@@ -32,9 +29,9 @@ def get_content(api, post_mode: bool = True):
         # 待證實文章
         connect_core.TargetUnit('本篇文章內容經站方授權之板務管理人員判斷有尚待證實之處', response=' ',
                                 handler=is_unconfirmed_handler),
-        connect_core.TargetUnit(screens.Target.PostEnd, log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit(screens.Target.InPost, log_level=LogLevel.DEBUG, break_detect=True),
-        connect_core.TargetUnit(screens.Target.PostNoContent, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.PostEnd, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InPost, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.PostNoContent, log_level=log.DEBUG, break_detect=True),
         # 動畫文章
         connect_core.TargetUnit(screens.Target.Animation, response=command.go_main_menu_type_q,
                                 break_detect_after_send=True),
@@ -147,7 +144,7 @@ def get_content(api, post_mode: bool = True):
 
             origin_post.append(new_content_part)
 
-            logger.debug('NewContentPart', new_content_part)
+            log.logger.debug('NewContentPart', new_content_part)
 
         if index == 1:
             if content_start_jump and len(new_content_part) == 0:
@@ -177,7 +174,7 @@ def get_content(api, post_mode: bool = True):
     # OriginPost = [line.strip() for line in OriginPost.split('\n')]
     # OriginPost = '\n'.join(OriginPost)
 
-    logger.debug('OriginPost', origin_post)
+    log.logger.debug('OriginPost', origin_post)
 
     return origin_post, has_control_code
 
@@ -186,7 +183,6 @@ mail_capacity: Optional[tuple[int, int]] = None
 
 
 def get_mailbox_capacity(api) -> tuple[int, int]:
-
     global mail_capacity
     if mail_capacity is not None:
         return mail_capacity
@@ -194,16 +190,15 @@ def get_mailbox_capacity(api) -> tuple[int, int]:
     last_screen = api.connect_core.get_screen_queue()[-1]
     capacity_line = last_screen.split('\n')[2]
 
-    logger = DefaultLogger('get_mailbox_capacity')
-    logger.debug('capacity_line', capacity_line)
+    log.logger.debug('capacity_line', capacity_line)
 
     pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
     if pattern_result is not None:
         current_capacity = int(pattern_result.group(0).split('/')[0])
         max_capacity = int(pattern_result.group(0).split('/')[1])
 
-        logger.debug('current_capacity', current_capacity)
-        logger.debug('max_capacity', max_capacity)
+        log.logger.debug('current_capacity', current_capacity)
+        log.logger.debug('max_capacity', max_capacity)
 
         mail_capacity = (current_capacity, max_capacity)
         return current_capacity, max_capacity
@@ -218,7 +213,6 @@ def get_mailbox_capacity(api) -> tuple[int, int]:
 # └── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┘
 
 def parse_query_post(api, ori_screen):
-    logger = DefaultLogger('parse_query_post')
     lock_post = False
     try:
         cursor_line = [line for line in ori_screen.split(
@@ -332,13 +326,13 @@ def parse_query_post(api, ori_screen):
         if len(push_number) == 0:
             push_number = None
 
-    logger.debug('PostAuthor', post_author)
-    logger.debug('PostTitle', post_title)
-    logger.debug('PostAID', post_aid)
-    logger.debug('PostWeb', post_web)
-    logger.debug('PostMoney', post_money)
-    logger.debug('ListDate', list_date)
-    logger.debug('PushNumber', push_number)
+    log.logger.debug('PostAuthor', post_author)
+    log.logger.debug('PostTitle', post_title)
+    log.logger.debug('PostAID', post_aid)
+    log.logger.debug('PostWeb', post_web)
+    log.logger.debug('PostMoney', post_money)
+    log.logger.debug('ListDate', list_date)
+    log.logger.debug('PushNumber', push_number)
 
     return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
 
@@ -383,9 +377,9 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit('任意鍵', log_level=LogLevel.DEBUG, response=' '),
-        connect_core.TargetUnit('互動式動畫播放中', log_level=LogLevel.DEBUG, response=command.ctrl_c),
-        connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+        connect_core.TargetUnit('任意鍵', log_level=log.DEBUG, response=' '),
+        connect_core.TargetUnit('互動式動畫播放中', log_level=log.DEBUG, response=command.ctrl_c),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
     ]
 
     if refresh:
@@ -406,7 +400,7 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
         cmd = ''.join(cmd_list)
 
         target_list = [
-            connect_core.TargetUnit(screens.Target.InBoard, log_level=LogLevel.DEBUG, break_detect=True),
+            connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
         ]
 
         api.connect_core.send(cmd, target_list)

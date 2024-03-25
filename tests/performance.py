@@ -1,13 +1,16 @@
+import os
+import sys
 import time
-from tests import util
+
+sys.path.append(os.getcwd())
 
 import PyPtt
-from PyPtt_0_9 import PTT
+from tests import util
 
 
 def test(ptt_bot):
     test_time = 500
-    util.logger.info(f'效能測試 get_time {test_time} 次')
+    print(f'效能測試 get_time {test_time} 次')
 
     start_time = time.time()
     for _ in range(test_time):
@@ -15,22 +18,16 @@ def test(ptt_bot):
 
         assert ptt_time is not None
 
-        # if ptt_time is None:
-        #     util.log.py.info('PTT_TIME is None')
-        #     break
-        # util.log.py.info(ptt_time)
     end_time = time.time()
-    util.logger.info(
+    print(
         F'Performance Test get_time {end_time - start_time} s')
 
-    util.logger.info('Performance Test finish')
+    print('Performance Test finish')
 
 
 def func():
-
     ptt_bot_list = [
-        PyPtt.API(),
-        PTT.API()]
+        PyPtt.API()]
 
     for ptt_bot in ptt_bot_list:
         util.login(ptt_bot)

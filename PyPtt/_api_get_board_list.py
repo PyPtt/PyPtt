@@ -1,11 +1,11 @@
 import progressbar
-from SingleLog import LogLevel
 
 from . import _api_util
 from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n
+from . import log
 from . import screens
 
 
@@ -51,7 +51,7 @@ def get_board_list(api) -> list:
         # print(f'FrontPartList =>{FrontPartList}<=')
         max_no = int(front_part_list[0].rstrip(')'))
 
-    if api.config.log_level == LogLevel.INFO:
+    if api.config.log_level == log.INFO:
         pb = progressbar.ProgressBar(
             max_value=max_no,
             redirect_stdout=True)
@@ -101,14 +101,14 @@ def get_board_list(api) -> list:
 
             board_list.append(board_name)
 
-            if api.config.log_level == LogLevel.INFO:
+            if api.config.log_level == log.INFO:
                 pb.update(no)
 
         if no >= max_no:
             break
         cmd = command.ctrl_f
 
-    if api.config.log_level == LogLevel.INFO:
+    if api.config.log_level == log.INFO:
         pb.finish()
 
     return board_list

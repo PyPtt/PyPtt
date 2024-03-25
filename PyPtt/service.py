@@ -1,16 +1,16 @@
 import threading
 import time
 import uuid
+from typing import Optional
 
-from SingleLog import DefaultLogger
-
-import PyPtt
-from PyPtt import check_value
+from . import PTT
+from . import check_value
+from . import log
 
 
 class Service:
 
-    def __init__(self, pyptt_init_config: dict = {}):
+    def __init__(self, pyptt_init_config: Optional[dict] = None):
 
         """
 
@@ -63,9 +63,13 @@ class Service:
                 finally:
                     service.close()
         """
+        if pyptt_init_config is None:
+            pyptt_init_config = {}
 
-        self._log = DefaultLogger('Service')
-        self._log.info('init')
+        log_level = pyptt_init_config.get('log_level', log.INFO)
+        self.logger = log.init(log_level, 'service')
+
+        self.logger.info('init')
 
         self._api = None
         self._api_init_config = pyptt_init_config
@@ -90,9 +94,9 @@ class Service:
             self._api.logout()
             self._api = None
 
-        self._api = PyPtt.API(**self._api_init_config)
+        self._api = PTT.API(**self._api_init_config)
 
-        self._log.info('start')
+        self.logger.info('start')
 
         while not self._close:
             if len(self._call_queue) == 0:
@@ -124,7 +128,7 @@ class Service:
                     self._id_pool.add(call_id)
                     return call_id
 
-    def call(self, api: str, args: dict = {}):
+    def call(self, api: str, args: Optional[dict] = None):
 
         if args is None:
             args = {}
@@ -157,8 +161,8 @@ class Service:
         return call_result['result']
 
     def close(self):
-        self._log.info('close')
+        self.logger.info('close')
         self._close = True
         self._thread.join()
 
-        self._log.info('done')
+        self.logger.info('done')

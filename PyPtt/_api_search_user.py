@@ -5,6 +5,7 @@ from . import connect_core
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 
 
 def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
@@ -46,7 +47,7 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
 
     resultlist = []
 
-    api.logger.info(i18n.search_user)
+    log.logger.info(i18n.search_user)
 
     while True:
 
@@ -98,6 +99,6 @@ def search_user(api, ptt_id: str, min_page: int, max_page: int) -> list:
             connect_core.TargetUnit('查詢網友', break_detect=True)
         ]
     )
-    api.logger.info(i18n.success)
+    log.logger.info(i18n.success)
 
     return list(filter(None, resultlist))
