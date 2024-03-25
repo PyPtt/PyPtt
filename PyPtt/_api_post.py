@@ -7,7 +7,6 @@ from . import connect_core
 from . import exceptions
 from . import i18n
 from . import lib_util
-from . import screens
 from . import log
 
 

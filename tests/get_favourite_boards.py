@@ -8,7 +8,6 @@ from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
-
     result = ptt_bot.get_favourite_boards()
 
     for r in result:

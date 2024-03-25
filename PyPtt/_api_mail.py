@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from typing import Dict, Optional
 
-from . import log
 from . import _api_util
 from . import check_value
 from . import command
@@ -12,6 +11,7 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 from . import screens
 from .data_type import MailField
 
@@ -23,7 +23,6 @@ def mail(api,
          content: str,
          sign_file,
          backup: bool = True) -> None:
-
     _api_util.one_thread(api)
 
     if not api._is_login:
@@ -122,7 +121,8 @@ mail_date_pattern = re.compile('時間  (.+)')
 ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 
-def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
+def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None,
+             search_condition: Optional[str] = None,
              search_list: Optional[list] = None) -> Dict:
     _api_util.one_thread(api)
 

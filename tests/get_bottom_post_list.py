@@ -8,10 +8,10 @@ from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
-
     result = ptt_bot.get_bottom_post_list('Test')
 
     print(result)
+
 
 def func():
     host_list = [

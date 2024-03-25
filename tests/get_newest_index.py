@@ -46,7 +46,6 @@ def test_mail_index(ptt_bot: PyPtt.API):
         log.logger.info('mail newest index', index)
 
 
-
 def func():
     host_list = [
         PyPtt.HOST.PTT1,

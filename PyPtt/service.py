@@ -1,6 +1,7 @@
 import threading
 import time
 import uuid
+from typing import Optional
 
 from . import PTT
 from . import check_value
@@ -9,7 +10,7 @@ from . import log
 
 class Service:
 
-    def __init__(self, pyptt_init_config: dict = {}):
+    def __init__(self, pyptt_init_config: Optional[dict] = None):
 
         """
 
@@ -62,6 +63,9 @@ class Service:
                 finally:
                     service.close()
         """
+        if pyptt_init_config is None:
+            pyptt_init_config = {}
+
         log_level = pyptt_init_config.get('log_level', log.INFO)
         self.logger = log.init(log_level, 'service')
 
@@ -124,7 +128,7 @@ class Service:
                     self._id_pool.add(call_id)
                     return call_id
 
-    def call(self, api: str, args: dict = {}):
+    def call(self, api: str, args: Optional[dict] = None):
 
         if args is None:
             args = {}

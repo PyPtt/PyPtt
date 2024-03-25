@@ -4,12 +4,10 @@ import sys
 sys.path.append(os.getcwd())
 
 import PyPtt
-from PyPtt import log
 from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
-
     ptt_bot.give_money('janice001', 10)
 
 

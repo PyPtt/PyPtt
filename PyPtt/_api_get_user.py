@@ -12,13 +12,12 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 from . import screens
 from .data_type import UserField
-from . import log
 
 
 def get_user(api, ptt_id: str) -> Dict:
-
     _api_util.one_thread(api)
 
     if not api._is_login:

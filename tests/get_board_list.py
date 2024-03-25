@@ -10,7 +10,6 @@ from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
-
     board_list = ptt_bot.get_all_boards()
 
     with open(f'tests/{ptt_bot.host}-board_list.json', 'w') as f:

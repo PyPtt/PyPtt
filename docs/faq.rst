@@ -14,14 +14,14 @@ Q: 使用 PyPtt 時，遇到問題該如何解決？
 2. 提出 issue。
     * 請先確認你使用的版本是否為 |version_pic|，如果不是，請更新到最新版本。
     * 如果你使用的是最新版本，請確認你的問題是否已經在這裡被回答過了。
-    * 如果你的問題還沒有被回答過，請依照以下程式碼將 LogLevel_ 設定為 `TRACE`，並附上 **可以重現問題的程式碼**。
+    * 如果你的問題還沒有被回答過，請依照以下程式碼將 LogLevel_ 設定為 `DEBUG`，並附上 **可以重現問題的程式碼**。
     * 並且到 GitHub 提出 `issue`_。
 
 .. code-block:: python
 
     import PyPtt
 
-    ptt_bot = PyPtt.API(log_level=PyPtt.LogLevel.TRACE)
+    ptt_bot = PyPtt.API(log_level=PyPtt.LogLevel.DEBUG)
 
     # 你的程式碼
 

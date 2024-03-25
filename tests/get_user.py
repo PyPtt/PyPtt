@@ -5,7 +5,6 @@ import sys
 sys.path.append(os.getcwd())
 
 import PyPtt
-from PyPtt import log
 from tests import util
 
 

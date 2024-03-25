@@ -10,8 +10,8 @@ from . import data_type
 from . import exceptions
 from . import i18n
 from . import lib_util
-from . import screens
 from . import log
+from . import screens
 
 
 def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0) -> None:

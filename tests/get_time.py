@@ -18,7 +18,6 @@ def test(ptt_bot: PyPtt.API):
 
 
 def func():
-
     host_list = [
         PyPtt.HOST.PTT1,
         PyPtt.HOST.PTT2]
