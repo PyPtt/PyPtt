@@ -35,13 +35,7 @@ from . import log
 
 
 class API:
-    def __init__(self, language: data_type.Language = data_type.Language.MANDARIN,
-                 log_level: log.LogLv = log.INFO,
-                 screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
-                 connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
-                 logger_callback: Optional[Callable] = None, host=data_type.HOST.PTT1,
-                 check_update: bool = True) -> None:
-
+    def __init__(self, **kwargs):
         """
 
         初始化 PyPtt。
@@ -71,11 +65,14 @@ class API:
         .. _LogLevel: https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22
         """
 
+        log_level = kwargs.get('log_level', log.INFO)
         if not isinstance(log_level, log.LogLv):
             raise TypeError('[PyPtt] log_level must be log.Level')
 
+        logger_callback = kwargs.get('logger_callback', None)
         log.init(log_level, logger_callback=logger_callback)
 
+        language = kwargs.get('language', data_type.Language.MANDARIN)
         if not isinstance(language, data_type.Language):
             raise TypeError('[PyPtt] language must be PyPtt.Language')
 
@@ -93,9 +90,15 @@ class API:
         self._ptt_pw: str = ''
         self._is_login: bool = False
 
+        host = kwargs.get('host', data_type.HOST.PTT1)
+        screen_timeout = kwargs.get('screen_timeout', 3.0)
+        screen_long_timeout = kwargs.get('screen_long_timeout', 10.0)
+        screen_post_timeout = kwargs.get('screen_post_timeout', 60.0)
+
         check_value.check_type(host, (data_type.HOST, str), 'host')
         check_value.check_type(screen_timeout, float, 'screen_timeout')
         check_value.check_type(screen_long_timeout, float, 'screen_long_timeout')
+        check_value.check_type(screen_post_timeout, float, 'screen_post_timeout')
 
         if screen_timeout != 0:
             self.config.screen_timeout = screen_timeout
@@ -107,9 +110,13 @@ class API:
         self.config.host = host
         self.host = host
 
+        port = kwargs.get('port', 23)
+
         check_value.check_type(port, int, 'port')
         check_value.check_range(port, 1, 65535 - 1, 'port')
         self.config.port = port
+
+        connect_mode = kwargs.get('connect_mode', data_type.ConnectMode.WEBSOCKETS)
 
         check_value.check_type(connect_mode, data_type.ConnectMode, 'connect_mode')
         if host in [data_type.HOST.PTT1, data_type.HOST.PTT2] and connect_mode is data_type.ConnectMode.TELNET:
@@ -150,6 +157,9 @@ class API:
             log.logger.info(i18n.set_connect_host, '...', self.config.host)
 
         log.logger.info('PyPtt', i18n.init, '...', i18n.done)
+
+        check_update = kwargs.get('check_update', True)
+        check_value.check_type(check_update, bool, 'check_update')
 
         if check_update:
             version_compare, remote_version = lib_util.sync_version()
