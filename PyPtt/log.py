@@ -66,7 +66,11 @@ class Logger:
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
 
-        self.logger.addHandler(_console_handler)
+        if self.logger.hasHandlers():
+            for handler in self.logger.handlers:
+                handler.setFormatter(_console_handler.formatter)
+        else:
+            self.logger.addHandler(_console_handler)
 
         self.logger_callback: Optional[callable] = None
         if logger_callback and callable(logger_callback):

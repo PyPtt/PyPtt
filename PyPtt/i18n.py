@@ -1224,8 +1224,8 @@ def load(lang):
 
     global login_success
     login_success = specific_load(lang, [
-        '登入成功',
-        'login success',
+        '登入 ... 成功',
+        'login ... success',
     ])
 
     global mail_box

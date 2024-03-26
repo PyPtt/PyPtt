@@ -5,13 +5,14 @@ name: docs
 on:
   pull_request:
     types: [ closed ]
-    branches:
-      - master
+    paths:
+      - 'docs/**/*'
+      - 'PyPtt/*.py'
   workflow_dispatch:
 
 jobs:
   build:
-    if: github.event.branch == 'master'
+    if: github.event_name != 'workflow_dispatch' && github.event.pull_request.merged == true
     name: Build doc and Deploy
     runs-on: ubuntu-latest
     steps:

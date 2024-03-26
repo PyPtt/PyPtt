@@ -131,23 +131,25 @@ class API:
         log.logger.info('PyPtt', i18n.init)
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
-            log.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
+            log.logger.info(i18n.set_connect_mode, '...', i18n.connect_mode_TELNET)
         elif self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
-            log.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+            log.logger.info(i18n.set_connect_mode, '...', i18n.connect_mode_WEBSOCKET)
 
         if self.config.language == data_type.Language.MANDARIN:
-            log.logger.info(i18n.set_up_lang_module, i18n.mandarin_module)
+            log.logger.info(i18n.set_up_lang_module, '...', i18n.mandarin_module)
         elif self.config.language == data_type.Language.ENGLISH:
-            log.logger.info(i18n.set_up_lang_module, i18n.english_module)
+            log.logger.info(i18n.set_up_lang_module, '...', i18n.english_module)
 
         if self.config.host == data_type.HOST.PTT1:
-            log.logger.info(i18n.set_connect_host, i18n.PTT)
+            log.logger.info(i18n.set_connect_host, '...', i18n.PTT)
         elif self.config.host == data_type.HOST.PTT2:
-            log.logger.info(i18n.set_connect_host, i18n.PTT2)
+            log.logger.info(i18n.set_connect_host, '...', i18n.PTT2)
         elif self.config.host == data_type.HOST.LOCALHOST:
-            log.logger.info(i18n.set_connect_host, i18n.localhost)
+            log.logger.info(i18n.set_connect_host, '...', i18n.localhost)
         else:
-            log.logger.info(i18n.set_connect_host, self.config.host)
+            log.logger.info(i18n.set_connect_host, '...', self.config.host)
+
+        log.logger.info('PyPtt', i18n.init, '...', i18n.done)
 
         if check_update:
             version_compare, remote_version = lib_util.sync_version()
