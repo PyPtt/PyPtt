@@ -6,8 +6,10 @@ import yaml
 from . import __version__
 from . import data_type
 
-locale_pool: set[str] = {
-    data_type.Language.ENGLISH, data_type.Language.MANDARIN}
+locale_pool = {
+    data_type.Language.ENGLISH,
+    data_type.Language.MANDARIN
+}
 
 _script_path = os.path.dirname(os.path.abspath(__file__))
 _lang_data = {}
