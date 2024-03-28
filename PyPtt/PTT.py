@@ -73,14 +73,18 @@ class API:
         log.init(log_level, logger_callback=logger_callback)
 
         language = kwargs.get('language', data_type.Language.MANDARIN)
-        if not isinstance(language, data_type.Language):
+        if not isinstance(language, str):
+            raise TypeError('[PyPtt] language must be PyPtt.Language')
+        if language not in i18n.locale_pool:
             raise TypeError('[PyPtt] language must be PyPtt.Language')
 
         self.config = config.Config()
         self.config.log_level = log_level
 
         self.config.language = language
-        i18n.load(self.config.language)
+
+        print('language', self.config.language)
+        i18n.init(self.config.language)
 
         self.is_mailbox_full: bool = False
         self.is_registered_user: bool = False
@@ -135,7 +139,7 @@ class API:
 
         log.logger.info(i18n.welcome)
 
-        log.logger.info('PyPtt', i18n.init)
+        log.logger.info('PyPtt', i18n.initialization)
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
             log.logger.info(i18n.set_connect_mode, '...', i18n.connect_mode_TELNET)
@@ -156,7 +160,7 @@ class API:
         else:
             log.logger.info(i18n.set_connect_host, '...', self.config.host)
 
-        log.logger.info('PyPtt', i18n.init, '...', i18n.done)
+        log.logger.info('PyPtt', i18n.initialization, '...', i18n.done)
 
         check_update = kwargs.get('check_update', True)
         check_value.check_type(check_update, bool, 'check_update')

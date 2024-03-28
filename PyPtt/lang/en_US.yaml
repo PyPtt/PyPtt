@@ -1,0 +1,204 @@
+PTT: PTT
+PTT2: PTT2
+active: active
+animation_post: Animation PostField
+anonymous_transaction: transaction without anomalous
+any_key_continue: any key to continue
+authentication_has_not_expired: authentication has not expired
+author: author
+board: board
+board_list: board list
+browse_post: browse post
+browse_post_done: browse post done
+browse_waterball: browse waterball
+browse_waterball_done: browse waterball complete
+bucket_fail: bucket fail
+bucket_success: bucket success
+can_not_use_search_post_code_f: This status can not use the search PostField code function
+catch_bottom_post_success: catch bottom post success
+catch_post: catch post
+catch_post_success: get post success
+change_pw: change password
+check_new_password: check new password
+comment: comment
+comment_content: comment content
+comment_date: comment date
+comment_id: comment id
+complete: complete
+confirm: confirm
+confirm_delete: confirm delete
+connect: connect
+connect_core: connect core
+connect_fail: connect fail
+connect_host: the connect host
+connect_mode: the connect mode
+connect_mode_TELNET: Telnet
+connect_mode_WEBSOCKET: WebSocket
+connection_closed: connection Closed
+constant_red_bag: constant the red bag
+content: content
+current_version: Current version
+date: date
+debug: dbug
+del_all_mark_post: Del All Mark PostField
+del_wrong_pw_record: delete error password record
+delete_post: Delete post
+delete_success: delete Success
+deleted_post: Deleted PostField
+development_version: Running development version
+done: done
+edit_post: edit post
+edit_red_bag: Edits the red bag
+english_module: english
+error_login_rich_people_go_main_menu: error login rich people, go main menu
+error_parameter: wrong parameter
+error_pw: wrong password
+fail: fail
+find_newest_index: find newest index
+forced_write: Forced Write
+get_call_status: get BBCall status
+get_call_status_success: get BBCall status success
+get_favourite_board_list: Query favourite board list
+get_mail: Get mail
+get_user: get user
+get_user_fail: get user fail
+get_user_success: get user success
+go_main_menu: go to main menu
+goodbye:
+  - good bye
+  - bye
+  - see you
+  - catch you later
+  - I hate to run, but...
+  - Until we meet again, I will wait
+has_comment_permission: user has permission to comment
+has_new_mail_goto_main_menu: new mail! Back to main menu
+has_post_permission: have permission to post
+hide_sensitive_info: hide sensitive info
+in_login_process_please_wait: in login process, please wait
+info: info
+initialization: init
+input_bucket_days_reason: input bucket days and reason
+input_id: input ID
+input_money: input money
+input_new_password: input new password
+input_origin_password: input Origin Password
+kick_other_login: kick other login
+latest_version: Running the latest version
+localhost: localhost
+login: login
+login_fail: login fail
+login_id: login id
+login_success: login ... success
+login_too_often: login too often
+logout: logout
+logout_success: logout success
+mail_box: mail box
+mail_box_full: mail box is full
+mandarin_module: mandarin
+mark_success: Del All Mark PostField
+money_too_few: the amount is too small, the transaction is cancelled!
+multi_thread_operate: do not use a multi-thread to operate a PyPtt object
+must_be: must be
+must_be_a_boolean: must be a boolean
+must_be_a_integer: must be a integer
+must_be_a_string: must be a string
+must_between: must between
+must_bigger_than: must bigger than
+must_small_than: must smaller than
+need_moderator_permission: need moderator permission
+new_cursor: new cursor
+new_settings_have_been_saved: new settings have been saved
+new_version: There is a new version
+no_changes: no changes have been made to any settings
+no_comment: no comment
+no_fast_comment: no fast comment
+no_mail: you have no mail
+no_money: not enough PTT coins
+no_permission: user Has No Permission
+no_post: no post
+no_response: this post has been closed and marked, no response
+no_search_result: No Search Result
+no_signature_file: no Signature File
+no_such_board: no such board
+no_such_mail: No such mail
+no_such_post: in {Target0}, the post code is not EXISTS {Target1}
+no_such_user: no such user
+no_waterball: no waterball
+not_kick_other_login: not kick other login
+not_push_aligned: No push aligned
+not_record_ip: not record IP
+not_self_save_draft: not self-save draft
+old_cursor: old cursor
+only_arrow: Arrow Only in Push
+only_secure_connection: skip registration form
+out_side: out
+picks_in_register: registration application processing order
+post: post article
+post_deleted: post has been deleted
+post_no_content: post has no content
+post_not_finish: post is not finish
+prepare_connect_again: prepare connect again
+ptt2_not_support: PTT2 not support this api
+ptt_msg: ptt msg
+push_aligned: Push aligned
+query_post_success: query post success
+query_ptt_time_success: query ptt time success
+quit_user_profile: Quit UserField Profile
+quote_original: quote original
+read_complete: read complete
+reading: reading
+reading_board_info: reading board Info
+record_ip: Record ip
+red_bag_no_edition: Not editing the red bag
+reply_board: respond to the BoardField
+reply_board_mail: respond to the board and the mailbox of author
+reply_mail: respond to the mailbox of author
+require_login: please login first
+reset_your_contact_email: Please reset your contact email
+respond_success: respond success
+restore_connection: restore Connection
+retry: retry
+save_file: Save File
+screen_no_match_target: this screen is not recognized
+search_user: Search user
+select_sign_file: select {Target0}th signature file
+select_signature: Select Signature
+self_save_draft: self-save draft
+send_mail: send mail
+send_msg: send msg
+set_call_status: set call status
+set_call_status_success: set BBCall status success
+set_connect_host: set up the connect host
+set_connect_mode: set up the connect mode
+set_contact_mail_first: password can only be changed after setting the contact mailbox
+set_up_lang_module: set up language module
+skip_registration_form: skip registration form
+spend_time: spend time
+substandard_post: substandard post
+success: success
+system_busy_try_later: system busy, try later
+throw_waterball: throw {Target0} waterball
+throw_waterball_success: throw waterball success
+timeout: timeout
+title: title
+trading_in_progress: trading is in progress
+transaction: transaction
+transaction_cancelled: the transaction is cancelled!
+transaction_success: transaction success
+unconfirmed_post: PostField To Be Confirmed
+unknown: unknown
+unregistered_user_cant_use_all_api: unregistered UserField Can't Use All API
+unregistered_user_cant_use_this_api: unregistered UserField Can't Use This API
+update_remote_version: fetching latest version
+update_sync_online_user_friend_list: update sync online user friend list
+use_mailbox_api_will_logout_after_execution: if you use mailbox related functions, you will be logged out automatically after execution
+use_the_original_title: use the original title
+use_too_many_resources: use too many resources
+user_has_previously_been_banned: user has previously been banned
+user_offline: user offline
+verify_id: verify ID
+wait_for_no_fast_comment: because no fast comment, wait 5 sec
+water_ball: water Ball
+welcome: PyPtt v {version} developed by CodingMan
+wrong_id_pw: wrong id or pw
