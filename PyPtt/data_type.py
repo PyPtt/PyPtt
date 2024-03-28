@@ -4,9 +4,9 @@ from enum import auto
 from AutoStrEnum import AutoStrEnum
 
 
-class Language(AutoStrEnum):
-    MANDARIN = auto()
-    ENGLISH = auto()
+class Language:
+    MANDARIN = 'zh_TW'
+    ENGLISH = 'en_US'
 
 
 class ConnectMode(AutoStrEnum):

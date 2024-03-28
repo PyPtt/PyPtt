@@ -3,3 +3,4 @@ websockets
 uao
 requests==2.31.0
 AutoStrEnum
+PyYAML
