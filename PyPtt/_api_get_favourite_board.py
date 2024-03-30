@@ -83,5 +83,5 @@ def get_favourite_board(api) -> list:
 
         cmd = command.ctrl_f
 
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.get_favourite_board_list, '...', i18n.success)
     return favourite_board_list

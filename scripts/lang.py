@@ -12,12 +12,12 @@ import PyPtt
 
 def add_lang():
     new_words = [
-        (PyPtt.Language.MANDARIN, 'english_module', '英文'),
-        (PyPtt.Language.ENGLISH, 'english_module', 'english'),
+        (PyPtt.Language.MANDARIN, 'get_board_info', '取得看板資訊 _target0_'),
+        (PyPtt.Language.ENGLISH, 'get_board_info', 'get board info _target0_'),
     ]
 
     for lang, key, value in new_words:
-        PyPtt.i18n.init(lang)
+        PyPtt.i18n.init(lang, cache=True)
 
         PyPtt.i18n._lang_data[key] = value
 
@@ -82,7 +82,7 @@ def check_lang():
             yaml.dump(PyPtt.i18n._lang_data, f, allow_unicode=True, default_flow_style=False)
 
 if __name__ == '__main__':
-    # add_lang()
+    add_lang()
     # check_lang()
     pass
 

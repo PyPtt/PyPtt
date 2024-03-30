@@ -4,7 +4,7 @@ active: 啟動
 author: 作者
 board: 看板
 can_not_use_search_post_code_f: 此狀態下無法使用搜尋文章代碼(AID)功能
-catch_bottom_post_success: 取得置底文章成功
+catch_bottom_post: 取得置底文章
 change_pw: 變更密碼
 comment: 推文
 comment_content: 推文內文
@@ -26,8 +26,10 @@ english_module: 英文
 error_pw: 密碼不正確
 fail: 失敗
 find_newest_index: 找到最新編號
+get_board_info: 取得看板資訊 _target0_
 get_favourite_board_list: 取得我的最愛
 get_mail: 取得信件
+give_money_to: 給 _target0_ _target1_ P 幣
 goodbye: 再見
 has_comment_permission: 確認擁有推文權限
 has_new_mail_goto_main_menu: 有新信，回到主選單
@@ -64,7 +66,7 @@ no_response: 很抱歉, 此文章已結案並標記, 不得回應
 no_search_result: 沒有搜尋結果
 no_such_board: 無該看板
 no_such_mail: 無此信件
-no_such_post: '_Target0_ 板找不到這個文章代碼 _Target1_'
+no_such_post: _target0_ 板找不到這個文章代碼 _target1_
 no_such_user: 無該使用者
 not_kick_other_login: 不剔除其他登入
 not_push_aligned: 無推文對齊
@@ -104,5 +106,5 @@ use_too_many_resources: 耗用過多資源
 user_has_previously_been_banned: 使用者之前已被禁言
 user_offline: 使用者離線
 wait_for_no_fast_comment: 因禁止快速連續推文，所以等待五秒
-welcome: PyPtt v _Target0_ 由 CodingMan 開發
+welcome: PyPtt v _target0_ 由 CodingMan 開發
 wrong_id_pw: 帳號密碼錯誤

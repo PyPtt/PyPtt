@@ -256,7 +256,7 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
                 # print(location)
                 mail_location = location[1:-1]
 
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.get_mail, '...', i18n.success)
 
     return {
         MailField.origin_mail: origin_mail,

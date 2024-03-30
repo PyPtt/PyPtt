@@ -26,8 +26,10 @@ english_module: English
 error_pw: Wrong password
 fail: Fail
 find_newest_index: Find newest index
+get_board_info: Get board info _target0_
 get_favourite_board_list: Query favourite board list
 get_mail: Get mail
+give_money_to: give _target0_ _target1_ P coins
 goodbye: I hate to run, but...
 has_comment_permission: User has permission to comment
 has_new_mail_goto_main_menu: New mail! Back to main menu
@@ -64,7 +66,7 @@ no_response: This post has been closed and marked, no response
 no_search_result: No Search Result
 no_such_board: No such board
 no_such_mail: No such mail
-no_such_post: In _Target0_, the post code is not EXISTS _Target1_
+no_such_post: In _target0_, the post code is not EXISTS _target1_
 no_such_user: No such user
 not_kick_other_login: Not kick other login
 not_push_aligned: No push aligned
@@ -104,5 +106,5 @@ use_too_many_resources: Use too many resources
 user_has_previously_been_banned: User has previously been banned
 user_offline: User offline
 wait_for_no_fast_comment: Because no fast comment, wait 5 sec
-welcome: PyPtt v _Target0_ developed by CodingMan
+welcome: PyPtt v _target0_ developed by CodingMan
 wrong_id_pw: Wrong id or pw

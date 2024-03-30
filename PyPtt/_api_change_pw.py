@@ -45,4 +45,4 @@ def change_pw(api, new_password: str) -> None:
 
     api._ptt_pw = new_password
 
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.change_pw, '...', i18n.success)

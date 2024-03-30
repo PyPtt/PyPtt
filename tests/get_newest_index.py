@@ -60,6 +60,10 @@ def func():
         try:
             util.login(ptt_bot)
             test_mail_index(ptt_bot)
+            test_mail_index(ptt_bot)
+            test_board_index(ptt_bot)
+            test_board_index(ptt_bot)
+            test_mail_index(ptt_bot)
         finally:
             ptt_bot.logout()
 

@@ -130,7 +130,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     if index == 1 or index == 2:
         raise exceptions.NoPermission(i18n.no_permission)
 
-    log.logger.info(i18n.has_post_permission)
+    log.logger.debug(i18n.has_post_permission)
 
     content = lib_util.uniform_new_line(content)
 
@@ -154,4 +154,4 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
         target_list,
         screen_timeout=api.config.screen_post_timeout)
 
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.post, '...', i18n.success)

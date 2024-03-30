@@ -22,7 +22,7 @@ mapping = {
 def replace(string, *args):
     for i in range(len(args)):
         target = f'{args[i]}'
-        string = string.replace(f'_Target{i}_', target)
+        string = string.replace(f'_target{i}_', target)
     return string
 
 

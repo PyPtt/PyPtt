@@ -46,6 +46,8 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
             post_index,
             newest_index)
 
+    log.logger.info(i18n.delete_post)
+
     board_info = _api_util.check_board(api, board)
 
     check_author = True
@@ -107,4 +109,4 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
         if not api.confirm:
             raise exceptions.NoPermission(i18n.no_permission)
 
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.delete_post, '...', i18n.success)

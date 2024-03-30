@@ -63,7 +63,7 @@ def _comment(api,
     if index == -1:
         raise exceptions.UnknownError('unknown error in comment')
 
-    log.logger.info(i18n.has_comment_permission)
+    log.logger.debug(i18n.has_comment_permission)
 
     cmd_list = []
 
@@ -208,4 +208,4 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
                 log.logger.info(i18n.wait_for_no_fast_comment)
                 time.sleep(5.2)
 
-        log.logger.info(i18n.success)
+        log.logger.info(i18n.comment, '...', i18n.success)
