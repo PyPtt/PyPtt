@@ -2,11 +2,13 @@
 <html class="no-js" lang="zh-TW" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" />
-        <link rel="canonical" href="https://pyptt.cc/py-modindex.html" />
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" /><link rel="next" title="FAQ" href="faq.html" /><link rel="prev" title="Docker Image" href="docker.html" />
+        <link rel="canonical" href="https://pyptt.cc/dev.html" />
 
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 --><title>Python 模組索引 - PyPtt.cc</title>
-<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=362ab14a" />
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>Development - PyPtt.cc</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -134,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -155,7 +157,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">目錄</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">APIs</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of APIs</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/init.html">init</a></li>
@@ -189,7 +191,7 @@
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">使用範例</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">docker image</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dev.html">參與開發</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">參與開發</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常見問題</a></li>
 <li class="toctree-l1"><a class="reference internal" href="roadmap.html">Roadmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">ChangeLog</a></li>
@@ -214,7 +216,8 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -222,52 +225,97 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          
-<section class="domainindex-section">
-  <h1>Python 模組索引</h1>
-  <div class="domainindex-jumpbox"><a href="#cap-p"><strong>p</strong></a></div>
+          <section id="development">
+<h1>Development<a class="headerlink" href="#development" title="Link to this heading">#</a></h1>
+<p>如果你想參與開發，請參考以下須知：</p>
+<section id="id1">
+<h2>開發環境<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>我們建議您使用 virtualenv 來建立獨立的 Python 環境，以避免相依性問題。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>virtualenv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</pre></div>
+</div>
 </section>
-<table class="domainindex-table">
-  <tr class="pcap">
-    <td></td><td>&#160;</td><td></td>
-  </tr>
-  <tr class="cap" id="cap-p">
-    <td></td><td><strong>p</strong></td><td></td>
-  </tr>
-  <tr>
-    <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-    <td>
-        <code class="xref">PyPtt</code></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/init.html#module-PyPtt.API"><code class="xref">PyPtt.API</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="service.html#module-PyPtt.Service"><code class="xref">PyPtt.Service</code></a></td><td>
-    <em></em></td>
-  </tr>
-</table>
+<section id="id2">
+<h2>安裝相依套件<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>你可以使用以下指令來安裝相依套件：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<p>如果你想更改文件，請安裝開發相依套件：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
+</pre></div>
+</div>
+<p>產生文件網頁</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>make_doc.sh
+</pre></div>
+</div>
+<p>你可以在 docs/_build/html/index.html 中查看文件網頁。</p>
+</section>
+<section id="id3">
+<h2>執行測試<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>你可以使用以下指令來執行測試：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">tests</span><span class="o">/*.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>如果有遺漏的測試，請不吝發起 Pull Request。</p>
+</section>
+<section id="id4">
+<h2>撰寫文件<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<div class="line-block">
+<div class="line">如果你的變更涉及文件，請記得更新文件。</div>
+<div class="line">我們使用 Sphinx 來撰寫文件，你可以在 docs/ 中找到文件的原始碼。</div>
+</div>
+</section>
+<section id="pull-request">
+<h2>建立你的 Pull Request<a class="headerlink" href="#pull-request" title="Link to this heading">#</a></h2>
+<p>如果你想要貢獻程式碼，請參考以下步驟：</p>
+<ol class="arabic simple">
+<li><p>Fork 這個專案。</p></li>
+<li><p>建立你的特性分支 (<cite>git checkout -b feat/my-new-feature</cite>)。</p></li>
+<li><dl class="simple">
+<dt>Commit 你的變更 (<cite>git commit -am 『feat: add some feature</cite>)。</dt><dd><p>commit msg 格式，請參考 <a class="reference external" href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits</a>。</p>
+</dd>
+</dl>
+</li>
+<li><p>Push 到你的分支 (<cite>git push origin feat/my-new-feature</cite>)。</p></li>
+<li><p>建立一個新的 Pull Request。</p></li>
+</ol>
+<p>請注意，我們會優先處理符合 <a class="reference external" href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits</a> 的 Pull Request。</p>
+</section>
+</section>
 
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="faq.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">FAQ</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="docker.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Docker Image</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -286,8 +334,31 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Development</a><ul>
+<li><a class="reference internal" href="#id1">開發環境</a></li>
+<li><a class="reference internal" href="#id2">安裝相依套件</a></li>
+<li><a class="reference internal" href="#id3">執行測試</a></li>
+<li><a class="reference internal" href="#id4">撰寫文件</a></li>
+<li><a class="reference internal" href="#pull-request">建立你的 Pull Request</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

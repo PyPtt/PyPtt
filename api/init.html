@@ -190,11 +190,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../type.html">參數型態</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../exceptions.html">例外</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">使用範例</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../docker.html">Docker Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../docker.html">docker image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev.html">參與開發</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">常見問題</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../roadmap.html">Roadmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">ChangeLog</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/">Source Code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyPtt/">PyPI</a></li>
 </ul>
 
@@ -234,7 +235,7 @@
 <h1>init<a class="headerlink" href="#init" title="Link to this heading">#</a></h1>
 <dl class="py function" id="module-PyPtt.API">
 <span id="api-init"></span><dt class="sig sig-object py" id="PyPtt.API.__init__">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Language</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'MANDARIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LogLevel</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">LogLevel.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_long_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_post_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connect_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ConnectMode</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'WEBSOCKETS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PTT1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#PyPtt.API.__init__" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyPtt.API.__init__" title="Link to this definition">#</a></dt>
 <dd><p>初始化 PyPtt。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
@@ -261,6 +262,20 @@
 </pre></div>
 </div>
 <p>參考: <a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>、<a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>、<a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>、<a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a></p>
+<p>英文顯示範例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span>
+    <span class="n">language</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">ENGLISH</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>除錯範例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span>
+    <span class="n">log_level</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

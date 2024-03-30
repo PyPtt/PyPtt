@@ -68,6 +68,9 @@ PyPtt
 :doc:`Docker Image <docker>`
     如何使用 Docker Image 來使用 PyPtt。
 
+:doc:`參與開發 <dev>`
+    如果你想要貢獻 PyPtt，可以看看這裡。
+
 :doc:`常見問題 <faq>`
     任何常見問題都可以在這找到解答。
 
@@ -89,10 +92,11 @@ PyPtt
     type
     exceptions
     examples
-    docker
+    docker image <docker>
+    參與開發 <dev>
     常見問題 <faq>
     Roadmap <roadmap>
     ChangeLog <changelog>
 
-    Github <https://github.com/PyPtt/>
+    Source Code <https://github.com/PyPtt/>
     PyPI <https://pypi.org/project/PyPtt/>

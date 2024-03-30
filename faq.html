@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" /><link rel="next" title="開發" href="roadmap.html" /><link rel="prev" title="Docker Image" href="docker.html" />
+<link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" /><link rel="next" title="開發" href="roadmap.html" /><link rel="prev" title="Development" href="dev.html" />
         <link rel="canonical" href="https://pyptt.cc/faq.html" />
 
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
@@ -190,11 +190,12 @@
 <li class="toctree-l1"><a class="reference internal" href="type.html">參數型態</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">使用範例</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">docker image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">參與開發</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">常見問題</a></li>
 <li class="toctree-l1"><a class="reference internal" href="roadmap.html">Roadmap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">ChangeLog</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/">Source Code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyPtt/">PyPI</a></li>
 </ul>
 
@@ -244,18 +245,17 @@
 <ol class="arabic simple">
 <li><dl class="simple">
 <dt>自己修正並提交 PR，如果沒辦法請參考步驟 2。</dt><dd><ul class="simple">
-<li><p>如果你是程式設計師，建議先試著自己修正問題。</p></li>
-<li><p>如果你修正了問題，請提交 PR，我們會盡快處理。</p></li>
+<li><p>如果你是程式設計師，可以參考 <a class="reference internal" href="dev.html"><span class="doc">參與開發</span></a> 一起幫忙修正問題。</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>提出 issue。</dt><dd><ul class="simple">
+<dt>到 GitHub 提出 <a class="reference external" href="https://github.com/PyPtt/PyPtt/issues/new">issue</a> 或者到 <a class="reference external" href="https://t.me/PyPtt">PyPtt Telegram 社群</a> 討論。</dt><dd><ul class="simple">
 <li><p>請先確認你使用的版本是否為 <a class="reference external" href="https://pypi.org/project/PyPtt/"><img alt="version_pic" src="https://img.shields.io/pypi/v/PyPtt.svg" /></a>，如果不是，請更新到最新版本。</p></li>
 <li><p>如果你使用的是最新版本，請確認你的問題是否已經在這裡被回答過了。</p></li>
-<li><p>如果你的問題還沒有被回答過，請依照以下程式碼將 <a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a> 設定為 <cite>TRACE</cite>，並附上 <strong>可以重現問題的程式碼</strong>。</p></li>
-<li><p>並且到 GitHub 提出 <a class="reference external" href="https://github.com/PyPtt/PyPtt/issues/new">issue</a>。</p></li>
+<li><p>如果你的問題還沒有被回答過，請依照以下程式碼將 <a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a> 設定為 <cite>DEBUG</cite>，並附上 <strong>可以重現問題的程式碼</strong>。</p></li>
+<li><p>到 GitHub 提出 <a class="reference external" href="https://github.com/PyPtt/PyPtt/issues/new">issue</a> 或者到 <a class="reference external" href="https://t.me/PyPtt">PyPtt Telegram 社群</a> 討論。</p></li>
 </ul>
 </dd>
 </dl>
@@ -263,7 +263,7 @@
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
 
-<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">TRACE</span><span class="p">)</span>
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 
 <span class="c1"># 你的程式碼</span>
 </pre></div>
@@ -274,14 +274,14 @@
 <div class="line-block">
 <div class="line">A: 因為 jupyter 內部也使用了 asyncio 作為協程管理工具，會跟 PyPtt 內部的 asyncio 衝突，所以如果想要在 jypyter 內使用，請在你的程式碼中加入以下程式碼</div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">安裝 nest_asyncio</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">安裝 nest_asyncio</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>nest_asyncio
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">在程式碼中引用 nest_asyncio</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">在程式碼中引用 nest_asyncio</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nest_asyncio</span>
 <span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
 </pre></div>
@@ -293,11 +293,18 @@
 <div class="line-block">
 <div class="line">A: 請參考以下指令，安裝 Python 的 SSL 憑證</div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">以 Python 3.10 為例</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">以 Python 3.10 為例</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sh<span class="w"> </span>/Applications/Python<span class="se">\ </span><span class="m">3</span>.10/Install<span class="se">\ </span>Certificates.command
 </pre></div>
 </div>
+</div>
+</section>
+<section id="id2">
+<h2>Q: 為什麼我沒辦法在雲端環境上使用 PyPtt？<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<div class="line-block">
+<div class="line">A: 如果你是使用雲端 (Colab、GCP、Azure、AWS…etc) 無法連線 PTT 是正常的。</div>
+<div class="line">因為 PTT 有防止機器人登入的機制，所以在雲端環境上無法使用 PyPtt。</div>
 </div>
 </section>
 </section>
@@ -316,14 +323,14 @@
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="docker.html">
+          <a class="prev-page" href="dev.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Docker Image</div>
+                <div class="title">Development</div>
                 
               </div>
             </a>
@@ -362,6 +369,7 @@
 <li><a class="reference internal" href="#id1">Q: 使用 PyPtt 時，遇到問題該如何解決？</a></li>
 <li><a class="reference internal" href="#q-jupyter-the-event-loop-is-already-running">Q: 在 jupyter 遭遇 <cite>the event loop is already running</cite> 錯誤</a></li>
 <li><a class="reference internal" href="#q-mac-websocket-ssl">Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤</a></li>
+<li><a class="reference internal" href="#id2">Q: 為什麼我沒辦法在雲端環境上使用 PyPtt？</a></li>
 </ul>
 </li>
 </ul>
