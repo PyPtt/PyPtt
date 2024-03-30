@@ -117,7 +117,11 @@ def sync_version() -> Tuple[data_type.Compare, str]:
     remote_version = remote_version[remote_version.find("'") + 1:]
     remote_version = remote_version[:remote_version.find("'")]
 
-    version_list = [int(v) for v in __version__.split('.')]
+    current_version = __version__
+    if 'dev' in current_version:
+        current_version = current_version[:current_version.find('dev') - 1]
+
+    version_list = [int(v) for v in current_version.split('.')]
     remote_version_list = [int(v) for v in remote_version.split('.')]
 
     sync_version_compare = data_type.Compare.SAME

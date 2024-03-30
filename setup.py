@@ -122,4 +122,7 @@ setup(
         'AutoStrEnum',
         'PyYAML',
     ],
+    package_data={
+        'PyPtt': ['lang/*.yaml'],
+    }
 )
