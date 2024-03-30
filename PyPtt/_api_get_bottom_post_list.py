@@ -16,6 +16,9 @@ def get_bottom_post_list(api, board):
         raise exceptions.RequireLogin(i18n.require_login)
 
     check_value.check_type(board, str, 'board')
+
+    log.logger.info(i18n.catch_bottom_post)
+
     _api_util.check_board(api, board)
 
     _api_util.goto_board(api, board, end=True)
@@ -67,6 +70,6 @@ def get_bottom_post_list(api, board):
         current_post = api.get_post(board=board, aid=post_aid, query=True)
         result.append(current_post)
 
-    log.logger.info(i18n.catch_bottom_post_success)
+    log.logger.info(i18n.catch_bottom_post, '...', i18n.success)
 
     return list(reversed(result))

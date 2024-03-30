@@ -31,17 +31,17 @@ class TargetUnit:
                  break_detect_after_send=False, exceptions_=None, refresh=True, secret=False, handler=None,
                  max_match: int = 0):
 
-        self._DetectTarget = detect_target
+        self.detect_target = detect_target
         if log_level is None:
-            self._log_level = log.INFO
+            self.log_level = log.INFO
         else:
-            self._log_level = log_level
-        self._Response = response
-        self._BreakDetect = break_detect
-        self._Exception = exceptions_
-        self._Refresh = refresh
-        self._BreakAfterSend = break_detect_after_send
-        self._Secret = secret
+            self.log_level = log_level
+        self._response_func = response
+        self._break_detect = break_detect
+        self._exception = exceptions_
+        self._refresh = refresh
+        self._break_after_send = break_detect_after_send
+        self._secret = secret
         self._Handler = handler
         self._max_match = max_match
         self._current_match = 0
@@ -49,44 +49,44 @@ class TargetUnit:
     def is_match(self, screen: str) -> bool:
         if self._current_match >= self._max_match > 0:
             return False
-        if isinstance(self._DetectTarget, str):
-            if self._DetectTarget in screen:
+        if isinstance(self.detect_target, str):
+            if self.detect_target in screen:
                 self._current_match += 1
                 return True
             return False
-        elif isinstance(self._DetectTarget, list):
-            for Target in self._DetectTarget:
+        elif isinstance(self.detect_target, list):
+            for Target in self.detect_target:
                 if Target not in screen:
                     return False
             self._current_match += 1
             return True
 
     def get_detect_target(self):
-        return self._DetectTarget
+        return self.detect_target
 
-    def get_log_level(self) -> int:
-        return self._log_level
+    def get_log_level(self):
+        return self.log_level
 
     def get_response(self, screen: str) -> str:
-        if callable(self._Response):
-            return self._Response(screen)
-        return self._Response
+        if callable(self._response_func):
+            return self._response_func(screen)
+        return self._response_func
 
     def is_break(self) -> bool:
-        return self._BreakDetect
+        return self._break_detect
 
     def raise_exception(self):
-        if isinstance(self._Exception, Exception):
-            raise self._Exception
+        if isinstance(self._exception, Exception):
+            raise self._exception
 
     def is_refresh(self) -> bool:
-        return self._Refresh
+        return self._refresh
 
     def is_break_after_send(self) -> bool:
-        return self._BreakAfterSend
+        return self._break_after_send
 
     def is_secret(self) -> bool:
-        return self._Secret
+        return self._secret
 
 
 class RecvData:

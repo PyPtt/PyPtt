@@ -5,6 +5,7 @@ from . import connect_core
 from . import exceptions
 from . import i18n
 from . import lib_util
+from . import log
 
 
 def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content: str) -> None:
@@ -28,6 +29,10 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
         check_value.check_type(red_bag_content, str, 'red_bag_content')
     else:
         red_bag_content = ''
+
+    log.logger.info(
+        i18n.replace(i18n.give_money_to, ptt_id, money))
+
     # Check data_type.user
     api.get_user(ptt_id)
 
@@ -87,3 +92,7 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
         target_list,
         screen_timeout=api.config.screen_long_timeout
     )
+
+    log.logger.info(
+        i18n.replace(i18n.give_money_to, ptt_id, money),
+        '...', i18n.success)

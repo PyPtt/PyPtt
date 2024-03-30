@@ -17,9 +17,6 @@ def get_post_index(api, board: str, aid: str) -> int:
 
     cmd = ''.join(cmd_list)
 
-    no_such_post = i18n.no_such_post
-    no_such_post = i18n.replace(no_such_post, board, aid)
-
     target_list = [
         connect_core.TargetUnit('找不到這個文章代碼', log_level=log.DEBUG,
                                 exceptions_=exceptions.NoSuchPost(board, aid)),

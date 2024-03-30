@@ -85,11 +85,6 @@ def mail(api,
 
     cmd = ''.join(cmd_list)
 
-    # 根據簽名檔調整顯示訊息
-    if sign_file == 0:
-        sing_file_selection = i18n.no_signature_file
-    else:
-        sing_file_selection = i18n.replace(i18n.select_sign_file, str(sign_file))
     # 定義如何根據情況回覆訊息
     target_list = [
         connect_core.TargetUnit('請按任意鍵繼續', response=command.enter, break_detect_after_send=True),
@@ -261,7 +256,7 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
                 # print(location)
                 mail_location = location[1:-1]
 
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.get_mail, '...', i18n.success)
 
     return {
         MailField.origin_mail: origin_mail,

@@ -22,6 +22,9 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
 
     check_value.check_type(board, str, 'board')
 
+    logger.info(
+        i18n.replace(i18n.get_board_info, board))
+
     _api_util.goto_board(api, board, refresh=True)
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
@@ -226,6 +229,11 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         api.connect_core.send(
             cmd,
             target_list)
+
+    logger.info(
+        i18n.replace(i18n.get_board_info, board),
+        '...', i18n.success
+    )
 
     return {
         BoardField.board: boardname,

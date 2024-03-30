@@ -84,7 +84,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
             if i == max_retry - 1:
                 raise
 
-        log.log.logger.debug('Wait for retry repost')
+        log.logger.debug('Wait for retry repost')
         time.sleep(0.1)
 
     post = json.dumps(post, cls=AutoJsonEncoder)

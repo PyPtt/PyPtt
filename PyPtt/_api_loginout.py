@@ -14,7 +14,9 @@ from . import screens
 def logout(api) -> None:
     _api_util.one_thread(api)
 
+    log.logger.info(i18n.logout)
     if not api._is_login:
+        log.logger.info(i18n.logout, '...', i18n.success)
         return
 
     cmd_list = []
@@ -30,8 +32,6 @@ def logout(api) -> None:
         connect_core.TargetUnit('任意鍵', break_detect=True),
     ]
 
-    log.logger.info(i18n.logout)
-
     try:
         api.connect_core.send(cmd, target_list)
         api.connect_core.close()
@@ -42,7 +42,7 @@ def logout(api) -> None:
 
     api._is_login = False
 
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.logout, '...', i18n.success)
 
 
 def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
@@ -134,9 +134,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         connect_core.TargetUnit('另外若輸入後發生認證碼錯誤請先確認輸入是否為最後一封', response='x' + command.enter),
         connect_core.TargetUnit('此帳號已設定為只能使用安全連線', exceptions_=exceptions.OnlySecureConnection())
     ]
-    #
-    # #
-    #
+
     # IAC = '\xff'
     # WILL = '\xfb'
     # NAWS = '\x1f'
@@ -232,4 +230,4 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         log.logger.info(i18n.picks_in_register, api.process_picks)
 
     api._is_login = True
-    log.logger.info(i18n.success)
+    log.logger.info(i18n.login_success)

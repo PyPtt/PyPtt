@@ -118,8 +118,8 @@ setup(
         'progressbar2',
         'websockets',
         'uao',
-        'SingleLog',
         'requests',
-        'AutoStrEnum'
+        'AutoStrEnum',
+        'PyYAML',
     ],
 )

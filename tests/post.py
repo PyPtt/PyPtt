@@ -111,8 +111,10 @@ def test(ptt_bot: PyPtt.API):
 
         log.logger.info('pass')
 
-    for index in post_list:
-        ptt_bot.del_post(board='Test', index=index)
+    # for index in post_list:
+    #     ptt_bot.del_post(board='Test', index=index)
+
+    util.del_all_post(ptt_bot)
 
 
 def func():

@@ -35,13 +35,7 @@ from . import log
 
 
 class API:
-    def __init__(self, language: data_type.Language = data_type.Language.MANDARIN,
-                 log_level: log.LogLv = log.INFO,
-                 screen_timeout: int = 3.0, screen_long_timeout: int = 10.0, screen_post_timeout: int = 60.0,
-                 connect_mode: data_type.ConnectMode = data_type.ConnectMode.WEBSOCKETS, port: int = 23,
-                 logger_callback: Optional[Callable] = None, host=data_type.HOST.PTT1,
-                 check_update: bool = True) -> None:
-
+    def __init__(self, **kwargs):
         """
 
         初始化 PyPtt。
@@ -69,21 +63,44 @@ class API:
         參考: :ref:`language`、LogLevel_、:ref:`connect-mode`、:ref:`host`
 
         .. _LogLevel: https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22
+
+        英文顯示範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API(
+                language=PyPtt.Language.ENGLISH)
+
+        除錯範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API(
+                log_level=PyPtt.LogLevel.DEBUG)
+
+
         """
 
+        log_level = kwargs.get('log_level', log.INFO)
         if not isinstance(log_level, log.LogLv):
             raise TypeError('[PyPtt] log_level must be log.Level')
 
+        logger_callback = kwargs.get('logger_callback', None)
         log.init(log_level, logger_callback=logger_callback)
 
-        if not isinstance(language, data_type.Language):
+        language = kwargs.get('language', data_type.Language.MANDARIN)
+        if not isinstance(language, str):
+            raise TypeError('[PyPtt] language must be PyPtt.Language')
+        if language not in i18n.locale_pool:
             raise TypeError('[PyPtt] language must be PyPtt.Language')
 
         self.config = config.Config()
         self.config.log_level = log_level
 
         self.config.language = language
-        i18n.load(self.config.language)
+
+        print('language', self.config.language)
+        i18n.init(self.config.language)
 
         self.is_mailbox_full: bool = False
         self.is_registered_user: bool = False
@@ -93,9 +110,15 @@ class API:
         self._ptt_pw: str = ''
         self._is_login: bool = False
 
+        host = kwargs.get('host', data_type.HOST.PTT1)
+        screen_timeout = kwargs.get('screen_timeout', 3.0)
+        screen_long_timeout = kwargs.get('screen_long_timeout', 10.0)
+        screen_post_timeout = kwargs.get('screen_post_timeout', 60.0)
+
         check_value.check_type(host, (data_type.HOST, str), 'host')
         check_value.check_type(screen_timeout, float, 'screen_timeout')
         check_value.check_type(screen_long_timeout, float, 'screen_long_timeout')
+        check_value.check_type(screen_post_timeout, float, 'screen_post_timeout')
 
         if screen_timeout != 0:
             self.config.screen_timeout = screen_timeout
@@ -107,9 +130,13 @@ class API:
         self.config.host = host
         self.host = host
 
+        port = kwargs.get('port', 23)
+
         check_value.check_type(port, int, 'port')
         check_value.check_range(port, 1, 65535 - 1, 'port')
         self.config.port = port
+
+        connect_mode = kwargs.get('connect_mode', data_type.ConnectMode.WEBSOCKETS)
 
         check_value.check_type(connect_mode, data_type.ConnectMode, 'connect_mode')
         if host in [data_type.HOST.PTT1, data_type.HOST.PTT2] and connect_mode is data_type.ConnectMode.TELNET:
@@ -126,28 +153,34 @@ class API:
 
         log.logger.debug('thread_id', self._thread_id)
 
-        log.logger.info(i18n.welcome)
+        log.logger.info(
+            i18n.replace(i18n.welcome, __version__))
 
-        log.logger.info('PyPtt', i18n.init)
+        log.logger.info('PyPtt', i18n.initialization)
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
-            log.logger.info(i18n.set_connect_mode, i18n.connect_mode_TELNET)
+            log.logger.info(i18n.set_connect_mode, '...', i18n.connect_mode_TELNET)
         elif self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
-            log.logger.info(i18n.set_connect_mode, i18n.connect_mode_WEBSOCKET)
+            log.logger.info(i18n.set_connect_mode, '...', i18n.connect_mode_WEBSOCKET)
 
         if self.config.language == data_type.Language.MANDARIN:
-            log.logger.info(i18n.set_up_lang_module, i18n.mandarin_module)
+            log.logger.info(i18n.set_up_lang_module, '...', i18n.mandarin_module)
         elif self.config.language == data_type.Language.ENGLISH:
-            log.logger.info(i18n.set_up_lang_module, i18n.english_module)
+            log.logger.info(i18n.set_up_lang_module, '...', i18n.english_module)
 
         if self.config.host == data_type.HOST.PTT1:
-            log.logger.info(i18n.set_connect_host, i18n.PTT)
+            log.logger.info(i18n.set_connect_host, '...', i18n.PTT)
         elif self.config.host == data_type.HOST.PTT2:
-            log.logger.info(i18n.set_connect_host, i18n.PTT2)
+            log.logger.info(i18n.set_connect_host, '...', i18n.PTT2)
         elif self.config.host == data_type.HOST.LOCALHOST:
-            log.logger.info(i18n.set_connect_host, i18n.localhost)
+            log.logger.info(i18n.set_connect_host, '...', i18n.localhost)
         else:
-            log.logger.info(i18n.set_connect_host, self.config.host)
+            log.logger.info(i18n.set_connect_host, '...', self.config.host)
+
+        log.logger.info('PyPtt', i18n.initialization, '...', i18n.done)
+
+        check_update = kwargs.get('check_update', True)
+        check_value.check_type(check_update, bool, 'check_update')
 
         if check_update:
             version_compare, remote_version = lib_util.sync_version()
@@ -253,7 +286,7 @@ class API:
 
     def get_post(self, board: str, aid: Optional[str] = None, index: Optional[int] = None,
                  search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
-                 search_list: Optional[List[str]] = None, query: bool = False) -> Dict:
+                 search_list: Optional[List[tuple]] = None, query: bool = False) -> Dict:
         """
         取得文章。
 
@@ -261,8 +294,6 @@ class API:
             board (str): 看板名稱。
             aid (str): 文章編號。
             index: 文章編號。
-            search_type (:ref:`search-type`): 搜尋類型。
-            search_condition (str): 搜尋條件。
             search_list (List[str]): 搜尋清單。
             query (bool): 是否為查詢模式。
 
@@ -293,6 +324,22 @@ class API:
             try:
                 # .. login ..
                 post_info = ptt_bot.get_post('Python', index=1)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        使用搜尋範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                post_info = ptt_bot.get_post(
+                    'Python',
+                    index=1,
+                    search_list=[(PyPtt.SearchType.KEYWORD, 'PyPtt')]
+                )
                 # .. do something ..
             finally:
                 ptt_bot.logout()
