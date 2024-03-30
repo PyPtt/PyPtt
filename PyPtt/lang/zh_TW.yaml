@@ -30,7 +30,13 @@ get_board_info: 取得看板資訊 _target0_
 get_favourite_board_list: 取得我的最愛
 get_mail: 取得信件
 give_money_to: 給 _target0_ _target1_ P 幣
-goodbye: 再見
+goodbye:
+  - 再見
+  - 下次再見
+  - 再會
+  - 祝平安
+  - 謝謝你，我很開心
+  - 我們會再見面的
 has_comment_permission: 確認擁有推文權限
 has_new_mail_goto_main_menu: 有新信，回到主選單
 has_post_permission: 確認擁有貼文權限

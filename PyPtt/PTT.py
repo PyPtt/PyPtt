@@ -63,6 +63,22 @@ class API:
         參考: :ref:`language`、LogLevel_、:ref:`connect-mode`、:ref:`host`
 
         .. _LogLevel: https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22
+
+        英文顯示範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API(
+                language=PyPtt.Language.ENGLISH)
+
+        除錯範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API(
+                log_level=PyPtt.LogLevel.DEBUG)
+
+
         """
 
         log_level = kwargs.get('log_level', log.INFO)
@@ -270,7 +286,7 @@ class API:
 
     def get_post(self, board: str, aid: Optional[str] = None, index: Optional[int] = None,
                  search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
-                 search_list: Optional[List[str]] = None, query: bool = False) -> Dict:
+                 search_list: Optional[List[tuple]] = None, query: bool = False) -> Dict:
         """
         取得文章。
 
@@ -278,8 +294,6 @@ class API:
             board (str): 看板名稱。
             aid (str): 文章編號。
             index: 文章編號。
-            search_type (:ref:`search-type`): 搜尋類型。
-            search_condition (str): 搜尋條件。
             search_list (List[str]): 搜尋清單。
             query (bool): 是否為查詢模式。
 
@@ -310,6 +324,22 @@ class API:
             try:
                 # .. login ..
                 post_info = ptt_bot.get_post('Python', index=1)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        使用搜尋範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                post_info = ptt_bot.get_post(
+                    'Python',
+                    index=1,
+                    search_list=[(PyPtt.SearchType.KEYWORD, 'PyPtt')]
+                )
                 # .. do something ..
             finally:
                 ptt_bot.logout()

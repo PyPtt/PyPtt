@@ -11,18 +11,20 @@ Python 版本
 --------------
 PyPtt 目前相依於以下套件，這些套件都會在安裝的過程中被自動安裝。
 
+* progressbar2_ is a text progress bar library for Python.
 * websockets_ is a library for building WebSocket_ servers and clients in Python with a focus on correctness, simplicity, robustness, and performance.
 * uao_ is a pure Python implementation of the Unicode encoder/decoder.
-* SingleLog_ is a simple logging library for Python.
 * requests_ is a Python HTTP library, released under the Apache License 2.0.
 * AutoStrEnum_ is a Python library that provides an Enum class that automatically converts enum values to and from strings.
+* PyYAML_ is a YAML parser and emitter for Python.
 
+.. _progressbar2: https://progressbar-2.readthedocs.io/en/latest/
 .. _websockets: https://websockets.readthedocs.io/en/stable/
 .. _`WebSocket`: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
 .. _uao: https://github.com/eight04/pyUAO
-.. _SingleLog: https://github.com/PttCodingMan/SingleLog
 .. _requests: https://requests.readthedocs.io/en/master/
 .. _AutoStrEnum: https://github.com/PttCodingMan/PttCodingMan
+.. _PyYAML: https://pyyaml.org/
 
 使用虛擬環境安裝 (推薦)
 -------------------------

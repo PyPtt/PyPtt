@@ -14,7 +14,9 @@ from . import screens
 def logout(api) -> None:
     _api_util.one_thread(api)
 
+    log.logger.info(i18n.logout)
     if not api._is_login:
+        log.logger.info(i18n.logout, '...', i18n.success)
         return
 
     cmd_list = []
@@ -29,8 +31,6 @@ def logout(api) -> None:
     target_list = [
         connect_core.TargetUnit('任意鍵', break_detect=True),
     ]
-
-    log.logger.info(i18n.logout)
 
     try:
         api.connect_core.send(cmd, target_list)
