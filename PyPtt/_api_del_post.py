@@ -66,6 +66,7 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
 
     if check_author:
         if api.ptt_id.lower() != post_info[data_type.PostField.author].lower():
+            log.logger.info(i18n.delete_post, '...', i18n.fail)
             raise exceptions.NoPermission(i18n.no_permission)
 
     _api_util.goto_board(api, board)
@@ -100,13 +101,9 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
         cmd,
         target_list)
 
-    # last_screen = api.connect_core.get_screen_queue()[-1]
-    # print(api.confirm)
-    # print(last_screen)
-    # print(index)
-
     if index == 1:
         if not api.confirm:
+            log.logger.info(i18n.delete_post, '...', i18n.fail)
             raise exceptions.NoPermission(i18n.no_permission)
 
     log.logger.info(i18n.delete_post, '...', i18n.success)

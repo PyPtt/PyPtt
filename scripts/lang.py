@@ -12,8 +12,8 @@ import PyPtt
 
 def add_lang():
     new_words = [
-        (PyPtt.Language.MANDARIN, 'get_board_info', '取得看板資訊 _target0_'),
-        (PyPtt.Language.ENGLISH, 'get_board_info', 'get board info _target0_'),
+        (PyPtt.Language.MANDARIN, 'give_money', '給 _target0_ _target_ P 幣'),
+        (PyPtt.Language.ENGLISH, 'give_money', 'give _target0_ _target_ P coins'),
     ]
 
     for lang, key, value in new_words:

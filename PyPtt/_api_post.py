@@ -128,6 +128,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     if index < 0:
         raise exceptions.UnknownError('UnknownError')
     if index == 1 or index == 2:
+        log.logger.info(i18n.post, '...', i18n.fail)
         raise exceptions.NoPermission(i18n.no_permission)
 
     log.logger.debug(i18n.has_post_permission)
