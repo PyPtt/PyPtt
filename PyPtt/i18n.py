@@ -19,6 +19,13 @@ mapping = {
 }
 
 
+def replace(string, *args):
+    for i in range(len(args)):
+        target = f'{args[i]}'
+        string = string.replace(f'_Target{i}_', target)
+    return string
+
+
 def init(locale: str, cache: bool = False) -> None:
     if locale not in locale_pool:
         raise ValueError(f'Unknown locale: {locale}')

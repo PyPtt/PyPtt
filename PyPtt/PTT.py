@@ -137,7 +137,8 @@ class API:
 
         log.logger.debug('thread_id', self._thread_id)
 
-        log.logger.info(i18n.welcome)
+        log.logger.info(
+            i18n.replace(i18n.welcome, __version__))
 
         log.logger.info('PyPtt', i18n.initialization)
 
