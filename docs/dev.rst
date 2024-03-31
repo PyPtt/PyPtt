@@ -63,4 +63,3 @@ Development
 NOTE: 我們會優先處理符合 `Conventional Commits`_ 的 Pull Request。
 
 .. _Conventional Commits: https://www.conventionalcommits.org/en/v1.0.0/
-
