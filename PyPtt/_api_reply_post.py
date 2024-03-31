@@ -58,15 +58,17 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
     cmd_list.append(command.enter * 2)
     cmd_list.append('r')
 
+    reply_msg = ''
     if reply_to == data_type.ReplyTo.BOARD:
-        log.logger.info(i18n.reply_board)
+        reply_msg = i18n.reply_board
         reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=log.INFO, response='F' + command.enter)
     elif reply_to == data_type.ReplyTo.MAIL:
-        log.logger.info(i18n.reply_mail)
+        reply_msg = i18n.reply_mail
         reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=log.INFO, response='M' + command.enter)
     elif reply_to == data_type.ReplyTo.BOARD_MAIL:
-        log.logger.info(i18n.reply_board_mail)
+        reply_msg = i18n.reply_board_mail
         reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=log.INFO, response='B' + command.enter)
+    log.logger.info(reply_msg)
 
     cmd = ''.join(cmd_list)
     target_list = [
@@ -89,4 +91,4 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         target_list,
         screen_timeout=api.config.screen_long_timeout)
 
-    log.logger.info(i18n.success)
+    log.logger.info(reply_msg, '...', i18n.success)
