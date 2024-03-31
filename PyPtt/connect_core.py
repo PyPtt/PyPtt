@@ -188,13 +188,13 @@ class API(object):
                 print(e)
 
                 if self.config.host == data_type.HOST.PTT1:
-                    log.logger.info(i18n.connect, i18n.PTT, i18n.fail)
+                    log.logger.info(i18n.connect, i18n.PTT, '...', i18n.fail)
                 elif self.config.host == data_type.HOST.PTT2:
-                    log.logger.info(i18n.connect, i18n.PTT2, i18n.fail)
+                    log.logger.info(i18n.connect, i18n.PTT2, '...', i18n.fail)
                 elif self.config.host == data_type.HOST.LOCALHOST:
-                    log.logger.info(i18n.connect, i18n.localhost, i18n.fail)
+                    log.logger.info(i18n.connect, i18n.localhost, '...', i18n.fail)
                 else:
-                    log.logger.info(i18n.connect, self.config.host, i18n.fail)
+                    log.logger.info(i18n.connect, self.config.host, '...', i18n.fail)
 
                 _wait()
                 continue

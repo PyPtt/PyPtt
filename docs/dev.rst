@@ -31,7 +31,7 @@ Development
 
     bash make_doc.sh
 
-你可以在 docs/_build/html/index.html 中查看文件網頁。
+你可以在 docs/_build/html/index.html 中找到根據你的修改產生的網頁。
 
 執行測試
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,7 +58,8 @@ Development
     commit msg 格式，請參考 `Conventional Commits`_。
 4. Push 到你的分支 (`git push origin feat/my-new-feature`)。
 5. 建立一個新的 Pull Request。
+6. 你可以跟 reviewer 要求測試你的變更。
 
-請注意，我們會優先處理符合 `Conventional Commits`_ 的 Pull Request。
+NOTE: 我們會優先處理符合 `Conventional Commits`_ 的 Pull Request。
 
 .. _Conventional Commits: https://www.conventionalcommits.org/en/v1.0.0/

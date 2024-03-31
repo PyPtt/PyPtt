@@ -100,7 +100,7 @@ def mail(api,
         target_list,
         screen_timeout=api.config.screen_post_timeout)
 
-    log.logger.info(i18n.send_mail, i18n.success)
+    log.logger.info(i18n.send_mail, '...', i18n.success)
 
 
 # --

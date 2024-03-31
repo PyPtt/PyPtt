@@ -69,7 +69,7 @@ def get_favourite_board(api) -> list:
             board_title = board_title[1:]
 
             if board in board_list:
-                log.logger.info(i18n.success)
+                log.logger.info(i18n.get_favourite_board_list, '...', i18n.success)
                 return favourite_board_list
             board_list.append(board)
 

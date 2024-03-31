@@ -99,7 +99,6 @@ class API:
 
         self.config.language = language
 
-        print('language', self.config.language)
         i18n.init(self.config.language)
 
         self.is_mailbox_full: bool = False

@@ -61,7 +61,7 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     post_info = api.get_post(board, aid=post_aid, index=post_index, query=True)
     if post_info[data_type.PostField.post_status] != data_type.PostStatus.EXISTS:
         # delete success
-        log.logger.info(i18n.success)
+        log.logger.info(i18n.delete_post, '...', i18n.success)
         return
 
     if check_author:
