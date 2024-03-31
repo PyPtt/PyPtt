@@ -1,7 +1,6 @@
 import json
 
 import PyPtt
-from PyPtt import PostField
 from PyPtt import log
 from . import config
 
