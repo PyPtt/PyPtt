@@ -37,7 +37,7 @@ def get_content(api, post_mode: bool = True):
                                 break_detect_after_send=True),
     ]
 
-    line_from_pattern = re.compile('[\d]+~[\d]+')
+    line_from_pattern = re.compile(r'[\d]+~[\d]+')
 
     has_control_code = False
     control_code_mode = False
@@ -192,7 +192,7 @@ def get_mailbox_capacity(api) -> tuple[int, int]:
 
     log.logger.debug('capacity_line', capacity_line)
 
-    pattern_result = re.compile('(\d+)/(\d+)').search(capacity_line)
+    pattern_result = re.compile(r'(\d+)/(\d+)').search(capacity_line)
     if pattern_result is not None:
         current_capacity = int(pattern_result.group(0).split('/')[0])
         max_capacity = int(pattern_result.group(0).split('/')[1])
@@ -254,11 +254,11 @@ def parse_query_post(api, ori_screen):
     post_aid = None
     if len(aid_line) == 1:
         aid_line = aid_line[0]
-        pattern = re.compile('#[\w|-]+')
+        pattern = re.compile(r'#[\w|-]+')
         pattern_result = pattern.search(aid_line)
         post_aid = pattern_result.group(0)[1:]
 
-    pattern = re.compile('文章網址: https:[\S]+html')
+    pattern = re.compile(r'文章網址: https:[\S]+html')
     pattern_result = pattern.search(ori_screen_temp)
 
     if pattern_result is None:
@@ -266,7 +266,7 @@ def parse_query_post(api, ori_screen):
     else:
         post_web = pattern_result.group(0)[6:]
 
-    pattern = re.compile('這一篇文章值 [\d]+ Ptt幣')
+    pattern = re.compile(r'這一篇文章值 [\d]+ Ptt幣')
     pattern_result = pattern.search(ori_screen_temp)
     if pattern_result is None:
         # 特殊文章無價格
@@ -276,7 +276,7 @@ def parse_query_post(api, ori_screen):
         post_money = post_money[:post_money.find(' ')]
         post_money = int(post_money)
 
-    pattern = re.compile('[\d]+\/[\d]+')
+    pattern = re.compile(r'[\d]+\/[\d]+')
     pattern_result = pattern.search(cursor_line)
     if pattern_result is None:
         list_date = None
@@ -290,7 +290,7 @@ def parse_query_post(api, ori_screen):
     # >781508 +爆 9/17 jodojeda     □ [新聞] 國人吃魚少 學者：應把吃魚當成輕鬆愉快
     # >781406 +X1 9/17 kingofage111 R: [申請] ReDmango 請辭Gossiping板主職務
 
-    pattern = re.compile('[\d]+')
+    pattern = re.compile(r'[\d]+')
     pattern_result = pattern.search(cursor_line)
     post_index = 0
     if pattern_result is not None:
