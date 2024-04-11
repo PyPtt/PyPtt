@@ -10,7 +10,7 @@ on:
     branches:
       - master
     paths:
-      - 'PyPtt/*.py'
+      - 'PyPtt/**/*'
       - 'setup.py'
   workflow_dispatch:
 
