@@ -9,7 +9,7 @@ from tests import util
 
 
 def test(ptt_bot):
-    test_time = 500
+    test_time = 2500
     print(f'效能測試 get_time {test_time} 次')
 
     start_time = time.time()
