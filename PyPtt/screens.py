@@ -191,8 +191,8 @@ def show(config, screen_queue, function_name=None):
     print('-' * 50)
 
 
-xy_pattern_h = re.compile('^=ESC=\[[\d]+;[\d]+H')
-xy_pattern_s = re.compile('^=ESC=\[[\d]+;[\d]+s')
+xy_pattern_h = re.compile(r'^=ESC=\[[\d]+;[\d]+H')
+xy_pattern_s = re.compile(r'^=ESC=\[[\d]+;[\d]+s')
 
 
 class VT100Parser:
@@ -230,17 +230,11 @@ class VT100Parser:
         data = bytes_data.decode(encoding, errors='replace')
 
         # remove color
-        data = re.sub('\x1B\[[\d+;]*m', '', data)
+        data = re.sub(r'\x1B\[[\d+;]*m', '', data)
         data = re.sub(r'[\x1B]', '=ESC=', data)
         data = re.sub(r'[\r]', '', data)
         while ' \x08' in data:
             data = re.sub(r' \x08', '', data)
-
-        # print('---' * 8)
-        # print(encoding)
-        # print(bytes_data)
-        # print(data)
-        # print('---' * 8)
 
         if '=ESC=[2J' in data:
             data = data[data.rfind('=ESC=[2J') + len('=ESC=[2J'):]

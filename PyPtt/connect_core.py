@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import os.path
 import ssl
 import telnetlib
 import threading
@@ -23,7 +24,11 @@ from . import screens
 
 websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
 
+_script_path = os.path.dirname(os.path.abspath(__file__))
+
 ssl_context = ssl.create_default_context()
+ssl_context.load_cert_chain(certfile=f"{_script_path}/ssl/cert.pem", keyfile=f"{_script_path}/ssl/key.pem")
+ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
 
 
 class TargetUnit:

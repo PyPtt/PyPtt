@@ -123,6 +123,9 @@ setup(
         'PyYAML',
     ],
     package_data={
-        'PyPtt': ['lang/*.yaml'],
+        'PyPtt': [
+            'lang/*.yaml',
+            'ssl/*.pem',
+        ],
     }
 )

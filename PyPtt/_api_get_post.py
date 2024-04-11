@@ -165,7 +165,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         cursor_line = cursor_line[0]
         log.logger.debug('CursorLine', cursor_line)
 
-        pattern = re.compile('[\d]+\/[\d]+')
+        pattern = re.compile(r'[\d]+\/[\d]+')
         pattern_result = pattern.search(cursor_line)
         if pattern_result is None:
             list_date = None
@@ -173,12 +173,12 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             list_date = pattern_result.group(0)
             list_date = list_date[-5:]
 
-        pattern = re.compile('\[[\w]+\]')
+        pattern = re.compile(r'\[[\w]+\]')
         pattern_result = pattern.search(cursor_line)
         if pattern_result is not None:
             post_del_status = data_type.PostStatus.DELETED_BY_AUTHOR
         else:
-            pattern = re.compile('<[\w]+>')
+            pattern = re.compile(r'<[\w]+>')
             pattern_result = pattern.search(cursor_line)
             post_del_status = data_type.PostStatus.DELETED_BY_MODERATOR
 
@@ -262,9 +262,9 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         })
         return post
 
-    post_author_pattern_new = re.compile('作者  (.+) 看板')
-    post_author_pattern_old = re.compile('作者  (.+)')
-    board_pattern = re.compile('看板  (.+)')
+    post_author_pattern_new = re.compile(r'作者  (.+) 看板')
+    post_author_pattern_old = re.compile(r'作者  (.+)')
+    board_pattern = re.compile(r'看板  (.+)')
 
     post_date = None
     post_content = None
@@ -323,7 +323,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
 
     log.logger.debug(i18n.author, post_author)
 
-    post_title_pattern = re.compile('標題  (.+)')
+    post_title_pattern = re.compile(r'標題  (.+)')
 
     title_line = origin_post_lines[1]
     pattern_result = post_title_pattern.search(title_line)
@@ -356,7 +356,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
 
     log.logger.debug(i18n.title, post_title)
 
-    post_date_pattern = re.compile('時間  .{24}')
+    post_date_pattern = re.compile(r'時間  .{24}')
     date_line = origin_post_lines[2]
     pattern_result = post_date_pattern.search(date_line)
     if pattern_result is None:
@@ -439,8 +439,8 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
 
     info_lines = [line for line in origin_post_lines if line.startswith('※') or line.startswith('◆')]
 
-    pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
-    pattern_p2 = re.compile('[\d]+-[\d]+-[\d]+-[\d]+')
+    pattern = re.compile(r'[\d]+\.[\d]+\.[\d]+\.[\d]+')
+    pattern_p2 = re.compile(r'[\d]+-[\d]+-[\d]+-[\d]+')
     for line in reversed(info_lines):
 
         log.logger.debug('IP Line', line)
@@ -506,9 +506,9 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             return post
     log.logger.debug('IP', ip)
 
-    push_author_pattern = re.compile('[推|噓|→] [\w| ]+:')
-    push_date_pattern = re.compile('[\d]+/[\d]+ [\d]+:[\d]+')
-    push_ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+    push_author_pattern = re.compile(r'[推|噓|→] [\w| ]+:')
+    push_date_pattern = re.compile(r'[\d]+/[\d]+ [\d]+:[\d]+')
+    push_ip_pattern = re.compile(r'[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
     push_list = []
 
