@@ -166,7 +166,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
             last_screen = api.connect_core.get_screen_queue()[-1]
             cursor_line = [x for x in last_screen.split('\n') if x.strip().startswith(api.cursor)][0]
 
-            list_index = int(re.compile('(\d+)').search(cursor_line).group(0))
+            list_index = int(re.compile(r'(\d+)').search(cursor_line).group(0))
 
             if search_type == 0 and search_list is None:
                 if list_index > current_capacity:

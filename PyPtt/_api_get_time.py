@@ -8,7 +8,7 @@ from . import i18n
 from . import log
 from . import screens
 
-pattern = re.compile('[\d]+:[\d][\d]')
+pattern = re.compile(r'[\d]+:[\d][\d]')
 
 
 def get_time(api) -> str:

@@ -110,10 +110,10 @@ content_start = '─────────────────────
 content_end = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
 content_ip_old = '◆ From: '
 
-mail_author_pattern = re.compile('作者  (.+)')
-mail_title_pattern = re.compile('標題  (.+)')
-mail_date_pattern = re.compile('時間  (.+)')
-ip_pattern = re.compile('[\d]+\.[\d]+\.[\d]+\.[\d]+')
+mail_author_pattern = re.compile(r'作者  (.+)')
+mail_title_pattern = re.compile(r'標題  (.+)')
+mail_date_pattern = re.compile(r'時間  (.+)')
+ip_pattern = re.compile(r'[\d]+\.[\d]+\.[\d]+\.[\d]+')
 
 
 def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None,
