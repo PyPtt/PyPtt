@@ -17,7 +17,7 @@ def has_new_mail(api) -> int:
     cmd = ''.join(cmd_list)
     current_capacity = None
     plus_count = 0
-    index_pattern = re.compile('(\d+)')
+    index_pattern = re.compile(r'(\d+)')
     checked_index_list = []
     break_detect = False
 

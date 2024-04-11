@@ -53,7 +53,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     else:
         if '編號' not in nuser or '人氣' not in nuser:
             raise exceptions.NoSuchBoard(api.config, board)
-        pattern = re.compile('[\d]+')
+        pattern = re.compile(r'[\d]+')
         r = pattern.search(nuser)
         if r is None:
             raise exceptions.NoSuchBoard(api.config, board)
@@ -74,7 +74,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
 
-    p = re.compile('《(.+)》看板設定')
+    p = re.compile(r'《(.+)》看板設定')
     r = p.search(ori_screen)
     if r is not None:
         boardname = r.group(0)[1:-5].strip()
@@ -84,13 +84,13 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     if boardname.lower() != board.lower():
         raise exceptions.NoSuchBoard(api.config, board)
 
-    p = re.compile('中文敘述: (.+)')
+    p = re.compile(r'中文敘述: (.+)')
     r = p.search(ori_screen)
     if r is not None:
         chinese_des = r.group(0)[5:].strip()
     logger.debug('中文敘述', chinese_des)
 
-    p = re.compile('板主名單: (.+)')
+    p = re.compile(r'板主名單: (.+)')
     r = p.search(ori_screen)
     if r is not None:
         moderator_line = r.group(0)[5:].strip()
@@ -131,7 +131,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     logger.debug('快速連推文章', fast_push)
 
     if not fast_push:
-        p = re.compile('最低間隔時間: [\d]+')
+        p = re.compile(r'最低間隔時間: [\d]+')
         r = p.search(ori_screen)
         if r is not None:
             min_interval = r.group(0)[7:].strip()
@@ -166,7 +166,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     require18 = ('禁止 未滿十八歲進入' in ori_screen)
     logger.debug('禁止未滿十八歲進入', require18)
 
-    p = re.compile('登入次數 [\d]+ 次以上')
+    p = re.compile(r'登入次數 [\d]+ 次以上')
     r = p.search(ori_screen)
     if r is not None:
         require_login_time = r.group(0).split(' ')[1]
@@ -175,7 +175,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         require_login_time = 0
     logger.debug('發文限制登入次數', require_login_time)
 
-    p = re.compile('退文篇數 [\d]+ 篇以下')
+    p = re.compile(r'退文篇數 [\d]+ 篇以下')
     r = p.search(ori_screen)
     if r is not None:
         require_illegal_post = r.group(0).split(' ')[1]
@@ -212,7 +212,7 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
 
         for i in screen_lines:
             if '種類：' in i:
-                type_pattern = re.compile('\d\.([^\ ]*)')
+                type_pattern = re.compile(r'\d\.([^\ ]*)')
                 # 0 is not present any type that the key hold None object
                 kind_list = type_pattern.findall(i)
                 break

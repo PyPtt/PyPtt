@@ -77,7 +77,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
     #     api.is_mailbox_full = True
 
     def register_processing(screen):
-        pattern = re.compile('[\d]+')
+        pattern = re.compile(r'[\d]+')
         api.process_picks = int(pattern.search(screen).group(0))
 
     if len(ptt_pw) > 8:
