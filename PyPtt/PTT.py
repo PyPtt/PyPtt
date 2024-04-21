@@ -352,14 +352,14 @@ class API:
 
     def get_newest_index(self, index_type: data_type.NewIndex, board: Optional[str] = None,
                          search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
-                         search_list: Optional[List[Tuple[Any | str]]] = None, ) -> int:
+                         search_list: Optional[List[Tuple[Any, str]]] = None) -> int:
         """
         取得最新文章或信箱編號。
 
         Args:
             index_type (:ref:`new-index`): 編號類型。
             board (str): 看板名稱。
-            search_list (List[str]): 搜尋清單。
+            search_list (List[Tuple[Any | str]]): 搜尋清單。
 
         Returns:
             int，最新文章或信箱編號。
