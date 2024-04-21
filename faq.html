@@ -6,7 +6,7 @@
 <link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" /><link rel="next" title="開發" href="roadmap.html" /><link rel="prev" title="Development" href="dev.html" />
         <link rel="canonical" href="https://pyptt.cc/faq.html" />
 
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>FAQ - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
@@ -232,16 +232,16 @@
         </div>
         <article role="main">
           <section id="faq">
-<h1>FAQ<a class="headerlink" href="#faq" title="Link to this heading">#</a></h1>
+<h1>FAQ<a class="headerlink" href="#faq" title="連結到這個標頭">¶</a></h1>
 <p>這裡搜集了一些常見問題的解答，如果你有任何問題，請先看看這裡。</p>
 <section id="q-pyptt">
-<h2>Q: 我該如何使用 PyPtt？<a class="headerlink" href="#q-pyptt" title="Link to this heading">#</a></h2>
+<h2>Q: 我該如何使用 PyPtt？<a class="headerlink" href="#q-pyptt" title="連結到這個標頭">¶</a></h2>
 <div class="line-block">
 <div class="line">A: 可以先參考 <a class="reference internal" href="install.html"><span class="doc">安裝 PyPtt</span></a>、<a class="reference internal" href="api/index.html"><span class="doc">APIs</span></a> 與 <a class="reference internal" href="examples.html"><span class="doc">使用範例</span></a>。</div>
 </div>
 </section>
 <section id="id1">
-<h2>Q: 使用 PyPtt 時，遇到問題該如何解決？<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>Q: 使用 PyPtt 時，遇到問題該如何解決？<a class="headerlink" href="#id1" title="連結到這個標頭">¶</a></h2>
 <ol class="arabic simple">
 <li><dl class="simple">
 <dt>自己修正並提交 PR，如果沒辦法請參考步驟 2。</dt><dd><ul class="simple">
@@ -270,18 +270,18 @@
 </div>
 </section>
 <section id="q-jupyter-the-event-loop-is-already-running">
-<h2>Q: 在 jupyter 遭遇 <cite>the event loop is already running</cite> 錯誤<a class="headerlink" href="#q-jupyter-the-event-loop-is-already-running" title="Link to this heading">#</a></h2>
+<h2>Q: 在 jupyter 遭遇 <cite>the event loop is already running</cite> 錯誤<a class="headerlink" href="#q-jupyter-the-event-loop-is-already-running" title="連結到這個標頭">¶</a></h2>
 <div class="line-block">
 <div class="line">A: 因為 jupyter 內部也使用了 asyncio 作為協程管理工具，會跟 PyPtt 內部的 asyncio 衝突，所以如果想要在 jypyter 內使用，請在你的程式碼中加入以下程式碼</div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">安裝 nest_asyncio</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">安裝 nest_asyncio</span><a class="headerlink" href="#id3" title="連結到這個程式碼">¶</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>nest_asyncio
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">在程式碼中引用 nest_asyncio</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">在程式碼中引用 nest_asyncio</span><a class="headerlink" href="#id4" title="連結到這個程式碼">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nest_asyncio</span>
 <span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
 </pre></div>
@@ -289,19 +289,19 @@
 </div>
 </section>
 <section id="q-mac-websocket-ssl">
-<h2>Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤<a class="headerlink" href="#q-mac-websocket-ssl" title="Link to this heading">#</a></h2>
+<h2>Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤<a class="headerlink" href="#q-mac-websocket-ssl" title="連結到這個標頭">¶</a></h2>
 <div class="line-block">
 <div class="line">A: 請參考以下指令，安裝 Python 的 SSL 憑證</div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">以 Python 3.10 為例</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">以 Python 3.10 為例</span><a class="headerlink" href="#id5" title="連結到這個程式碼">¶</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sh<span class="w"> </span>/Applications/Python<span class="se">\ </span><span class="m">3</span>.10/Install<span class="se">\ </span>Certificates.command
 </pre></div>
 </div>
 </div>
 </section>
 <section id="id2">
-<h2>Q: 為什麼我沒辦法在雲端環境上使用 PyPtt？<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>Q: 為什麼我沒辦法在雲端環境上使用 PyPtt？<a class="headerlink" href="#id2" title="連結到這個標頭">¶</a></h2>
 <div class="line-block">
 <div class="line">A: 如果你是使用雲端 (Colab、GCP、Azure、AWS…etc) 無法連線 PTT 是正常的。</div>
 <div class="line">因為 PTT 有防止機器人登入的機制，所以在雲端環境上無法使用 PyPtt。</div>
@@ -382,11 +382,11 @@
     </aside>
   </div>
 </div><script src="_static/documentation_options.js?v=fed94910"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/translations.js?v=d9a6981e"></script>
+    <script src="_static/translations.js?v=1fe8cbde"></script>
     </body>
 </html>
