@@ -17,6 +17,16 @@ def test(ptt_bot: PyPtt.API):
         log.logger.info('mail result', mail_info)
 
 
+def test_2(ptt_bot: PyPtt.API):
+    mail_index = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL)
+
+    test_range = 100
+
+    for i in range(test_range):
+        mail_info = ptt_bot.get_mail(mail_index - i)
+        log.logger.info('mail result', f"[{mail_info['date']}]")
+
+
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
@@ -31,6 +41,7 @@ def func():
         try:
             util.login(ptt_bot)
             test(ptt_bot)
+            test_2(ptt_bot)
         finally:
             ptt_bot.logout()
 

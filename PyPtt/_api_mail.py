@@ -181,6 +181,8 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
         mail_author = None
     else:
         mail_author = pattern_result.group(0)[2:].strip()
+        if '看板' in mail_author:
+            mail_author = mail_author[:mail_author.find('看板')].strip()
 
     # 使用表示式分析信件標題
     pattern_result = mail_title_pattern.search(origin_mail)

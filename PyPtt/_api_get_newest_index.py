@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Optional
+from typing import Optional, Any, List, Tuple
 
 from . import _api_util
 from . import check_value
@@ -55,7 +55,7 @@ def _get_newest_index(api) -> int:
 
 def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] = None,
                      search_type: data_type.SearchType = None, search_condition: Optional[str] = None,
-                     search_list: Optional[list] = None) -> int:
+                     search_list: Optional[List[Tuple[Any, str]]] = None) -> int:
     _api_util.one_thread(api)
 
     if not api._is_login:
