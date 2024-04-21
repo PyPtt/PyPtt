@@ -199,15 +199,12 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
         mail_date = pattern_result.group(0)[2:].strip()
 
     # 從全文拿掉信件開頭作為信件內文
-    mail_content = origin_mail[origin_mail.find(content_start) + len(content_start) + 1:]
-
-    mail_content = mail_content[
-                   mail_content.find(screens.Target.content_start) + len(screens.Target.content_start) + 1:]
+    mail_content = '\n'.join(origin_mail.split('\n')[4:])
 
     for EC in screens.Target.content_end_list:
         # + 3 = 把 --\n 拿掉
         if EC in mail_content:
-            mail_content = mail_content[:mail_content.rfind(EC) + 3].rstrip()
+            mail_content = mail_content[:mail_content.rfind(EC)].rstrip()
             break
 
     # 紅包偵測
@@ -215,9 +212,6 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     if content_end not in origin_mail and 'Ptt幣的大紅包喔' in origin_mail:
         mail_content = mail_content.strip()
         red_envelope = True
-    else:
-
-        mail_content = mail_content[:mail_content.rfind(content_end) + 3]
 
     if red_envelope:
         mail_ip = None
