@@ -1,6 +1,8 @@
+import queue
 import threading
 import time
-import uuid
+from queue import Queue
+from threading import Condition
 from typing import Optional
 
 from . import PTT
@@ -74,11 +76,11 @@ class Service:
         self._api = None
         self._api_init_config = pyptt_init_config
 
-        self._call_queue = []
+        self._call_queue = Queue()
         self._call_result = {}
+        self._call_result_cv = Condition()
 
-        self._id_pool = set()
-        self._id_pool_lock = threading.Lock()
+        self._id_pool = {}
 
         self._close = False
 
@@ -89,7 +91,6 @@ class Service:
             time.sleep(0.01)
 
     def _run(self):
-
         if self._api is not None:
             self._api.logout()
             self._api = None
@@ -99,11 +100,10 @@ class Service:
         self.logger.info('start')
 
         while not self._close:
-            if len(self._call_queue) == 0:
-                time.sleep(0.05)
+            try:
+                call = self._call_queue.get(timeout=0.05)
+            except queue.Empty:
                 continue
-
-            call = self._call_queue.pop(0)
 
             func = getattr(self._api, call['api'])
 
@@ -114,22 +114,21 @@ class Service:
             except Exception as e:
                 api_exception = e
 
-            self._call_result[call['id']] = {
-                'result': api_result,
-                'exception': api_exception
-            }
+            with self._call_result_cv:
+                self._call_result[call['id']] = {
+                    'result': api_result,
+                    'exception': api_exception
+                }
+                self._call_result_cv.notify()
 
     def _get_call_id(self):
-        while True:
-            call_id = uuid.uuid4().hex
 
-            with self._id_pool_lock:
-                if call_id not in self._id_pool:
-                    self._id_pool.add(call_id)
-                    return call_id
+        call_id = f'{threading.get_ident()}_{int(time.time() * 1000000)}'
+        self._id_pool[call_id] = True
+
+        return call_id
 
     def call(self, api: str, args: Optional[dict] = None):
-
         if args is None:
             args = {}
 
@@ -144,16 +143,16 @@ class Service:
             'id': self._get_call_id(),
             'args': args
         }
-        self._call_queue.append(call)
+        self._call_queue.put(call)
 
-        while call['id'] not in self._call_result:
-            time.sleep(0.01)
+        with self._call_result_cv:
+            while call['id'] not in self._call_result:
+                self._call_result_cv.wait()
 
-        call_result = self._call_result[call['id']]
-        del self._call_result[call['id']]
+            call_result = self._call_result[call['id']]
+            del self._call_result[call['id']]
 
-        with self._id_pool_lock:
-            self._id_pool.remove(call['id'])
+        del self._id_pool[call['id']]
 
         if call_result['exception'] is not None:
             raise call_result['exception']
