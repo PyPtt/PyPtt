@@ -26,8 +26,6 @@ from . import ssl_config
 
 websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
 
-_script_path = os.path.dirname(__file__)
-
 ssl_context = ssl.create_default_context()
 
 
