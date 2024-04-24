@@ -21,10 +21,25 @@ from . import exceptions
 from . import i18n
 from . import log
 from . import screens
+from . import ssl_config
 
 websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
 
-_script_path = os.path.dirname(os.path.abspath(__file__))
+_script_path = os.path.dirname(__file__)
+
+
+def ssl_init():
+    if not os.path.exists(f'{_script_path}/ssl'):
+        os.mkdir(f'{_script_path}/ssl')
+
+    with open(f"{_script_path}/ssl/cert.pem", 'w') as f:
+        f.write(ssl_config.cert)
+
+    with open(f"{_script_path}/ssl/key.pem", 'w') as f:
+        f.write(ssl_config.key)
+
+
+ssl_init()
 
 ssl_context = ssl.create_default_context()
 ssl_context.load_cert_chain(certfile=f"{_script_path}/ssl/cert.pem", keyfile=f"{_script_path}/ssl/key.pem")

@@ -1,8 +1,6 @@
 import os
 import random
 
-import yaml
-
 from . import __version__
 from . import data_type
 
@@ -11,7 +9,7 @@ locale_pool = {
     data_type.Language.MANDARIN
 }
 
-_script_path = os.path.dirname(os.path.abspath(__file__))
+_script_path = os.path.dirname(__file__)
 _lang_data = {}
 
 mapping = {
@@ -30,12 +28,14 @@ def init(locale: str, cache: bool = False) -> None:
     if locale not in locale_pool:
         raise ValueError(f'Unknown locale: {locale}')
 
-    language_file = f'{_script_path}/lang/{locale}.yaml'
-    if not os.path.exists(language_file):
-        raise ValueError(f'Unknown locale file: {language_file}')
+    if locale == data_type.Language.ENGLISH:
+        from . import lang_en_US as lang
+    elif locale == data_type.Language.MANDARIN:
+        from . import lang_zh_TW as lang
+    string_data = lang.string_data
 
-    with open(language_file, "r") as f:
-        string_data = yaml.safe_load(f)
+    if string_data is None:
+        raise ValueError(f'Unknown locale: {locale}')
 
     for k, v in string_data.items():
 
