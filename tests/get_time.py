@@ -20,7 +20,8 @@ def test(ptt_bot: PyPtt.API):
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
-        PyPtt.HOST.PTT2]
+        PyPtt.HOST.PTT2
+    ]
 
     for host in host_list:
         ptt_bot = PyPtt.API(

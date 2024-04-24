@@ -124,7 +124,6 @@ setup(
     ],
     package_data={
         'PyPtt': [
-            'lang/*.yaml',
             'ssl/*.pem',
         ],
     }
