@@ -4,6 +4,7 @@ import asyncio
 import os.path
 import ssl
 import telnetlib
+import tempfile
 import threading
 import time
 import traceback
@@ -25,24 +26,27 @@ from . import ssl_config
 
 websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
 
-_script_path = os.path.dirname(__file__)
+ssl_context = ssl.create_default_context()
 
 
 def ssl_init():
-    if not os.path.exists(f'{_script_path}/ssl'):
-        os.mkdir(f'{_script_path}/ssl')
 
-    with open(f"{_script_path}/ssl/cert.pem", 'w') as f:
-        f.write(ssl_config.cert)
+    cert_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pem')
+    cert_file.write(ssl_config.cert.encode('utf-8'))
 
-    with open(f"{_script_path}/ssl/key.pem", 'w') as f:
-        f.write(ssl_config.key)
+    key_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pem')
+    key_file.write(ssl_config.key.encode('utf-8'))
+
+    cert_file.close()
+    key_file.close()
+
+    ssl_context.load_cert_chain(certfile=cert_file.name, keyfile=key_file.name)
+
+    os.unlink(cert_file.name)
+    os.unlink(key_file.name)
 
 
 ssl_init()
-
-ssl_context = ssl.create_default_context()
-ssl_context.load_cert_chain(certfile=f"{_script_path}/ssl/cert.pem", keyfile=f"{_script_path}/ssl/key.pem")
 ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
 
 

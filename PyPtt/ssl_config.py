@@ -1,4 +1,3 @@
-import os
 
 cert = """-----BEGIN CERTIFICATE-----
 MIIBrTCCAVOgAwIBAgIUac6b6rzwFIEa9VBigD0jYlE96NkwCgYIKoZIzj0EAwIw
