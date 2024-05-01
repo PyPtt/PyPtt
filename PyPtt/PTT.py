@@ -2,7 +2,7 @@
 
 import functools
 import threading
-from typing import Dict, Tuple, Callable, List, Optional, Any
+from typing import Dict, Tuple, List, Optional, Any
 
 from . import __version__
 from . import _api_bucket
@@ -50,7 +50,7 @@ class API:
             logger_callback (Callable): PyPtt 顯示訊息的 callback。預設為 None。
             port (int): PyPtt 連線的 port。預設為 **23**。
             host (:ref:`host`): PyPtt 連線的 PTT 伺服器。預設為 **PTT1**。
-            check_update (bool): 是否檢查 PyPtt 的更新。預設為 **True**。
+            check_update (bool): 是否檢查 PyPtt 的更新。預設為 **False**。
 
         Returns:
             None
@@ -178,7 +178,7 @@ class API:
 
         log.logger.info('PyPtt', i18n.initialization, '...', i18n.done)
 
-        check_update = kwargs.get('check_update', True)
+        check_update = kwargs.get('check_update', False)
         check_value.check_type(check_update, bool, 'check_update')
 
         if check_update:
@@ -195,7 +195,7 @@ class API:
             log.logger.info(i18n.current_version, __version__)
 
     def __del__(self):
-        if log.logger:
+        if log and log.logger:
             log.logger.debug(i18n.goodbye)
 
     def login(self, ptt_id: str, ptt_pw: str, kick_other_session: bool = False) -> None:
@@ -1058,8 +1058,3 @@ class API:
 
     def fast_post_step1(self, sign_file):
         _api_post.fast_post_step1(self, sign_file)
-
-
-if __name__ == '__main__':
-    print('PyPtt v ' + __version__)
-    print('Maintained by CodingMan')
