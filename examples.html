@@ -6,10 +6,10 @@
 <link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜尋" href="search.html" /><link rel="next" title="Docker Image" href="docker.html" /><link rel="prev" title="例外" href="exceptions.html" />
         <link rel="canonical" href="https://pyptt.cc/examples.html" />
 
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2024.04.27 -->
         <title>使用範例 - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=362ab14a" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=437aa6ec" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
     
@@ -113,6 +113,8 @@
 <label class="overlay toc-overlay" for="__toc">
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -230,7 +232,7 @@
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
-        <article role="main">
+        <article role="main" id="furo-main-content">
           <section id="id1">
 <h1>使用範例<a class="headerlink" href="#id1" title="連結到這個標頭">¶</a></h1>
 <div class="line-block">
@@ -238,7 +240,7 @@
 </div>
 <section id="id2">
 <h2>保持登入<a class="headerlink" href="#id2" title="連結到這個標頭">¶</a></h2>
-<p>這裡示範了如何保持登入</p>
+<p>這裡示範了如何保持登入。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
 
 <span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
@@ -302,7 +304,7 @@
 </section>
 <section id="id3">
 <h2>幫你的文章上色<a class="headerlink" href="#id3" title="連結到這個標頭">¶</a></h2>
-<p>如果在發的時候有上色的需求，可以透過模擬鍵盤輸入的方式達到加上色碼的效果</p>
+<p>如果在發的時候有上色的需求，可以透過模擬鍵盤輸入的方式達到加上色碼的效果。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
 
 <span class="n">content</span> <span class="o">=</span> <span class="p">[</span>
@@ -324,7 +326,7 @@
 </section>
 <section id="check-post-status">
 <span id="id4"></span><h2>如何判斷文章資料是否可以使用<a class="headerlink" href="#check-post-status" title="連結到這個標頭">¶</a></h2>
-<p>當 <a class="reference internal" href="api/get_post.html"><span class="doc">get_post</span></a> 回傳文章資料回來時，這時需要一些判斷來決定是否要使用這些資料</p>
+<p>當 <a class="reference internal" href="api/get_post.html"><span class="doc">get_post</span></a> 回傳文章資料回來時，這時需要一些判斷來決定是否要使用這些資料。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
 
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
@@ -351,6 +353,69 @@
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>文章格式檢查無法通過，但有固定格式時如何處理？<a class="headerlink" href="#id5" title="連結到這個標頭">¶</a></h2>
+<div class="line-block">
+<div class="line">在上一個章節看到當 <a class="reference internal" href="api/get_post.html"><span class="doc">get_post</span></a> 回傳文章資料回來時，這時需要使用 <cite>PyPtt.PostField.pass_format_check</cite> 來判斷決定是否要使用這些資料。</div>
+<div class="line">但如果是已經被編輯過的文章，可能會無法通過格式檢查，這時除了可以透過 <cite>PyPtt.PostField.full_content</cite> 來取得文章內容，並自行解析外，也可以透過一些手段來修改 PyPtt 判斷文章格式的方式。</div>
+</div>
+<div class="line-block">
+<div class="line">以下是未修改過的 PTT 文章結尾格式。</div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>--
+※ 發信站: 批踢踢實業坊(ptt.cc), 來自: 175.xxx.xx.2 (馬來西亞)
+※ 文章網址: https://www.ptt.cc/bbs/Stock/M.1713918602.A.9A8.html
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">以下是 Stock 版常常出現的編輯後格式。</div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>--
+※ 文章網址: https://www.ptt.cc/bbs/Stock/M.1714437002.A.883.html
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">因為格式是固定的，所以可以透過新增文章結尾的方式來達到通過格式檢查的效果。</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">PyPtt</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PTT1_ID&#39;</span><span class="p">],</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PTT1_PW&#39;</span><span class="p">])</span>
+
+        <span class="n">post_info</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post</span><span class="p">(</span><span class="s1">&#39;Stock&#39;</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">&#39;1c5YhY_K&#39;</span><span class="p">)</span>
+
+        <span class="c1"># output False</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">post_info</span><span class="p">[</span><span class="s1">&#39;pass_format_check&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Add custom content_end_list</span>
+
+        <span class="kn">from</span> <span class="nn">PyPtt</span> <span class="kn">import</span> <span class="n">screens</span>
+        <span class="n">screens</span><span class="o">.</span><span class="n">Target</span><span class="o">.</span><span class="n">content_end_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--</span><span class="se">\n</span><span class="s1">※ 文章網址&#39;</span><span class="p">)</span>
+
+        <span class="n">post_info</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post</span><span class="p">(</span><span class="s1">&#39;Stock&#39;</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">&#39;1c5YhY_K&#39;</span><span class="p">)</span>
+
+        <span class="c1"># output True</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">post_info</span><span class="p">[</span><span class="s1">&#39;pass_format_check&#39;</span><span class="p">])</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">這樣就可以透過新增文章結尾的方式來達到通過格式檢查的效果。</div>
+<div class="line">你可以在 <a class="reference external" href="https://github.com/PyPtt/PyPtt/blob/master/PyPtt/screens.py#L11-L162">PyPtt.screens.Target</a> 找到更多可以修改的屬性。</div>
 </div>
 </section>
 </section>
@@ -414,6 +479,7 @@
 <li><a class="reference internal" href="#id2">保持登入</a></li>
 <li><a class="reference internal" href="#id3">幫你的文章上色</a></li>
 <li><a class="reference internal" href="#check-post-status">如何判斷文章資料是否可以使用</a></li>
+<li><a class="reference internal" href="#id5">文章格式檢查無法通過，但有固定格式時如何處理？</a></li>
 </ul>
 </li>
 </ul>
@@ -428,7 +494,7 @@
 </div><script src="_static/documentation_options.js?v=fed94910"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="_static/scripts/furo.js?v=4e2eecee"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/translations.js?v=1fe8cbde"></script>
