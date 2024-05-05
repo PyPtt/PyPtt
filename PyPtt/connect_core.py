@@ -26,10 +26,11 @@ from . import ssl_config
 
 websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
 
-ssl_context = ssl.create_default_context()
+ssl_context = None
 
 
 def ssl_init():
+    global ssl_context
 
     cert_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pem')
     cert_file.write(ssl_config.cert.encode('utf-8'))
@@ -40,14 +41,17 @@ def ssl_init():
     cert_file.close()
     key_file.close()
 
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
     ssl_context.load_cert_chain(certfile=cert_file.name, keyfile=key_file.name)
+    ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
+    ssl_context.verify_mode = ssl.CERT_NONE
 
     os.unlink(cert_file.name)
     os.unlink(key_file.name)
 
 
 ssl_init()
-ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
 
 
 class TargetUnit:
