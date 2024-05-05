@@ -11,6 +11,7 @@
 #### PyPtt (PTT Library) 是一套 Pure Python PTT API 是目前支援最完整的 PTT API。具備大部分常用功能，無論推文、發文、取得文章、取得信件、寄信、發 P 幣、丟水球，你都可以在這裡找到完整的使用範例
 #### 使用帳號登入，支援使用登入之後才可以使用的功能，例如：推文、發文、寄信、發 P 幣等等
 #### 本專案意旨在提供 PTT 自動化機器人函式庫，無意違反任何 PTT 站方規範。如有牴觸，請馬上告知。
+#### 由於 PTT 封鎖雲端連線，建議在雲端以外的環境使用。
 ####
 #### Pypi: https://pypi.org/project/PyPtt/
 <img src="https://raw.githubusercontent.com/PyPtt/PyPtt/master/docs/_static/login_1.0.gif" width="560">
