@@ -1,5 +1,5 @@
 progressbar2
-websockets
+websockets==12.0
 uao
 requests==2.32.0
 AutoStrEnum
