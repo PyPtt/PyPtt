@@ -12,6 +12,7 @@ on:
     paths:
       - 'PyPtt/**/*'
       - 'setup.py'
+      - 'requirements.txt'
   workflow_dispatch:
 
 jobs:
