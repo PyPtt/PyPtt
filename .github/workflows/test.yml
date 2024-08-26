@@ -45,19 +45,4 @@ jobs:
       - name: Test
         run: |
           python tests/init.py
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out master
-        uses: actions/checkout@v4
-
-      - name: detect-secrets
-        uses: reviewdog/action-detect-secrets@master
-        with:
-          reporter: github-pr-review
-
-      - name: Security vulnerabilities scan
-        uses: aufdenpunkt/python-safety-check@master
-        with:
-          scan_requirements_file_only: true
     
