@@ -7,8 +7,6 @@ name: deploy
 on:
   pull_request:
     types: [ closed ]
-    branches:
-      - master
     paths:
       - 'PyPtt/**/*'
       - 'setup.py'
@@ -36,18 +34,18 @@ jobs:
         run: |
           python -m build
       - name: Publish package to TestPyPI
-        if: github.event_name == 'workflow_dispatch' && github.event.pull_request.merged == false
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == false
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
       - name: Publish package
-        if: github.event_name != 'workflow_dispatch' && github.event.pull_request.merged == true
+        if: github.event.pull_request.merged == true
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
       - name: Trigger Docker build
-        if: github.event_name != 'workflow_dispatch' && github.event.pull_request.merged == true
+        if: github.event.pull_request.merged == true
         uses: InformaticsMatters/trigger-ci-action@1.0.1
         with:
           ci-owner: PyPtt
