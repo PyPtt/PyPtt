@@ -13,7 +13,6 @@ from typing import Any
 
 import websockets
 import websockets.exceptions
-import websockets.http
 
 import PyPtt
 from . import command
@@ -24,7 +23,14 @@ from . import log
 from . import screens
 from . import ssl_config
 
-websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
+try:
+    import websockets.http
+    websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
+    use_http11 = False
+except AttributeError:
+    import websockets.http11
+    websockets.http11.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
+    use_http11 = True
 
 ssl_context = None
 
@@ -203,7 +209,7 @@ class API(object):
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
-                    log.logger.debug('USER_AGENT', websockets.http.USER_AGENT)
+                    log.logger.debug('USER_AGENT', websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             websocket_host,
