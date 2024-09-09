@@ -19,6 +19,23 @@ def api_test(thread_id, service):
     result = service.call('get_newest_index', {'index_type': PyPtt.NewIndex.BOARD, 'board': 'Python'})
     print(f'thread id {thread_id}', 'get_newest_index', result)
 
+    result = service.call('get_post', {
+        'board': 'Python',
+        'index': 1,
+        'search_list': [(PyPtt.SearchType.KEYWORD, 'PyPtt')]
+    })
+    print(f'thread id {thread_id}', 'get_post', result)
+
+    # board='Test', title_index=1, title='PyPtt 程式貼文測試', content=content, sign_file=0
+    result = service.call('post', {
+        'board': 'Test',
+        'title_index': 1,
+        'title': 'PyPtt service 程式貼文測試',
+        'content': '測試內容',
+        'sign_file': 0
+    })
+    print(f'thread id {thread_id}', 'post', result)
+
 
 def test():
     pyptt_init_config = {
