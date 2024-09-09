@@ -37,9 +37,13 @@ Development
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 你可以使用以下指令來執行測試：
 
-.. code-block:: python
+.. code-block:: bash
 
-    python3 tests/*.py
+    for test in tests/*.py; do python3 $test; done
+
+此外，在執行之前你可能會想要設定測試用的帳號，這部份可以透過直接修改
+tests/config.py，或是設定 PTT1_ID、PTT1_PW、PTT2_ID 與 PTT2_PW 四個
+環境變數來達成。
 
 如果有遺漏的測試，請不吝發起 Pull Request。
 
