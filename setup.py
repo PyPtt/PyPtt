@@ -7,7 +7,9 @@ from setuptools import setup
 
 def version_automation_script():
     is_merged = os.environ.get('GITHUB_EVENT_NAME') == 'pull_request'
+    branch = os.environ.get('GITHUB_REF_NAME')
     print('is_merged:', is_merged)
+    print('branch:', branch)
 
     # read the main version from __init__.py
     with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
@@ -37,7 +39,7 @@ def version_automation_script():
     if version is None or pypi_version is None:
         raise ValueError('Can not get version from pypi')
 
-    if not is_merged:
+    if 'master' not in branch:
         commit_file = '/tmp/commit_hash.txt'
         if os.path.exists(commit_file):
             with open(commit_file, 'r', encoding='utf-8') as f:
