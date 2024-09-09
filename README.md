@@ -28,7 +28,7 @@ pip install PyPtt
 #### 你可以在 Telegram 上找到 PyPtt 社群 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
 
 ## 贊助
-#### 如果這個專案對你有幫助，贊助我一杯咖啡吧!!
+#### issue 解太慢嗎？幫我增加一點動力吧！
 ####
 #### [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
