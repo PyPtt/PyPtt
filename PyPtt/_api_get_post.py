@@ -50,10 +50,14 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')
 
-    if index is not None and isinstance(aid, str):
+    if index > 0 and aid is not None:
         raise ValueError('wrong parameter index and aid can\'t both input')
 
-    if index is None and aid is None:
+    if aid is not None:
+        pass
+    elif index > 0:
+        pass
+    else:
         raise ValueError('wrong parameter index or aid must input')
 
     search_cmd = None
@@ -63,7 +67,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     else:
         current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board)
 
-    if index is not None:
+    if index is not None and index > 0:
         check_value.check_index('index', index, current_index)
 
     max_retry = 2
