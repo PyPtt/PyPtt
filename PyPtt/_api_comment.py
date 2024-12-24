@@ -174,26 +174,31 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
             max_push_length = 58 - len(api.ptt_id)
 
     push_content = push_content.strip()
-
     push_list = []
+    
     while push_content:
-        index = 0
-        jump = 0
-
-        while len(push_content[:index].encode('big5uao', 'replace')) < max_push_length:
-
-            if index == len(push_content):
+        # 先找出符合長度限制的最大子字串
+        test_content = push_content
+        while test_content:
+            if len(test_content.encode('big5uao', 'replace')) <= max_push_length:
                 break
-            if push_content[index] == '\n':
-                jump = 1
-                break
+            test_content = test_content[:-1]
+        
+        # 找換行符號
+        newline_pos = test_content.find('\n')
+        if newline_pos != -1:
+            # 如果有換行，就切到換行為止
+            push_list.append(push_content[:newline_pos])
+            push_content = push_content[newline_pos + 1:]
+        else:
+            # 沒有換行就用符合長度的最大子字串
+            if not test_content:
+                # 保險起見，避免無限迴圈
+                test_content = push_content[:1]
+            push_list.append(test_content)
+            push_content = push_content[len(test_content):]
 
-            index += 1
-
-        push_list.append(push_content[:index])
-        push_content = push_content[index + jump:]
-
-    push_list = filter(None, push_list)
+    push_list = list(filter(None, push_list))
 
     for comment in push_list:
 
@@ -208,4 +213,4 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
                 log.logger.info(i18n.wait_for_no_fast_comment)
                 time.sleep(5.2)
 
-        log.logger.info(i18n.comment, '...', i18n.success)
+        log.logger.info(f"{i18n.comment}...{i18n.success}")

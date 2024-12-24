@@ -45,7 +45,7 @@ def logout(api) -> None:
     log.logger.info(i18n.logout, '...', i18n.success)
 
 
-def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
+def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool) -> None:
     _api_util.one_thread(api)
 
     check_value.check_type(ptt_id, str, 'ptt_id')
@@ -57,34 +57,17 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
 
     api.config.kick_other_session = kick_other_session
 
-    def kick_other_login_display_msg():
-        if api.config.kick_other_session:
-            return i18n.kick_other_login
-        return i18n.not_kick_other_login
-
     def kick_other_login_response(screen):
-        if api.config.kick_other_session:
-            return 'y' + command.enter
-        return 'n' + command.enter
+        return ('y' if api.config.kick_other_session else 'n') + command.enter
 
     api.is_mailbox_full = False
-
-    # def is_mailbox_full():
-    #     log.log(
-    #         api.config,
-    #         LogLevel.INFO,
-    #         i18n.MailBoxFull)
-    #     api.is_mailbox_full = True
 
     def register_processing(screen):
         pattern = re.compile(r'[\d]+')
         api.process_picks = int(pattern.search(screen).group(0))
-
-    if len(ptt_pw) > 8:
-        ptt_pw = ptt_pw[:8]
-
-    ptt_id = ptt_id.strip()
-    ptt_pw = ptt_pw.strip()
+        
+    ptt_id = ptt_id[:12].strip()
+    ptt_pw = ptt_pw[:8].strip()
 
     api.ptt_id = ptt_id
     api._ptt_pw = ptt_pw
@@ -108,11 +91,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
         connect_core.TargetUnit('有一篇文章尚未完成', response='Q' + command.enter),
         connect_core.TargetUnit(
             '請重新設定您的聯絡信箱', break_detect=True, exceptions_=exceptions.ResetYourContactEmail()),
-        # connect_core.TargetUnit(
-        #     i18n.in_login_process_please_wait,
-        #     '登入中，請稍候'),
         connect_core.TargetUnit('密碼正確'),
-        # 密碼正確
         connect_core.TargetUnit('您想刪除其他重複登入的連線嗎', response=kick_other_login_response),
         connect_core.TargetUnit('◆ 您的註冊申請單尚在處理中', response=command.enter, handler=register_processing),
         connect_core.TargetUnit('任意鍵', response=' '),
@@ -162,7 +141,6 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
 
         if current_capacity > max_capacity:
             api.is_mailbox_full = True
-
             log.logger.info(i18n.mail_box_full)
 
         if api.is_mailbox_full:
@@ -182,12 +160,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool):
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
 
-    is_login = True
-
-    for t in screens.Target.MainMenu:
-        if t not in ori_screen:
-            is_login = False
-            break
+    is_login = all(t in ori_screen for t in screens.Target.MainMenu)
 
     if not is_login:
         raise exceptions.LoginError()
