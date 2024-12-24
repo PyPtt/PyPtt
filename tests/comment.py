@@ -42,7 +42,7 @@ def test(ptt_bot):
         ptt_bot.comment(
             board=board,
             comment_type=PyPtt.CommentType.ARROW,
-            content='comment by index',
+            content='測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試',
             index=post_info['index'],
         )
 
@@ -50,7 +50,7 @@ def test(ptt_bot):
         ptt_bot.comment(
             board=board,
             comment_type=PyPtt.CommentType.ARROW,
-            content='comment by aid',
+            content='測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試',
             aid=post_info['aid'],
         )
 
