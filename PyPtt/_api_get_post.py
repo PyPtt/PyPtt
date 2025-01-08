@@ -50,7 +50,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     if len(board) == 0:
         raise ValueError(f'board error parameter: {board}')
 
-    if index > 0 and aid is not None:
+    if (index is not None and index > 0) and aid is not None:
         raise ValueError('wrong parameter index and aid can\'t both input')
 
     if aid is not None:
