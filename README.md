@@ -1,5 +1,4 @@
 ![](https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/logo/facebook_cover_photo_2.png)
-# PyPtt
 [![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/PyPtt)
 [![test](https://github.com/PyPtt/PyPtt/actions/workflows/test.yml/badge.svg)](https://github.com/PyPtt/PyPtt/actions/workflows/test.yml)
@@ -8,18 +7,27 @@
 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
-#### PyPtt (PTT Library) 是一套 Pure Python PTT API 是目前支援最完整的 PTT API。具備大部分常用功能，無論推文、發文、取得文章、取得信件、寄信、發 P 幣、丟水球，你都可以在這裡找到完整的使用範例
-#### 使用帳號登入，支援使用登入之後才可以使用的功能，例如：推文、發文、寄信、發 P 幣等等
-#### 本專案意旨在提供 PTT 自動化機器人函式庫，無意違反任何 PTT 站方規範。如有牴觸，請馬上告知。
-#### 由於 PTT 封鎖雲端連線，建議在雲端以外的環境使用。
-####
-#### Pypi: https://pypi.org/project/PyPtt/
-<img src="https://raw.githubusercontent.com/PyPtt/PyPtt/master/docs/_static/login_1.0.gif" width="560">
+## PyPtt (PTT Library)
 
-## 安裝
+PyPtt 是一套以 Pure Python 實作的 PTT (批踢踢) SDK，提供了完整功能讓您就像真人操作一樣地使用 PTT。
+
+### 主要功能
+- 帳號管理: 登入登出、修改密碼
+- 文章相關: 發文、推文、回覆、刪文
+- 看板相關: 搜尋文章、取得看板資訊
+- 信件系統: 寄信、收信、刪信
+- 管理功能: 水桶、修改看板標題
+- 其他功能: 即時訊息(水球)、P幣轉帳
+
+### 系統需求
+- Python 3.6+
+- 非雲端環境 (因 PTT 封鎖雲端 IP)
+
+### 快速開始
 ```bash
 pip install PyPtt
 ```
+<img src="https://raw.githubusercontent.com/PyPtt/PyPtt/master/docs/_static/login_1.0.gif" width="560">
 
 ## 回報問題
 #### 請參考 [常見問題](https://pyptt.cc/faq.html) 章節
