@@ -75,6 +75,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
             raise exceptions.HostNotSupport(lib_util.get_current_func_name())
 
     _api_util.check_board(
+        api,
         board,
         check_moderator=True)
 

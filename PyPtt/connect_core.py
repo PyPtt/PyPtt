@@ -14,7 +14,6 @@ from typing import Any
 import websockets
 import websockets.exceptions
 
-import PyPtt
 from . import command
 from . import data_type
 from . import exceptions
@@ -23,13 +22,15 @@ from . import log
 from . import screens
 from . import ssl_config
 
+__version__='1.1.2'
+
 try:
     import websockets.http
-    websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
+    websockets.http.USER_AGENT += f' PyPtt/{__version__}'
     use_http11 = False
 except AttributeError:
     import websockets.http11
-    websockets.http11.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
+    websockets.http11.USER_AGENT += f' PyPtt/{__version__}'
     use_http11 = True
 
 ssl_context = None

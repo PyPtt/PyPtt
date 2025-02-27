@@ -7,22 +7,23 @@ import yaml
 
 sys.path.append(os.getcwd())
 
-import PyPtt
-
+# import PyPtt
+from ..PyPtt import data_type
+from ..PyPtt import i18n
 
 def add_lang():
     new_words = [
-        (PyPtt.Language.MANDARIN, 'give_money', '給 _target0_ _target_ P 幣'),
-        (PyPtt.Language.ENGLISH, 'give_money', 'give _target0_ _target_ P coins'),
+        (data_type.Language.MANDARIN, 'give_money', '給 _target0_ _target_ P 幣'),
+        (data_type.Language.ENGLISH, 'give_money', 'give _target0_ _target_ P coins'),
     ]
 
     for lang, key, value in new_words:
-        PyPtt.i18n.init(lang, cache=True)
+        i18n.init(lang, cache=True)
 
-        PyPtt.i18n._lang_data[key] = value
+        i18n._lang_data[key] = value
 
         with open(f'PyPtt/lang/{lang}.yaml', 'w', encoding='utf-8') as f:
-            yaml.dump(PyPtt.i18n._lang_data, f, allow_unicode=True, default_flow_style=False)
+            yaml.dump(i18n._lang_data, f, allow_unicode=True, default_flow_style=False)
 
 
 def check_lang():
@@ -30,11 +31,11 @@ def check_lang():
 
     # 搜尋 PyPtt 資料夾底下，所有用到 i18n 的字串
 
-    PyPtt.i18n.init(PyPtt.Language.MANDARIN, cache=True)
+    i18n.init(data_type.Language.MANDARIN, cache=True)
 
     # init count dict
     count_dict = {}
-    for key, value in PyPtt.i18n._lang_data.items():
+    for key, value in i18n._lang_data.items():
         print('->', key, value)
         count_dict[key] = 0
 
@@ -71,15 +72,15 @@ def check_lang():
     # collect the keys with 0 count
     zero_count_keys = [key for key, value in count_dict.items() if value == 0]
 
-    for lang in PyPtt.i18n.locale_pool:
-        PyPtt.i18n.init(lang, cache=True)
+    for lang in i18n.locale_pool:
+        i18n.init(lang, cache=True)
         for key in zero_count_keys:
             # remove the key from the lang data
-            PyPtt.i18n._lang_data.pop(key, None)
+            i18n._lang_data.pop(key, None)
             print(f'Removed key: {key} from {lang}.yaml')
 
         with open(f'PyPtt/lang/{lang}.yaml', 'w', encoding='utf-8') as f:
-            yaml.dump(PyPtt.i18n._lang_data, f, allow_unicode=True, default_flow_style=False)
+            yaml.dump(i18n._lang_data, f, allow_unicode=True, default_flow_style=False)
 
 if __name__ == '__main__':
     add_lang()
