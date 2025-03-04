@@ -334,7 +334,7 @@
 
                 <span class="n">newest_index</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_newest_index</span><span class="p">(</span><span class="n">index_type</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span><span class="p">,</span> <span class="n">board</span><span class="o">=</span><span class="s1">&#39;Gossiping&#39;</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionClosed</span><span class="p">:</span>
-                <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">login</span><span class="p">()</span>
+                <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">continue</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;其他錯誤:&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>

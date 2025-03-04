@@ -53,7 +53,7 @@
 
                     newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Gossiping')
                 except PyPtt.exceptions.ConnectionClosed:
-                    ptt_bot = login()
+                    ptt_bot = None
                     continue
                 except Exception as e:
                     print('其他錯誤:', e)
