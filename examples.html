@@ -289,6 +289,70 @@
 <section id="id2">
 <h2>保持登入<a class="headerlink" href="#id2" title="連結到這個標頭">¶</a></h2>
 <p>這裡示範了如何保持登入。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">PyPtt</span>
+
+
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="n">max_retry</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">retry_time</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retry</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+
+            <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;PTT ID&#39;</span><span class="p">,</span> <span class="s1">&#39;PTT PW&#39;</span><span class="p">,</span>
+                          <span class="n">kick_other_session</span><span class="o">=</span><span class="kc">False</span> <span class="k">if</span> <span class="n">retry_time</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">LoginError</span><span class="p">:</span>
+            <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;登入失敗&#39;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">LoginTooOften</span><span class="p">:</span>
+            <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;請稍後再試&#39;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">WrongIDorPassword</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;帳號密碼錯誤&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;其他錯誤:&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">ptt_bot</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_newest_index</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ptt_bot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">login</span><span class="p">()</span>
+
+                <span class="n">newest_index</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_newest_index</span><span class="p">(</span><span class="n">index_type</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span><span class="p">,</span> <span class="n">board</span><span class="o">=</span><span class="s1">&#39;Gossiping&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionClosed</span><span class="p">:</span>
+                <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">login</span><span class="p">()</span>
+                <span class="k">continue</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;其他錯誤:&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">newest_index</span> <span class="o">==</span> <span class="n">last_newest_index</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">last_newest_index</span> <span class="o">=</span> <span class="n">newest_index</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;有新文章!&#39;</span><span class="p">,</span> <span class="n">newest_index</span><span class="p">)</span>
+
+            <span class="c1"># do something</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 <section id="id3">
 <h2>幫你的文章上色<a class="headerlink" href="#id3" title="連結到這個標頭">¶</a></h2>

@@ -7,6 +7,7 @@
 這裡示範了如何保持登入。
 
 .. code-block:: python
+
     import time
 
     import PyPtt
@@ -39,7 +40,6 @@
                 break
 
         return ptt_bot
-
 
     if __name__ == '__main__':
         ptt_bot = None
