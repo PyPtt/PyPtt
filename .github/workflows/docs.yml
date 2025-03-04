@@ -3,6 +3,9 @@ name: docs
 
 # run on merge to master or manual trigger
 on:
+  push:
+    branches:
+      - master  # Run when changes are pushed to master branch
   workflow_dispatch:
 
 jobs:
