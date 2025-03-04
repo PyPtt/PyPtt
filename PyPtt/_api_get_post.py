@@ -94,6 +94,81 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     post = json.dumps(post, cls=AutoJsonEncoder)
     return json.loads(post)
 
+def _get_mark_status(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, query: bool = False,
+                         search_cmd_list: Optional[list[str]] = None) -> Dict:
+    # Move the cursor to the board
+    _api_util.check_board(api, board)
+    _api_util.goto_board(api, board)
+
+    # Move the cursor to the target line
+    cmd_list = []
+
+    if post_aid is not None:
+        cmd_list.append(lib_util.check_aid(post_aid))
+    elif post_index != 0:
+
+        if search_cmd_list is not None:
+            cmd_list.extend(search_cmd_list)
+
+        cmd_list.append(str(max(1, post_index - 100)))
+        cmd_list.append(command.enter)
+        cmd_list.append(str(post_index))
+    else:
+        raise ValueError('post_aid and post_index cannot be None at the same time')
+
+    cmd_list.append(command.enter)
+    cmd_list.append(command.query_post)
+
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit(
+            screens.Target.PTT1_QueryPost if api.config.host == data_type.HOST.PTT1 else screens.Target.PTT2_QueryPost,
+            log_level=log.DEBUG, break_detect=True, refresh=False),
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board)),
+    ]
+
+    index = api.connect_core.send(cmd, target_list)
+    ori_screen = api.connect_core.get_screen_queue()[-1]
+    # print(ori_screen)
+#    編號    日 期 作  者       文  章  標  題                           人氣:1
+#   32717  45 3/02 Valter       □ [建議] 遊戲內鬼消息比照劇透進行管理
+#   32718  13 3/02 arrenwu      R: [建議] 遊戲內鬼消息比照劇透進行管理
+#   32719 m 4 3/02 CardboardBox □ [申訴] #1dmsgLl6 (C_Chat)
+#   32720 s14 3/03 worshipA     □ [檢舉] jerry7668 4-1
+#   32721 s 5 3/03 Lisanity     □ [檢舉] GGdong 4-5 4-11
+#   32722 s 3 3/03 dmmscratchTW □ [申請] 日本DMM SCRATCH台灣分部DMM星願池宣傳
+#   32723 s 6 3/03 smart0eddie  □ [檢舉] byjiang 4-11
+#   32724 s 5 3/03 smart0eddie  □ [檢舉] Just80270 4-11
+
+# ┌── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┐
+# │ 文章代碼(AID): #1dnbIaIV (C_ChatBM) [ptt.cc] [檢舉] eva05s 4-4     │
+# │ 文章網址: https://www.ptt.cc/bbs/C_ChatBM/M.1741051044.A.49F.html    │
+# │ 這一篇文章值 0 Ptt幣                                              │
+# └── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ─┘
+# ●32731 ! 4 3/04 an94mod0     □ [檢舉] eva05s 4-4
+
+#     ★  m13 2/02 erimow       □ [公告]《C_ChatBM》板規+發文流程+板務詢問
+#     ★  m 1 2/14 nh507121     轉 [公告] C_Chat板板規 v.17.2
+#     ★  m   2/22 Sessyoin     轉 [公告] 新板主上任交接 (C_Chat、C_ChatBM)
+#     ★  m18 2/25 Sessyoin     □ [公告] 本板關閉發文獎勵（P幣）
+
+    cursor_line = [line for line in ori_screen.split(
+        '\n') if line.startswith(api.cursor)]
+
+    if len(cursor_line) != 1:
+        raise exceptions.UnknownError(ori_screen)
+
+    cursor_line = cursor_line[0]
+    log.logger.debug('CursorLine', cursor_line)
+    # print(cursor_line)
+    # ●32731 ! 4 3/04 an94mod0     □ [檢舉] eva05s 4-4
+    # ●  169     3/16 abdj0025     R: [討論] C_ChatBM的發文限制
+    MARK_PATTERN = re.compile(r'{} *\d+ (?P<mark>[!ms ]) *\d* '.format(api.cursor))
+    mark_match_result = MARK_PATTERN.search(cursor_line)
+    result = mark_match_result['mark']
+    return '' if result == ' ' else result
 
 def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, query: bool = False,
               search_cmd_list: Optional[list[str]] = None) -> Dict:

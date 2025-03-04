@@ -283,6 +283,15 @@ class API:
 
         return _api_get_time.get_time(self)
 
+    def get_mark_status(self, board, aid:str=None, index:int=0):
+        """
+        Return the mark status of the target article.
+        It's m, s, ! or empty string ('').
+        """
+        # Either aid or index should be present.
+        assert (aid is not None and index==0) or (aid is None and index!=0)
+        return _api_get_post._get_mark_status(self, board, aid, index)
+
     def get_post(self, board: str, aid: Optional[str] = None, index: Optional[int] = None,
                  search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
                  search_list: Optional[List[tuple]] = None, query: bool = False) -> Dict:
