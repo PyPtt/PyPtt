@@ -3,8 +3,6 @@ name: docs
 
 # run on merge to master or manual trigger
 on:
-  branch:
-    - master
   workflow_dispatch:
 
 jobs:
