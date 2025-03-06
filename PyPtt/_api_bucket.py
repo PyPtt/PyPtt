@@ -11,25 +11,40 @@ from .data_type import UserField
 
 import re
 
-def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
+def _bucket_operation_reset(api, board: str, ptt_id: str):
+    """
+    1. Confirm api login and the user is a moderator of the board.
+    2. Confirm the existence of ptt_id
+    3. goto the board
+    """
+    check_value.check_type(board, str, 'board')
+    check_value.check_type(ptt_id, str, 'ptt_id')
+
+    # Confirm single thread
     _api_util.one_thread(api)
 
+    # Confirm login status
     if not api._is_login:
         raise exceptions.RequireLogin(i18n.require_login)
 
+    # Confirm the user is registered
     if not api.is_registered_user:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
-    check_value.check_type(board, str, 'board')
-    check_value.check_type(bucket_days, int, 'bucket_days')
-    check_value.check_type(reason, str, 'reason')
-    check_value.check_type(ptt_id, str, 'ptt_id')
-
+    # Confirm the existence of the target user_id
     api.get_user(ptt_id)
 
+    # Confirm moderator status
     _api_util.check_board(api, board, check_moderator=True)
 
+    # Move cursor to the board
     _api_util.goto_board(api, board)
+
+def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
+    _bucket_operation_reset(api, board, ptt_id)
+
+    check_value.check_type(bucket_days, int, 'bucket_days')
+    check_value.check_type(reason, str, 'reason')
 
     cmd_list = []
     cmd_list.append('i')
@@ -64,28 +79,52 @@ def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
         cmd,
         target_list)
 
+def lift_bucket(api, board: str, ptt_id: str, reason: str) -> None:
+    """提前解除水桶
+
+    Args:
+        api (_type_): _description_
+        board (str): 板名
+        ptt_id (str): ptt_id
+        reason: 解除水桶裡由
+    """
+    _bucket_operation_reset(api, board, ptt_id)
+
+    check_value.check_type(reason, str, 'reason')
+
+    cmd_list = []
+    cmd_list.append('i')
+    cmd_list.append(command.ctrl_p)
+    cmd_list.append('w')
+    cmd_list.append(command.enter)
+    cmd_list.append('d')
+    cmd_list.append(command.enter)
+    cmd_list.append(ptt_id)
+    cmd_list.append(command.enter)
+    cmd_lift_bucket = ''.join(cmd_list)
+
+    cmd_list = []
+    cmd_list.append(reason)
+    cmd_list.append(command.enter)
+    cmd_list.append('y')
+    cmd_list.append(command.enter)
+    cmd_lift_bucket_reason = ''.join(cmd_list)
+
+    target_lift_bucket = [
+        connect_core.TargetUnit('請輸入理由(空白可取消解除)', response=cmd_lift_bucket_reason),
+        connect_core.TargetUnit('其它鍵結束', response=command.enter),
+        connect_core.TargetUnit('權限設定系統', response=command.enter),
+        connect_core.TargetUnit('任意鍵', response=command.space),
+        connect_core.TargetUnit(screens.Target.InBoard, break_detect=True)
+    ]
+
+    api.connect_core.send(
+        cmd_lift_bucket,
+        target_lift_bucket)
+
+
 def get_bucket_status(api, board: str, ptt_id: str) -> None:
-    _api_util.one_thread(api)
-
-    # Confirm login status
-    if not api._is_login:
-        raise exceptions.RequireLogin(i18n.require_login)
-
-    # Confirm the user is registered
-    if not api.is_registered_user:
-        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
-
-    check_value.check_type(board, str, 'board')
-    check_value.check_type(ptt_id, str, 'ptt_id')
-
-    # Confirm the existence of the target user_id
-    api.get_user(ptt_id)
-
-    # Confirm moderator status
-    _api_util.check_board(api, board, check_moderator=True)
-
-    # Move cursor to the board
-    _api_util.goto_board(api, board)
+    _bucket_operation_reset(api, board, ptt_id)
 
     cmd_list = []
     cmd_list.append('i')

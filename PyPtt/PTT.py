@@ -794,6 +794,19 @@ class API:
         """
         return _api_bucket.get_bucket_status(self, board, ptt_id)
 
+    def lift_bucket(self, board:str, ptt_id: str, reason: str):
+        """_summary_
+
+        Args:
+            board (str): 看板名稱
+            ptt_id (str): 使用者id
+            reason (str): 提前解除水桶原因
+
+        Return: None
+
+        """
+        _api_bucket.lift_bucket(self, board, ptt_id, reason)
+
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
         """
         水桶。
