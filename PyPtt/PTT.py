@@ -194,6 +194,9 @@ class API:
         else:
             log.logger.info(i18n.current_version, __version__)
 
+    def get_latest_screen(self):
+        return self.connect_core.get_screen_queue()[-1]
+
     def __del__(self):
         if log and log.logger:
             log.logger.debug(i18n.goodbye)
@@ -777,6 +780,19 @@ class API:
         """
 
         return _api_get_favourite_board.get_favourite_board(self)
+
+    def get_bucket_status(self, board: str, ptt_id: str):
+        """_summary_
+
+        Args:
+            board (str): 看板名稱
+            ptt_id (str): 使用者id
+
+        Return:
+                {UserField.is_suspended   : bool
+                 UserField.remaining_days : int}
+        """
+        return _api_bucket.get_bucket_status(self, board, ptt_id)
 
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
         """

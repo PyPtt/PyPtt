@@ -58,6 +58,8 @@ class UserField(AutoStrEnum):
     five_chess = auto()
     chess = auto()
     signature_file = auto()
+    is_suspended = auto()
+    remaining_days = auto()
 
 
 class CommentField(AutoStrEnum):
