@@ -1,6 +1,7 @@
 ﻿from __future__ import annotations
 
 import functools
+import re
 import threading
 from typing import Dict, Tuple, List, Optional, Any
 
@@ -25,6 +26,7 @@ from . import _api_post
 from . import _api_reply_post
 from . import _api_search_user
 from . import _api_set_board_title
+from . import _api_selected_zone
 from . import check_value
 from . import config
 from . import connect_core
@@ -842,6 +844,26 @@ class API:
         """
 
         _api_bucket.bucket(self, board, bucket_days, reason, ptt_id)
+
+    def copy_article_to_selected_zone(self, board: str, route: str, aid: Optional[str] = None, index: int = 0,  ):
+        """
+        route: this is how we get to the destination in the selected region
+               ex. 1-19-6-11-2
+
+        Return:
+            Location of article in the selected zone.
+            ex. z-1-19-6-11-2-50
+        """
+
+        # Check pattern
+        ROUTE_PATTERN = re.compile(r'\d(-\d+)*')
+        assert ROUTE_PATTERN.match(route) is not None, "{} is an invalid route"
+
+        # Check either aid or index is given
+        assert (aid is not None and index ==0) or (aid is None and index > 0)
+
+        return _api_selected_zone.copy_article_to_selected_zone(self, board, route, aid, index)
+
 
     def search_user(self, ptt_id: str, min_page: Optional[int] = None, max_page: Optional[int] = None) -> List[str]:
         """

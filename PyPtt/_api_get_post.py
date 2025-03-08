@@ -130,6 +130,8 @@ def _get_mark_status(api, board: str, post_aid: Optional[str] = None, post_index
     ]
 
     index = api.connect_core.send(cmd, target_list)
+    print('_get_mark_status index: {}'.format(index))
+    assert index >= 0, "index= {}. TargetUnit was not found".format(index)
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
 #    編號    日 期 作  者       文  章  標  題                           人氣:1

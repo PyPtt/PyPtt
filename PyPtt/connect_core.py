@@ -294,6 +294,10 @@ class API(object):
 
     def send(self, msg: str, target_list: list, screen_timeout: int = 0, refresh: bool = True,
              secret: bool = False) -> int:
+        """
+        Returns:
+            int: the index of TargetUnit in the target_list found in the last screen
+        """
 
         if not all(isinstance(T, TargetUnit) for T in target_list):
             raise ValueError('Item of TargetList must be TargetUnit')

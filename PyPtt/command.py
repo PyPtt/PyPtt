@@ -17,6 +17,7 @@ up = '\x1b\x4fA'
 down = '\x1b\x4fB'
 right = '\x1b\x4fC'
 left = '\x1b\x4fD'
+end = '\x1b\x4fF'
 
 space = ' '
 query_post = 'Q'
