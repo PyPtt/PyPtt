@@ -40,6 +40,10 @@ pip install PyPtt
 ####
 #### [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=PyPtt/PyPtt&type=Date)](https://www.star-history.com/#PyPtt/PyPtt&Date)
+
 ## 贊助清單
 
 #### leftc
