@@ -99,7 +99,7 @@ def copy_article_to_selected_zone(api, board:str , route: str, aid: str, index: 
 
     _api_util.goto_board(api, board)
 
-    # Go to the target artice
+    # Go to the target article
     go_to_and_toggle_the_specified_article(api, aid, index)
 
     # Mark the article

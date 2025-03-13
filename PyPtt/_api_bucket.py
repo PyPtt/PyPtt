@@ -11,11 +11,11 @@ from .data_type import UserField
 
 import re
 
-def _bucket_operation_reset(api, board: str, ptt_id: str):
+def bucket_operation_reset(api, board: str, ptt_id: str):
     """
     1. Confirm api login and the user is a moderator of the board.
     2. Confirm the existence of ptt_id
-    3. goto the board
+    3. goto the board where the user is to be suspended.
     """
     check_value.check_type(board, str, 'board')
     check_value.check_type(ptt_id, str, 'ptt_id')
@@ -41,8 +41,6 @@ def _bucket_operation_reset(api, board: str, ptt_id: str):
     _api_util.goto_board(api, board)
 
 def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
-    _bucket_operation_reset(api, board, ptt_id)
-
     check_value.check_type(bucket_days, int, 'bucket_days')
     check_value.check_type(reason, str, 'reason')
 
@@ -88,7 +86,6 @@ def lift_bucket(api, board: str, ptt_id: str, reason: str) -> None:
         ptt_id (str): ptt_id
         reason: 解除水桶裡由
     """
-    _bucket_operation_reset(api, board, ptt_id)
 
     check_value.check_type(reason, str, 'reason')
 
@@ -122,10 +119,15 @@ def lift_bucket(api, board: str, ptt_id: str, reason: str) -> None:
         cmd_lift_bucket,
         target_lift_bucket)
 
-
 def get_bucket_status(api, board: str, ptt_id: str) -> None:
-    _bucket_operation_reset(api, board, ptt_id)
+    """_summary_
 
+    Returns:
+        {
+            'is_suspended' : bool
+            'remaining_days' : int
+        }
+    """
     cmd_list = []
     cmd_list.append('i')
     cmd_list.append(command.ctrl_p)

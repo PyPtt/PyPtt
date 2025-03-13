@@ -5,6 +5,8 @@ import re
 import threading
 from typing import Dict, Tuple, List, Optional, Any
 
+from .data_type import UserField
+
 from . import __version__
 from . import _api_bucket
 from . import _api_change_pw
@@ -794,6 +796,7 @@ class API:
                 {UserField.is_suspended   : bool
                  UserField.remaining_days : int}
         """
+        _api_bucket.bucket_operation_reset(self, board, ptt_id)
         return _api_bucket.get_bucket_status(self, board, ptt_id)
 
     def lift_bucket(self, board:str, ptt_id: str, reason: str):
@@ -807,7 +810,30 @@ class API:
         Return: None
 
         """
+        assert reason is not None and len(reason) > 0, "The reason is not valid: {}".format(reason)
+
+        _api_bucket.bucket_operation_reset(self, board, ptt_id)
         _api_bucket.lift_bucket(self, board, ptt_id, reason)
+
+    def safe_bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
+        """
+        This is a extended version of bucket that if a ptt_id is already suspended,
+        it will lift_bucket and then
+        """
+        assert reason is not None and len(reason) > 0, "The reason is not valid: {}".format(reason)
+
+        _api_bucket.bucket_operation_reset(self, board, ptt_id)
+
+        user_bucket_status = _api_bucket.get_bucket_status(self, board, ptt_id)
+
+        effective_bucket_days = bucket_days
+        if user_bucket_status[UserField.is_suspended]:
+            effective_bucket_days += user_bucket_status[UserField.remaining_days]
+            _api_bucket.lift_bucket(self, board, ptt_id, '追加水桶 {}'.format(reason))
+
+        # Now suspend the user_id with effective_bucket_days
+        _api_bucket.bucket(self, board, effective_bucket_days, reason, ptt_id)
+
 
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
         """
@@ -842,7 +868,9 @@ class API:
                 ptt_bot.logout()
 
         """
-
+        assert reason is not None and len(reason) > 0, "The reason is not valid: {}".format(reason)
+        
+        _api_bucket.bucket_operation_reset(self, board, ptt_id)
         _api_bucket.bucket(self, board, bucket_days, reason, ptt_id)
 
     def copy_article_to_selected_zone(self, board: str, route: str, aid: Optional[str] = None, index: int = 0,  ):
