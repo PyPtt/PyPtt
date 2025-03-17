@@ -293,17 +293,42 @@ class API:
     def get_mark_status(self, board, aid:str=None, index:int=0):
         """
         Return the mark status of the target article.
-        It's m, s, ! or empty string ('').
+        It could be
+            - Marked: M (New), = (Updated), m (Old)
+            - Concluded: S (New/Updated), s (Old)
+            - Normal: + (New), ~ (Updated), '' (Old)
         """
         # Either aid or index should be present.
         assert (aid is not None and index==0) or (aid is None and index!=0)
         return _api_get_post._get_mark_status(self, board, aid, index)
+
+    def is_post_concluded(self, board, aid:str=None, index:int=0):
+        """
+        Check if the target post is concluded. (s, S)
+        """
+        mark_status =  self.get_mark_status(board, aid, index)
+        return mark_status == 's' or mark_status == 'S'
+
+    def is_post_locked(self, board, aid:str=None, index:int=0):
+        """
+        Check if the target post is locked. (!)
+        """
+        mark_status =  self.get_mark_status(board, aid, index)
+        return mark_status == '!'
+
+    def is_post_marked(self, board, aid:str=None, index:int=0):
+        """
+        Check if the target post is marked. (M, m, =)
+        """
+        mark_status =  self.get_mark_status(board, aid, index)
+        return mark_status == 'm' or mark_status == '=' or mark_status == 'M'
 
     def get_post(self, board: str, aid: Optional[str] = None, index: Optional[int] = None,
                  search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
                  search_list: Optional[List[tuple]] = None, query: bool = False) -> Dict:
         """
         取得文章。
+        當 aid 與 index 同時出現時，aid 優先。(不建議這種使用方式)
 
         Args:
             board (str): 看板名稱。
@@ -869,7 +894,7 @@ class API:
 
         """
         assert reason is not None and len(reason) > 0, "The reason is not valid: {}".format(reason)
-        
+
         _api_bucket.bucket_operation_reset(self, board, ptt_id)
         _api_bucket.bucket(self, board, bucket_days, reason, ptt_id)
 
