@@ -99,7 +99,7 @@ setup(
         'Topic :: Communications :: BBS',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
-i
+
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
 
         'Programming Language :: Python :: 3.8',
