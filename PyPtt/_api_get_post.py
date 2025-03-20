@@ -122,6 +122,8 @@ def _get_mark_status(api, board: str, post_aid: Optional[str] = None, post_index
     cmd = ''.join(cmd_list)
 
     target_list = [
+        connect_core.TargetUnit('找不到這個文章代碼', log_level=log.DEBUG,
+                        exceptions_=exceptions.NoSuchPost(board, post_aid)),
         connect_core.TargetUnit(
             screens.Target.PTT1_QueryPost if api.config.host == data_type.HOST.PTT1 else screens.Target.PTT2_QueryPost,
             log_level=log.DEBUG, break_detect=True, refresh=False),
