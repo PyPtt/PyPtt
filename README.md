@@ -42,7 +42,7 @@ pip install PyPtt
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=PyPtt/PyPtt&type=Date)](https://www.star-history.com/#PyPtt/PyPtt&Date)
+[![Star History Chart](https://codingman.cc/images/star_history.svg)](https://www.star-history.com/#PyPtt/PyPtt&Date)
 
 ## 贊助清單
 
