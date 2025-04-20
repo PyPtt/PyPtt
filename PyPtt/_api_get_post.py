@@ -48,17 +48,17 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
         check_value.check_type(search_condition, str, 'search_condition')
 
     if len(board) == 0:
-        raise ValueError(f'board error parameter: {board}')
+        raise exceptions.ParameterError(f'board error parameter: {board}')
 
     if (index is not None and index > 0) and aid is not None:
-        raise ValueError('wrong parameter index and aid can\'t both input')
+        raise exceptions.ParameterError('wrong parameter index and aid can\'t both input')
 
     if aid is not None:
         pass
     elif index > 0:
         pass
     else:
-        raise ValueError('wrong parameter index or aid must input')
+        raise exceptions.ParameterError('wrong parameter index or aid must input')
 
     search_cmd = None
     if search_list is not None and len(search_list) > 0:
@@ -113,7 +113,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         cmd_list.append(command.enter)
         cmd_list.append(str(post_index))
     else:
-        raise ValueError('post_aid and post_index cannot be None at the same time')
+        raise exceptions.ParameterError('post_aid and post_index cannot be None at the same time')
 
     cmd_list.append(command.enter)
     cmd_list.append(command.query_post)

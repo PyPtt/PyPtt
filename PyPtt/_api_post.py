@@ -107,7 +107,7 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     check_value.check_type(content, str, 'content')
 
     if str(sign_file).lower() not in sign_file_list:
-        raise ValueError(f'wrong parameter sign_file: {sign_file}')
+        raise exceptions.ParameterError(f'wrong parameter sign_file: {sign_file}')
 
     _api_util.check_board(api, board)
     _api_util.goto_board(api, board)

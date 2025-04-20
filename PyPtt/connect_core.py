@@ -298,7 +298,7 @@ class API(object):
              secret: bool = False) -> int:
 
         if not all(isinstance(T, TargetUnit) for T in target_list):
-            raise ValueError('Item of TargetList must be TargetUnit')
+            raise exceptions.ParameterError('Item of TargetList must be TargetUnit')
 
         if self._UseTooManyResources not in target_list:
             target_list.append(self._UseTooManyResources)

@@ -145,7 +145,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if board is not None:
-            raise ValueError('board should not input at NewIndex.MAIL.')
+            raise exceptions.ParameterError('board should not input at NewIndex.MAIL.')
 
         cmd_list = []
         cmd_list.append(command.go_main_menu)

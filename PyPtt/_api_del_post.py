@@ -29,13 +29,13 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     check_value.check_type(post_index, int, 'PostIndex')
 
     if len(board) == 0:
-        raise ValueError(f'board error parameter: {board}')
+        raise exceptions.ParameterError(f'board error parameter: {board}')
 
     if post_index != 0 and isinstance(post_aid, str):
-        raise ValueError('wrong parameter index and aid can\'t both input')
+        raise exceptions.ParameterError('wrong parameter index and aid can\'t both input')
 
     if post_index == 0 and post_aid is None:
-        raise ValueError('wrong parameter index or aid must input')
+        raise exceptions.ParameterError('wrong parameter index or aid must input')
 
     if post_index != 0:
         newest_index = api.get_newest_index(
@@ -78,7 +78,7 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     elif post_index != 0:
         cmd_list.append(str(post_index))
     else:
-        raise ValueError('post_aid and post_index cannot be None at the same time')
+        raise exceptions.ParameterError('post_aid and post_index cannot be None at the same time')
 
     cmd_list.append(command.enter)
     cmd_list.append('d')
