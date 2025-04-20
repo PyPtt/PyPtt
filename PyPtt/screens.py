@@ -161,6 +161,11 @@ class Target:
         '--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)'
     ]
 
+    OnlineUser = [
+        '編號',
+        '日 期'
+    ]
+
 
 def show(config, screen_queue, function_name=None):
     if config.log_level != log.DEBUG:

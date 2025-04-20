@@ -80,7 +80,7 @@ class TargetUnit:
         self._max_match = max_match
         self._current_match = 0
 
-    def is_match(self, screen: str) -> bool:
+    def is_match(self, screen: str, cursor) -> bool:
         if self._current_match >= self._max_match > 0:
             return False
         if isinstance(self.detect_target, str):
@@ -89,8 +89,11 @@ class TargetUnit:
                 return True
             return False
         elif isinstance(self.detect_target, list):
-            for Target in self.detect_target:
-                if Target not in screen:
+            for target in self.detect_target:
+                if target == cursor:
+                    if not any(line.startswith(target) for line in screen.split('\n')):
+                        return False
+                elif target not in screen:
                     return False
             self._current_match += 1
             return True
@@ -152,10 +155,11 @@ class ReceiveDataQueue(object):
 
 
 class API(object):
-    def __init__(self, config):
+    def __init__(self, api):
 
         self.current_encoding = 'big5uao'
-        self.config = config
+        self.api = api
+        self.config = api.config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
                                                exceptions_=exceptions.UseTooManyResources())
@@ -249,8 +253,7 @@ class API(object):
         find_target = False
         target_index = -1
         for target in target_list:
-            condition = target.is_match(screen)
-            if condition:
+            if target.is_match(screen, self.api.cursor):
                 if target._Handler is not None:
                     target._Handler(screen)
                 if len(screen) > 0:

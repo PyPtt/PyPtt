@@ -48,6 +48,7 @@ def _get_newest_index(api) -> int:
             break
 
     if newest_index == 0:
+        print('!!!!', last_screen)
         raise exceptions.UnknownError('UnknownError')
 
     return newest_index
@@ -96,6 +97,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
         target_list = [
             connect_core.TargetUnit('沒有文章...', log_level=log.DEBUG, break_detect=True),
             connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+            connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=log.DEBUG, break_detect=True),
             connect_core.TargetUnit(screens.Target.MainMenu_Exiting,
                                     exceptions_=exceptions.NoSuchBoard(api.config, board)),
         ]

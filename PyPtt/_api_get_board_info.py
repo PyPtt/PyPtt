@@ -30,31 +30,27 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
 
-    nuser = None
+    online_user_line = None
     for line in ori_screen.split('\n'):
-        if '編號' not in line:
+        if '作  者' not in line:
             continue
         if '日 期' not in line:
             continue
-        if '人氣' not in line:
-            continue
 
-        nuser = line
+        online_user_line = line
         break
 
-    if nuser is None:
+    if online_user_line is None:
+        print(ori_screen)
         raise exceptions.NoSuchBoard(api.config, board)
 
-    # print('------------------------')
-    # print('nuser', nuser)
-    # print('------------------------')
-    if '[靜]' in nuser:
+    if '[靜]' in online_user_line:
         online_user = 0
     else:
-        if '編號' not in nuser or '人氣' not in nuser:
+        if '日 期' not in online_user_line or '作  者' not in online_user_line:
             raise exceptions.NoSuchBoard(api.config, board)
         pattern = re.compile(r'[\d]+')
-        r = pattern.search(nuser)
+        r = pattern.search(online_user_line)
         if r is None:
             raise exceptions.NoSuchBoard(api.config, board)
         # 減一是把自己本身拿掉
