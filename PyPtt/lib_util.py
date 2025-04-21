@@ -88,7 +88,6 @@ sync_version_result: str = ''
 
 def sync_version() -> Tuple[data_type.Compare, str]:
     global sync_version_compare
-    global sync_version_result
 
     if sync_version_compare is not data_type.Compare.UNKNOWN:
         return sync_version_compare, sync_version_result

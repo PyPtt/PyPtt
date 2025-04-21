@@ -65,7 +65,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool) -> None:
     def register_processing(screen):
         pattern = re.compile(r'[\d]+')
         api.process_picks = int(pattern.search(screen).group(0))
-        
+
     ptt_id = ptt_id[:12].strip()
     ptt_pw = ptt_pw[:8].strip()
 
