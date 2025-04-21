@@ -175,7 +175,7 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
 
     push_content = push_content.strip()
     push_list = []
-    
+
     while push_content:
         # 先找出符合長度限制的最大子字串
         test_content = push_content
@@ -183,7 +183,7 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
             if len(test_content.encode('big5uao', 'replace')) <= max_push_length:
                 break
             test_content = test_content[:-1]
-        
+
         # 找換行符號
         newline_pos = test_content.find('\n')
         if newline_pos != -1:

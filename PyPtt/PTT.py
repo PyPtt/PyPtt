@@ -29,10 +29,11 @@ from . import check_value
 from . import config
 from . import connect_core
 from . import data_type
+from . import exceptions
 from . import i18n
 from . import lib_util
 from . import log
-from . import exceptions
+
 
 class API:
     def __init__(self, **kwargs):

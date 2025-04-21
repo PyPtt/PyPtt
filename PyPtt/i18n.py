@@ -57,4 +57,3 @@ def init(locale: str, cache: bool = False) -> None:
         if cache:
             global _lang_data
             _lang_data[k] = v
-

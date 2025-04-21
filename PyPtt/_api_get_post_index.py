@@ -2,7 +2,6 @@ from . import _api_util
 from . import command
 from . import connect_core
 from . import exceptions
-from . import i18n
 from . import log
 from . import screens
 
