@@ -28,7 +28,7 @@ def get_user(api, ptt_id: str) -> Dict:
 
     check_value.check_type(ptt_id, str, 'UserID')
     if len(ptt_id) < 2:
-        raise ValueError(f'wrong parameter user_id: {ptt_id}')
+        raise exceptions.ParameterError(f'wrong parameter user_id: {ptt_id}')
 
     cmd_list = []
     cmd_list.append(command.go_main_menu)

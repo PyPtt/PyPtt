@@ -96,6 +96,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
         target_list = [
             connect_core.TargetUnit('沒有文章...', log_level=log.DEBUG, break_detect=True),
             connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+            connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=log.DEBUG, break_detect=True),
             connect_core.TargetUnit(screens.Target.MainMenu_Exiting,
                                     exceptions_=exceptions.NoSuchBoard(api.config, board)),
         ]
@@ -143,7 +144,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
             raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
         if board is not None:
-            raise ValueError('board should not input at NewIndex.MAIL.')
+            raise exceptions.ParameterError('board should not input at NewIndex.MAIL.')
 
         cmd_list = []
         cmd_list.append(command.go_main_menu)

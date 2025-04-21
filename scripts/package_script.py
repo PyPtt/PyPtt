@@ -34,7 +34,7 @@ def get_next_version():
             time.sleep(1)
 
     if version is None or pypi_version is None:
-        raise ValueError('Can not get version from pypi')
+        raise exceptions.ParameterError('Can not get version from pypi')
 
     if not is_merged:
         commit_file = '/tmp/commit_hash.txt'

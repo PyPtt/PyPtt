@@ -35,28 +35,28 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
         check_value.check_type(search_condition, str, 'SearchCondition')
 
     if len(board) == 0:
-        raise ValueError(f'board error parameter: {board}')
+        raise exceptions.ParameterError(f'board error parameter: {board}')
 
     if mark_type != data_type.MarkType.DELETE_D:
         if post_index != 0 and isinstance(post_aid, str):
-            raise ValueError('wrong parameter index and aid can\'t both input')
+            raise exceptions.ParameterError('wrong parameter index and aid can\'t both input')
 
         if post_index == 0 and post_aid is None:
-            raise ValueError('wrong parameter index or aid must input')
+            raise exceptions.ParameterError('wrong parameter index or aid must input')
 
     if search_condition is not None and search_type == 0:
-        raise ValueError('wrong parameter index or aid must input')
+        raise exceptions.ParameterError('wrong parameter index or aid must input')
 
     if search_type == data_type.SearchType.COMMENT:
         try:
             S = int(search_condition)
         except ValueError:
-            raise ValueError(f'wrong parameter search_condition: {search_condition}')
+            raise exceptions.ParameterError(f'wrong parameter search_condition: {search_condition}')
 
         check_value.check_range(S, -100, 100, 'search_condition')
 
     if post_aid is not None and search_condition is not None:
-        raise ValueError('wrong parameter aid and search_condition can\'t both input')
+        raise exceptions.ParameterError('wrong parameter aid and search_condition can\'t both input')
 
     if post_index != 0:
         newest_index = api.get_newest_index(
@@ -104,7 +104,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
 
         cmd_list.append(command.enter)
     else:
-        raise ValueError('post_aid and post_index cannot be None at the same time')
+        raise exceptions.ParameterError('post_aid and post_index cannot be None at the same time')
 
     if mark_type == data_type.MarkType.S:
         cmd_list.append('L')

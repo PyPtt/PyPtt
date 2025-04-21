@@ -29,6 +29,7 @@ from . import check_value
 from . import config
 from . import connect_core
 from . import data_type
+from . import exceptions
 from . import i18n
 from . import lib_util
 from . import log
@@ -139,16 +140,17 @@ class API:
 
         check_value.check_type(connect_mode, data_type.ConnectMode, 'connect_mode')
         if host in [data_type.HOST.PTT1, data_type.HOST.PTT2] and connect_mode is data_type.ConnectMode.TELNET:
-            raise ValueError('[PyPtt] TELNET is not available on PTT1 and PTT2')
+            raise exceptions.ParameterError('[PyPtt] TELNET is not available on PTT1 and PTT2')
         self.config.connect_mode = connect_mode
 
-        self.connect_core = connect_core.API(self.config)
-        self._exist_board_list = []
+        self.connect_core = connect_core.API(self)
+        self._exist_board_list = set()
         self._moderators = dict()
         self._thread_id = threading.get_ident()
-        self._goto_board_list = []
+        self._goto_board_list = set()
         self._board_info_list = dict()
         self._newest_index_data = data_type.TimedDict(timeout=2)
+        self.cursor = None
 
         log.logger.debug('thread_id', self._thread_id)
 

@@ -7,6 +7,7 @@ from typing import Optional
 
 from . import PTT
 from . import check_value
+from . import exceptions
 from . import log
 
 
@@ -136,7 +137,7 @@ class Service:
         check_value.check_type(args, dict, 'args')
 
         if api not in dir(self._api):
-            raise ValueError(f'api {api} not found')
+            raise exceptions.ParameterError(f'api {api} not found')
 
         call = {
             'api': api,

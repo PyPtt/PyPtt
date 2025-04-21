@@ -25,10 +25,12 @@ from . import ssl_config
 
 try:
     import websockets.http
+
     websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
     use_http11 = False
 except AttributeError:
     import websockets.http11
+
     websockets.http11.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
     use_http11 = True
 
@@ -80,7 +82,7 @@ class TargetUnit:
         self._max_match = max_match
         self._current_match = 0
 
-    def is_match(self, screen: str) -> bool:
+    def is_match(self, screen: str, cursor) -> bool:
         if self._current_match >= self._max_match > 0:
             return False
         if isinstance(self.detect_target, str):
@@ -89,8 +91,11 @@ class TargetUnit:
                 return True
             return False
         elif isinstance(self.detect_target, list):
-            for Target in self.detect_target:
-                if Target not in screen:
+            for target in self.detect_target:
+                if target == cursor:
+                    if not any(line.startswith(target) for line in screen.split('\n')):
+                        return False
+                elif target not in screen:
                     return False
             self._current_match += 1
             return True
@@ -152,10 +157,11 @@ class ReceiveDataQueue(object):
 
 
 class API(object):
-    def __init__(self, config):
+    def __init__(self, api):
 
         self.current_encoding = 'big5uao'
-        self.config = config
+        self.api = api
+        self.config = api.config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
                                                exceptions_=exceptions.UseTooManyResources())
@@ -209,7 +215,8 @@ class API(object):
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
-                    log.logger.debug('USER_AGENT', websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
+                    log.logger.debug('USER_AGENT',
+                                     websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             websocket_host,
@@ -249,8 +256,7 @@ class API(object):
         find_target = False
         target_index = -1
         for target in target_list:
-            condition = target.is_match(screen)
-            if condition:
+            if target.is_match(screen, self.api.cursor):
                 if target._Handler is not None:
                     target._Handler(screen)
                 if len(screen) > 0:
@@ -295,7 +301,7 @@ class API(object):
              secret: bool = False) -> int:
 
         if not all(isinstance(T, TargetUnit) for T in target_list):
-            raise ValueError('Item of TargetList must be TargetUnit')
+            raise exceptions.ParameterError('Item of TargetList must be TargetUnit')
 
         if self._UseTooManyResources not in target_list:
             target_list.append(self._UseTooManyResources)

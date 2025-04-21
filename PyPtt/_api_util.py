@@ -372,14 +372,15 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
     cmd_list.append('qs')
     cmd_list.append(board)
     cmd_list.append(command.enter)
-    cmd_list.append(command.space)
+    cmd_list.append(command.ctrl_c * 5)
 
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit('任意鍵', log_level=log.DEBUG, response=' '),
-        connect_core.TargetUnit('互動式動畫播放中', log_level=log.DEBUG, response=command.ctrl_c),
+        connect_core.TargetUnit('任意鍵', log_level=log.DEBUG, response=command.space * 5),
+        connect_core.TargetUnit('互動式動畫播放中', log_level=log.DEBUG, response=command.ctrl_c * 5),
         connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=log.DEBUG, break_detect=True),
     ]
 
     if refresh:
@@ -389,8 +390,12 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
             current_refresh = True
         else:
             current_refresh = False
-    api._goto_board_list.append(board.lower())
-    api.connect_core.send(cmd, target_list, refresh=current_refresh)
+    api._goto_board_list.add(board.lower())
+
+    # 這裡可能因為發現第一次進入看板會有進版畫面，一般來說都可以在 target_list 找到對應的標的
+    # 但某些看板會卡在進版動畫中，但沒有顯示任意鍵繼續或互動是動畫，所以當 index == -1 (表示找不到標的 timeout 了)
+    # 可以嘗試修改 cmd_list
+    index = api.connect_core.send(cmd, target_list, refresh=current_refresh)
 
     if end:
         cmd_list = []
@@ -416,7 +421,7 @@ def one_thread(api):
 def check_board(api, board: str, check_moderator: bool = False) -> Dict:
     if board.lower() not in api._exist_board_list:
         board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)
-        api._exist_board_list.append(board.lower())
+        api._exist_board_list.add(board.lower())
         api._board_info_list[board.lower()] = board_info
 
         moderators = board_info[data_type.BoardField.moderators]

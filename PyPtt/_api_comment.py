@@ -35,7 +35,7 @@ def _comment(api,
     elif post_index != 0:
         cmd_list.append(str(post_index))
     else:
-        raise ValueError('post_aid and post_index cannot be None at the same time')
+        raise exceptions.ParameterError('post_aid and post_index cannot be None at the same time')
 
     cmd_list.append(command.enter)
     cmd_list.append(command.comment)
@@ -138,13 +138,13 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
     check_value.check_type(post_index, int, 'index')
 
     if len(board) == 0:
-        raise ValueError(f'wrong parameter board: {board}')
+        raise exceptions.ParameterError(f'wrong parameter board: {board}')
 
     if post_index != 0 and isinstance(post_aid, str):
-        raise ValueError('wrong parameter index and aid can\'t both input')
+        raise exceptions.ParameterError('wrong parameter index and aid can\'t both input')
 
     if post_index == 0 and post_aid is None:
-        raise ValueError('wrong parameter index or aid must input')
+        raise exceptions.ParameterError('wrong parameter index or aid must input')
 
     if post_index != 0:
         newest_index = api.get_newest_index(
@@ -175,7 +175,7 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
 
     push_content = push_content.strip()
     push_list = []
-    
+
     while push_content:
         # 先找出符合長度限制的最大子字串
         test_content = push_content
@@ -183,7 +183,7 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
             if len(test_content.encode('big5uao', 'replace')) <= max_push_length:
                 break
             test_content = test_content[:-1]
-        
+
         # 找換行符號
         newline_pos = test_content.find('\n')
         if newline_pos != -1:
