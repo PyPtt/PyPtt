@@ -41,7 +41,6 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         break
 
     if online_user_line is None:
-        print(ori_screen)
         raise exceptions.NoSuchBoard(api.config, board)
 
     if '[靜]' in online_user_line:

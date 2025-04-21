@@ -12,6 +12,7 @@ import requests
 from . import __version__
 from . import check_value
 from . import data_type
+from . import exceptions
 from . import i18n
 from . import log
 

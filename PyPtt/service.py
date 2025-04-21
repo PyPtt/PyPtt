@@ -7,6 +7,7 @@ from typing import Optional
 
 from . import PTT
 from . import check_value
+from . import exceptions
 from . import log
 
 

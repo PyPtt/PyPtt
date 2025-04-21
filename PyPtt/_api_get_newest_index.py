@@ -48,7 +48,6 @@ def _get_newest_index(api) -> int:
             break
 
     if newest_index == 0:
-        print('!!!!', last_screen)
         raise exceptions.UnknownError('UnknownError')
 
     return newest_index

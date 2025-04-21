@@ -3,6 +3,7 @@ import random
 
 from . import __version__
 from . import data_type
+from . import exceptions
 
 locale_pool = {
     data_type.Language.ENGLISH,
