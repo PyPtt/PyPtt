@@ -8,7 +8,6 @@ from . import i18n
 from . import log
 from . import screens
 
-
 def get_board_list(api) -> list:
     _api_util.one_thread(api)
 

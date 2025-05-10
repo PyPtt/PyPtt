@@ -267,6 +267,9 @@ class API:
 
         _api_loginout.logout(self)
 
+    def go_to_main_menu(self) -> None:
+        _api_loginout.go_to_main_menu(self)
+
     def get_time(self) -> str:
 
         """
@@ -843,7 +846,7 @@ class API:
     def safe_bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
         """
         This is a extended version of bucket that if a ptt_id is already suspended,
-        it will lift_bucket and then
+        it will lift_bucket first and then bucket the user with the sum of remaining and new penalties.
         """
         assert reason is not None and len(reason) > 0, "The reason is not valid: {}".format(reason)
 
