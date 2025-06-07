@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from tkinter import E
 from typing import Optional
 
-from . import _api_util
+from . import _api_util, _api_bucket
 from . import check_value
 from . import command
 from . import connect_core
@@ -13,6 +14,75 @@ from . import lib_util
 from . import log
 from . import screens
 
+def recycle_post_to_mailbox(api, board: str, post_aid: str, ptt_id: str):
+    # Go to the board and confirm moderator identity
+    _api_bucket.moderator_operation_reset(api, board, ptt_id)
+
+    # Get into the recycle bin
+    cmd_list = []
+    cmd_list.append(command.tilde)
+
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit('Magical Index: 編輯歷史', response=command.tilde),
+        connect_core.TargetUnit('此篇文章暫無編輯歷史記錄', response=command.tilde),
+        connect_core.TargetUnit('站方不保證此處為完整的電磁記錄', response=command.space),
+        connect_core.TargetUnit('請按任意鍵繼續', response=command.space),
+
+        # Desired destination
+        connect_core.TargetUnit('已刪檔案', break_detect=True),
+
+        # No articles in the recycle bin.
+        connect_core.TargetUnit(screens.Target.InBoard, exceptions_=exceptions.NoSuchPost(board, post_aid)),
+    ]
+
+    index = api.connect_core.send(
+    cmd,
+    target_list)
+    assert index >= 0, "index= {}. TargetUnit was not found".format(index)
+
+    # TODO: Issue #265
+    # Shouldn't have to do this. Need to find out the cause.
+    _api_util.goto_board(api, board)
+
+    index = api.connect_core.send(
+    cmd,
+    target_list)
+    assert index >= 0, "index= {}. TargetUnit was not found".format(index)
+
+    # Go to the index
+    cmd_list2 = []
+    cmd_list2.append('#{}'.format(post_aid))
+    cmd_list2.append(command.enter)
+
+    cmd2 = ''.join(cmd_list2)
+
+    target_list2  = [
+        connect_core.TargetUnit(['Magical Index: 資源回收筒', '找不到符合的資料'], exceptions_=exceptions.NoSuchPost(board, post_aid)),
+        connect_core.TargetUnit('已刪檔案', break_detect=True),
+    ]
+
+    index = api.connect_core.send(
+    cmd2,
+    target_list2)
+    assert index >= 0, "index= {}. TargetUnit was not found".format(index)
+
+    # Go to the index
+    cmd_list3 = []
+    cmd_list3.append('x')
+
+    cmd3 = ''.join(cmd_list3)
+
+    target_list3  = [
+        connect_core.TargetUnit('儲存完成，請至信箱檢查備忘錄信件', response=command.space, break_detect=True), # This must be the first line
+        connect_core.TargetUnit('確定要把此份文件回存至信箱嗎', response=''.join(['y', command.enter])),
+    ]
+
+    index = api.connect_core.send(
+    cmd3,
+    target_list3)
+    assert index >= 0, "index= {}. TargetUnit was not found".format(index)
 
 def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0) -> None:
     _api_util.one_thread(api)

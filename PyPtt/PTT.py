@@ -29,6 +29,7 @@ from . import _api_reply_post
 from . import _api_search_user
 from . import _api_set_board_title
 from . import _api_selected_zone
+from . import _api_util
 from . import check_value
 from . import config
 from . import connect_core
@@ -268,7 +269,7 @@ class API:
         _api_loginout.logout(self)
 
     def go_to_main_menu(self) -> None:
-        _api_loginout.go_to_main_menu(self)
+        _api_util.go_to_main_menu(self)
 
     def get_time(self) -> str:
 
@@ -304,27 +305,6 @@ class API:
         # Either aid or index should be present.
         assert (aid is not None and index==0) or (aid is None and index!=0)
         return _api_get_post._get_mark_status(self, board, aid, index)
-
-    def is_post_concluded(self, board, aid:str=None, index:int=0):
-        """
-        Check if the target post is concluded. (s, S)
-        """
-        mark_status =  self.get_mark_status(board, aid, index)
-        return mark_status == 's' or mark_status == 'S'
-
-    def is_post_locked(self, board, aid:str=None, index:int=0):
-        """
-        Check if the target post is locked. (!)
-        """
-        mark_status =  self.get_mark_status(board, aid, index)
-        return mark_status == '!'
-
-    def is_post_marked(self, board, aid:str=None, index:int=0):
-        """
-        Check if the target post is marked. (M, m, =)
-        """
-        mark_status =  self.get_mark_status(board, aid, index)
-        return mark_status == 'm' or mark_status == '=' or mark_status == 'M'
 
     def get_post(self, board: str, aid: Optional[str] = None, index: Optional[int] = None,
                  search_type: Optional[data_type.SearchType] = None, search_condition: Optional[str] = None,
@@ -582,7 +562,7 @@ class API:
 
         Args:
             ptt_id (str): PTT ID。
-            money (int): 轉帳金額。
+            money (int): 轉帳金額(稅後)。
             red_bag_title (str): 紅包標題。
             red_bag_content (str): 紅包內容。
 
@@ -749,6 +729,27 @@ class API:
 
         _api_set_board_title.set_board_title(self, board, new_title)
 
+    def is_post_concluded(self, board, aid:str=None, index:int=0):
+        """
+        Check if the target post is concluded. (s, S)
+        """
+        mark_status =  self.get_mark_status(board, aid, index)
+        return mark_status == 's' or mark_status == 'S'
+
+    def is_post_locked(self, board, aid:str=None, index:int=0):
+        """
+        Check if the target post is locked. (!)
+        """
+        mark_status =  self.get_mark_status(board, aid, index)
+        return mark_status == '!'
+
+    def is_post_marked(self, board, aid:str=None, index:int=0):
+        """
+        Check if the target post is marked. (M, m, =)
+        """
+        mark_status =  self.get_mark_status(board, aid, index)
+        return mark_status == 'm' or mark_status == '=' or mark_status == 'M'
+
     def mark_post(self, mark_type: int, board: str, aid: Optional[str] = None, index: int = 0, search_type: int = 0,
                   search_condition: Optional[str] = None) -> None:
         """
@@ -824,7 +825,7 @@ class API:
                 {UserField.is_suspended   : bool
                  UserField.remaining_days : int}
         """
-        _api_bucket.bucket_operation_reset(self, board, ptt_id)
+        _api_bucket.moderator_operation_reset(self, board, ptt_id)
         return _api_bucket.get_bucket_status(self, board, ptt_id)
 
     def lift_bucket(self, board:str, ptt_id: str, reason: str):
@@ -840,7 +841,7 @@ class API:
         """
         assert reason is not None and len(reason) > 0, "The reason is not valid: {}".format(reason)
 
-        _api_bucket.bucket_operation_reset(self, board, ptt_id)
+        _api_bucket.moderator_operation_reset(self, board, ptt_id)
         _api_bucket.lift_bucket(self, board, ptt_id, reason)
 
     def safe_bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
@@ -850,7 +851,7 @@ class API:
         """
         assert reason is not None and len(reason) > 0, "The reason is not valid: {}".format(reason)
 
-        _api_bucket.bucket_operation_reset(self, board, ptt_id)
+        _api_bucket.moderator_operation_reset(self, board, ptt_id)
 
         user_bucket_status = _api_bucket.get_bucket_status(self, board, ptt_id)
 
@@ -861,7 +862,6 @@ class API:
 
         # Now suspend the user_id with effective_bucket_days
         _api_bucket.bucket(self, board, effective_bucket_days, reason, ptt_id)
-
 
     def bucket(self, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
         """
@@ -898,28 +898,8 @@ class API:
         """
         assert reason is not None and len(reason) > 0, "The reason is not valid: {}".format(reason)
 
-        _api_bucket.bucket_operation_reset(self, board, ptt_id)
+        _api_bucket.moderator_operation_reset(self, board, ptt_id)
         _api_bucket.bucket(self, board, bucket_days, reason, ptt_id)
-
-    def copy_article_to_selected_zone(self, board: str, route: str, aid: Optional[str] = None, index: int = 0,  ):
-        """
-        route: this is how we get to the destination in the selected region
-               ex. 1-19-6-11-2
-
-        Return:
-            Location of article in the selected zone.
-            ex. z-1-19-6-11-2-50
-        """
-
-        # Check pattern
-        ROUTE_PATTERN = re.compile(r'\d(-\d+)*')
-        assert ROUTE_PATTERN.match(route) is not None, "{} is an invalid route"
-
-        # Check either aid or index is given
-        assert (aid is not None and index ==0) or (aid is None and index > 0)
-
-        return _api_selected_zone.copy_article_to_selected_zone(self, board, route, aid, index)
-
 
     def search_user(self, ptt_id: str, min_page: Optional[int] = None, max_page: Optional[int] = None) -> List[str]:
         """
@@ -1168,6 +1148,53 @@ class API:
         """
 
         _api_del_post.del_post(self, board, aid, index)
+
+    def copy_article_to_selected_zone(self, board: str, route: str, aid: Optional[str] = None, index: int = 0,  ):
+        """
+        route: this is how we get to the destination in the selected region
+               ex. 1-19-6-11-2
+
+        Return:
+            Location of article in the selected zone.
+            ex. z-1-19-6-11-2-50
+        """
+
+        # Check pattern
+        ROUTE_PATTERN = re.compile(r'\d(-\d+)*')
+        assert ROUTE_PATTERN.match(route) is not None, "{} is an invalid route"
+
+        # Check either aid or index is given
+        assert (aid is not None and index ==0) or (aid is None and index > 0)
+
+        return _api_selected_zone.copy_article_to_selected_zone(self, board, route, aid, index)
+
+    def recycle_post_to_selected_zone(self, board: str, route: str, aid: str):
+        """
+        將指定編號之文章中資源回收桶複製到信箱。
+        需要板主權限。
+
+        Args:
+            board (str): 看板名稱。
+            aid (str): 文章編號。
+            ptt_id (int): 板主id
+
+        Returns:
+            None
+
+        範例::
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.recycle_post_to_mailbox(board='Python', aid='1TJH_XY0')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+        """
+        _api_del_post.recycle_post_to_mailbox(self, board, aid, self.ptt_id)
+
+        return _api_selected_zone.copy_latest_recycled_in_mailbox_to_selected_zone(self, board, route)
 
     def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
         _api_post.fast_post_step0(self, board, title, content, post_type)

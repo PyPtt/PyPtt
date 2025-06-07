@@ -365,6 +365,19 @@ def get_search_condition_cmd(index_type: data_type.NewIndex, search_list: Option
 
     return cmd_list
 
+def go_to_main_menu(api) -> None:
+    """
+        回到主選單
+    """
+    cmd_list = []
+    cmd_list.append(command.go_main_menu)
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit(screens.Target.MainMenu, break_detect=True),
+    ]
+
+    api.connect_core.send(cmd, target_list)
 
 def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> None:
     cmd_list = []

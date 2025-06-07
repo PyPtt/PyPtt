@@ -1,4 +1,5 @@
 # http://www.physics.udel.edu/~watson/scen103/ascii.html
+
 enter = '\r'
 tab = '\t'
 ctrl_c = '\x03'
@@ -27,3 +28,4 @@ go_main_menu_type_q = 'q' * 5
 refresh = ctrl_l
 control_code = ctrl_u + star
 backspace = ctrl_h
+tilde = r'~'

@@ -10,23 +10,6 @@ from . import i18n
 from . import log
 from . import screens
 
-
-def go_to_main_menu(api) -> None:
-    """回到主選單
-
-    Args:
-        api (_type_): _description_
-    """
-    cmd_list = []
-    cmd_list.append(command.go_main_menu)
-    cmd = ''.join(cmd_list)
-
-    target_list = [
-        connect_core.TargetUnit(screens.Target.MainMenu, break_detect=True),
-    ]
-
-    api.connect_core.send(cmd, target_list)
-
 def logout(api) -> None:
     _api_util.one_thread(api)
 

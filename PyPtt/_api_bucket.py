@@ -11,7 +11,7 @@ from .data_type import UserField
 
 import re
 
-def bucket_operation_reset(api, board: str, ptt_id: str):
+def moderator_operation_reset(api, board: str, ptt_id: str):
     """
     1. Confirm api login and the user is a moderator of the board.
     2. Confirm the existence of ptt_id
