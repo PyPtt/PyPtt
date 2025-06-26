@@ -9,7 +9,6 @@ from tests import util
 
 
 def test(ptt_bot: PyPtt.API):
-    result = []
     for _ in range(3):
         mail_index = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL)
         mail_info = ptt_bot.get_mail(mail_index)

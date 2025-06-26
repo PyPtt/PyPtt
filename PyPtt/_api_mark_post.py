@@ -21,7 +21,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     if not isinstance(mark_type, data_type.MarkType):
-        raise TypeError(f'mark_type must be data_type.MarkType')
+        raise TypeError('mark_type must be data_type.MarkType')
 
     check_value.check_type(board, str, 'board')
     if post_aid is not None:
@@ -29,7 +29,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
     check_value.check_type(post_index, int, 'PostIndex')
 
     if not isinstance(search_type, data_type.SearchType):
-        raise TypeError(f'search_type must be data_type.SearchType')
+        raise TypeError('search_type must be data_type.SearchType')
 
     if search_condition is not None:
         check_value.check_type(search_condition, str, 'SearchCondition')

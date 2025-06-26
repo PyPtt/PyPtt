@@ -47,7 +47,7 @@ def test():
         PyPtt.API(language=99)
     except TypeError:
         print('通過')
-    except:
+    except Exception:
         print('沒通過')
         assert False
     print('=== 語言放字串 ===')
@@ -55,7 +55,7 @@ def test():
         PyPtt.API(language='PyPtt.i18n.language.ENGLISH')
     except TypeError:
         print('通過')
-    except:
+    except Exception:
         print('沒通過')
         assert False
 
