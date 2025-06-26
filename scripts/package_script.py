@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+from PyPtt import exceptions
 
 
 def get_next_version():

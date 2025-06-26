@@ -20,7 +20,7 @@ author = 'CodingMan'
 version = PyPtt.__version__
 release = PyPtt.__version__
 
-html_title = f'PyPtt.cc'
+html_title = 'PyPtt.cc'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

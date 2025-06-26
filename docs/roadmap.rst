@@ -10,13 +10,6 @@
 * WebSocket 支援 Tor or Proxy
     期待有一天可以透過 Tor 或 Proxy 來連接到 PTT，讓 PyPtt 可以自由地在雲端伺服器運作。
 
-開發中
---------------------
-* 支援 PTT 官方 APP API
-    你可以在 ptt-app-api_ 分支上找到目前的進度。
-
-.. _ptt-app-api: https://github.com/PyPtt/PyPtt/tree/ptt-app-api
-
 已完成
 --------------------
 * PyPtt Service docker

@@ -11,7 +11,7 @@ def generate_ssl_certificate():
     print('SSL certificate generated successfully.')
 
     # 讀取生成的憑證
-    with open(f'./key.pem', 'r') as key_file, open(f'./cert.pem', 'r') as cert_file:
+    with open('./key.pem', 'r') as key_file, open('./cert.pem', 'r') as cert_file:
         key = key_file.read()
         cert = cert_file.read()
 
@@ -27,9 +27,9 @@ def generate_ssl_certificate():
         f.write(ssl_context)
 
     # 刪除生成的憑證檔案
-    os.remove(f'./key.pem')
-    os.remove(f'./cert.pem')
-    os.remove(f'./csr.pem')
+    os.remove('./key.pem')
+    os.remove('./cert.pem')
+    os.remove('./csr.pem')
 
 
 if __name__ == '__main__':

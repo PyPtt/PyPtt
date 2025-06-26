@@ -130,7 +130,7 @@ def comment(api, board: str, push_type: data_type.CommentType, push_content: str
     check_value.check_type(board, str, 'board')
 
     if not isinstance(push_type, data_type.CommentType):
-        raise TypeError(f'CommentType must be data_type.CommentType')
+        raise TypeError('CommentType must be data_type.CommentType')
 
     check_value.check_type(push_content, str, 'push_content')
     if post_aid is not None:

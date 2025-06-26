@@ -150,11 +150,24 @@ def test(ptt_bot: PyPtt.API):
     # result = get_post_with_condition(ptt_bot)
     # util.log.py.info(json.dumps(result, ensure_ascii=False, indent=4))
 
+def test_case_animation(ptt_bot: PyPtt.API):
+
+    board, aid = ptt_bot.get_aid_from_url('https://www.ptt.cc/bbs/NCCU09_PSYCH/M.1322976839.A.0E3.html')
+
+    print(board, aid)
+
+    post = ptt_bot.get_post(
+        board,
+        aid=aid)
+
+    print(json.dumps(post, indent=4, ensure_ascii=False))
+
+
 
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
-        PyPtt.HOST.PTT2
+        # PyPtt.HOST.PTT2
     ]
 
     for host in host_list:
@@ -165,7 +178,8 @@ def func():
 
         try:
             util.login(ptt_bot)
-            test(ptt_bot)
+            # test(ptt_bot)
+            test_case_animation(ptt_bot)
         finally:
             ptt_bot.logout()
 

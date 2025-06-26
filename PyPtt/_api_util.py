@@ -33,8 +33,7 @@ def get_content(api, post_mode: bool = True):
         connect_core.TargetUnit(screens.Target.InPost, log_level=log.DEBUG, break_detect=True),
         connect_core.TargetUnit(screens.Target.PostNoContent, log_level=log.DEBUG, break_detect=True),
         # 動畫文章
-        connect_core.TargetUnit(screens.Target.Animation, response=command.go_main_menu_type_q,
-                                break_detect_after_send=True),
+        connect_core.TargetUnit(screens.Target.Animation, response='n'),
     ]
 
     line_from_pattern = re.compile(r'[\d]+~[\d]+')
@@ -395,7 +394,7 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
     # 這裡可能因為發現第一次進入看板會有進版畫面，一般來說都可以在 target_list 找到對應的標的
     # 但某些看板會卡在進版動畫中，但沒有顯示任意鍵繼續或互動是動畫，所以當 index == -1 (表示找不到標的 timeout 了)
     # 可以嘗試修改 cmd_list
-    index = api.connect_core.send(cmd, target_list, refresh=current_refresh)
+    api.connect_core.send(cmd, target_list, refresh=current_refresh)
 
     if end:
         cmd_list = []

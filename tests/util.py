@@ -1,7 +1,6 @@
 import json
 
 import PyPtt
-from PyPtt import PostField
 from PyPtt import log
 from . import config
 
@@ -63,5 +62,5 @@ def del_all_post(ptt_bot: PyPtt.API):
     for i in range(30):
         try:
             ptt_bot.del_post(board='Test', index=newest_index - i)
-        except:
+        except Exception:
             pass

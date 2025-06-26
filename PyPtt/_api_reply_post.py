@@ -17,7 +17,7 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         raise exceptions.RequireLogin(i18n.require_login)
 
     if not isinstance(reply_to, data_type.ReplyTo):
-        raise TypeError(f'ReplyTo must be data_type.ReplyTo')
+        raise TypeError('ReplyTo must be data_type.ReplyTo')
 
     check_value.check_type(board, str, 'board')
     check_value.check_type(content, str, 'content')
