@@ -23,7 +23,7 @@ class Target:
     PTT1_QueryPost = [
         '請按任意鍵繼續',
         '文章代碼(AID):',
-        '文章網址:'
+        ('文章網址:', '本看板目前不提供文章網址')
     ]
 
     PTT2_QueryPost = [

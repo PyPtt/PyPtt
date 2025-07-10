@@ -95,8 +95,13 @@ class TargetUnit:
                 if target == cursor:
                     if not any(line.startswith(target) for line in screen.split('\n')):
                         return False
-                elif target not in screen:
-                    return False
+                elif isinstance(target, str):
+                    if target not in screen:
+                        return False
+                elif isinstance(target, list):
+                    if not any(t in screen for t in target):
+                        return False
+
             self._current_match += 1
             return True
 
