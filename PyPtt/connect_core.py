@@ -95,8 +95,13 @@ class TargetUnit:
                 if target == cursor:
                     if not any(line.startswith(target) for line in screen.split('\n')):
                         return False
-                elif target not in screen:
-                    return False
+                elif isinstance(target, str):
+                    if target not in screen:
+                        return False
+                elif isinstance(target, list):
+                    if not any(t in screen for t in target):
+                        return False
+
             self._current_match += 1
             return True
 
@@ -211,7 +216,7 @@ class API(object):
                 if self.config.connect_mode == data_type.ConnectMode.TELNET:
                     self._core = telnetlib.Telnet(telnet_host, self.config.port)
                 else:
-                    if not threading.current_thread() is threading.main_thread():
+                    if threading.current_thread() is not threading.main_thread():
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
