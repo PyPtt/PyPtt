@@ -1,3 +1,4 @@
+from . import exceptions
 from . import i18n
 from . import log
 
@@ -21,19 +22,19 @@ def check_range(value, min_value, max_value, name) -> None:
 
     if min_value <= value <= max_value:
         return
-    raise ValueError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
+    raise exceptions.ParameterError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
 
 
 def check_index(name, index, max_value=None) -> None:
     check_type(index, int, name)
     if index < 1:
-        raise ValueError(f'{name} {i18n.must_bigger_than} 0')
+        raise exceptions.ParameterError(f'{name} {i18n.must_bigger_than} 0')
 
     if max_value is not None:
         if index > max_value:
             log.logger.info('index', index)
             log.logger.info('max_value', max_value)
-            raise ValueError(f'{name} {index} {i18n.must_between} 0 ~ {max_value}')
+            raise exceptions.ParameterError(f'{name} {index} {i18n.must_between} 0 ~ {max_value}')
 
 
 def check_index_range(start_name, start_index, end_name, end_index, max_value=None) -> None:
@@ -41,20 +42,20 @@ def check_index_range(start_name, start_index, end_name, end_index, max_value=No
     check_type(end_index, int, end_name)
 
     if start_index < 1:
-        raise ValueError(f'{start_name} {start_index} {i18n.must_bigger_than} 0')
+        raise exceptions.ParameterError(f'{start_name} {start_index} {i18n.must_bigger_than} 0')
 
     if end_index <= 1:
-        raise ValueError(f'{end_name} {end_index} {i18n.must_bigger_than} 1')
+        raise exceptions.ParameterError(f'{end_name} {end_index} {i18n.must_bigger_than} 1')
 
     if start_index > end_index:
-        raise ValueError(f'{end_name} {end_index} {i18n.must_bigger_than} {start_name} {start_index}')
+        raise exceptions.ParameterError(f'{end_name} {end_index} {i18n.must_bigger_than} {start_name} {start_index}')
 
     if max_value is not None:
         if start_index > max_value:
-            raise ValueError(f'{start_name} {start_index} {i18n.must_small_than} {max_value}')
+            raise exceptions.ParameterError(f'{start_name} {start_index} {i18n.must_small_than} {max_value}')
 
         if end_index > max_value:
-            raise ValueError(f'{end_name} {end_index} {i18n.must_small_than} {max_value}')
+            raise exceptions.ParameterError(f'{end_name} {end_index} {i18n.must_small_than} {max_value}')
 
 
 if __name__ == '__main__':

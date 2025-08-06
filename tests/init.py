@@ -32,14 +32,14 @@ def test():
     try:
         PyPtt.API(host=PyPtt.HOST.PTT1, connect_mode=PyPtt.ConnectMode.TELNET)
         assert False
-    except ValueError:
+    except PyPtt.ParameterError:
         print('通過')
 
     print('=== set host with PTT2 and TELNET ===')
     try:
         PyPtt.API(host=PyPtt.HOST.PTT2, connect_mode=PyPtt.ConnectMode.TELNET)
         assert False
-    except ValueError:
+    except PyPtt.ParameterError:
         print('通過')
 
     try:
@@ -47,7 +47,7 @@ def test():
         PyPtt.API(language=99)
     except TypeError:
         print('通過')
-    except:
+    except Exception:
         print('沒通過')
         assert False
     print('=== 語言放字串 ===')
@@ -55,7 +55,7 @@ def test():
         PyPtt.API(language='PyPtt.i18n.language.ENGLISH')
     except TypeError:
         print('通過')
-    except:
+    except Exception:
         print('沒通過')
         assert False
 

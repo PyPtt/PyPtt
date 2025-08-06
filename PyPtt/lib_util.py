@@ -12,6 +12,7 @@ import requests
 from . import __version__
 from . import check_value
 from . import data_type
+from . import exceptions
 from . import i18n
 from . import log
 
@@ -50,7 +51,7 @@ def get_aid_from_url(url: str) -> Tuple[str, str]:
     pattern = re.compile(r'https://www.ptt.cc/bbs/[-.\w]+/M.[\d]+.A[.\w]*.html')
     r = pattern.search(url)
     if r is None:
-        raise ValueError('wrong parameter url must be www.ptt.cc post url')
+        raise exceptions.ParameterError('wrong parameter url must be www.ptt.cc post url')
 
     board = url[23:]
     board = board[:board.find('/')]
@@ -87,7 +88,6 @@ sync_version_result: str = ''
 
 def sync_version() -> Tuple[data_type.Compare, str]:
     global sync_version_compare
-    global sync_version_result
 
     if sync_version_compare is not data_type.Compare.UNKNOWN:
         return sync_version_compare, sync_version_result
@@ -148,7 +148,7 @@ def uniform_new_line(text: str) -> str:
 @functools.lru_cache(maxsize=64)
 def check_aid(aid: str) -> str:
     if aid is None:
-        raise ValueError('aid is None')
+        raise exceptions.ParameterError('aid is None')
 
     if not isinstance(aid, str):
         raise TypeError('aid is not str')
@@ -157,12 +157,12 @@ def check_aid(aid: str) -> str:
         aid = aid[1:]
 
     if len(aid) != 8:
-        raise ValueError('aid is not valid')
+        raise exceptions.ParameterError('aid is not valid')
 
     # check the char of aid is in aid_table or not
     for char in aid:
         if char not in aid_table:
-            raise ValueError('aid is not valid')
+            raise exceptions.ParameterError('aid is not valid')
 
     return f'#{aid}'
 

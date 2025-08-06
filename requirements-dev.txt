@@ -4,3 +4,4 @@ uao
 requests==2.32.4
 AutoStrEnum
 PyYAML
+python-dotenv

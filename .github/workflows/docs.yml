@@ -3,16 +3,13 @@ name: docs
 
 # run on merge to master or manual trigger
 on:
-  pull_request:
-    types: [ closed ]
-    paths:
-      - 'docs/**/*'
-      - 'PyPtt/*.py'
+  push:
+    branches:
+      - master  # Run when changes are pushed to master branch
   workflow_dispatch:
 
 jobs:
   build:
-    if: github.event_name != 'workflow_dispatch' && github.event.pull_request.merged == true
     name: Build doc and Deploy
     runs-on: ubuntu-latest
     steps:

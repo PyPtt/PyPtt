@@ -26,11 +26,13 @@ __version__='1.1.2'
 
 try:
     import websockets.http
-    websockets.http.USER_AGENT += f' PyPtt/{__version__}'
+
+    websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
     use_http11 = False
 except AttributeError:
     import websockets.http11
-    websockets.http11.USER_AGENT += f' PyPtt/{__version__}'
+
+    websockets.http11.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
     use_http11 = True
 
 ssl_context = None
@@ -81,7 +83,7 @@ class TargetUnit:
         self._max_match = max_match
         self._current_match = 0
 
-    def is_match(self, screen: str) -> bool:
+    def is_match(self, screen: str, cursor) -> bool:
         if self._current_match >= self._max_match > 0:
             return False
         if isinstance(self.detect_target, str):
@@ -90,9 +92,17 @@ class TargetUnit:
                 return True
             return False
         elif isinstance(self.detect_target, list):
-            for Target in self.detect_target:
-                if Target not in screen:
-                    return False
+            for target in self.detect_target:
+                if target == cursor:
+                    if not any(line.startswith(target) for line in screen.split('\n')):
+                        return False
+                elif isinstance(target, str):
+                    if target not in screen:
+                        return False
+                elif isinstance(target, list):
+                    if not any(t in screen for t in target):
+                        return False
+
             self._current_match += 1
             return True
 
@@ -153,10 +163,11 @@ class ReceiveDataQueue(object):
 
 
 class API(object):
-    def __init__(self, config):
+    def __init__(self, api):
 
         self.current_encoding = 'big5uao'
-        self.config = config
+        self.api = api
+        self.config = api.config
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
                                                exceptions_=exceptions.UseTooManyResources())
@@ -206,11 +217,12 @@ class API(object):
                 if self.config.connect_mode == data_type.ConnectMode.TELNET:
                     self._core = telnetlib.Telnet(telnet_host, self.config.port)
                 else:
-                    if not threading.current_thread() is threading.main_thread():
+                    if threading.current_thread() is not threading.main_thread():
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
 
-                    log.logger.debug('USER_AGENT', websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
+                    log.logger.debug('USER_AGENT',
+                                     websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
                     self._core = asyncio.get_event_loop().run_until_complete(
                         websockets.connect(
                             websocket_host,
@@ -250,8 +262,7 @@ class API(object):
         find_target = False
         target_index = -1
         for target in target_list:
-            condition = target.is_match(screen)
-            if condition:
+            if target.is_match(screen, self.api.cursor):
                 if target._Handler is not None:
                     target._Handler(screen)
                 if len(screen) > 0:
@@ -300,7 +311,7 @@ class API(object):
         """
 
         if not all(isinstance(T, TargetUnit) for T in target_list):
-            raise ValueError('Item of TargetList must be TargetUnit')
+            raise exceptions.ParameterError('Item of TargetList must be TargetUnit')
 
         if self._UseTooManyResources not in target_list:
             target_list.append(self._UseTooManyResources)

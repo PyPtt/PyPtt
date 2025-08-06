@@ -45,7 +45,7 @@ def mail(api,
 
     if not check_sign_file:
         if sign_file.lower() != 'x':
-            raise ValueError(f'wrong parameter sign_file: {sign_file}')
+            raise exceptions.ParameterError(f'wrong parameter sign_file: {sign_file}')
 
     cmd_list = []
     # 回到主選單
@@ -130,7 +130,7 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     log.logger.info(i18n.get_mail)
 
     if not isinstance(index, int):
-        raise ValueError('index must be int')
+        raise exceptions.ParameterError('index must be int')
 
     current_index = api.get_newest_index(data_type.NewIndex.MAIL)
     if index <= 0 or current_index < index:

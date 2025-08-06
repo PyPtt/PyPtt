@@ -48,17 +48,17 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
         check_value.check_type(search_condition, str, 'search_condition')
 
     if len(board) == 0:
-        raise ValueError(f'board error parameter: {board}')
+        raise exceptions.ParameterError(f'board error parameter: {board}')
 
     if (index is not None and index > 0) and aid is not None:
-        raise ValueError('wrong parameter index and aid can\'t both input')
+        raise exceptions.ParameterError('wrong parameter index and aid can\'t both input')
 
     if aid is not None:
         pass
     elif index > 0:
         pass
     else:
-        raise ValueError('wrong parameter index or aid must input')
+        raise exceptions.ParameterError('wrong parameter index or aid must input')
 
     search_cmd = None
     if search_list is not None and len(search_list) > 0:
@@ -192,7 +192,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         cmd_list.append(command.enter)
         cmd_list.append(str(post_index))
     else:
-        raise ValueError('post_aid and post_index cannot be None at the same time')
+        raise exceptions.ParameterError('post_aid and post_index cannot be None at the same time')
 
     cmd_list.append(command.enter)
     cmd_list.append(command.query_post)
@@ -208,7 +208,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     ]
 
     index = api.connect_core.send(cmd, target_list)
-    ori_screen = api.connect_core.get_screen_queue()[-1]
+    last_screen = api.connect_core.get_screen_queue()[-1]
 
     post = {
         PostField.board: None,
@@ -237,13 +237,13 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     if index < 0 or index == 1:
         # 文章被刪除
         log.logger.debug(i18n.post_deleted)
-        log.logger.debug('OriScreen', ori_screen)
+        log.logger.debug('OriScreen', last_screen)
 
-        cursor_line = [line for line in ori_screen.split(
+        cursor_line = [line for line in last_screen.split(
             '\n') if line.startswith(api.cursor)]
 
         if len(cursor_line) != 1:
-            raise exceptions.UnknownError(ori_screen)
+            raise exceptions.UnknownError(last_screen)
 
         cursor_line = cursor_line[0]
         log.logger.debug('CursorLine', cursor_line)
@@ -293,7 +293,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index = \
             _api_util.parse_query_post(
                 api,
-                ori_screen)
+                last_screen)
 
         if lock_post:
             post.update({

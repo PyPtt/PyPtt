@@ -17,7 +17,7 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         raise exceptions.RequireLogin(i18n.require_login)
 
     if not isinstance(reply_to, data_type.ReplyTo):
-        raise TypeError(f'ReplyTo must be data_type.ReplyTo')
+        raise TypeError('ReplyTo must be data_type.ReplyTo')
 
     check_value.check_type(board, str, 'board')
     check_value.check_type(content, str, 'content')
@@ -37,10 +37,10 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
     sign_file_list.extend([str(x) for x in range(0, 10)])
 
     if str(sign_file).lower() not in sign_file_list:
-        raise ValueError(f'wrong parameter sign_file: {sign_file}')
+        raise exceptions.ParameterError(f'wrong parameter sign_file: {sign_file}')
 
     if post_aid is not None and post_index != 0:
-        raise ValueError('wrong parameter aid and index can\'t both input')
+        raise exceptions.ParameterError('wrong parameter aid and index can\'t both input')
 
     _api_util.check_board(api, board)
 
@@ -53,7 +53,7 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
     elif post_index != 0:
         cmd_list.append(str(post_index))
     else:
-        raise ValueError('post_aid and post_index cannot be None at the same time')
+        raise exceptions.ParameterError('post_aid and post_index cannot be None at the same time')
 
     cmd_list.append(command.enter * 2)
     cmd_list.append('r')

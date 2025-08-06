@@ -8,7 +8,10 @@
 
 .. code-block:: python
 
+    import time
+
     import PyPtt
+
 
     def login():
         max_retry = 5
@@ -18,8 +21,8 @@
             try:
                 ptt_bot = PyPtt.API()
 
-                ptt_bot.login('YOUR_ID', 'YOUR_PW',
-                    kick_other_session=False if retry_time == 0 else True)
+                ptt_bot.login('PTT ID', 'PTT PW',
+                              kick_other_session=False if retry_time == 0 else True)
                 break
             except PyPtt.exceptions.LoginError:
                 ptt_bot = None
@@ -39,18 +42,18 @@
         return ptt_bot
 
     if __name__ == '__main__':
-        login()
-
-        last_newest_index = ptt_bot.get_newest_index()
-        time.sleep(60)
-
+        ptt_bot = None
+        last_newest_index = None
         try:
             while True:
 
                 try:
-                    newest_index = ptt_bot.get_newest_index()
+                    if ptt_bot is None:
+                        ptt_bot = login()
+
+                    newest_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board='Gossiping')
                 except PyPtt.exceptions.ConnectionClosed:
-                    ptt_bot = login()
+                    ptt_bot = None
                     continue
                 except Exception as e:
                     print('其他錯誤:', e)
@@ -58,6 +61,7 @@
 
                 if newest_index == last_newest_index:
                     continue
+                last_newest_index = newest_index
 
                 print('有新文章!', newest_index)
 
