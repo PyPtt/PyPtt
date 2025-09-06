@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from . import _api_util
 from . import check_value
@@ -11,7 +11,7 @@ from . import log
 from . import screens
 
 
-def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> list[Dict]:
+def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dict]:
     _api_util.one_thread(api)
 
     if not api._is_login:
