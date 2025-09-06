@@ -15,14 +15,20 @@ def check_type(value, value_type, name) -> None:
             raise TypeError(f'[PyPtt] {name} {i18n.must_be} {value_type}, but got {value}')
 
 
-def check_range(value, min_value, max_value, name) -> None:
+def check_range(value, min_value: int = None, max_value: int = None, name: str = None) -> None:
     check_type(value, int, name)
-    check_type(min_value, int, 'min_value')
-    check_type(max_value, int, 'max_value')
 
-    if min_value <= value <= max_value:
-        return
-    raise exceptions.ParameterError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
+    if min_value is not None:
+        check_type(min_value, int, 'min_value')
+
+        if value < min_value:
+            raise exceptions.ParameterError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
+
+    if max_value is not None:
+        check_type(max_value, int, 'max_value')
+
+        if value > max_value:
+            raise exceptions.ParameterError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
 
 
 def check_index(name, index, max_value=None) -> None:
