@@ -31,6 +31,14 @@ def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dic
     start_index = max_index - limit - offset + 1
     end_index = start_index + limit - 1
 
+    # the first page shows 10 posts, each next page shows 20 posts
+    if limit <= 10:
+        max_round = 1
+    else:
+        # 1 is for the first page, +1 is for rounding up
+        # so +2
+        max_round = (limit - 10) // 20 + 2
+
     cmd_list = []
 
     cmd_list.append(str(max(1, start_index - 100)))
@@ -46,7 +54,7 @@ def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dic
 
     post_list = []
 
-    while True:
+    for _ in range(max_round):
 
         index = api.connect_core.send(cmd, target_list)
         cmd = command.page_down
