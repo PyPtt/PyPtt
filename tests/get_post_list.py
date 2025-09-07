@@ -12,16 +12,20 @@ def test(ptt_bot: PyPtt.API):
 
     def _test(board: str):
         offset = 0
-        limit = 5
+        limit = 100
 
         check_rounds = 5
 
         post_list = []
 
+        max_index = ptt_bot.get_newest_index(index_type=PyPtt.NewIndex.BOARD, board=board)
+
+        cur_offset = offset
+
         for _ in range(check_rounds):
 
-            cur_post_list = ptt_bot.get_post_list(board, limit=limit, offset=offset)
-            offset += limit
+            cur_post_list = ptt_bot.get_post_list(board, limit=limit, offset=cur_offset)
+            cur_offset += limit
 
             post_list.extend(cur_post_list)
 
@@ -41,8 +45,13 @@ def test(ptt_bot: PyPtt.API):
         assert len(post_list) == check_rounds * limit, f'Length of post_list is not correct: {len(post_list)}'
 
         post_list.sort(key=lambda x: x[PyPtt.PostField.index])
-        print(json.dumps(post_list, indent=4, ensure_ascii=False))
+
+        # assert if the max index is correct
+        assert max_index - offset == post_list[-1][PyPtt.PostField.index], f'Max index is not correct: {max_index} and {post_list[-1][PyPtt.PostField.index]}'
+
+        # print(json.dumps(post_list, indent=4, ensure_ascii=False))
         print(f'Total posts: {len(post_list)}')
+        print('All tests passed.')
 
     test_boards = [
         'Gossiping',
