@@ -53,17 +53,24 @@ def test(ptt_bot: PyPtt.API):
         print(f'Total posts: {len(post_list)}')
         print('All tests passed.')
 
-    test_boards = [
-        'Gossiping',
-        'Stock',
-        'Baseball',
-        'NBA',
-        'LoL',
-        'Soft_Job',
-        'Tech_Job',
-        'Python',
-        'xxxxx' # non-existent board
-    ]
+    if ptt_bot.host == PyPtt.HOST.PTT1:
+        test_boards = [
+            'Gossiping',
+            'Stock',
+            'Baseball',
+            'NBA',
+            'LoL',
+            'Soft_Job',
+            'Tech_Job',
+            'Python',
+            'xxxxx' # non-existent board
+        ]
+    elif ptt_bot.host == PyPtt.HOST.PTT2:
+        test_boards = [
+            'Ptt2Law',
+            'SYSOP',
+            'xxxxx' # non-existent board
+        ]
 
     for board in test_boards:
         print(f'Testing board: {board}')
@@ -81,7 +88,7 @@ def test(ptt_bot: PyPtt.API):
 def func():
     host_list = [
         PyPtt.HOST.PTT1,
-        # PyPtt.HOST.PTT2
+        PyPtt.HOST.PTT2
     ]
 
     for host in host_list:
