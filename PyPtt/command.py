@@ -26,3 +26,6 @@ go_main_menu_type_q = 'q' * 5
 refresh = ctrl_l
 control_code = ctrl_u + star
 backspace = ctrl_h
+
+page_up = 'P'
+page_down = 'N'

@@ -94,7 +94,7 @@ def get_content(api, post_mode: bool = True):
             # 這裡是 PyPtt 最黑暗最墮落的地方，所有你所知的程式碼守則，在這裡都不適用
             # 每除完一次錯誤，我會陷入嚴重的創傷後壓力症候群，而我的腦袋會自動選擇遺忘這裡所有的一切
             # 以確保下一個週一，我可以正常上班
-            # but it works!
+            # but it works!!!
 
             # print(LastScreen)
             # print(f'last_read_line_a_temp [{last_read_line_a_temp}]')

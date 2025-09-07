@@ -115,5 +115,6 @@ string_data = {
     "user_offline": "User offline",
     "wait_for_no_fast_comment": "Because no fast comment, wait 5 sec",
     "welcome": "PyPtt v _target0_ developed by CodingMan",
-    "wrong_id_pw": "Wrong id or pw"
+    "wrong_id_pw": "Wrong id or pw",
+    "unknown_error": "Unknown error",
 }

@@ -15,6 +15,7 @@ from . import _api_get_bottom_post_list
 from . import _api_get_favourite_board
 from . import _api_get_newest_index
 from . import _api_get_post
+from . import _api_get_post_list
 from . import _api_get_time
 from . import _api_get_user
 from . import _api_give_money
@@ -1054,6 +1055,36 @@ class API:
         """
 
         _api_del_post.del_post(self, board, aid, index)
+
+    def get_post_list(self, board: str, limit: int = 20, offset: int = 0) -> list[dict]:
+        """
+        取得文章列表。
+
+        Args:
+            board (str): 看板名稱。
+            limit (int): 取得文章數量，預設為 20。
+            offset (int): 偏移量，預設為 0。
+        Returns:
+            list[dict]，文章列表，詳見 :ref:`post-field`。
+
+        Raises:
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                post_list = ptt_bot.get_post_list(board='Python', limit=10, offset=0)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+        """
+
+        return _api_get_post_list.get_post_list(self, board, limit, offset)
 
     def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
         _api_post.fast_post_step0(self, board, title, content, post_type)
