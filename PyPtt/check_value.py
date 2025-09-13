@@ -22,13 +22,13 @@ def check_range(value, min_value: int = None, max_value: int = None, name: str =
         check_type(min_value, int, 'min_value')
 
         if value < min_value:
-            raise exceptions.ParameterError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
+            raise exceptions.ParameterError(f'{name} {value} {i18n.must_bigger_than} {min_value - 1}')
 
     if max_value is not None:
         check_type(max_value, int, 'max_value')
 
         if value > max_value:
-            raise exceptions.ParameterError(f'{name} {value} {i18n.must_between} {min_value} ~ {max_value}')
+            raise exceptions.ParameterError(f'{name} {value} {i18n.must_small_than} {max_value + 1}')
 
 
 def check_index(name, index, max_value=None) -> None:
