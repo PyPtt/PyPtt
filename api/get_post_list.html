@@ -3,11 +3,11 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="索引" href="../genindex.html" /><link rel="search" title="搜尋" href="../search.html" /><link rel="next" title="login, logout" href="login_logout.html" /><link rel="prev" title="APIs" href="index.html" />
-        <link rel="canonical" href="https://pyptt.cc/api/init.html" />
+<link rel="index" title="索引" href="../genindex.html" /><link rel="search" title="搜尋" href="../search.html" /><link rel="next" title="mail" href="mail.html" /><link rel="prev" title="comment" href="comment.html" />
+        <link rel="canonical" href="https://pyptt.cc/api/get_post_list.html" />
 
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2025.07.19 -->
-        <title>init - PyPtt.cc</title>
+        <title>get_post_list - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=acfd86a5" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -180,7 +180,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -203,7 +203,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">APIs</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of APIs</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">init</a></li>
+<li class="toctree-l2"><a class="reference internal" href="init.html">init</a></li>
 <li class="toctree-l2"><a class="reference internal" href="login_logout.html">login, logout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_post.html">get_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_newest_index.html">get_newest_index</a></li>
@@ -211,7 +211,7 @@
 <li class="toctree-l2"><a class="reference internal" href="reply_post.html">reply_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="del_post.html">del_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="comment.html">comment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="get_post_list.html">get_post_list</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">get_post_list</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html">mail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_mail.html">get_mail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="del_mail.html">del_mail</a></li>
@@ -261,7 +261,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/api/init.rst.txt" title="View this page">
+  <a class="muted-link" href="../_sources/api/get_post_list.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -275,55 +275,46 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="init">
-<h1>init<a class="headerlink" href="#init" title="連結到這個標頭">¶</a></h1>
-<dl class="py function" id="module-PyPtt.API">
-<span id="api-init"></span><dt class="sig sig-object py" id="PyPtt.API.__init__">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PyPtt.API.__init__" title="連結到這個定義">¶</a></dt>
-<dd><p>初始化 PyPtt。</p>
+          <section id="get-post-list">
+<h1>get_post_list<a class="headerlink" href="#get-post-list" title="連結到這個標頭">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_post_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>取得文章列表。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>language</strong> (<a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>) – PyPtt 顯示訊息的語言。預設為 <strong>MANDARIN</strong>。</p></li>
-<li><p><strong>log_level</strong> (<a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>) – PyPtt 顯示訊息的等級。預設為 <strong>INFO</strong>。</p></li>
-<li><p><strong>screen_timeout</strong> (<em>int</em>) – 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 <strong>3 秒</strong>。</p></li>
-<li><p><strong>screen_long_timeout</strong> (<em>int</em>) – 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 <strong>10 秒</strong>。</p></li>
-<li><p><strong>screen_post_timeout</strong> (<em>int</em>) – 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 <strong>60 秒</strong>。</p></li>
-<li><p><strong>connect_mode</strong> (<a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>) – PyPtt 連線的模式。預設為 <strong>WEBSOCKETS</strong>。</p></li>
-<li><p><strong>logger_callback</strong> (<em>Callable</em>) – PyPtt 顯示訊息的 callback。預設為 None。</p></li>
-<li><p><strong>port</strong> (<em>int</em>) – PyPtt 連線的 port。預設為 <strong>23</strong>。</p></li>
-<li><p><strong>host</strong> (<a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a>) – PyPtt 連線的 PTT 伺服器。預設為 <strong>PTT1</strong>。</p></li>
-<li><p><strong>check_update</strong> (<em>bool</em>) – 是否檢查 PyPtt 的更新。預設為 <strong>False</strong>。</p></li>
+<li><p><strong>board</strong> (<em>str</em>) – 看板名稱。</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – 取得文章數量，預設為 20。</p></li>
+<li><p><strong>offset</strong> (<em>int</em>) – 偏移量，預設為 0。</p></li>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p>list[dict]，文章列表，詳見 <a class="reference internal" href="../type.html#post-field"><span class="std std-ref">PostField</span></a>。</p>
+</dd>
+<dt class="field-odd">引發<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> – 需要登入。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchBoard" title="PyPtt.PyPtt.exceptions.NoSuchBoard"><strong>NoSuchBoard</strong></a> – 看板不存在。</p></li>
+</ul>
 </dd>
 </dl>
 <p>範例:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>參考: <a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>、<a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>、<a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>、<a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a></p>
-<p>英文顯示範例:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
-
-<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span>
-    <span class="n">language</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">ENGLISH</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>除錯範例:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
-
-<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span>
-    <span class="n">log_level</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># .. login ..</span>
+    <span class="n">post_list</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post_list</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Python&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># .. do something ..</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -335,23 +326,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="login_logout.html">
+          <a class="next-page" href="mail.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">login, logout</div>
+                <div class="title">mail</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="index.html">
+          <a class="prev-page" href="comment.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">APIs</div>
+                <div class="title">comment</div>
                 
               </div>
             </a>
@@ -373,27 +364,8 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">init</a><ul>
-<li><a class="reference internal" href="#PyPtt.API.__init__"><code class="docutils literal notranslate"><span class="pre">__init__()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

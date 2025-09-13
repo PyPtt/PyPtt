@@ -20,6 +20,7 @@ APIs
    reply_post
    del_post
    comment
+   get_post_list
 
 信箱相關
 ----------------
