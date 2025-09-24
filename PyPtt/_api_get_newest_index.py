@@ -159,6 +159,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
 
         target_list = [
             connect_core.TargetUnit(screens.Target.InMailBox, break_detect=True),
+            connect_core.TargetUnit(screens.Target.InMailBoxWithCursor, break_detect=True),
             connect_core.TargetUnit(screens.Target.CursorToGoodbye, response=cmd),
         ]
 
@@ -185,7 +186,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
             cmd,
             target_list)
 
-        if index == 0:
+        if index == 0 or index == 1:
             normal_newest_index = get_index(api)
 
             if search_list is not None and len(search_list) > 0:
