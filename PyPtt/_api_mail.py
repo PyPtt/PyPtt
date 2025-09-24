@@ -47,6 +47,8 @@ def mail(api,
         if sign_file.lower() != 'x':
             raise exceptions.ParameterError(f'wrong parameter sign_file: {sign_file}')
 
+    content = lib_util.uniform_new_line(content)
+
     cmd_list = []
     # 回到主選單
     cmd_list.append(command.go_main_menu)
