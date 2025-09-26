@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import os.path
 import ssl
-import telnetlib
 import tempfile
 import threading
 import time
@@ -213,20 +212,17 @@ class API(object):
         for _ in range(2):
 
             try:
-                if self.config.connect_mode == data_type.ConnectMode.TELNET:
-                    self._core = telnetlib.Telnet(telnet_host, self.config.port)
-                else:
-                    if threading.current_thread() is not threading.main_thread():
-                        loop = asyncio.new_event_loop()
-                        asyncio.set_event_loop(loop)
+                if threading.current_thread() is not threading.main_thread():
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
 
-                    log.logger.debug('USER_AGENT',
-                                     websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
-                    self._core = asyncio.get_event_loop().run_until_complete(
-                        websockets.connect(
-                            websocket_host,
-                            origin=websocket_origin,
-                            ssl=ssl_context))
+                log.logger.debug('USER_AGENT',
+                                 websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
+                self._core = asyncio.get_event_loop().run_until_complete(
+                    websockets.connect(
+                        websocket_host,
+                        origin=websocket_origin,
+                        ssl=ssl_context))
 
                 connect_success = True
             except Exception as e:
