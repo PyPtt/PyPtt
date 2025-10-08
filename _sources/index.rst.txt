@@ -40,9 +40,9 @@ PyPtt
 
 重要消息
 --------------------
-| 2022.12.19 發佈 :doc:`Docker Image <docker>`。
-| 2022.12.08 PyPtt 1.0.0 正式發布
-| 2021.12.08 PyPtt 新增 :doc:`service` 功能
+| 2025.09.06 發佈 `PTT MCP server`_
+
+.. _PTT MCP server: https://github.com/PyPtt/ptt_mcp_server
 
 
 文件
