@@ -25,7 +25,7 @@ def test_2(ptt_bot: PyPtt.API):
         if mail_index - i <= 0:
             break
         mail_info = ptt_bot.get_mail(mail_index - i)
-        log.logger.info(f'{mail_index - i} mail result', f"[{mail_info['date']}]")
+        log.logger.info(f'{mail_index - i} mail result', f"[{mail_info[PyPtt.MailField.title]}]")
 
 
 def func():
