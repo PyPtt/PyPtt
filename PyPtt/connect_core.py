@@ -4,7 +4,6 @@ import asyncio
 import os.path
 import ssl
 import tempfile
-import threading
 import time
 import traceback
 import warnings
@@ -132,22 +131,6 @@ class TargetUnit:
         return self._secret
 
 
-class RecvData:
-    def __init__(self):
-        self.data = None
-
-
-async def websocket_recv_func(core, recv_data_obj):
-    recv_data_obj.data = await core.recv()
-
-
-async def websocket_receiver(core, screen_timeout, recv_data_obj):
-    # Wait for at most 1 second
-    await asyncio.wait_for(
-        websocket_recv_func(core, recv_data_obj),
-        timeout=screen_timeout)
-
-
 class ReceiveDataQueue(object):
     def __init__(self):
         self._ReceiveDataQueue = []
@@ -169,6 +152,18 @@ class API(object):
         self._RDQ = ReceiveDataQueue()
         self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
                                                exceptions_=exceptions.UseTooManyResources())
+        self._loop = None
+
+    def _get_event_loop(self):
+        if self._loop and not self._loop.is_closed():
+            return self._loop
+
+        try:
+            self._loop = asyncio.get_running_loop()
+        except RuntimeError:
+            self._loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self._loop)
+        return self._loop
 
     def connect(self) -> None:
         def _wait():
@@ -188,43 +183,34 @@ class API(object):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
         self.current_encoding = 'big5uao'
-        # self.log.py.info(i18n.connect_core, i18n.active)
 
         if self.config.host == data_type.HOST.PTT1:
-            telnet_host = 'ptt.cc'
             websocket_host = 'wss://ws.ptt.cc/bbs/'
             websocket_origin = 'https://term.ptt.cc'
         elif self.config.host == data_type.HOST.PTT2:
-            telnet_host = 'ptt2.cc'
             websocket_host = 'wss://ws.ptt2.cc/bbs/'
             websocket_origin = 'https://term.ptt2.cc'
         elif self.config.host == data_type.HOST.LOCALHOST:
-            telnet_host = 'localhost'
             websocket_host = 'wss://localhost'
             websocket_origin = 'https://term.ptt.cc'
         else:
-            telnet_host = self.config.host
             websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
 
         connect_success = False
+        loop = self._get_event_loop()
 
         for _ in range(2):
-
             try:
-                if threading.current_thread() is not threading.main_thread():
-                    loop = asyncio.new_event_loop()
-                    asyncio.set_event_loop(loop)
-
                 log.logger.debug('USER_AGENT',
                                  websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
-                self._core = asyncio.get_event_loop().run_until_complete(
+                self._core = loop.run_until_complete(
                     websockets.connect(
                         websocket_host,
                         origin=websocket_origin,
                         ssl=ssl_context))
-
                 connect_success = True
+                break
             except Exception as e:
                 traceback.print_tb(e.__traceback__)
                 print(e)
@@ -240,8 +226,6 @@ class API(object):
 
                 _wait()
                 continue
-
-            break
 
         if not connect_success:
             raise exceptions.ConnectError(self.config)
@@ -265,7 +249,6 @@ class API(object):
                     self._RDQ.add(screen)
                     if target == self._UseTooManyResources:
                         use_too_many_res = True
-                        # print(f'1 {use_too_many_res}')
                         break
                     target.raise_exception()
 
@@ -286,17 +269,95 @@ class API(object):
                 elif refresh:
                     add_refresh = True
 
-                if add_refresh:
-                    if not msg.endswith(command.refresh):
-                        msg = msg + command.refresh
+                if add_refresh and not msg.endswith(command.refresh):
+                    msg += command.refresh
 
                 is_secret = target.is_secret()
 
                 if target.is_break_after_send():
-                    # break_index = target_list.index(target)
                     break_detect_after_send = True
                 break
         return screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index
+
+    async def _async_send(self, msg: str, target_list: list, screen_timeout: int, refresh: bool, secret: bool) -> int:
+        current_screen_timeout = self.config.screen_timeout if screen_timeout == 0 else screen_timeout
+        is_secret = secret
+        break_detect_after_send = False
+        use_too_many_res = False
+
+        while True:
+            if refresh and msg and not msg.endswith(command.refresh):
+                msg += command.refresh
+
+            try:
+                encoded_msg = msg.encode('utf-8', 'replace')
+            except AttributeError:
+                encoded_msg = msg
+            except Exception as e:
+                traceback.print_tb(e.__traceback__)
+                print(e)
+                encoded_msg = msg.encode('utf-8', 'replace')
+
+            if is_secret:
+                log.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
+            else:
+                log.logger.debug(i18n.send_msg, str(encoded_msg))
+
+            try:
+                await self._core.send(encoded_msg)
+            except (websockets.exceptions.ConnectionClosed, websockets.exceptions.ConnectionClosedOK, RuntimeError):
+                raise exceptions.ConnectionClosed()
+
+            if break_detect_after_send:
+                return -1
+
+            msg = ''
+            receive_data_buffer = bytes()
+            start_time = time.time()
+            find_target = False
+            target_index = -1
+
+            try:
+                async with asyncio.timeout(current_screen_timeout):
+                    while True:
+                        try:
+                            data_chunk = await self._core.recv()
+                        except (websockets.exceptions.ConnectionClosed, websockets.exceptions.ConnectionClosedOK):
+                            if use_too_many_res:
+                                raise exceptions.UseTooManyResources()
+                            raise exceptions.ConnectionClosed()
+
+                        receive_data_buffer += data_chunk
+
+                        screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
+                            self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
+
+                        if self.current_encoding == 'big5uao' and not find_target:
+                            self.current_encoding = 'utf-8'
+                            screen_, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
+                                self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
+                            if find_target:
+                                screen = screen_
+                            else:
+                                self.current_encoding = 'big5uao'
+
+                        if find_target:
+                            break
+            except TimeoutError:
+                if len(receive_data_buffer) > 0:
+                    vt100_p = screens.VT100Parser(receive_data_buffer, self.current_encoding)
+                    screens.show(self.config, vt100_p.screen)
+                    self._RDQ.add(vt100_p.screen)
+                return -1
+
+            if target_index != -1:
+                return target_index
+
+            if use_too_many_res:
+                continue
+
+            if not find_target:
+                return -1
 
     def send(self, msg: str, target_list: list, screen_timeout: int = 0, refresh: bool = True,
              secret: bool = False) -> int:
@@ -307,127 +368,69 @@ class API(object):
         if self._UseTooManyResources not in target_list:
             target_list.append(self._UseTooManyResources)
 
-        if screen_timeout == 0:
-            current_screen_timeout = self.config.screen_timeout
-        else:
-            current_screen_timeout = screen_timeout
-
-        break_detect_after_send = False
-        is_secret = secret
-
-        use_too_many_res = False
-        while True:
-
-            if refresh and not msg.endswith(command.refresh):
-                msg = msg + command.refresh
-
-            try:
-                msg = msg.encode('utf-8', 'replace')
-            except AttributeError:
-                pass
-            except Exception as e:
-                traceback.print_tb(e.__traceback__)
-                print(e)
-                msg = msg.encode('utf-8', 'replace')
-
-            if is_secret:
-                log.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
+        if self.config.connect_mode == data_type.ConnectMode.TELNET:
+            # Original Telnet logic remains, as it doesn't use asyncio
+            if screen_timeout == 0:
+                current_screen_timeout = self.config.screen_timeout
             else:
-                log.logger.debug(i18n.send_msg, str(msg))
-
-            if self.config.connect_mode == data_type.ConnectMode.TELNET:
+                current_screen_timeout = screen_timeout
+            break_detect_after_send = False
+            is_secret = secret
+            use_too_many_res = False
+            while True:
+                if refresh and not msg.endswith(command.refresh):
+                    msg = msg + command.refresh
+                try:
+                    msg = msg.encode('utf-8', 'replace')
+                except AttributeError:
+                    pass
+                if is_secret:
+                    log.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
+                else:
+                    log.logger.debug(i18n.send_msg, str(msg))
                 try:
                     self._core.read_very_eager()
                     self._core.write(msg)
                 except EOFError:
                     raise exceptions.ConnectionClosed()
-            else:
-                try:
-                    asyncio.get_event_loop().run_until_complete(
-                        self._core.send(msg))
-                except websockets.exceptions.ConnectionClosedError:
-                    raise exceptions.ConnectionClosed()
-                except RuntimeError:
-                    raise exceptions.ConnectionClosed()
-                except websockets.exceptions.ConnectionClosedOK:
-                    raise exceptions.ConnectionClosed()
-
                 if break_detect_after_send:
                     return -1
-
-            msg = ''
-            receive_data_buffer = bytes()
-
-            start_time = time.time()
-            mid_time = time.time()
-            while mid_time - start_time < current_screen_timeout:
-
-                # print(1)
-                recv_data_obj = RecvData()
-
-                if self.config.connect_mode == data_type.ConnectMode.TELNET:
+                msg = ''
+                receive_data_buffer = bytes()
+                start_time = time.time()
+                mid_time = time.time()
+                while mid_time - start_time < current_screen_timeout:
                     try:
-                        recv_data_obj.data = self._core.read_very_eager()
+                        data = self._core.read_very_eager()
                     except EOFError:
                         return -1
-
-                else:
-                    try:
-
-                        asyncio.get_event_loop().run_until_complete(
-                            websocket_receiver(
-                                self._core, current_screen_timeout, recv_data_obj))
-
-                    except websockets.exceptions.ConnectionClosed:
-                        if use_too_many_res:
-                            raise exceptions.UseTooManyResources()
-                        raise exceptions.ConnectionClosed()
-                    except websockets.exceptions.ConnectionClosedOK:
-                        raise exceptions.ConnectionClosed()
-                    except asyncio.TimeoutError:
-                        return -1
-                    except RuntimeError:
-                        raise exceptions.ConnectionClosed()
-
-                receive_data_buffer += recv_data_obj.data
-
-                screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
-                    self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
-
-                if self.current_encoding == 'big5uao' and not find_target:
-                    self.current_encoding = 'utf-8'
-                    screen_, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
+                    receive_data_buffer += data
+                    screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                         self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
-
+                    if target_index != -1:
+                        return target_index
+                    if use_too_many_res:
+                        continue
                     if find_target:
-                        screen = screen_
-                    else:
-                        self.current_encoding = 'big5uao'
-
-                # print(4)
-                if target_index != -1:
-                    return target_index
-
-                if use_too_many_res:
-                    continue
-
-                if find_target:
-                    break
-                if len(screen) > 0:
-                    screens.show(self.config, screen)
-                    self._RDQ.add(screen)
-
-                # print(6)
-
-                mid_time = time.time()
-
-            if not find_target:
-                return -1
-        return -2
+                        break
+                    if len(screen) > 0:
+                        screens.show(self.config, screen)
+                        self._RDQ.add(screen)
+                    mid_time = time.time()
+                if not find_target:
+                    return -1
+            return -2
+        else:
+            loop = self._get_event_loop()
+            return loop.run_until_complete(
+                self._async_send(msg, target_list, screen_timeout, refresh, secret)
+            )
 
     def close(self):
         if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
-            asyncio.get_event_loop().run_until_complete(self._core.close())
+            if self._core and self._core.open:
+                loop = self._get_event_loop()
+                loop.run_until_complete(self._core.close())
         else:
             self._core.close()
 
