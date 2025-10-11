@@ -13,7 +13,11 @@ def test(ptt_bot: PyPtt.API):
     newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, 'Test')
 
     for i in range(10):
-        ptt_bot.get_post(board='Test', index=newest_index - i)
+        try:
+            ptt_bot.del_post(board='Test', index=newest_index - i)
+        except PyPtt.NoPermission:
+            print(f'No permission to delete post index {newest_index - i}')
+            pass
 
 
 def func():

@@ -54,6 +54,14 @@ def test(ptt_bot):
             aid=post_info['aid'],
         )
 
+        for i in range(50):
+            ptt_bot.comment(
+                board=board,
+                comment_type=PyPtt.CommentType.ARROW,
+                content=f'連續推文 {i+1}',
+                aid=post_info['aid'],
+            )
+
 
 def func():
     host_list = [
