@@ -20,10 +20,11 @@ PyPtt 是一套以 Pure Python 實作的 PTT (批踢踢) SDK，提供了完整�
 - 其他功能: 即時訊息(水球)、P幣轉帳
 
 ### 系統需求
-- Python 3.8 以上
+- Python 3.11 以上
 - 非雲端環境 (因 PTT 封鎖雲端 IP)
 
 ### 快速開始
+
 ```bash
 pip install PyPtt
 ```

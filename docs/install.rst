@@ -3,7 +3,7 @@
 
 Python 版本
 --------------
-| 推薦使用 CPython_ 3.8+。
+| 推薦使用 CPython_ 3.11+。
 
 .. _CPython: https://www.python.org/
 

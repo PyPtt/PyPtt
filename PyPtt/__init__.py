@@ -8,4 +8,4 @@ from .service import Service
 
 LOG_LEVEL = LogLevel
 
-_main_version = '1.3'
+_main_version = '1.4'
