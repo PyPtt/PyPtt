@@ -1,8 +1,10 @@
 import json
+import logging
 
 import PyPtt
-from PyPtt import log
-from . import config
+import config
+
+logger = logging.getLogger()
 
 
 def log_to_file(msg: str):
@@ -35,25 +37,25 @@ def login(ptt_bot: PyPtt.API, kick: bool = True):
             ptt_bot.login(ptt_id=ptt_id, ptt_pw=ptt_pw, kick_other_session=kick)
             break
         except PyPtt.LoginError:
-            log.logger.info('登入失敗')
+            logger.info('登入失敗')
             assert False
         except PyPtt.WrongIDorPassword:
-            log.logger.info('帳號密碼錯誤')
+            logger.info('帳號密碼錯誤')
             assert False
         except PyPtt.LoginTooOften:
-            log.logger.info('請稍等一下再登入')
+            logger.info('請稍等一下再登入')
             assert False
 
     if not ptt_bot.is_registered_user:
-        log.logger.info('未註冊使用者')
+        logger.info('未註冊使用者')
 
         if ptt_bot.process_picks != 0:
-            log.logger.info(f'註冊單處理順位 {ptt_bot.process_picks}')
+            logger.info(f'註冊單處理順位 {ptt_bot.process_picks}')
 
 
 def show_data(data, key: str = None):
     if isinstance(data, dict):
-        log.logger.info(f'{key}: {data[key]}')
+        logger.info(f'{key}: {data[key]}')
 
 
 def del_all_post(ptt_bot: PyPtt.API):

@@ -51,6 +51,8 @@ def test():
         # 'language': PyPtt.Language.ENGLISH,
     }
 
+    print(PyPtt.__version__)
+
     service = Service(pyptt_init_config)
 
     try:
