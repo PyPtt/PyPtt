@@ -8,6 +8,8 @@ import PyPtt
 from PyPtt import Service
 from tests import config
 
+test_thread_num = 10
+
 
 def api_test(thread_id, service):
     result = service.call('get_time')
@@ -36,6 +38,13 @@ def api_test(thread_id, service):
     })
     print(f'thread id {thread_id}', 'post', result)
 
+    for i in range(test_thread_num):
+        newest_index = service.call('get_newest_index', {'index_type': PyPtt.NewIndex.BOARD, 'board': 'Test'})
+        result = service.call('del_post', {
+            'board': 'Test',
+            'index': newest_index - i,
+        })
+    print(f'thread id {thread_id}', 'del_post', result)
 
 def test():
     pyptt_init_config = {
@@ -49,7 +58,7 @@ def test():
         service.call('login', {'ptt_id': config.PTT1_ID, 'ptt_pw': config.PTT1_PW})
 
         pool = []
-        for i in range(10):
+        for i in range(test_thread_num):
             t = threading.Thread(target=api_test, args=(i, service))
             t.start()
             pool.append(t)

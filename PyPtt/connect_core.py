@@ -430,7 +430,10 @@ class API(object):
         if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
             if self._core and self._core.open:
                 loop = self._get_event_loop()
-                loop.run_until_complete(self._core.close())
+                try:
+                    loop.run_until_complete(asyncio.wait_for(self._core.close(), timeout=2.0))
+                except (asyncio.TimeoutError, RuntimeError):
+                    pass
         else:
             self._core.close()
 
