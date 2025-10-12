@@ -8,19 +8,13 @@ from tests import util
 
 @pytest.fixture(params=[PyPtt.HOST.PTT1, PyPtt.HOST.PTT2])
 def ptt_bot(request):
-    """
-    Pytest fixture to create and tear down a PyPtt.API instance.
-    It's parameterized to run tests for each host.
+    """This local, function-scoped fixture overrides the session-scoped one
+    from conftest.py. It provides a clean, isolated API instance for this
+    test file, which is necessary because these tests manipulate login/logout state.
     """
     bot = PyPtt.API(host=request.param)
-
-    # 'yield' passes the 'bot' object to the test function
     yield bot
-
-    # --- Teardown code runs after the test is complete ---
-    # Ensure the user is logged out and the connection is closed.
-    # NOTE: Accessing the internal `_is_login` attribute is not ideal,
-    # but necessary here for robust teardown.
+    # Teardown
     if bot._is_login:
         bot.logout()
 
