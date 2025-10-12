@@ -1,27 +1,49 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
 build/
+develop-eggs/
 dist/
-/CrawlBoardResult.txt
-/.pypirc
-PTTLibrary.egg-info/
-*Out.txt
-/Big5Data.txt
-PTTLibrary-*/
-/PTTLibrary/i18n.txt
-/Test.txt
-Account*.txt
+eggs/
+*.egg-info
+.installed.cfg
+*.manifest
 *.spec
-/LogHandler.txt
-.vscode
-.idea/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.coverage
+.tox/
+htmlcov/
+
+# Virtual environment
+.env/
 venv/
-/log.txt
-PyPtt.egg-info/
-/test_account*.txt
-/test_result.txt
-*.json
-tests/ptt.sh
-docs/_build/
+env/
+
+# Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
 .DS_Store
-ptt.sh
+.Trashes
+Thumbs.db
+
+# Sensitive information (example)
 .env
+
+_build/
