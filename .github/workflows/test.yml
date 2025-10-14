@@ -44,5 +44,8 @@ jobs:
           flake8 PyPtt/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test
         run: |
-          python tests/init.py
+          python -m pytest tests/test_init.py
+          python -m pytest tests/test_i18n.py
+          python -m pytest tests/test_exceptions.py
+          
     
