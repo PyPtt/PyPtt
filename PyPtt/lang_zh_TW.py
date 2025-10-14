@@ -114,7 +114,7 @@ string_data = {
     "user_has_previously_been_banned": "使用者之前已被禁言",
     "user_offline": "使用者離線",
     "wait_for_no_fast_comment": "因禁止快速連續推文，所以等待五秒",
-    "welcome": "PyPtt v _target0_ 由 CodingMan 開發",
+    "welcome": "PyPtt v _target0_",
     "wrong_id_pw": "帳號密碼錯誤",
     "unknown_error": "未知錯誤",
 }
