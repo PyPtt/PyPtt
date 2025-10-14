@@ -1,6 +1,13 @@
 import pytest
 import PyPtt
-from tests import util
+
+try:
+    from tests import util
+
+    login_ptt = True
+except ModuleNotFoundError:
+    # run in ci
+    login_ptt = False
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -11,22 +18,23 @@ def ptt_bots(request):
     """
 
     ptt1_bot = PyPtt.API(host=PyPtt.HOST.PTT1)
-    util.login(ptt1_bot, kick=True)
+    if login_ptt: util.login(ptt1_bot, kick=True)
 
     ptt2_bot = PyPtt.API(host=PyPtt.HOST.PTT2)
-    util.login(ptt2_bot, kick=True)
+    if login_ptt: util.login(ptt2_bot, kick=True)
 
     yield ptt1_bot, ptt2_bot
     # Final teardown at the end of the session
 
-    util.del_all_post(ptt1_bot)
-    try:
-        ptt1_bot.logout()
-    except Exception:
-        pass
+    if login_ptt:
+        util.del_all_post(ptt1_bot)
+        try:
+            ptt1_bot.logout()
+        except Exception:
+            pass
 
-    util.del_all_post(ptt2_bot)
-    try:
-        ptt2_bot.logout()
-    except Exception:
-        pass
+        util.del_all_post(ptt2_bot)
+        try:
+            ptt2_bot.logout()
+        except Exception:
+            pass
