@@ -42,6 +42,9 @@ def test_del_own_post(ptt_bots):
         for i in range(5):
             deleted_post_data = ptt_bot.get_post('Test', index=newest_index - i)
 
+            if deleted_post_data[PyPtt.PostField.author].split(' ')[0] != post_data[PyPtt.PostField.author].split(' ')[0]:
+                continue
+
             if ptt_bot.host == PyPtt.HOST.PTT1:
                 assert deleted_post_data[PyPtt.PostField.post_status] in [
                     PyPtt.PostStatus.DELETED_BY_AUTHOR,
