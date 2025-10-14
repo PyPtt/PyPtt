@@ -20,45 +20,36 @@ PTT2_BOARD_CASES = [
     ('PttSuggest', PyPtt.SearchType.KEYWORD, '[問題]'),
 ]
 
-def test_get_mail_index(logged_in_bot: PyPtt.API):
+def test_get_mail_index(ptt_bots):
     """Tests getting the newest mail index."""
-    index = logged_in_bot.get_newest_index(PyPtt.NewIndex.MAIL)
-    assert isinstance(index, int) and index > 0
+    for ptt_bot in ptt_bots:
+        index = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL)
+        assert isinstance(index, int) and index > 0
 
 
-@pytest.mark.parametrize("board, search_type, search_condition", PTT1_BOARD_CASES)
-def test_get_board_index_ptt1(logged_in_bot: PyPtt.API, board, search_type, search_condition):
-    """Tests getting the newest board index on PTT1 with various search parameters."""
-    if logged_in_bot.config.host != PyPtt.HOST.PTT1:
-        pytest.skip("This test is for PTT1 only.")
-
-    index = logged_in_bot.get_newest_index(
-        index_type=PyPtt.NewIndex.BOARD,
-        board=board,
-        search_type=search_type,
-        search_condition=search_condition
-    )
-    assert isinstance(index, int) and index > 0
-
-
-@pytest.mark.parametrize("board, search_type, search_condition", PTT2_BOARD_CASES)
-def test_get_board_index_ptt2(logged_in_bot: PyPtt.API, board, search_type, search_condition):
+def test_get_board_index(ptt_bots):
     """Tests getting the newest board index on PTT2 with various search parameters."""
-    if logged_in_bot.config.host != PyPtt.HOST.PTT2:
-        pytest.skip("This test is for PTT2 only.")
+    for ptt_bot in ptt_bots:
+        if ptt_bot.config.host == PyPtt.HOST.PTT1:
+            test_params = PTT1_BOARD_CASES
+        else:
+            test_params = PTT2_BOARD_CASES
 
-    index = logged_in_bot.get_newest_index(
-        index_type=PyPtt.NewIndex.BOARD,
-        board=board,
-        search_type=search_type,
-        search_condition=search_condition
-    )
-    assert isinstance(index, int) and index > 0
+        for board, search_type, search_condition in test_params:
+
+            index = ptt_bot.get_newest_index(
+                index_type=PyPtt.NewIndex.BOARD,
+                board=board,
+                search_type=search_type,
+                search_condition=search_condition
+            )
+            assert isinstance(index, int) and index > 0
 
 
-def test_get_index_of_non_existent_board(logged_in_bot: PyPtt.API):
+def test_get_index_of_non_existent_board(ptt_bots):
     """Tests that getting the index of a non-existent board raises NoSuchBoard exception."""
-    with pytest.raises(exceptions.NoSuchBoard):
-        logged_in_bot.get_newest_index(
-            PyPtt.NewIndex.BOARD,
-            board='board_not_exist_xyz123')
+    for logged_in_bot in ptt_bots:
+        with pytest.raises(exceptions.NoSuchBoard):
+            logged_in_bot.get_newest_index(
+                PyPtt.NewIndex.BOARD,
+                board='board_not_exist_xyz123')

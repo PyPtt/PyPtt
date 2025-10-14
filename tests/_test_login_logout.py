@@ -15,8 +15,10 @@ def ptt_bot(request):
     bot = PyPtt.API(host=request.param)
     yield bot
     # Teardown
-    if bot._is_login:
+    try:
         bot.logout()
+    except Exception:
+        pass
 
 
 def test_login_logout(ptt_bot: PyPtt.API):

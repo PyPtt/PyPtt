@@ -88,7 +88,7 @@ class API:
             raise TypeError('[PyPtt] log_level must be log.Level')
 
         logger_callback = kwargs.get('logger_callback', None)
-        log.init(log_level, logger_callback=logger_callback)
+        log.init(log_level=log_level, logger_callback=logger_callback)
 
         language = kwargs.get('language', data_type.Language.MANDARIN)
         if not isinstance(language, str):
