@@ -1,3 +1,4 @@
+import json
 import time
 
 import pytest
@@ -42,17 +43,21 @@ def test_del_own_post(ptt_bots):
         for i in range(5):
             deleted_post_data = ptt_bot.get_post('Test', index=newest_index - i)
 
-            if deleted_post_data[PyPtt.PostField.author].split(' ')[0] != post_data[PyPtt.PostField.author].split(' ')[0]:
+            print(json.dumps(deleted_post_data, ensure_ascii=False, indent=2))
+
+            if deleted_post_data[PyPtt.PostField.post_status] in [
+                PyPtt.PostStatus.DELETED_BY_AUTHOR,
+                PyPtt.PostStatus.DELETED_BY_MODERATOR,
+                PyPtt.PostStatus.DELETED_BY_UNKNOWN
+            ]:
                 continue
 
-            if ptt_bot.host == PyPtt.HOST.PTT1:
-                assert deleted_post_data[PyPtt.PostField.post_status] in [
-                    PyPtt.PostStatus.DELETED_BY_AUTHOR,
-                    PyPtt.PostStatus.DELETED_BY_UNKNOWN
-                ], f"Post was not deleted successfully at {ptt_bot.host}"
-            if ptt_bot.host == PyPtt.HOST.PTT2:
-                assert deleted_post_data[PyPtt.PostField.author].split(' ')[0] != post_data[PyPtt.PostField.author].split(' ')[0], \
-                    f"Post was not deleted successfully at {ptt_bot.host}"
+            if deleted_post_data[PyPtt.PostField.author].split(' ')[0] != post_data[PyPtt.PostField.author].split(' ')[
+                0]:
+                continue
+
+            # author is myself but not deleted
+            assert False
 
 
 

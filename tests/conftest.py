@@ -27,14 +27,14 @@ def ptt_bots(request):
     # Final teardown at the end of the session
 
     if login_ptt:
-        util.del_all_post(ptt1_bot)
         try:
+            util.del_all_post(ptt1_bot)
             ptt1_bot.logout()
         except Exception:
             pass
 
-        util.del_all_post(ptt2_bot)
         try:
+            util.del_all_post(ptt2_bot)
             ptt2_bot.logout()
         except Exception:
             pass

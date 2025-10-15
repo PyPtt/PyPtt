@@ -47,5 +47,4 @@ jobs:
           python -m pytest tests/test_init.py
           python -m pytest tests/test_i18n.py
           python -m pytest tests/test_exceptions.py
-          
-    
+          python -m pytest tests/test_logger.py

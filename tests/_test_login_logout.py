@@ -30,12 +30,7 @@ def test_login_logout(ptt_bot: PyPtt.API):
     util.login(ptt_bot, kick=True)
     ptt_bot.logout()
 
-    print('wait', end=' ')
-    max_wait_time = 5
-    for sec in range(max_wait_time):
-        print(max_wait_time - sec, end=' ')
-        time.sleep(1)
-    print()
+    time.sleep(5)
 
     # Second login/logout cycle
     util.login(ptt_bot, kick=False)
