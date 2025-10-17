@@ -45,10 +45,10 @@ jobs:
           flake8 PyPtt/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test
         run: |
-          python -m pytest tests/test_init.py
-          python -m pytest tests/test_i18n.py
-          python -m pytest tests/test_exceptions.py
-          python -m pytest tests/test_logger.py
+          python -m pytest tests/test_init.py \
+          tests/test_i18n.py \
+          tests/test_exceptions.py \
+          tests/test_logger.py
 
   deploy:
     needs: test
@@ -61,12 +61,24 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Download PyPI info for version check
+        run: wget -q -O pypi_version.json https://pypi.org/pypi/PyPtt/json
+      - name: Check for version duplication
+        run: |
+          LOCAL_VERSION=$(grep '__version__' PyPtt/__init__.py | cut -d"'" -f2)
+          PYPI_VERSION=$(jq -r '.info.version' pypi_version.json)
+          echo "Local version: $LOCAL_VERSION"
+          echo "PyPI version: $PYPI_VERSION"
+          if [ "$LOCAL_VERSION" == "$PYPI_VERSION" ]; then
+            echo "Error: Version $LOCAL_VERSION already exists on PyPI. Please update the version in PyPtt/__init__.py"
+            exit 1
+          else
+            echo "Version check passed. $LOCAL_VERSION is a new version."
+          fi
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install build
-          # Download PyPI information for version generation
-          wget -q -O pypi_version.json https://pypi.org/pypi/PyPtt/json
       - name: Update SSL certificates
         run: |
           python3 scripts/gen_ssl.py
@@ -111,7 +123,8 @@ jobs:
             ghcr.io/${{ steps.image_name.outputs.NAME }}:latest
             ghcr.io/${{ steps.image_name.outputs.NAME }}:${{ env.PYPTT_VERSION }}
           build-args: |
-            GITHUB_REF_NAME=${{ github.ref_name }}
+            PYPTT_VERSION=${{ env.PYPTT_VERSION }}
+            PYPI_REGISTRY_URL=https://pypi.org/simple
       - name: Sanitize branch name for Docker tag
         if: github.ref != 'refs/heads/master'
         id: sanitize_branch
@@ -125,4 +138,5 @@ jobs:
           push: true
           tags: ghcr.io/${{ steps.image_name.outputs.NAME }}:test-${{ steps.sanitize_branch.outputs.TAG_SUFFIX }}
           build-args: |
-            GITHUB_REF_NAME=${{ github.ref_name }}
+            PYPTT_VERSION=${{ env.PYPTT_VERSION }}
+            PYPI_REGISTRY_URL=https://test.pypi.org/simple
