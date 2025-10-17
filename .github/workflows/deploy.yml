@@ -114,17 +114,13 @@ jobs:
           build-args: |
             PYPTT_VERSION=${{ env.PYPTT_VERSION }}
             PYPI_REGISTRY_URL=https://pypi.org/simple
-      - name: Sanitize branch name for Docker tag
-        if: github.ref != 'refs/heads/master'
-        id: sanitize_branch
-        run: echo "TAG_SUFFIX=$(echo ${{ github.ref_name }} | sed 's/\//-/g')" >> $GITHUB_OUTPUT
       - name: Build and push Docker image for test branches
         if: github.ref != 'refs/heads/master'
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ steps.image_name.outputs.NAME }}:dev-${{ steps.sanitize_branch.outputs.TAG_SUFFIX }}
+          tags: ghcr.io/${{ steps.image_name.outputs.NAME }}:${{ env.PYPTT_VERSION }}
           build-args: |
             PYPTT_VERSION=${{ env.PYPTT_VERSION }}
             PYPI_REGISTRY_URL=https://test.pypi.org/simple
