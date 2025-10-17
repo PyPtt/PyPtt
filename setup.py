@@ -6,9 +6,9 @@ from setuptools import setup
 with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
     data = f.read().strip()
     version = data.split('__version__ = ')[1].split('\n')[0].strip().strip('\'')
-    print('version:', version)
+    print('main_version:', version)
 
-with open('version.txt', 'w', encoding='utf-8') as f:
+with open('main_version.txt', 'w', encoding='utf-8') as f:
     f.write(version)
 
 # Append dev version for non-master branches in GitHub Actions
@@ -19,6 +19,9 @@ if github_ref and github_run_number and not github_ref.endswith('/master'):
     version = f"{version}.dev{github_run_number}"
 
 print('final version:', version)
+
+with open('final_version.txt', 'w', encoding='utf-8') as f:
+    f.write(version)
 
 # This setup.py is needed for editable installs and for the dynamic version.
 setup(version=version)

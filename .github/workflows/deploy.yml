@@ -63,15 +63,15 @@ jobs:
         run: wget -q -O pypi_version.json https://pypi.org/pypi/PyPtt/json
       - name: Check for version duplication
         run: |
-          LOCAL_VERSION=$(cat version.txt)
+          LOCAL_MAIN_VERSION=$(cat main_version.txt)
           PYPI_VERSION=$(jq -r '.info.version' pypi_version.json)
-          echo "Local version: $LOCAL_VERSION"
+          echo "Local version: $LOCAL_MAIN_VERSION"
           echo "PyPI version: $PYPI_VERSION"
-          if [ "$LOCAL_VERSION" == "$PYPI_VERSION" ]; then
-            echo "Error: Version $LOCAL_VERSION already exists on PyPI. Please update the version in PyPtt/__init__.py"
+          if [ "$LOCAL_MAIN_VERSION" == "$PYPI_VERSION" ]; then
+            echo "Error: Version $LOCAL_MAIN_VERSION already exists on PyPI. Please update the version in PyPtt/__init__.py"
             exit 1
           else
-            echo "Version check passed. $LOCAL_VERSION is a new version."
+            echo "Version check passed. $LOCAL_MAIN_VERSION is a new version."
           fi
 
       - name: Publish package to TestPyPI
@@ -88,7 +88,7 @@ jobs:
           password: ${{ secrets.PYPI_API_TOKEN }}
       - name: Get package version
         id: get_version
-        run: echo "PYPTT_VERSION=$(cat version.txt)" >> $GITHUB_ENV
+        run: echo "PYPTT_VERSION=$(cat final_version.txt)" >> $GITHUB_ENV
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
