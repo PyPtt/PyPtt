@@ -1,8 +1,20 @@
 from setuptools import setup
+import re
+import os
 
-import PyPtt
+def get_version():
+    """
+    Read version from __init__.py
+    """
+    # read the main version from __init__.py
+    with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
+        data = f.read().strip()
+        cur_version = data.split('__version__ = ')[1].split('\n')[0].strip().strip('\'')
+        print('version:', cur_version)
 
-version = PyPtt.__version__
+    return cur_version
+
+version = get_version()
 print('the next version:', version)
 
 setup(
@@ -51,7 +63,6 @@ setup(
         'AutoStrEnum',
         'PyYAML',
     ],
-    setup_requires=['AutoStrEnum'],
     extras_require={
         'api': [
             'fastapi',
