@@ -54,6 +54,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool) -> None:
 
     if api._is_login:
         api.logout()
+        api._is_login = False
 
     api.config.kick_other_session = kick_other_session
 
