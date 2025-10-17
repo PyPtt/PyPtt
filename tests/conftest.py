@@ -1,13 +1,9 @@
 import pytest
 import PyPtt
 
-try:
-    from tests import util
+from tests import util
 
-    login_ptt = True
-except ModuleNotFoundError:
-    # run in ci
-    login_ptt = False
+is_run_in_github_actions = util.is_running_in_github_actions()
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -18,15 +14,15 @@ def ptt_bots(request):
     """
 
     ptt1_bot = PyPtt.API(host=PyPtt.HOST.PTT1)
-    if login_ptt: util.login(ptt1_bot, kick=True)
+    if not is_run_in_github_actions: util.login(ptt1_bot, kick=True)
 
     ptt2_bot = PyPtt.API(host=PyPtt.HOST.PTT2)
-    if login_ptt: util.login(ptt2_bot, kick=True)
+    if not is_run_in_github_actions: util.login(ptt2_bot, kick=True)
 
     yield ptt1_bot, ptt2_bot
     # Final teardown at the end of the session
 
-    if login_ptt:
+    if not is_run_in_github_actions:
         try:
             util.del_all_post(ptt1_bot)
             ptt1_bot.logout()

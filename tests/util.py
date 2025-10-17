@@ -66,3 +66,7 @@ def del_all_post(ptt_bot: PyPtt.API):
             ptt_bot.del_post(board='Test', index=newest_index - i)
         except Exception:
             pass
+
+def is_running_in_github_actions() -> bool:
+    import os
+    return os.getenv('GITHUB_ACTIONS') == 'true'
