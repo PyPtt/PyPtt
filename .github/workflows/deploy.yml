@@ -88,7 +88,7 @@ jobs:
           password: ${{ secrets.PYPI_API_TOKEN }}
       - name: Get package version
         id: get_version
-        run: echo "PYPTT_VERSION=$(grep '__version__' PyPtt/__init__.py | cut -d"'" -f2)" >> $GITHUB_ENV
+        run: echo "PYPTT_VERSION=$(cat version.txt)" >> $GITHUB_ENV
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -124,7 +124,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ steps.image_name.outputs.NAME }}:test-${{ steps.sanitize_branch.outputs.TAG_SUFFIX }}
+          tags: ghcr.io/${{ steps.image_name.outputs.NAME }}:dev-${{ steps.sanitize_branch.outputs.TAG_SUFFIX }}
           build-args: |
             PYPTT_VERSION=${{ env.PYPTT_VERSION }}
             PYPI_REGISTRY_URL=https://test.pypi.org/simple
