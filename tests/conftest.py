@@ -1,9 +1,12 @@
 import pytest
 import PyPtt
 
-from tests import util
+try:
+    from tests import util
+    is_run_in_github_actions = False
+except KeyError:
+    is_run_in_github_actions = True
 
-is_run_in_github_actions = util.is_running_in_github_actions()
 
 
 @pytest.fixture(scope="session", autouse=True)
