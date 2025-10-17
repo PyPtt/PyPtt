@@ -51,6 +51,7 @@ setup(
         'AutoStrEnum',
         'PyYAML',
     ],
+    setup_requires=['AutoStrEnum'],
     extras_require={
         'api': [
             'fastapi',
