@@ -1,9 +1,11 @@
 import PyPtt
 import pytest
 
+from tests import config
+
 def test_give_money(ptt_bots):
     """Tests giving PTT money to a user."""
-    recipient_id = 'janice001'
+    recipient_id = config.TEST_USER
     amount = 1
 
     for ptt_bot in ptt_bots:
