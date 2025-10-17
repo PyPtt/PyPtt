@@ -75,7 +75,7 @@ jobs:
         run: wget -q -O pypi_version.json https://pypi.org/pypi/PyPtt/json
       - name: Check for version duplication
         run: |
-          LOCAL_VERSION=$(echo version.txt)
+          LOCAL_VERSION=$(cat version.txt)
           PYPI_VERSION=$(jq -r '.info.version' pypi_version.json)
           echo "Local version: $LOCAL_VERSION"
           echo "PyPI version: $PYPI_VERSION"

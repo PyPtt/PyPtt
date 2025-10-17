@@ -1,12 +1,9 @@
 FROM python:3.14.0-alpine
 
-# These ARGs will be passed from the GitHub Actions workflow
-ARG PYPTT_VERSION
-ARG PYPI_REGISTRY_URL
-
 WORKDIR /app
 
 COPY PyPtt/ /app/
+COPY requirements.txt /app/
 
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
