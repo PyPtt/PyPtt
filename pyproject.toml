@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyPtt"
+dynamic = ["version"]
+description = "PyPtt github: https://github.com/PyPtt/PyPtt"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "GNU Lesser General Public License v3 (LGPLv3)" }
+keywords = ["PTT", "crawler", "bot", "library", "websockets"]
+authors = [
+  { name = "CodingMan", email = "pttcodingman@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Communications :: BBS",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Natural Language :: Chinese (Traditional)",
+    "Natural Language :: English",
+]
+
+dependencies = [
+    "progressbar2",
+    "websockets==12.0",
+    "uao",
+    "requests==2.32.4",
+    "AutoStrEnum",
+    "PyYAML",
+]
+
+[project.urls]
+Homepage = "https://pyptt.cc/"
+Repository = "https://github.com/PyPtt/PyPtt"
+
+[project.optional-dependencies]
+api = [
+    "fastapi",
+    "uvicorn[standard]",
+]
+dev = [
+    "pytest",
+    "python-dotenv",
+]
+
+[tool.setuptools]
+packages = ["PyPtt"]
+
+[tool.setuptools.dynamic]
+version = { attr = "PyPtt.__version__" }
+
+[tool.setuptools.package-data]
+PyPtt = ["ssl/*.pem"]
