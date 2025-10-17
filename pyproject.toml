@@ -59,7 +59,7 @@ dev = [
 packages = ["PyPtt"]
 
 [tool.setuptools.dynamic]
-version = { attr = "PyPtt.__version__" }
+
 
 [tool.setuptools.package-data]
 PyPtt = ["ssl/*.pem"]
