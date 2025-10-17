@@ -5,8 +5,9 @@ FROM python:3.14.0-alpine
 # Set the working directory to /app
 WORKDIR /app
 
-# Install build dependencies
-RUN pip install --upgrade pip
+# Install build dependencies, including wget for the setup.py script
+RUN apk add --no-cache wget && \
+    pip install --upgrade pip
 
 # Copy PyPtt source and install it
 # This will install the PyPtt version from the current repository
