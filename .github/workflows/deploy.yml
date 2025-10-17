@@ -2,20 +2,9 @@ name: Test and Deploy
 
 on:
   push:
-    paths:
-      - 'PyPtt/**/*'
-      - 'setup.py'
-      - 'requirements.txt'
-      - 'docker/*'
-    branches:
-      - '**'
   pull_request:
     types:
       - opened
-    paths:
-      - 'PyPtt/**/*'
-      - 'setup.py'
-      - 'requirements.txt'
   workflow_dispatch:
 
 jobs:

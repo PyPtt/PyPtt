@@ -5,7 +5,7 @@ name: docs
 on:
   push:
     branches:
-      - master  # Run when changes are pushed to master branch
+      - master
   workflow_dispatch:
 
 jobs:
