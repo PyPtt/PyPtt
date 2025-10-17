@@ -15,7 +15,18 @@ def get_version():
     return cur_version
 
 version = get_version()
-print('the next version:', version)
+
+# Append dev version for non-master branches in GitHub Actions
+github_ref = os.environ.get("GITHUB_REF")
+github_run_number = os.environ.get("GITHUB_RUN_NUMBER")
+
+if github_ref and github_run_number and github_ref != 'refs/heads/master':
+    version = f"{version}.dev{github_run_number}"
+
+# output the version
+with open('version.txt', 'w', encoding='utf-8') as f:
+    f.write(version)
+print('version:', version)
 
 setup(
     name='PyPtt',  # Required

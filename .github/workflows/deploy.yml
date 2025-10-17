@@ -61,20 +61,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Download PyPI info for version check
-        run: wget -q -O pypi_version.json https://pypi.org/pypi/PyPtt/json
-      - name: Check for version duplication
-        run: |
-          LOCAL_VERSION=$(grep '__version__' PyPtt/__init__.py | cut -d"'" -f2)
-          PYPI_VERSION=$(jq -r '.info.version' pypi_version.json)
-          echo "Local version: $LOCAL_VERSION"
-          echo "PyPI version: $PYPI_VERSION"
-          if [ "$LOCAL_VERSION" == "$PYPI_VERSION" ]; then
-            echo "Error: Version $LOCAL_VERSION already exists on PyPI. Please update the version in PyPtt/__init__.py"
-            exit 1
-          else
-            echo "Version check passed. $LOCAL_VERSION is a new version."
-          fi
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -85,6 +71,21 @@ jobs:
       - name: Build package
         run: |
           python -m build
+      - name: Download PyPI info for version check
+        run: wget -q -O pypi_version.json https://pypi.org/pypi/PyPtt/json
+      - name: Check for version duplication
+        run: |
+          LOCAL_VERSION=$(echo version.txt)
+          PYPI_VERSION=$(jq -r '.info.version' pypi_version.json)
+          echo "Local version: $LOCAL_VERSION"
+          echo "PyPI version: $PYPI_VERSION"
+          if [ "$LOCAL_VERSION" == "$PYPI_VERSION" ]; then
+            echo "Error: Version $LOCAL_VERSION already exists on PyPI. Please update the version in PyPtt/__init__.py"
+            exit 1
+          else
+            echo "Version check passed. $LOCAL_VERSION is a new version."
+          fi
+
       - name: Publish package to TestPyPI
         if: github.ref != 'refs/heads/master'
         uses: pypa/gh-action-pypi-publish@release/v1
