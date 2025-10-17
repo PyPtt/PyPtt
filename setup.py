@@ -18,5 +18,7 @@ github_run_number = os.environ.get("GITHUB_RUN_NUMBER")
 if github_ref and github_run_number and not github_ref.endswith('/master'):
     version = f"{version}.dev{github_run_number}"
 
+print('final version:', version)
+
 # This setup.py is needed for editable installs and for the dynamic version.
 setup(version=version)
