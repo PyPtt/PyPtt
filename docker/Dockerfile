@@ -16,6 +16,11 @@ COPY setup.py /app/setup.py
 COPY MANIFEST.in /app/MANIFEST.in
 COPY LICENSE /app/LICENSE
 COPY README.md /app/README.md
+
+# Make GITHUB_REF_NAME build-arg available as an env var for setup.py
+ARG GITHUB_REF_NAME
+ENV GITHUB_REF_NAME=${GITHUB_REF_NAME}
+
 RUN pip install .
 
 # Copy the FastAPI app and its dependencies

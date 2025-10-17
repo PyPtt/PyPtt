@@ -110,6 +110,8 @@ jobs:
           tags: |
             ghcr.io/${{ steps.image_name.outputs.NAME }}:latest
             ghcr.io/${{ steps.image_name.outputs.NAME }}:${{ env.PYPTT_VERSION }}
+          build-args: |
+            GITHUB_REF_NAME=${{ github.ref_name }}
       - name: Sanitize branch name for Docker tag
         if: github.ref != 'refs/heads/master'
         id: sanitize_branch
@@ -122,3 +124,5 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: ghcr.io/${{ steps.image_name.outputs.NAME }}:test-${{ steps.sanitize_branch.outputs.TAG_SUFFIX }}
+          build-args: |
+            GITHUB_REF_NAME=${{ github.ref_name }}
