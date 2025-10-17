@@ -8,6 +8,9 @@ with open('PyPtt/__init__.py', 'r', encoding='utf-8') as f:
     version = data.split('__version__ = ')[1].split('\n')[0].strip().strip('\'')
     print('version:', version)
 
+with open('version.txt', 'w', encoding='utf-8') as f:
+    f.write(version)
+
 # Append dev version for non-master branches in GitHub Actions
 github_ref = os.environ.get("GITHUB_REF")
 github_run_number = os.environ.get("GITHUB_RUN_NUMBER")

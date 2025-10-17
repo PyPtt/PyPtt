@@ -52,6 +52,7 @@ api = [
 dev = [
     "pytest",
     "python-dotenv",
+    "flake8",
 ]
 
 [tool.setuptools]
