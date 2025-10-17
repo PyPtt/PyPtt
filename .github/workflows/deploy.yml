@@ -117,7 +117,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./docker/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ steps.image_name.outputs.NAME }}:latest
@@ -134,7 +133,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./docker/Dockerfile
           push: true
           tags: ghcr.io/${{ steps.image_name.outputs.NAME }}:test-${{ steps.sanitize_branch.outputs.TAG_SUFFIX }}
           build-args: |
