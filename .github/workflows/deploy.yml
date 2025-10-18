@@ -59,7 +59,6 @@ jobs:
             version.txt
 
   test:
-    if: "always() && (needs.check-version.result == 'success' || needs.check-version.result == 'skipped')"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
