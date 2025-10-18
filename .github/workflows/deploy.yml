@@ -169,6 +169,8 @@ jobs:
           build-args: |
             PYPTT_VERSION=${{ env.PYPTT_VERSION }}
             PYPI_REGISTRY_URL=https://pypi.org/simple
+          cache-from: type=registry,ref=ghcr.io/${{ steps.image_name.outputs.NAME }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.image_name.outputs.NAME }}:buildcache,mode=max
       - name: Build and push Docker image for test branches
         if: github.ref != 'refs/heads/master'
         uses: docker/build-push-action@v3
@@ -180,6 +182,8 @@ jobs:
           build-args: |
             PYPTT_VERSION=${{ env.PYPTT_VERSION }}
             PYPI_REGISTRY_URL=https://test.pypi.org/simple
+          cache-from: type=registry,ref=ghcr.io/${{ steps.image_name.outputs.NAME }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.image_name.outputs.NAME }}:buildcache,mode=max
 
   deploy-docs:
     needs: test
