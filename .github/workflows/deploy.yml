@@ -7,9 +7,6 @@ on:
       - opened
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   pre-test:
     name: Pre-Test Version Check
@@ -138,6 +135,9 @@ jobs:
     needs: test
     name: Deploy to GHCR
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
