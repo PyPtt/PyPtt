@@ -22,6 +22,13 @@ Docker Image
 
     docker run -d -p 8787:8787 ghcr.io/pyptt/pyptt:latest
 
+如果你想要也可以直接啟動 api_server.py:
+
+.. code-block:: bash
+
+    pip install .[api]
+    uvicorn PyPtt.api_server:app --host 0.0.0.0 --port 8787
+
 連線
 -----------------
 
