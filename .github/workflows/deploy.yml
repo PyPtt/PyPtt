@@ -204,3 +204,23 @@ jobs:
           build-args: |
             PYPTT_VERSION=${{ env.PYPTT_VERSION }}
             PYPI_REGISTRY_URL=https://test.pypi.org/simple
+
+  deploy-docs:
+    needs: test
+    name: Build doc and Deploy
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+    - name: Build and Commit
+      uses: sphinx-notes/pages@v3
+      with:
+        pyproject_extras: dev
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
