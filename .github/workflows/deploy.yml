@@ -113,10 +113,8 @@ jobs:
           name: build-artifact
           path: .
       - name: Publish package to TestPyPI
-        if: github.ref != 'refs/heads/master'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          verbose: true
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository-url: https://test.pypi.org/legacy/
       - name: Publish package to PyPI
@@ -188,7 +186,7 @@ jobs:
   deploy-docs:
     needs: test
     name: Deploy to GitHub Pages
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-python@v5
