@@ -2,6 +2,12 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 |
+| 2025.10.18 PyPtt 支援 Python 3.14 Free Threaded。
+| 2025.10.18 重構測試全面採用 pytest，終於可以一次測完所有功能了！
+| 重構 CI/CD 流程。重構底層與批踢踢連線模組。
+
+| 2025.10.18 結果我一忘忘三年...我再想辦法補 🫣
+
 | 2022.12.20 PyPtt 1.0.3，logger 改採用以 logging_ 為基底。
 
 .. _logging: https://docs.python.org/3/howto/logging.html

@@ -293,6 +293,11 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">8787</span>:8787<span class="w"> </span>ghcr.io/pyptt/pyptt:latest
 </pre></div>
 </div>
+<p>如果你想要也可以直接啟動 api_server.py:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="o">[</span>api<span class="o">]</span>
+uvicorn<span class="w"> </span>PyPtt.api_server:app<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8787</span>
+</pre></div>
+</div>
 </section>
 <section id="id3">
 <h2>連線<a class="headerlink" href="#id3" title="連結到這個標頭">¶</a></h2>
