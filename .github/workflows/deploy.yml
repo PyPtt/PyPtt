@@ -186,7 +186,8 @@ jobs:
   deploy-docs:
     needs: test
     name: Deploy to GitHub Pages
-    if: github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+    # disabled for testing purposes
+#    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-python@v5
@@ -197,8 +198,9 @@ jobs:
       uses: sphinx-notes/pages@v3
       with:
         pyproject_extras: dev
+        publish: false
     - name: Push changes
-      uses: ad-m/github-push-action@master
+      uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-pages
+        publish_dir: ./docs/_build/html
