@@ -2,7 +2,7 @@ from typing import Optional, Dict, Any
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-
+import logging
 from . import __version__
 from . import service
 
@@ -29,7 +29,8 @@ def api_func(request: ApiRequest):
         result = pyptt_service.call(api, args)
 
     except Exception as e:
-        return {"api": request.api, "args": request.args, "error": str(e)}
+        logging.exception(f"Error in API call {request.api} with args {request.args}")
+        return {"api": request.api, "args": request.args, "error": "An internal error has occurred."}
 
     if result is None:
         result = 'success without return value'
