@@ -91,7 +91,7 @@ jobs:
           tests/test_logger.py
       - name: Test docs build
         run: |
-          make html
+          cd docs && make html
       
 
   deploy-pypi:
