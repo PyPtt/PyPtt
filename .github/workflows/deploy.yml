@@ -60,7 +60,7 @@ jobs:
 
   test:
     needs: [check-version]
-    if: "always() && (needs.pre-test.result == 'success' || needs.pre-test.result == 'skipped')"
+    if: "always() && (needs.check-version.result == 'success' || needs.check-version.result == 'skipped')"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
