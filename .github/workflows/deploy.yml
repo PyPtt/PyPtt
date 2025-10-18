@@ -99,7 +99,7 @@ jobs:
       - name: Build docs test
         uses: sphinx-notes/pages@v3
         with:
-          pyproject_extras: dev
+          publish: false
       
 
   deploy-pypi:
