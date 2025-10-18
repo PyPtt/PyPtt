@@ -99,9 +99,6 @@ jobs:
   test-build-docs:
     name: Test building documentation
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
     steps:
       - uses: actions/setup-python@v6
         with:
