@@ -9,7 +9,7 @@ on:
 
 jobs:
   pre-test:
-    name: Pre-Test Version Check
+    name: Did you forget to update the version?
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
@@ -207,7 +207,7 @@ jobs:
 
   deploy-docs:
     needs: test
-    name: Build doc and Deploy
+    name: Deploy to GitHub Pages
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
