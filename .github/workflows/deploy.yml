@@ -97,9 +97,8 @@ jobs:
           tests/test_exceptions.py \
           tests/test_logger.py
       - name: Build docs test
-        uses: sphinx-notes/pages@v3
-        with:
-          publish: false
+        run: |
+          cd docs && make html
       
 
   deploy-pypi:
