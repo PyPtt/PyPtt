@@ -50,6 +50,13 @@ jobs:
           else
             echo "Version check passed. $CURRENT_VERSION is a new version."
           fi
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: |
+            dist/
+            version.txt
 
   test:
     needs: [pre-test]
@@ -100,28 +107,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          python-version: '3.12'
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-3.12-${{ hashFiles('**/pyproject.toml') }}-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-3.12-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
-      - name: Update SSL certificates
-        run: |
-          python3 scripts/gen_ssl.py
-      - name: Build package
-        run: |
-          python -m build
+          name: build-artifact
+          path: .
       - name: Publish package to TestPyPI
         if: github.ref != 'refs/heads/master'
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -145,27 +135,11 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          python-version: '3.12'
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-3.12-${{ hashFiles('**/pyproject.toml') }}-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-3.12-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
-      - name: Update SSL certificates
-        run: |
-          python3 scripts/gen_ssl.py
-      - name: Build package
-        run: |
-          python -m build
+          name: build-artifact
+          path: .
       - name: Get package version
         id: get_version
         run: echo "PYPTT_VERSION=$(cat version.txt)" >> $GITHUB_ENV
