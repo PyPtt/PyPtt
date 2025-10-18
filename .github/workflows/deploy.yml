@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  pre-test:
+  check-version:
     name: Forget to update the version?
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
             version.txt
 
   test:
-    needs: [pre-test]
+    needs: [check-version]
     if: "always() && (needs.pre-test.result == 'success' || needs.pre-test.result == 'skipped')"
     runs-on: ubuntu-latest
     strategy:
@@ -96,9 +96,10 @@ jobs:
           tests/test_i18n.py \
           tests/test_exceptions.py \
           tests/test_logger.py
-      - name: Test docs build
-        run: |
-          cd docs && make html
+      - name: Build docs test
+        uses: sphinx-notes/pages@v3
+        with:
+          pyproject_extras: dev
       
 
   deploy-pypi:
