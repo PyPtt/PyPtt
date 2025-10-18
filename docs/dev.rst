@@ -8,28 +8,21 @@ Development
 
 .. code-block:: bash
 
-    virtualenv venv
-    source venv/bin/activate
+    python3 -m venv .venv
 
 安裝相依套件
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-你可以使用以下指令來安裝相依套件：
+你可以使用以下指令來安裝測開發的相依套件：
 
 .. code-block:: bash
 
-    pip install -r requirements.txt
-
-如果你想更改文件，請安裝開發相依套件：
-
-.. code-block:: bash
-
-    pip install -r docs/requirements.txt
+    pip install .[dev]
 
 產生文件網頁
 
 .. code-block:: bash
 
-    bash make_doc.sh
+    make html
 
 你可以在 docs/_build/html/index.html 中找到根據你的修改產生的網頁。
 
@@ -39,11 +32,19 @@ Development
 
 .. code-block:: bash
 
-    for test in tests/*.py; do python3 $test; done
+    python3 -m pytest
 
-此外，在執行之前你可能會想要設定測試用的帳號，這部份可以透過直接修改
-tests/config.py，或是設定 PTT1_ID、PTT1_PW、PTT2_ID 與 PTT2_PW 四個
-環境變數來達成。
+此外，在執行之前你可能會想要設定測試用的帳號，你可以直接建立 .env 檔案，並加入以下內容：
+
+.. code-block:: dosini
+
+    PTT1_ID="id1"
+    PTT1_PW="pw1"
+
+    PTT2_ID="id2"
+    PTT2_PW="pw2"
+
+    TEST_USER="id2" # 用給 P 幣測試的帳號
 
 如果有遺漏的測試，請不吝發起 Pull Request。
 

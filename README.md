@@ -9,7 +9,7 @@
 
 ## PyPtt (PTT Library)
 
-PyPtt 是一套以 Pure Python 實作的 PTT (批踢踢) SDK，提供了完整功能讓您就像真人操作一樣地使用 PTT。
+PyPtt 是一套以 Pure Python 實作的 PTT (批踢踢) SDK，提供了批踢踢完整功能讓您可以自由開發你的批踢踢機器人。
 
 ### 主要功能
 - 帳號管理: 登入登出、修改密碼

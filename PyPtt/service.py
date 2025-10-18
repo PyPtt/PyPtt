@@ -20,7 +20,7 @@ class Service:
         這是一個可以在多執行緒中使用的 PyPtt API 服務。
 
         | 請注意：這僅僅只是 Thread Safe 的實作，對效能並不會有實質上的幫助。
-        | 如果你需要更好的效能，請在每一個線程都使用一個 PyPtt.API 本身。
+        | 如果你需要更好的效能，請在每一個線程都使用一個 PyPtt.API 物件。
 
         Args:
             pyptt_init_config (dict): PyPtt 初始化設定，請參考 :ref:`初始化設定 <api-init>`。
