@@ -9,7 +9,7 @@ on:
 
 jobs:
   pre-test:
-    name: Did you forget to update the version?
+    name: Forget to update the version?
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
@@ -187,6 +187,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ghcr.io/${{ steps.image_name.outputs.NAME }}:latest
@@ -199,6 +200,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/${{ steps.image_name.outputs.NAME }}:${{ env.PYPTT_VERSION }}
           build-args: |
