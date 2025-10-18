@@ -40,6 +40,7 @@ PyPtt
 
 重要消息
 --------------------
+| 2025.10.18 支援 Python 3.14 Free Threaded
 | 2025.09.06 發佈 `PTT MCP server`_
 
 .. _PTT MCP server: https://github.com/PyPtt/ptt_mcp_server
