@@ -1,5 +1,0 @@
-sphinx
-sphinx-copybutton
-pygments==2.15.0
-Furo
-sphinx-sitemap

@@ -186,8 +186,7 @@ jobs:
   deploy-docs:
     needs: test
     name: Deploy to GitHub Pages
-    # disabled for testing purposes
-#    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-python@v5
