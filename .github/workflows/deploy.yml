@@ -205,7 +205,7 @@ jobs:
   deploy-docs:
     needs: [test, check-version, test-build-docs]
     name: Deploy to GitHub Pages
-#    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-python@v6
