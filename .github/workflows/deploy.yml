@@ -59,7 +59,6 @@ jobs:
             version.txt
 
   test:
-    needs: [check-version]
     if: "always() && (needs.check-version.result == 'success' || needs.check-version.result == 'skipped')"
     runs-on: ubuntu-latest
     strategy:
@@ -102,7 +101,7 @@ jobs:
       
 
   deploy-pypi:
-    needs: test
+    needs: [test, check-version]
     name: Deploy to PyPI
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -124,7 +123,7 @@ jobs:
           password: ${{ secrets.PYPI_API_TOKEN }}
 
   deploy-ghcr:
-    needs: test
+    needs: [test, check-version]
     name: Deploy to GHCR
     runs-on: ubuntu-latest
     permissions:
@@ -184,7 +183,7 @@ jobs:
           cache-to: type=registry,ref=ghcr.io/${{ steps.image_name.outputs.NAME }}:buildcache,mode=max
 
   deploy-docs:
-    needs: test
+    needs: [test, check-version]
     name: Deploy to GitHub Pages
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
