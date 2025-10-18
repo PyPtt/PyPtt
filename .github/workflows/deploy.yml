@@ -188,6 +188,9 @@ jobs:
     name: Deploy to GitHub Pages
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
     steps:
     - uses: actions/setup-python@v5
     - uses: actions/checkout@v4
