@@ -14,8 +14,8 @@ PyPtt
 .. image:: https://img.shields.io/pypi/dm/PyPtt?color=ocean
     :target: https://pypi.org/project/PyPtt/
 
-.. image:: https://github.com/PyPtt/PyPtt/actions/workflows/test.yml/badge.svg?branch=master&color=yellogreen
-    :target: https://github.com/PyPtt/PyPtt/actions/workflows/test.yml
+.. image:: https://github.com/PyPtt/PyPtt/actions/workflows/deploy.yml/badge.svg?branch=master&color=yellogreen
+    :target: https://github.com/PyPtt/PyPtt/actions/workflows/deploy.yml
 
 .. image:: https://img.shields.io/pypi/pyversions/PyPtt
     :target: https://pypi.org/project/PyPtt/
