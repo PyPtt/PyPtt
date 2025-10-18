@@ -6,6 +6,10 @@ on:
     types:
       - opened
   workflow_dispatch:
+    
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   pre-test:
