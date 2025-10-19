@@ -165,7 +165,3 @@ def check_aid(aid: str) -> str:
             raise exceptions.ParameterError('aid is not valid')
 
     return f'#{aid}'
-
-
-if __name__ == '__main__':
-    check_aid('#1aBzRW4z')

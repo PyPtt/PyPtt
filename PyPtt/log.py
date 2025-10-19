@@ -109,24 +109,3 @@ def init(log_level: LogLv, name: Optional[str] = None, logger_callback: Optional
         logger = current_logger
     return current_logger
 
-
-if __name__ == '__main__':
-    logger = init(INFO)
-
-    logger.info('1')
-    logger.info('1', '2')
-    logger.info('1', '2', '3')
-
-    logger.debug('debug 1')
-    logger.debug('1', '2')
-    logger.debug('1', '2', '3')
-
-    logger = init(DEBUG)
-
-    logger.info('1')
-    logger.info('1', '2')
-    logger.info('1', '2', '3')
-
-    logger.debug('debug 2')
-    logger.debug('1', '2')
-    logger.debug('1', '2', '3')

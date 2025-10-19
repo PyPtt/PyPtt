@@ -63,15 +63,3 @@ def check_index_range(start_name, start_index, end_name, end_index, max_value=No
         if end_index > max_value:
             raise exceptions.ParameterError(f'{end_name} {end_index} {i18n.must_small_than} {max_value}')
 
-
-if __name__ == '__main__':
-    QQ = str
-
-    if QQ is str:
-        print('1')
-
-    if QQ == str:
-        print('2')
-
-    if isinstance('', QQ):
-        print('3')
