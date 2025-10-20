@@ -23,6 +23,7 @@ string_data = {
     "delete_post": "Delete post",
     "development_version": "Running development version",
     "done": "Done",
+    "edit_post": "Edit post",
     "english_module": "English",
     "error_pw": "Wrong password",
     "fail": "Fail",

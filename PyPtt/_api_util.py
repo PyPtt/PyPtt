@@ -10,6 +10,7 @@ from . import command
 from . import connect_core
 from . import data_type
 from . import exceptions
+from . import lib_util
 from . import log
 from . import screens
 
@@ -408,6 +409,23 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
         ]
 
         api.connect_core.send(cmd, target_list)
+
+
+def goto_post(api, board: str, post_aid: str = None, post_index: int = 0) -> None:
+    cmd_list = []
+
+    if post_aid is not None:
+        cmd_list.append(lib_util.check_aid(post_aid))
+    elif post_index != 0:
+        cmd_list.append(str(post_index))
+    else:
+        raise exceptions.ParameterError('post_aid and post_index cannot be None at the same time')
+
+    cmd_list.append(command.enter)
+
+    cmd = ''.join(cmd_list)
+
+
 
 
 def one_thread(api):

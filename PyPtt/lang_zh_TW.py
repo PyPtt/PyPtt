@@ -23,6 +23,7 @@ string_data = {
     "delete_post": "刪除文章",
     "development_version": "正在執行開發版本",
     "done": "完成",
+    "edit_post": "編輯文章",
     "english_module": "英文",
     "error_pw": "密碼不正確",
     "fail": "失敗",

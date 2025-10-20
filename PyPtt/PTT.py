@@ -9,6 +9,7 @@ from . import _api_bucket
 from . import _api_change_pw
 from . import _api_comment
 from . import _api_del_post
+from . import _api_edit_post
 from . import _api_get_board_info
 from . import _api_get_board_list
 from . import _api_get_bottom_post_list
@@ -1085,6 +1086,43 @@ class API:
         """
 
         return _api_get_post_list.get_post_list(self, board, limit, offset)
+
+    def edit_post(self, board: str, aid: Optional[str] = None, index: int = 0, title: Optional[str] = None,
+                  content: Optional[str] = None) -> None:
+        """
+        編輯文章。
+
+        Args:
+            board (str): 看板名稱。
+            aid (str): 文章編號。
+            index (int): 文章編號。
+            title (str): 新標題。
+            content (str): 新內容。
+
+        Returns:
+            None
+
+        Raises:
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            NoSuchBoard: 看板不存在。
+            NoSuchPost: 文章不存在。
+            NoPermission: 沒有權限。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.edit_post(board='Python', aid='1TJH_XY0', title='新標題', content='新內容')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+        """
+
+        _api_edit_post.edit_post(self, board, aid, index, title, content)
 
     def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
         _api_post.fast_post_step0(self, board, title, content, post_type)

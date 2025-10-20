@@ -14,24 +14,29 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-3.12-${{ hashFiles('**/pyproject.toml') }}-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-3.12-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install build
           sudo apt-get -y install jq
       - name: Update SSL certificates
         run: |
           python3 scripts/gen_ssl.py
-      - name: Build package
+      - name: Calculate and Inject Dynamic Version
+        id: get_version
         run: |
-          python -m build
+          BASE_VERSION=$(grep "__version__" PyPtt/__init__.py | sed "s/['"]//g" | cut -d'=' -f2 | tr -d ' ')
+          echo "Base version: $BASE_VERSION"
+          if [[ "${{ github.ref }}" != "refs/heads/master" ]]; then
+            FINAL_VERSION="${BASE_VERSION}.dev${{ github.run_number }}"
+          else
+            FINAL_VERSION="$BASE_VERSION"
+          fi
+          echo "Final version: $FINAL_VERSION"
+          sed -i "s/__version__ = .*/__version__ = '$FINAL_VERSION'/" PyPtt/__init__.py
+          echo "Updated PyPtt/__init__.py:"
+          cat PyPtt/__init__.py
+          echo $FINAL_VERSION > version.txt
+          echo "VERSION=$FINAL_VERSION" >> $GITHUB_OUTPUT
       - name: Download PyPI info for version check
         run: wget -q -O pypi_version.json https://pypi.org/pypi/PyPtt/json
       - name: Check for version duplication
@@ -51,7 +56,6 @@ jobs:
         with:
           name: build-artifact
           path: |
-            dist/
             version.txt
 
   test:
@@ -71,7 +75,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}-${{ hashFiles('**/setup.py') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
       - name: Install dependencies
@@ -123,13 +127,19 @@ jobs:
     needs: [test, check-version, test-build-docs]
     name: Deploy to PyPI
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          name: build-artifact
-          path: .
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+      - name: Build package
+        run: |
+          python -m build
       - name: Publish package to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
