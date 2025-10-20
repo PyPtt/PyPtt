@@ -19,8 +19,7 @@ from . import log
 
 def get_file_name(path_str: str) -> str:
     result = os.path.basename(path_str)
-    result = result[:result.find('.')]
-    return result
+    return os.path.splitext(result)[0]
 
 
 def get_current_func_name() -> str:
