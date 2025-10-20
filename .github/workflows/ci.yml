@@ -1,7 +1,6 @@
-name: CI
+name: CI on Pull Request
 
 on:
-  push:
   pull_request:
 
 jobs:
@@ -40,7 +39,10 @@ jobs:
           python -m pytest tests/test_init.py \
           tests/test_i18n.py \
           tests/test_exceptions.py \
-          tests/test_logger.py
+          tests/test_logger.py \
+          tests/test_lib_util.py \
+          tests/test_check_value.py \
+          tests/test_data_type.py
 
   test-build-docs:
     name: Test building documentation
