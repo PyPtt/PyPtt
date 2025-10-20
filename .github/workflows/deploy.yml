@@ -24,7 +24,8 @@ jobs:
       - name: Calculate and Inject Dynamic Version
         id: get_version
         run: |
-          BASE_VERSION=$(grep "__version__" PyPtt/__init__.py | sed "s/['"]//g" | cut -d'=' -f2 | tr -d ' ')
+          # Extract base version from __init__.py
+          BASE_VERSION=$(grep -Po "(?<=__version__ = ')[0-9]+\.[0-9]+\.[0-9]+" PyPtt/__init__.py)
           echo "Base version: $BASE_VERSION"
           if [[ "${{ github.ref }}" != "refs/heads/master" ]]; then
             FINAL_VERSION="${BASE_VERSION}.dev${{ github.run_number }}"
