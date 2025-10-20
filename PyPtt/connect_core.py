@@ -24,12 +24,15 @@ from . import ssl_config
 try:
     import websockets.http
 
-    websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
+    if f'PyPtt/{PyPtt.__version__}' not in websockets.http.USER_AGENT:
+        websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
+
     use_http11 = False
 except AttributeError:
     import websockets.http11
 
-    websockets.http11.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
+    if f'PyPtt/{PyPtt.__version__}' not in websockets.http11.USER_AGENT:
+        websockets.http11.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
     use_http11 = True
 
 ssl_context = None

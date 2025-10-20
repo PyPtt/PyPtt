@@ -1087,8 +1087,8 @@ class API:
 
         return _api_get_post_list.get_post_list(self, board, limit, offset)
 
-    def edit_post(self, board: str, aid: Optional[str] = None, index: int = 0, title: Optional[str] = None,
-                  content: Optional[str] = None) -> None:
+    def edit_post(self, board: str, aid: Optional[str] = None, index: int = 0,
+                  title: Optional[str] = None, content: Optional[str] = None) -> None:
         """
         編輯文章。
 
@@ -1122,7 +1122,7 @@ class API:
                 ptt_bot.logout()
         """
 
-        _api_edit_post.edit_post(self, board, aid, index, title, content)
+        _api_edit_post.edit_post(self, board=board, post_aid=aid, post_index=index, new_title=title, new_content=content)
 
     def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
         _api_post.fast_post_step0(self, board, title, content, post_type)

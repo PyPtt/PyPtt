@@ -166,6 +166,11 @@ class Target:
         '日 期'
     ]
 
+    EditTitle = [
+        '標題：',
+    ]
+    EditTitleLen = len(EditTitle)
+
 
 def show(config, screen_queue, function_name=None):
     if config.log_level != log.DEBUG:
