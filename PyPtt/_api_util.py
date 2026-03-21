@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 import re
 import threading
+from dataclasses import dataclass
 from typing import Dict, Optional
 
 from . import _api_get_board_info
@@ -12,6 +13,19 @@ from . import data_type
 from . import exceptions
 from . import log
 from . import screens
+
+
+@dataclass
+class PostQueryResult:
+    lock_post: bool
+    author: str
+    title: str
+    aid: Optional[str]
+    url: Optional[str]
+    money: int
+    list_date: Optional[str]
+    push_number: Optional[str]
+    index: int
 
 
 def get_content(api, post_mode: bool = True):
@@ -178,13 +192,9 @@ def get_content(api, post_mode: bool = True):
     return origin_post, has_control_code
 
 
-mail_capacity: Optional[tuple[int, int]] = None
-
-
 def get_mailbox_capacity(api) -> tuple[int, int]:
-    global mail_capacity
-    if mail_capacity is not None:
-        return mail_capacity
+    if api._mail_capacity is not None:
+        return api._mail_capacity
 
     last_screen = api.connect_core.get_screen_queue()[-1]
     capacity_line = last_screen.split('\n')[2]
@@ -199,7 +209,7 @@ def get_mailbox_capacity(api) -> tuple[int, int]:
         log.logger.debug('current_capacity', current_capacity)
         log.logger.debug('max_capacity', max_capacity)
 
-        mail_capacity = (current_capacity, max_capacity)
+        api._mail_capacity = (current_capacity, max_capacity)
         return current_capacity, max_capacity
     return 0, 0
 
@@ -333,7 +343,17 @@ def parse_query_post(api, ori_screen):
     log.logger.debug('ListDate', list_date)
     log.logger.debug('PushNumber', push_number)
 
-    return lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index
+    return PostQueryResult(
+        lock_post=lock_post,
+        author=post_author,
+        title=post_title,
+        aid=post_aid,
+        url=post_web,
+        money=post_money,
+        list_date=list_date,
+        push_number=push_number,
+        index=post_index,
+    )
 
 
 def get_search_condition_cmd(index_type: data_type.NewIndex, search_list: Optional[list] = None):

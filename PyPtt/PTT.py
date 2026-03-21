@@ -151,6 +151,7 @@ class API:
         self._goto_board_list = set()
         self._board_info_list = dict()
         self._newest_index_data = data_type.TimedDict(timeout=2)
+        self._mail_capacity = None
         self.cursor = None
 
         log.logger.debug('thread_id', self._thread_id)

@@ -158,20 +158,19 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         return _parse_deleted_post(api, post, board, last_screen)
 
     # index == 0: QueryPost screen matched
-    lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index = \
-        _api_util.parse_query_post(api, last_screen)
+    q = _api_util.parse_query_post(api, last_screen)
 
     post[PostField.board] = board
-    post[PostField.aid] = post_aid
-    post[PostField.index] = post_index
-    post[PostField.author] = post_author
-    post[PostField.title] = post_title
-    post[PostField.url] = post_web
-    post[PostField.money] = post_money
-    post[PostField.list_date] = list_date
-    post[PostField.push_number] = push_number
+    post[PostField.aid] = q.aid
+    post[PostField.index] = q.index
+    post[PostField.author] = q.author
+    post[PostField.title] = q.title
+    post[PostField.url] = q.url
+    post[PostField.money] = q.money
+    post[PostField.list_date] = q.list_date
+    post[PostField.push_number] = q.push_number
 
-    if lock_post:
+    if q.lock_post:
         post[PostField.is_lock] = True
         post[PostField.pass_format_check] = True
         return post

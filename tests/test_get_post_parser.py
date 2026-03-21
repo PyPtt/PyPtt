@@ -24,7 +24,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from PyPtt import _api_get_post, data_type, exceptions
+from PyPtt import _api_get_post, _api_util, data_type, exceptions
+from PyPtt._api_util import PostQueryResult
 from PyPtt.data_type import CommentField, CommentType, PostField, PostStatus
 from PyPtt.screens import Target as ScreenTarget
 
@@ -35,29 +36,28 @@ CONTENT_END_PTT1 = '--\n※ 發信站: 批踢踢實業坊'
 CONTENT_END_PTT2 = '--\n※ 發信站: 批踢踢兔(ptt2.cc)'
 
 # Dummy header returned by mocked parse_query_post
-# (lock_post, author, title, aid, web, money, list_date, push_number, index)
-HEADER_NORMAL = (
-    False,
-    'CodingMan',
-    '[閒聊] 測試文章',
-    '1AbCdEfG',
-    'https://www.ptt.cc/bbs/Python/M.1704067200.A.1.html',
-    2,
-    ' 1/01',
-    '50',
-    1,
+HEADER_NORMAL = PostQueryResult(
+    lock_post=False,
+    author='CodingMan',
+    title='[閒聊] 測試文章',
+    aid='1AbCdEfG',
+    url='https://www.ptt.cc/bbs/Python/M.1704067200.A.1.html',
+    money=2,
+    list_date=' 1/01',
+    push_number='50',
+    index=1,
 )
 
-HEADER_LOCK = (
-    True,
-    'CodingMan',
-    '[公告] 鎖文',
-    '1AbCdEfG',
-    'https://www.ptt.cc/bbs/Python/M.1704067200.A.1.html',
-    -1,
-    ' 1/01',
-    None,
-    2,
+HEADER_LOCK = PostQueryResult(
+    lock_post=True,
+    author='CodingMan',
+    title='[公告] 鎖文',
+    aid='1AbCdEfG',
+    url='https://www.ptt.cc/bbs/Python/M.1704067200.A.1.html',
+    money=-1,
+    list_date=' 1/01',
+    push_number=None,
+    index=2,
 )
 
 
@@ -185,7 +185,7 @@ class TestNormalPost:
     def test_aid_from_header(self):
         api = _make_api()
         result = _call_get_post(api, _build_post())
-        assert result[PostField.aid] == HEADER_NORMAL[3]
+        assert result[PostField.aid] == HEADER_NORMAL.aid
 
     def test_post_status_exists(self):
         api = _make_api()
@@ -434,7 +434,7 @@ class TestQueryMode:
     def test_query_author_from_header(self):
         api = _make_api()
         result = _call_get_post(api, _build_post(), query=True)
-        assert result[PostField.author] == HEADER_NORMAL[1]
+        assert result[PostField.author] == HEADER_NORMAL.author
 
 
 # ── substandard posts (pass_format_check=False) ───────────────────────────────
