@@ -295,10 +295,12 @@ class API:
 
         Args:
             board (str): 看板名稱。
-            aid (str): 文章編號。
-            index: 文章編號。
-            search_list (List[str]): 搜尋清單。
-            query (bool): 是否為查詢模式。
+            aid (str): 文章 AID，例如 ``'1TJH_XY0'``。
+            index (int): 文章編號。
+            search_type (:ref:`search-type`): 搜尋類型，與 ``search_condition`` 搭配使用。
+            search_condition (str): 搜尋條件，例如關鍵字或作者 ID。
+            search_list (List[Tuple]): 多條件搜尋清單，每個元素為 ``(SearchType, condition)``。
+            query (bool): 是否為查詢模式，不進入文章內容，僅取得列表資訊。
 
         Returns:
             Dict，文章內容。詳見 :ref:`post-field`
