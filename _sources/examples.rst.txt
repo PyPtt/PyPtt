@@ -80,9 +80,9 @@
     import PyPtt
 
     content = [
-        PTT.command.Ctrl_C + PTT.command.Left + '5' + PTT.command.Right + '這是閃爍字' + PTT.command.Ctrl_C,
-        PTT.command.Ctrl_C + PTT.command.Left + '31' + PTT.command.Right + '前景紅色' + PTT.command.Ctrl_C,
-        PTT.command.Ctrl_C + PTT.command.Left + '44' + PTT.command.Right + '背景藍色' + PTT.command.Ctrl_C,
+        PyPtt.command.Ctrl_C + PyPtt.command.Left + '5' + PyPtt.command.Right + '這是閃爍字' + PyPtt.command.Ctrl_C,
+        PyPtt.command.Ctrl_C + PyPtt.command.Left + '31' + PyPtt.command.Right + '前景紅色' + PyPtt.command.Ctrl_C,
+        PyPtt.command.Ctrl_C + PyPtt.command.Left + '44' + PyPtt.command.Right + '背景藍色' + PyPtt.command.Ctrl_C,
     ]
     content = '\n'.join(content)
 
