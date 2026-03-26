@@ -71,6 +71,10 @@ class Target:
         '說明'
     ]
 
+    WaterBallPostAction = [
+        '清除(C) 存入信箱(M) 保留(R)',
+    ]
+
     PostIP_New = [
         '※ 發信站: 批踢踢實業坊(ptt.cc), 來自:'
     ]

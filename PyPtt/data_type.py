@@ -98,12 +98,22 @@ class PostField(AutoStrEnum):
     is_unconfirmed = auto()
 
 
-# class WaterballInfo:
-#     def __init__(self, waterball_type, target, content, date):
-#         self.type: int = parse_para(int, waterball_type)
-#         self.target: str = parse_para(str, target)
-#         self.content: str = parse_para(str, content)
-#         self.date: str = parse_para(str, date)
+class WaterballType(AutoStrEnum):
+    SEND = auto()
+    CATCH = auto()
+
+
+class WaterballPostAction(AutoStrEnum):
+    CLEAR = auto()
+    MAILBOX = auto()
+    KEEP = auto()
+
+
+class WaterballField(AutoStrEnum):
+    type = auto()
+    target = auto()
+    content = auto()
+    date = auto()
 
 
 class Cursor:

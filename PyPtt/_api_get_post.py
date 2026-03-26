@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 import time
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Tuple
 
 from AutoStrEnum import AutoJsonEncoder
 
@@ -151,145 +151,116 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         PostField.push_number: None,
         PostField.is_lock: False,
         PostField.full_content: None,
-        PostField.is_unconfirmed: False}
+        PostField.is_unconfirmed: False,
+    }
 
-    post_author = None
-    post_title = None
     if index < 0 or index == 1:
-        # 文章被刪除
-        log.logger.debug(i18n.post_deleted)
-        log.logger.debug('OriScreen', last_screen)
+        return _parse_deleted_post(api, post, board, last_screen)
 
-        cursor_line = [line for line in last_screen.split(
-            '\n') if line.startswith(api.cursor)]
+    # index == 0: QueryPost screen matched
+    q = _api_util.parse_query_post(api, last_screen)
 
-        if len(cursor_line) != 1:
-            raise exceptions.UnknownError(last_screen)
+    post[PostField.board] = board
+    post[PostField.aid] = q.aid
+    post[PostField.index] = q.index
+    post[PostField.author] = q.author
+    post[PostField.title] = q.title
+    post[PostField.url] = q.url
+    post[PostField.money] = q.money
+    post[PostField.list_date] = q.list_date
+    post[PostField.push_number] = q.push_number
 
-        cursor_line = cursor_line[0]
-        log.logger.debug('CursorLine', cursor_line)
-
-        pattern = re.compile(r'[\d]+\/[\d]+')
-        pattern_result = pattern.search(cursor_line)
-        if pattern_result is None:
-            list_date = None
-        else:
-            list_date = pattern_result.group(0)
-            list_date = list_date[-5:]
-
-        pattern = re.compile(r'\[[\w]+\]')
-        pattern_result = pattern.search(cursor_line)
-        if pattern_result is not None:
-            post_del_status = data_type.PostStatus.DELETED_BY_AUTHOR
-        else:
-            pattern = re.compile(r'<[\w]+>')
-            pattern_result = pattern.search(cursor_line)
-            post_del_status = data_type.PostStatus.DELETED_BY_MODERATOR
-
-        # > 79843     9/11 -             □ (本文已被吃掉)<
-        # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
-        # print(f'O=>{CursorLine}<')
-        if pattern_result is not None:
-            post_author = pattern_result.group(0)[1:-1]
-        else:
-            post_author = None
-            post_del_status = data_type.PostStatus.DELETED_BY_UNKNOWN
-
-        log.logger.debug('ListDate', list_date)
-        log.logger.debug('PostAuthor', post_author)
-        log.logger.debug('post_del_status', post_del_status)
-
-        post.update({
-            PostField.board: board,
-            PostField.author: post_author,
-            PostField.list_date: list_date,
-            PostField.post_status: post_del_status,
-            PostField.pass_format_check: True
-        })
-
+    if q.lock_post:
+        post[PostField.is_lock] = True
+        post[PostField.pass_format_check] = True
         return post
 
-    elif index == 0:
-
-        lock_post, post_author, post_title, post_aid, post_web, post_money, list_date, push_number, post_index = \
-            _api_util.parse_query_post(
-                api,
-                last_screen)
-
-        if lock_post:
-            post.update({
-                PostField.board: board,
-                PostField.aid: post_aid,
-                PostField.index: post_index,
-                PostField.author: post_author,
-                PostField.title: post_title,
-                PostField.url: post_web,
-                PostField.money: post_money,
-                PostField.list_date: list_date,
-                PostField.pass_format_check: True,
-                PostField.push_number: push_number,
-                PostField.is_lock: True})
-            return post
-
     if query:
-        post.update({
-            PostField.board: board,
-            PostField.aid: post_aid,
-            PostField.index: post_index,
-            PostField.author: post_author,
-            PostField.title: post_title,
-            PostField.url: post_web,
-            PostField.money: post_money,
-            PostField.list_date: list_date,
-            PostField.pass_format_check: True,
-            PostField.push_number: push_number})
+        post[PostField.pass_format_check] = True
         return post
 
     origin_post, has_control_code = _api_util.get_content(api)
+    post[PostField.has_control_code] = has_control_code
+    post[PostField.is_unconfirmed] = api.Unconfirmed
 
     if origin_post is None:
         log.logger.info(i18n.post_deleted)
-
-        post.update({
-            PostField.board: board,
-            PostField.aid: post_aid,
-            PostField.index: post_index,
-            PostField.author: post_author,
-            PostField.title: post_title,
-            PostField.url: post_web,
-            PostField.money: post_money,
-            PostField.list_date: list_date,
-            PostField.has_control_code: has_control_code,
-            PostField.pass_format_check: False,
-            PostField.push_number: push_number,
-            PostField.is_unconfirmed: api.Unconfirmed
-        })
         return post
 
-    post_author_pattern_new = re.compile(r'作者  (.+) 看板')
-    post_author_pattern_old = re.compile(r'作者  (.+)')
-    board_pattern = re.compile(r'看板  (.+)')
+    post[PostField.full_content] = origin_post
 
-    post_date = None
+    return _parse_post_content(api, post, board, origin_post)
+
+
+def _parse_deleted_post(api, post: Dict, board: str, last_screen: str) -> Dict:
+    log.logger.debug(i18n.post_deleted)
+    log.logger.debug('OriScreen', last_screen)
+
+    cursor_lines = [line for line in last_screen.split('\n') if line.startswith(api.cursor)]
+    if len(cursor_lines) != 1:
+        raise exceptions.UnknownError(last_screen)
+    cursor_line = cursor_lines[0]
+    log.logger.debug('CursorLine', cursor_line)
+
+    pattern = re.compile(r'[\d]+\/[\d]+')
+    pattern_result = pattern.search(cursor_line)
+    if pattern_result is None:
+        list_date = None
+    else:
+        list_date = pattern_result.group(0)[-5:]
+
+    pattern = re.compile(r'\[[\w]+\]')
+    pattern_result = pattern.search(cursor_line)
+    if pattern_result is not None:
+        post_del_status = data_type.PostStatus.DELETED_BY_AUTHOR
+    else:
+        pattern = re.compile(r'<[\w]+>')
+        pattern_result = pattern.search(cursor_line)
+        post_del_status = data_type.PostStatus.DELETED_BY_MODERATOR
+
+    # > 79843     9/11 -             □ (本文已被吃掉)<
+    # > 76060     8/28 -             □ (本文已被刪除) [weida7332]
+    if pattern_result is not None:
+        post_author = pattern_result.group(0)[1:-1]
+    else:
+        post_author = None
+        post_del_status = data_type.PostStatus.DELETED_BY_UNKNOWN
+
+    log.logger.debug('ListDate', list_date)
+    log.logger.debug('PostAuthor', post_author)
+    log.logger.debug('post_del_status', post_del_status)
+
+    post[PostField.board] = board
+    post[PostField.author] = post_author
+    post[PostField.list_date] = list_date
+    post[PostField.post_status] = post_del_status
+    post[PostField.pass_format_check] = True
+    return post
+
+
+def _parse_post_content(api, post: Dict, board: str, origin_post: str) -> Dict:
     post_content = None
     ip = None
     location = None
-    push_list = []
 
     # 格式確認，亂改的我也沒辦法Q_Q
     origin_post_lines = origin_post.split('\n')
-
     author_line = origin_post_lines[0]
 
     if board.lower() == 'allpost':
+        board_pattern = re.compile(r'看板  (.+)')
         board_line = author_line[author_line.find(')') + 1:]
         pattern_result = board_pattern.search(board_line)
         if pattern_result is not None:
-            board_temp = post_author = pattern_result.group(0)
+            board_temp = pattern_result.group(0)
             board_temp = board_temp[2:].strip()
             if len(board_temp) > 0:
                 board = board_temp
+                post[PostField.board] = board
                 log.logger.debug(i18n.board, board)
+
+    post_author_pattern_new = re.compile(r'作者  (.+) 看板')
+    post_author_pattern_old = re.compile(r'作者  (.+)')
 
     pattern_result = post_author_pattern_new.search(author_line)
     if pattern_result is not None:
@@ -299,65 +270,21 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         pattern_result = post_author_pattern_old.search(author_line)
         if pattern_result is None:
             log.logger.info(i18n.substandard_post, i18n.author)
-
-            post.update({
-                PostField.board: board,
-                PostField.aid: post_aid,
-                PostField.index: post_index,
-                PostField.author: post_author,
-                PostField.date: post_date,
-                PostField.title: post_title,
-                PostField.url: post_web,
-                PostField.money: post_money,
-                PostField.content: post_content,
-                PostField.ip: ip,
-                PostField.comments: push_list,
-                PostField.list_date: list_date,
-                PostField.has_control_code: has_control_code,
-                PostField.pass_format_check: False,
-                PostField.location: location,
-                PostField.push_number: push_number,
-                PostField.full_content: origin_post,
-                PostField.is_unconfirmed: api.Unconfirmed, })
-
             return post
         post_author = pattern_result.group(0)
         post_author = post_author[:post_author.rfind(')') + 1]
     post_author = post_author[4:].strip()
-
+    post[PostField.author] = post_author
     log.logger.debug(i18n.author, post_author)
 
     post_title_pattern = re.compile(r'標題  (.+)')
-
     title_line = origin_post_lines[1]
     pattern_result = post_title_pattern.search(title_line)
     if pattern_result is None:
         log.logger.info(i18n.substandard_post, i18n.title)
-
-        post.update({
-            PostField.board: board,
-            PostField.aid: post_aid,
-            PostField.index: post_index,
-            PostField.author: post_author,
-            PostField.date: post_date,
-            PostField.title: post_title,
-            PostField.url: post_web,
-            PostField.money: post_money,
-            PostField.content: post_content,
-            PostField.ip: ip,
-            PostField.comments: push_list,
-            PostField.list_date: list_date,
-            PostField.has_control_code: has_control_code,
-            PostField.pass_format_check: False,
-            PostField.location: location,
-            PostField.push_number: push_number,
-            PostField.full_content: origin_post,
-            PostField.is_unconfirmed: api.Unconfirmed, })
-
         return post
-    post_title = pattern_result.group(0)
-    post_title = post_title[4:].strip()
-
+    post_title = pattern_result.group(0)[4:].strip()
+    post[PostField.title] = post_title
     log.logger.debug(i18n.title, post_title)
 
     post_date_pattern = re.compile(r'時間  .{24}')
@@ -365,88 +292,53 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     pattern_result = post_date_pattern.search(date_line)
     if pattern_result is None:
         log.logger.info(i18n.substandard_post, i18n.date)
-
-        post.update({
-            PostField.board: board,
-            PostField.aid: post_aid,
-            PostField.index: post_index,
-            PostField.author: post_author,
-            PostField.date: post_date,
-            PostField.title: post_title,
-            PostField.url: post_web,
-            PostField.money: post_money,
-            PostField.content: post_content,
-            PostField.ip: ip,
-            PostField.comments: push_list,
-            PostField.list_date: list_date,
-            PostField.has_control_code: has_control_code,
-            PostField.pass_format_check: False,
-            PostField.location: location,
-            PostField.push_number: push_number,
-            PostField.full_content: origin_post,
-            PostField.is_unconfirmed: api.Unconfirmed, })
-
         return post
-    post_date = pattern_result.group(0)
-    post_date = post_date[4:].strip()
-
+    post_date = pattern_result.group(0)[4:].strip()
+    post[PostField.date] = post_date
     log.logger.debug(i18n.date, post_date)
 
     content_fail = True
-    if screens.Target.content_start not in origin_post:
-        # print('Type 1')
-        content_fail = True
-    else:
-        post_content = origin_post
-        post_content = post_content[
-                       post_content.find(screens.Target.content_start) + len(screens.Target.content_start) + 1:]
-        # print('Type 2')
-        # print(f'PostContent [{PostContent}]')
+    if screens.Target.content_start in origin_post:
+        post_content = origin_post[
+            origin_post.find(screens.Target.content_start) + len(screens.Target.content_start) + 1:]
         for content_end in screens.Target.content_end_list:
             # + 3 = 把 --\n 拿掉
-            # print(f'EC [{EC}]')
             if content_end in post_content:
                 content_fail = False
-
                 post_content = post_content[:post_content.rfind(content_end) + 3]
-                origin_post_lines = origin_post[origin_post.find(content_end):]
-                # post_content = post_content.strip()
-                origin_post_lines = origin_post_lines.split('\n')
+                origin_post_lines = origin_post[origin_post.find(content_end):].split('\n')
                 break
 
     if content_fail:
         log.logger.info(i18n.substandard_post, i18n.content)
-
-        post.update({
-            PostField.board: board,
-            PostField.aid: post_aid,
-            PostField.index: post_index,
-            PostField.author: post_author,
-            PostField.date: post_date,
-            PostField.title: post_title,
-            PostField.url: post_web,
-            PostField.money: post_money,
-            PostField.content: post_content,
-            PostField.ip: ip,
-            PostField.comments: push_list,
-            PostField.list_date: list_date,
-            PostField.has_control_code: has_control_code,
-            PostField.pass_format_check: False,
-            PostField.location: location,
-            PostField.push_number: push_number,
-            PostField.full_content: origin_post,
-            PostField.is_unconfirmed: api.Unconfirmed, })
-
         return post
-
+    post[PostField.content] = post_content
     log.logger.debug(i18n.content, post_content)
 
-    info_lines = [line for line in origin_post_lines if line.startswith('※') or line.startswith('◆')]
+    ip, location = _parse_ip_location(origin_post_lines)
+
+    if api.config.host == data_type.HOST.PTT1 and ip is None:
+        log.logger.info(i18n.substandard_post, ip)
+        return post
+    post[PostField.ip] = ip
+    post[PostField.location] = location
+    log.logger.debug('IP', ip)
+
+    post[PostField.comments] = _parse_comments(api, origin_post_lines)
+    post[PostField.pass_format_check] = True
+    return post
+
+
+def _parse_ip_location(lines: List[str]) -> Tuple[Optional[str], Optional[str]]:
+    """Extract IP and optional location from ※ / ◆ info lines."""
+    ip = None
+    location = None
+    info_lines = [line for line in lines if line.startswith('※') or line.startswith('◆')]
 
     pattern = re.compile(r'[\d]+\.[\d]+\.[\d]+\.[\d]+')
     pattern_p2 = re.compile(r'[\d]+-[\d]+-[\d]+-[\d]+')
-    for line in reversed(info_lines):
 
+    for line in reversed(info_lines):
         log.logger.debug('IP Line', line)
 
         # type 1
@@ -470,46 +362,21 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             location_temp = location_temp.replace('(', '')
             location_temp = location_temp[:location_temp.rfind(')')]
             location_temp = location_temp.strip()
-            # print(f'=>[{LocationTemp}]')
             if ' ' not in location_temp and len(location_temp) > 0:
                 location = location_temp
-
                 log.logger.debug('Location', location)
             break
 
         pattern_result = pattern_p2.search(line)
         if pattern_result is not None:
-            ip = pattern_result.group(0)
-            ip = ip.replace('-', '.')
-            # print(f'IP -> [{IP}]')
+            ip = pattern_result.group(0).replace('-', '.')
             break
-    if api.config.host == data_type.HOST.PTT1:
-        if ip is None:
-            log.logger.info(i18n.substandard_post, ip)
 
-            post.update({
-                PostField.board: board,
-                PostField.aid: post_aid,
-                PostField.index: post_index,
-                PostField.author: post_author,
-                PostField.date: post_date,
-                PostField.title: post_title,
-                PostField.url: post_web,
-                PostField.money: post_money,
-                PostField.content: post_content,
-                PostField.ip: ip,
-                PostField.comments: push_list,
-                PostField.list_date: list_date,
-                PostField.has_control_code: has_control_code,
-                PostField.pass_format_check: False,
-                PostField.location: location,
-                PostField.push_number: push_number,
-                PostField.full_content: origin_post,
-                PostField.is_unconfirmed: api.Unconfirmed, })
+    return ip, location
 
-            return post
-    log.logger.debug('IP', ip)
 
+def _parse_comments(api, origin_post_lines: List[str]) -> List[Dict]:
+    """Parse push / boo / arrow comments from post lines."""
     push_author_pattern = re.compile(r'[推|噓|→] [\w| ]+:')
     push_date_pattern = re.compile(r'[\d]+/[\d]+ [\d]+:[\d]+')
     push_ip_pattern = re.compile(r'[\d]+\.[\d]+\.[\d]+\.[\d]+')
@@ -531,7 +398,6 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             # 不符合推文格式
             continue
         push_author = result.group(0)[2:-1].strip()
-
         log.logger.debug(i18n.comment_id, push_author)
 
         result = push_date_pattern.search(line)
@@ -547,7 +413,6 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             log.logger.debug(f'{i18n.comment} ip', comment_ip)
 
         push_content = line[line.find(push_author) + len(push_author):]
-        # PushContent = PushContent.replace(PushDate, '')
 
         if api.config.host == data_type.HOST.PTT1:
             push_content = push_content[:push_content.rfind(push_date)]
@@ -557,35 +422,14 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         if comment_ip is not None:
             push_content = push_content.replace(comment_ip, '')
         push_content = push_content[push_content.find(':') + 1:].strip()
-
         log.logger.debug(i18n.comment_content, push_content)
 
-        current_push = {
+        push_list.append({
             CommentField.type: comment_type,
             CommentField.author: push_author,
             CommentField.content: push_content,
             CommentField.ip: comment_ip,
-            CommentField.time: push_date}
-        push_list.append(current_push)
+            CommentField.time: push_date,
+        })
 
-    post.update({
-        PostField.board: board,
-        PostField.aid: post_aid,
-        PostField.index: post_index,
-        PostField.author: post_author,
-        PostField.date: post_date,
-        PostField.title: post_title,
-        PostField.url: post_web,
-        PostField.money: post_money,
-        PostField.content: post_content,
-        PostField.ip: ip,
-        PostField.comments: push_list,
-        PostField.list_date: list_date,
-        PostField.has_control_code: has_control_code,
-        PostField.pass_format_check: True,
-        PostField.location: location,
-        PostField.push_number: push_number,
-        PostField.full_content: origin_post,
-        PostField.is_unconfirmed: api.Unconfirmed})
-
-    return post
+    return push_list

@@ -20,6 +20,7 @@ from . import _api_get_time
 from . import _api_get_user
 from . import _api_give_money
 from . import _api_loginout
+from . import _api_get_waterball
 from . import _api_mail
 from . import _api_mark_post
 from . import _api_post
@@ -151,6 +152,7 @@ class API:
         self._goto_board_list = set()
         self._board_info_list = dict()
         self._newest_index_data = data_type.TimedDict(timeout=2)
+        self._mail_capacity = None
         self.cursor = None
 
         log.logger.debug('thread_id', self._thread_id)
@@ -294,10 +296,12 @@ class API:
 
         Args:
             board (str): 看板名稱。
-            aid (str): 文章編號。
-            index: 文章編號。
-            search_list (List[str]): 搜尋清單。
-            query (bool): 是否為查詢模式。
+            aid (str): 文章 AID，例如 ``'1TJH_XY0'``。
+            index (int): 文章編號。
+            search_type (:ref:`search-type`): 搜尋類型，與 ``search_condition`` 搭配使用。
+            search_condition (str): 搜尋條件，例如關鍵字或作者 ID。
+            search_list (List[Tuple]): 多條件搜尋清單，每個元素為 ``(SearchType, condition)``。
+            query (bool): 是否為查詢模式，不進入文章內容，僅取得列表資訊。
 
         Returns:
             Dict，文章內容。詳見 :ref:`post-field`
@@ -938,6 +942,43 @@ class API:
         """
 
         _api_mail.del_mail(self, index)
+
+    def get_waterball(self, post_action: data_type.WaterballPostAction = data_type.WaterballPostAction.KEEP) -> List[Dict]:
+        """
+        取得水球紀錄。
+
+        Args:
+            post_action (WaterballPostAction): 取得水球後的處理方式。
+                - ``WaterballPostAction.KEEP``（預設）：保留水球記錄。
+                - ``WaterballPostAction.CLEAR``：清除水球記錄。
+                - ``WaterballPostAction.MAILBOX``：存入信箱。
+
+        Returns:
+            List[Dict]，水球紀錄清單，詳見 :ref:`waterball-field`。
+
+        Raises:
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                waterball_list = ptt_bot.get_waterball(post_action=PyPtt.WaterballPostAction.KEEP)
+                for waterball in waterball_list:
+                    print(waterball[PyPtt.WaterballField.type])
+                    print(waterball[PyPtt.WaterballField.target])
+                    print(waterball[PyPtt.WaterballField.content])
+                    print(waterball[PyPtt.WaterballField.date])
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+        """
+
+        return _api_get_waterball.get_waterball(self, post_action)
 
     def change_pw(self, new_password: str) -> None:
         """

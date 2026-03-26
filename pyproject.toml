@@ -35,7 +35,7 @@ dependencies = [
     "progressbar2",
     "websockets==12.0",
     "uao",
-    "requests==2.32.4",
+    "requests==2.33.0",
     "AutoStrEnum",
     "PyYAML",
 ]

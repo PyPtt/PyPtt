@@ -30,6 +30,7 @@ string_data = {
     "get_board_info": "取得看板資訊 _target0_",
     "get_favourite_board_list": "取得我的最愛",
     "get_mail": "取得信件",
+    "get_waterball": "取得水球紀錄",
     "give_money_to": "給 _target0_ _target1_ P 幣",
     "goodbye": [
         "再見",
