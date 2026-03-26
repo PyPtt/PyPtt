@@ -30,6 +30,7 @@ string_data = {
     "get_board_info": "Get board info _target0_",
     "get_favourite_board_list": "Query favourite board list",
     "get_mail": "Get mail",
+    "get_waterball": "Get waterball records",
     "give_money_to": "give _target0_ _target1_ P coins",
     "goodbye": [
         "good bye",
