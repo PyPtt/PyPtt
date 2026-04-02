@@ -50,6 +50,12 @@ APIs
    get_aid_from_url
    get_bottom_post_list
 
+水球相關
+----------------
+.. toctree::
+
+   get_waterball
+
 版主相關
 ----------------
 .. toctree::

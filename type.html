@@ -218,6 +218,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api/get_board_info.html">get_board_info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_aid_from_url.html">get_aid_from_url</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_bottom_post_list.html">get_bottom_post_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/get_waterball.html">get_waterball</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/set_board_title.html">set_board_title</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/mark_post.html">mark_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/bucket.html">bucket</a></li>
@@ -833,6 +834,78 @@
 </dd></dl>
 
 </section>
+<section id="waterballtype">
+<span id="waterball-type"></span><h2>WaterballType<a class="headerlink" href="#waterballtype" title="連結到這個標頭">¶</a></h2>
+<ul class="simple">
+<li><p>水球類型。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballType.SEND">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballType.</span></span><span class="sig-name descname"><span class="pre">SEND</span></span><a class="headerlink" href="#PyPtt.WaterballType.SEND" title="連結到這個定義">¶</a></dt>
+<dd><p>發送水球</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballType.CATCH">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballType.</span></span><span class="sig-name descname"><span class="pre">CATCH</span></span><a class="headerlink" href="#PyPtt.WaterballType.CATCH" title="連結到這個定義">¶</a></dt>
+<dd><p>接收水球</p>
+</dd></dl>
+
+</section>
+<section id="waterballpostaction">
+<span id="waterball-post-action"></span><h2>WaterballPostAction<a class="headerlink" href="#waterballpostaction" title="連結到這個標頭">¶</a></h2>
+<ul class="simple">
+<li><p>取得水球後的處理方式。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballPostAction.KEEP">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballPostAction.</span></span><span class="sig-name descname"><span class="pre">KEEP</span></span><a class="headerlink" href="#PyPtt.WaterballPostAction.KEEP" title="連結到這個定義">¶</a></dt>
+<dd><p>保留水球記錄</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballPostAction.CLEAR">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballPostAction.</span></span><span class="sig-name descname"><span class="pre">CLEAR</span></span><a class="headerlink" href="#PyPtt.WaterballPostAction.CLEAR" title="連結到這個定義">¶</a></dt>
+<dd><p>清除水球記錄</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballPostAction.MAILBOX">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballPostAction.</span></span><span class="sig-name descname"><span class="pre">MAILBOX</span></span><a class="headerlink" href="#PyPtt.WaterballPostAction.MAILBOX" title="連結到這個定義">¶</a></dt>
+<dd><p>存入信箱</p>
+</dd></dl>
+
+</section>
+<section id="waterballfield">
+<span id="waterball-field"></span><h2>WaterballField<a class="headerlink" href="#waterballfield" title="連結到這個標頭">¶</a></h2>
+<ul class="simple">
+<li><p>水球資料欄位。</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballField.type">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballField.</span></span><span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#PyPtt.WaterballField.type" title="連結到這個定義">¶</a></dt>
+<dd><p>水球類型，詳見 <a class="reference internal" href="#waterball-type"><span class="std std-ref">WaterballType</span></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballField.target">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballField.</span></span><span class="sig-name descname"><span class="pre">target</span></span><a class="headerlink" href="#PyPtt.WaterballField.target" title="連結到這個定義">¶</a></dt>
+<dd><p>水球對象</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballField.content">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballField.</span></span><span class="sig-name descname"><span class="pre">content</span></span><a class="headerlink" href="#PyPtt.WaterballField.content" title="連結到這個定義">¶</a></dt>
+<dd><p>水球內容</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PyPtt.WaterballField.date">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.WaterballField.</span></span><span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#PyPtt.WaterballField.date" title="連結到這個定義">¶</a></dt>
+<dd><p>水球時間</p>
+</dd></dl>
+
+</section>
 <section id="postfield">
 <span id="post-field"></span><h2>PostField<a class="headerlink" href="#postfield" title="連結到這個標頭">¶</a></h2>
 <ul class="simple">
@@ -1136,6 +1209,24 @@
 <li><a class="reference internal" href="#PyPtt.BoardField.require_login_time"><code class="docutils literal notranslate"><span class="pre">PyPtt.BoardField.require_login_time</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.BoardField.require_illegal_post"><code class="docutils literal notranslate"><span class="pre">PyPtt.BoardField.require_illegal_post</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.BoardField.post_kind_list"><code class="docutils literal notranslate"><span class="pre">PyPtt.BoardField.post_kind_list</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#waterballtype">WaterballType</a><ul>
+<li><a class="reference internal" href="#PyPtt.WaterballType.SEND"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballType.SEND</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.WaterballType.CATCH"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballType.CATCH</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#waterballpostaction">WaterballPostAction</a><ul>
+<li><a class="reference internal" href="#PyPtt.WaterballPostAction.KEEP"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballPostAction.KEEP</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.WaterballPostAction.CLEAR"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballPostAction.CLEAR</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.WaterballPostAction.MAILBOX"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballPostAction.MAILBOX</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#waterballfield">WaterballField</a><ul>
+<li><a class="reference internal" href="#PyPtt.WaterballField.type"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballField.type</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.WaterballField.target"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballField.target</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.WaterballField.content"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballField.content</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.WaterballField.date"><code class="docutils literal notranslate"><span class="pre">PyPtt.WaterballField.date</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#postfield">PostField</a><ul>
