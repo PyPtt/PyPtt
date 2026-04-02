@@ -7,18 +7,34 @@ from tests import config # Assuming config.py has PTT1_ID and PTT1_PW
 
 @pytest.fixture(scope="module", autouse=True)
 def service_instance():
+    import time
+
     pyptt_init_config = {}
     service = Service(pyptt_init_config)
+
+    max_retries = 3
+    retry_delay = 10
+
+    for attempt in range(max_retries):
+        try:
+            service.call('login', {
+                'ptt_id': config.PTT1_ID,
+                'ptt_pw': config.PTT1_PW,
+                'kick_other_session': True
+            })
+            break
+        except (PyPtt.LoginError, PyPtt.LoginTooOften) as e:
+            if attempt < max_retries - 1:
+                wait = retry_delay * (attempt + 1)
+                print(f'Service 登入失敗 ({e})，{wait} 秒後重試 ({attempt + 1}/{max_retries})')
+                time.sleep(wait)
+            else:
+                service.close()
+                pytest.fail(f'Service 登入失敗，已重試 {max_retries} 次: {e}')
+
     try:
-        # Login using credentials from config.py
-        service.call('login', {
-            'ptt_id': config.PTT1_ID,
-            'ptt_pw': config.PTT1_PW,
-            'kick_other_session': True
-        })
         yield service
     finally:
-        # Ensure logout and close are called
         try:
             service.call('logout')
         except Exception as e:
