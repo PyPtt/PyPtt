@@ -400,6 +400,7 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
         connect_core.TargetUnit('互動式動畫播放中', log_level=log.DEBUG, response=command.ctrl_c * 5),
         connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
         connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.MainMenu_Exiting, log_level=log.DEBUG, break_detect=True),
     ]
 
     if refresh:
@@ -414,7 +415,15 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
     # 這裡可能因為發現第一次進入看板會有進版畫面，一般來說都可以在 target_list 找到對應的標的
     # 但某些看板會卡在進版動畫中，但沒有顯示任意鍵繼續或互動是動畫，所以當 index == -1 (表示找不到標的 timeout 了)
     # 可以嘗試修改 cmd_list
-    api.connect_core.send(cmd, target_list, refresh=current_refresh)
+    index = api.connect_core.send(cmd, target_list, refresh=current_refresh)
+
+    # index == 4 表示偵測到 MainMenu_Exiting，代表導航到看板失敗
+    # 可能是暫時性的問題（閒置太久、連線狀態改變等），重試一次
+    if index == 4:
+        log.logger.debug('goto_board', board, 'failed, retrying')
+        index = api.connect_core.send(cmd, target_list, refresh=True)
+        if index == 4:
+            raise exceptions.NoSuchBoard(api.config, board)
 
     if end:
         cmd_list = []

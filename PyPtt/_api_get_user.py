@@ -34,6 +34,16 @@ def get_user(api, ptt_id: str) -> Dict:
     cmd_list.append(command.go_main_menu)
     cmd_list.append('T')
     cmd_list.append(command.enter)
+
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit(screens.Target.InTalk, break_detect=True),
+    ]
+
+    api.connect_core.send(cmd, target_list)
+
+    cmd_list = []
     cmd_list.append('Q')
     cmd_list.append(command.enter)
     cmd_list.append(ptt_id)
