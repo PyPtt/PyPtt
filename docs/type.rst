@@ -403,6 +403,60 @@ BoardField
 
     發文類別，例如 [公告] [問卦] 等
 
+.. _waterball-type:
+
+WaterballType
+--------------
+* 水球類型。
+
+.. py:attribute:: PyPtt.WaterballType.SEND
+
+    發送水球
+
+.. py:attribute:: PyPtt.WaterballType.CATCH
+
+    接收水球
+
+.. _waterball-post-action:
+
+WaterballPostAction
+--------------------
+* 取得水球後的處理方式。
+
+.. py:attribute:: PyPtt.WaterballPostAction.KEEP
+
+    保留水球記錄
+
+.. py:attribute:: PyPtt.WaterballPostAction.CLEAR
+
+    清除水球記錄
+
+.. py:attribute:: PyPtt.WaterballPostAction.MAILBOX
+
+    存入信箱
+
+.. _waterball-field:
+
+WaterballField
+----------------
+* 水球資料欄位。
+
+.. py:attribute:: PyPtt.WaterballField.type
+
+    水球類型，詳見 :ref:`waterball-type`
+
+.. py:attribute:: PyPtt.WaterballField.target
+
+    水球對象
+
+.. py:attribute:: PyPtt.WaterballField.content
+
+    水球內容
+
+.. py:attribute:: PyPtt.WaterballField.date
+
+    水球時間
+
 .. _post-field:
 
 PostField

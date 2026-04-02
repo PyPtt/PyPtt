@@ -948,10 +948,7 @@ class API:
         取得水球紀錄。
 
         Args:
-            post_action (WaterballPostAction): 取得水球後的處理方式。
-                - ``WaterballPostAction.KEEP``（預設）：保留水球記錄。
-                - ``WaterballPostAction.CLEAR``：清除水球記錄。
-                - ``WaterballPostAction.MAILBOX``：存入信箱。
+            post_action (:ref:`waterball-post-action`): 取得水球後的處理方式，預設為 KEEP。
 
         Returns:
             List[Dict]，水球紀錄清單，詳見 :ref:`waterball-field`。
