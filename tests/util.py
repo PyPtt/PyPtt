@@ -26,25 +26,28 @@ def get_id_pw(password_file):
     return ptt_id, password
 
 
-def login(ptt_bot: PyPtt.API, kick: bool = True):
+def login(ptt_bot: PyPtt.API, kick: bool = True, max_retries: int = 3, retry_delay: int = 10):
+    import time
+
     if ptt_bot.host == PyPtt.HOST.PTT1:
         ptt_id, ptt_pw = config.PTT1_ID, config.PTT1_PW
     else:
         ptt_id, ptt_pw = config.PTT2_ID, config.PTT2_PW
 
-    for _ in range(3):
+    for attempt in range(max_retries):
         try:
             ptt_bot.login(ptt_id=ptt_id, ptt_pw=ptt_pw, kick_other_session=kick)
-            break
-        except PyPtt.LoginError:
-            logger.info('登入失敗')
-            assert False
+            return
         except PyPtt.WrongIDorPassword:
             logger.info('帳號密碼錯誤')
-            assert False
-        except PyPtt.LoginTooOften:
-            logger.info('請稍等一下再登入')
-            assert False
+            assert False, '帳號密碼錯誤，不重試'
+        except (PyPtt.LoginError, PyPtt.LoginTooOften) as e:
+            if attempt < max_retries - 1:
+                wait = retry_delay * (attempt + 1)
+                logger.info(f'登入失敗 ({e})，{wait} 秒後重試 ({attempt + 1}/{max_retries})')
+                time.sleep(wait)
+            else:
+                assert False, f'登入失敗，已重試 {max_retries} 次: {e}'
 
     if not ptt_bot.is_registered_user:
         logger.info('未註冊使用者')
