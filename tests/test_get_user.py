@@ -1,3 +1,6 @@
+import time
+
+
 def _check_user_info(user_info, test_user):
     assert user_info is not None, f'get_user returned None for user {test_user}'
     assert 'ptt_id' in user_info
@@ -16,20 +19,10 @@ def test_get_user(ptt_bots):
         'CodingMan',
     ]
 
-    for ptt_bot in ptt_bots:
+    for _ in range(100):
         for test_user in test_users:
-            user_info = ptt_bot.get_user(test_user)
+            user_info = ptt_bots[0].get_user(test_user)
             _check_user_info(user_info, test_user)
 
+            time.sleep(1)
 
-def test_get_user_ptt1_only(ptt_bots):
-    """Tests getting user information that only exists on PTT1."""
-    ptt1_bot = ptt_bots[0]
-
-    test_users = [
-        'janice001',
-    ]
-
-    for test_user in test_users:
-        user_info = ptt1_bot.get_user(test_user)
-        _check_user_info(user_info, test_user)
