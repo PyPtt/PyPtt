@@ -37,30 +37,21 @@ def get_user(api, ptt_id: str) -> Dict:
 
     cmd = ''.join(cmd_list)
 
-    target_list = [
-        connect_core.TargetUnit(screens.Target.InTalk, break_detect=True),
-    ]
-
-    api.connect_core.send(cmd, target_list)
-
-    cmd_list = []
-    cmd_list.append('Q')
-    cmd_list.append(command.enter)
-    cmd_list.append(ptt_id)
-    cmd_list.append(command.enter)
-
-    cmd = ''.join(cmd_list)
+    # Use InTalk as a non-break target that auto-responds with the
+    # query command, and max_match=1 to prevent re-matching on
+    # intermediate screens (race condition fix).
+    query_cmd = 'Q' + command.enter + ptt_id + command.enter
 
     target_list = [
         connect_core.TargetUnit(screens.Target.AnyKey, break_detect=True),
-        connect_core.TargetUnit(screens.Target.InTalk, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InTalk,
+                                response=query_cmd,
+                                max_match=1),
     ]
 
-    index = api.connect_core.send(
-        cmd,
-        target_list)
+    index = api.connect_core.send(cmd, target_list)
     ori_screen = api.connect_core.get_screen_queue()[-1]
-    if index == 1:
+    if index != 0:
         raise exceptions.NoSuchUser(ptt_id)
     # PTT1
     # 《ＩＤ暱稱》CodingMan (專業程式 BUG 製造機)《經濟狀況》小康 ($73866)

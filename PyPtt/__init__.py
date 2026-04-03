@@ -1,4 +1,6 @@
-__version__ = '2.0.5'
+__version__ = '2.0.6'
+__author__ = 'CodingMan'
+__email__ = 'pttcodingman@gmail.com'
 
 from .PTT import API
 from .data_type import *
