@@ -104,6 +104,8 @@ class Target:
 
     AnyKey = '任意鍵'
 
+    WaterballCleanup = '確定清除？'
+
     InTalk = [
         '【聊天說話】',
         '線上使用者列表',
