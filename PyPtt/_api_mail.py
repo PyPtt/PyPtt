@@ -277,7 +277,7 @@ def del_mail(api, index) -> None:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     current_index = api.get_newest_index(data_type.NewIndex.MAIL)
-    check_value.check_index(index, current_index)
+    check_value.check_index('index', index, current_index)
 
     cmd_list = []
     # 進入主選單

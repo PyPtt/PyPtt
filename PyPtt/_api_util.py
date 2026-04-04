@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import functools
 import re
 import threading
 from dataclasses import dataclass
@@ -62,6 +61,8 @@ def get_content(api, post_mode: bool = True):
     first_page = True
     origin_post = []
     stop_dict = dict()
+    new_content_part = ''
+    get_line_b = 0
 
     while True:
         index = api.connect_core.send(cmd, target_list)
@@ -445,7 +446,6 @@ def one_thread(api):
         raise exceptions.MultiThreadOperated()
 
 
-@functools.lru_cache(maxsize=64)
 def check_board(api, board: str, check_moderator: bool = False) -> Dict:
     if board.lower() not in api._exist_board_list:
         board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)

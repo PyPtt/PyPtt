@@ -327,6 +327,8 @@ class API(object):
                                 raise exceptions.UseTooManyResources()
                             raise exceptions.ConnectionClosed()
 
+                        if isinstance(data_chunk, str):
+                            data_chunk = data_chunk.encode('utf-8')
                         receive_data_buffer += data_chunk
 
                         screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
@@ -366,7 +368,7 @@ class API(object):
             raise exceptions.ParameterError('Item of TargetList must be TargetUnit')
 
         if self._UseTooManyResources not in target_list:
-            target_list.append(self._UseTooManyResources)
+            target_list = target_list + [self._UseTooManyResources]
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
             # Original Telnet logic remains, as it doesn't use asyncio
@@ -428,7 +430,11 @@ class API(object):
 
     def close(self):
         if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
-            if self._core and self._core.open:
+            try:
+                is_open = not self._core.closed
+            except AttributeError:
+                is_open = getattr(self._core, 'open', False)
+            if self._core and is_open:
                 loop = self._get_event_loop()
                 try:
                     loop.run_until_complete(asyncio.wait_for(self._core.close(), timeout=2.0))

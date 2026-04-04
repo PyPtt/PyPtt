@@ -120,7 +120,7 @@ class Service:
                     'result': api_result,
                     'exception': api_exception
                 }
-                self._call_result_cv.notify()
+                self._call_result_cv.notify_all()
 
     def _get_call_id(self):
 

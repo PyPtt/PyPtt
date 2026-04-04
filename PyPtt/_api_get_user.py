@@ -113,7 +113,8 @@ def get_user(api, ptt_id: str) -> Dict:
 
     # PTT2 沒有退文
     if api.config.host == data_type.HOST.PTT1:
-        illegal_post = int(re.findall(r'\d+', buff_1)[1])
+        int_list = re.findall(r'\d+', buff_1)
+        illegal_post = int(int_list[1]) if len(int_list) > 1 else 0
     else:
         illegal_post = None
 
