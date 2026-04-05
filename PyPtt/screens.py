@@ -151,7 +151,7 @@ class Target:
     ]
 
     use_too_many_resources = [
-        '程式耗用過多計算資源'
+        '程式耗用過多'
     ]
 
     Animation = [
@@ -217,11 +217,11 @@ class VT100Parser:
 
     def _move(self, x, y):
         self._cursor_x = x
-        self._cursor_y = y
+        self._cursor_y = min(y, len(self.screen) - 1)
 
     def _newline(self):
         self._cursor_x = 0
-        self._cursor_y += 1
+        self._cursor_y = min(self._cursor_y + 1, len(self.screen) - 1)
 
     def _k(self):
         if self._cursor_x == 0:

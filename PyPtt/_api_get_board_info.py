@@ -69,22 +69,27 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
 
+    boardname = None
     p = re.compile(r'《(.+)》看板設定')
     r = p.search(ori_screen)
     if r is not None:
         boardname = r.group(0)[1:-5].strip()
 
+    if boardname is None:
+        raise exceptions.NoSuchBoard(api.config, board)
     logger.debug('看板名稱', boardname, board)
 
     if boardname.lower() != board.lower():
         raise exceptions.NoSuchBoard(api.config, board)
 
+    chinese_des = ''
     p = re.compile(r'中文敘述: (.+)')
     r = p.search(ori_screen)
     if r is not None:
         chinese_des = r.group(0)[5:].strip()
     logger.debug('中文敘述', chinese_des)
 
+    moderators = []
     p = re.compile(r'板主名單: (.+)')
     r = p.search(ori_screen)
     if r is not None:

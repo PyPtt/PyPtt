@@ -35,7 +35,7 @@ def mail(api,
     check_value.check_type(title, str, 'title')
     check_value.check_type(content, str, 'content')
 
-    api.get_user(ptt_id)
+    _api_util.check_user_exist(api, ptt_id)
 
     check_sign_file = False
     for i in range(0, 10):
@@ -277,7 +277,7 @@ def del_mail(api, index) -> None:
         raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
 
     current_index = api.get_newest_index(data_type.NewIndex.MAIL)
-    check_value.check_index(index, current_index)
+    check_value.check_index('index', index, current_index)
 
     cmd_list = []
     # 進入主選單

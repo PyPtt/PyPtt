@@ -98,6 +98,14 @@ class PostField(AutoStrEnum):
     is_unconfirmed = auto()
 
 
+class CallStatus(AutoStrEnum):
+    ON = auto()
+    UNPLUG = auto()
+    WATERPROOF = auto()
+    FRIEND = auto()
+    OFF = auto()
+
+
 class WaterballType(AutoStrEnum):
     SEND = auto()
     CATCH = auto()

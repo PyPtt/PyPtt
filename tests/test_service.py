@@ -5,6 +5,53 @@ import time
 from PyPtt import Service, PostField
 from tests import config # Assuming config.py has PTT1_ID and PTT1_PW
 
+class TestCallInterval:
+    """Tests for call_interval feature (no network required)."""
+
+    def test_default_call_interval(self):
+        service = Service()
+        assert service._call_interval == 0
+        service.close()
+
+    def test_init_with_call_interval(self):
+        service = Service(call_interval=1.5)
+        assert service._call_interval == 1.5
+        service.close()
+
+    def test_init_with_int_call_interval(self):
+        service = Service(call_interval=2)
+        assert service._call_interval == 2
+        service.close()
+
+    def test_set_call_interval(self):
+        service = Service()
+        service.set_call_interval(0.5)
+        assert service._call_interval == 0.5
+        service.set_call_interval(0)
+        assert service._call_interval == 0
+        service.close()
+
+    def test_negative_call_interval_init(self):
+        with pytest.raises(PyPtt.exceptions.ParameterError):
+            Service(call_interval=-1)
+
+    def test_negative_call_interval_setter(self):
+        service = Service()
+        with pytest.raises(PyPtt.exceptions.ParameterError):
+            service.set_call_interval(-1)
+        service.close()
+
+    def test_invalid_type_call_interval_init(self):
+        with pytest.raises(TypeError):
+            Service(call_interval='fast')
+
+    def test_invalid_type_call_interval_setter(self):
+        service = Service()
+        with pytest.raises(TypeError):
+            service.set_call_interval('fast')
+        service.close()
+
+
 @pytest.fixture(scope="module", autouse=True)
 def service_instance():
     import time

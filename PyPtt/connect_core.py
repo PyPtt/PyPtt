@@ -249,6 +249,8 @@ class API(object):
                     self._RDQ.add(screen)
                     if target == self._UseTooManyResources:
                         use_too_many_res = True
+                        find_target = True
+                        log.logger.info(i18n.use_too_many_resources)
                         break
                     target.raise_exception()
 
@@ -327,19 +329,22 @@ class API(object):
                                 raise exceptions.UseTooManyResources()
                             raise exceptions.ConnectionClosed()
 
+                        if isinstance(data_chunk, str):
+                            data_chunk = data_chunk.encode('utf-8')
                         receive_data_buffer += data_chunk
 
                         screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                             self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
-                        if self.current_encoding == 'big5uao' and not find_target:
-                            self.current_encoding = 'utf-8'
+                        if not find_target:
+                            original_encoding = self.current_encoding
+                            self.current_encoding = 'big5uao' if original_encoding == 'utf-8' else 'utf-8'
                             screen_, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                                 self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
                             if find_target:
                                 screen = screen_
                             else:
-                                self.current_encoding = 'big5uao'
+                                self.current_encoding = original_encoding
 
                         if find_target:
                             break
@@ -348,13 +353,15 @@ class API(object):
                     vt100_p = screens.VT100Parser(receive_data_buffer, self.current_encoding)
                     screens.show(self.config, vt100_p.screen)
                     self._RDQ.add(vt100_p.screen)
+                if use_too_many_res:
+                    raise exceptions.UseTooManyResources()
                 return -1
 
             if target_index != -1:
                 return target_index
 
             if use_too_many_res:
-                continue
+                raise exceptions.UseTooManyResources()
 
             if not find_target:
                 return -1
@@ -366,7 +373,7 @@ class API(object):
             raise exceptions.ParameterError('Item of TargetList must be TargetUnit')
 
         if self._UseTooManyResources not in target_list:
-            target_list.append(self._UseTooManyResources)
+            target_list = target_list + [self._UseTooManyResources]
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
             # Original Telnet logic remains, as it doesn't use asyncio
@@ -428,7 +435,11 @@ class API(object):
 
     def close(self):
         if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
-            if self._core and self._core.open:
+            try:
+                is_open = not self._core.closed
+            except AttributeError:
+                is_open = getattr(self._core, 'open', False)
+            if self._core and is_open:
                 loop = self._get_event_loop()
                 try:
                     loop.run_until_complete(asyncio.wait_for(self._core.close(), timeout=2.0))

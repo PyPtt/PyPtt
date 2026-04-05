@@ -12,6 +12,11 @@
 
 已完成
 --------------------
+* 支援 Python 3.14 Free Threaded 2025.10.18 完成
+* 重構測試全面採用 pytest 2025.10.18 完成
+* 發佈 `PTT MCP server`_ 2025.09.06 完成
+* 支援 Python 3.13 2024 完成
+* 新增 :doc:`api/get_post_list` API 2024 完成
 * PyPtt Service docker
     | 期待 PyPtt 在未來可以有 API 形式的服務，讓大家可以透過 API 呼叫來使用 PyPtt。
     | 這樣其實在某個層面也上可以達到使用 Tor or Proxy 的目的。
@@ -22,3 +27,5 @@
      使用 sphinx 來建置官方網站，讓大家可以更方便地了解 PyPtt。
 * 測試案例 2022.12.15 完成
 * 1.0 正式版本重構 2022.11.15 完成
+
+.. _PTT MCP server: https://github.com/PyPtt/ptt_mcp_server

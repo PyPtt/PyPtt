@@ -68,6 +68,8 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
     elif reply_to == data_type.ReplyTo.BOARD_MAIL:
         reply_msg = i18n.reply_board_mail
         reply_target_unit = connect_core.TargetUnit('▲ 回應至', log_level=log.INFO, response='B' + command.enter)
+    else:
+        raise exceptions.ParameterError(f'unsupported reply_to: {reply_to}')
     log.logger.info(reply_msg)
 
     cmd = ''.join(cmd_list)

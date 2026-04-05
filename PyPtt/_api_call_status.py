@@ -6,8 +6,7 @@ from . import log
 from . import screens
 
 
-def get_call_status(api) -> None:
-    # log.py = DefaultLogger('api', api.config.log_level)
+def get_call_status(api) -> data_type.CallStatus:
 
     cmd_list = []
     cmd_list.append(command.go_main_menu)
@@ -34,15 +33,15 @@ def get_call_status(api) -> None:
             raise exceptions.UnknownError('UnknownError')
 
     if index == 0:
-        return data_type.call_status.ON
+        return data_type.CallStatus.ON
     if index == 1:
-        return data_type.call_status.UNPLUG
+        return data_type.CallStatus.UNPLUG
     if index == 2:
-        return data_type.call_status.WATERPROOF
+        return data_type.CallStatus.WATERPROOF
     if index == 3:
-        return data_type.call_status.FRIEND
+        return data_type.CallStatus.FRIEND
     if index == 4:
-        return data_type.call_status.OFF
+        return data_type.CallStatus.OFF
 
     ori_screen = api.connect_core.get_screen_queue()[-1]
     raise exceptions.UnknownError(ori_screen)
@@ -63,10 +62,14 @@ def set_call_status(api, call_status) -> None:
     target_list = [
         connect_core.TargetUnit(screens.Target.InUserList, break_detect=True)]
 
-    while current_call_status != call_status:
+    for _ in range(6):
+        if current_call_status == call_status:
+            break
         api.connect_core.send(
             cmd,
             target_list,
             screen_timeout=api.config.screen_long_timeout)
 
         current_call_status = api._get_call_status()
+    else:
+        raise exceptions.UnknownError('could not set call status')

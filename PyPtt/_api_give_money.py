@@ -33,8 +33,7 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
     log.logger.info(
         i18n.replace(i18n.give_money_to, ptt_id, money))
 
-    # Check data_type.user
-    api.get_user(ptt_id)
+    _api_util.check_user_exist(api, ptt_id)
 
     cmd_list = []
     cmd_list.append(command.go_main_menu)

@@ -67,7 +67,7 @@ def _comment(api,
 
     cmd_list = []
 
-    if index == 0 or index == 1:
+    if index in (0, 1, 2):
         push_option_line = api.connect_core.get_screen_queue()[-1]
         push_option_line = push_option_line.split('\n')[-1]
 

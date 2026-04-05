@@ -22,7 +22,7 @@ def bucket(api, board: str, bucket_days: int, reason: str, ptt_id: str) -> None:
     check_value.check_type(reason, str, 'reason')
     check_value.check_type(ptt_id, str, 'ptt_id')
 
-    api.get_user(ptt_id)
+    _api_util.check_user_exist(api, ptt_id)
 
     _api_util.check_board(api, board, check_moderator=True)
 

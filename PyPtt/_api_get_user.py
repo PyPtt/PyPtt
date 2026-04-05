@@ -30,12 +30,21 @@ def get_user(api, ptt_id: str) -> Dict:
     if len(ptt_id) < 2:
         raise exceptions.ParameterError(f'wrong parameter user_id: {ptt_id}')
 
-    cmd_list = []
-    cmd_list.append(command.go_main_menu)
-    cmd_list.append('T')
-    cmd_list.append(command.enter)
+    # Step 1: Navigate to Talk menu.
+    # AnyKey auto-dismiss is safe here because no query commands are pending.
+    cmd = command.go_main_menu + 'T' + command.enter
 
-    cmd = ''.join(cmd_list)
+    target_list = [
+        connect_core.TargetUnit(screens.Target.InTalk, break_detect=True),
+        connect_core.TargetUnit(screens.Target.AnyKey, response=' '),
+    ]
+
+    nav_index = api.connect_core.send(cmd, target_list)
+
+    # Step 2: Query user.
+    # Use AnyKey as break target — it's at the very bottom of the user info
+    # screen, so matching it confirms the screen is fully transmitted.
+    cmd = 'Q' + command.enter + ptt_id + command.enter
 
     # Use InTalk as a non-break target that auto-responds with the
     # query command, and max_match=1 to prevent re-matching on
@@ -113,7 +122,8 @@ def get_user(api, ptt_id: str) -> Dict:
 
     # PTT2 沒有退文
     if api.config.host == data_type.HOST.PTT1:
-        illegal_post = int(re.findall(r'\d+', buff_1)[1])
+        int_list = re.findall(r'\d+', buff_1)
+        illegal_post = int(int_list[1]) if len(int_list) > 1 else 0
     else:
         illegal_post = None
 
@@ -152,5 +162,7 @@ def get_user(api, ptt_id: str) -> Dict:
         UserField.chess: chess,
         UserField.signature_file: signature_file,
     }
+    api._exist_user_list.add(ptt_id.lower())
+
     user = json.dumps(user, cls=AutoJsonEncoder)
     return json.loads(user)

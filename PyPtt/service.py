@@ -13,7 +13,7 @@ from . import log
 
 class Service:
 
-    def __init__(self, pyptt_init_config: Optional[dict] = None):
+    def __init__(self, pyptt_init_config: Optional[dict] = None, call_interval: float = 0):
 
         """
 
@@ -24,6 +24,7 @@ class Service:
 
         Args:
             pyptt_init_config (dict): PyPtt 初始化設定，請參考 :ref:`初始化設定 <api-init>`。
+            call_interval (float): API 呼叫之間的最小時間間隔（秒），預設為 0（不限制）。
 
         Returns:
             None
@@ -48,7 +49,7 @@ class Service:
                     # 'language': PyPtt.Language.ENGLISH,
                 }
 
-                service = Service(pyptt_init_config)
+                service = Service(pyptt_init_config, call_interval=0.5)
 
                 try:
                     service.call('login', {'ptt_id': 'YOUR_PTT_ID', 'ptt_pw': 'YOUR_PTT_PW'})
@@ -69,6 +70,10 @@ class Service:
         if pyptt_init_config is None:
             pyptt_init_config = {}
 
+        check_value.check_type(call_interval, (int, float), 'call_interval')
+        if call_interval < 0:
+            raise exceptions.ParameterError('call_interval must be >= 0')
+
         log_level = pyptt_init_config.get('log_level', log.INFO)
         self.logger = log.init(log_level, 'service')
 
@@ -76,6 +81,9 @@ class Service:
 
         self._api = None
         self._api_init_config = pyptt_init_config
+
+        self._call_interval = call_interval
+        self._last_call_time = 0.0
 
         self._call_queue = Queue()
         self._call_result = {}
@@ -106,6 +114,11 @@ class Service:
             except queue.Empty:
                 continue
 
+            if self._call_interval > 0:
+                elapsed = time.monotonic() - self._last_call_time
+                if elapsed < self._call_interval:
+                    time.sleep(self._call_interval - elapsed)
+
             func = getattr(self._api, call['api'])
 
             api_result = None
@@ -115,12 +128,14 @@ class Service:
             except Exception as e:
                 api_exception = e
 
+            self._last_call_time = time.monotonic()
+
             with self._call_result_cv:
                 self._call_result[call['id']] = {
                     'result': api_result,
                     'exception': api_exception
                 }
-                self._call_result_cv.notify()
+                self._call_result_cv.notify_all()
 
     def _get_call_id(self):
 
@@ -159,6 +174,20 @@ class Service:
             raise call_result['exception']
 
         return call_result['result']
+
+    def set_call_interval(self, call_interval: float):
+        """設定 API 呼叫之間的最小時間間隔。
+
+        Args:
+            call_interval (float): 最小時間間隔（秒），必須 >= 0。
+
+        Returns:
+            None
+        """
+        check_value.check_type(call_interval, (int, float), 'call_interval')
+        if call_interval < 0:
+            raise exceptions.ParameterError('call_interval must be >= 0')
+        self._call_interval = call_interval
 
     def close(self):
         self.logger.info('close')
