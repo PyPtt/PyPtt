@@ -46,9 +46,16 @@ def get_user(api, ptt_id: str) -> Dict:
     # screen, so matching it confirms the screen is fully transmitted.
     cmd = 'Q' + command.enter + ptt_id + command.enter
 
+    # Use InTalk as a non-break target that auto-responds with the
+    # query command, and max_match=1 to prevent re-matching on
+    # intermediate screens (race condition fix).
+    query_cmd = 'Q' + command.enter + ptt_id + command.enter
+
     target_list = [
         connect_core.TargetUnit(screens.Target.AnyKey, break_detect=True),
-        connect_core.TargetUnit(screens.Target.InTalk, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InTalk,
+                                response=query_cmd,
+                                max_match=1),
     ]
 
     index = api.connect_core.send(cmd, target_list)
