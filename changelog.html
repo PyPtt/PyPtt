@@ -233,7 +233,7 @@
 <li class="toctree-l1"><a class="reference internal" href="faq.html">常見問題</a></li>
 <li class="toctree-l1"><a class="reference internal" href="roadmap.html">Roadmap</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">ChangeLog</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/">Source Code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/PyPtt/PyPtt">Source Code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyPtt/">PyPI</a></li>
 </ul>
 
@@ -279,6 +279,11 @@
 <div class="line">這裡寫著 PyPtt 的故事。</div>
 </div>
 <div class="line-block">
+<div class="line">2026.04 修正 <code class="docutils literal notranslate"><span class="pre">connect_core</span></code> 編碼回退機制僅支援單向（big5uao → utf-8），導致 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 偵測失敗的問題。</div>
+<div class="line">2026.04 修正 <code class="docutils literal notranslate"><span class="pre">_decode_screen</span></code> 中 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 匹配後未設定 <code class="docutils literal notranslate"><span class="pre">find_target</span></code>，導致編碼回退覆蓋偵測結果的問題。</div>
+<div class="line">2026.04 偵測到 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 時直接拋出例外，由上層處理重新連線。</div>
+</div>
+<div class="line-block">
 <div class="line">2026.03 重構 <code class="docutils literal notranslate"><span class="pre">parse_query_post</span></code> 為 <code class="docutils literal notranslate"><span class="pre">PostQueryResult</span></code> dataclass，改善內部結構。</div>
 </div>
 <div class="line-block">
@@ -300,13 +305,13 @@
 <div class="line">2022.12.19 發佈 <a class="reference internal" href="docker.html"><span class="doc">Docker Image</span></a>。</div>
 </div>
 <div class="line-block">
+<div class="line">2022.12.18 PyPtt 新增 <a class="reference internal" href="service.html"><span class="doc">Service</span></a> 功能。</div>
+</div>
+<div class="line-block">
 <div class="line">2022.12.08 PyPtt 1.0.1, 1.0.2，修正一些小錯誤</div>
 </div>
 <div class="line-block">
 <div class="line">2022.12.08 PyPtt 1.0.0 正式發布。</div>
-</div>
-<div class="line-block">
-<div class="line">2021.12.08 PyPtt 新增 <a class="reference internal" href="service.html"><span class="doc">Service</span></a> 功能。</div>
 </div>
 <div class="line-block">
 <div class="line">2022.12.01 開發 頁面改名為 Roadmap。</div>
@@ -360,7 +365,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=bd10ee69"></script>
+</div><script src="_static/documentation_options.js?v=5773baff"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

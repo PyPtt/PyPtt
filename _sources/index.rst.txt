@@ -99,5 +99,5 @@ PyPtt
     Roadmap <roadmap>
     ChangeLog <changelog>
 
-    Source Code <https://github.com/PyPtt/>
+    Source Code <https://github.com/PyPtt/PyPtt>
     PyPI <https://pypi.org/project/PyPtt/>

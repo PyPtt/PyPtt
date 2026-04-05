@@ -103,6 +103,8 @@
 
 .. code-block:: python
 
+    import sys
+
     import PyPtt
 
     ptt_bot = PyPtt.API()
@@ -169,7 +171,7 @@
             post_info = ptt_bot.get_post('Stock', aid='1c5YhY_K')
 
             # output False
-            print(post_info['pass_format_check'])
+            print(post_info[PyPtt.PostField.pass_format_check])
 
             # Add custom content_end_list
 
@@ -179,7 +181,7 @@
             post_info = ptt_bot.get_post('Stock', aid='1c5YhY_K')
 
             # output True
-            print(post_info['pass_format_check'])
+            print(post_info[PyPtt.PostField.pass_format_check])
 
         except Exception as e:
             print(e)
@@ -189,4 +191,4 @@
 | 這樣就可以透過新增文章結尾的方式來達到通過格式檢查的效果。
 | 你可以在 `PyPtt.screens.Target`_ 找到更多可以修改的屬性。
 
-.. _PyPtt.screens.Target: https://github.com/PyPtt/PyPtt/blob/master/PyPtt/screens.py#L11-L162
+.. _PyPtt.screens.Target: https://github.com/PyPtt/PyPtt/blob/master/PyPtt/screens.py#L11-L173
