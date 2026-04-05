@@ -147,6 +147,7 @@ class API:
 
         self.connect_core = connect_core.API(self)
         self._exist_board_list = set()
+        self._exist_user_list = set()
         self._moderators = dict()
         self._thread_id = threading.get_ident()
         self._goto_board_list = set()

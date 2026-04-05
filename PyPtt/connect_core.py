@@ -249,6 +249,8 @@ class API(object):
                     self._RDQ.add(screen)
                     if target == self._UseTooManyResources:
                         use_too_many_res = True
+                        find_target = True
+                        log.logger.info(i18n.use_too_many_resources)
                         break
                     target.raise_exception()
 
@@ -334,14 +336,15 @@ class API(object):
                         screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                             self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
 
-                        if self.current_encoding == 'big5uao' and not find_target:
-                            self.current_encoding = 'utf-8'
+                        if not find_target:
+                            original_encoding = self.current_encoding
+                            self.current_encoding = 'big5uao' if original_encoding == 'utf-8' else 'utf-8'
                             screen_, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                                 self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
                             if find_target:
                                 screen = screen_
                             else:
-                                self.current_encoding = 'big5uao'
+                                self.current_encoding = original_encoding
 
                         if find_target:
                             break
@@ -350,13 +353,15 @@ class API(object):
                     vt100_p = screens.VT100Parser(receive_data_buffer, self.current_encoding)
                     screens.show(self.config, vt100_p.screen)
                     self._RDQ.add(vt100_p.screen)
+                if use_too_many_res:
+                    raise exceptions.UseTooManyResources()
                 return -1
 
             if target_index != -1:
                 return target_index
 
             if use_too_many_res:
-                continue
+                raise exceptions.UseTooManyResources()
 
             if not find_target:
                 return -1

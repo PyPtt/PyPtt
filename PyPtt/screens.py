@@ -151,7 +151,7 @@ class Target:
     ]
 
     use_too_many_resources = [
-        '程式耗用過多計算資源'
+        '程式耗用過多'
     ]
 
     Animation = [

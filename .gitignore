@@ -32,6 +32,9 @@ htmlcov/
 venv/
 env/
 
+# Claude Code
+.claude/
+
 # Editors
 .vscode/
 .idea/

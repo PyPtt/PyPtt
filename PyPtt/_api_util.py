@@ -446,6 +446,11 @@ def one_thread(api):
         raise exceptions.MultiThreadOperated()
 
 
+def check_user_exist(api, ptt_id: str) -> None:
+    if ptt_id.lower() not in api._exist_user_list:
+        api.get_user(ptt_id)
+
+
 def check_board(api, board: str, check_moderator: bool = False) -> Dict:
     if board.lower() not in api._exist_board_list:
         board_info = _api_get_board_info.get_board_info(api, board, get_post_kind=False, call_by_others=False)

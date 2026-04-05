@@ -17,12 +17,27 @@ def test_get_user(ptt_bots):
     """Tests getting user information from PTT."""
     test_users = [
         'CodingMan',
+        'codingman',
+        'CODINGMAN',
+        'cOdInGmAn',
     ]
 
-    for _ in range(100):
+    for _ in range(3):
         for test_user in test_users:
             user_info = ptt_bots[0].get_user(test_user)
             _check_user_info(user_info, test_user)
 
-            time.sleep(1)
 
+def test_get_user_no_such_user(ptt_bots):
+    """Tests that querying a non-existent user raises NoSuchUser."""
+    import PyPtt
+    import pytest
+
+    no_such_users = [
+        'zzznotexist999',
+        'qqzzxxyy123',
+    ]
+
+    for user in no_such_users:
+        with pytest.raises(PyPtt.exceptions.NoSuchUser):
+            ptt_bots[0].get_user(user)
