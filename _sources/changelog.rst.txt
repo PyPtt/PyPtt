@@ -2,6 +2,10 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 
+| 2026.04 修正 ``connect_core`` 編碼回退機制僅支援單向（big5uao → utf-8），導致 ``UseTooManyResources`` 偵測失敗的問題。
+| 2026.04 修正 ``_decode_screen`` 中 ``UseTooManyResources`` 匹配後未設定 ``find_target``，導致編碼回退覆蓋偵測結果的問題。
+| 2026.04 偵測到 ``UseTooManyResources`` 時直接拋出例外，由上層處理重新連線。
+
 | 2026.03 重構 ``parse_query_post`` 為 ``PostQueryResult`` dataclass，改善內部結構。
 
 | 2025.10.18 PyPtt 支援 Python 3.14 Free Threaded。
@@ -20,11 +24,11 @@
 
 | 2022.12.19 發佈 :doc:`Docker Image <docker>`。
 
+| 2022.12.18 PyPtt 新增 :doc:`service` 功能。
+
 | 2022.12.08 PyPtt 1.0.1, 1.0.2，修正一些小錯誤
 
 | 2022.12.08 PyPtt 1.0.0 正式發布。
-
-| 2021.12.08 PyPtt 新增 :doc:`service` 功能。
 
 | 2022.12.01 開發 頁面改名為 Roadmap。
 
