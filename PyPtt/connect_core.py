@@ -47,11 +47,14 @@ def ssl_init():
     cert_file.close()
     key_file.close()
 
+    # Verify the PTT server certificate against the system CA bundle.
+    # The client cert loaded below is *not* for identity (PTT does not
+    # validate it); it exists purely to make the TLS handshake succeed in
+    # environments where omitting a Certificate message breaks negotiation.
+    # See PyPtt/ssl_config.py for details.
     ssl_context = ssl.create_default_context()
-    ssl_context.check_hostname = False
     ssl_context.load_cert_chain(certfile=cert_file.name, keyfile=key_file.name)
     ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
-    ssl_context.verify_mode = ssl.CERT_NONE
 
     os.unlink(cert_file.name)
     os.unlink(key_file.name)
