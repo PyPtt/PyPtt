@@ -32,12 +32,15 @@ except AttributeError:
     websockets.http11.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
     use_http11 = True
 
-ssl_context = None
-
-
-def ssl_init():
-    global ssl_context
-
+def ssl_init(verify_ssl: bool = True) -> ssl.SSLContext:
+    # Verify the PTT server certificate against the system CA bundle.
+    # The client cert loaded below is *not* for identity (PTT does not
+    # validate it); it exists purely to make the TLS handshake succeed in
+    # environments where omitting a Certificate message breaks negotiation.
+    # See PyPtt/ssl_config.py for details.
+    #
+    # Pass verify_ssl=False only when connecting through an SSL-inspecting
+    # proxy whose CA cert is not in the system trust store.
     cert_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pem')
     cert_file.write(ssl_config.cert.encode('utf-8'))
 
@@ -47,17 +50,18 @@ def ssl_init():
     cert_file.close()
     key_file.close()
 
-    ssl_context = ssl.create_default_context()
-    ssl_context.check_hostname = False
-    ssl_context.load_cert_chain(certfile=cert_file.name, keyfile=key_file.name)
-    ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
-    ssl_context.verify_mode = ssl.CERT_NONE
+    ctx = ssl.create_default_context()
+    ctx.load_cert_chain(certfile=cert_file.name, keyfile=key_file.name)
+    ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+
+    if not verify_ssl:
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
 
     os.unlink(cert_file.name)
     os.unlink(key_file.name)
 
-
-ssl_init()
+    return ctx
 
 
 class TargetUnit:
@@ -153,6 +157,7 @@ class API(object):
         self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
                                                exceptions_=exceptions.UseTooManyResources())
         self._loop = None
+        self._ssl_context = ssl_init(self.config.verify_ssl)
 
     def _get_event_loop(self):
         if self._loop and not self._loop.is_closed():
@@ -208,7 +213,7 @@ class API(object):
                     websockets.connect(
                         websocket_host,
                         origin=websocket_origin,
-                        ssl=ssl_context))
+                        ssl=self._ssl_context))
                 connect_success = True
                 break
             except Exception as e:
