@@ -36,6 +36,9 @@ class Config:
     # 預設使用 23
     port = 23
 
+    # 預設驗證 server 端 TLS 憑證；設為 False 可在 SSL 攔截 proxy 環境下使用
+    verify_ssl = True
+
     logger_callback = None
 
 

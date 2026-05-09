@@ -53,6 +53,7 @@ class API:
             logger_callback (Callable): PyPtt 顯示訊息的 callback。預設為 None。
             port (int): PyPtt 連線的 port。預設為 **23**。
             host (:ref:`host`): PyPtt 連線的 PTT 伺服器。預設為 **PTT1**。
+            verify_ssl (bool): 是否驗證 PTT server 端的 TLS 憑證。預設為 **True**。若你的網路環境透過 SSL 攔截 proxy（如企業防火牆），可設為 **False** 以停用驗證。
             check_update (bool): 是否檢查 PyPtt 的更新。預設為 **False**。
 
         Returns:
@@ -144,6 +145,10 @@ class API:
         if host in [data_type.HOST.PTT1, data_type.HOST.PTT2] and connect_mode is data_type.ConnectMode.TELNET:
             raise exceptions.ParameterError('[PyPtt] TELNET is not available on PTT1 and PTT2')
         self.config.connect_mode = connect_mode
+
+        verify_ssl = kwargs.get('verify_ssl', True)
+        check_value.check_type(verify_ssl, bool, 'verify_ssl')
+        self.config.verify_ssl = verify_ssl
 
         self.connect_core = connect_core.API(self)
         self._exist_board_list = set()
