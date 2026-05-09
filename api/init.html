@@ -291,6 +291,7 @@
 <li><p><strong>logger_callback</strong> (<em>Callable</em>) – PyPtt 顯示訊息的 callback。預設為 None。</p></li>
 <li><p><strong>port</strong> (<em>int</em>) – PyPtt 連線的 port。預設為 <strong>23</strong>。</p></li>
 <li><p><strong>host</strong> (<a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a>) – PyPtt 連線的 PTT 伺服器。預設為 <strong>PTT1</strong>。</p></li>
+<li><p><strong>verify_ssl</strong> (<em>bool</em>) – 是否驗證 PTT server 端的 TLS 憑證。預設為 <strong>True</strong>。若你的網路環境透過 SSL 攔截 proxy（如企業防火牆），可設為 <strong>False</strong> 以停用驗證。</p></li>
 <li><p><strong>check_update</strong> (<em>bool</em>) – 是否檢查 PyPtt 的更新。預設為 <strong>False</strong>。</p></li>
 </ul>
 </dd>
@@ -390,7 +391,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=5773baff"></script>
+</div><script src="../_static/documentation_options.js?v=45b586e5"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
