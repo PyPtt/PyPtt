@@ -1,11 +1,43 @@
 import re
 import sys
+import unicodedata
 
 from uao import register_uao
 
 from . import log
 
 register_uao()
+
+
+def _cell_width(ch: str) -> int:
+    """Return the terminal-cell width of a single character.
+
+    PTT is a Chinese BBS rendered on East Asian terminals. Wide ('W'),
+    Fullwidth ('F'), and Ambiguous ('A') characters all occupy 2 cells —
+    Ambiguous includes glyphs like ※, ←, →, ◎ that PTT's protocol treats
+    as full-width when positioning the cursor.
+    """
+    return 2 if unicodedata.east_asian_width(ch) in ('W', 'F', 'A') else 1
+
+
+def _cell_len(text: str) -> int:
+    return sum(_cell_width(c) for c in text)
+
+
+def _str_pos_at_cells(line: str, cells: int) -> int:
+    """Return the string index that corresponds to `cells` visual cells.
+
+    If `cells` lands inside a wide character, the index of the character *after*
+    it is returned (i.e. the wide character is treated as fully consumed).
+    """
+    if cells <= 0:
+        return 0
+    consumed = 0
+    for i, ch in enumerate(line):
+        if consumed >= cells:
+            return i
+        consumed += _cell_width(ch)
+    return len(line)
 
 
 class Target:
@@ -160,7 +192,10 @@ class Target:
 
     CursorToGoodbye = MainMenu.copy()
 
-    content_start = '─── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──'
+    # PTT separator: ~39 consecutive box-drawing horizontals. The legacy
+    # parser produced cell-padded output ('─── ── ──...'); with cell-aware
+    # cursor tracking the spaces are gone and we see a continuous run.
+    content_start = '───────────────────────────────────────'
     content_end_list = [
         '--\n※ 發信站: 批踢踢實業坊',
         '--\n※ 發信站: 批踢踢兔(ptt2.cc)',
@@ -211,10 +246,6 @@ class VT100Parser:
         self._cursor_x = 0
         self._cursor_y = 0
 
-    def _2j(self):
-        self.screen = [''] * 24
-        self.screen_length = dict()
-
     def _move(self, x, y):
         self._cursor_x = x
         self._cursor_y = min(y, len(self.screen) - 1)
@@ -224,10 +255,10 @@ class VT100Parser:
         self._cursor_y = min(self._cursor_y + 1, len(self.screen) - 1)
 
     def _k(self):
-        if self._cursor_x == 0:
-            # nothing happen but cause error
-            return
-        self.screen[self._cursor_y] = self.screen[self._cursor_y][:self._cursor_x]
+        # Erase from cursor to end of line (VT100 ESC [ K).
+        pos = _str_pos_at_cells(self.screen[self._cursor_y], self._cursor_x)
+        self.screen[self._cursor_y] = self.screen[self._cursor_y][:pos]
+        self.screen_length[self._cursor_y] = self._cursor_x
 
     def __init__(self, bytes_data, encoding):
         # self._data = data
@@ -282,7 +313,8 @@ class VT100Parser:
                 xy_part = xy_result.group(0)
 
                 new_y = int(xy_part[6:xy_part.find(';')]) - 1
-                new_x = int(xy_part[xy_part.find(';') + 1: -1])
+                # VT100 columns are 1-based; convert to 0-based cursor_x.
+                new_x = int(xy_part[xy_part.find(';') + 1: -1]) - 1
                 # log.py.info('xy', xy_part, new_x, new_y)
                 self._move(new_x, new_y)
 
@@ -297,7 +329,7 @@ class VT100Parser:
                 # print(f'-{data[:1]}-{len(data[:1].encode("big5-uao", "replace"))}')
 
                 if self._cursor_y not in self.screen_length:
-                    self.screen_length[self._cursor_y] = len(self.screen[self._cursor_y].encode(encoding, 'replace'))
+                    self.screen_length[self._cursor_y] = _cell_len(self.screen[self._cursor_y])
 
                 current_line_length = self.screen_length[self._cursor_y]
                 replace_mode = False
@@ -318,14 +350,15 @@ class VT100Parser:
                 current_index = min(next_newline, next_esc)
 
                 current_data = data[:current_index]
-                current_data_length = len(current_data.encode(encoding, 'replace'))
-                # print('=', current_data, '=', current_data_length)
+                current_data_length = _cell_len(current_data)
                 if replace_mode:
-                    current_line = self.screen[self._cursor_y][:self._cursor_x]
-                    current_line += current_data
-                    current_line += self.screen[self._cursor_y][self._cursor_x + len(current_data):]
-
-                    self.screen[self._cursor_y] = current_line
+                    line = self.screen[self._cursor_y]
+                    splice_start = _str_pos_at_cells(line, self._cursor_x)
+                    splice_end = _str_pos_at_cells(line, self._cursor_x + current_data_length)
+                    self.screen[self._cursor_y] = line[:splice_start] + current_data + line[splice_end:]
+                    self._cursor_x += current_data_length
+                    if self._cursor_x > self.screen_length[self._cursor_y]:
+                        self.screen_length[self._cursor_y] = self._cursor_x
                 else:
                     self.screen[self._cursor_y] += current_data
                     self._cursor_x += current_data_length
