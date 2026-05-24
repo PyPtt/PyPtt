@@ -2,7 +2,7 @@ import json
 import logging
 
 import PyPtt
-import config
+from tests import config
 
 logger = logging.getLogger()
 
