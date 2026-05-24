@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import threading
+from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Dict, Optional
 
@@ -12,6 +13,27 @@ from . import data_type
 from . import exceptions
 from . import log
 from . import screens
+
+
+_MAX_GET_CONTENT_HEIGHT = 100  # PTT server hard cap
+
+
+@contextmanager
+def expanded_screen(api):
+    """Temporarily resize the PTT terminal to its maximum (100 rows) and restore on exit.
+
+    Wraps any paging loop that calls connect_core.send() in a loop so that more
+    content is visible per page and fewer round-trips are needed.  PTT's hard
+    cap is 100 rows regardless of what NAWS requests.
+    """
+    original_height = api.config.screen_height
+    if original_height < _MAX_GET_CONTENT_HEIGHT:
+        api.connect_core.set_screen_height(_MAX_GET_CONTENT_HEIGHT)
+    try:
+        yield
+    finally:
+        if original_height < _MAX_GET_CONTENT_HEIGHT:
+            api.connect_core.set_screen_height(original_height)
 
 
 @dataclass
@@ -29,6 +51,12 @@ class PostQueryResult:
 
 def get_content(api, post_mode: bool = True):
     api.Unconfirmed = False
+
+    # Temporarily expand the terminal to PTT's maximum to minimise send() round-trips.
+    # All other API calls stay at the user-configured (smaller) height.
+    original_height = api.config.screen_height
+    if original_height < _MAX_GET_CONTENT_HEIGHT:
+        api.connect_core.set_screen_height(_MAX_GET_CONTENT_HEIGHT)
 
     def is_unconfirmed_handler(screen):
         api.Unconfirmed = True
@@ -130,14 +158,22 @@ def get_content(api, post_mode: bool = True):
                     if get_line_b > 0:
                         # print('Type 1')
                         new_content_part = '\n'.join(lines[-get_line_b:])
-                        if index == 1 and len(new_content_part) == get_line_b - 1:
-                            new_content_part = '\n'.join(lines[-(get_line_b * 2):])
-                        elif origin_post and get_line_b + 1 <= len(lines):
-                            last_line_temp = origin_post[-1].strip()
-                            try_line = lines[-(get_line_b + 1)].strip()
+                        # The doubling and try_line heuristics were tuned for
+                        # 24-row screens (max get_line_b ≈ 22). With larger
+                        # screen_height the delta can be 50+, causing both
+                        # heuristics to look back into the post header rows
+                        # (作者/標題/時間) and inject them into the body.
+                        # Only apply them when the delta is within the original
+                        # 24-row regime.
+                        if get_line_b <= 23:
+                            if index == 1 and len(new_content_part) == get_line_b - 1:
+                                new_content_part = '\n'.join(lines[-(get_line_b * 2):])
+                            elif origin_post and get_line_b + 1 <= len(lines):
+                                last_line_temp = origin_post[-1].strip()
+                                try_line = lines[-(get_line_b + 1)].strip()
 
-                            if not last_line_temp.endswith(try_line):
-                                new_content_part = try_line + '\n' + new_content_part
+                                if not last_line_temp.endswith(try_line):
+                                    new_content_part = try_line + '\n' + new_content_part
                         stop_dict = dict()
                     else:
                         # 駐足現象，LastReadLineB跟上一次相比並沒有改變
@@ -182,6 +218,9 @@ def get_content(api, post_mode: bool = True):
             cmd = command.right
         else:
             cmd = command.down
+
+    if original_height < _MAX_GET_CONTENT_HEIGHT:
+        api.connect_core.set_screen_height(original_height)
 
     # print(api.Unconfirmed)
     origin_post = '\n'.join(origin_post)

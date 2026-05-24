@@ -58,6 +58,7 @@ def _build_api(screen: str, cursor: str = '>', newest: int = 9458):
     api._is_login = True
     api._thread_id = threading.get_ident()  # bypass one_thread guard
     api.cursor = cursor
+    api.config.screen_height = 24  # required by expanded_screen()
     api.get_newest_index = MagicMock(return_value=newest)
     api.connect_core = MagicMock()
     api.connect_core.send = MagicMock(return_value=0)

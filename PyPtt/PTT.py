@@ -150,7 +150,7 @@ class API:
         check_value.check_type(verify_ssl, bool, 'verify_ssl')
         self.config.verify_ssl = verify_ssl
 
-        screen_height = kwargs.get('screen_height', 100)
+        screen_height = kwargs.get('screen_height', 24)
         check_value.check_type(screen_height, int, 'screen_height')
         check_value.check_range(screen_height, 24, 254, 'screen_height')
         self.config.screen_height = screen_height

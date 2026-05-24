@@ -216,6 +216,9 @@ class API(object):
                         ssl=self._ssl_context))
                 # Respond to PTT's IAC DO NAWS (ff fd 1f) and announce terminal size.
                 # PTT honours any height >= 24; larger values reduce get_content iterations.
+                # PTT's hard cap is 100 rows regardless of what we send.
+                # h is validated to 24–254; 255 is excluded because 0xFF inside a
+                # Telnet SB payload must be doubled (RFC 854) — simpler to cap at 254.
                 h = self.config.screen_height
                 naws = (
                     b'\xff\xfb\x1f'                          # IAC WILL NAWS
@@ -445,6 +448,16 @@ class API(object):
             return loop.run_until_complete(
                 self._async_send(msg, target_list, screen_timeout, refresh, secret)
             )
+
+    def set_screen_height(self, height: int) -> None:
+        """Send a mid-session NAWS to resize the terminal, then update config."""
+        naws = (
+            b'\xff\xfb\x1f'
+            + b'\xff\xfa\x1f\x00\x50' + bytes([0, height]) + b'\xff\xf0'
+        )
+        loop = self._get_event_loop()
+        loop.run_until_complete(self._core.send(naws))
+        self.config.screen_height = height
 
     def close(self):
         if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:

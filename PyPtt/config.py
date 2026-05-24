@@ -37,10 +37,9 @@ class Config:
     port = 23
 
     # 終端機高度（行數，含狀態列），透過 Telnet NAWS 告知 PTT
-    # 越大每頁能看到更多行，大幅減少 get_post 的網路來回次數
-    # 實測：高度 24 → 58 次 send；高度 100 → 2 次（~97% 改善）
-    # PTT 伺服器端硬性上限為 100，傳入更大的值不會有額外效果
-    screen_height = 100
+    # get_content 會自動暫時擴大到 100（PTT 上限）以減少 get_post 的 send 次數，結束後還原
+    # 其他 API 維持此高度以避免不必要的資料量
+    screen_height = 24
 
     # 預設驗證 server 端 TLS 憑證；設為 False 可在 SSL 攔截 proxy 環境下使用
     verify_ssl = True

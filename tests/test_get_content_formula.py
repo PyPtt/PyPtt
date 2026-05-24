@@ -93,6 +93,9 @@ def _build_api(page_specs: list[tuple]) -> MagicMock:
     """
     api = MagicMock()
     api.Unconfirmed = False
+    # set_screen_height is called by get_content to auto-resize; keep screen_height
+    # as a plain int so the comparison `original_height < _MAX_GET_CONTENT_HEIGHT` works.
+    api.config.screen_height = PTT_SCREEN_ROWS + 1  # already at max, skip resize
     api.connect_core.send.side_effect = [idx for _, idx in page_specs]
     api.connect_core.get_screen_queue.side_effect = [
         [s] for s, _ in page_specs
