@@ -72,9 +72,13 @@ def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dic
                 # replace the first cursor in the line
                 line = line.replace(api.cursor, ' ' * len(api.cursor.encode('big5uao')), 1)
 
-                if api.cursor == data_type.Cursor.NEW:
-                    # add one space in the beginning to align the old cursor line
-                    line = f' {line}'
+            if api.cursor == data_type.Cursor.NEW:
+                # Pad one leading space so the fixed-column offsets below
+                # apply equally to cursor and non-cursor rows. Before the
+                # VT100Parser cell-tracking fix, the parser inserted this
+                # padding implicitly via its off-by-one column quirk; the
+                # offsets here were tuned to that padded layout.
+                line = f' {line}'
 
             cur_index = int(line[:8].strip())
             status = line[8:10].strip()
