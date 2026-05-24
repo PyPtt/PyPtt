@@ -132,7 +132,7 @@ def get_content(api, post_mode: bool = True):
                         new_content_part = '\n'.join(lines[-get_line_b:])
                         if index == 1 and len(new_content_part) == get_line_b - 1:
                             new_content_part = '\n'.join(lines[-(get_line_b * 2):])
-                        elif origin_post:
+                        elif origin_post and get_line_b + 1 <= len(lines):
                             last_line_temp = origin_post[-1].strip()
                             try_line = lines[-(get_line_b + 1)].strip()
 
