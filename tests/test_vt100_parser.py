@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from PyPtt.screens import VT100Parser
+from PyPtt.screens import VT100Parser, _cell_len, _cell_width, _str_pos_at_cells
 
 FIXTURE_DIR = Path(__file__).resolve().parent / 'fixtures' / 'vt100'
 
@@ -35,6 +35,75 @@ def parse_fixture(name: str) -> list[str]:
 def parse(data: bytes, encoding: str = 'utf-8') -> list[str]:
     """Run the parser and return the screen split back into 24 lines."""
     return VT100Parser(data, encoding).screen.split('\n')
+
+
+# ── cell-width helpers ───────────────────────────────────────────────────────
+
+class TestCellWidth:
+    """_cell_width / _cell_len underpin every column-position calculation."""
+
+    def test_ascii_is_one_cell(self):
+        for ch in 'A1 .!':
+            assert _cell_width(ch) == 1
+
+    def test_wide_cjk_is_two_cells(self):
+        # 'W' (Wide) ideographs.
+        for ch in '中文程式範例你好':
+            assert _cell_width(ch) == 2
+
+    def test_fullwidth_is_two_cells(self):
+        # 'F' (Fullwidth) — e.g. fullwidth digits, letters, brackets.
+        for ch in 'ＡＢＣ１２３＝':
+            assert _cell_width(ch) == 2
+
+    def test_ambiguous_is_two_cells_for_ptt(self):
+        # PTT renders Ambiguous-width chars as 2 cells; the parser must agree.
+        # These are the actual glyphs we encountered in real PTT screens.
+        for ch in '※←→◎●★◢◤▆ˇ─':
+            assert _cell_width(ch) == 2, f'{ch!r} should be 2 cells'
+
+    def test_cell_len_sums_mixed_string(self):
+        # '[軟工] 成為全宇宙のNo.1吧' has the layout PTT actually sends:
+        #   '['(1) + '軟'(2) + '工'(2) + ']'(1) + ' '(1)
+        # + '成'(2) + '為'(2) + '全'(2) + '宇'(2) + '宙'(2)
+        # + 'の'(2) + 'N'(1) + 'o'(1) + '.'(1) + '1'(1) + '吧'(2) = 25
+        assert _cell_len('[軟工] 成為全宇宙のNo.1吧') == 25
+
+    def test_cell_len_empty(self):
+        assert _cell_len('') == 0
+
+
+class TestStrPosAtCells:
+    """Map a cell offset back to a string index, used by _k and replace_mode."""
+
+    def test_zero_cells_is_position_zero(self):
+        assert _str_pos_at_cells('abc', 0) == 0
+        assert _str_pos_at_cells('中文', 0) == 0
+
+    def test_negative_clamps_to_zero(self):
+        assert _str_pos_at_cells('abc', -5) == 0
+
+    def test_ascii_one_to_one(self):
+        assert _str_pos_at_cells('hello', 3) == 3
+        assert _str_pos_at_cells('hello', 5) == 5
+
+    def test_beyond_end_returns_len(self):
+        # When target exceeds the string's visible width, return len(line)
+        # so callers slice up to the end without IndexError.
+        assert _str_pos_at_cells('hello', 100) == 5
+        assert _str_pos_at_cells('中文', 100) == 2
+
+    def test_wide_char_skipped_when_target_lands_inside(self):
+        # '中文' = 4 cells. Asking for cell 1 lands inside '中' (cells 0-1);
+        # we round forward so the wide char is treated as fully consumed.
+        assert _str_pos_at_cells('中文', 1) == 1
+
+    def test_mixed_line_round_trip(self):
+        # 'A中B' = cells [A=0, 中=1-2, B=3], string indices [A=0, 中=1, B=2].
+        assert _str_pos_at_cells('A中B', 0) == 0
+        assert _str_pos_at_cells('A中B', 1) == 1   # at start of 中
+        assert _str_pos_at_cells('A中B', 3) == 2   # after 中, before B
+        assert _str_pos_at_cells('A中B', 4) == 3   # after B (end)
 
 
 # ── basics ────────────────────────────────────────────────────────────────────
@@ -200,6 +269,70 @@ class TestReplaceMode:
         # ※ is East Asian Ambiguous → treated as 2 cells. After writing ※,
         # positioning to col 3 (0-based 2) requires no padding.
         assert parse(b'\x1b[1;1H\xe2\x80\xbb\x1b[1;3H!')[0] == '※!'
+
+
+# ── wide-char field alignment (the actual bug we hit on real PTT data) ────────
+
+class TestWideCharFieldAlignment:
+    """When PTT writes a wide-char run and then jumps the cursor forward to a
+    later column, the parser must pad with (target_col - current_cells) spaces
+    — counting cells, not encoded bytes. This was the headline bug fixed by
+    the cursor-tracking overhaul; pin it down so future regressions surface
+    in unit tests rather than only via fixture diffs."""
+
+    def test_wide_chars_advance_cursor_in_cells_not_bytes(self):
+        # Layout: 30 cells of header, then '[軟工]' (5 cells) + ' ' + 25 cells
+        # of '成為全宇宙のNo.1吧' content, then jump to col 65 → 9 spaces of
+        # padding before '24'. This is the exact byte pattern PTT sends for
+        # board-listing rows with CJK titles.
+        body = '[軟工] 成為全宇宙のNo.1吧'
+        data = (
+            b'\x1b[5;31H' + body.encode('utf-8')
+            + b'\x1b[5;65H24'
+        )
+        line = parse(data)[4]
+        # cols 0-29 padded, body at 30-54 (25 cells), 9 spaces, '24' at 64-65
+        assert line.endswith('吧         24'), f'got {line!r}'
+
+    def test_back_to_back_wide_chars_keep_cell_alignment(self):
+        # Two wide chars then a positioning jump that lands at exactly the
+        # cells-consumed boundary → no padding needed, no replace mode.
+        # '※' (2 cells) at col 0 → cursor at col 2 → jump to col 3 → ' xx'.
+        data = b'\x1b[1;1H\xe2\x80\xbb\x1b[1;3H xx'
+        assert parse(data)[0] == '※ xx'
+
+    def test_space_backspace_collapse_with_wide_char(self):
+        # PTT's actual byte pattern for emitting a wide char in a column slot:
+        # send two spaces (the visual width), two backspaces (to step back),
+        # then the wide char itself. The parser must collapse the ' \x08' pairs
+        # and place the wide char at column 0.
+        # Equivalent to writing '◎' at column 0 of an empty line.
+        data = b'  \x08\x08\xe2\x97\x8e tail'
+        assert parse(data)[0] == '◎ tail'
+
+    def test_ptt_post_meta_line_layout(self):
+        # Exact byte pattern observed for the '※ 發信站' line of a post:
+        # position to row 10 col 1, ' \x08\x08' (space pad + backspace)
+        # collapses to empty, write '※' (2 cells) → cursor at col 2,
+        # re-position to row 10 col 3 → cursor at cell 2 (matches), no pad,
+        # write ' 發信站: x'. Expected: '※ 發信站: x' (single space).
+        data = (
+            b'\x1b[10;1H  \x08\x08\xe2\x80\xbb'      # row 10 col 1, then ※
+            b'\x1b[10;3H \xe7\x99\xbc\xe4\xbf\xa1\xe7\xab\x99: x'  # row 10 col 3
+        )
+        assert parse(data)[9] == '※ 發信站: x'
+
+    def test_box_drawing_horizontal_treated_as_two_cells(self):
+        # '─' (U+2500) is Ambiguous-width — PTT uses long runs of it as
+        # post-content separators. With cell tracking, three positioned
+        # writes pack into a tight string (no gap-fill spaces between).
+        # Mirrors the screens.Target.content_start update.
+        data = (
+            b'\x1b[1;1H\xe2\x94\x80'   # ─ at col 1 → cursor at cell 2
+            + b'\x1b[1;3H\xe2\x94\x80'  # ─ at col 3 → cursor at cell 4
+            + b'\x1b[1;5H\xe2\x94\x80'  # ─ at col 5 → cursor at cell 6
+        )
+        assert parse(data)[0] == '───'
 
 
 # ── real PTT byte streams ─────────────────────────────────────────────────────

@@ -53,6 +53,7 @@ dev = [
     "pytest",
     "python-dotenv",
     "flake8",
+    "pyte",
     "sphinx",
     "sphinx-copybutton",
     "pygments==2.15.0",
