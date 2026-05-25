@@ -6,9 +6,9 @@
 <link rel="index" title="索引" href="../genindex.html"><link rel="search" title="搜尋" href="../search.html"><link rel="next" title="login, logout" href="login_logout.html"><link rel="prev" title="APIs" href="index.html">
         <link rel="canonical" href="https://pyptt.cc/api/init.html">
 
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"><!-- Generated with Sphinx 7.3.7 and Furo 2025.12.19 -->
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>init - PyPtt.cc</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=acfd86a5" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -282,17 +282,17 @@
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>language</strong> (<a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>) – PyPtt 顯示訊息的語言。預設為 <strong>MANDARIN</strong>。</p></li>
-<li><p><strong>log_level</strong> (<a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>) – PyPtt 顯示訊息的等級。預設為 <strong>INFO</strong>。</p></li>
-<li><p><strong>screen_timeout</strong> (<em>int</em>) – 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 <strong>3 秒</strong>。</p></li>
-<li><p><strong>screen_long_timeout</strong> (<em>int</em>) – 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 <strong>10 秒</strong>。</p></li>
-<li><p><strong>screen_post_timeout</strong> (<em>int</em>) – 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 <strong>60 秒</strong>。</p></li>
-<li><p><strong>connect_mode</strong> (<a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>) – PyPtt 連線的模式。預設為 <strong>WEBSOCKETS</strong>。</p></li>
-<li><p><strong>logger_callback</strong> (<em>Callable</em>) – PyPtt 顯示訊息的 callback。預設為 None。</p></li>
-<li><p><strong>port</strong> (<em>int</em>) – PyPtt 連線的 port。預設為 <strong>23</strong>。</p></li>
-<li><p><strong>host</strong> (<a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a>) – PyPtt 連線的 PTT 伺服器。預設為 <strong>PTT1</strong>。</p></li>
-<li><p><strong>verify_ssl</strong> (<em>bool</em>) – 是否驗證 PTT server 端的 TLS 憑證。預設為 <strong>True</strong>。若你的網路環境透過 SSL 攔截 proxy（如企業防火牆），可設為 <strong>False</strong> 以停用驗證。</p></li>
-<li><p><strong>check_update</strong> (<em>bool</em>) – 是否檢查 PyPtt 的更新。預設為 <strong>False</strong>。</p></li>
+<li><p><strong>language</strong> (<a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>) -- PyPtt 顯示訊息的語言。預設為 <strong>MANDARIN</strong>。</p></li>
+<li><p><strong>log_level</strong> (<a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>) -- PyPtt 顯示訊息的等級。預設為 <strong>INFO</strong>。</p></li>
+<li><p><strong>screen_timeout</strong> (<em>int</em>) -- 經過 screen_timeout 秒之後， PyPtt 將會判定無法判斷目前畫面的狀況。預設為 <strong>3 秒</strong>。</p></li>
+<li><p><strong>screen_long_timeout</strong> (<em>int</em>) -- 經過 screen_long_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如踢掉其他連線等等。預設為 <strong>10 秒</strong>。</p></li>
+<li><p><strong>screen_post_timeout</strong> (<em>int</em>) -- 經過 screen_post_timeout 秒之後，PyPtt 將會判定無法判斷目前畫面的狀況，這會用在較長的等待時間，例如發佈文章等等。預設為 <strong>60 秒</strong>。</p></li>
+<li><p><strong>connect_mode</strong> (<a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>) -- PyPtt 連線的模式。預設為 <strong>WEBSOCKETS</strong>。</p></li>
+<li><p><strong>logger_callback</strong> (<em>Callable</em>) -- PyPtt 顯示訊息的 callback。預設為 None。</p></li>
+<li><p><strong>port</strong> (<em>int</em>) -- PyPtt 連線的 port。預設為 <strong>23</strong>。</p></li>
+<li><p><strong>host</strong> (<a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a>) -- PyPtt 連線的 PTT 伺服器。預設為 <strong>PTT1</strong>。</p></li>
+<li><p><strong>verify_ssl</strong> (<em>bool</em>) -- 是否驗證 PTT server 端的 TLS 憑證。預設為 <strong>True</strong>。若你的網路環境透過 SSL 攔截 proxy（如企業防火牆），可設為 <strong>False</strong> 以停用驗證。</p></li>
+<li><p><strong>check_update</strong> (<em>bool</em>) -- 是否檢查 PyPtt 的更新。預設為 <strong>False</strong>。</p></li>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
@@ -300,20 +300,20 @@
 </dd>
 </dl>
 <p>範例:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>參考: <a class="reference internal" href="../type.html#language"><span class="std std-ref">Language</span></a>、<a class="reference external" href="https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22">LogLevel</a>、<a class="reference internal" href="../type.html#connect-mode"><span class="std std-ref">ConnectMode</span></a>、<a class="reference internal" href="../type.html#host"><span class="std std-ref">HOST</span></a></p>
 <p>英文顯示範例:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
 
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span>
     <span class="n">language</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">Language</span><span class="o">.</span><span class="n">ENGLISH</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>除錯範例:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyPtt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
 
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">(</span>
     <span class="n">log_level</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">LogLevel</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
@@ -392,11 +392,11 @@
     </aside>
   </div>
 </div><script src="../_static/documentation_options.js?v=7b8cb681"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/translations.js?v=1fe8cbde"></script>
+    <script src="../_static/translations.js?v=cbf116e0"></script>
     </body>
 </html>
