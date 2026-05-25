@@ -1,5 +1,12 @@
 /*
+ * searchtools.js
+ * ~~~~~~~~~~~~~~~~
+ *
  * Sphinx JavaScript utilities for the full-text search.
+ *
+ * :copyright: Copyright 2007-2024 by the Sphinx team, see AUTHORS.
+ * :license: BSD, see LICENSE for details.
+ *
  */
 "use strict";
 
@@ -13,7 +20,7 @@ if (typeof Scorer === "undefined") {
     // and returns the new score.
     /*
     score: result => {
-      const [docname, title, anchor, descr, score, filename, kind] = result
+      const [docname, title, anchor, descr, score, filename] = result
       return score
     },
     */
@@ -40,15 +47,6 @@ if (typeof Scorer === "undefined") {
   };
 }
 
-// Global search result kind enum, used by themes to style search results.
-// prettier-ignore
-class SearchResultKind {
-  static get index() { return "index"; }
-  static get object() { return "object"; }
-  static get text() { return "text"; }
-  static get title() { return "title"; }
-}
-
 const _removeChildren = (element) => {
   while (element && element.lastChild) element.removeChild(element.lastChild);
 };
@@ -59,15 +57,6 @@ const _removeChildren = (element) => {
 const _escapeRegExp = (string) =>
   string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 
-const _escapeHTML = (text) => {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&apos;");
-};
-
 const _displayItem = (item, searchTerms, highlightTerms) => {
   const docBuilder = DOCUMENTATION_OPTIONS.BUILDER;
   const docFileSuffix = DOCUMENTATION_OPTIONS.FILE_SUFFIX;
@@ -75,13 +64,9 @@ const _displayItem = (item, searchTerms, highlightTerms) => {
   const showSearchSummary = DOCUMENTATION_OPTIONS.SHOW_SEARCH_SUMMARY;
   const contentRoot = document.documentElement.dataset.content_root;
 
-  const [docName, title, anchor, descr, score, _filename, kind] = item;
+  const [docName, title, anchor, descr, score, _filename] = item;
 
   let listItem = document.createElement("li");
-  // Add a class representing the item's type:
-  // can be used by a theme's CSS selector for styling
-  // See SearchResultKind for the class names.
-  listItem.classList.add(`kind-${kind}`);
   let requestUrl;
   let linkUrl;
   if (docBuilder === "dirhtml") {
@@ -100,30 +85,25 @@ const _displayItem = (item, searchTerms, highlightTerms) => {
   let linkEl = listItem.appendChild(document.createElement("a"));
   linkEl.href = linkUrl + anchor;
   linkEl.dataset.score = score;
-  linkEl.innerHTML = _escapeHTML(title);
+  linkEl.innerHTML = title;
   if (descr) {
     listItem.appendChild(document.createElement("span")).innerHTML =
-      ` (${_escapeHTML(descr)})`;
+      " (" + descr + ")";
     // highlight search terms in the description
-    if (SPHINX_HIGHLIGHT_ENABLED)
-      // SPHINX_HIGHLIGHT_ENABLED is set in sphinx_highlight.js
-      highlightTerms.forEach((term) =>
-        _highlightText(listItem, term, "highlighted"),
-      );
-  } else if (showSearchSummary)
+    if (SPHINX_HIGHLIGHT_ENABLED)  // set in sphinx_highlight.js
+      highlightTerms.forEach((term) => _highlightText(listItem, term, "highlighted"));
+  }
+  else if (showSearchSummary)
     fetch(requestUrl)
       .then((responseData) => responseData.text())
       .then((data) => {
         if (data)
           listItem.appendChild(
-            Search.makeSearchSummary(data, searchTerms, anchor),
+            Search.makeSearchSummary(data, searchTerms, anchor)
           );
         // highlight search terms in the summary
-        if (SPHINX_HIGHLIGHT_ENABLED)
-          // SPHINX_HIGHLIGHT_ENABLED is set in sphinx_highlight.js
-          highlightTerms.forEach((term) =>
-            _highlightText(listItem, term, "highlighted"),
-          );
+        if (SPHINX_HIGHLIGHT_ENABLED)  // set in sphinx_highlight.js
+          highlightTerms.forEach((term) => _highlightText(listItem, term, "highlighted"));
       });
   Search.output.appendChild(listItem);
 };
@@ -132,14 +112,12 @@ const _finishSearch = (resultCount) => {
   Search.title.innerText = _("Search Results");
   if (!resultCount)
     Search.status.innerText = Documentation.gettext(
-      "Your search did not match any documents. Please make sure that all words are spelled correctly and that you've selected enough categories.",
+      "Your search did not match any documents. Please make sure that all words are spelled correctly and that you've selected enough categories."
     );
   else
-    Search.status.innerText = Documentation.ngettext(
-      "Search finished, found one page matching the search query.",
-      "Search finished, found ${resultCount} pages matching the search query.",
-      resultCount,
-    ).replace("${resultCount}", resultCount);
+    Search.status.innerText = _(
+      "Search finished, found ${resultCount} page(s) matching the search query."
+    ).replace('${resultCount}', resultCount);
 };
 const _displayNextItem = (
   results,
@@ -153,14 +131,14 @@ const _displayNextItem = (
     _displayItem(results.pop(), searchTerms, highlightTerms);
     setTimeout(
       () => _displayNextItem(results, resultCount, searchTerms, highlightTerms),
-      5,
+      5
     );
   }
   // search finished, update title and status message
   else _finishSearch(resultCount);
 };
 // Helper function used by query() to order search results.
-// Each input is an array of [docname, title, anchor, descr, score, filename, kind].
+// Each input is an array of [docname, title, anchor, descr, score, filename].
 // Order the results by score (in opposite order of appearance, since the
 // `_displayNextItem` function uses pop() to retrieve items) and then alphabetically.
 const _orderResultsByScoreThenName = (a, b) => {
@@ -185,10 +163,9 @@ const _orderResultsByScoreThenName = (a, b) => {
  * This is the same as ``\W+`` in Python, preserving the surrogate pair area.
  */
 if (typeof splitQuery === "undefined") {
-  var splitQuery = (query) =>
-    query
+  var splitQuery = (query) => query
       .split(/[^\p{Letter}\p{Number}_\p{Emoji_Presentation}]+/gu)
-      .filter((term) => term); // remove remaining empty strings
+      .filter(term => term)  // remove remaining empty strings
 }
 
 /**
@@ -200,23 +177,16 @@ const Search = {
   _pulse_status: -1,
 
   htmlToText: (htmlString, anchor) => {
-    const htmlElement = new DOMParser().parseFromString(
-      htmlString,
-      "text/html",
-    );
-    for (const removalQuery of [".headerlink", "script", "style"]) {
-      htmlElement.querySelectorAll(removalQuery).forEach((el) => {
-        el.remove();
-      });
+    const htmlElement = new DOMParser().parseFromString(htmlString, 'text/html');
+    for (const removalQuery of [".headerlinks", "script", "style"]) {
+      htmlElement.querySelectorAll(removalQuery).forEach((el) => { el.remove() });
     }
     if (anchor) {
-      const anchorContent = htmlElement.querySelector(
-        `[role="main"] ${anchor}`,
-      );
+      const anchorContent = htmlElement.querySelector(`[role="main"] ${anchor}`);
       if (anchorContent) return anchorContent.textContent;
 
       console.warn(
-        `Anchored content block not found. Sphinx search tries to obtain it via DOM query '[role=main] ${anchor}'. Check your theme or template.`,
+        `Anchored content block not found. Sphinx search tries to obtain it via DOM query '[role=main] ${anchor}'. Check your theme or template.`
       );
     }
 
@@ -225,7 +195,7 @@ const Search = {
     if (docContent) return docContent.textContent;
 
     console.warn(
-      "Content block not found. Sphinx search tries to obtain it via DOM query '[role=main]'. Check your theme or template.",
+      "Content block not found. Sphinx search tries to obtain it via DOM query '[role=main]'. Check your theme or template."
     );
     return "";
   },
@@ -278,7 +248,6 @@ const Search = {
     searchSummary.classList.add("search-summary");
     searchSummary.innerText = "";
     const searchList = document.createElement("ul");
-    searchList.setAttribute("role", "list");
     searchList.classList.add("search");
 
     const out = document.getElementById("search-results");
@@ -310,8 +279,12 @@ const Search = {
       const queryTermLower = queryTerm.toLowerCase();
 
       // maybe skip this "word"
-      // stopwords set is from language_data.js
-      if (stopwords.has(queryTermLower) || queryTerm.match(/^\d+$/)) return;
+      // stopwords array is from language_data.js
+      if (
+        stopwords.indexOf(queryTermLower) !== -1 ||
+        queryTerm.match(/^\d+$/)
+      )
+        return;
 
       // stem the word
       let word = stemmer.stemWord(queryTermLower);
@@ -323,12 +296,8 @@ const Search = {
       }
     });
 
-    if (SPHINX_HIGHLIGHT_ENABLED) {
-      // SPHINX_HIGHLIGHT_ENABLED is set in sphinx_highlight.js
-      localStorage.setItem(
-        "sphinx_highlight_terms",
-        [...highlightTerms].join(" "),
-      );
+    if (SPHINX_HIGHLIGHT_ENABLED) {  // set in sphinx_highlight.js
+      localStorage.setItem("sphinx_highlight_terms", [...highlightTerms].join(" "))
     }
 
     // console.debug("SEARCH: searching for:");
@@ -341,13 +310,7 @@ const Search = {
   /**
    * execute search (requires search index to be loaded)
    */
-  _performSearch: (
-    query,
-    searchTerms,
-    excludedTerms,
-    highlightTerms,
-    objectTerms,
-  ) => {
+  _performSearch: (query, searchTerms, excludedTerms, highlightTerms, objectTerms) => {
     const filenames = Search._index.filenames;
     const docNames = Search._index.docnames;
     const titles = Search._index.titles;
@@ -355,7 +318,7 @@ const Search = {
     const indexEntries = Search._index.indexentries;
 
     // Collect multiple result groups to be sorted separately and then ordered.
-    // Each is an array of [docname, title, anchor, descr, score, filename, kind].
+    // Each is an array of [docname, title, anchor, descr, score, filename].
     const normalResults = [];
     const nonMainIndexResults = [];
 
@@ -363,23 +326,16 @@ const Search = {
 
     const queryLower = query.toLowerCase().trim();
     for (const [title, foundTitles] of Object.entries(allTitles)) {
-      if (
-        title.toLowerCase().trim().includes(queryLower)
-        && queryLower.length >= title.length / 2
-      ) {
+      if (title.toLowerCase().trim().includes(queryLower) && (queryLower.length >= title.length/2)) {
         for (const [file, id] of foundTitles) {
-          const score = Math.round(
-            (Scorer.title * queryLower.length) / title.length,
-          );
-          const boost = titles[file] === title ? 1 : 0; // add a boost for document titles
+          let score = Math.round(100 * queryLower.length / title.length)
           normalResults.push([
             docNames[file],
             titles[file] !== title ? `${titles[file]} > ${title}` : title,
             id !== null ? "#" + id : "",
             null,
-            score + boost,
+            score,
             filenames[file],
-            SearchResultKind.title,
           ]);
         }
       }
@@ -387,9 +343,9 @@ const Search = {
 
     // search for explicit entries in index directives
     for (const [entry, foundEntries] of Object.entries(indexEntries)) {
-      if (entry.includes(queryLower) && queryLower.length >= entry.length / 2) {
+      if (entry.includes(queryLower) && (queryLower.length >= entry.length/2)) {
         for (const [file, id, isMain] of foundEntries) {
-          const score = Math.round((100 * queryLower.length) / entry.length);
+          const score = Math.round(100 * queryLower.length / entry.length);
           const result = [
             docNames[file],
             titles[file],
@@ -397,7 +353,6 @@ const Search = {
             null,
             score,
             filenames[file],
-            SearchResultKind.index,
           ];
           if (isMain) {
             normalResults.push(result);
@@ -410,13 +365,11 @@ const Search = {
 
     // lookup as object
     objectTerms.forEach((term) =>
-      normalResults.push(...Search.performObjectSearch(term, objectTerms)),
+      normalResults.push(...Search.performObjectSearch(term, objectTerms))
     );
 
     // lookup as search terms in fulltext
-    normalResults.push(
-      ...Search.performTermsSearch(searchTerms, excludedTerms),
-    );
+    normalResults.push(...Search.performTermsSearch(searchTerms, excludedTerms));
 
     // let the scorer override scores with a custom scoring function
     if (Scorer.score) {
@@ -437,11 +390,7 @@ const Search = {
     // note the reversing of results, so that in the case of duplicates, the highest-scoring entry is kept
     let seen = new Set();
     results = results.reverse().reduce((acc, result) => {
-      let resultStr = result
-        .slice(0, 4)
-        .concat([result[5]])
-        .map((v) => String(v))
-        .join(",");
+      let resultStr = result.slice(0, 4).concat([result[5]]).map(v => String(v)).join(',');
       if (!seen.has(resultStr)) {
         acc.push(result);
         seen.add(resultStr);
@@ -453,20 +402,8 @@ const Search = {
   },
 
   query: (query) => {
-    const [
-      searchQuery,
-      searchTerms,
-      excludedTerms,
-      highlightTerms,
-      objectTerms,
-    ] = Search._parseQuery(query);
-    const results = Search._performSearch(
-      searchQuery,
-      searchTerms,
-      excludedTerms,
-      highlightTerms,
-      objectTerms,
-    );
+    const [searchQuery, searchTerms, excludedTerms, highlightTerms, objectTerms] = Search._parseQuery(query);
+    const results = Search._performSearch(searchQuery, searchTerms, excludedTerms, highlightTerms, objectTerms);
 
     // for debugging
     //Search.lastresults = results.slice();  // a copy
@@ -489,7 +426,7 @@ const Search = {
     const results = [];
 
     const objectSearchCallback = (prefix, match) => {
-      const name = match[4];
+      const name = match[4]
       const fullname = (prefix ? prefix + "." : "") + name;
       const fullnameLower = fullname.toLowerCase();
       if (fullnameLower.indexOf(object) < 0) return;
@@ -537,11 +474,12 @@ const Search = {
         descr,
         score,
         filenames[match[0]],
-        SearchResultKind.object,
       ]);
     };
     Object.keys(objects).forEach((prefix) =>
-      objects[prefix].forEach((array) => objectSearchCallback(prefix, array)),
+      objects[prefix].forEach((array) =>
+        objectSearchCallback(prefix, array)
+      )
     );
     return results;
   },
@@ -563,17 +501,9 @@ const Search = {
     // perform the search on the required terms
     searchTerms.forEach((word) => {
       const files = [];
-      // find documents, if any, containing the query word in their text/title term indices
-      // use Object.hasOwnProperty to avoid mismatching against prototype properties
       const arr = [
-        {
-          files: terms.hasOwnProperty(word) ? terms[word] : undefined,
-          score: Scorer.term,
-        },
-        {
-          files: titleTerms.hasOwnProperty(word) ? titleTerms[word] : undefined,
-          score: Scorer.title,
-        },
+        { files: terms[word], score: Scorer.term },
+        { files: titleTerms[word], score: Scorer.title },
       ];
       // add support for partial matches
       if (word.length > 2) {
@@ -605,17 +535,15 @@ const Search = {
 
         // set score for the word in each file
         recordFiles.forEach((file) => {
-          if (!scoreMap.has(file)) scoreMap.set(file, new Map());
-          const fileScores = scoreMap.get(file);
-          fileScores.set(word, record.score);
+          if (!scoreMap.has(file)) scoreMap.set(file, {});
+          scoreMap.get(file)[word] = record.score;
         });
       });
 
       // create the mapping
       files.forEach((file) => {
         if (!fileMap.has(file)) fileMap.set(file, [word]);
-        else if (fileMap.get(file).indexOf(word) === -1)
-          fileMap.get(file).push(word);
+        else if (fileMap.get(file).indexOf(word) === -1) fileMap.get(file).push(word);
       });
     });
 
@@ -626,11 +554,11 @@ const Search = {
 
       // as search terms with length < 3 are discarded
       const filteredTermCount = [...searchTerms].filter(
-        (term) => term.length > 2,
+        (term) => term.length > 2
       ).length;
       if (
-        wordList.length !== searchTerms.size
-        && wordList.length !== filteredTermCount
+        wordList.length !== searchTerms.size &&
+        wordList.length !== filteredTermCount
       )
         continue;
 
@@ -638,16 +566,16 @@ const Search = {
       if (
         [...excludedTerms].some(
           (term) =>
-            terms[term] === file
-            || titleTerms[term] === file
-            || (terms[term] || []).includes(file)
-            || (titleTerms[term] || []).includes(file),
+            terms[term] === file ||
+            titleTerms[term] === file ||
+            (terms[term] || []).includes(file) ||
+            (titleTerms[term] || []).includes(file)
         )
       )
         break;
 
       // select one (max) score for the file.
-      const score = Math.max(...wordList.map((w) => scoreMap.get(file).get(w)));
+      const score = Math.max(...wordList.map((w) => scoreMap.get(file)[w]));
       // add result to the result list
       results.push([
         docNames[file],
@@ -656,7 +584,6 @@ const Search = {
         null,
         score,
         filenames[file],
-        SearchResultKind.text,
       ]);
     }
     return results;
@@ -683,8 +610,7 @@ const Search = {
 
     let summary = document.createElement("p");
     summary.classList.add("context");
-    summary.textContent =
-      top + text.substr(startWithContext, 240).trim() + tail;
+    summary.textContent = top + text.substr(startWithContext, 240).trim() + tail;
 
     return summary;
   },
