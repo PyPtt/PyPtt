@@ -152,6 +152,59 @@ class TestMultiRowListing:
             assert '□' not in p[data_type.PostField.author]
 
 
+# ── pinned posts (★) must be silently skipped ────────────────────────────────
+
+class TestPinnedPostSkip:
+    """
+    PTT boards can have pinned/announcement posts at the bottom of the listing.
+    Their index field contains '★' instead of a number, e.g.:
+        '    ★  m爆 2/14 ubcs  □ [公告] Board announcement'
+    The parser must skip these lines without crashing and without including
+    them in the returned post list.
+    """
+
+    def test_starred_lines_do_not_crash(self):
+        cursor = '>  9458   2 5/07 fragmentwing □ [問題] openpyxl 全局Font？'
+        # Pinned posts appear after regular posts, matching Gossiping real layout.
+        pinned = [
+            '    ★  m爆 2/14 ubcs         □ [公告] 板規公告（置頂）',
+            '    ★  !   2/21 ubcs         □ [公告] 管理員公告',
+        ]
+        api = _build_api(_build_screen(cursor, pinned))
+        posts = _api_get_post_list.get_post_list(api, 'Python', limit=1)
+        assert len(posts) == 1
+        assert posts[0][data_type.PostField.index] == 9458
+
+    def test_starred_lines_not_in_result(self):
+        cursor = '>  9450 + 110/22 dosiris      □ [問題] 關於正規表示法'
+        after = [
+            '   9451   112/13 iread        □ 執行 Python 程式的六種方法',
+            '    ★  m爆 2/14 ubcs         □ [公告] 置頂公告',
+        ]
+        api = _build_api(_build_screen(cursor, after), newest=9451)
+        posts = _api_get_post_list.get_post_list(api, 'Python', limit=2)
+        indices = [p[data_type.PostField.index] for p in posts]
+        assert 9450 in indices
+        assert 9451 in indices
+        # No pinned post with a non-integer index in the result
+        for p in posts:
+            assert isinstance(p[data_type.PostField.index], int)
+
+    def test_mixed_regular_and_starred_returns_only_regular(self):
+        # Board listing: regular posts interspersed with pinned posts.
+        cursor = '>  9456   3 5/01 userA        □ [問題] 問題一'
+        after = [
+            '    ★  m爆 1/01 admin        □ [公告] 板規',
+            '   9457 + 1 5/02 userB        □ [問題] 問題二',
+            '    ★  !   2/01 admin        □ [公告] 管理員公告',
+            '   9458   1 5/03 userC        □ [問題] 問題三',
+        ]
+        api = _build_api(_build_screen(cursor, after), newest=9458)
+        posts = _api_get_post_list.get_post_list(api, 'Python', limit=3)
+        indices = [p[data_type.PostField.index] for p in posts]
+        assert indices == [9456, 9457, 9458]
+
+
 # ── regression: master before the fix would mis-slice these ───────────────────
 
 class TestRegressionAgainstMasterBug:

@@ -81,7 +81,13 @@ def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dic
                     # offsets here were tuned to that padded layout.
                     line = f' {line}'
 
-                cur_index = int(line[:8].strip())
+                try:
+                    cur_index = int(line[:8].strip())
+                except ValueError:
+                    # Pinned/announcement posts use '★' instead of a numeric
+                    # index — they have no sequential index and cannot be
+                    # fetched by index, so skip them.
+                    continue
                 status = line[8:10].strip()
                 comment = line[10:12].strip()
                 list_date = line[12:17].strip()
