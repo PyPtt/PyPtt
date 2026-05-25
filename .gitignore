@@ -17,6 +17,7 @@ eggs/
 .installed.cfg
 *.manifest
 *.spec
+version.txt
 
 # Installer logs
 pip-log.txt

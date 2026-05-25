@@ -33,9 +33,9 @@ classifiers = [
 
 dependencies = [
     "progressbar2",
-    "websockets==12.0",
+    "websockets>=12",
     "uao",
-    "requests==2.33.0",
+    "requests>=2.32",
     "AutoStrEnum",
     "PyYAML",
 ]
@@ -56,7 +56,7 @@ dev = [
     "pyte",
     "sphinx",
     "sphinx-copybutton",
-    "pygments==2.15.0",
+    "pygments>=2.15",
     "Furo",
     "sphinx-sitemap",
 ]
