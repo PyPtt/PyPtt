@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Version
+
+Version is defined in `PyPtt/__init__.py` (`__version__`).
+
+Before merging a feature branch, check if the branch version matches master. If it does, bump the patch version:
+
+```bash
+# Check: if both show the same version, bump
+git show master:PyPtt/__init__.py | grep __version__
+grep __version__ PyPtt/__init__.py
+# Then edit PyPtt/__init__.py and increment the patch number
+```
+
 ## Commands
 
 ### Install
