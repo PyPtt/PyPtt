@@ -24,6 +24,7 @@ def get_favourite_board(api) -> list:
 
     board_list = []
     favourite_board_list = []
+    # NOTE: expanded_screen intentionally not used — same risk as get_board_list.
     while True:
 
         api.connect_core.send(

@@ -101,51 +101,52 @@ def get_waterball(api, post_action: WaterballPostAction = WaterballPostAction.KE
     seen_lines = set()
     all_content_parts = []
 
-    while True:
-        target_list = [
-            connect_core.TargetUnit('◆ 暫無訊息記錄', log_level=log.DEBUG, break_detect=True),
-            connect_core.TargetUnit(screens.Target.WaterBallListEnd, log_level=log.DEBUG, break_detect=True),
-            connect_core.TargetUnit(screens.Target.InWaterBallList, log_level=log.DEBUG, break_detect=True),
-        ]
-
-        index = api.connect_core.send(cmd, target_list)
-
-        if index == 0:
-            # no waterball records
-            api.connect_core.send('q' + command.go_main_menu, [
-                connect_core.TargetUnit(screens.Target.MainMenu, log_level=log.DEBUG, break_detect=True),
-            ])
-            log.logger.info(i18n.get_waterball, '...', i18n.success)
-            return []
-
-        if index < 0:
-            break
-
-        screen = api.connect_core.get_screen_queue()[-1]
-        for line in screen.split('\n'):
-            line = line.strip()
-            if line and line not in seen_lines:
-                seen_lines.add(line)
-                all_content_parts.append(line)
-
-        if index == 1:
-            # WaterBallListEnd — collect done, exit viewer; handle post-action prompt
-            action_cmd = _post_action_cmd[post_action]
-            target_list_exit = [
-                connect_core.TargetUnit(screens.Target.WaterBallPostAction, log_level=log.DEBUG,
-                                        response=action_cmd + command.enter),
-                connect_core.TargetUnit(screens.Target.WaterballCleanup, log_level=log.DEBUG,
-                                        response='y' + command.enter),
-                connect_core.TargetUnit(screens.Target.MainMenu, log_level=log.DEBUG, break_detect=True),
+    with _api_util.expanded_screen(api):
+        while True:
+            target_list = [
+                connect_core.TargetUnit('◆ 暫無訊息記錄', log_level=log.DEBUG, break_detect=True),
+                connect_core.TargetUnit(screens.Target.WaterBallListEnd, log_level=log.DEBUG, break_detect=True),
+                connect_core.TargetUnit(screens.Target.InWaterBallList, log_level=log.DEBUG, break_detect=True),
             ]
-            api.connect_core.send('q', target_list_exit)
-            api.connect_core.send(command.go_main_menu, [
-                connect_core.TargetUnit(screens.Target.MainMenu, log_level=log.DEBUG, break_detect=True),
-            ])
-            break
 
-        # index == 2: InWaterBallList — next page
-        cmd = command.ctrl_f
+            index = api.connect_core.send(cmd, target_list)
+
+            if index == 0:
+                # no waterball records
+                api.connect_core.send('q' + command.go_main_menu, [
+                    connect_core.TargetUnit(screens.Target.MainMenu, log_level=log.DEBUG, break_detect=True),
+                ])
+                log.logger.info(i18n.get_waterball, '...', i18n.success)
+                return []
+
+            if index < 0:
+                break
+
+            screen = api.connect_core.get_screen_queue()[-1]
+            for line in screen.split('\n'):
+                line = line.strip()
+                if line and line not in seen_lines:
+                    seen_lines.add(line)
+                    all_content_parts.append(line)
+
+            if index == 1:
+                # WaterBallListEnd — collect done, exit viewer; handle post-action prompt
+                action_cmd = _post_action_cmd[post_action]
+                target_list_exit = [
+                    connect_core.TargetUnit(screens.Target.WaterBallPostAction, log_level=log.DEBUG,
+                                            response=action_cmd + command.enter),
+                    connect_core.TargetUnit(screens.Target.WaterballCleanup, log_level=log.DEBUG,
+                                            response='y' + command.enter),
+                    connect_core.TargetUnit(screens.Target.MainMenu, log_level=log.DEBUG, break_detect=True),
+                ]
+                api.connect_core.send('q', target_list_exit)
+                api.connect_core.send(command.go_main_menu, [
+                    connect_core.TargetUnit(screens.Target.MainMenu, log_level=log.DEBUG, break_detect=True),
+                ])
+                break
+
+            # index == 2: InWaterBallList — next page
+            cmd = command.ctrl_f
 
     result = []
     for line in _merge_continuation_lines(all_content_parts):

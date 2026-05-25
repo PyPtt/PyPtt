@@ -54,51 +54,58 @@ def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dic
 
     post_list = []
 
-    for _ in range(max_round):
+    with _api_util.expanded_screen(api):
+        for _ in range(max_round):
 
-        index = api.connect_core.send(cmd, target_list)
-        cmd = command.page_down
-        last_screen = api.connect_core.get_screen_queue()[-1]
+            index = api.connect_core.send(cmd, target_list)
+            cmd = command.page_down
+            last_screen = api.connect_core.get_screen_queue()[-1]
 
-        is_parse_area = False
+            is_parse_area = False
 
-        for line in last_screen.splitlines()[3:-1]:
+            for line in last_screen.splitlines()[3:-1]:
 
-            if not line.startswith(api.cursor) and not is_parse_area:
-                continue
-            is_parse_area = True
+                if not line.startswith(api.cursor) and not is_parse_area:
+                    continue
+                is_parse_area = True
 
-            if line.strip().startswith(api.cursor):
-                # replace the first cursor in the line
-                line = line.replace(api.cursor, ' ' * len(api.cursor.encode('big5uao')), 1)
+                if line.strip().startswith(api.cursor):
+                    # replace the first cursor in the line
+                    line = line.replace(api.cursor, ' ' * len(api.cursor.encode('big5uao')), 1)
 
-            if api.cursor == data_type.Cursor.NEW:
-                # Pad one leading space so the fixed-column offsets below
-                # apply equally to cursor and non-cursor rows. Before the
-                # VT100Parser cell-tracking fix, the parser inserted this
-                # padding implicitly via its off-by-one column quirk; the
-                # offsets here were tuned to that padded layout.
-                line = f' {line}'
+                if api.cursor == data_type.Cursor.NEW:
+                    # Pad one leading space so the fixed-column offsets below
+                    # apply equally to cursor and non-cursor rows. Before the
+                    # VT100Parser cell-tracking fix, the parser inserted this
+                    # padding implicitly via its off-by-one column quirk; the
+                    # offsets here were tuned to that padded layout.
+                    line = f' {line}'
 
-            cur_index = int(line[:8].strip())
-            status = line[8:10].strip()
-            comment = line[10:12].strip()
-            list_date = line[12:17].strip()
-            author = line[18:31].strip()
-            title = line[31:]
+                try:
+                    cur_index = int(line[:8].strip())
+                except ValueError:
+                    # Pinned/announcement posts use '★' instead of a numeric
+                    # index — they have no sequential index and cannot be
+                    # fetched by index, so skip them.
+                    continue
+                status = line[8:10].strip()
+                comment = line[10:12].strip()
+                list_date = line[12:17].strip()
+                author = line[18:31].strip()
+                title = line[31:]
 
-            cur_post = {
-                data_type.PostField.board: board,
-                data_type.PostField.index: cur_index,
-                data_type.PostField.list_date: list_date,
-                data_type.PostField.author: author,
-                data_type.PostField.title: title,
-                data_type.PostField.push_number: comment
-            }
+                cur_post = {
+                    data_type.PostField.board: board,
+                    data_type.PostField.index: cur_index,
+                    data_type.PostField.list_date: list_date,
+                    data_type.PostField.author: author,
+                    data_type.PostField.title: title,
+                    data_type.PostField.push_number: comment
+                }
 
-            post_list.append(cur_post)
+                post_list.append(cur_post)
 
-            if cur_index >= end_index:
-                return post_list
+                if cur_index >= end_index:
+                    return post_list
 
-    raise exceptions.UnknownError(i18n.unknown_error)
+        raise exceptions.UnknownError(i18n.unknown_error)

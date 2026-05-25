@@ -260,13 +260,13 @@ class VT100Parser:
         self.screen[self._cursor_y] = self.screen[self._cursor_y][:pos]
         self.screen_length[self._cursor_y] = self._cursor_x
 
-    def __init__(self, bytes_data, encoding):
+    def __init__(self, bytes_data, encoding, screen_height: int = 24):
         # self._data = data
         # https://www.csie.ntu.edu.tw/~r88009/Java/html/Network/vt100.htm
 
         self._cursor_x = 0
         self._cursor_y = 0
-        self.screen = [''] * 24
+        self.screen = [''] * screen_height
         self.screen_length = dict()
 
         data = bytes_data.decode(encoding, errors='replace')
