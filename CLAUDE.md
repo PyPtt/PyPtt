@@ -6,13 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Version is defined in `PyPtt/__init__.py` (`__version__`).
 
-Before merging a feature branch, check if the branch version matches master. If it does, bump the patch version:
+`setup.py` reads `__version__` and appends `.dev{GITHUB_RUN_NUMBER}` when building on a non-master branch. The CI check (`Forget to update the version?`) fails if the built version's prefix matches the latest PyPI release.
+
+Before merging a feature branch, ensure the version is ahead of PyPI:
 
 ```bash
-# Check: if both show the same version, bump
-git show master:PyPtt/__init__.py | grep __version__
+# Check PyPI latest
+curl -s https://pypi.org/pypi/PyPtt/json | python3 -c "import sys,json; print(json.load(sys.stdin)['info']['version'])"
+# Check local
 grep __version__ PyPtt/__init__.py
-# Then edit PyPtt/__init__.py and increment the patch number
+# If local == PyPI version, bump the patch in PyPtt/__init__.py
 ```
 
 ## Commands
