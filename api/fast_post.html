@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="索引" href="../genindex.html"><link rel="search" title="搜尋" href="../search.html"><link rel="next" title="mark_post" href="mark_post.html"><link rel="prev" title="get_waterball" href="get_waterball.html">
-        <link rel="canonical" href="https://pyptt.cc/api/set_board_title.html">
+<link rel="index" title="索引" href="../genindex.html"><link rel="search" title="搜尋" href="../search.html"><link rel="next" title="reply_post" href="reply_post.html"><link rel="prev" title="post" href="post.html">
+        <link rel="canonical" href="https://pyptt.cc/api/fast_post.html">
 
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>set_board_title - PyPtt.cc</title>
+        <title>fast_post_step0 / fast_post_step1 - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -174,7 +174,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -201,7 +201,7 @@
 <li class="toctree-l2"><a class="reference internal" href="get_post.html">get_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_newest_index.html">get_newest_index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="post.html">post</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fast_post.html">fast_post_step0 / fast_post_step1</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">fast_post_step0 / fast_post_step1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reply_post.html">reply_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="del_post.html">del_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="comment.html">comment</a></li>
@@ -220,7 +220,7 @@
 <li class="toctree-l2"><a class="reference internal" href="get_aid_from_url.html">get_aid_from_url</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_bottom_post_list.html">get_bottom_post_list</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_waterball.html">get_waterball</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">set_board_title</a></li>
+<li class="toctree-l2"><a class="reference internal" href="set_board_title.html">set_board_title</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mark_post.html">mark_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bucket.html">bucket</a></li>
 </ul>
@@ -256,7 +256,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/api/set_board_title.rst.txt" title="View this page">
+  <a class="muted-link" href="../_sources/api/fast_post.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -269,22 +269,44 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="set-board-title">
-<h1>set_board_title<a class="headerlink" href="#set-board-title" title="連結到這個標頭">¶</a></h1>
-<dl class="py function" id="api-set-board-title">
+          <section id="fast-post-step0-fast-post-step1">
+<h1>fast_post_step0 / fast_post_step1<a class="headerlink" href="#fast-post-step0-fast-post-step1" title="連結到這個標頭">¶</a></h1>
+<p id="api-fast-post">將發文流程拆成兩步，讓你在精確時刻（例如跨年）送出文章。</p>
+<p><strong>運作原理</strong></p>
+<p>一般的 <a class="reference internal" href="post.html#api-post"><span class="std std-ref">post</span></a> 是逐步互動的：每送一個指令都要等 PTT 回應，
+因此整體速度受到網路來回延遲（RTT）限制。</p>
+<p><code class="docutils literal notranslate"><span class="pre">fast_post_step0</span></code> 把所有準備工作（進板、填標題、填內文、Ctrl+X）打包成一個指令串一次送出，
+讓連線停在「確定要儲存檔案嗎？」畫面等待。
+到了精確時刻，呼叫 <code class="docutils literal notranslate"><span class="pre">fast_post_step1</span></code> 只送一個確認，文章立即發佈。</p>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p>呼叫 <code class="docutils literal notranslate"><span class="pre">fast_post_step0</span></code> 之後，連線處於等待狀態，<strong>不可呼叫任何其他 API</strong>，
+否則會造成連線錯誤。</p>
+</div>
+<dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">set_board_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
-<dd><p>設定看板標題。</p>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">fast_post_step0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
+<dd><p>快速發文第一步：預先準備文章，停在儲存確認畫面。</p>
+<p>將導航至看板、填入標題與內文、按下 Ctrl+X 的所有指令一次送出，
+讓連線停在「確定要儲存檔案嗎？」的畫面等待。
+搭配 <a class="reference internal" href="#api-fast-post"><span class="std std-ref">fast_post_step1</span></a> 在精確時刻送出文章。</p>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p>呼叫此方法後，連線進入等待狀態，不可再呼叫其他 API，
+否則會造成連線錯誤。請在確認時機到來後立即呼叫 <code class="docutils literal notranslate"><span class="pre">fast_post_step1</span></code>。</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>board</strong> (<em>str</em>) -- 看板名稱。</p></li>
-<li><p><strong>new_title</strong> (<em>str</em>) -- 新標題。</p></li>
+<li><p><strong>title</strong> (<em>str</em>) -- 文章標題。</p></li>
+<li><p><strong>content</strong> (<em>str</em>) -- 文章內容。</p></li>
+<li><p><strong>post_type</strong> (<em>int</em>) -- 文章分類編號（各看板分類不同，從 1 開始）。</p></li>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
@@ -293,26 +315,105 @@
 <dt class="field-odd">引發<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 需要登入。</p></li>
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.UnregisteredUser" title="PyPtt.PyPtt.exceptions.UnregisteredUser"><strong>UnregisteredUser</strong></a> -- 未註冊使用者。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchBoard" title="PyPtt.PyPtt.exceptions.NoSuchBoard"><strong>NoSuchBoard</strong></a> -- 看板不存在。</p></li>
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NeedModeratorPermission" title="PyPtt.PyPtt.exceptions.NeedModeratorPermission"><strong>NeedModeratorPermission</strong></a> -- 需要看板管理員權限。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoPermission" title="PyPtt.PyPtt.exceptions.NoPermission"><strong>NoPermission</strong></a> -- 沒有發佈權限。</p></li>
 </ul>
 </dd>
 </dl>
 <p>範例:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
 
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="c1"># .. login ..</span>
-    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">set_board_title</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">new_title</span><span class="o">=</span><span class="s1">&#39;現在時間 </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
-    <span class="c1"># .. do something ..</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;帳號&#39;</span><span class="p">,</span> <span class="s1">&#39;密碼&#39;</span><span class="p">)</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">fast_post_step0</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;PyPtt 快速發文測試&#39;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s1">&#39;測試內容&#39;</span><span class="p">,</span> <span class="n">post_type</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="mf">1735660800.0</span>
+    <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">fast_post_step1</span><span class="p">(</span><span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>參考 <a class="reference internal" href="#api-fast-post"><span class="std std-ref">快速發文</span></a></p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">fast_post_step1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign_file</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
+<dd><p>快速發文第二步：在精確時刻確認送出文章。</p>
+<p>對 PTT 送出儲存確認，完成簽名檔選擇，讓文章正式發佈。
+須在 <a class="reference internal" href="#api-fast-post"><span class="std std-ref">fast_post_step0</span></a> 之後、連線仍在等待狀態時呼叫。</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sign_file</strong> (<em>str</em><em> or </em><em>int</em>) -- 簽名檔編號 0-9 或 <code class="docutils literal notranslate"><span class="pre">x</span></code> (隨機)，預設為 0 (不選)。</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">引發<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 需要登入。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoPermission" title="PyPtt.PyPtt.exceptions.NoPermission"><strong>NoPermission</strong></a> -- 沒有發佈權限。</p></li>
+</ul>
+</dd>
+</dl>
+<p>範例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ptt_bot</span><span class="o">.</span><span class="n">fast_post_step1</span><span class="p">(</span><span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>參考 <a class="reference internal" href="#api-fast-post"><span class="std std-ref">快速發文</span></a></p>
+</dd></dl>
+
+<section id="id1">
+<h2>範例<a class="headerlink" href="#id1" title="連結到這個標頭">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
+
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;帳號&#39;</span><span class="p">,</span> <span class="s1">&#39;密碼&#39;</span><span class="p">)</span>
+
+    <span class="c1"># ── 提前幾秒執行：準備好文章 ──</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">fast_post_step0</span><span class="p">(</span>
+        <span class="n">board</span><span class="o">=</span><span class="s1">&#39;Gossiping&#39;</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;2026新年快樂&#39;</span><span class="p">,</span>
+        <span class="n">content</span><span class="o">=</span><span class="s1">&#39;大家新年快樂！</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="n">post_type</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ── 等到精確時刻 ──</span>
+    <span class="c1"># 注意：PTT 主機時間可能與 NTP 有偏差，</span>
+    <span class="c1">#       建議先用 get_time() 校正誤差後再計算 target。</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="mf">1767196800.0</span>  <span class="c1"># 2026-01-01 00:00:00 UTC+8</span>
+    <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># ── 精確時刻送出 ──</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">fast_post_step1</span><span class="p">(</span><span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="ptt">
+<h2>PTT 時間校正<a class="headerlink" href="#ptt" title="連結到這個標頭">¶</a></h2>
+<p>PTT 主機時間可能與本地時間有數秒偏差，跨年搶頭香時需要補正：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
+
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+<span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;帳號&#39;</span><span class="p">,</span> <span class="s1">&#39;密碼&#39;</span><span class="p">)</span>
+
+<span class="c1"># 比較 PTT 主機時間與本地時間</span>
+<span class="n">local_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+<span class="n">ptt_time</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span>  <span class="c1"># 格式 &#39;HH:MM&#39;</span>
+<span class="c1"># 根據偏差調整 target 後再呼叫 fast_post_step0 / fast_post_step1</span>
+</pre></div>
+</div>
+<p>參考 <a class="reference internal" href="get_time.html#api-get-time"><span class="std std-ref">取得 PTT 時間</span></a></p>
+</section>
 </section>
 
         </article>
@@ -320,23 +421,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="mark_post.html">
+          <a class="next-page" href="reply_post.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">mark_post</div>
+                <div class="title">reply_post</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="get_waterball.html">
+          <a class="prev-page" href="post.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">get_waterball</div>
+                <div class="title">post</div>
                 
               </div>
             </a>
@@ -358,8 +459,28 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">fast_post_step0 / fast_post_step1</a><ul>
+<li><a class="reference internal" href="#id1">範例</a></li>
+<li><a class="reference internal" href="#ptt">PTT 時間校正</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
