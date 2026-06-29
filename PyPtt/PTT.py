@@ -1071,7 +1071,7 @@ class API:
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
-    def del_post(self, board: str, aid: Optional[str] = None, index: int = 0) -> None:
+    def del_post(self, board: str, aid: Optional[str] = None, index: int = 0, reason: Optional[str] = None) -> None:
         """
         刪除文章。
 
@@ -1079,6 +1079,7 @@ class API:
             board (str): 看板名稱。
             aid (str): 文章編號。
             index (int): 文章編號。
+            reason (str): 板主刪除他人文章時，加註於刪除後標題的理由（僅板主刪除他板友文章時有效）。
 
         Returns:
             None
@@ -1103,7 +1104,7 @@ class API:
                 ptt_bot.logout()
         """
 
-        _api_del_post.del_post(self, board, aid, index)
+        _api_del_post.del_post(self, board, aid, index, reason)
 
     def get_post_list(self, board: str, limit: int = 20, offset: int = 0) -> list[dict]:
         """
