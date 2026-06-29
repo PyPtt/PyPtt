@@ -66,6 +66,13 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
         log.logger.info(i18n.delete_post, '...', i18n.success)
         return
 
+    # PTT only offers the "R加註理由" annotation when a moderator deletes
+    # another user's post. On your own post the reason can never be applied,
+    # so reject it rather than silently dropping it.
+    if reason and api.ptt_id.lower() == post_info[data_type.PostField.author].lower():
+        raise exceptions.ParameterError(
+            'reason is only valid when a moderator deletes another user\'s post')
+
     if check_author:
         if api.ptt_id.lower() != post_info[data_type.PostField.author].lower():
             log.logger.info(i18n.delete_post, '...', i18n.fail)

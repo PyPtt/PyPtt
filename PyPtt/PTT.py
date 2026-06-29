@@ -1090,6 +1090,7 @@ class API:
             NoSuchBoard: 看板不存在。
             NoSuchPost: 文章不存在。
             NoPermission: 沒有權限。
+            ParameterError: 對自己的文章傳入 reason（加註理由僅適用於版主刪除他人文章）。
 
         範例::
 

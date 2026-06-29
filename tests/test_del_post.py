@@ -89,6 +89,33 @@ def test_del_other_post_permission_error(ptt_bots):
             ptt_bot.del_post(board=board, index=target_index)
 
 
+def test_del_own_post_with_reason_raises(ptt_bots):
+    """Passing a reason for your own post is rejected: the annotation only
+    applies when a moderator deletes another user's post."""
+    for ptt_bot in ptt_bots:
+        post_title = f"PyPtt Reason Reject Test {int(time.time())}"
+        ptt_bot.post(board='Test', title_index=1, title=post_title,
+                     content="This is a test post for deletion.")
+        time.sleep(1)
+
+        newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, board='Test')
+        index = -1
+        for i in range(5):
+            post_data = ptt_bot.get_post('Test', index=newest_index - i)
+            if post_data['author'].startswith(ptt_bot.ptt_id) and \
+                    post_data['title'] == f"[測試] {post_title}":
+                index = newest_index - i
+                break
+        assert index != -1
+
+        # reason on your own post must raise, and must NOT delete it
+        with pytest.raises(PyPtt.exceptions.ParameterError):
+            ptt_bot.del_post(board='Test', index=index, reason='測試理由')
+
+        # clean up: a plain delete still works
+        ptt_bot.del_post(board='Test', index=index)
+
+
 def test_del_other_post_with_reason_as_moderator(ptt_bots):
     """Tests that a board moderator can delete another user's post and
     annotate a reason on the resulting title."""
