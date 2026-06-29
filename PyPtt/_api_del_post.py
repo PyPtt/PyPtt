@@ -14,7 +14,7 @@ from . import log
 from . import screens
 
 
-def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0) -> None:
+def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, reason: Optional[str] = None) -> None:
     _api_util.one_thread(api)
 
     if not api.is_registered_user:
@@ -27,6 +27,8 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     if post_aid is not None:
         check_value.check_type(post_aid, str, 'PostAID')
     check_value.check_type(post_index, int, 'PostIndex')
+    if reason is not None:
+        check_value.check_type(reason, str, 'reason')
 
     if len(board) == 0:
         raise exceptions.ParameterError(f'board error parameter: {board}')
@@ -64,6 +66,13 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
         log.logger.info(i18n.delete_post, '...', i18n.success)
         return
 
+    # PTT only offers the "R加註理由" annotation when a moderator deletes
+    # another user's post. On your own post the reason can never be applied,
+    # so reject it rather than silently dropping it.
+    if reason and api.ptt_id.lower() == post_info[data_type.PostField.author].lower():
+        raise exceptions.ParameterError(
+            'reason is only valid when a moderator deletes another user\'s post')
+
     if check_author:
         if api.ptt_id.lower() != post_info[data_type.PostField.author].lower():
             log.logger.info(i18n.delete_post, '...', i18n.fail)
@@ -90,20 +99,40 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     def confirm_delete_handler(screen):
         api.confirm = True
 
+    # A board moderator deleting another user's post gets an extra
+    # "R加註理由" option that lets us annotate the title shown after deletion.
+    use_reason = bool(reason) and not check_author
+
+    def confirm_delete_response(screen):
+        if use_reason and '加註理由' in screen:
+            return 'r' + command.enter
+        return 'y' + command.enter
+
     target_list = [
         connect_core.TargetUnit('請按任意鍵繼續', response=' '),
-        connect_core.TargetUnit('請確定刪除(Y/N)?[N]', response='y' + command.enter, handler=confirm_delete_handler,
-                                max_match=1),
-        connect_core.TargetUnit(screens.Target.InBoard, break_detect=True),
+        connect_core.TargetUnit('請確定刪除(Y/N', response=confirm_delete_response,
+                                handler=confirm_delete_handler, max_match=1),
     ]
 
-    index = api.connect_core.send(
-        cmd,
-        target_list)
+    if use_reason:
+        target_list.append(
+            connect_core.TargetUnit(
+                '請輸入刪除後要顯示的標題',
+                response=command.ctrl_e + ' ' + reason + command.enter,
+                max_match=1))
+        target_list.append(
+            connect_core.TargetUnit(
+                '請再次確定是否要用上述理由刪除(Y/N',
+                response='y' + command.enter,
+                max_match=1))
 
-    if index == 1:
-        if not api.confirm:
-            log.logger.info(i18n.delete_post, '...', i18n.fail)
-            raise exceptions.NoPermission(i18n.no_permission)
+    target_list.append(
+        connect_core.TargetUnit(screens.Target.InBoard, break_detect=True))
+
+    api.connect_core.send(cmd, target_list)
+
+    if not api.confirm:
+        log.logger.info(i18n.delete_post, '...', i18n.fail)
+        raise exceptions.NoPermission(i18n.no_permission)
 
     log.logger.info(i18n.delete_post, '...', i18n.success)

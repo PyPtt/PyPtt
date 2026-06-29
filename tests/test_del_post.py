@@ -4,6 +4,7 @@ import time
 import pytest
 
 import PyPtt
+from tests import config
 
 
 def test_del_own_post(ptt_bots):
@@ -86,3 +87,64 @@ def test_del_other_post_permission_error(ptt_bots):
         # 5. Try to delete it and expect a permission error
         with pytest.raises(PyPtt.NoPermission):
             ptt_bot.del_post(board=board, index=target_index)
+
+
+def test_del_own_post_with_reason_raises(ptt_bots):
+    """Passing a reason for your own post is rejected: the annotation only
+    applies when a moderator deletes another user's post."""
+    for ptt_bot in ptt_bots:
+        post_title = f"PyPtt Reason Reject Test {int(time.time())}"
+        ptt_bot.post(board='Test', title_index=1, title=post_title,
+                     content="This is a test post for deletion.")
+        time.sleep(1)
+
+        newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, board='Test')
+        index = -1
+        for i in range(5):
+            post_data = ptt_bot.get_post('Test', index=newest_index - i)
+            if post_data['author'].startswith(ptt_bot.ptt_id) and \
+                    post_data['title'] == f"[測試] {post_title}":
+                index = newest_index - i
+                break
+        assert index != -1
+
+        # reason on your own post must raise, and must NOT delete it
+        with pytest.raises(PyPtt.exceptions.ParameterError):
+            ptt_bot.del_post(board='Test', index=index, reason='測試理由')
+
+        # clean up: a plain delete still works
+        ptt_bot.del_post(board='Test', index=index)
+
+
+def test_del_other_post_with_reason_as_moderator(ptt_bots):
+    """Tests that a board moderator can delete another user's post and
+    annotate a reason on the resulting title."""
+    if not config.MOD_BOARD:
+        pytest.skip('MOD_BOARD env var not set')
+    for ptt_bot in ptt_bots:
+        if ptt_bot.host != PyPtt.HOST.PTT1:
+            continue  # MOD_BOARD is a PTT1 board
+
+        board = config.MOD_BOARD
+        newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, board=board)
+
+        # Find a recent existing post on MOD_BOARD not authored by the bot.
+        target_index = -1
+        for i in range(10):
+            index_to_check = newest_index - i
+            try:
+                post = ptt_bot.get_post(board, index=index_to_check, query=True)
+                if post[PyPtt.PostField.post_status] == PyPtt.PostStatus.EXISTS and not post['author'].startswith(
+                        ptt_bot.ptt_id):
+                    target_index = index_to_check
+                    break
+            except PyPtt.NoSuchPost:
+                continue
+
+        if target_index == -1:
+            pytest.skip(f"Could not find a recent post by another user on {board} for host {ptt_bot.host}")
+
+        ptt_bot.del_post(board=board, index=target_index, reason='PyPtt 自動測試刪文理由')
+
+        deleted_post = ptt_bot.get_post(board, index=target_index, query=True)
+        assert deleted_post[PyPtt.PostField.post_status] == PyPtt.PostStatus.DELETED_BY_MODERATOR
