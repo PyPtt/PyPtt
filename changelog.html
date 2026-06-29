@@ -279,12 +279,12 @@
 <div class="line">這裡寫著 PyPtt 的故事。</div>
 </div>
 <div class="line-block">
-<div class="line">2026.04 修正 <code class="docutils literal notranslate"><span class="pre">connect_core</span></code> 編碼回退機制僅支援單向（big5uao → utf-8），導致 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 偵測失敗的問題。</div>
-<div class="line">2026.04 修正 <code class="docutils literal notranslate"><span class="pre">_decode_screen</span></code> 中 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 匹配後未設定 <code class="docutils literal notranslate"><span class="pre">find_target</span></code>，導致編碼回退覆蓋偵測結果的問題。</div>
-<div class="line">2026.04 偵測到 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 時直接拋出例外，由上層處理重新連線。</div>
+<div class="line">2026.04.05 修正 <code class="docutils literal notranslate"><span class="pre">connect_core</span></code> 編碼回退機制僅支援單向（big5uao → utf-8），導致 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 偵測失敗的問題。</div>
+<div class="line">2026.04.05 修正 <code class="docutils literal notranslate"><span class="pre">_decode_screen</span></code> 中 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 匹配後未設定 <code class="docutils literal notranslate"><span class="pre">find_target</span></code>，導致編碼回退覆蓋偵測結果的問題。</div>
+<div class="line">2026.04.05 偵測到 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 時直接拋出例外，由上層處理重新連線。</div>
 </div>
 <div class="line-block">
-<div class="line">2026.03 重構 <code class="docutils literal notranslate"><span class="pre">parse_query_post</span></code> 為 <code class="docutils literal notranslate"><span class="pre">PostQueryResult</span></code> dataclass，改善內部結構。</div>
+<div class="line">2026.03.26 重構 <code class="docutils literal notranslate"><span class="pre">parse_query_post</span></code> 為 <code class="docutils literal notranslate"><span class="pre">PostQueryResult</span></code> dataclass，改善內部結構。</div>
 </div>
 <div class="line-block">
 <div class="line">2025.10.18 PyPtt 支援 Python 3.14 Free Threaded。</div>
@@ -292,11 +292,11 @@
 <div class="line">重構 CI/CD 流程。重構底層與批踢踢連線模組。</div>
 </div>
 <div class="line-block">
-<div class="line">2024 新增 <a class="reference internal" href="api/get_post_list.html"><span class="doc">get_post_list</span></a> API，可以批次取得文章列表。</div>
-<div class="line">2024 修正推文解析錯誤。</div>
-<div class="line">2024 修正 get_newest_index 錯誤。</div>
-<div class="line">2024 支援 Python 3.13。</div>
-<div class="line">2024 支援 websockets 13。</div>
+<div class="line">2025.09.26 支援 Python 3.13。</div>
+<div class="line">2025.09.07 新增 <a class="reference internal" href="api/get_post_list.html"><span class="doc">get_post_list</span></a> API，可以批次取得文章列表。</div>
+<div class="line">2025.04.21 修正 get_newest_index 錯誤。</div>
+<div class="line">2024.12.24 修正推文解析錯誤。</div>
+<div class="line">2024.09.09 支援 websockets 13。</div>
 </div>
 <div class="line-block">
 <div class="line">2022.12.20 PyPtt 1.0.3，logger 改採用以 <a class="reference external" href="https://docs.python.org/3/howto/logging.html">logging</a> 為基底。</div>
@@ -365,7 +365,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=7b8cb681"></script>
+</div><script src="_static/documentation_options.js?v=694a8a9b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
