@@ -12,6 +12,11 @@ def test_give_money(ptt_bots):
         # PTT2 test host does not support giving money.
         if ptt_bot.host == PyPtt.HOST.PTT2:
             continue
+        # Can't give money to yourself — under LOCALHOST both bots share the
+        # same .host value, so the PTT2 skip above doesn't disambiguate them,
+        # and TEST_USER may legitimately be the PTT2 account's own ptt_id.
+        if ptt_bot.ptt_id.lower() == recipient_id.lower():
+            continue
 
         try:
             # This call should not raise an exception on success

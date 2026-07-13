@@ -7,6 +7,15 @@ from tests import config
 logger = logging.getLogger()
 
 
+def is_primary_host(ptt_bot, ptt_bots):
+    """True for the bot playing the 'PTT1' role: real PTT1, or — when testing
+    against a local image where both bots share HOST.LOCALHOST — the first bot
+    (conftest logs it in as the PTT1_ID account, i.e. the MOD_BOARD moderator)."""
+    if ptt_bot.host == PyPtt.HOST.PTT1:
+        return True
+    return ptt_bot.host == PyPtt.HOST.LOCALHOST and ptt_bot is ptt_bots[0]
+
+
 def log_to_file(msg: str):
     with open('single_log.txt', 'a', encoding='utf8') as f:
         f.write(f'{msg}\n')
@@ -26,10 +35,15 @@ def get_id_pw(password_file):
     return ptt_id, password
 
 
-def login(ptt_bot: PyPtt.API, kick: bool = True, max_retries: int = 3, retry_delay: int = 10):
+def login(ptt_bot: PyPtt.API, kick: bool = True, max_retries: int = 3, retry_delay: int = 10,
+          account: int = None):
     import time
 
-    if ptt_bot.host == PyPtt.HOST.PTT1:
+    if account == 1:
+        ptt_id, ptt_pw = config.PTT1_ID, config.PTT1_PW
+    elif account == 2:
+        ptt_id, ptt_pw = config.PTT2_ID, config.PTT2_PW
+    elif ptt_bot.host == PyPtt.HOST.PTT1:
         ptt_id, ptt_pw = config.PTT1_ID, config.PTT1_PW
     else:
         ptt_id, ptt_pw = config.PTT2_ID, config.PTT2_PW

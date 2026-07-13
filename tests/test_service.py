@@ -1,9 +1,15 @@
+import os
+
 import pytest
 import PyPtt
 import threading
 import time
 from PyPtt import Service, PostField
 from tests import config # Assuming config.py has PTT1_ID and PTT1_PW
+
+# ponytail: PTT_HOST=LOCALHOST points at a local imageptt docker container
+# instead of the real PTT1 host; unset keeps the status quo.
+_use_localhost = os.environ.get('PTT_HOST') == 'LOCALHOST'
 
 class TestCallInterval:
     """Tests for call_interval feature (no network required)."""
@@ -56,7 +62,7 @@ class TestCallInterval:
 def service_instance():
     import time
 
-    pyptt_init_config = {}
+    pyptt_init_config = {'host': PyPtt.HOST.LOCALHOST} if _use_localhost else {}
     service = Service(pyptt_init_config)
 
     max_retries = 3

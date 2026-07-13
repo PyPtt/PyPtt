@@ -13,6 +13,7 @@ import pytest
 import PyPtt
 from PyPtt import PostField, NewIndex
 from tests import config
+from tests import util
 
 
 def _post_and_get_aid(ptt_bot, board: str) -> str:
@@ -39,8 +40,8 @@ def test_mark_post_on_moderated_board(ptt_bots):
     if not config.MOD_BOARD:
         pytest.skip('MOD_BOARD env var not set')
     for ptt_bot in ptt_bots:
-        if ptt_bot.host != PyPtt.HOST.PTT1:
-            continue  # MOD_BOARD is a PTT1 board
+        if not util.is_primary_host(ptt_bot, ptt_bots):
+            continue  # MOD_BOARD is moderated by the primary bot
         aid = _post_and_get_aid(ptt_bot, board=config.MOD_BOARD)
         try:
             ptt_bot.mark_post(

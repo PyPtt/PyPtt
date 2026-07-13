@@ -20,6 +20,15 @@ PTT2_BOARD_CASES = [
     ('PttSuggest', PyPtt.SearchType.KEYWORD, '[問題]'),
 ]
 
+# The PTT1/PTT2 cases above search real, host-specific historical posts and
+# boards that don't exist on a local imageptt container. `Python` is seeded
+# with at least one post by scripts/bootstrap_local_pttbbs.py and — unlike
+# `Test` — no other test in the suite deletes from it, so its post count
+# only ever grows across a full-suite run.
+LOCALHOST_BOARD_CASES = [
+    ('Python', None, None),
+]
+
 def test_get_mail_index(ptt_bots):
     """Tests getting the newest mail index."""
     for ptt_bot in ptt_bots:
@@ -30,7 +39,9 @@ def test_get_mail_index(ptt_bots):
 def test_get_board_index(ptt_bots):
     """Tests getting the newest board index on PTT2 with various search parameters."""
     for ptt_bot in ptt_bots:
-        if ptt_bot.config.host == PyPtt.HOST.PTT1:
+        if ptt_bot.config.host == PyPtt.HOST.LOCALHOST:
+            test_params = LOCALHOST_BOARD_CASES
+        elif ptt_bot.config.host == PyPtt.HOST.PTT1:
             test_params = PTT1_BOARD_CASES
         else:
             test_params = PTT2_BOARD_CASES
