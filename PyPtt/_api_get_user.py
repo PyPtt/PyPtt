@@ -121,7 +121,7 @@ def get_user(api, ptt_id: str) -> Dict:
     legal_post = int(re.findall(r'\d+', buff_1)[0])
 
     # PTT2 沒有退文
-    if api.config.host == data_type.HOST.PTT1:
+    if api.config.host != data_type.HOST.PTT2:
         int_list = re.findall(r'\d+', buff_1)
         illegal_post = int(int_list[1]) if len(int_list) > 1 else 0
     else:

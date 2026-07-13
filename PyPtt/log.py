@@ -96,6 +96,16 @@ class Logger:
         if self.logger_callback:
             self.logger_callback(msg)
 
+    def warning(self, *args):
+
+        if not self.logger.isEnabledFor(logging.WARNING):
+            return
+
+        msg = _combine_msg(*args)
+        self.logger.warning(msg)
+        if self.logger_callback:
+            self.logger_callback(msg)
+
 
 logger: Optional[Logger] = None
 

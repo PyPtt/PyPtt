@@ -14,7 +14,9 @@ from . import log
 from . import screens
 
 
-def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, reason: Optional[str] = None) -> None:
+def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, reason: Optional[str] = None,
+             bad_post_type: Optional[data_type.BadPostType] = None,
+             bad_post_reason: Optional[str] = None) -> None:
     _api_util.one_thread(api)
 
     if not api.is_registered_user:
@@ -29,6 +31,10 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     check_value.check_type(post_index, int, 'PostIndex')
     if reason is not None:
         check_value.check_type(reason, str, 'reason')
+    if bad_post_type is not None:
+        check_value.check_type(bad_post_type, data_type.BadPostType, 'bad_post_type')
+    if bad_post_reason is not None:
+        check_value.check_type(bad_post_reason, str, 'bad_post_reason')
 
     if len(board) == 0:
         raise exceptions.ParameterError(f'board error parameter: {board}')
@@ -73,6 +79,22 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
         raise exceptions.ParameterError(
             'reason is only valid when a moderator deletes another user\'s post')
 
+    # 惡退（劣文）跟 R 加註理由一樣，只有「板主刪除他人文章」時才有意義。
+    if bad_post_type is not None and (
+            check_author or api.ptt_id.lower() == post_info[data_type.PostField.author].lower()):
+        raise exceptions.ParameterError(
+            'bad_post_type is only valid when a moderator deletes another user\'s post')
+
+    if bad_post_type == data_type.BadPostType.OTHER:
+        if not bad_post_reason:
+            raise exceptions.ParameterError(
+                'bad_post_reason is required when bad_post_type is BadPostType.OTHER')
+        if len(bad_post_reason) > 50:
+            raise exceptions.ParameterError('bad_post_reason must not exceed 50 characters')
+    elif bad_post_reason is not None:
+        raise exceptions.ParameterError(
+            'bad_post_reason is only valid when bad_post_type is BadPostType.OTHER')
+
     if check_author:
         if api.ptt_id.lower() != post_info[data_type.PostField.author].lower():
             log.logger.info(i18n.delete_post, '...', i18n.fail)
@@ -95,6 +117,7 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     cmd = ''.join(cmd_list)
 
     api.confirm = False
+    api.bad_post_done = False
 
     def confirm_delete_handler(screen):
         api.confirm = True
@@ -126,6 +149,35 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
                 response='y' + command.enter,
                 max_match=1))
 
+    # A moderator deleting another user's post always gets asked
+    # "惡退文章?(y/N)" (record a bad-post strike against the author). Answering
+    # 'n' when bad_post_type wasn't requested is what fixes send() timing out
+    # for 3 seconds and returning -1 on every moderator delete.
+    if not check_author:
+        def bad_post_menu_handler(screen):
+            api.bad_post_done = True
+
+        target_list.append(
+            connect_core.TargetUnit(
+                '惡退文章?(y/N',
+                response=('y' if bad_post_type else 'n') + command.enter,
+                max_match=1))
+
+        if bad_post_type is not None:
+            target_list.append(
+                connect_core.TargetUnit(
+                    '0.取消退文',
+                    response=str(int(bad_post_type)) + command.enter,
+                    handler=bad_post_menu_handler,
+                    max_match=1))
+
+            if bad_post_type == data_type.BadPostType.OTHER:
+                target_list.append(
+                    connect_core.TargetUnit(
+                        '請輸入原因',
+                        response=bad_post_reason + command.enter,
+                        max_match=1))
+
     target_list.append(
         connect_core.TargetUnit(screens.Target.InBoard, break_detect=True))
 
@@ -134,5 +186,11 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     if not api.confirm:
         log.logger.info(i18n.delete_post, '...', i18n.fail)
         raise exceptions.NoPermission(i18n.no_permission)
+
+    if bad_post_type is not None and not api.bad_post_done:
+        log.logger.warning(
+            i18n.bad_post,
+            'the post was deleted but PTT did not present the bad-post '
+            'menu (it may be too old to badpost); no bad-post record was made')
 
     log.logger.info(i18n.delete_post, '...', i18n.success)

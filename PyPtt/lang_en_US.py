@@ -3,6 +3,7 @@ string_data = {
     "PTT2": "PTT2",
     "active": "Active",
     "author": "Author",
+    "bad_post": "bad post",
     "board": "Board",
     "can_not_use_search_post_code_f": "This status can not use the search PostField code function",
     "catch_bottom_post_success": "Catch bottom post success",

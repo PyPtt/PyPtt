@@ -61,15 +61,20 @@ Several moderator-only API tests (`test_mark_post.py`, `test_set_board_title.py`
 
 Run the integration suite against a local pttbbs instead of the real PTT. Use the Docker Hub image `bbsdocker/imageptt` (the `ghcr.io` build dropped the WebSocket proxy, so it has no port 48763). The container has no persistent volume — everything resets on restart — so re-run the bootstrap script after every start:
 
-```bash
-CID=$(docker run -d -p 8888:8888 -p 48763:48763 bbsdocker/imageptt)
+Always start from a fresh container. Tests mutate the BBS in ways that don't undo (see the bad-post ban below), and a re-bootstrap onto a dirty container hides those states rather than clearing them. A full recycle costs ~12s (the image is cached, so `run` is instant; the bootstrap is the 12s), which is far cheaper than debugging a poisoned account. Reusing a fixed `--name` keeps stale containers from piling up:
 
-python scripts/bootstrap_local_pttbbs.py "$CID"
+```bash
+docker rm -f ptt 2>/dev/null
+docker run -d --name ptt -p 8888:8888 -p 48763:48763 bbsdocker/imageptt
+
+.venv311/bin/python scripts/bootstrap_local_pttbbs.py ptt
 
 MOD_BOARD=PyPttMod PTT_HOST=LOCALHOST \
   PTT1_ID=pypttbot1 PTT1_PW=test1234 PTT2_ID=pypttbot2 PTT2_PW=test5678 TEST_USER=pypttbot2 \
   python -m pytest tests/
 ```
+
+Run the bootstrap with a **Python 3.11 or 3.12** interpreter (`.venv311/bin/python` here) — it shells out to `scripts/gen_local_passwds.py`, which needs the `crypt` module that 3.13 removed. Under a newer interpreter it dies with a `CalledProcessError` whose cause isn't obvious.
 
 (Local podman testing: set `CONTAINER_TOOL=podman` before the bootstrap call.)
 
@@ -80,6 +85,8 @@ MOD_BOARD=PyPttMod PTT_HOST=LOCALHOST \
 `scripts/gen_local_passwds.py` writes a `.PASSWDS` with each `id:password` account pre-set to `PERM_POST` (registered, can post), skipping the interactive `new` + SYSOP-approval flow. It uses Python's `crypt` (Py 3.11/3.12 only); its DES hash matches the container's libc `crypt`. `scripts/mkboard.py` patches the raw `.BRD` board-header array to create/update a single board (moderator and post-type list optional) — see its docstring for standalone usage.
 
 A handful of mutation-heavy tests (`give_money`, `post`, `reply_post`, `search_user`, `mark_post`, `mail_send_and_del`, `set_board_title`, ...) intermittently fail with `ConnectionClosed` when the *entire* suite runs as one long session against the local container — this is the same pre-existing PTT/session-instability pattern noted above for the real hosts, not something specific to LOCALHOST. They pass individually or in small focused groups.
+
+`tests/test_del_post.py::test_bad_post` lands a real bad-post (惡退) strike on `TEST_USER`, and pttbbs answers that with a ~1 hour posting ban (`您被設退文！(限制 XX 分 XX 秒)`). The account stays muted for the rest of the container's life, so any later test that needs `TEST_USER` to post will fail. It is deliberately ordered last in its file; to re-run it (or the suite) against the same host, restart the container and re-run the bootstrap first.
 
 ## Architecture
 
