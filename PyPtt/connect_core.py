@@ -196,8 +196,12 @@ class API(object):
             websocket_host = 'wss://ws.ptt2.cc/bbs/'
             websocket_origin = 'https://term.ptt2.cc'
         elif self.config.host == data_type.HOST.LOCALHOST:
-            websocket_host = 'wss://localhost'
-            websocket_origin = 'https://term.ptt.cc'
+            # ponytail: local pttbbs docker image (bbsdocker/imageptt) serves plain ws
+            # (no TLS) on 48763; config.port defaults to 23 (telnet default) so treat
+            # that as "not set" and fall back to imageptt's default port
+            port = self.config.port if self.config.port != 23 else 48763
+            websocket_host = f'ws://localhost:{port}/bbs'
+            websocket_origin = 'http://localhost'
         else:
             websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
@@ -209,11 +213,15 @@ class API(object):
             try:
                 log.logger.debug('USER_AGENT',
                                  websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
+                # ponytail: ws:// (local docker target) can't take an ssl context —
+                # websockets errors out if you pass one on a non-wss URI
+                connect_kwargs = {'origin': websocket_origin}
+                if websocket_host.startswith('wss://'):
+                    connect_kwargs['ssl'] = self._ssl_context
                 self._core = loop.run_until_complete(
                     websockets.connect(
                         websocket_host,
-                        origin=websocket_origin,
-                        ssl=self._ssl_context))
+                        **connect_kwargs))
                 # Respond to PTT's IAC DO NAWS (ff fd 1f) and announce terminal size.
                 # PTT honours any height >= 24; larger values reduce get_content iterations.
                 # PTT's hard cap is 100 rows regardless of what we send.

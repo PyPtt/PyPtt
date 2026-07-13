@@ -26,10 +26,15 @@ def get_id_pw(password_file):
     return ptt_id, password
 
 
-def login(ptt_bot: PyPtt.API, kick: bool = True, max_retries: int = 3, retry_delay: int = 10):
+def login(ptt_bot: PyPtt.API, kick: bool = True, max_retries: int = 3, retry_delay: int = 10,
+          account: int = None):
     import time
 
-    if ptt_bot.host == PyPtt.HOST.PTT1:
+    if account == 1:
+        ptt_id, ptt_pw = config.PTT1_ID, config.PTT1_PW
+    elif account == 2:
+        ptt_id, ptt_pw = config.PTT2_ID, config.PTT2_PW
+    elif ptt_bot.host == PyPtt.HOST.PTT1:
         ptt_id, ptt_pw = config.PTT1_ID, config.PTT1_PW
     else:
         ptt_id, ptt_pw = config.PTT2_ID, config.PTT2_PW

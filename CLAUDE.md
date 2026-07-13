@@ -57,6 +57,27 @@ Several moderator-only API tests (`test_mark_post.py`, `test_set_board_title.py`
 
 `test_fast_post.py` is xfail-strict — `fast_post_step0/1` and `fast_post` call a non-existent `connect_core.API.fast_send` method and will raise `AttributeError`. Drop the xfail once that method is implemented (or the calls are rewired to `send`).
 
+### Testing against a local pttbbs (Docker)
+
+Run integration tests against a local pttbbs instead of the real PTT. Use the Docker Hub image `bbsdocker/imageptt` (the `ghcr.io` build dropped the WebSocket proxy, so it has no port 48763):
+
+```bash
+CID=$(docker run -d -p 8888:8888 -p 48763:48763 bbsdocker/imageptt)
+
+# Seed already-registered, postable accounts (container has none by default and
+# resets on every restart, so re-run this after each start):
+python scripts/gen_local_passwds.py pypttbot1:test1234 pypttbot2:test5678 > /tmp/PASSWDS
+docker cp /tmp/PASSWDS "$CID":/home/bbs/.PASSWDS
+docker exec -u bbs "$CID" sh -c 'cd /home/bbs && chmod 644 .PASSWDS && ./bin/uhash_loader'
+
+PTT1_ID=pypttbot1 PTT1_PW=test1234 PTT2_ID=pypttbot2 PTT2_PW=test5678 \
+  PTT_HOST=LOCALHOST python -m pytest tests/
+```
+
+`PTT_HOST=LOCALHOST` makes `tests/conftest.py` point both bots at `PyPtt.HOST.LOCALHOST` (WebSocket `ws://localhost:48763/bbs`, no TLS) instead of PTT1/PTT2.
+
+`scripts/gen_local_passwds.py` writes a `.PASSWDS` with each `id:password` account pre-set to `PERM_POST` (registered, can post), skipping the interactive `new` + SYSOP-approval flow. It uses Python's `crypt` (Py 3.11/3.12 only); its DES hash matches the container's libc `crypt`. Alternatively, register manually via `new` at the login screen — a `SYSOP` account auto-gets sysop perms, but ordinary accounts stay `PERM_DEFAULT` until SYSOP approves their ticket.
+
 ## Architecture
 
 PyPtt is a Python library for automating the PTT BBS (a Telnet/WebSocket bulletin board system popular in Taiwan).
