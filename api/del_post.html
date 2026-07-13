@@ -277,7 +277,7 @@
 <h1>del_post<a class="headerlink" href="#del-post" title="連結到這個標頭">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">del_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">del_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bad_post_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BadPostType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bad_post_reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
 <dd><p>刪除文章。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
@@ -286,6 +286,10 @@
 <li><p><strong>aid</strong> (<em>str</em>) -- 文章編號。</p></li>
 <li><p><strong>index</strong> (<em>int</em>) -- 文章編號。</p></li>
 <li><p><strong>reason</strong> (<em>str</em>) -- 板主刪除他人文章時，加註於刪除後標題的理由（僅板主刪除他板友文章時有效）。</p></li>
+<li><p><strong>bad_post_type</strong> (<em>data_type.BadPostType</em>) -- 板主刪除他人文章時，對作者記的惡退（劣文）分類，
+僅板主刪除他板友文章時有效。</p></li>
+<li><p><strong>bad_post_reason</strong> (<em>str</em>) -- 惡退理由，僅 <code class="docutils literal notranslate"><span class="pre">bad_post_type</span></code> 為 <code class="docutils literal notranslate"><span class="pre">BadPostType.OTHER</span></code> 時可傳入且必須傳入，
+長度上限 50 字。</p></li>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
@@ -298,7 +302,8 @@
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchBoard" title="PyPtt.PyPtt.exceptions.NoSuchBoard"><strong>NoSuchBoard</strong></a> -- 看板不存在。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchPost" title="PyPtt.PyPtt.exceptions.NoSuchPost"><strong>NoSuchPost</strong></a> -- 文章不存在。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoPermission" title="PyPtt.PyPtt.exceptions.NoPermission"><strong>NoPermission</strong></a> -- 沒有權限。</p></li>
-<li><p><strong>ParameterError</strong> -- 對自己的文章傳入 reason（加註理由僅適用於版主刪除他人文章）。</p></li>
+<li><p><strong>ParameterError</strong> -- 對自己的文章傳入 reason 或 bad_post_type（僅適用於版主刪除他人文章），
+    或 bad_post_type 為 BadPostType.OTHER 卻未傳入 bad_post_reason（或超過 50 字）。</p></li>
 </ul>
 </dd>
 </dl>
@@ -309,6 +314,9 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">del_post</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Python&#39;</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">&#39;1TJH_XY0&#39;</span><span class="p">)</span>
+    <span class="c1"># 板主刪除他人文章，並記一支「廣告」惡退</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">del_post</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Python&#39;</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">&#39;1TJH_XY0&#39;</span><span class="p">,</span>
+                      <span class="n">bad_post_type</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">BadPostType</span><span class="o">.</span><span class="n">AD</span><span class="p">)</span>
     <span class="c1"># .. do something ..</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
@@ -367,7 +375,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=15183edd"></script>
+</div><script src="../_static/documentation_options.js?v=07de02c7"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
