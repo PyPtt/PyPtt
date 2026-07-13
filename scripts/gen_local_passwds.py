@@ -23,6 +23,7 @@ PASSWD_VERSION = 4194
 USEREC_SIZE = 512
 MAX_USERS = 100  # imageptt .PASSWDS is 100 slots x 512 bytes
 USERLEVEL = 0o37  # PERM_BASIC|CHAT|PAGE|POST|LOGINOK -> registered, can post
+MONEY = 100000   # seed Ptt coins so give_money() has something to send
 SALT = "aa"      # traditional DES crypt; Python's crypt matches the container's libc crypt
 
 USEREC_FMT = (
@@ -60,6 +61,7 @@ def userec(userid: str, password: str, now: int = 1700000000) -> bytes:
         nickname=userid.encode(),
         passwd=crypt.crypt(password[:8], SALT).encode(),  # mbbsd truncates to 8 chars
         userlevel=USERLEVEL,
+        money=MONEY,
         numlogindays=1,
         firstlogin=now,
         lastlogin=now,
@@ -86,6 +88,7 @@ def _selfcheck():
     assert fields["version"] == PASSWD_VERSION
     assert fields["userid"].rstrip(b"\x00") == b"pypttbot1"
     assert fields["userlevel"] == USERLEVEL
+    assert fields["money"] == MONEY
     print("selfcheck OK")
 
 

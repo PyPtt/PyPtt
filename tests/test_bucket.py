@@ -17,6 +17,7 @@ import pytest
 
 import PyPtt
 from tests import config
+from tests import util
 
 
 def test_bucket_nonexistent_user_raises(ptt_bots):
@@ -38,7 +39,7 @@ def test_bucket_on_moderated_board(ptt_bots):
     if not config.MOD_BOARD:
         pytest.skip('MOD_BOARD env var not set')
     for ptt_bot in ptt_bots:
-        if ptt_bot.host != PyPtt.HOST.PTT1:
+        if not util.is_primary_host(ptt_bot, ptt_bots):
             continue
         try:
             ptt_bot.bucket(

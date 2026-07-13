@@ -7,6 +7,15 @@ from tests import config
 logger = logging.getLogger()
 
 
+def is_primary_host(ptt_bot, ptt_bots):
+    """True for the bot playing the 'PTT1' role: real PTT1, or — when testing
+    against a local image where both bots share HOST.LOCALHOST — the first bot
+    (conftest logs it in as the PTT1_ID account, i.e. the MOD_BOARD moderator)."""
+    if ptt_bot.host == PyPtt.HOST.PTT1:
+        return True
+    return ptt_bot.host == PyPtt.HOST.LOCALHOST and ptt_bot is ptt_bots[0]
+
+
 def log_to_file(msg: str):
     with open('single_log.txt', 'a', encoding='utf8') as f:
         f.write(f'{msg}\n')

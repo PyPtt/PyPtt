@@ -16,6 +16,7 @@ import pytest
 
 import PyPtt
 from tests import config
+from tests import util
 
 
 def test_a_set_board_title_without_moderator_perm_raises(ptt_bots):
@@ -36,7 +37,7 @@ def test_b_set_board_title_on_moderated_board(ptt_bots):
     if not config.MOD_BOARD:
         pytest.skip('MOD_BOARD env var not set')
     for ptt_bot in ptt_bots:
-        if ptt_bot.host != PyPtt.HOST.PTT1:
+        if not util.is_primary_host(ptt_bot, ptt_bots):
             continue
         info = ptt_bot.get_board_info(board=config.MOD_BOARD)
         original = info[PyPtt.BoardField.mandarin_des]

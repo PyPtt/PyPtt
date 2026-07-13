@@ -199,7 +199,9 @@ class Target:
     content_end_list = [
         '--\n※ 發信站: 批踢踢實業坊',
         '--\n※ 發信站: 批踢踢兔(ptt2.cc)',
-        '--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)'
+        '--\n※ 發信站: 新批踢踢(ptt2.twbbs.org.tw)',
+        # bbsdocker/imageptt (HOST.LOCALHOST test container) site name.
+        '--\n※ 發信站: 批踢踢 docker(pttdocker.test)'
     ]
 
     OnlineUser = [

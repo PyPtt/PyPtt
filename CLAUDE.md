@@ -59,24 +59,27 @@ Several moderator-only API tests (`test_mark_post.py`, `test_set_board_title.py`
 
 ### Testing against a local pttbbs (Docker)
 
-Run integration tests against a local pttbbs instead of the real PTT. Use the Docker Hub image `bbsdocker/imageptt` (the `ghcr.io` build dropped the WebSocket proxy, so it has no port 48763):
+Run the integration suite against a local pttbbs instead of the real PTT. Use the Docker Hub image `bbsdocker/imageptt` (the `ghcr.io` build dropped the WebSocket proxy, so it has no port 48763). The container has no persistent volume — everything resets on restart — so re-run the bootstrap script after every start:
 
 ```bash
 CID=$(docker run -d -p 8888:8888 -p 48763:48763 bbsdocker/imageptt)
 
-# Seed already-registered, postable accounts (container has none by default and
-# resets on every restart, so re-run this after each start):
-python scripts/gen_local_passwds.py pypttbot1:test1234 pypttbot2:test5678 > /tmp/PASSWDS
-docker cp /tmp/PASSWDS "$CID":/home/bbs/.PASSWDS
-docker exec -u bbs "$CID" sh -c 'cd /home/bbs && chmod 644 .PASSWDS && ./bin/uhash_loader'
+python scripts/bootstrap_local_pttbbs.py "$CID"
 
-PTT1_ID=pypttbot1 PTT1_PW=test1234 PTT2_ID=pypttbot2 PTT2_PW=test5678 \
-  PTT_HOST=LOCALHOST python -m pytest tests/
+MOD_BOARD=PyPttMod PTT_HOST=LOCALHOST \
+  PTT1_ID=pypttbot1 PTT1_PW=test1234 PTT2_ID=pypttbot2 PTT2_PW=test5678 TEST_USER=pypttbot2 \
+  python -m pytest tests/
 ```
 
-`PTT_HOST=LOCALHOST` makes `tests/conftest.py` point both bots at `PyPtt.HOST.LOCALHOST` (WebSocket `ws://localhost:48763/bbs`, no TLS) instead of PTT1/PTT2.
+(Local podman testing: set `CONTAINER_TOOL=podman` before the bootstrap call.)
 
-`scripts/gen_local_passwds.py` writes a `.PASSWDS` with each `id:password` account pre-set to `PERM_POST` (registered, can post), skipping the interactive `new` + SYSOP-approval flow. It uses Python's `crypt` (Py 3.11/3.12 only); its DES hash matches the container's libc `crypt`. Alternatively, register manually via `new` at the login screen — a `SYSOP` account auto-gets sysop perms, but ordinary accounts stay `PERM_DEFAULT` until SYSOP approves their ticket.
+`scripts/bootstrap_local_pttbbs.py` provisions everything the suite needs in one pass: accounts (`pypttbot1`, `pypttbot2`, `CodingMan` + a second `Coding`-prefixed account, all pre-registered via `scripts/gen_local_passwds.py` — see below), boards (`Test`, `Python`, `Announce` with no moderator; `PyPttMod` moderated by `pypttbot1`, matching `MOD_BOARD` above), and seed content (posts, self-mail, a non-moderator post on `PyPttMod`) so read-only tests have something to find. It's safe to re-run.
+
+`PTT_HOST=LOCALHOST` makes `tests/conftest.py` (and a few tests that build their own `PyPtt.API`/`Service`) point at `PyPtt.HOST.LOCALHOST` (WebSocket `ws://localhost:48763/bbs`, no TLS) instead of PTT1/PTT2.
+
+`scripts/gen_local_passwds.py` writes a `.PASSWDS` with each `id:password` account pre-set to `PERM_POST` (registered, can post), skipping the interactive `new` + SYSOP-approval flow. It uses Python's `crypt` (Py 3.11/3.12 only); its DES hash matches the container's libc `crypt`. `scripts/mkboard.py` patches the raw `.BRD` board-header array to create/update a single board (moderator and post-type list optional) — see its docstring for standalone usage.
+
+A handful of mutation-heavy tests (`give_money`, `post`, `reply_post`, `search_user`, `mark_post`, `mail_send_and_del`, `set_board_title`, ...) intermittently fail with `ConnectionClosed` when the *entire* suite runs as one long session against the local container — this is the same pre-existing PTT/session-instability pattern noted above for the real hosts, not something specific to LOCALHOST. They pass individually or in small focused groups.
 
 ## Architecture
 

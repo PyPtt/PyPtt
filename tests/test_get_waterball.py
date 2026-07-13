@@ -7,9 +7,16 @@ try:
 except KeyError:
     import config
 
+import os
+
+# ponytail: PTT_HOST=LOCALHOST points at a local imageptt docker container
+# instead of the real PTT1 host; unset keeps the status quo.
+_use_localhost = os.environ.get('PTT_HOST') == 'LOCALHOST'
+
 
 def test_get_waterball():
     ptt1_bot = PyPtt.API(
+        host=PyPtt.HOST.LOCALHOST if _use_localhost else PyPtt.HOST.PTT1,
     )
     ptt1_bot.login(ptt_id=config.PTT1_ID, ptt_pw=config.PTT1_PW, kick_other_session=True)
 

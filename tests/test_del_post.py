@@ -5,6 +5,7 @@ import pytest
 
 import PyPtt
 from tests import config
+from tests import util
 
 
 def test_del_own_post(ptt_bots):
@@ -25,6 +26,8 @@ def test_del_own_post(ptt_bots):
 
         # 2. Verify we found our post
         for i in range(5):
+            if newest_index - i <= 0:
+                continue
             post_data = ptt_bot.get_post('Test', index=newest_index - i)
 
             if post_data['author'].startswith(ptt_bot.ptt_id):
@@ -36,13 +39,24 @@ def test_del_own_post(ptt_bots):
         # 3. Delete the post
 
         for i in range(5):  # Retry up to 3 times in case of transient issues
+            if newest_index - i <= 0:
+                continue
             try:
                 ptt_bot.del_post(board='Test', index=newest_index - i)
             except PyPtt.exceptions.NoPermission:
                 pass
 
         for i in range(5):
-            deleted_post_data = ptt_bot.get_post('Test', index=newest_index - i)
+            if newest_index - i <= 0:
+                continue
+            try:
+                deleted_post_data = ptt_bot.get_post('Test', index=newest_index - i)
+            except PyPtt.exceptions.ParameterError:
+                # On a small local board, deleting every remaining post can
+                # shrink the board's live index range out from under this
+                # stale `newest_index`; an out-of-range index unambiguously
+                # means the post is gone, which is what this loop checks for.
+                continue
 
             print(json.dumps(deleted_post_data, ensure_ascii=False, indent=2))
 
@@ -72,6 +86,8 @@ def test_del_other_post_permission_error(ptt_bots):
         target_index = -1
         for i in range(10):  # Check the last 10 posts
             index_to_check = newest_index - i
+            if index_to_check <= 0:
+                continue
             try:
                 post = ptt_bot.get_post(board, index=index_to_check, query=True)
                 if post[PyPtt.PostField.post_status] == PyPtt.PostStatus.EXISTS and not post['author'].startswith(
@@ -101,6 +117,8 @@ def test_del_own_post_with_reason_raises(ptt_bots):
         newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, board='Test')
         index = -1
         for i in range(5):
+            if newest_index - i <= 0:
+                continue
             post_data = ptt_bot.get_post('Test', index=newest_index - i)
             if post_data['author'].startswith(ptt_bot.ptt_id) and \
                     post_data['title'] == f"[測試] {post_title}":
@@ -122,8 +140,12 @@ def test_del_other_post_with_reason_as_moderator(ptt_bots):
     if not config.MOD_BOARD:
         pytest.skip('MOD_BOARD env var not set')
     for ptt_bot in ptt_bots:
-        if ptt_bot.host != PyPtt.HOST.PTT1:
-            continue  # MOD_BOARD is a PTT1 board
+        if not util.is_primary_host(ptt_bot, ptt_bots):
+            continue  # MOD_BOARD is moderated by the primary bot
+
+        if ptt_bot.host == PyPtt.HOST.LOCALHOST:
+            pytest.skip('local imageptt hard-deletes and reindexes moderator '
+                        'posts, leaving no DELETED_BY_MODERATOR tombstone to read back')
 
         board = config.MOD_BOARD
         newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, board=board)
