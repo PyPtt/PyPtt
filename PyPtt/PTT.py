@@ -1097,7 +1097,11 @@ class API:
             NoSuchPost: 文章不存在。
             NoPermission: 沒有權限。
             ParameterError: 對自己的文章傳入 reason 或 bad_post_type（僅適用於版主刪除他人文章），
-                或 bad_post_type 為 BadPostType.OTHER 卻未傳入 bad_post_reason（或超過 50 字）。
+                或 bad_post_type 為 BadPostType.OTHER 卻未傳入 bad_post_reason（或超過 50 bytes，
+                或含有控制字元）。
+            BadPostNotRecorded: 傳入 bad_post_type 時，文章已成功刪除，但 PTT 端沒有完成惡退
+                （劣文）記錄流程（例如文章太舊而跳過惡退選單、或逾時）。代表刪除本身已經成功，
+                只是這支惡退沒有記上。
 
         範例::
 

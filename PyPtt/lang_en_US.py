@@ -4,6 +4,7 @@ string_data = {
     "active": "Active",
     "author": "Author",
     "bad_post": "bad post",
+    "bad_post_not_recorded": "the post was deleted, but the bad-post record was not made",
     "board": "Board",
     "can_not_use_search_post_code_f": "This status can not use the search PostField code function",
     "catch_bottom_post": "Catch bottom post",

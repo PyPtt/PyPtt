@@ -53,6 +53,7 @@ exception_cases = [
     (PyPtt.SetContactMailFirst, []),
     (PyPtt.ResetYourContactEmail, []),
     (PyPtt.ParameterError, ['test message']),
+    (PyPtt.BadPostNotRecorded, ['test message']),
 ]
 
 
