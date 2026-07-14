@@ -36,6 +36,7 @@ def test_get_post_list_positive(ptt_bots):
     """Shared logic for testing get_post_list's positive path (a board with
     posts returns a well-formed, duplicate-free, ascending-index list)."""
 
+    verified = False
     for ptt_bot in ptt_bots:
         if ptt_bot.host == PyPtt.HOST.PTT1:
             boards = test_boards_ptt1
@@ -57,14 +58,12 @@ def test_get_post_list_positive(ptt_bots):
             try:
                 post_list = ptt_bot.get_post_list(board=board, limit=limit)
             except exceptions.NoSearchResult:
-                pytest.skip(f"Board {board} has no posts to test.")
-                return
+                continue
             except exceptions.NoPermission:
-                pytest.skip(f"No permission to enter board {board}.")
-                return
+                continue
 
             if not post_list:
-                pytest.skip(f"Board {board} returned no posts.")
+                continue
 
             assert len(post_list) <= limit
 
@@ -88,6 +87,11 @@ def test_get_post_list_positive(ptt_bots):
                 if last_index != -1:
                     assert index > last_index, "Posts are not in ascending order of index."
                 last_index = index
+
+            verified = True
+
+    if not verified:
+        pytest.skip("No board in this run returned a usable post list.")
 
 
 def test_get_post_list_non_existent_board(ptt_bots):
