@@ -157,6 +157,17 @@ search_list_ptt2 = [
     ('PttSuggest', PyPtt.SearchType.COMMENT, '10'),
 ]
 
+# LOCALHOST cases, mirroring tests/test_get_newest_index.py's
+# LOCALHOST_BOARD_CASES rationale: 'pypttbot2' matches only pypttbot2's
+# Python seed post title (a proper subset of Python's posts, not literally
+# every post -- get_newest_index can't tell "no match" apart from "the match
+# set happens to be the whole board"), and COMMENT '1' matches the post
+# scripts/bootstrap_local_pttbbs.py cross-pushes from pypttbot1.
+search_list_localhost = [
+    ('Python', PyPtt.SearchType.KEYWORD, 'pypttbot2'),
+    ('Python', PyPtt.SearchType.COMMENT, '1'),
+]
+
 @pytest.mark.parametrize("board, search_type, condition", search_list_ptt1)
 def test_get_post_with_condition_ptt1(ptt_bots, board, search_type, condition):
     """Tests getting a post with search conditions on PTT1."""
@@ -187,6 +198,39 @@ def test_get_post_with_condition_ptt1(ptt_bots, board, search_type, condition):
     assert post is not None
     assert isinstance(post, dict)
     assert 'post_status' in post
+
+
+@pytest.mark.parametrize("board, search_type, condition", search_list_localhost)
+def test_get_post_with_condition_localhost(ptt_bots, board, search_type, condition):
+    """Tests getting a post with search conditions (KEYWORD, COMMENT) against
+    a local imageptt container. Unlike the PTT1/PTT2 versions above, this
+    doesn't skip on NoSearchResult/index==0 -- the seed data guarantees a
+    match, so an empty result here is a real regression, not an environment
+    quirk."""
+    ptt_bot = ptt_bots[0]
+    if ptt_bot.host != PyPtt.HOST.LOCALHOST:
+        pytest.skip("This test is for a local imageptt container (PTT_HOST=LOCALHOST)")
+
+    index = ptt_bot.get_newest_index(
+        PyPtt.NewIndex.BOARD,
+        board,
+        search_type=search_type,
+        search_condition=condition
+    )
+    assert index > 0
+
+    post = ptt_bot.get_post(
+        board,
+        index=index,
+        search_type=search_type,
+        search_condition=condition
+    )
+
+    assert post is not None
+    assert isinstance(post, dict)
+    assert PyPtt.PostField.post_status in post
+    assert PyPtt.PostField.author in post
+    assert PyPtt.PostField.title in post
 
 @pytest.mark.parametrize("board, search_type, condition", search_list_ptt2)
 def test_get_post_with_condition_ptt2(ptt_bots, board, search_type, condition):
