@@ -139,21 +139,39 @@ def step_seed_data():
             except Exception as e:
                 print(f'  mail to self by {bot.ptt_id} skipped: {e}')
 
-        # Cross-push pypttbot2's just-posted 'Python' article so LOCALHOST-only
-        # tests that search by push count (SearchType.COMMENT, e.g.
+        # Cross-push pypttbot2's 'Python' article so LOCALHOST-only tests that
+        # search by push count (SearchType.COMMENT, e.g.
         # test_get_newest_index.py) have at least one match. Self-push is
         # disallowed by default, so pypttbot1 pushes pypttbot2's post rather
-        # than its own. Safe to re-run: pttbbs allows repeat pushes from the
-        # same user on the same article, so this just adds another push line
-        # -- the match count only ever grows, never shrinks or errors.
-        try:
-            python_newest = bots[0].get_newest_index(PyPtt.NewIndex.BOARD, board='Python')
-            bots[0].comment(board='Python', comment_type=PyPtt.CommentType.PUSH,
-                             content='cross-push for PyPtt LOCALHOST search tests',
-                             index=python_newest)
-            print(f'  pushed Python #{python_newest} as {bots[0].ptt_id}')
-        except Exception as e:
-            print(f'  push on Python by {bots[0].ptt_id} skipped: {e}')
+        # than its own -- which means it must find a post actually authored
+        # by pypttbot2, not just "the newest post on the board": if
+        # pypttbot2's post above silently failed on some run, the newest post
+        # could be pypttbot1's own, and pushing that would be a self-push
+        # PTT rejects. This intentionally isn't wrapped in a broad
+        # try/except: this seed is a hard prerequisite for the COMMENT-search
+        # tests, so a failure here should fail bootstrap loudly (non-zero
+        # exit) rather than silently leave the suite without it. Safe to
+        # re-run: pttbbs allows repeat pushes from the same user on the same
+        # article, so this just adds another push line -- the match count
+        # only ever grows, never shrinks or errors.
+        python_newest = bots[0].get_newest_index(PyPtt.NewIndex.BOARD, board='Python')
+        pypttbot2_index = None
+        for i in range(10):
+            index_to_check = python_newest - i
+            if index_to_check <= 0:
+                break
+            post = bots[0].get_post('Python', index=index_to_check, query=True)
+            if post[PyPtt.PostField.author].split(' ')[0] == bots[1].ptt_id:
+                pypttbot2_index = index_to_check
+                break
+        if pypttbot2_index is None:
+            raise RuntimeError(
+                f"couldn't find a Python-board post authored by {bots[1].ptt_id} to "
+                "cross-push (needed for SearchType.COMMENT tests)")
+        bots[0].comment(board='Python', comment_type=PyPtt.CommentType.PUSH,
+                         content='cross-push for PyPtt LOCALHOST search tests',
+                         index=pypttbot2_index)
+        print(f'  pushed Python #{pypttbot2_index} (post by {bots[1].ptt_id}) as {bots[0].ptt_id}')
 
         # A PyPttMod post NOT authored by pypttbot1 (the board's moderator),
         # for test_del_post.py::test_del_other_post_with_reason_as_moderator.
