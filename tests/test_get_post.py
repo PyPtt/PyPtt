@@ -14,11 +14,15 @@ test_post_list_ptt2 = [
 ]
 
 # A local imageptt container has no PTT1/PTT2 historical posts, so these
-# target the seed posts scripts/bootstrap_local_pttbbs.py plants on 'Test'
-# and 'Python' for pypttbot1/pypttbot2. The index/aid are fetched dynamically
-# via get_newest_index rather than hardcoded, since a full-suite run may have
-# other test files add (or, on 'Test', delete) posts before this file runs.
-test_boards_localhost = ['Test', 'Python']
+# target the seed post scripts/bootstrap_local_pttbbs.py plants on 'Python'
+# for pypttbot1/pypttbot2. The index/aid are fetched dynamically via
+# get_newest_index rather than hardcoded, since a full-suite run may have
+# other test files add more posts before this file runs. Deliberately not
+# 'Test': every test file's session teardown deletes each bot's own recent
+# posts there (tests/util.py::del_all_post), so across a full-suite run
+# 'Test' can be left with 0 posts by the time this file runs -- 'Python' is
+# never pruned this way, so its post count only ever grows.
+test_boards_localhost = ['Python']
 
 @pytest.mark.parametrize("board, index_or_aid", test_post_list_ptt1)
 def test_get_post_without_condition_ptt1(ptt_bots, board, index_or_aid):
@@ -57,14 +61,7 @@ def test_get_post_without_condition_localhost(ptt_bots, board):
         pytest.skip("This test is for a local imageptt container (PTT_HOST=LOCALHOST)")
 
     index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, board=board)
-    if index == 0:
-        # Every test file's session teardown deletes each bot's own recent
-        # posts on 'Test' (tests/util.py::del_all_post), so in a full-suite
-        # run 'Test' can be left with 0 posts by the time this file runs --
-        # unlike 'Python', which no other test prunes. Skip rather than fail:
-        # this is expected full-suite state, not a regression.
-        pytest.skip(f"Board {board} has no posts on this local imageptt container "
-                    "(likely drained by an earlier test file's teardown).")
+    assert index > 0
 
     post = ptt_bot.get_post(board, index=index)
     assert post is not None
