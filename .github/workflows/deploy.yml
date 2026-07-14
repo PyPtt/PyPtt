@@ -169,12 +169,12 @@ jobs:
           #     test_bucket.py, which tolerates an already-banned user,
           #     follows it).
           #
-          # test_get_bottom_post_list.py and test_get_time.py are excluded:
-          # confirmed (by re-running each standalone against a fresh
-          # container) to fail independently of ordering/pollution --
-          # real bugs/format mismatches, not CI flakiness. See CLAUDE.md.
+          # test_get_time.py is excluded: confirmed (by re-running standalone
+          # against a fresh container) to fail independently of
+          # ordering/pollution -- a LOCALHOST time-format mismatch, not CI
+          # flakiness. See CLAUDE.md.
           set +e
-          EXCLUDE="test_get_bottom_post_list.py|test_get_time.py|test_comment.py|test_del_post.py|test_bucket.py"
+          EXCLUDE="test_get_time.py|test_comment.py|test_del_post.py|test_bucket.py"
           MIDDLE=$(find tests -maxdepth 1 -name 'test_*.py' -printf '%f\n' | grep -vE "^(${EXCLUDE})$" | sort)
           ORDER="test_comment.py ${MIDDLE} test_del_post.py test_bucket.py"
 

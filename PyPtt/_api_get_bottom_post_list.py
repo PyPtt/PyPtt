@@ -29,7 +29,7 @@ def get_bottom_post_list(api, board):
     bottom_length = len(bottom_screen)
 
     if bottom_length == 0:
-        log.logger.info(i18n.catch_bottom_post_success)
+        log.logger.info(i18n.catch_bottom_post, '...', i18n.success)
         return list()
 
     cmd_list = []

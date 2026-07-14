@@ -6,7 +6,7 @@ string_data = {
     "bad_post": "bad post",
     "board": "Board",
     "can_not_use_search_post_code_f": "This status can not use the search PostField code function",
-    "catch_bottom_post_success": "Catch bottom post success",
+    "catch_bottom_post": "Catch bottom post",
     "change_pw": "Change password",
     "comment": "Comment",
     "comment_content": "Comment content",
