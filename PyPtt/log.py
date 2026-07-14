@@ -63,6 +63,16 @@ class Logger:
 
     def __init__(self, name: str, level: int = logging.NOTSET, logger_callback: Optional[callable] = None):
 
+        # Remembered independently of self.logger's own level: NOTSET (SILENT)
+        # is used here purely as a "fully silent" sentinel, but stdlib
+        # logging.Logger.isEnabledFor() treats NOTSET as "defer to the
+        # nearest ancestor with an explicit level" (falling back to the root
+        # logger's default of WARNING). That makes isEnabledFor(WARNING)
+        # return True even under SILENT, which previously let warning()
+        # leak through. Comparing against this stored level directly avoids
+        # relying on isEnabledFor()/root-logger defaults at all.
+        self._level = level
+
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
 
@@ -76,9 +86,14 @@ class Logger:
         if logger_callback and callable(logger_callback):
             self.logger_callback = logger_callback
 
+    def _enabled_for(self, level: int) -> bool:
+        if self._level == logging.NOTSET:
+            return False
+        return level >= self._level
+
     def info(self, *args):
 
-        if not self.logger.isEnabledFor(logging.INFO):
+        if not self._enabled_for(logging.INFO):
             return
 
         msg = _combine_msg(*args)
@@ -88,7 +103,7 @@ class Logger:
 
     def debug(self, *args):
 
-        if not self.logger.isEnabledFor(logging.DEBUG):
+        if not self._enabled_for(logging.DEBUG):
             return
 
         msg = _combine_msg(*args)
@@ -98,7 +113,7 @@ class Logger:
 
     def warning(self, *args):
 
-        if not self.logger.isEnabledFor(logging.WARNING):
+        if not self._enabled_for(logging.WARNING):
             return
 
         msg = _combine_msg(*args)
