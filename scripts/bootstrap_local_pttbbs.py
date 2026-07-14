@@ -22,7 +22,9 @@ Steps:
     (c) log in via this repo's PyPtt (host=LOCALHOST) and seed the data the
         test suite reads: a post on Test and on Python by each bot, a
         self-mail for each bot (so `get_newest_index(NewIndex.MAIL) > 0`),
-        and a PyPttMod post authored by pypttbot2 (a non-BM author, needed by
+        a cross-push of pypttbot2's Python post by pypttbot1 (so
+        SearchType.COMMENT searches have a match), and a PyPttMod post
+        authored by pypttbot2 (a non-BM author, needed by
         `test_del_post.py::test_del_other_post_with_reason_as_moderator`).
 
 See CLAUDE.md, "Testing against a local pttbbs", for the full workflow
@@ -136,6 +138,22 @@ def step_seed_data():
                 print(f'  mailed self as {bot.ptt_id}')
             except Exception as e:
                 print(f'  mail to self by {bot.ptt_id} skipped: {e}')
+
+        # Cross-push pypttbot2's just-posted 'Python' article so LOCALHOST-only
+        # tests that search by push count (SearchType.COMMENT, e.g.
+        # test_get_newest_index.py) have at least one match. Self-push is
+        # disallowed by default, so pypttbot1 pushes pypttbot2's post rather
+        # than its own. Safe to re-run: pttbbs allows repeat pushes from the
+        # same user on the same article, so this just adds another push line
+        # -- the match count only ever grows, never shrinks or errors.
+        try:
+            python_newest = bots[0].get_newest_index(PyPtt.NewIndex.BOARD, board='Python')
+            bots[0].comment(board='Python', comment_type=PyPtt.CommentType.PUSH,
+                             content='cross-push for PyPtt LOCALHOST search tests',
+                             index=python_newest)
+            print(f'  pushed Python #{python_newest} as {bots[0].ptt_id}')
+        except Exception as e:
+            print(f'  push on Python by {bots[0].ptt_id} skipped: {e}')
 
         # A PyPttMod post NOT authored by pypttbot1 (the board's moderator),
         # for test_del_post.py::test_del_other_post_with_reason_as_moderator.

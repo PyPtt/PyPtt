@@ -18,18 +18,42 @@ test_boards_ptt2 = [
     'SYSOP',
 ]
 
-def run_post_list_test(ptt_bots):
-    """Shared logic for testing get_post_list."""
+# A local imageptt container has neither PTT1/PTT2's boards nor their post
+# volume. Only 'Python' is used here (not also 'Test', which
+# scripts/bootstrap_local_pttbbs.py also seeds): every test file's session
+# teardown deletes each bot's own recent posts on 'Test'
+# (tests/util.py::del_all_post), so across a full-suite run -- or even a
+# second run of just this file against the same container -- 'Test' can be
+# left with 0 posts, which get_post_list rejects outright (limit must be
+# >=1 and <= the newest index). 'Python' is never pruned this way, so its
+# post count only ever grows.
+test_boards_localhost = [
+    'Python',
+]
+
+
+def test_get_post_list_positive(ptt_bots):
+    """Shared logic for testing get_post_list's positive path (a board with
+    posts returns a well-formed, duplicate-free, ascending-index list)."""
 
     for ptt_bot in ptt_bots:
         if ptt_bot.host == PyPtt.HOST.PTT1:
             boards = test_boards_ptt1
         elif ptt_bot.host == PyPtt.HOST.PTT2:
             boards = test_boards_ptt2
+        else:
+            boards = test_boards_localhost
 
         limit = 20
 
         for board in boards:
+            if ptt_bot.host == PyPtt.HOST.LOCALHOST:
+                # A fresh imageptt container only has the couple of seed
+                # posts bootstrap plants -- get_post_list requires
+                # limit <= the board's newest index.
+                max_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, board=board)
+                limit = min(20, max_index)
+
             try:
                 post_list = ptt_bot.get_post_list(board=board, limit=limit)
             except exceptions.NoSearchResult:
@@ -58,9 +82,11 @@ def run_post_list_test(ptt_bots):
                 assert index not in index_set, f'Duplicate index found: {index}'
                 index_set.add(index)
 
-                # Check if posts are returned in descending order of index
+                # get_post_list walks the board forward from start_index (see
+                # _api_get_post_list.py), so posts come back oldest-first --
+                # ascending order.
                 if last_index != -1:
-                    assert index < last_index, "Posts are not in descending order of index."
+                    assert index > last_index, "Posts are not in ascending order of index."
                 last_index = index
 
 
