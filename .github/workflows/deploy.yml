@@ -98,6 +98,99 @@ jobs:
           tests/test_get_post_list_parser.py \
           tests/test_pyte_parity.py
 
+  # Runs the credentialed integration suite (tests/) against a disposable
+  # local pttbbs container instead of the real PTT (cloud runners can't reach
+  # PTT1/PTT2). `continue-on-error: true` and deliberately absent from the
+  # `needs:` of deploy-pypi/deploy-ghcr/deploy-docs below: this job is a
+  # signal, not a gate, while it's still being hardened.
+  test-integration:
+    name: Integration tests (local pttbbs)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      # Fixed test accounts provisioned by scripts/bootstrap_local_pttbbs.py
+      # into the disposable container below -- not secrets, nothing to leak.
+      MOD_BOARD: PyPttMod
+      PTT_HOST: LOCALHOST
+      PTT1_ID: pypttbot1
+      PTT1_PW: test1234
+      PTT2_ID: pypttbot2
+      PTT2_PW: test5678
+      TEST_USER: pypttbot2
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          # Locked to 3.12 (not the test job's matrix): bootstrap shells out
+          # to scripts/gen_local_passwds.py, which needs the stdlib `crypt`
+          # module removed in 3.13.
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[dev]
+      - name: Start local pttbbs container
+        run: docker run -d --name ptt -p 8888:8888 -p 48763:48763 bbsdocker/imageptt
+      - name: Wait for local pttbbs to accept connections
+        run: |
+          for i in $(seq 1 60); do
+            if (exec 3<>/dev/tcp/127.0.0.1/48763) 2>/dev/null; then
+              exec 3<&- 3>&-
+              echo "pttbbs WebSocket port ready after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "pttbbs did not open port 48763 in time" >&2
+          docker logs ptt
+          exit 1
+      - name: Bootstrap accounts, boards and seed content
+        run: python scripts/bootstrap_local_pttbbs.py ptt
+      - name: Run integration suite
+        run: |
+          # Each test file gets its own pytest process (one shared session
+          # across all of tests/ is flaky here: mutation-heavy tests
+          # intermittently hit ConnectionClosed / NoSuchBoard / session-state
+          # errors -- see CLAUDE.md). Two files carry ordering constraints
+          # baked into the *fresh, disposable* container's shared state:
+          #
+          #   - test_comment.py must run FIRST: every file's session
+          #     teardown deletes each bot's own recent posts on board
+          #     'Test' (tests/util.py::del_all_post), so by the second file
+          #     the seed post test_comment.py reads (and doesn't create
+          #     itself) is already gone.
+          #   - test_bucket.py must run LAST: its success path mutes
+          #     TEST_USER (pypttbot2) on MOD_BOARD for a full day, which
+          #     breaks every later test that needs TEST_USER able to post.
+          #     test_del_post.py runs right before it for the same reason
+          #     (its own last test, test_bad_post, additionally mutes
+          #     TEST_USER globally for ~1 hour -- fine since nothing but
+          #     test_bucket.py, which tolerates an already-banned user,
+          #     follows it).
+          #
+          # test_get_bottom_post_list.py and test_get_time.py are excluded:
+          # confirmed (by re-running each standalone against a fresh
+          # container) to fail independently of ordering/pollution --
+          # real bugs/format mismatches, not CI flakiness. See CLAUDE.md.
+          set +e
+          EXCLUDE="test_get_bottom_post_list.py|test_get_time.py|test_comment.py|test_del_post.py|test_bucket.py"
+          MIDDLE=$(find tests -maxdepth 1 -name 'test_*.py' -printf '%f\n' | grep -vE "^(${EXCLUDE})$" | sort)
+          ORDER="test_comment.py ${MIDDLE} test_del_post.py test_bucket.py"
+
+          FAILED=0
+          for f in $ORDER; do
+            echo "::group::tests/$f"
+            python -m pytest "tests/$f" -q
+            rc=$?
+            [ $rc -ne 0 ] && FAILED=1
+            echo "::endgroup::"
+          done
+          exit $FAILED
+      - name: Container logs (always, for debugging)
+        if: always()
+        run: docker logs ptt
+
   test-build-docs:
     name: Test building documentation
     runs-on: ubuntu-latest
