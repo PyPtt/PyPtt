@@ -61,7 +61,21 @@ BOARDS = [
     ('Python', '', POST_TYPES),
     ('Announce', '', POST_TYPES),
     ('PyPttMod', 'pypttbot1', POST_TYPES),
+    ('PyPttLottery', '', POST_TYPES),
 ]
+
+# A per-board lottery round (mbbsd/gamble.c) for tests/test_lottery.py.
+# Normally created interactively via Ctrl-G (hold_gamble(), moderator-only,
+# and blocked on BRD_NOCREDIT boards) -- seeding the data files directly
+# sidesteps both requirements. Format is mbbsd/gamble.c:show_ticket_data():
+# line 1 is the per-ticket price, then up to 8 item-name lines; a same-named
+# extensionless `ticket` marker file (dashf() only checks existence) means
+# betting is open. ASCII-only names avoid the container's Big5/UTF-8 auto
+# detection (PyPtt.connect_core) mattering for a file it never negotiates
+# encoding for.
+LOTTERY_BOARD = 'PyPttLottery'
+LOTTERY_PRICE = 10
+LOTTERY_ITEMS = ('Alpha', 'Bravo', 'Charlie')
 
 
 def run(*args):
@@ -105,6 +119,22 @@ def step_boards(container):
                         user='bbs', cwd='/home/bbs')
     container_exec(container, './bin/shmctl', 'reloadbcache', user='bbs', cwd='/home/bbs')
     container_exec(container, './bin/shmctl', 'bBMC', user='bbs', cwd='/home/bbs')
+
+
+def step_lottery(container):
+    print('--- (d) lottery round ---')
+    bdir = '/home/bbs/boards/%s/%s' % (LOTTERY_BOARD[0], LOTTERY_BOARD)
+    items_path = os.path.join(REPO_ROOT, '.ticket.items.tmp')
+    with open(items_path, 'w') as f:
+        f.write('\n'.join([str(LOTTERY_PRICE), *LOTTERY_ITEMS]) + '\n')
+    try:
+        run(CONTAINER_TOOL, 'cp', items_path, f'{container}:{bdir}/ticket.items')
+        container_exec(container, 'sh', '-c',
+                        f'touch {bdir}/ticket && '
+                        f'chown bbs:bbs {bdir}/ticket.items {bdir}/ticket && '
+                        f'chmod 644 {bdir}/ticket.items {bdir}/ticket')
+    finally:
+        os.remove(items_path)
 
 
 def step_seed_data():
@@ -195,6 +225,7 @@ def main():
     container = sys.argv[1] if len(sys.argv) > 1 else 'pyptt-test'
     step_accounts(container)
     step_boards(container)
+    step_lottery(container)
     time.sleep(1)  # let shmctl's background bottom-post load settle
     step_seed_data()
     print('bootstrap done.')

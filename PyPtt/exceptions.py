@@ -215,6 +215,14 @@ class NoSuchPost(Error):
         return self.message
 
 
+class NoSuchLottery(Error):
+    def __init__(self, board):
+        self.message = i18n.no_such_lottery + ': ' + board
+
+    def __str__(self):
+        return self.message
+
+
 class CanNotUseSearchPostCode(Error):
     """
     此狀態下無法使用搜尋文章代碼(AID)功能
