@@ -39,6 +39,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
         search_list = []
     else:
         check_value.check_type(search_list, list, 'search_list')
+        search_list = list(search_list)  # 別就地改到呼叫端傳進來的 list
 
     if (search_type, search_condition) != (None, None):
         search_list.insert(0, (search_type, search_condition))
