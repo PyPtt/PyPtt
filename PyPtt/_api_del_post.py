@@ -17,6 +17,45 @@ from . import screens
 # character), not in Python characters.
 _BAD_POST_REASON_MAX_BYTES = 50
 
+# --- del_post's `reason` field (annotates the title shown after a
+# moderator deletes another user's post) ---
+#
+# pttbbs pre-fills this prompt with "(已被<moderator id>刪除) <author id>"
+# (pttbbs mbbsd/bbs.c, del_post()'s SAFE_ARTICLE_DELETE branch) in a
+# `char reason[PROPER_TITLE_LEN]` buffer; PROPER_TITLE_LEN is 42
+# (pttbbs include/common.h), so the whole title -- prefix *and* PyPtt's
+# reason together -- is capped at 41 Big5 bytes, not python characters.
+# PyPtt answers the prompt with Ctrl-E (jump to the end of the prefilled
+# text) plus a leading space plus `reason`, so the byte budget actually
+# left for `reason` depends on how long the moderator's and the post
+# author's PTT IDs are -- there is no single safe constant independent of
+# who is deleting what, unlike bad_post_reason above.
+#
+# Verified live against a local pttbbs (bbsdocker/imageptt rebuilt with
+# SAFE_ARTICLE_DELETE enabled -- the stock image ships with that feature
+# #define'd out and never offers this prompt at all):
+#   - exactly at the budget: reason is accepted in full, title not
+#     truncated.
+#   - 1 byte over budget, ASCII-only overflow: pttbbs silently truncates
+#     to fit (title is just missing the last character).
+#   - 1 byte over budget, where the overflow splits a double-byte Big5
+#     glyph in half: pttbbs's line editor corrupts and del_post() hangs
+#     until connect_core's screen_timeout, returning neither success nor
+#     a clean failure -- this is the "刪文失敗" a caller with a too-long
+#     reason actually experiences.
+# PyPtt must reject before sending in both cases.
+_REASON_TITLE_BUFFER_BYTES = 41  # PROPER_TITLE_LEN(42) - 1 byte reserved for the NUL terminator
+_REASON_PREFIX_FIXED_BYTES = 13  # Big5 bytes of "(已被刪除) <>", the literal part of "(已被%s刪除) <%s>"
+# A rough, moderator/author-id-independent ceiling: the most bytes `reason`
+# could ever fit under, i.e. the budget if both PTT ids were the shortest
+# possible (1 byte each). Real ids can only be longer than that, which only
+# shrinks the true budget further -- so a reason within this ceiling is not
+# guaranteed to fit any *particular* id pair, but a reason over it can never
+# fit *any* id pair. That asymmetry is what makes it safe to use as an
+# early, id-independent guard: it will never reject a reason that might be
+# legal once we know the real ids (checked later by _check_reason_budget).
+_REASON_MAX_POSSIBLE_BYTES = _REASON_TITLE_BUFFER_BYTES - _REASON_PREFIX_FIXED_BYTES - 1 - 1 - 1
+
 
 def _check_no_control_chars(name: str, value: str) -> None:
     """Terminal command injection guard: none of PyPtt's del_post text
@@ -38,6 +77,55 @@ def _check_bad_post_reason(bad_post_reason: str) -> None:
     if len(encoded) > _BAD_POST_REASON_MAX_BYTES:
         raise exceptions.ParameterError(
             f'bad_post_reason must not exceed {_BAD_POST_REASON_MAX_BYTES} bytes')
+
+
+def _check_reason(reason: str) -> None:
+    """Early, post_info-independent guard for `reason`: control chars,
+    Big5-encodability, and a rough length ceiling that can never fit any
+    moderator/author id pair (_REASON_MAX_POSSIBLE_BYTES). This alone does
+    NOT guarantee `reason` fits the *actual* ids involved -- that exact,
+    id-dependent budget is enforced later by _check_reason_budget, once
+    post_info is available. Keeping this one id-independent lets del_post()
+    reject an obviously-broken reason (control chars, non-Big5, absurdly
+    long) the same way regardless of whether the target post still exists."""
+    _check_no_control_chars('reason', reason)
+    try:
+        encoded = reason.encode('big5uao')
+    except UnicodeEncodeError as e:
+        raise exceptions.ParameterError(
+            f'reason contains a character that cannot be encoded in Big5: {e}') from e
+    if len(encoded) > _REASON_MAX_POSSIBLE_BYTES:
+        raise exceptions.ParameterError(
+            f'reason must not exceed {_REASON_MAX_POSSIBLE_BYTES} bytes '
+            f'(pttbbs caps the deleted-post title at {_REASON_TITLE_BUFFER_BYTES} bytes total; '
+            f'{_REASON_MAX_POSSIBLE_BYTES} bytes is the most any reason could ever fit, for the '
+            f'shortest possible moderator/author PTT ids -- the actual limit for this delete may '
+            f'be smaller)')
+
+
+def _check_reason_budget(reason: str, moderator_id: str, author_id: str) -> None:
+    """Exact, post_info-dependent guard for `reason`: pttbbs pre-fills the
+    delete-title prompt with "(已被<moderator_id>刪除) <author_id>" inside the
+    fixed-size buffer described above, so the byte budget actually left for
+    `reason` depends on the two real PTT IDs involved in this delete --
+    unlike _check_bad_post_reason, this can't be a plain module-level
+    constant. Call this once post_info is available (see del_post());
+    _check_reason above already covers the id-independent checks (control
+    chars, Big5-encodability) so this only needs to re-derive the byte
+    count for the length comparison."""
+    try:
+        encoded = reason.encode('big5uao')
+    except UnicodeEncodeError as e:
+        raise exceptions.ParameterError(
+            f'reason contains a character that cannot be encoded in Big5: {e}') from e
+    prefix_bytes = _REASON_PREFIX_FIXED_BYTES + len(moderator_id) + len(author_id)
+    # -1 for the leading space PyPtt sends before reason (see del_post()).
+    max_reason_bytes = max(0, _REASON_TITLE_BUFFER_BYTES - prefix_bytes - 1)
+    if len(encoded) > max_reason_bytes:
+        raise exceptions.ParameterError(
+            f'reason must not exceed {max_reason_bytes} bytes for this moderator/author pair '
+            f'(pttbbs caps the deleted-post title at {_REASON_TITLE_BUFFER_BYTES} bytes total, '
+            f'and the prefix "(已被{moderator_id}刪除) <{author_id}>" already uses {prefix_bytes} of them)')
 
 
 def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, reason: Optional[str] = None,
@@ -74,9 +162,17 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
     # --- Pure parameter validation (doesn't need post_info) happens here,
     # before the "already deleted" early-return below -- an invalid
     # combination of parameters must always fail the same way, regardless of
-    # whether the post happens to already be gone. ---
+    # whether the post happens to already be gone. `reason` is checked in
+    # two stages for this reason: _check_reason here covers everything that
+    # doesn't depend on state (control chars, Big5-encodability, and a
+    # rough ceiling no id pair could ever exceed), so those failures are
+    # always reported the same way; the *exact* budget depends on the
+    # moderator's and the post author's real PTT IDs, so that part
+    # (_check_reason_budget) has to wait until post_info is available below
+    # -- alongside the other post_info-dependent reason check ("reason is
+    # only valid when...") a few lines down. ---
     if reason is not None:
-        _check_no_control_chars('reason', reason)
+        _check_reason(reason)
 
     if bad_post_type == data_type.BadPostType.OTHER:
         if not bad_post_reason:
@@ -131,6 +227,15 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
         if api.ptt_id.lower() != post_info[data_type.PostField.author].lower():
             log.logger.info(i18n.delete_post, '...', i18n.fail)
             raise exceptions.NoPermission(i18n.no_permission)
+
+    # Reaching here with reason still set means: not self-authored (checked
+    # above) and permitted (the check_author gate above didn't raise) --
+    # i.e. exactly the "moderator deleting someone else's post" case where
+    # PTT will actually offer the R加註理由 prompt. Validate reason's exact
+    # byte budget now, using the real moderator/author id pair, before any
+    # of the interactive delete flow below is sent.
+    if reason:
+        _check_reason_budget(reason, api.ptt_id, post_info[data_type.PostField.author])
 
     _api_util.goto_board(api, board)
 
