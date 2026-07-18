@@ -9,6 +9,7 @@ import traceback
 import warnings
 from typing import Any
 
+import certifi
 import websockets
 import websockets.exceptions
 
@@ -50,7 +51,9 @@ def ssl_init(verify_ssl: bool = True) -> ssl.SSLContext:
     cert_file.close()
     key_file.close()
 
-    ctx = ssl.create_default_context()
+    # certifi 的 CA bundle 隨 requests 一起裝，避免 macOS 官方 python 沒根憑證時
+    # 出現 CERTIFICATE_VERIFY_FAILED，且不必靠使用者設 SSL_CERT_FILE。
+    ctx = ssl.create_default_context(cafile=certifi.where())
     ctx.load_cert_chain(certfile=cert_file.name, keyfile=key_file.name)
     ctx.minimum_version = ssl.TLSVersion.TLSv1_2
 
