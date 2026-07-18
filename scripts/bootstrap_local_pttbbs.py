@@ -17,8 +17,10 @@ Usage:
 Steps:
     (a) generate `.PASSWDS` for pypttbot1 / pypttbot2 / CodingMan and load it
         into the container via `uhash_loader`.
-    (b) create boards Test / Python / Announce (no moderator) and PyPttMod
-        (moderated by pypttbot1), then reload the board + BM shm caches.
+    (b) create boards Test / Python / Announce (no moderator), PyPttMod
+        (moderated by pypttbot1), and AnonTest (BRD_ANONYMOUS +
+        BRD_DEFAULTANONYMOUS, for tests/test_post_anonymous.py), then
+        reload the board + BM shm caches.
     (c) log in via this repo's PyPtt (host=LOCALHOST) and seed the data the
         test suite reads: a post on Test and on Python by each bot, a
         self-mail for each bot (so `get_newest_index(NewIndex.MAIL) > 0`),
@@ -55,12 +57,17 @@ ACCOUNTS = [
 # misaligning the post-composer keystrokes on boards with no post-type list.
 POST_TYPES = '測試,問題,心得,閒聊,公告,其他'
 
-# (board, moderator_id, post_types)
+# (board, moderator_id, post_types[, anon_mode]) -- anon_mode defaults to ''
+# (not anonymous) when omitted; see scripts/mkboard.py's docstring.
 BOARDS = [
     ('Test', '', POST_TYPES),
     ('Python', '', POST_TYPES),
     ('Announce', '', POST_TYPES),
     ('PyPttMod', 'pypttbot1', POST_TYPES),
+    # BRD_ANONYMOUS + BRD_DEFAULTANONYMOUS: an Enter response to the "請輸入
+    # 你想用的ID" prompt deterministically resolves to "Anonymous." here, which
+    # is what tests/test_post_anonymous.py (issue #84) relies on.
+    ('AnonTest', '', POST_TYPES, 'defanon'),
 ]
 
 
@@ -100,8 +107,10 @@ def step_boards(container):
     print('--- (b) boards ---')
     mkboard_script = os.path.join(REPO_ROOT, 'scripts', 'mkboard.py')
     run(CONTAINER_TOOL, 'cp', mkboard_script, f'{container}:/home/bbs/mkboard.py')
-    for board, moderator, post_types in BOARDS:
-        container_exec(container, '/usr/bin/python3', 'mkboard.py', board, moderator, post_types,
+    for board_spec in BOARDS:
+        board, moderator, post_types, *anon_mode = board_spec
+        args = [board, moderator, post_types, *anon_mode]
+        container_exec(container, '/usr/bin/python3', 'mkboard.py', *args,
                         user='bbs', cwd='/home/bbs')
     container_exec(container, './bin/shmctl', 'reloadbcache', user='bbs', cwd='/home/bbs')
     container_exec(container, './bin/shmctl', 'bBMC', user='bbs', cwd='/home/bbs')

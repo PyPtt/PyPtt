@@ -9,13 +9,18 @@ own it as `bbs:bbs`, and `shmctl reloadbcache` requires `-u bbs` shmat access
 — see `bootstrap_local_pttbbs.py`).
 
 Usage (inside the container):
-    python3 mkboard.py <board_name> [bm_id] [posttype1,posttype2,...]
+    python3 mkboard.py <board_name> [bm_id] [posttype1,posttype2,...] [anon_mode]
 
     board_name   Board id, e.g. "Test".
     bm_id        Moderator's ptt_id. Omit or pass "" for no moderator.
     posttype     Comma-separated "文章種類" category names (up to 8, each at
                  most 2 Big5 characters), e.g. "問題,心得,其他". Omit or pass
                  "" to leave the board without a post-type list.
+    anon_mode    "anon" sets BRD_ANONYMOUS (0x40, board carries the 匿名發文
+                 prompt but defaults to the real id), "defanon" additionally
+                 sets BRD_DEFAULTANONYMOUS (0x80, prompt defaults to
+                 "Anonymous"). Omit or pass "" to leave the board non-
+                 anonymous (attr unchanged).
 
 After running this (and for every board it touches), reload the live board
 cache and BM cache as the `bbs` user:
@@ -37,6 +42,19 @@ OFF_TITLE, L_TITLE = OFF_BRD + L_BRD, BTLEN + 1
 OFF_BM, L_BM = OFF_TITLE + L_TITLE, IDLEN * 3 + 3
 OFF_POSTTYPE, L_POSTTYPE = 172, 33
 OFF_POSTTYPE_F = 205
+
+# brdattr is a packed little-endian uint32 at byte offset 104 (see
+# pttbbs/include/pttstruct.h boardheader_t). BRD_ANONYMOUS (0x40) and
+# BRD_DEFAULTANONYMOUS (0x80) both fit in its low byte, so OR-ing that one
+# byte is enough -- no need to touch the other 3 bytes of the word.
+OFF_BRDATTR = 104
+BRD_ANONYMOUS = 0x40
+BRD_DEFAULTANONYMOUS = 0x80
+ANON_MODES = {
+    '': 0,
+    'anon': BRD_ANONYMOUS,
+    'defanon': BRD_ANONYMOUS | BRD_DEFAULTANONYMOUS,
+}
 
 
 def setfield(hdr: bytearray, off: int, length: int, raw: bytes) -> None:
@@ -68,6 +86,9 @@ def main():
     bm_id = args[1] if len(args) > 1 else ''
     posttype_csv = args[2] if len(args) > 2 else ''
     posttypes = [t for t in posttype_csv.split(',') if t] if posttype_csv else []
+    anon_mode = args[3] if len(args) > 3 else ''
+    if anon_mode not in ANON_MODES:
+        sys.exit(f'unknown anon_mode: {anon_mode!r} (expected "", "anon", or "defanon")')
 
     title_b = ('測試 ◎PyPtt ' + board_name).encode('big5')
 
@@ -93,6 +114,7 @@ def main():
     setfield(hdr, OFF_BM, L_BM, bm_id.encode('latin1'))
     setfield(hdr, OFF_POSTTYPE, L_POSTTYPE, encode_posttypes(posttypes))
     hdr[OFF_POSTTYPE_F] = 0
+    hdr[OFF_BRDATTR] |= ANON_MODES[anon_mode]
 
     if existing:
         idx = existing[0]
@@ -113,6 +135,7 @@ def main():
     print('board dir:', bdir, 'exists' if os.path.isdir(bdir) else 'MISSING')
     print('BM field set to:', bm_id or '(none)')
     print('posttype set to:', posttypes or '(none)')
+    print('anon_mode set to:', anon_mode or '(none)')
     print('.BRD now', len(data) // SIZE, 'boards,', len(data), 'bytes')
 
 

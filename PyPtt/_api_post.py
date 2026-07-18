@@ -92,7 +92,49 @@ sign_file_list = [str(x) for x in range(0, 10)]
 sign_file_list.append('x')
 
 
-def post(api, board: str, title: str, content: str, title_index: int, sign_file: [str | int]) -> None:
+# --- post()'s `anonymous` / `display_id` params (issue #84) ---
+#
+# pttbbs only shows the "請輸入你想用的ID" / "確定[y/N]?" prompt pair when the
+# *board itself* carries BRD_ANONYMOUS server-side (mbbsd/edit.c write_header,
+# `if (currbrdattr & BRD_ANONYMOUS)`). On a normal board the two TargetUnits
+# below simply never match anything on screen -- there is no way for PyPtt to
+# force anonymity on a board that isn't flagged anonymous. See
+# scripts/mkboard.py / scripts/bootstrap_local_pttbbs.py's AnonTest board for
+# how to provision one locally.
+#
+# Response mapping, matching pttbbs' own rules for that prompt:
+#   anonymous=False              -> 'r' (real userid; safe default, and a
+#                                    no-op on non-anonymous boards)
+#   anonymous=True,  no display_id -> '' (Enter; "Anonymous." -- pttbbs
+#                                    appends the same trailing '.' as the
+#                                    display_id case below -- on a
+#                                    default-anonymous board, real userid
+#                                    otherwise -- pttbbs' own behavior)
+#   anonymous=True,  display_id  -> that string; pttbbs appends a trailing
+#                                    '.' to it (e.g. display_id='Fox' shows
+#                                    up as author 'Fox.') -- fixed pttbbs
+#                                    behavior, not adjustable by PyPtt.
+def _anonymous_response(anonymous: bool, display_id: [str | None]) -> str:
+    if display_id is not None:
+        check_value.check_type(display_id, str, 'display_id')
+        if not anonymous:
+            raise exceptions.ParameterError('display_id requires anonymous=True')
+        # pttbbs (mbbsd/edit.c) treats a leading '-' as "this is a deleted
+        # name" and re-shows the same prompt instead of accepting it, which
+        # would make PyPtt's TargetUnit answer it the same way forever.
+        if display_id.startswith('-'):
+            raise exceptions.ParameterError("display_id must not start with '-'")
+        for c in display_id:
+            if ord(c) < 0x20 or ord(c) == 0x7f:
+                raise exceptions.ParameterError(
+                    f'display_id must not contain control characters (found {c!r})')
+        return display_id
+
+    return '' if anonymous else 'r'
+
+
+def post(api, board: str, title: str, content: str, title_index: int, sign_file: [str | int],
+         anonymous: bool = False, display_id: [str | None] = None) -> None:
     _api_util.one_thread(api)
 
     if not api._is_login:
@@ -105,9 +147,12 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     check_value.check_type(title_index, int, 'title_index')
     check_value.check_type(title, str, 'title')
     check_value.check_type(content, str, 'content')
+    check_value.check_type(anonymous, bool, 'anonymous')
 
     if str(sign_file).lower() not in sign_file_list:
         raise exceptions.ParameterError(f'wrong parameter sign_file: {sign_file}')
+
+    anonymous_response = _anonymous_response(anonymous, display_id)
 
     _api_util.check_board(api, board)
     _api_util.goto_board(api, board)
@@ -147,7 +192,17 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
 
     target_list = [
         connect_core.TargetUnit('任意鍵繼續', break_detect=True),
-        connect_core.TargetUnit('確定要儲存檔案嗎', response='s' + command.enter),
+        # max_match=1: pttbbs' "檔案處理" screen keeps every answered prompt's
+        # echoed text on screen as the flow proceeds through the next ones
+        # (confirmed live -- "確定要儲存檔案嗎？ s" stays visible through the
+        # anonymous-post prompts below). Without max_match=1 this target
+        # re-matches on every later screen in the same flow and re-sends
+        # 's' + Enter into whatever field currently has focus (e.g. the
+        # anonymous-ID or confirm prompt), corrupting the answer.
+        connect_core.TargetUnit('確定要儲存檔案嗎', response='s' + command.enter, max_match=1),
+        # Only shown on a BRD_ANONYMOUS board -- no-op on a normal board.
+        connect_core.TargetUnit('請輸入你想用的ID', response=anonymous_response + command.enter, max_match=1),
+        connect_core.TargetUnit('確定[y/N]', response='y' + command.enter, max_match=1),
         connect_core.TargetUnit('x=隨機', response=str(sign_file) + command.enter),
     ]
     api.connect_core.send(
