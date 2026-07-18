@@ -146,6 +146,21 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
     cmd_list.append(command.ctrl_z)
     cmd_list.append('m')
 
+    # search_type/search_condition 併入 search_list（比照 get_post），
+    # 否則單獨使用 search_type 搜尋會被忽略。
+    if search_list is None:
+        search_list = []
+    else:
+        check_value.check_type(search_list, list, 'search_list')
+        search_list = list(search_list)  # 別就地改到呼叫端傳進來的 list
+
+    if (search_type, search_condition) != (None, None):
+        search_list.insert(0, (search_type, search_condition))
+
+    for search_type, search_condition in search_list:
+        check_value.check_type(search_type, data_type.SearchType, 'search_type')
+        check_value.check_type(search_condition, str, 'search_condition')
+
     # 處理條件整理出指令
     _cmd_list = _api_util.get_search_condition_cmd(data_type.NewIndex.MAIL, search_list)
 
