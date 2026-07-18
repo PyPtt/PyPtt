@@ -168,6 +168,28 @@ MarkType
 
     待證實文章
 
+.. _bad-post-type:
+
+BadPostType
+-----------
+* 版主刪除他人文章時的惡退（劣文）分類。
+
+.. py:attribute:: PyPtt.BadPostType.AD
+
+    廣告
+
+.. py:attribute:: PyPtt.BadPostType.BAD_LANGUAGE
+
+    不當用辭
+
+.. py:attribute:: PyPtt.BadPostType.PERSONAL_ATTACK
+
+    人身攻擊
+
+.. py:attribute:: PyPtt.BadPostType.OTHER
+
+    其他
+
 
 .. _user-field:
 

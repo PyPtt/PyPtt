@@ -1071,7 +1071,9 @@ class API:
 
         return _api_get_bottom_post_list.get_bottom_post_list(self, board)
 
-    def del_post(self, board: str, aid: Optional[str] = None, index: int = 0, reason: Optional[str] = None) -> None:
+    def del_post(self, board: str, aid: Optional[str] = None, index: int = 0, reason: Optional[str] = None,
+                 bad_post_type: Optional[data_type.BadPostType] = None,
+                 bad_post_reason: Optional[str] = None) -> None:
         """
         刪除文章。
 
@@ -1080,6 +1082,10 @@ class API:
             aid (str): 文章編號。
             index (int): 文章編號。
             reason (str): 板主刪除他人文章時，加註於刪除後標題的理由（僅板主刪除他板友文章時有效）。
+            bad_post_type (data_type.BadPostType): 板主刪除他人文章時，對作者記的惡退（劣文）分類，
+                僅板主刪除他板友文章時有效。
+            bad_post_reason (str): 惡退理由，僅 ``bad_post_type`` 為 ``BadPostType.OTHER`` 時可傳入且必須傳入，
+                長度上限 50 字。
 
         Returns:
             None
@@ -1090,7 +1096,12 @@ class API:
             NoSuchBoard: 看板不存在。
             NoSuchPost: 文章不存在。
             NoPermission: 沒有權限。
-            ParameterError: 對自己的文章傳入 reason（加註理由僅適用於版主刪除他人文章）。
+            ParameterError: 對自己的文章傳入 reason 或 bad_post_type（僅適用於版主刪除他人文章），
+                或 bad_post_type 為 BadPostType.OTHER 卻未傳入 bad_post_reason（或超過 50 bytes，
+                或含有控制字元）。
+            BadPostNotRecorded: 傳入 bad_post_type 時，文章已成功刪除，但 PTT 端沒有完成惡退
+                （劣文）記錄流程（例如文章太舊而跳過惡退選單、或逾時）。代表刪除本身已經成功，
+                只是這支惡退沒有記上。
 
         範例::
 
@@ -1100,12 +1111,15 @@ class API:
             try:
                 # .. login ..
                 ptt_bot.del_post(board='Python', aid='1TJH_XY0')
+                # 板主刪除他人文章，並記一支「廣告」惡退
+                ptt_bot.del_post(board='Python', aid='1TJH_XY0',
+                                  bad_post_type=PyPtt.BadPostType.AD)
                 # .. do something ..
             finally:
                 ptt_bot.logout()
         """
 
-        _api_del_post.del_post(self, board, aid, index, reason)
+        _api_del_post.del_post(self, board, aid, index, reason, bad_post_type, bad_post_reason)
 
     def get_post_list(self, board: str, limit: int = 20, offset: int = 0) -> list[dict]:
         """

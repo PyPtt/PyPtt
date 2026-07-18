@@ -34,6 +34,7 @@ classifiers = [
 dependencies = [
     "progressbar2",
     "websockets>=12",
+    "certifi",
     "uao",
     "requests>=2.32",
     "AutoStrEnum",

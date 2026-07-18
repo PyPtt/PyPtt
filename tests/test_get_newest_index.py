@@ -25,8 +25,26 @@ PTT2_BOARD_CASES = [
 # with at least one post by scripts/bootstrap_local_pttbbs.py and — unlike
 # `Test` — no other test in the suite deletes from it, so its post count
 # only ever grows across a full-suite run.
+#
+# The KEYWORD and COMMENT cases exercise search_type/search_condition, which
+# none of the PTT1/PTT2 cases above do for this test (they search real,
+# host-specific historical content instead). 'pypttbot2' matches only
+# pypttbot2's seed post title (`f'PyPtt seed post ({bot.ptt_id})'`) -- a
+# proper subset of Python's posts, not e.g. 'seed post' which (at least on a
+# freshly bootstrapped container) matches *every* post: get_newest_index
+# treats a search landing on the same index as the unfiltered newest as "no
+# match" (see _api_get_newest_index.py), which is indistinguishable from "the
+# match set happens to be the whole board". Bootstrap also cross-pushes
+# pypttbot2's Python post from pypttbot1 so a push-count search has at least
+# one (but, by the same board-composition reasoning, not literally all)
+# matches. Note `get_newest_index` returns a position within the filtered
+# search results, not the post's absolute board index (PTT's search listing
+# renumbers matches sequentially) -- that's why the assertion below only
+# checks `index > 0`, not a specific value.
 LOCALHOST_BOARD_CASES = [
     ('Python', None, None),
+    ('Python', PyPtt.SearchType.KEYWORD, 'pypttbot2'),
+    ('Python', PyPtt.SearchType.COMMENT, '1'),
 ]
 
 def test_get_mail_index(ptt_bots):

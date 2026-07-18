@@ -121,11 +121,19 @@ def get_user(api, ptt_id: str) -> Dict:
     legal_post = int(re.findall(r'\d+', buff_1)[0])
 
     # PTT2 沒有退文
-    if api.config.host == data_type.HOST.PTT1:
-        int_list = re.findall(r'\d+', buff_1)
-        illegal_post = int(int_list[1]) if len(int_list) > 1 else 0
-    else:
+    if api.config.host == data_type.HOST.PTT2:
         illegal_post = None
+    else:
+        int_list = re.findall(r'\d+', buff_1)
+        if len(int_list) > 1:
+            illegal_post = int(int_list[1])
+        elif api.config.host == data_type.HOST.PTT1:
+            # Historical PTT1 behaviour: default to 0 rather than "unavailable".
+            illegal_post = 0
+        else:
+            # Non-PTT1 hosts (e.g. LOCALHOST) that fail to parse a second
+            # number: report "unavailable" rather than a fabricated 0.
+            illegal_post = None
 
     activity, mail = parse_user_info_from_line(activity_line)
     last_login_date, last_login_ip = parse_user_info_from_line(last_login_line)

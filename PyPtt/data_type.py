@@ -1,4 +1,5 @@
 import time
+from enum import IntEnum
 from enum import auto
 
 from AutoStrEnum import AutoStrEnum
@@ -160,6 +161,19 @@ class MarkType(AutoStrEnum):
     M = auto()
     # 待證實文章
     UNCONFIRMED = auto()
+
+
+class BadPostType(IntEnum):
+    # 版主刪除他人文章時的惡退（劣文）分類，對應 PTT 選單的數字選項。
+
+    # 廣告
+    AD = 1
+    # 不當用辭
+    BAD_LANGUAGE = 2
+    # 人身攻擊
+    PERSONAL_ATTACK = 3
+    # 其他
+    OTHER = 4
 
 
 class FavouriteBoardField(AutoStrEnum):

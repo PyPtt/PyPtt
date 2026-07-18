@@ -3,6 +3,8 @@ string_data = {
     "PTT2": "批踢踢兔",
     "active": "啟動",
     "author": "作者",
+    "bad_post": "劣文",
+    "bad_post_not_recorded": "文章已刪除，但退文（惡退）未成功記錄",
     "board": "看板",
     "can_not_use_search_post_code_f": "此狀態下無法使用搜尋文章代碼(AID)功能",
     "catch_bottom_post": "取得置底文章",

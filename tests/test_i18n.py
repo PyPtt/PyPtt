@@ -2,6 +2,7 @@ import pytest
 
 import PyPtt
 from PyPtt import i18n, exceptions
+from PyPtt import lang_en_US, lang_zh_TW
 
 # Data from lang files for assertion
 english_goodbye = [
@@ -84,3 +85,22 @@ def test_i18n_caching(monkeypatch):
     assert i18n._lang_data
     assert 'welcome' in i18n._lang_data
     assert i18n.welcome == i18n._lang_data['welcome']
+
+
+def test_i18n_lang_files_have_symmetric_keys():
+    """Every key in lang_zh_TW must exist in lang_en_US and vice versa.
+
+    Otherwise i18n.init() (which does globals()[k] = v per lang file) leaves
+    one language missing an attribute that code elsewhere unconditionally
+    references, raising AttributeError only under that language.
+    """
+    zh_keys = set(lang_zh_TW.string_data.keys())
+    en_keys = set(lang_en_US.string_data.keys())
+
+    zh_only = zh_keys - en_keys
+    en_only = en_keys - zh_keys
+
+    assert not zh_only and not en_only, (
+        f"lang_zh_TW has keys missing from lang_en_US: {sorted(zh_only)}; "
+        f"lang_en_US has keys missing from lang_zh_TW: {sorted(en_only)}"
+    )
