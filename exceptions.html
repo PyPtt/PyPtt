@@ -450,6 +450,13 @@
 <dd><p>請重新設定聯絡信箱。</p>
 </dd></dl>
 
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.BadPostNotRecorded">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">BadPostNotRecorded</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.BadPostNotRecorded" title="連結到這個定義">¶</a></dt>
+<dd><p>板主刪除他人文章並指定 <a class="reference internal" href="type.html#bad-post-type"><span class="std std-ref">BadPostType</span></a> 時，文章已成功刪除，但 PTT 端沒有完成惡退（劣文）
+記錄流程（例如文章太舊而跳過惡退選單）。呼叫端應理解「刪除成功，但惡退未記錄」。</p>
+</dd></dl>
+
 </section>
 
         </article>
@@ -536,6 +543,7 @@
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.OnlySecureConnection"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.OnlySecureConnection</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.SetContactMailFirst"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.SetContactMailFirst</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.ResetYourContactEmail"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.ResetYourContactEmail</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.BadPostNotRecorded"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.BadPostNotRecorded</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -547,7 +555,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=15183edd"></script>
+</div><script src="_static/documentation_options.js?v=07de02c7"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
