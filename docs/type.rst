@@ -564,3 +564,69 @@ PostField
 .. py:attribute:: PyPtt.PostField.is_unconfirmed
 
     文章是否為未確認文章
+
+.. _lottery-field:
+
+LotteryField
+--------------
+* 樂透資料欄位。
+
+.. py:attribute:: PyPtt.LotteryField.board
+
+    看板名稱
+
+.. py:attribute:: PyPtt.LotteryField.price
+
+    每張價格
+
+.. py:attribute:: PyPtt.LotteryField.total
+
+    已下注總額
+
+.. py:attribute:: PyPtt.LotteryField.options
+
+    下注選項清單，詳見 :ref:`lottery-option-field`
+
+.. _lottery-option-field:
+
+LotteryOptionField
+--------------------
+* 樂透下注選項資料欄位。
+
+.. py:attribute:: PyPtt.LotteryOptionField.index
+
+    選項編號
+
+.. py:attribute:: PyPtt.LotteryOptionField.name
+
+    選項名稱
+
+.. py:attribute:: PyPtt.LotteryOptionField.sold
+
+    已售出張數
+
+.. _lottery-bet-field:
+
+LotteryBetField
+------------------
+* 樂透下注結果資料欄位。
+
+.. py:attribute:: PyPtt.LotteryBetField.board
+
+    看板名稱
+
+.. py:attribute:: PyPtt.LotteryBetField.item
+
+    下注選項編號
+
+.. py:attribute:: PyPtt.LotteryBetField.name
+
+    選項名稱
+
+.. py:attribute:: PyPtt.LotteryBetField.amount
+
+    購買張數
+
+.. py:attribute:: PyPtt.LotteryBetField.cost
+
+    本次下注花費的 Ptt 幣總額
