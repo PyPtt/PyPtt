@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="索引" href="../genindex.html"><link rel="search" title="搜尋" href="../search.html"><link rel="next" title="get_post_list" href="get_post_list.html"><link rel="prev" title="del_post" href="del_post.html">
-        <link rel="canonical" href="https://pyptt.cc/api/comment.html">
+<link rel="index" title="索引" href="../genindex.html"><link rel="search" title="搜尋" href="../search.html"><link rel="next" title="Service" href="../service.html"><link rel="prev" title="bucket" href="bucket.html">
+        <link rel="canonical" href="https://pyptt.cc/api/lottery.html">
 
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>comment - PyPtt.cc</title>
+        <title>lottery - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -203,7 +203,7 @@
 <li class="toctree-l2"><a class="reference internal" href="post.html">post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reply_post.html">reply_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="del_post.html">del_post</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">comment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="comment.html">comment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_post_list.html">get_post_list</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html">mail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_mail.html">get_mail</a></li>
@@ -222,7 +222,7 @@
 <li class="toctree-l2"><a class="reference internal" href="set_board_title.html">set_board_title</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mark_post.html">mark_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bucket.html">bucket</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lottery.html">lottery</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">lottery</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../service.html">Service</a></li>
@@ -256,7 +256,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/api/comment.rst.txt" title="View this page">
+  <a class="muted-link" href="../_sources/api/lottery.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -274,33 +274,28 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="comment">
-<h1>comment<a class="headerlink" href="#comment" title="連結到這個標頭">¶</a></h1>
-<dl class="py function" id="api-comment">
+          <section id="lottery">
+<h1>lottery<a class="headerlink" href="#lottery" title="連結到這個標頭">¶</a></h1>
+<dl class="py function" id="api-get-lottery">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CommentType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
-<dd><p>推文。</p>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_lottery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span></dt>
+<dd><p>取得看板樂透（彩券）目前的開獎資訊，對應看板內按 <cite>f</cite> 鍵的功能。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>board</strong> (<em>str</em>) -- 看板名稱。</p></li>
-<li><p><strong>comment_type</strong> (<a class="reference internal" href="../type.html#comment-type"><span class="std std-ref">CommentType</span></a>) -- 推文類型。</p></li>
-<li><p><strong>content</strong> (<em>str</em>) -- 推文內容。</p></li>
-<li><p><strong>aid</strong> (<em>str</em>) -- 文章編號。</p></li>
-<li><p><strong>index</strong> (<em>int</em>) -- 文章編號。</p></li>
-</ul>
+<dd class="field-odd"><p><strong>board</strong> (<em>str</em>) -- 看板名稱。</p>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p>樂透資訊，包含 price（每張價格）、total（已下注總額）、
+options（下注選項清單，每個選項包含 index、name、sold）。</p>
 </dd>
-<dt class="field-odd">引發<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.UnregisteredUser" title="PyPtt.PyPtt.exceptions.UnregisteredUser"><strong>UnregisteredUser</strong></a> -- 未註冊使用者。</p></li>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+<dt class="field-even">引發<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 需要登入。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchBoard" title="PyPtt.PyPtt.exceptions.NoSuchBoard"><strong>NoSuchBoard</strong></a> -- 看板不存在。</p></li>
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchPost" title="PyPtt.PyPtt.exceptions.NoSuchPost"><strong>NoSuchPost</strong></a> -- 文章不存在。</p></li>
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoPermission" title="PyPtt.PyPtt.exceptions.NoPermission"><strong>NoPermission</strong></a> -- 沒有推文權限。</p></li>
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoFastComment" title="PyPtt.PyPtt.exceptions.NoFastComment"><strong>NoFastComment</strong></a> -- 推文間隔太短。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchLottery" title="PyPtt.PyPtt.exceptions.NoSuchLottery"><strong>NoSuchLottery</strong></a> -- 該看板目前並沒有舉辦樂透，或樂透已封盤/開獎。</p></li>
 </ul>
 </dd>
 </dl>
@@ -310,14 +305,55 @@
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
-    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">comment</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">comment_type</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">CommentType</span><span class="o">.</span><span class="n">PUSH</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s1">&#39;Comment by index&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
-    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">comment</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">comment_type</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">CommentType</span><span class="o">.</span><span class="n">PUSH</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s1">&#39;Comment by index&#39;</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">&#39;17MrayxF&#39;</span><span class="p">)</span>
+    <span class="n">lottery</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_lottery</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">)</span>
     <span class="c1"># .. do something ..</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>參考 <a class="reference internal" href="../type.html#comment-type"><span class="std std-ref">推文類型</span></a>、<a class="reference internal" href="get_newest_index.html#api-get-newest-index"><span class="std std-ref">取得最新文章編號</span></a></p>
+</dd></dl>
+
+<dl class="py function" id="api-bet-lottery">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">bet_lottery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span></dt>
+<dd><p>在看板下注樂透（彩券），對應看板內按 <cite>f</cite> 鍵後購買彩券的功能。</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>board</strong> (<em>str</em>) -- 看板名稱。</p></li>
+<li><p><strong>item</strong> (<em>int</em>) -- 要購買的樂透選項編號，範圍 1~8（依看板實際選項數而定）。</p></li>
+<li><p><strong>amount</strong> (<em>int</em>) -- 購買張數，範圍 1~9999，並受限於帳戶內的 Ptt 幣餘額。</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>下注結果，包含 board、item、name（選項名稱）、amount、
+cost（本次下注花費的 Ptt 幣總額）。</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+<dt class="field-even">引發<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 需要登入。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.UnregisteredUser" title="PyPtt.PyPtt.exceptions.UnregisteredUser"><strong>UnregisteredUser</strong></a> -- 未註冊使用者。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchBoard" title="PyPtt.PyPtt.exceptions.NoSuchBoard"><strong>NoSuchBoard</strong></a> -- 看板不存在。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchLottery" title="PyPtt.PyPtt.exceptions.NoSuchLottery"><strong>NoSuchLottery</strong></a> -- 該看板目前並沒有舉辦樂透，或樂透已封盤/開獎。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoMoney" title="PyPtt.PyPtt.exceptions.NoMoney"><strong>NoMoney</strong></a> -- 餘額不足。</p></li>
+</ul>
+</dd>
+</dl>
+<p>範例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
+
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># .. login ..</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">bet_lottery</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1"># .. do something ..</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -327,23 +363,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="get_post_list.html">
+          <a class="next-page" href="../service.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">get_post_list</div>
+                <div class="title">Service</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="del_post.html">
+          <a class="prev-page" href="bucket.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">del_post</div>
+                <div class="title">bucket</div>
                 
               </div>
             </a>
