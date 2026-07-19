@@ -106,7 +106,10 @@ def get_board_list(api) -> list:
             board_list.append(board_name)
 
             if api.config.log_level == log.INFO:
-                pb.update(no)
+                # ponytail: max_no is parsed from the last-page screen and can
+                # undercount by one on some board sets; the bar is cosmetic, so
+                # clamp instead of letting pb.update raise and abort get_all_boards.
+                pb.update(min(no, max_no))
 
         if no >= max_no:
             break
