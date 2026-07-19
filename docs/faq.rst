@@ -10,11 +10,11 @@ Q: 使用 PyPtt 時，遇到問題該如何解決？
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. 自己修正並提交 PR，如果沒辦法請參考步驟 2。
     * 如果你是程式設計師，可以參考 :doc:`參與開發 <dev>` 一起幫忙修正問題。
-2. 到 GitHub 提出 `issue`_ 或者到 `PyPtt Telegram 社群`_ 討論。
+2. 到 GitHub 提出 `issue`_ 或者到 `PyPtt Discord 社群`_ 討論。
     * 請先確認你使用的版本是否為 |version_pic|，如果不是，請更新到最新版本。
     * 如果你使用的是最新版本，請確認你的問題是否已經在這裡被回答過了。
     * 如果你的問題還沒有被回答過，請依照以下程式碼將 LogLevel_ 設定為 `DEBUG`，並附上 **可以重現問題的程式碼**。
-    * 到 GitHub 提出 `issue`_ 或者到 `PyPtt Telegram 社群`_ 討論。
+    * 到 GitHub 提出 `issue`_ 或者到 `PyPtt Discord 社群`_ 討論。
 
 .. code-block:: python
 
@@ -27,7 +27,7 @@ Q: 使用 PyPtt 時，遇到問題該如何解決？
 .. |version_pic| image:: https://img.shields.io/pypi/v/PyPtt.svg
     :target: https://pypi.org/project/PyPtt/
 
-.. _`PyPtt Telegram 社群`: https://t.me/PyPtt
+.. _`PyPtt Discord 社群`: https://discord.gg/8VYtGU5RNB
 
 .. _LogLevel: https://github.com/PttCodingMan/SingleLog/blob/d7c19a1b848dfb1c9df8201f13def9a31afd035c/SingleLog/SingleLog.py#L22
 

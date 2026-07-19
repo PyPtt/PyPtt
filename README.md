@@ -1,10 +1,10 @@
-![](https://raw.githubusercontent.com/PttCodingMan/PyPtt/master/logo/facebook_cover_photo_2.png)
-[![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.python.org/pypi/PyPtt)
+![](https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_cover_photo_2.png)
+[![Package Version](https://img.shields.io/pypi/v/PyPtt.svg)](https://pypi.org/project/PyPtt/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/PyPtt)
 [![test](https://github.com/PyPtt/PyPtt/actions/workflows/deploy.yml/badge.svg)](https://github.com/PyPtt/PyPtt/actions/workflows/deploy.yml)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/PyPtt)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
+[![Discord](https://img.shields.io/badge/Discord-加入社群-5865F2?logo=discord&logoColor=white)](https://discord.gg/8VYtGU5RNB)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](http://paypal.me/CodingMan)
 
 ## PyPtt (PTT Library)
@@ -34,7 +34,7 @@ pip install PyPtt
 #### 請參考 [常見問題](https://pyptt.cc/faq.html) 章節
 
 ## 加入 PyPtt 社群
-#### 你可以在 Telegram 上找到 PyPtt 社群 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/PyPtt)
+#### 你可以在 Discord 上找到 PyPtt 社群 [![Discord](https://img.shields.io/badge/Discord-加入社群-5865F2?logo=discord&logoColor=white)](https://discord.gg/8VYtGU5RNB)
 
 ## 贊助
 #### issue 解太慢嗎？幫我增加一點動力吧！
@@ -43,7 +43,7 @@ pip install PyPtt
 
 ## Star History
 
-[![Star History Chart](https://codingman.cc/images/star_history.svg)](https://www.star-history.com/#PyPtt/PyPtt&Date)
+[![Star History Chart](https://raw.githubusercontent.com/PyPtt/PyPtt/master/docs/_static/star_history.svg)](https://star-history.com/#PyPtt/PyPtt&Date)
 
 ## 贊助清單
 
