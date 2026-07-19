@@ -277,7 +277,7 @@
 <h1>post<a class="headerlink" href="#post" title="連結到這個標頭">¶</a></h1>
 <dl class="py function" id="api-post">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anonymous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
 <dd><p>發文。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
@@ -287,6 +287,12 @@
 <li><p><strong>title</strong> (<em>str</em>) -- 文章標題。</p></li>
 <li><p><strong>content</strong> (<em>str</em>) -- 文章內容。</p></li>
 <li><p><strong>sign_file</strong> (<em>str</em><em> | </em><em>int</em>) -- 編號或隨機簽名檔 (x)，預設為 0 (不選)。</p></li>
+<li><p><strong>anonymous</strong> (<em>bool</em>) -- 是否匿名發文，預設為 False。僅在該看板本身具有匿名 (BRD_ANONYMOUS)
+屬性時才會生效，一般看板無法透過此參數強制匿名；PyPtt 只能在該提示出現時回覆它。</p></li>
+<li><p><strong>display_id</strong> (<em>str</em>) -- 匿名發文時欲顯示的自訂名稱；預設為 None，代表使用 pttbbs 預設值
+(預設匿名板為 &quot;Anonymous.&quot;，否則為原 ID)。pttbbs 會在暱名 (含預設的 &quot;Anonymous&quot;)
+後方加上一個 &quot;.&quot;（例如 display_id='Fox' 會顯示為 &quot;Fox.&quot;），此為 pttbbs 固定行為，
+無法調整。僅能在 anonymous=True 時使用。</p></li>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
@@ -298,6 +304,7 @@
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 需要登入。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchBoard" title="PyPtt.PyPtt.exceptions.NoSuchBoard"><strong>NoSuchBoard</strong></a> -- 看板不存在。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoPermission" title="PyPtt.PyPtt.exceptions.NoPermission"><strong>NoPermission</strong></a> -- 沒有發佈權限。</p></li>
+<li><p><strong>ParameterError</strong> -- display_id 於 anonymous=False 時提供。</p></li>
 </ul>
 </dd>
 </dl>
@@ -308,6 +315,12 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">title_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;PyPtt 程式貼文測試&#39;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s1">&#39;測試內容&#39;</span><span class="p">,</span> <span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># 匿名發文 (需看板本身具有匿名屬性)</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;AnonBoard&#39;</span><span class="p">,</span> <span class="n">title_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;匿名貼文測試&#39;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s1">&#39;測試內容&#39;</span><span class="p">,</span>
+                 <span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">anonymous</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># 匿名發文並自訂顯示名稱</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;AnonBoard&#39;</span><span class="p">,</span> <span class="n">title_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;匿名貼文測試&#39;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s1">&#39;測試內容&#39;</span><span class="p">,</span>
+                 <span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">anonymous</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">display_id</span><span class="o">=</span><span class="s1">&#39;Fox&#39;</span><span class="p">)</span>
     <span class="c1"># .. do something ..</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
@@ -366,7 +379,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=22527af3"></script>
+</div><script src="../_static/documentation_options.js?v=24b6755a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
