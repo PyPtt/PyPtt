@@ -151,4 +151,9 @@
     板主刪除他人文章並指定 :ref:`bad-post-type` 時，文章已成功刪除，但 PTT 端沒有完成惡退（劣文）
     記錄流程（例如文章太舊而跳過惡退選單）。呼叫端應理解「刪除成功，但惡退未記錄」。
 
+.. py:exception:: PyPtt.exceptions.NoSuchLottery
+    :module: PyPtt
+
+    查無樂透，該看板目前並沒有舉辦樂透，或樂透已封盤/開獎。
+
 .. _水桶: https://pttpedia.fandom.com/zh/wiki/%E6%B0%B4%E6%A1%B6
