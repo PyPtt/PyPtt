@@ -436,7 +436,8 @@ class API:
         return _api_get_newest_index.get_newest_index(
             self, index_type, board, search_type, search_condition, search_list)
 
-    def post(self, board: str, title_index: int, title: str, content: str, sign_file: [str | int] = 0) -> None:
+    def post(self, board: str, title_index: int, title: str, content: str, sign_file: [str | int] = 0,
+             anonymous: bool = False, display_id: Optional[str] = None) -> None:
         """
         發文。
 
@@ -446,6 +447,12 @@ class API:
             title (str): 文章標題。
             content (str): 文章內容。
             sign_file  (str | int): 編號或隨機簽名檔 (x)，預設為 0 (不選)。
+            anonymous (bool): 是否匿名發文，預設為 False。僅在該看板本身具有匿名 (BRD_ANONYMOUS)
+                屬性時才會生效，一般看板無法透過此參數強制匿名；PyPtt 只能在該提示出現時回覆它。
+            display_id (str): 匿名發文時欲顯示的自訂名稱；預設為 None，代表使用 pttbbs 預設值
+                (預設匿名板為 "Anonymous."，否則為原 ID)。pttbbs 會在暱名 (含預設的 "Anonymous")
+                後方加上一個 "."（例如 display_id='Fox' 會顯示為 "Fox."），此為 pttbbs 固定行為，
+                無法調整。僅能在 anonymous=True 時使用。
 
         Returns:
             None
@@ -455,6 +462,7 @@ class API:
             RequireLogin: 需要登入。
             NoSuchBoard: 看板不存在。
             NoPermission: 沒有發佈權限。
+            ParameterError: display_id 於 anonymous=False 時提供。
 
         範例::
 
@@ -464,13 +472,19 @@ class API:
             try:
                 # .. login ..
                 ptt_bot.post(board='Test', title_index=1, title='PyPtt 程式貼文測試', content='測試內容', sign_file=0)
+                # 匿名發文 (需看板本身具有匿名屬性)
+                ptt_bot.post(board='AnonBoard', title_index=1, title='匿名貼文測試', content='測試內容',
+                             sign_file=0, anonymous=True)
+                # 匿名發文並自訂顯示名稱
+                ptt_bot.post(board='AnonBoard', title_index=1, title='匿名貼文測試', content='測試內容',
+                             sign_file=0, anonymous=True, display_id='Fox')
                 # .. do something ..
             finally:
                 ptt_bot.logout()
 
         """
 
-        _api_post.post(self, board, title, content, title_index, sign_file)
+        _api_post.post(self, board, title, content, title_index, sign_file, anonymous, display_id)
 
     def comment(self, board: str, comment_type: data_type.CommentType, content: str, aid: Optional[str] = None,
                 index: int = 0) -> None:
