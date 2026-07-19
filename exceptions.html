@@ -222,6 +222,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api/set_board_title.html">set_board_title</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/mark_post.html">mark_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/bucket.html">bucket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/lottery.html">lottery</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service</a></li>
@@ -457,6 +458,12 @@
 記錄流程（例如文章太舊而跳過惡退選單）。呼叫端應理解「刪除成功，但惡退未記錄」。</p>
 </dd></dl>
 
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoSuchLottery">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoSuchLottery</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoSuchLottery" title="連結到這個定義">¶</a></dt>
+<dd><p>查無樂透，該看板目前並沒有舉辦樂透，或樂透已封盤/開獎。</p>
+</dd></dl>
+
 </section>
 
         </article>
@@ -544,6 +551,7 @@
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.SetContactMailFirst"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.SetContactMailFirst</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.ResetYourContactEmail"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.ResetYourContactEmail</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.BadPostNotRecorded"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.BadPostNotRecorded</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchLottery"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchLottery</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -555,7 +563,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=36704940"></script>
+</div><script src="_static/documentation_options.js?v=013a0d6e"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
