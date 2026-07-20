@@ -1002,6 +1002,22 @@ class API:
             finally:
                 ptt_bot.logout()
 
+        以作者搜尋信件（先用 get_newest_index 取得該作者的信件數，再逐封取得）::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+
+            search_list = [(PyPtt.SearchType.AUTHOR, 'CodingMan')]
+
+            try:
+                # .. login ..
+                count = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL, search_list=search_list)
+                mail = ptt_bot.get_mail(index=count, search_list=search_list)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
         參考 :doc:`get_newest_index`
         """
 
