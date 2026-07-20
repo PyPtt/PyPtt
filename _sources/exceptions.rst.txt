@@ -145,6 +145,12 @@
 
     請重新設定聯絡信箱。
 
+.. py:exception:: PyPtt.exceptions.ParameterError
+    :module: PyPtt
+
+    參數錯誤，呼叫時傳入的參數值或組合不合法（例如 :doc:`api/post` 於 ``anonymous=False``
+    時仍傳入 ``display_id``）。
+
 .. py:exception:: PyPtt.exceptions.BadPostNotRecorded
     :module: PyPtt
 

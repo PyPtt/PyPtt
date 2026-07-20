@@ -285,14 +285,10 @@
 <dd class="field-odd"><p><strong>board</strong> (<em>str</em>) -- 看板名稱。</p>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
-<dd class="field-even"><p>樂透資訊，包含 price（每張價格）、total（已下注總額）、
-options（下注選項清單，每個選項包含 index、name、sold）。</p>
+<dd class="field-even"><p>Dict，樂透資訊，詳見 <a class="reference internal" href="../type.html#lottery-field"><span class="std std-ref">LotteryField</span></a>。</p>
 </dd>
-<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict</p>
-</dd>
-<dt class="field-even">引發<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
+<dt class="field-odd">引發<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 需要登入。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchBoard" title="PyPtt.PyPtt.exceptions.NoSuchBoard"><strong>NoSuchBoard</strong></a> -- 看板不存在。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchLottery" title="PyPtt.PyPtt.exceptions.NoSuchLottery"><strong>NoSuchLottery</strong></a> -- 該看板目前並沒有舉辦樂透，或樂透已封盤/開獎。</p></li>
@@ -326,14 +322,10 @@ options（下注選項清單，每個選項包含 index、name、sold）。</p>
 </ul>
 </dd>
 <dt class="field-even">回傳<span class="colon">:</span></dt>
-<dd class="field-even"><p>下注結果，包含 board、item、name（選項名稱）、amount、
-cost（本次下注花費的 Ptt 幣總額）。</p>
+<dd class="field-even"><p>Dict，下注結果，詳見 <a class="reference internal" href="../type.html#lottery-bet-field"><span class="std std-ref">LotteryBetField</span></a>。</p>
 </dd>
-<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict</p>
-</dd>
-<dt class="field-even">引發<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
+<dt class="field-odd">引發<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 需要登入。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.UnregisteredUser" title="PyPtt.PyPtt.exceptions.UnregisteredUser"><strong>UnregisteredUser</strong></a> -- 未註冊使用者。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.NoSuchBoard" title="PyPtt.PyPtt.exceptions.NoSuchBoard"><strong>NoSuchBoard</strong></a> -- 看板不存在。</p></li>
