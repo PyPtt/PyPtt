@@ -452,6 +452,13 @@
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.ParameterError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">ParameterError</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.ParameterError" title="連結到這個定義">¶</a></dt>
+<dd><p>參數錯誤，呼叫時傳入的參數值或組合不合法（例如 <a class="reference internal" href="api/post.html"><span class="doc">post</span></a> 於 <code class="docutils literal notranslate"><span class="pre">anonymous=False</span></code>
+時仍傳入 <code class="docutils literal notranslate"><span class="pre">display_id</span></code>）。</p>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.BadPostNotRecorded">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">BadPostNotRecorded</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.BadPostNotRecorded" title="連結到這個定義">¶</a></dt>
 <dd><p>板主刪除他人文章並指定 <a class="reference internal" href="type.html#bad-post-type"><span class="std std-ref">BadPostType</span></a> 時，文章已成功刪除，但 PTT 端沒有完成惡退（劣文）
@@ -550,6 +557,7 @@
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.OnlySecureConnection"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.OnlySecureConnection</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.SetContactMailFirst"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.SetContactMailFirst</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.ResetYourContactEmail"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.ResetYourContactEmail</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.ParameterError"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.ParameterError</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.BadPostNotRecorded"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.BadPostNotRecorded</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchLottery"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchLottery</span></code></a></li>
 </ul>
@@ -563,7 +571,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=13fc3174"></script>
+</div><script src="_static/documentation_options.js?v=6fae8532"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

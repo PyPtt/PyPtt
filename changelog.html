@@ -280,6 +280,11 @@
 <div class="line">這裡寫著 PyPtt 的故事。</div>
 </div>
 <div class="line-block">
+<div class="line">2026.07.19 內嵌 pyUAO Big5-UAO 編碼器，移除對外部 <code class="docutils literal notranslate"><span class="pre">uao</span></code> 套件的依賴。</div>
+<div class="line">2026.07.19 新增 <a class="reference internal" href="api/lottery.html"><span class="doc">lottery</span></a> API（<code class="docutils literal notranslate"><span class="pre">get_lottery</span></code> / <code class="docutils literal notranslate"><span class="pre">bet_lottery</span></code>），支援看板樂透查詢與下注功能。</div>
+<div class="line">2026.07.19 <code class="docutils literal notranslate"><span class="pre">post</span></code> 新增 <code class="docutils literal notranslate"><span class="pre">anonymous</span></code> / <code class="docutils literal notranslate"><span class="pre">display_id</span></code> 參數，支援匿名看板發文（可自訂顯示名稱）。</div>
+</div>
+<div class="line-block">
 <div class="line">2026.07.13 <code class="docutils literal notranslate"><span class="pre">del_post</span></code> 新增 <code class="docutils literal notranslate"><span class="pre">bad_post_type</span></code> / <code class="docutils literal notranslate"><span class="pre">bad_post_reason</span></code> 參數，支援版主刪除他人文章時的惡退（劣文）功能；同時修正板主刪文未回答「惡退文章?(y/N)」提示導致的 3 秒逾時問題。</div>
 <div class="line">2026.04.05 修正 <code class="docutils literal notranslate"><span class="pre">connect_core</span></code> 編碼回退機制僅支援單向（big5uao → utf-8），導致 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 偵測失敗的問題。</div>
 <div class="line">2026.04.05 修正 <code class="docutils literal notranslate"><span class="pre">_decode_screen</span></code> 中 <code class="docutils literal notranslate"><span class="pre">UseTooManyResources</span></code> 匹配後未設定 <code class="docutils literal notranslate"><span class="pre">find_target</span></code>，導致編碼回退覆蓋偵測結果的問題。</div>
@@ -367,7 +372,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=13fc3174"></script>
+</div><script src="_static/documentation_options.js?v=6fae8532"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
