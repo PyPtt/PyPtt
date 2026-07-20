@@ -611,8 +611,7 @@ class API:
             board (str): 看板名稱。
 
         Returns:
-            Dict: 樂透資訊，包含 price（每張價格）、total（已下注總額）、
-            options（下注選項清單，每個選項包含 index、name、sold）。
+            Dict，樂透資訊，詳見 :ref:`lottery-field`。
 
         Raises:
             RequireLogin: 需要登入。
@@ -646,8 +645,7 @@ class API:
             amount (int): 購買張數，範圍 1~9999，並受限於帳戶內的 Ptt 幣餘額。
 
         Returns:
-            Dict: 下注結果，包含 board、item、name（選項名稱）、amount、
-            cost（本次下注花費的 Ptt 幣總額）。
+            Dict，下注結果，詳見 :ref:`lottery-bet-field`。
 
         Raises:
             RequireLogin: 需要登入。

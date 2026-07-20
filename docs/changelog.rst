@@ -2,6 +2,10 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 
+| 2026.07.19 內嵌 pyUAO Big5-UAO 編碼器，移除對外部 ``uao`` 套件的依賴。
+| 2026.07.19 新增 :doc:`api/lottery` API（``get_lottery`` / ``bet_lottery``），支援看板樂透查詢與下注功能。
+| 2026.07.19 ``post`` 新增 ``anonymous`` / ``display_id`` 參數，支援匿名看板發文（可自訂顯示名稱）。
+
 | 2026.07.13 ``del_post`` 新增 ``bad_post_type`` / ``bad_post_reason`` 參數，支援版主刪除他人文章時的惡退（劣文）功能；同時修正板主刪文未回答「惡退文章?(y/N)」提示導致的 3 秒逾時問題。
 | 2026.04.05 修正 ``connect_core`` 編碼回退機制僅支援單向（big5uao → utf-8），導致 ``UseTooManyResources`` 偵測失敗的問題。
 | 2026.04.05 修正 ``_decode_screen`` 中 ``UseTooManyResources`` 匹配後未設定 ``find_target``，導致編碼回退覆蓋偵測結果的問題。
