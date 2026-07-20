@@ -2,7 +2,7 @@ import re
 import sys
 import unicodedata
 
-from uao import register_uao
+from ._uao import register_uao
 
 from . import log
 

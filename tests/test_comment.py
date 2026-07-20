@@ -20,7 +20,8 @@ def test_comment(ptt_bots):
             if post_id is None:
                 try:
                     newest_index = ptt_bot.get_newest_index(PyPtt.NewIndex.BOARD, board)
-                    for i in range(100):
+                    # bound so index never hits 0 (get_post rejects it); empty board -> loop skips, falls through to skip below
+                    for i in range(min(100, newest_index)):
 
                         current_post = ptt_bot.get_post(board, index=newest_index - i)
                         if current_post and current_post.get(PyPtt.PostField.post_status) == PyPtt.PostStatus.EXISTS:

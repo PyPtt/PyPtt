@@ -611,8 +611,7 @@ class API:
             board (str): 看板名稱。
 
         Returns:
-            Dict: 樂透資訊，包含 price（每張價格）、total（已下注總額）、
-            options（下注選項清單，每個選項包含 index、name、sold）。
+            Dict，樂透資訊，詳見 :ref:`lottery-field`。
 
         Raises:
             RequireLogin: 需要登入。
@@ -646,8 +645,7 @@ class API:
             amount (int): 購買張數，範圍 1~9999，並受限於帳戶內的 Ptt 幣餘額。
 
         Returns:
-            Dict: 下注結果，包含 board、item、name（選項名稱）、amount、
-            cost（本次下注花費的 Ptt 幣總額）。
+            Dict，下注結果，詳見 :ref:`lottery-bet-field`。
 
         Raises:
             RequireLogin: 需要登入。
@@ -998,6 +996,22 @@ class API:
             try:
                 # .. login ..
                 mail = ptt_bot.get_mail(index=1)
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        以作者搜尋信件（先用 get_newest_index 取得該作者的信件數，再逐封取得）::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+
+            search_list = [(PyPtt.SearchType.AUTHOR, 'CodingMan')]
+
+            try:
+                # .. login ..
+                count = ptt_bot.get_newest_index(PyPtt.NewIndex.MAIL, search_list=search_list)
+                mail = ptt_bot.get_mail(index=count, search_list=search_list)
                 # .. do something ..
             finally:
                 ptt_bot.logout()

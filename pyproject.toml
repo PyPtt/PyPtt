@@ -35,7 +35,6 @@ dependencies = [
     "progressbar2",
     "websockets>=12",
     "certifi",
-    "uao",
     "requests>=2.32",
     "AutoStrEnum",
     "PyYAML",
@@ -63,10 +62,10 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["PyPtt"]
+packages = ["PyPtt", "PyPtt._uao"]
 
 [tool.setuptools.dynamic]
 
 
 [tool.setuptools.package-data]
-PyPtt = ["ssl/*.pem"]
+"PyPtt._uao" = ["LICENSE"]
