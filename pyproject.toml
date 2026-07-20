@@ -68,5 +68,4 @@ packages = ["PyPtt", "PyPtt._uao"]
 
 
 [tool.setuptools.package-data]
-PyPtt = ["ssl/*.pem"]
 "PyPtt._uao" = ["LICENSE"]
