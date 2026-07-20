@@ -312,6 +312,22 @@
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>以作者搜尋信件（先用 get_newest_index 取得該作者的信件數，再逐封取得）:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
+
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+
+<span class="n">search_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">SearchType</span><span class="o">.</span><span class="n">AUTHOR</span><span class="p">,</span> <span class="s1">&#39;CodingMan&#39;</span><span class="p">)]</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># .. login ..</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_newest_index</span><span class="p">(</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">MAIL</span><span class="p">,</span> <span class="n">search_list</span><span class="o">=</span><span class="n">search_list</span><span class="p">)</span>
+    <span class="n">mail</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_mail</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">count</span><span class="p">,</span> <span class="n">search_list</span><span class="o">=</span><span class="n">search_list</span><span class="p">)</span>
+    <span class="c1"># .. do something ..</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>參考 <a class="reference internal" href="get_newest_index.html"><span class="doc">get_newest_index</span></a></p>
 </dd></dl>
 
@@ -366,7 +382,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=13fc3174"></script>
+</div><script src="../_static/documentation_options.js?v=6fae8532"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
