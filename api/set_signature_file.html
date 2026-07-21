@@ -3,11 +3,11 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="索引" href="../genindex.html"><link rel="search" title="搜尋" href="../search.html"><link rel="next" title="get_all_boards" href="get_all_boards.html"><link rel="prev" title="set_signature_file" href="set_signature_file.html">
-        <link rel="canonical" href="https://pyptt.cc/api/get_time.html">
+<link rel="index" title="索引" href="../genindex.html"><link rel="search" title="搜尋" href="../search.html"><link rel="next" title="get_time" href="get_time.html"><link rel="prev" title="change_pw" href="change_pw.html">
+        <link rel="canonical" href="https://pyptt.cc/api/set_signature_file.html">
 
     <link rel="shortcut icon" href="https://raw.githubusercontent.com/PyPtt/PyPtt/master/logo/facebook_profile_image.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>get_time - PyPtt.cc</title>
+        <title>set_signature_file - PyPtt.cc</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -212,8 +212,8 @@
 <li class="toctree-l2"><a class="reference internal" href="get_user.html">get_user</a></li>
 <li class="toctree-l2"><a class="reference internal" href="search_user.html">search_user</a></li>
 <li class="toctree-l2"><a class="reference internal" href="change_pw.html">change_pw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_signature_file.html">set_signature_file</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">get_time</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">set_signature_file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_time.html">get_time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_all_boards.html">get_all_boards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_favourite_boards.html">get_favourite_boards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="get_board_info.html">get_board_info</a></li>
@@ -257,7 +257,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/api/get_time.rst.txt" title="View this page">
+  <a class="muted-link" href="../_sources/api/set_signature_file.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -275,24 +275,32 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="get-time">
-<h1>get_time<a class="headerlink" href="#get-time" title="連結到這個標頭">¶</a></h1>
-<dl class="py function" id="api-get-time">
+          <section id="set-signature-file">
+<h1>set_signature_file<a class="headerlink" href="#set-signature-file" title="連結到這個標頭">¶</a></h1>
+<dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">get_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span></dt>
-<dd><p>取得 PTT 系統時間。</p>
+<span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">set_signature_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
+<dd><p>更新登入帳號的名片檔（PTT 的 plan），對應【個人設定】-&gt;【個人檔案】
+-&gt;(Q)ueryEdit 編輯名片檔的功能。<cite>get_user()</cite> 回傳的 <cite>signature_file</cite>
+欄位讀的就是這份內容。</p>
 <dl class="field-list simple">
-<dt class="field-odd">回傳<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>content</strong> (<em>str</em>) -- 新的名片檔內容，會整份取代原本的內容。</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">引發<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 需要登入。</p>
 </dd>
 </dl>
 <p>範例:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
-<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 
+<span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
-    <span class="n">time</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">set_signature_file</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s1">&#39;你好，我是 PyPtt&#39;</span><span class="p">)</span>
     <span class="c1"># .. do something ..</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
@@ -307,23 +315,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="get_all_boards.html">
+          <a class="next-page" href="get_time.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">get_all_boards</div>
+                <div class="title">get_time</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="set_signature_file.html">
+          <a class="prev-page" href="change_pw.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">set_signature_file</div>
+                <div class="title">change_pw</div>
                 
               </div>
             </a>
