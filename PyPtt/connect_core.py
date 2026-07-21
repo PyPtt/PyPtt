@@ -160,6 +160,7 @@ class API(object):
         self._UseTooManyResources = TargetUnit(screens.Target.use_too_many_resources,
                                                exceptions_=exceptions.UseTooManyResources())
         self._loop = None
+        self._stream_parsers = {}
         self._ssl_context = ssl_init(self.config.verify_ssl)
 
     def _get_event_loop(self):
@@ -257,13 +258,10 @@ class API(object):
         if not connect_success:
             raise exceptions.ConnectError(self.config)
 
-    def _decode_screen(self, receive_data_buffer, start_time, target_list, is_secret, refresh, msg):
+    def _decode_screen(self, screen, start_time, target_list, is_secret, refresh, msg):
 
         break_detect_after_send = False
         use_too_many_res = False
-
-        vt100_p = screens.VT100Parser(receive_data_buffer, self.current_encoding, self.config.screen_height)
-        screen = vt100_p.screen
 
         find_target = False
         target_index = -1
@@ -308,6 +306,17 @@ class API(object):
                 break
         return screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index
 
+    def _stream_screen(self, encoding: str, data_chunk: bytes) -> str:
+        """Feed a newly-received chunk to the per-encoding incremental parser
+        and return the current screen. Each parser decodes and steps through
+        every byte exactly once across the whole receive sequence."""
+        parser = self._stream_parsers.get(encoding)
+        if parser is None:
+            parser = screens.IncrementalScreen(encoding, self.config.screen_height)
+            self._stream_parsers[encoding] = parser
+        parser.feed(data_chunk)
+        return parser.screen
+
     async def _async_send(self, msg: str, target_list: list, screen_timeout: int, refresh: bool, secret: bool) -> int:
         current_screen_timeout = self.config.screen_timeout if screen_timeout == 0 else screen_timeout
         is_secret = secret
@@ -342,6 +351,11 @@ class API(object):
 
             msg = ''
             receive_data_buffer = bytes()
+            # Fresh incremental parsers for this screen sequence. Each arriving
+            # chunk is fed once (per encoding) instead of re-parsing the whole
+            # accumulated buffer every time — turning the receive loop from
+            # O(N²) into O(N).
+            self._stream_parsers = {}
             start_time = time.time()
             find_target = False
             target_index = -1
@@ -360,14 +374,20 @@ class API(object):
                             data_chunk = data_chunk.encode('utf-8')
                         receive_data_buffer += data_chunk
 
+                        screen = self._stream_screen(self.current_encoding, data_chunk)
                         screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
-                            self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
+                            self._decode_screen(screen, start_time, target_list, is_secret, refresh, msg)
 
                         if not find_target:
+                            # Auto-detect the server encoding: the alternate
+                            # parser has also seen every chunk so far (this
+                            # branch runs on every non-matching chunk), so
+                            # feeding it this chunk keeps it in sync.
                             original_encoding = self.current_encoding
                             self.current_encoding = 'big5uao' if original_encoding == 'utf-8' else 'utf-8'
+                            screen_ = self._stream_screen(self.current_encoding, data_chunk)
                             screen_, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
-                                self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
+                                self._decode_screen(screen_, start_time, target_list, is_secret, refresh, msg)
                             if find_target:
                                 screen = screen_
                             else:
@@ -431,6 +451,7 @@ class API(object):
                     return -1
                 msg = ''
                 receive_data_buffer = bytes()
+                self._stream_parsers = {}
                 start_time = time.time()
                 mid_time = time.time()
                 while mid_time - start_time < current_screen_timeout:
@@ -439,8 +460,9 @@ class API(object):
                     except EOFError:
                         return -1
                     receive_data_buffer += data
+                    screen = self._stream_screen(self.current_encoding, data)
                     screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
-                        self._decode_screen(receive_data_buffer, start_time, target_list, is_secret, refresh, msg)
+                        self._decode_screen(screen, start_time, target_list, is_secret, refresh, msg)
                     if target_index != -1:
                         return target_index
                     if use_too_many_res:
