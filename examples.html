@@ -369,9 +369,37 @@
 </pre></div>
 </div>
 <img alt="_images/color_demo.png" src="_images/color_demo.png" />
+<section id="id4">
+<h3>色碼對照<a class="headerlink" href="#id4" title="連結到這個標頭">¶</a></h3>
+<p>色碼是標準 ANSI SGR 參數，可以用 <code class="docutils literal notranslate"><span class="pre">;</span></code> 串接多個屬性：</p>
+<ul class="simple">
+<li><p>重置 <code class="docutils literal notranslate"><span class="pre">0</span></code>、高亮（亮色）``1``、閃爍 <code class="docutils literal notranslate"><span class="pre">5</span></code></p></li>
+<li><p>前景色：<code class="docutils literal notranslate"><span class="pre">30</span></code> 黑 <code class="docutils literal notranslate"><span class="pre">31</span></code> 紅 <code class="docutils literal notranslate"><span class="pre">32</span></code> 綠 <code class="docutils literal notranslate"><span class="pre">33</span></code> 黃 <code class="docutils literal notranslate"><span class="pre">34</span></code> 藍 <code class="docutils literal notranslate"><span class="pre">35</span></code> 洋紅 <code class="docutils literal notranslate"><span class="pre">36</span></code> 青 <code class="docutils literal notranslate"><span class="pre">37</span></code> 白</p></li>
+<li><p>背景色：<code class="docutils literal notranslate"><span class="pre">40</span></code> 黑 <code class="docutils literal notranslate"><span class="pre">41</span></code> 紅 <code class="docutils literal notranslate"><span class="pre">42</span></code> 綠 <code class="docutils literal notranslate"><span class="pre">43</span></code> 黃 <code class="docutils literal notranslate"><span class="pre">44</span></code> 藍 <code class="docutils literal notranslate"><span class="pre">45</span></code> 洋紅 <code class="docutils literal notranslate"><span class="pre">46</span></code> 青 <code class="docutils literal notranslate"><span class="pre">47</span></code> 白</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>組合色碼與一行多色<a class="headerlink" href="#id5" title="連結到這個標頭">¶</a></h3>
+<p>上面每一段的原理是：<code class="docutils literal notranslate"><span class="pre">command.ctrl_c</span></code> 在編輯器插入一組 ANSI 色碼，<code class="docutils literal notranslate"><span class="pre">command.left</span></code> 把游標退到屬性欄位，輸入色碼後 <code class="docutils literal notranslate"><span class="pre">command.right</span></code> 移出，接著打上要上色的文字，最後再一個 <code class="docutils literal notranslate"><span class="pre">command.ctrl_c</span></code> 把顏色重置。</p>
+<p>把多個屬性用 <code class="docutils literal notranslate"><span class="pre">;</span></code> 串起來就能疊加，例如 <code class="docutils literal notranslate"><span class="pre">1;33;44</span></code> 是「亮黃字配藍底」；同一行也可以放多段不同顏色。實務上包一個小函式重複使用會更好讀：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
+<span class="n">c</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span><span class="p">,</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">right</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">color</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="c1"># attr 例如 &#39;1;33;44&#39; 代表亮黃字、藍底</span>
+    <span class="k">return</span> <span class="n">c</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">right</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="n">c</span>
+
+<span class="n">content</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;31&#39;</span><span class="p">,</span> <span class="s1">&#39;紅&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;32&#39;</span><span class="p">,</span> <span class="s1">&#39;綠&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;33&#39;</span><span class="p">,</span> <span class="s1">&#39;黃&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;33;44&#39;</span><span class="p">,</span> <span class="s1">&#39; 亮黃字藍底 &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;  &#39;</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;36&#39;</span><span class="p">,</span> <span class="s1">&#39;亮青字&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>同樣的技巧也可以用在 <a class="reference internal" href="api/set_signature_file.html"><span class="doc">set_signature_file</span></a>，寫出彩色的名片檔（名片檔在查詢畫面大約只顯示 16 行，設計時請留意行數）。</p>
+</section>
 </section>
 <section id="check-post-status">
-<span id="id4"></span><h2>如何判斷文章資料是否可以使用<a class="headerlink" href="#check-post-status" title="連結到這個標頭">¶</a></h2>
+<span id="id6"></span><h2>如何判斷文章資料是否可以使用<a class="headerlink" href="#check-post-status" title="連結到這個標頭">¶</a></h2>
 <p>當 <a class="reference internal" href="api/get_post.html"><span class="doc">get_post</span></a> 回傳文章資料回來時，這時需要一些判斷來決定是否要使用這些資料。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
@@ -403,8 +431,8 @@
 </pre></div>
 </div>
 </section>
-<section id="id5">
-<h2>文章格式檢查無法通過，但有固定格式時如何處理？<a class="headerlink" href="#id5" title="連結到這個標頭">¶</a></h2>
+<section id="id7">
+<h2>文章格式檢查無法通過，但有固定格式時如何處理？<a class="headerlink" href="#id7" title="連結到這個標頭">¶</a></h2>
 <div class="line-block">
 <div class="line">在上一個章節看到當 <a class="reference internal" href="api/get_post.html"><span class="doc">get_post</span></a> 回傳文章資料回來時，這時需要使用 <cite>PyPtt.PostField.pass_format_check</cite> 來判斷決定是否要使用這些資料。</div>
 <div class="line">但如果是已經被編輯過的文章，可能會無法通過格式檢查，這時除了可以透過 <cite>PyPtt.PostField.full_content</cite> 來取得文章內容，並自行解析外，也可以透過一些手段來修改 PyPtt 判斷文章格式的方式。</div>
@@ -525,9 +553,13 @@
             <ul>
 <li><a class="reference internal" href="#">使用範例</a><ul>
 <li><a class="reference internal" href="#id2">保持登入</a></li>
-<li><a class="reference internal" href="#id3">幫你的文章上色</a></li>
+<li><a class="reference internal" href="#id3">幫你的文章上色</a><ul>
+<li><a class="reference internal" href="#id4">色碼對照</a></li>
+<li><a class="reference internal" href="#id5">組合色碼與一行多色</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#check-post-status">如何判斷文章資料是否可以使用</a></li>
-<li><a class="reference internal" href="#id5">文章格式檢查無法通過，但有固定格式時如何處理？</a></li>
+<li><a class="reference internal" href="#id7">文章格式檢查無法通過，但有固定格式時如何處理？</a></li>
 </ul>
 </li>
 </ul>
