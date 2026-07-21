@@ -1,3 +1,4 @@
+import codecs
 import re
 import sys
 import unicodedata
@@ -9,6 +10,14 @@ from . import log
 register_uao()
 
 
+# Memoise the per-character width. east_asian_width is a C call, but a PTT
+# screen is a few thousand characters drawn from a small alphabet, and the
+# parser walks each line repeatedly (_str_pos_at_cells, replace mode). Caching
+# turns the hot path into a dict hit. Writes are idempotent, so the plain-dict
+# race under free-threading is benign.
+_cell_width_cache: dict = {}
+
+
 def _cell_width(ch: str) -> int:
     """Return the terminal-cell width of a single character.
 
@@ -17,7 +26,11 @@ def _cell_width(ch: str) -> int:
     Ambiguous includes glyphs like ※, ←, →, ◎ that PTT's protocol treats
     as full-width when positioning the cursor.
     """
-    return 2 if unicodedata.east_asian_width(ch) in ('W', 'F', 'A') else 1
+    w = _cell_width_cache.get(ch)
+    if w is None:
+        w = 2 if unicodedata.east_asian_width(ch) in ('W', 'F', 'A') else 1
+        _cell_width_cache[ch] = w
+    return w
 
 
 def _cell_len(text: str) -> int:
@@ -241,51 +254,76 @@ def show(config, screen_queue, function_name=None):
 
 xy_pattern_h = re.compile(r'^=ESC=\[[\d]+;[\d]+H')
 xy_pattern_s = re.compile(r'^=ESC=\[[\d]+;[\d]+s')
+_color_sgr = re.compile(r'\x1B\[[\d+;]*m')
 
 
-class VT100Parser:
+def _preprocess(data: str) -> str:
+    """Normalise a decoded chunk: strip color, mark escapes, drop CR, and
+    collapse PTT's ' \\x08' wide-char reservation pairs.
+
+    Only the SGR (color) strip genuinely needs a regex; the remaining
+    substitutions are literal, and str.replace is several times faster than
+    re.sub — this runs on the whole buffer on every parse."""
+    data = _color_sgr.sub('', data)
+    data = data.replace('\x1B', '=ESC=')
+    data = data.replace('\r', '')
+    while ' \x08' in data:
+        data = data.replace(' \x08', '')
+    return data
+
+
+class _VT100Engine:
+    """Shared VT100 stepping engine.
+
+    Both the batch ``VT100Parser`` and the streaming ``IncrementalScreen``
+    drive the same left-to-right state machine over a preprocessed string
+    (escapes marked as ``=ESC=``). The screen is tracked in terminal cells
+    (see the module-level cell-width helpers), not bytes.
+
+    ``ESC [ 2J`` (clear screen) is handled as an in-loop reset: processing
+    left-to-right with a reset at every 2J yields the same final screen as
+    the classic "discard everything before the last 2J" slice, because each
+    reset wipes prior state — only work after the final reset survives."""
+
+    def __init__(self, screen_height: int = 24):
+        self._height = screen_height
+        self._reset_screen()
+
+    def _reset_screen(self):
+        self._cursor_x = 0
+        self._cursor_y = 0
+        self._lines = [''] * self._height
+        self._screen_length = dict()
+
+    # ── cursor / erase primitives ─────────────────────────────────────────
     def _h(self):
         self._cursor_x = 0
         self._cursor_y = 0
 
     def _move(self, x, y):
         self._cursor_x = x
-        self._cursor_y = min(y, len(self.screen) - 1)
+        self._cursor_y = min(y, len(self._lines) - 1)
 
     def _newline(self):
         self._cursor_x = 0
-        self._cursor_y = min(self._cursor_y + 1, len(self.screen) - 1)
+        self._cursor_y = min(self._cursor_y + 1, len(self._lines) - 1)
 
     def _k(self):
         # Erase from cursor to end of line (VT100 ESC [ K).
-        pos = _str_pos_at_cells(self.screen[self._cursor_y], self._cursor_x)
-        self.screen[self._cursor_y] = self.screen[self._cursor_y][:pos]
-        self.screen_length[self._cursor_y] = self._cursor_x
+        pos = _str_pos_at_cells(self._lines[self._cursor_y], self._cursor_x)
+        self._lines[self._cursor_y] = self._lines[self._cursor_y][:pos]
+        self._screen_length[self._cursor_y] = self._cursor_x
 
-    def __init__(self, bytes_data, encoding, screen_height: int = 24):
-        # self._data = data
-        # https://www.csie.ntu.edu.tw/~r88009/Java/html/Network/vt100.htm
+    # ── the stepping loop ─────────────────────────────────────────────────
+    def _run(self, data: str) -> str:
+        """Consume `data` left-to-right, mutating screen state.
 
-        self._cursor_x = 0
-        self._cursor_y = 0
-        self.screen = [''] * screen_height
-        self.screen_length = dict()
-
-        data = bytes_data.decode(encoding, errors='replace')
-
-        # remove color
-        data = re.sub(r'\x1B\[[\d+;]*m', '', data)
-        data = re.sub(r'[\x1B]', '=ESC=', data)
-        data = re.sub(r'[\r]', '', data)
-        while ' \x08' in data:
-            data = re.sub(r' \x08', '', data)
-
-        if '=ESC=[2J' in data:
-            data = data[data.rfind('=ESC=[2J') + len('=ESC=[2J'):]
-
-        count = 0
+        Returns the unconsumed tail: '' when everything was consumed, or the
+        remainder starting at a front ``=ESC=`` the machine does not
+        recognise. The batch parser ignores that tail (matching the classic
+        "bail on unknown escape" behaviour); the incremental parser carries
+        it until more bytes arrive or freezes on it."""
         while data:
-            count += 1
             while True:
                 if not data.startswith('=ESC='):
                     break
@@ -299,6 +337,10 @@ class VT100Parser:
                     continue
                 elif data.startswith('=ESC=[s'):
                     data = data[len('=ESC=[s'):]
+                    continue
+                elif data.startswith('=ESC=[2J'):
+                    data = data[len('=ESC=[2J'):]
+                    self._reset_screen()
                     continue
                 break
 
@@ -317,7 +359,6 @@ class VT100Parser:
                 new_y = int(xy_part[6:xy_part.find(';')]) - 1
                 # VT100 columns are 1-based; convert to 0-based cursor_x.
                 new_x = int(xy_part[xy_part.find(';') + 1: -1]) - 1
-                # log.py.info('xy', xy_part, new_x, new_y)
                 self._move(new_x, new_y)
 
                 data = data[len(xy_part):]
@@ -328,16 +369,14 @@ class VT100Parser:
                     self._newline()
                     continue
 
-                # print(f'-{data[:1]}-{len(data[:1].encode("big5-uao", "replace"))}')
+                if self._cursor_y not in self._screen_length:
+                    self._screen_length[self._cursor_y] = _cell_len(self._lines[self._cursor_y])
 
-                if self._cursor_y not in self.screen_length:
-                    self.screen_length[self._cursor_y] = _cell_len(self.screen[self._cursor_y])
-
-                current_line_length = self.screen_length[self._cursor_y]
+                current_line_length = self._screen_length[self._cursor_y]
                 replace_mode = False
                 if current_line_length < self._cursor_x:
                     append_space = ' ' * (self._cursor_x - current_line_length)
-                    self.screen[self._cursor_y] += append_space
+                    self._lines[self._cursor_y] += append_space
                 elif current_line_length > self._cursor_x:
                     replace_mode = True
 
@@ -347,34 +386,143 @@ class VT100Parser:
                 next_esc = data.find('=ESC=')
                 next_esc = 1920 if next_esc < 0 else next_esc
                 if next_esc == 0:
-                    break
+                    # A front escape the machine does not consume. Hand the
+                    # remainder back to the caller instead of dropping it.
+                    return data
 
                 current_index = min(next_newline, next_esc)
 
                 current_data = data[:current_index]
                 current_data_length = _cell_len(current_data)
                 if replace_mode:
-                    line = self.screen[self._cursor_y]
+                    line = self._lines[self._cursor_y]
                     splice_start = _str_pos_at_cells(line, self._cursor_x)
                     splice_end = _str_pos_at_cells(line, self._cursor_x + current_data_length)
-                    self.screen[self._cursor_y] = line[:splice_start] + current_data + line[splice_end:]
+                    self._lines[self._cursor_y] = line[:splice_start] + current_data + line[splice_end:]
                     self._cursor_x += current_data_length
-                    if self._cursor_x > self.screen_length[self._cursor_y]:
-                        self.screen_length[self._cursor_y] = self._cursor_x
+                    if self._cursor_x > self._screen_length[self._cursor_y]:
+                        self._screen_length[self._cursor_y] = self._cursor_x
                 else:
-                    self.screen[self._cursor_y] += current_data
+                    self._lines[self._cursor_y] += current_data
                     self._cursor_x += current_data_length
-                    self.screen_length[self._cursor_y] = self._cursor_x
+                    self._screen_length[self._cursor_y] = self._cursor_x
 
                 data = data[current_index:]
+        return ''
 
-                # print('\n'.join(self.screen))
-        # print('\n'.join(self._screen))
-        # print('=' * 20)
-        # print(data)
 
-        # print('Spend', count, 'cycle')
-        self.screen = '\n'.join(self.screen)
+class VT100Parser(_VT100Engine):
+    """Batch parser: decode the whole byte buffer and render one screen.
+
+    Kept as the reference implementation and the target-matching path for a
+    full (non-streamed) buffer. ``IncrementalScreen`` fed the same bytes in
+    any chunking produces a byte-identical screen (see
+    tests/test_incremental_parity.py)."""
+
+    def __init__(self, bytes_data, encoding, screen_height: int = 24):
+        # https://www.csie.ntu.edu.tw/~r88009/Java/html/Network/vt100.htm
+        super().__init__(screen_height)
+        data = _preprocess(bytes_data.decode(encoding, errors='replace'))
+        # Leftover (a trailing/unknown escape) is intentionally ignored here,
+        # matching the classic parser's "bail on unknown escape" behaviour.
+        self._run(data)
+        self.screen = '\n'.join(self._lines)
+
+
+# CSI final bytes are 0x40-0x7e; parameter/intermediate bytes are 0x20-0x3f.
+def _escape_complete(seq: str) -> bool:
+    """Is `seq` (which starts with a raw ESC) a complete escape sequence?
+
+    Used by the streaming parser to decide whether a trailing ESC run might
+    still be extended by the next chunk. A CSI (``ESC [``) is complete once a
+    final byte (0x40-0x7e) appears; a non-CSI ESC is treated as complete (the
+    engine will bail on it, same as the batch parser)."""
+    if len(seq) < 2:
+        return False            # lone ESC — wait for more
+    if seq[1] != '[':
+        return True             # ESC + non-'[': engine bails on it
+    for ch in seq[2:]:
+        if 0x40 <= ord(ch) <= 0x7e:
+            return True
+    return False                # still inside CSI parameters
+
+
+class IncrementalScreen(_VT100Engine):
+    """Streaming VT100 parser: feed byte chunks, read the current screen.
+
+    Removes the O(N²) re-parse of the receive loop — each byte is decoded and
+    stepped through the state machine exactly once, instead of the whole
+    accumulated buffer being re-parsed on every arriving chunk.
+
+    Correctness is anchored to ``VT100Parser``: feeding the same bytes in any
+    chunking (down to one byte at a time) yields the identical screen."""
+
+    def __init__(self, encoding, screen_height: int = 24):
+        super().__init__(screen_height)
+        self._decoder = codecs.getincrementaldecoder(encoding)(errors='replace')
+        self._raw = ''          # decoded but not-yet-safe-to-process tail
+        self._leftover = ''     # preprocessed front escape the engine paused on
+        self._bailed = False    # hit a complete-but-unknown escape → frozen
+
+    def _safe_cut(self, s: str) -> int:
+        """Length of the prefix of `s` safe to process now.
+
+        Holds back the maximal trailing run of spaces and backspaces, and an
+        incomplete trailing escape.
+
+        The ' \\x08' collapse cascades backwards through a run of spaces
+        (``'   \\x08\\x08'`` → ``' '``), and the ``\\x08`` bytes can arrive in a
+        later chunk, so the whole trailing ``[ \\x08]`` run is ambiguous until a
+        character that cannot participate in the collapse follows it. Only
+        commit up to that terminating character."""
+        cut = len(s)
+        while cut > 0 and s[cut - 1] in ' \x08':
+            cut -= 1
+        esc = s.rfind('\x1b')
+        if esc != -1 and not _escape_complete(s[esc:]):
+            cut = min(cut, esc)
+        return cut
+
+    def feed(self, chunk) -> None:
+        if self._bailed:
+            return
+        if isinstance(chunk, str):
+            chunk = chunk.encode('utf-8')
+        self._raw += self._decoder.decode(chunk)
+        cut = self._safe_cut(self._raw)
+        if cut == 0:
+            return
+        safe = _preprocess(self._raw[:cut])
+        self._raw = self._raw[cut:]
+        leftover = self._run(self._leftover + safe)
+        self._leftover = leftover
+        if leftover:
+            # _safe_cut only forwards complete escapes, so a surviving front
+            # escape is complete but unrecognised — the batch parser bails on
+            # it forever, so we freeze to match.
+            self._bailed = True
+
+    @property
+    def screen(self) -> str:
+        """Current screen as a ``screen_height``-line string, including any
+        still-buffered tail — matches VT100Parser over all bytes fed so far."""
+        dec_state = self._decoder.getstate()
+        if not self._raw and not self._leftover and not dec_state[0]:
+            # Nothing held and no partial multibyte in the decoder.
+            return '\n'.join(self._lines)
+        # Tentatively flush the held tail on a snapshot so a partial escape, an
+        # unpaired trailing space, or a partial multibyte char is reflected
+        # (matching the batch parser's errors='replace') without committing.
+        saved = (self._cursor_x, self._cursor_y, list(self._lines),
+                 dict(self._screen_length))
+        try:
+            tail = self._raw + self._decoder.decode(b'', final=True)
+            self._run(self._leftover + _preprocess(tail))
+            return '\n'.join(self._lines)
+        finally:
+            (self._cursor_x, self._cursor_y, self._lines,
+             self._screen_length) = saved
+            self._decoder.setstate(dec_state)
 
 
 if __name__ == '__main__':
