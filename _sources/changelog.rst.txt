@@ -2,6 +2,7 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 
+| 2026.07.21 新增 :doc:`api/set_signature_file` API（``set_signature_file``），可更新使用者名片檔（plan）。
 | 2026.07.19 內嵌 pyUAO Big5-UAO 編碼器，移除對外部 ``uao`` 套件的依賴。
 | 2026.07.19 新增 :doc:`api/lottery` API（``get_lottery`` / ``bet_lottery``），支援看板樂透查詢與下注功能。
 | 2026.07.19 ``post`` 新增 ``anonymous`` / ``display_id`` 參數，支援匿名看板發文（可自訂顯示名稱）。

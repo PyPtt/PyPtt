@@ -38,6 +38,7 @@ APIs
    get_user
    search_user
    change_pw
+   set_signature_file
 
 取得 PTT 資訊
 -------------------
