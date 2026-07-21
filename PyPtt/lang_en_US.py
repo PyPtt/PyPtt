@@ -106,6 +106,7 @@ string_data = {
     "set_connect_host": "Set up the connect host",
     "set_connect_mode": "Set up the connect mode",
     "set_contact_mail_first": "Password can only be changed after setting the contact mailbox",
+    "set_signature_file": "Update signature file",
     "set_up_lang_module": "Set up language module",
     "spend_time": "Spend time",
     "substandard_post": "Substandard post",

@@ -28,6 +28,7 @@ from . import _api_post
 from . import _api_reply_post
 from . import _api_search_user
 from . import _api_set_board_title
+from . import _api_set_signature_file
 from . import check_value
 from . import config
 from . import connect_core
@@ -805,6 +806,38 @@ class API:
         """
 
         _api_set_board_title.set_board_title(self, board, new_title)
+
+    def set_signature_file(self, content: str) -> None:
+
+        """
+        更新登入帳號的名片檔（PTT 的 plan），對應【個人設定】->【個人檔案】
+        ->(Q)ueryEdit 編輯名片檔的功能。`get_user()` 回傳的 `signature_file`
+        欄位讀的就是這份內容。
+
+        Args:
+            content (str): 新的名片檔內容，會整份取代原本的內容。
+
+        Returns:
+            None
+
+        Raises:
+            RequireLogin: 需要登入。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.set_signature_file(content='你好，我是 PyPtt')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        """
+
+        _api_set_signature_file.set_signature_file(self, content)
 
     def mark_post(self, mark_type: int, board: str, aid: Optional[str] = None, index: int = 0, search_type: int = 0,
                   search_condition: Optional[str] = None) -> None:
