@@ -1284,7 +1284,74 @@ class API:
         return _api_get_post_list.get_post_list(self, board, limit, offset)
 
     def fast_post_step0(self, board: str, title: str, content: str, post_type: int) -> None:
+        """
+        快速發文第一步：預先準備文章，停在儲存確認畫面。
+
+        將導航至看板、填入標題與內文、按下 Ctrl+X 的所有指令一次送出，
+        讓連線停在「確定要儲存檔案嗎？」的畫面等待。
+        搭配 :ref:`fast_post_step1 <api-fast-post>` 在精確時刻送出文章。
+
+        .. warning::
+            呼叫此方法後，連線進入等待狀態，不可再呼叫其他 API，
+            否則會造成連線錯誤。請在確認時機到來後立即呼叫 ``fast_post_step1``。
+
+        Args:
+            board (str): 看板名稱。
+            title (str): 文章標題。
+            content (str): 文章內容。
+            post_type (int): 文章分類編號（各看板分類不同，從 1 開始）。
+
+        Returns:
+            None
+
+        Raises:
+            RequireLogin: 需要登入。
+            NoSuchBoard: 看板不存在。
+            NoPermission: 沒有發佈權限。
+
+        範例::
+
+            import time
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                ptt_bot.login('帳號', '密碼')
+                ptt_bot.fast_post_step0(board='Test', title='PyPtt 快速發文測試', content='測試內容', post_type=1)
+                target = 1735660800.0
+                while time.time() < target:
+                    pass
+                ptt_bot.fast_post_step1(sign_file=0)
+            finally:
+                ptt_bot.logout()
+
+        參考 :ref:`快速發文 <api-fast-post>`
+        """
+
         _api_post.fast_post_step0(self, board, title, content, post_type)
 
-    def fast_post_step1(self, sign_file):
+    def fast_post_step1(self, sign_file) -> None:
+        """
+        快速發文第二步：在精確時刻確認送出文章。
+
+        對 PTT 送出儲存確認，完成簽名檔選擇，讓文章正式發佈。
+        須在 :ref:`fast_post_step0 <api-fast-post>` 之後、連線仍在等待狀態時呼叫。
+
+        Args:
+            sign_file (str or int): 簽名檔編號 0-9 或 ``x`` (隨機)，預設為 0 (不選)。
+
+        Returns:
+            None
+
+        Raises:
+            RequireLogin: 需要登入。
+            NoPermission: 沒有發佈權限。
+
+        範例::
+
+            ptt_bot.fast_post_step1(sign_file=0)
+
+        參考 :ref:`快速發文 <api-fast-post>`
+        """
+
         _api_post.fast_post_step1(self, sign_file)

@@ -17,6 +17,7 @@ APIs
    get_post
    get_newest_index
    post
+   fast_post
    reply_post
    del_post
    comment

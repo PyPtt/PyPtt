@@ -413,6 +413,9 @@ class API(object):
             if not find_target:
                 return -1
 
+    def fast_send(self, msg: str, target_list: list, refresh: bool = True) -> int:
+        return self.send(msg, target_list, refresh=refresh)
+
     def send(self, msg: str, target_list: list, screen_timeout: int = 0, refresh: bool = True,
              secret: bool = False) -> int:
 
