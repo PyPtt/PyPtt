@@ -350,11 +350,11 @@ class API(object):
                 return -1
 
             msg = ''
-            receive_data_buffer = bytes()
             # Fresh incremental parsers for this screen sequence. Each arriving
             # chunk is fed once (per encoding) instead of re-parsing the whole
             # accumulated buffer every time — turning the receive loop from
-            # O(N²) into O(N).
+            # O(N²) into O(N). The parsers also hold the rendered screen, so no
+            # separate raw byte buffer is accumulated.
             self._stream_parsers = {}
             start_time = time.time()
             find_target = False
@@ -372,7 +372,6 @@ class API(object):
 
                         if isinstance(data_chunk, str):
                             data_chunk = data_chunk.encode('utf-8')
-                        receive_data_buffer += data_chunk
 
                         screen = self._stream_screen(self.current_encoding, data_chunk)
                         screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
@@ -396,10 +395,17 @@ class API(object):
                         if find_target:
                             break
             except TimeoutError:
-                if len(receive_data_buffer) > 0:
-                    vt100_p = screens.VT100Parser(receive_data_buffer, self.current_encoding, self.config.screen_height)
-                    screens.show(self.config, vt100_p.screen)
-                    self._RDQ.add(vt100_p.screen)
+                # The incremental parser for the current encoding already holds
+                # the fully-rendered screen for every byte received this round
+                # (byte-identical to a fresh VT100Parser over the whole buffer —
+                # see tests/test_incremental_parity.py), so reuse it instead of
+                # re-decoding and re-parsing the entire buffer from scratch.
+                parser = self._stream_parsers.get(self.current_encoding)
+                if parser is not None:
+                    screen = parser.screen
+                    if len(screen) > 0:
+                        screens.show(self.config, screen)
+                        self._RDQ.add(screen)
                 if use_too_many_res:
                     raise exceptions.UseTooManyResources()
                 return -1
@@ -450,7 +456,6 @@ class API(object):
                 if break_detect_after_send:
                     return -1
                 msg = ''
-                receive_data_buffer = bytes()
                 self._stream_parsers = {}
                 start_time = time.time()
                 mid_time = time.time()
@@ -459,7 +464,6 @@ class API(object):
                         data = self._core.read_very_eager()
                     except EOFError:
                         return -1
-                    receive_data_buffer += data
                     screen = self._stream_screen(self.current_encoding, data)
                     screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
                         self._decode_screen(screen, start_time, target_list, is_secret, refresh, msg)
