@@ -26,6 +26,8 @@ def _cell_width(ch: str) -> int:
     Ambiguous includes glyphs like ※, ←, →, ◎ that PTT's protocol treats
     as full-width when positioning the cursor.
     """
+    if ch.isascii():        # every ASCII char is a single narrow cell
+        return 1
     w = _cell_width_cache.get(ch)
     if w is None:
         w = 2 if unicodedata.east_asian_width(ch) in ('W', 'F', 'A') else 1
@@ -34,6 +36,11 @@ def _cell_width(ch: str) -> int:
 
 
 def _cell_len(text: str) -> int:
+    # PTT screens are mostly ASCII, and an all-ASCII string is exactly one cell
+    # per character — str.isascii() (a fast C scan) lets whole segments skip the
+    # per-character loop.
+    if text.isascii():
+        return len(text)
     return sum(_cell_width(c) for c in text)
 
 
@@ -45,6 +52,8 @@ def _str_pos_at_cells(line: str, cells: int) -> int:
     """
     if cells <= 0:
         return 0
+    if line.isascii():      # 1 cell per char → cell offset == string index
+        return min(cells, len(line))
     consumed = 0
     for i, ch in enumerate(line):
         if consumed >= cells:
