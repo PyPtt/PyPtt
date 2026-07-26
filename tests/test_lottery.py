@@ -136,6 +136,20 @@ def test_bet_lottery_buys_exactly_the_requested_amount(ptt_bots):
     assert after[LotteryField.total] == before[LotteryField.total] + LOTTERY_PRICE * amount
 
 
+def test_bet_lottery_item_past_last_option_raises(ptt_bots):
+    """item is in range but the round has fewer options. This one only becomes
+    detectable after entering the ticket screen, so it also has to get back
+    out of it."""
+    ptt1_bot, ptt2_bot = ptt_bots
+    if ptt1_bot.host != PyPtt.HOST.LOCALHOST:
+        pytest.skip('PyPttLottery is only provisioned by the LOCALHOST bootstrap')
+
+    with pytest.raises(PyPtt.exceptions.ParameterError):
+        ptt2_bot.bet_lottery(board=LOTTERY_BOARD, item=len(LOTTERY_ITEMS) + 1, amount=1)
+
+    assert ptt2_bot.get_time() is not None
+
+
 def test_get_lottery_no_round_raises(ptt_bots):
     """A board that never had a lottery round raises NoSuchLottery."""
     ptt1_bot, ptt2_bot = ptt_bots
