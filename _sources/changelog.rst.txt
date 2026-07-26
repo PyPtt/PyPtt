@@ -2,9 +2,10 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 
+| 2026.07.26 移除樂透 API（``get_lottery`` / ``bet_lottery``）與相關的 ``LotteryField`` / ``LotteryOptionField`` / ``LotteryBetField`` / ``NoSuchLottery``。這是 breaking change：樂透畫面同時違反 ``TargetUnit`` 螢幕比對的三個前提（畫面字串唯一標識狀態、送出後必有回應、按鍵不會被中間層吃掉），維護成本高於價值。
 | 2026.07.21 新增 :doc:`api/set_signature_file` API（``set_signature_file``），可更新使用者名片檔（plan）。
 | 2026.07.19 內嵌 pyUAO Big5-UAO 編碼器，移除對外部 ``uao`` 套件的依賴。
-| 2026.07.19 新增 :doc:`api/lottery` API（``get_lottery`` / ``bet_lottery``），支援看板樂透查詢與下注功能。
+| 2026.07.19 新增 ``lottery`` API（``get_lottery`` / ``bet_lottery``），支援看板樂透查詢與下注功能。（已於 2026.07.26 移除）
 | 2026.07.19 ``post`` 新增 ``anonymous`` / ``display_id`` 參數，支援匿名看板發文（可自訂顯示名稱）。
 
 | 2026.07.13 ``del_post`` 新增 ``bad_post_type`` / ``bad_post_reason`` 參數，支援版主刪除他人文章時的惡退（劣文）功能；同時修正板主刪文未回答「惡退文章?(y/N)」提示導致的 3 秒逾時問題。
