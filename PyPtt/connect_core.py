@@ -162,6 +162,7 @@ class API(object):
         self._loop = None
         self._stream_parsers = {}
         self._ssl_context = ssl_init(self.config.verify_ssl)
+        self.last_timeout_was_silent = False
 
     def _get_event_loop(self):
         if self._loop and not self._loop.is_closed():
@@ -410,16 +411,20 @@ class API(object):
                         self._RDQ.add(screen)
                 if use_too_many_res:
                     raise exceptions.UseTooManyResources()
-                # ponytail: heuristic — the peer never answered at all for the
-                # whole send(), so treat it as a dead connection. Counted
+                # ponytail: zero bytes received this send() is NOT proof the
+                # connection is dead — pttbbs silently drops invalid keys
+                # without redrawing (measured: 5s of zero bytes on the lottery
+                # menu after sending a bad key, then the very next `q` exits
+                # cleanly in 0.00s, proving the connection was alive the whole
+                # time). So this is a hint for the caller, not a death
+                # verdict: record whether this round was totally silent and
+                # let the caller (e.g. _api_get_user.py) decide what a
+                # timeout with no bytes at all should mean for it. Counted
                 # per-send, not per-round, on purpose: a multi-round send()
                 # that goes silent midway still returns -1, which keeps
                 # _api_del_post.py's `timed_out = result == -1` reporting
                 # intact ("delete succeeded, but ...") on an irreversible op.
-                # Catching mid-send death too means teaching that call site
-                # (and friends) to handle ConnectionClosed first.
-                if not received_any_byte:
-                    raise exceptions.ConnectionClosed()
+                self.last_timeout_was_silent = not received_any_byte
                 return -1
 
             if target_index != -1:
@@ -439,6 +444,8 @@ class API(object):
 
         if self._UseTooManyResources not in target_list:
             target_list = target_list + [self._UseTooManyResources]
+
+        self.last_timeout_was_silent = False
 
         if self.config.connect_mode == data_type.ConnectMode.TELNET:
             # Original Telnet logic remains, as it doesn't use asyncio

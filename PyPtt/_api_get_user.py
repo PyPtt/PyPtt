@@ -59,9 +59,11 @@ def get_user(api, ptt_id: str) -> Dict:
     ]
 
     index = api.connect_core.send(cmd, target_list)
-    ori_screen = api.connect_core.get_screen_queue()[-1]
     if index != 0:
+        if api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
         raise exceptions.NoSuchUser(ptt_id)
+    ori_screen = api.connect_core.get_screen_queue()[-1]
     # PTT1
     # 《ＩＤ暱稱》CodingMan (專業程式 BUG 製造機)《經濟狀況》小康 ($73866)
     # 《登入次數》1118 次 (同天內只計一次) 《有效文章》15 篇 (退:0)

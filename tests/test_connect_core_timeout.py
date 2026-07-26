@@ -1,14 +1,15 @@
-"""No-network regression tests for the half-dead-connection heuristic in
-connect_core.API._async_send: a round that receives zero bytes before its
-screen_timeout elapses is treated as a dead connection (ConnectionClosed),
-while a round that receives at least one byte but never matches a target
-keeps the pre-existing timeout-returns--1 behavior."""
+"""No-network regression tests for connect_core.API._async_send's timeout
+handling: a round that receives zero bytes before its screen_timeout elapses
+no longer raises ConnectionClosed (that heuristic was falsified -- pttbbs
+silently drops invalid keys without redrawing, producing zero-byte timeouts
+on connections that are still alive). Instead, send() always returns -1 on
+timeout and records whether the timeout was totally silent on
+`last_timeout_was_silent`, leaving the death-vs-alive judgment call to the
+caller (see PyPtt/_api_get_user.py)."""
 
 import asyncio
 
-import pytest
-
-from PyPtt import config, connect_core, exceptions
+from PyPtt import config, connect_core
 
 
 class FakeCore:
@@ -41,28 +42,38 @@ def _make_api(chunks=()):
     return core_api
 
 
-def test_total_silence_raises_connection_closed():
+def test_total_silence_returns_minus_one_and_flags_silent():
+    """Zero bytes for the whole send() no longer raises ConnectionClosed --
+    it returns -1 like any other timeout, and sets last_timeout_was_silent
+    so the caller can decide what a fully-silent timeout means for it."""
     api = _make_api(chunks=[])
     target = connect_core.TargetUnit('NEVER_MATCHES_ANYTHING')
 
-    with pytest.raises(exceptions.ConnectionClosed):
-        api.send('cmd', [target], screen_timeout=0.1)
+    result = api.send('cmd', [target], screen_timeout=0.1)
+
+    assert result == -1
+    assert api.last_timeout_was_silent is True
 
 
 def test_bytes_received_without_match_still_returns_minus_one():
+    """At least one byte arrived but nothing matched: still a plain -1
+    timeout, and last_timeout_was_silent must be False (the connection was
+    demonstrably talking)."""
     api = _make_api(chunks=[b'some screen noise that matches nothing'])
     target = connect_core.TargetUnit('NEVER_MATCHES_ANYTHING')
 
     result = api.send('cmd', [target], screen_timeout=0.1)
 
     assert result == -1
+    assert api.last_timeout_was_silent is False
 
 
 def test_mid_send_disconnect_after_a_matched_round_still_returns_minus_one():
     """received_any_byte is tracked per-send, not per-round, on purpose: a
     multi-round send() (e.g. del_post's confirm -> bad-post-menu -> InBoard
     chain) that matches a target in round 1 and then goes fully silent in a
-    later round must still return -1, not raise ConnectionClosed.
+    later round must still return -1 with last_timeout_was_silent False, not
+    True.
 
     This is what keeps _api_del_post.py:351's `timed_out = result == -1`
     reachable, letting it report "delete succeeded, but PTT never returned
@@ -77,3 +88,26 @@ def test_mid_send_disconnect_after_a_matched_round_still_returns_minus_one():
     result = api.send('cmd', [non_break_target], screen_timeout=0.1)
 
     assert result == -1
+    assert api.last_timeout_was_silent is False
+
+
+def test_flag_resets_on_next_send():
+    """last_timeout_was_silent must not leak from a previous call() into the
+    next one: a silent-timeout send() followed by a normal, successfully
+    matched send() must leave the flag False. Guards against a caller
+    reading a stale True from an earlier, unrelated timeout."""
+    api = _make_api(chunks=[])
+    target = connect_core.TargetUnit('NEVER_MATCHES_ANYTHING')
+
+    result = api.send('cmd', [target], screen_timeout=0.1)
+
+    assert result == -1
+    assert api.last_timeout_was_silent is True
+
+    api._core = FakeCore(chunks=[b'HELLO'])
+    match_target = connect_core.TargetUnit('HELLO', break_detect=True)
+
+    result = api.send('cmd2', [match_target], screen_timeout=0.1)
+
+    assert result != -1
+    assert api.last_timeout_was_silent is False
