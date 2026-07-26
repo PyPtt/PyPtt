@@ -10,6 +10,7 @@ real PTT hosts. item/amount range validation raises before any board
 navigation, so those run everywhere.
 """
 import contextlib
+import re
 
 import pytest
 
@@ -20,6 +21,20 @@ from PyPtt import _api_lottery
 LOTTERY_BOARD = 'PyPttLottery'
 LOTTERY_PRICE = 10
 LOTTERY_ITEMS = ('Alpha', 'Bravo', 'Charlie')
+# PyPtt.API.bet_lottery's check_range() ceiling, i.e. the most that can be spent
+# in a single bet.
+MAX_AMOUNT = 9999
+
+_money_pattern = re.compile(r'現有 Dtt幣: (\d+)')
+
+
+def _wallet(bot):
+    """The balance pttbbs prints on the ticket screen. There is no public
+    accessor -- PyPtt.UserField.money is the textual rank ('小康'), not a
+    number."""
+    screen = _api_lottery._enter_ticket_screen(bot, LOTTERY_BOARD)
+    _api_lottery._leave_ticket_screen(bot)
+    return int(_money_pattern.search(screen).group(1))
 
 
 @contextlib.contextmanager
@@ -147,6 +162,34 @@ def test_bet_lottery_item_past_last_option_raises(ptt_bots):
     with pytest.raises(PyPtt.exceptions.ParameterError):
         ptt2_bot.bet_lottery(board=LOTTERY_BOARD, item=len(LOTTERY_ITEMS) + 1, amount=1)
 
+    assert ptt2_bot.get_time() is not None
+
+
+def test_bet_lottery_no_money_leaves_ticket_screen(ptt_bots):
+    """Running out of money must not cost us the session.
+
+    buy_ticket_ui() reports 現金不夠 through vmsg(), which parks a bar at the
+    bottom of the screen waiting for a keypress. _leave_ticket_screen's 'q' is
+    swallowed by that bar as its "press any key", so it leaves us back on the
+    種類 prompt, still inside pttbbs' ticket() loop -- and pttbbs paints nothing
+    new on the way, so there is no screen to notice it by. Without the retry in
+    _leave_ticket_screen the (session-scoped, shared) bot stays stuck there and
+    every later call talks to the lottery menu instead of PTT."""
+    ptt1_bot, ptt2_bot = ptt_bots
+    if ptt1_bot.host != PyPtt.HOST.LOCALHOST:
+        pytest.skip('PyPttLottery is only provisioned by the LOCALHOST bootstrap')
+
+    # A single bet tops out at MAX_AMOUNT tickets, so on a wallet that rich it
+    # cannot be made unaffordable -- spend it down first.
+    if _wallet(ptt2_bot) > LOTTERY_PRICE * MAX_AMOUNT:
+        ptt2_bot.bet_lottery(board=LOTTERY_BOARD, item=1, amount=MAX_AMOUNT)
+    assert _wallet(ptt2_bot) < LOTTERY_PRICE * MAX_AMOUNT
+
+    with pytest.raises(PyPtt.exceptions.NoMoney):
+        ptt2_bot.bet_lottery(board=LOTTERY_BOARD, item=1, amount=MAX_AMOUNT)
+
+    # get_time() returns None instead of raising when it cannot reach the main
+    # menu, which is exactly what a session stuck inside ticket() looks like.
     assert ptt2_bot.get_time() is not None
 
 
