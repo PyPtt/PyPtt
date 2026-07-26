@@ -219,27 +219,6 @@ class BoardField(AutoStrEnum):
     post_kind_list = auto()
 
 
-class LotteryField(AutoStrEnum):
-    board = auto()
-    price = auto()
-    total = auto()
-    options = auto()
-
-
-class LotteryOptionField(AutoStrEnum):
-    index = auto()
-    name = auto()
-    sold = auto()
-
-
-class LotteryBetField(AutoStrEnum):
-    board = auto()
-    item = auto()
-    name = auto()
-    amount = auto()
-    cost = auto()
-
-
 class Compare(AutoStrEnum):
     BIGGER = auto()
     SAME = auto()
