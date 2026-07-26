@@ -322,6 +322,7 @@ class API(object):
         is_secret = secret
         break_detect_after_send = False
         use_too_many_res = False
+        received_any_byte = False
 
         while True:
             if refresh and msg and not msg.endswith(command.refresh):
@@ -369,6 +370,7 @@ class API(object):
                             if use_too_many_res:
                                 raise exceptions.UseTooManyResources()
                             raise exceptions.ConnectionClosed()
+                        received_any_byte = True
 
                         if isinstance(data_chunk, str):
                             data_chunk = data_chunk.encode('utf-8')
@@ -408,6 +410,16 @@ class API(object):
                         self._RDQ.add(screen)
                 if use_too_many_res:
                     raise exceptions.UseTooManyResources()
+                # ponytail: heuristic — the peer never answered at all for the
+                # whole send(), so treat it as a dead connection. Counted
+                # per-send, not per-round, on purpose: a multi-round send()
+                # that goes silent midway still returns -1, which keeps
+                # _api_del_post.py's `timed_out = result == -1` reporting
+                # intact ("delete succeeded, but ...") on an irreversible op.
+                # Catching mid-send death too means teaching that call site
+                # (and friends) to handle ConnectionClosed first.
+                if not received_any_byte:
+                    raise exceptions.ConnectionClosed()
                 return -1
 
             if target_index != -1:
@@ -463,6 +475,14 @@ class API(object):
                     try:
                         data = self._core.read_very_eager()
                     except EOFError:
+                        # ponytail: known gap — write EOF above raises
+                        # ConnectionClosed, read EOF here returns -1, so a dead
+                        # Telnet link can still surface as NoSuchUser/NoSuchBoard
+                        # upstream (same bug the websocket path was fixed for).
+                        # Left alone deliberately: raising here carries the
+                        # _api_del_post.py:351 `timed_out = result == -1`
+                        # blast radius and there is no Telnet test harness to
+                        # verify against. Fix when Telnet gets one.
                         return -1
                     screen = self._stream_screen(self.current_encoding, data)
                     screen, find_target, is_secret, break_detect_after_send, use_too_many_res, msg, target_index = \
@@ -508,6 +528,22 @@ class API(object):
                     loop.run_until_complete(asyncio.wait_for(self._core.close(), timeout=2.0))
                 except (asyncio.TimeoutError, RuntimeError):
                     pass
+            # 若 close 逾時，websocket 的背景 task(keepalive_ping/transfer_data/
+            # close_connection)會殘留 pending；主動取消並跑完，再關閉 loop，否則 loop 被 GC 時
+            # 會噴 "Task was destroyed but it is pending" 與 "no running event loop"。
+            if self._loop is not None and not self._loop.is_closed():
+                try:
+                    pending = asyncio.all_tasks(self._loop)
+                    for task in pending:
+                        task.cancel()
+                    if pending:
+                        self._loop.run_until_complete(
+                            asyncio.gather(*pending, return_exceptions=True))
+                    self._loop.run_until_complete(self._loop.shutdown_asyncgens())
+                except RuntimeError:
+                    pass
+                finally:
+                    self._loop.close()
         else:
             self._core.close()
 
