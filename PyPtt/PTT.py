@@ -21,7 +21,6 @@ from . import _api_get_user
 from . import _api_give_money
 from . import _api_loginout
 from . import _api_get_waterball
-from . import _api_lottery
 from . import _api_mail
 from . import _api_mark_post
 from . import _api_post
@@ -602,74 +601,6 @@ class API:
         """
 
         _api_give_money.give_money(self, ptt_id, money, red_bag_title, red_bag_content)
-
-    def get_lottery(self, board: str) -> Dict:
-
-        """
-        取得看板樂透（彩券）目前的開獎資訊，對應看板內按 `f` 鍵的功能。
-
-        Args:
-            board (str): 看板名稱。
-
-        Returns:
-            Dict，樂透資訊，詳見 :ref:`lottery-field`。
-
-        Raises:
-            RequireLogin: 需要登入。
-            NoSuchBoard: 看板不存在。
-            NoSuchLottery: 該看板目前並沒有舉辦樂透，或樂透已封盤/開獎。
-
-        範例::
-
-            import PyPtt
-
-            ptt_bot = PyPtt.API()
-            try:
-                # .. login ..
-                lottery = ptt_bot.get_lottery(board='Test')
-                # .. do something ..
-            finally:
-                ptt_bot.logout()
-
-        """
-
-        return _api_lottery.get_lottery(self, board)
-
-    def bet_lottery(self, board: str, item: int = 1, amount: int = 1) -> Dict:
-
-        """
-        在看板下注樂透（彩券），對應看板內按 `f` 鍵後購買彩券的功能。
-
-        Args:
-            board (str): 看板名稱。
-            item (int): 要購買的樂透選項編號，範圍 1~8（依看板實際選項數而定）。
-            amount (int): 購買張數，範圍 1~9999，並受限於帳戶內的 Ptt 幣餘額。
-
-        Returns:
-            Dict，下注結果，詳見 :ref:`lottery-bet-field`。
-
-        Raises:
-            RequireLogin: 需要登入。
-            UnregisteredUser: 未註冊使用者。
-            NoSuchBoard: 看板不存在。
-            NoSuchLottery: 該看板目前並沒有舉辦樂透，或樂透已封盤/開獎。
-            NoMoney: 餘額不足。
-
-        範例::
-
-            import PyPtt
-
-            ptt_bot = PyPtt.API()
-            try:
-                # .. login ..
-                result = ptt_bot.bet_lottery(board='Test', item=1, amount=10)
-                # .. do something ..
-            finally:
-                ptt_bot.logout()
-
-        """
-
-        return _api_lottery.bet_lottery(self, board, item, amount)
 
     def mail(self, ptt_id: str, title: str, content: str, sign_file: [int | str] = 0,
              backup: bool = True) -> None:
