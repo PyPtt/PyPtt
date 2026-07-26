@@ -69,7 +69,7 @@ def _enter_ticket_screen(api, board: str) -> str:
             _NO_LOTTERY_TEXTS[1], break_detect=True, exceptions_=exceptions.NoSuchLottery(board)),
         connect_core.TargetUnit('請選擇要購買的種類', break_detect=True),
     ]
-    api.connect_core.send('f', target_list)
+    api.connect_core.send('f', target_list, screen_timeout=api.config.screen_long_timeout)
 
     return api.connect_core.get_screen_queue()[-1]
 
@@ -78,7 +78,7 @@ def _leave_ticket_screen(api) -> None:
     target_list = [
         connect_core.TargetUnit(screens.Target.InBoard, break_detect=True),
     ]
-    api.connect_core.send('q', target_list)
+    api.connect_core.send('q', target_list, screen_timeout=api.config.screen_long_timeout)
 
 
 def get_lottery(api, board: str) -> Dict:
@@ -143,13 +143,13 @@ def bet_lottery(api, board: str, item: int = 1, amount: int = 1) -> Dict:
             '板主已經停止下注了', break_detect=True, exceptions_=exceptions.NoSuchLottery(board)),
         connect_core.TargetUnit('按任意鍵繼續', break_detect=True),
     ]
-    api.connect_core.send(str(item), target_list)
+    api.connect_core.send(str(item), target_list, screen_timeout=api.config.screen_long_timeout)
 
     # dismiss the purchase-confirmation picture, back to the (refreshed) ticket screen
     target_list = [
         connect_core.TargetUnit('請選擇要購買的種類', break_detect=True),
     ]
-    api.connect_core.send(command.space, target_list)
+    api.connect_core.send(command.space, target_list, screen_timeout=api.config.screen_long_timeout)
 
     _leave_ticket_screen(api)
 
