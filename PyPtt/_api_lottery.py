@@ -78,7 +78,14 @@ def _leave_ticket_screen(api) -> None:
     target_list = [
         connect_core.TargetUnit(screens.Target.InBoard, break_detect=True),
     ]
-    api.connect_core.send('q', target_list)
+    # When we are bailing out on top of a vmsg() bar (現金不夠 / 板主已經停止下注了),
+    # that bar eats the 'q' as its "press any key" and drops us back on the
+    # 種類 prompt still inside ticket(). Nothing new is painted in that case
+    # (pttbbs only sends what changed, and the ticket screen did not), so there
+    # is no screen to detect it by -- and ticket()'s vkey_purge() throws away
+    # anything pipelined behind the 'q'. Hence: send it again.
+    if api.connect_core.send('q', target_list) == -1:
+        api.connect_core.send('q', target_list)
 
 
 def get_lottery(api, board: str) -> Dict:
@@ -119,39 +126,59 @@ def bet_lottery(api, board: str, item: int = 1, amount: int = 1) -> Dict:
     log.logger.info(i18n.replace(i18n.bet_lottery, board))
 
     ori_screen = _enter_ticket_screen(api, board)
-    before = _parse_lottery_screen(board, ori_screen)
 
-    options = before[LotteryField.options]
-    if item > len(options):
+    # Everything below drives mbbsd/gamble.c's ticket() loop, which only ever
+    # ends on 'q'. Bailing out without leaving it strands the whole session
+    # inside the lottery menu, so the exit is unconditional.
+    try:
+        before = _parse_lottery_screen(board, ori_screen)
+
+        options = before[LotteryField.options]
+        if item > len(options):
+            raise exceptions.ParameterError(
+                f'item {item} error, board {board} only has {len(options)} lottery options')
+
+        name = options[item - 1][LotteryOptionField.name]
+        price = before[LotteryField.price]
+
+        # Order matters. pttbbs never clears the 要買多少份呢 prompt, so it is
+        # still on screen once the purchase goes through -- matching it again
+        # would replay the Ctrl-Y/amount keys into the confirmation screen and
+        # then blindly wait out a whole screen_timeout. The error branches go
+        # first for the same reason: vmsg() paints 按任意鍵繼續 on the right of
+        # its own message bar (mbbsd/vtuikit.c: vshowmsg()'s VMSG_MSG_FLOAT),
+        # so 現金不夠/板主已經停止下注了 share a screen with it.
+        target_list = [
+            connect_core.TargetUnit('現金不夠', break_detect=True, exceptions_=exceptions.NoMoney()),
+            connect_core.TargetUnit(
+                '板主已經停止下注了', break_detect=True, exceptions_=exceptions.NoSuchLottery(board)),
+            connect_core.TargetUnit('按任意鍵繼續', break_detect=True),
+            # buy_ticket_ui()'s getdata_str() pre-fills this field with "1" and
+            # parks the cursor after it (mbbsd/vtuikit.c: vgetstring() copies
+            # defstr into buf then sets icurr = iend = strlen(buf)); typing
+            # digits without clearing first inserts after the "1" (e.g. "3"
+            # becomes "13"), so Ctrl-Y (clear-to-start) must come first.
+            connect_core.TargetUnit(
+                '要買多少份呢', response=command.ctrl_y + str(amount) + command.enter),
+        ]
+        api.connect_core.send(str(item), target_list)
+
+        # Dismiss the purchase-confirmation picture, back to the (refreshed)
+        # ticket screen. pttbbs redraws differentially and each send() starts
+        # from a blank screen parser, so only what actually *changed* shows up
+        # here -- 請選擇要購買的種類 is unchanged and therefore never
+        # retransmitted. show_ticket_data()'s repaint of the bet table is, so
+        # target that instead (請選擇要購買的種類 stays as a fallback for the
+        # full-redraw case).
+        target_list = [
+            connect_core.TargetUnit(
+                '板主已經停止下注了', break_detect=True, exceptions_=exceptions.NoSuchLottery(board)),
+            connect_core.TargetUnit('目前下注狀況', break_detect=True),
+            connect_core.TargetUnit('請選擇要購買的種類', break_detect=True),
+        ]
+        api.connect_core.send(command.space, target_list)
+    finally:
         _leave_ticket_screen(api)
-        raise exceptions.ParameterError(
-            f'item {item} error, board {board} only has {len(options)} lottery options')
-
-    name = options[item - 1][LotteryOptionField.name]
-    price = before[LotteryField.price]
-
-    target_list = [
-        # buy_ticket_ui()'s getdata_str() pre-fills this field with "1" and
-        # parks the cursor after it (mbbsd/vtuikit.c: vgetstring() copies
-        # defstr into buf then sets icurr = iend = strlen(buf)); typing
-        # digits without clearing first inserts after the "1" (e.g. "3"
-        # becomes "13"), so Ctrl-Y (clear-to-start) must come first.
-        connect_core.TargetUnit(
-            '要買多少份呢', response=command.ctrl_y + str(amount) + command.enter),
-        connect_core.TargetUnit('現金不夠', break_detect=True, exceptions_=exceptions.NoMoney()),
-        connect_core.TargetUnit(
-            '板主已經停止下注了', break_detect=True, exceptions_=exceptions.NoSuchLottery(board)),
-        connect_core.TargetUnit('按任意鍵繼續', break_detect=True),
-    ]
-    api.connect_core.send(str(item), target_list)
-
-    # dismiss the purchase-confirmation picture, back to the (refreshed) ticket screen
-    target_list = [
-        connect_core.TargetUnit('請選擇要購買的種類', break_detect=True),
-    ]
-    api.connect_core.send(command.space, target_list)
-
-    _leave_ticket_screen(api)
 
     log.logger.info(i18n.replace(i18n.bet_lottery, board), '...', i18n.success)
 
