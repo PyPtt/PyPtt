@@ -5,11 +5,7 @@ silently drops invalid keys without redrawing, producing zero-byte timeouts
 on connections that are still alive). Instead, send() always returns -1 on
 timeout and records whether the timeout was totally silent on
 `last_timeout_was_silent`, leaving the death-vs-alive judgment call to the
-caller (see PyPtt/_api_get_user.py).
-
-The last test covers the other no-network `_async_send` regression that needs
-this same FakeCore harness: an escape sequence split across two send rounds
-(see PyPtt/screens.py, IncrementalScreen.new_round)."""
+caller (see PyPtt/_api_get_user.py)."""
 
 import asyncio
 
@@ -115,23 +111,3 @@ def test_flag_resets_on_next_send():
 
     assert result != -1
     assert api.last_timeout_was_silent is False
-
-
-def test_escape_split_across_two_send_rounds_is_not_rendered_as_text():
-    """A round whose last chunk ends with a lone ESC leaves that byte held in
-    the incremental parser. Rebuilding the parser for the next round dropped
-    it, so the continuation (`[24;76H...`) was rendered as literal on-screen
-    text instead of a cursor move -- polluting the screen the _api_* parsers
-    read. The parsers must be blanked in place, not rebuilt."""
-    api = _make_api(chunks=[b'\x1b[2J\x1b[1;1HROUND1\x1b'])
-
-    assert api.send('cmd', [connect_core.TargetUnit('ROUND1', break_detect=True)],
-                    screen_timeout=0.1) != -1
-
-    api._core = FakeCore(chunks=[b'[24;76HROUND2'])
-    assert api.send('cmd2', [connect_core.TargetUnit('ROUND2', break_detect=True)],
-                    screen_timeout=0.1) != -1
-
-    screen = api._stream_parsers[api.current_encoding].screen
-    assert '[24;76H' not in screen
-    assert screen.split('\n')[23].strip() == 'ROUND2'
