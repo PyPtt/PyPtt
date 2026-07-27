@@ -80,7 +80,9 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         connect_core.TargetUnit('◆ 很抱歉, 此文章已結案並標記, 不得回應', log_level=log.INFO,
                                 exceptions_=exceptions.CantResponse()),
         connect_core.TargetUnit('(E)繼續編輯 (W)強制寫入', log_level=log.INFO, response='W' + command.enter),
-        connect_core.TargetUnit('請選擇簽名檔', response=str(sign_file) + command.enter),
+        # max_match=1 是防禦性上限，理由同 _api_mail.py。三種 reply_to（BOARD / MAIL /
+        # BOARD_MAIL）都對真 PTT 實測過，這個 target 一次都沒命中，目前執行不到。
+        connect_core.TargetUnit('請選擇簽名檔', response=str(sign_file) + command.enter, max_match=1),
         connect_core.TargetUnit('確定要儲存檔案嗎', response='s' + command.enter),
         connect_core.TargetUnit('編輯文章', log_level=log.INFO,
                                 response=str(content) + command.enter + command.ctrl_x),

@@ -677,7 +677,8 @@ class API:
             sign_file (str | int): 編號或隨機簽名檔 (x)，預設為 **0** (不選)。
             aid: 文章編號。
             index: 文章編號。
-            backup (bool): 回信給作者時是否自存底稿，預設為 True。僅在回覆類型含站內信時有作用。
+            backup (bool): 回信給作者時是否自存底稿，預設為 True。僅在 reply_to 為 MAIL 時有作用；
+                BOARD_MAIL 實測不會出現自存底稿提示，該路徑下此參數無效。
 
         Returns:
             None
