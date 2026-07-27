@@ -665,7 +665,7 @@ class API:
         return _api_get_board_list.get_board_list(self)
 
     def reply_post(self, reply_to: data_type.ReplyTo, board: str, content: str, sign_file: [str | int] = 0,
-                   aid: Optional[str] = None, index: int = 0) -> None:
+                   aid: Optional[str] = None, index: int = 0, backup: bool = True) -> None:
 
         """
         回覆文章。
@@ -677,6 +677,7 @@ class API:
             sign_file (str | int): 編號或隨機簽名檔 (x)，預設為 **0** (不選)。
             aid: 文章編號。
             index: 文章編號。
+            backup (bool): 回信給作者時是否自存底稿，預設為 True。僅在回覆類型含站內信時有作用。
 
         Returns:
             None
@@ -703,7 +704,7 @@ class API:
         參考 :ref:`回覆類型 <reply-to>`、:ref:`取得最新文章編號 <api-get-newest-index>`
         """
 
-        _api_reply_post.reply_post(self, reply_to, board, content, sign_file, aid, index)
+        _api_reply_post.reply_post(self, reply_to, board, content, sign_file, aid, index, backup)
 
     def set_board_title(self, board: str, new_title: str) -> None:
         """
