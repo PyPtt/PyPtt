@@ -23,7 +23,9 @@ import pytest
 
 from PyPtt import _api_get_board_info
 from PyPtt import _api_get_newest_index
+from PyPtt import _api_get_post
 from PyPtt import _api_get_post_index
+from PyPtt import _api_util
 from PyPtt import config
 from PyPtt import data_type
 from PyPtt import exceptions
@@ -232,3 +234,81 @@ def test_board_info_happy_path_unaffected():
     assert board_info[data_type.BoardField.board] == BOARD
     # 42 online minus ourselves
     assert board_info[data_type.BoardField.online_user] == 41
+
+
+# --- goto_board (_api_util.py) -----------------------------------------
+#
+# goto_board() is the shared upstream of ~a dozen APIs. It has two send()
+# call sites (_api_util.py ~:450 and ~:456, the latter only reached when the
+# first reports index == 4 / MainMenu_Exiting and a retry is attempted).
+# Both must raise ConnectionClosed on a fully silent timeout, and both must
+# leave the pre-existing "noisy -1 is tolerated" behaviour (_api_util.py
+# :447-449) alone.
+
+
+def _goto_board(script):
+    api = FakeApi(FakeConnectCore(script))
+    _api_util.goto_board(api, BOARD)
+
+
+def test_goto_board_first_send_silent_timeout_raises_connection_closed():
+    with pytest.raises(exceptions.ConnectionClosed):
+        _goto_board([(-1, True)])
+
+
+def test_goto_board_first_send_noisy_timeout_is_tolerated():
+    """A -1 with bytes received is goto_board's documented tolerance for a
+    found-but-unmatched screen; it must not raise anything."""
+    _goto_board([(-1, False)])  # must not raise
+
+
+def test_goto_board_retry_send_silent_timeout_raises_connection_closed():
+    """index == 4 (MainMenu_Exiting) triggers one retry send; if that retry
+    goes fully silent, the flag must be checked there too, not just on the
+    first send."""
+    with pytest.raises(exceptions.ConnectionClosed):
+        _goto_board([(4, False), (-1, True)])
+
+
+def test_goto_board_retry_send_noisy_timeout_still_raises_no_such_board():
+    with pytest.raises(exceptions.NoSuchBoard):
+        _goto_board([(4, False), (4, False)])
+
+
+def test_goto_board_happy_path_unaffected():
+    _goto_board([(2, False)])  # must not raise
+
+
+# --- get_post (_api_get_post.py) ----------------------------------------
+#
+# _get_post()'s query-post send (_api_get_post.py ~:132) treats any
+# index < 0 (or == 1) as "post was deleted" and hands the last screen to
+# _parse_deleted_post(). A fully silent timeout must be caught before that
+# hand-off instead of being parsed into a misleading result.
+
+# A cursor line _parse_deleted_post() can parse into a clean
+# DELETED_BY_AUTHOR result, so the "noisy timeout still falls through"
+# assertion has something well-formed to check against.
+DELETED_POST_SCREEN = '> 76060     8/28 -             □ (本文已被刪除) [someone]'
+
+
+def _get_post_call(script, screens):
+    api = FakeApi(FakeConnectCore(script, screens=screens))
+    return _api_get_post._get_post(api, BOARD, post_aid='#1AbCdEfG')
+
+
+def test_get_post_silent_timeout_raises_connection_closed():
+    """goto_board's send succeeds; the query-post send goes fully silent."""
+    with pytest.raises(exceptions.ConnectionClosed):
+        _get_post_call([(2, False), (-1, True)],
+                       screens=(BOARD_SCREEN, DELETED_POST_SCREEN))
+
+
+def test_get_post_noisy_timeout_still_falls_through_to_parse_deleted_post():
+    """Known, deliberately-unfixed gap: bytes arrived but nothing matched,
+    so this still gets parsed as a deleted post rather than reporting the
+    connection problem. Pinned here so a future fix is a deliberate,
+    visible change rather than an accidental one."""
+    post = _get_post_call([(2, False), (-1, False)],
+                          screens=(BOARD_SCREEN, DELETED_POST_SCREEN))
+    assert post[data_type.PostField.post_status] == data_type.PostStatus.DELETED_BY_AUTHOR

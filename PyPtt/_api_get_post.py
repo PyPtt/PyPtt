@@ -156,6 +156,17 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
     }
 
     if index < 0 or index == 1:
+        # Known gap (intentionally not fixed here): a connection that dies
+        # mid-redraw (bytes received, so last_timeout_was_silent is False)
+        # leaves a stale listing screen with a cursor line in RDQ, and
+        # _parse_deleted_post() will happily parse that into a normal-looking
+        # PostStatus.DELETED_BY_AUTHOR dict -- a false "deleted" report that
+        # this flag cannot catch. Fixing that needs dropping `index < 0` as a
+        # deleted-post signal outright, which first needs verifying what a
+        # real deleted post's Q-response looks like. Only the fully-silent
+        # (zero bytes received) timeout is handled below.
+        if index < 0 and api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
         return _parse_deleted_post(api, post, board, last_screen)
 
     # index == 0: QueryPost screen matched

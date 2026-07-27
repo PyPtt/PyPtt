@@ -448,12 +448,16 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
     # 但某些看板會卡在進版動畫中，但沒有顯示任意鍵繼續或互動是動畫，所以當 index == -1 (表示找不到標的 timeout 了)
     # 可以嘗試修改 cmd_list
     index = api.connect_core.send(cmd, target_list, refresh=current_refresh)
+    if index == -1 and api.connect_core.last_timeout_was_silent:
+        raise exceptions.ConnectionClosed()
 
     # index == 4 表示偵測到 MainMenu_Exiting，代表導航到看板失敗
     # 可能是暫時性的問題（閒置太久、連線狀態改變等），重試一次
     if index == 4:
         log.logger.debug('goto_board', board, 'failed, retrying')
         index = api.connect_core.send(cmd, target_list, refresh=True)
+        if index == -1 and api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
         if index == 4:
             raise exceptions.NoSuchBoard(api.config, board)
 
