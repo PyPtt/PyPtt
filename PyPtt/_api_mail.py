@@ -94,8 +94,14 @@ def mail(api,
         connect_core.TargetUnit('請按任意鍵繼續', response=command.enter, break_detect_after_send=True),
         connect_core.TargetUnit('確定要儲存檔案嗎', response='s' + command.enter),
         connect_core.TargetUnit('是否自存底稿', response=('y' if backup else 'n') + command.enter),
-        connect_core.TargetUnit('選擇簽名檔', response=str(sign_file) + command.enter),
-        connect_core.TargetUnit('x=隨機', response=str(sign_file) + command.enter),
+        # max_match=1 是防禦性上限，簽名檔提示只該被回答一次。真 PTT 與本地 pttbbs 都
+        # 實測過（monkeypatch TargetUnit.is_match 計數）：寄信流程從「確定要儲存檔案嗎」
+        # 直接跳到「已順利寄出，是否自存底稿」，這個 target 一次都沒命中，推測要帳號設過
+        # 簽名檔才會出現。假說是沒有上限時提示殘留在重繪畫面上會二次命中、多送的 enter
+        # 被自存底稿當成預設 Y 吃掉讓 backup 失效——該情境尚未實際復現，上限先留著。
+        # 巢狀 list = 命中任一字串；'選擇簽名檔' 與 'x=隨機' 是同一行提示的兩種寫法。
+        connect_core.TargetUnit([['選擇簽名檔', 'x=隨機']],
+                                response=str(sign_file) + command.enter, max_match=1),
     ]
 
     # 送出訊息
