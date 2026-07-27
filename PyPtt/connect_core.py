@@ -193,6 +193,9 @@ class API(object):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
         self.current_encoding = 'big5uao'
+        # A new connection is a new byte stream: unlike a send round, it must
+        # not inherit the previous stream's held tail / decoder state.
+        self._stream_parsers = {}
 
         if self.config.host == data_type.HOST.PTT1:
             websocket_host = 'wss://ws.ptt.cc/bbs/'
@@ -318,6 +321,19 @@ class API(object):
         parser.feed(data_chunk)
         return parser.screen
 
+    def _new_screen_round(self) -> None:
+        """Blank the incremental parsers' screens for a new send round.
+
+        The parsers are reset in place instead of being rebuilt: dropping them
+        also dropped the tail they hold back (an unfinished escape sequence or
+        a partial multibyte char at the chunk boundary), so the next round
+        rendered the continuation as literal text — a chunk starting with a
+        bare `[24;76H` showed up on screen verbatim. Tradeoff: an ambiguous
+        trailing space/backspace run now carries into the next round too.
+        """
+        for parser in self._stream_parsers.values():
+            parser.new_round()
+
     async def _async_send(self, msg: str, target_list: list, screen_timeout: int, refresh: bool, secret: bool) -> int:
         current_screen_timeout = self.config.screen_timeout if screen_timeout == 0 else screen_timeout
         is_secret = secret
@@ -352,12 +368,12 @@ class API(object):
                 return -1
 
             msg = ''
-            # Fresh incremental parsers for this screen sequence. Each arriving
-            # chunk is fed once (per encoding) instead of re-parsing the whole
-            # accumulated buffer every time — turning the receive loop from
-            # O(N²) into O(N). The parsers also hold the rendered screen, so no
-            # separate raw byte buffer is accumulated.
-            self._stream_parsers = {}
+            # Blank screen for this sequence. Each arriving chunk is fed once
+            # (per encoding) instead of re-parsing the whole accumulated buffer
+            # every time — turning the receive loop from O(N²) into O(N). The
+            # parsers also hold the rendered screen, so no separate raw byte
+            # buffer is accumulated.
+            self._new_screen_round()
             start_time = time.time()
             find_target = False
             target_index = -1
@@ -475,7 +491,7 @@ class API(object):
                 if break_detect_after_send:
                     return -1
                 msg = ''
-                self._stream_parsers = {}
+                self._new_screen_round()
                 start_time = time.time()
                 mid_time = time.time()
                 while mid_time - start_time < current_screen_timeout:

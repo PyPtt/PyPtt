@@ -511,6 +511,28 @@ class IncrementalScreen(_VT100Engine):
             # it forever, so we freeze to match.
             self._bailed = True
 
+    def new_round(self) -> None:
+        """Blank the screen for a new send round, keeping the input state.
+
+        The receive loop renders one screen per send round, but the byte
+        stream itself is continuous: a chunk can end mid-escape-sequence or
+        mid-multibyte character and only be completed by the first chunk of
+        the next round. Rebuilding the parser between rounds threw that
+        held-back tail away, so e.g. a trailing lone ``ESC`` turned the next
+        round's ``[24;76H`` into literal on-screen text. Round-scoped state
+        (rendered screen, bail-out latch) is reset; stream-scoped state (the
+        held tail ``_raw`` and the incremental decoder) carries over.
+
+        Tradeoff: a held tail that is *not* an unfinished escape (an
+        ambiguous trailing ``[ \\x08]`` run) also carries into the next
+        round's screen instead of being dropped — the same rule the batch
+        parser would apply if it saw the two rounds as one buffer, and the
+        only way to keep a wide-char reservation pair split across the
+        boundary intact."""
+        self._reset_screen()
+        self._leftover = ''
+        self._bailed = False
+
     @property
     def screen(self) -> str:
         """Current screen as a ``screen_height``-line string, including any
