@@ -34,6 +34,8 @@ def mail(api,
     check_value.check_type(ptt_id, str, 'ptt_id')
     check_value.check_type(title, str, 'title')
     check_value.check_type(content, str, 'content')
+    # 沒擋型別的話，backup='False' 這種字串是 truthy，會靜靜地存底稿。
+    check_value.check_type(backup, bool, 'backup')
 
     _api_util.check_user_exist(api, ptt_id)
 

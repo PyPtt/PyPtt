@@ -10,7 +10,7 @@ from . import log
 
 
 def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_file, post_aid: str,
-               post_index: int) -> None:
+               post_index: int, backup: bool = True) -> None:
     _api_util.one_thread(api)
 
     if not api._is_login:
@@ -21,6 +21,8 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
 
     check_value.check_type(board, str, 'board')
     check_value.check_type(content, str, 'content')
+    # 沒擋型別的話，backup='False' 這種字串是 truthy，會靜靜地存底稿。
+    check_value.check_type(backup, bool, 'backup')
     if post_aid is not None:
         check_value.check_type(post_aid, str, 'PostAID')
 
@@ -85,7 +87,8 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         connect_core.TargetUnit('請問要引用原文嗎', log_level=log.DEBUG, response='Y' + command.enter),
         connect_core.TargetUnit('採用原標題[Y/n]?', log_level=log.DEBUG, response='Y' + command.enter),
         reply_target_unit,
-        connect_core.TargetUnit('已順利寄出，是否自存底稿', log_level=log.DEBUG, response='Y' + command.enter),
+        connect_core.TargetUnit('已順利寄出，是否自存底稿', log_level=log.DEBUG,
+                                response=('Y' if backup else 'N') + command.enter),
     ]
 
     api.connect_core.send(

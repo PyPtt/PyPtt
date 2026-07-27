@@ -34,7 +34,7 @@ flake8 PyPtt/ --count --exit-zero --max-complexity=10 --max-line-length=127 --st
 ### Run tests
 Unit tests (no network required — run these during development):
 ```bash
-python -m pytest tests/test_init.py tests/test_i18n.py tests/test_exceptions.py tests/test_logger.py tests/test_parse_query_post.py tests/test_get_post_parser.py tests/test_vt100_parser.py tests/test_get_post_list_parser.py tests/test_pyte_parity.py
+python -m pytest tests/test_init.py tests/test_i18n.py tests/test_exceptions.py tests/test_logger.py tests/test_parse_query_post.py tests/test_get_post_parser.py tests/test_vt100_parser.py tests/test_get_post_list_parser.py tests/test_pyte_parity.py tests/test_backup_param.py
 ```
 
 `test_pyte_parity.py` cross-checks `VT100Parser` against the `pyte` reference VT100 emulator on captured PTT byte streams (`tests/fixtures/vt100/*.bin`). Skipped if `pyte` isn't installed.

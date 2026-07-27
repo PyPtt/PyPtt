@@ -95,6 +95,7 @@ jobs:
           tests/test_get_post_list_parser.py \
           tests/test_pyte_parity.py \
           tests/test_del_post_unit.py \
+          tests/test_backup_param.py \
           tests/test_connect_core_timeout.py \
           tests/test_incremental_parity.py \
           tests/test_parse_query_post.py \
