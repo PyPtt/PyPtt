@@ -27,6 +27,11 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
 
     _api_util.goto_board(api, board, refresh=True)
 
+    # last_timeout_was_silent is only meaningful right after a send(), and
+    # goto_board()'s last action is one. Nothing below sends until the 'i'
+    # further down, so the flag stays valid for the whole parse block: a
+    # totally silent timeout means goto_board never redrew and we are about
+    # to parse a stale screen -- a half-dead connection, not a missing board.
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
 
@@ -41,16 +46,22 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         break
 
     if online_user_line is None:
+        if api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
         raise exceptions.NoSuchBoard(api.config, board)
 
     if '[靜]' in online_user_line:
         online_user = 0
     else:
         if '日 期' not in online_user_line or '作  者' not in online_user_line:
+            if api.connect_core.last_timeout_was_silent:
+                raise exceptions.ConnectionClosed()
             raise exceptions.NoSuchBoard(api.config, board)
         pattern = re.compile(r'[\d]+')
         r = pattern.search(online_user_line)
         if r is None:
+            if api.connect_core.last_timeout_was_silent:
+                raise exceptions.ConnectionClosed()
             raise exceptions.NoSuchBoard(api.config, board)
         # 減一是把自己本身拿掉
         online_user = int(r.group(0)) - 1
@@ -66,6 +77,8 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         'i',
         target_list)
 
+    # Same flag window as above: the 'i' send() right before is the last one
+    # until the get_post_kind block, so the flag still describes it here.
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
 
@@ -76,10 +89,14 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         boardname = r.group(0)[1:-5].strip()
 
     if boardname is None:
+        if api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
         raise exceptions.NoSuchBoard(api.config, board)
     logger.debug('看板名稱', boardname, board)
 
     if boardname.lower() != board.lower():
+        if api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
         raise exceptions.NoSuchBoard(api.config, board)
 
     chinese_des = ''

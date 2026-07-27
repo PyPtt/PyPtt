@@ -94,7 +94,13 @@ jobs:
           tests/test_vt100_parser.py \
           tests/test_get_post_list_parser.py \
           tests/test_pyte_parity.py \
-          tests/test_del_post_unit.py
+          tests/test_del_post_unit.py \
+          tests/test_connect_core_timeout.py \
+          tests/test_incremental_parity.py \
+          tests/test_parse_query_post.py \
+          tests/test_get_post_parser.py \
+          tests/test_get_content_formula.py \
+          tests/test_uao_codec.py
 
   # Runs the credentialed integration suite (tests/) against a disposable
   # local pttbbs container instead of the real PTT (cloud runners can't reach

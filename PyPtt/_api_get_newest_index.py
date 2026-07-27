@@ -104,6 +104,8 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
 
         index = api.connect_core.send(cmd, target_list)
         if index < 0:
+            if api.connect_core.last_timeout_was_silent:
+                raise exceptions.ConnectionClosed()
             raise exceptions.NoSuchBoard(api.config, board)
 
         if index == 0:
@@ -127,6 +129,8 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
 
             index = api.connect_core.send(cmd, target_list)
             if index < 0:
+                if api.connect_core.last_timeout_was_silent:
+                    raise exceptions.ConnectionClosed()
                 raise exceptions.NoSuchBoard(api.config, board)
 
             if index == 0:

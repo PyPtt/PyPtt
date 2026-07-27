@@ -64,9 +64,3 @@ APIs
    set_board_title
    mark_post
    bucket
-
-樂透相關
-----------------
-.. toctree::
-
-   lottery
