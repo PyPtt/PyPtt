@@ -223,7 +223,6 @@
 <li class="toctree-l2"><a class="reference internal" href="api/set_board_title.html">set_board_title</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/mark_post.html">mark_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/bucket.html">bucket</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lottery.html">lottery</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="service.html">Service</a></li>
@@ -281,9 +280,10 @@
 <div class="line">這裡寫著 PyPtt 的故事。</div>
 </div>
 <div class="line-block">
+<div class="line">2026.07.26 移除樂透 API（<code class="docutils literal notranslate"><span class="pre">get_lottery</span></code> / <code class="docutils literal notranslate"><span class="pre">bet_lottery</span></code>）與相關的 <code class="docutils literal notranslate"><span class="pre">LotteryField</span></code> / <code class="docutils literal notranslate"><span class="pre">LotteryOptionField</span></code> / <code class="docutils literal notranslate"><span class="pre">LotteryBetField</span></code> / <code class="docutils literal notranslate"><span class="pre">NoSuchLottery</span></code>。這是 breaking change：樂透畫面同時違反 <code class="docutils literal notranslate"><span class="pre">TargetUnit</span></code> 螢幕比對的三個前提（畫面字串唯一標識狀態、送出後必有回應、按鍵不會被中間層吃掉），維護成本高於價值。</div>
 <div class="line">2026.07.21 新增 <a class="reference internal" href="api/set_signature_file.html"><span class="doc">set_signature_file</span></a> API（<code class="docutils literal notranslate"><span class="pre">set_signature_file</span></code>），可更新使用者名片檔（plan）。</div>
 <div class="line">2026.07.19 內嵌 pyUAO Big5-UAO 編碼器，移除對外部 <code class="docutils literal notranslate"><span class="pre">uao</span></code> 套件的依賴。</div>
-<div class="line">2026.07.19 新增 <a class="reference internal" href="api/lottery.html"><span class="doc">lottery</span></a> API（<code class="docutils literal notranslate"><span class="pre">get_lottery</span></code> / <code class="docutils literal notranslate"><span class="pre">bet_lottery</span></code>），支援看板樂透查詢與下注功能。</div>
+<div class="line">2026.07.19 新增 <code class="docutils literal notranslate"><span class="pre">lottery</span></code> API（<code class="docutils literal notranslate"><span class="pre">get_lottery</span></code> / <code class="docutils literal notranslate"><span class="pre">bet_lottery</span></code>），支援看板樂透查詢與下注功能。（已於 2026.07.26 移除）</div>
 <div class="line">2026.07.19 <code class="docutils literal notranslate"><span class="pre">post</span></code> 新增 <code class="docutils literal notranslate"><span class="pre">anonymous</span></code> / <code class="docutils literal notranslate"><span class="pre">display_id</span></code> 參數，支援匿名看板發文（可自訂顯示名稱）。</div>
 </div>
 <div class="line-block">
@@ -374,7 +374,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=58e4c11c"></script>
+</div><script src="_static/documentation_options.js?v=bbf4e1c0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
