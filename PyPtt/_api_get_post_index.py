@@ -35,6 +35,8 @@ def get_post_index(api, board: str, aid: str) -> int:
     ori_screen = api.connect_core.get_screen_queue()[-1]
     if index < 0:
         # print(OriScreen)
+        if api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
         raise exceptions.NoSuchBoard(api.config, board)
 
     # if index == 5:
