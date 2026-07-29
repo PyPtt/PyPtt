@@ -68,7 +68,9 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool) -> None:
         api.process_picks = int(pattern.search(screen).group(0))
 
     ptt_id = ptt_id[:12].strip()
-    ptt_pw = ptt_pw[:8].strip()
+    # 不截斷密碼: 舊版 PTT 由 server 端忽略第 8 字之後的部分, 新版 (pttbbs #112, bcrypt)
+    # 則支援 72 字元, 兩邊都必須送出完整密碼才會正確。
+    ptt_pw = ptt_pw.strip()
 
     api.ptt_id = ptt_id
     api._ptt_pw = ptt_pw
