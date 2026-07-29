@@ -33,6 +33,17 @@ def mail(api,
 
     check_value.check_type(ptt_id, str, 'ptt_id')
     check_value.check_type(title, str, 'title')
+    # mbbsd/mail.c:774-775 char tmp_title[STRLEN-20]; include/pttstruct.h:313
+    # STRLEN 80 -> len=60 -> vtuikit.c's getdata() only accepts len-1 bytes,
+    # and vkey_purge() clears the whole input queue if the overflow byte
+    # lands right after a Big5 lead byte -- so the safe cap is len-2 = 58.
+    try:
+        encoded_title = title.encode('big5uao')
+    except UnicodeEncodeError as e:
+        raise exceptions.ParameterError(
+            f'title contains a character that cannot be encoded in Big5: {e}') from e
+    if len(encoded_title) > 58:
+        raise exceptions.ParameterError('title must not exceed 58 bytes')
     check_value.check_type(content, str, 'content')
     # 沒擋型別的話，backup='False' 這種字串是 truthy，會靜靜地存底稿。
     check_value.check_type(backup, bool, 'backup')
@@ -117,7 +128,6 @@ def mail(api,
 # ※ 發信站: 批踢踢實業坊(ptt.cc)
 # ◆ From: 220.142.14.95
 content_start = '───────────────────────────────────────'
-content_end = '--\n※ 發信站: 批踢踢實業坊(ptt.cc)'
 content_ip_old = '◆ From: '
 
 mail_author_pattern = re.compile(r'作者  (.+)')
@@ -234,7 +244,7 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
 
     # 紅包偵測
     red_envelope = False
-    if content_end not in origin_mail and 'Ptt幣的大紅包喔' in origin_mail:
+    if not any(EC in origin_mail for EC in screens.Target.content_end_list) and 'Ptt幣的大紅包喔' in origin_mail:
         mail_content = mail_content.strip()
         red_envelope = True
 
@@ -248,7 +258,8 @@ def get_mail(api, index: int, search_type: Optional[data_type.SearchType] = None
         # 非紅包開始解析 ip 與 地區
 
         ip_line_list = origin_mail.split('\n')
-        ip_line = [x for x in ip_line_list if x.startswith(content_end[3:])]
+        ip_line = [x for x in ip_line_list
+                   if any(x.startswith(EC[3:]) for EC in screens.Target.content_end_list)]
 
         if len(ip_line) == 0:
             # 沒 ip 就沒地區

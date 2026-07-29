@@ -15,7 +15,12 @@ from . import screens
 
 # pttbbs input fields cap length in bytes (Big5: 2 bytes per Chinese
 # character), not in Python characters.
-_BAD_POST_REASON_MAX_BYTES = 50
+# mbbsd/assess.c:71 getdata(..., reason, 50, DOECHO) -> len=50 -> vtuikit.c's
+# getdata() only accepts len-1 bytes, and vkey_purge() (vtuikit.c:1409-1415)
+# clears the whole input queue if the last accepted byte lands at iend ==
+# len-2 with a Big5 lead byte (>0x80) still queued right after it -- so the
+# safe cap is len-2, not len-1.
+_BAD_POST_REASON_MAX_BYTES = 48
 
 # --- del_post's `reason` field (annotates the title shown after a
 # moderator deletes another user's post) ---
@@ -24,7 +29,8 @@ _BAD_POST_REASON_MAX_BYTES = 50
 # (pttbbs mbbsd/bbs.c, del_post()'s SAFE_ARTICLE_DELETE branch) in a
 # `char reason[PROPER_TITLE_LEN]` buffer; PROPER_TITLE_LEN is 42
 # (pttbbs include/common.h), so the whole title -- prefix *and* PyPtt's
-# reason together -- is capped at 41 Big5 bytes, not python characters.
+# reason together -- is capped at 40 Big5 bytes, not python characters
+# (len-2, see the vkey_purge() mechanism below).
 # PyPtt answers the prompt with Ctrl-E (jump to the end of the prefilled
 # text) plus a leading space plus `reason`, so the byte budget actually
 # left for `reason` depends on how long the moderator's and the post
@@ -34,8 +40,11 @@ _BAD_POST_REASON_MAX_BYTES = 50
 # Verified live against a local pttbbs (bbsdocker/imageptt rebuilt with
 # SAFE_ARTICLE_DELETE enabled -- the stock image ships with that feature
 # #define'd out and never offers this prompt at all):
-#   - exactly at the budget: reason is accepted in full, title not
-#     truncated.
+#   - within the safe budget: reason is accepted in full, title not
+#     truncated. (One prior run that landed exactly on the old,
+#     off-by-one budget only happened not to trip the bug below because
+#     the overflow byte's low bit was < 0x80 -- that was luck, not a
+#     safe boundary; see the mechanism below for why.)
 #   - 1 byte over budget, ASCII-only overflow: pttbbs silently truncates
 #     to fit (title is just missing the last character).
 #   - 1 byte over budget, where the overflow splits a double-byte Big5
@@ -44,7 +53,14 @@ _BAD_POST_REASON_MAX_BYTES = 50
 #     a clean failure -- this is the "刪文失敗" a caller with a too-long
 #     reason actually experiences.
 # PyPtt must reject before sending in both cases.
-_REASON_TITLE_BUFFER_BYTES = 41  # PROPER_TITLE_LEN(42) - 1 byte reserved for the NUL terminator
+#
+# mbbsd/bbs.c:3311,3387 getdata(..., reason, PROPER_TITLE_LEN, ...);
+# include/common.h:193 PROPER_TITLE_LEN 42 -> len=42 -> vtuikit.c's
+# getdata() only accepts len-1 bytes, and vkey_purge() (vtuikit.c:1409-1415)
+# clears the whole input queue if the last accepted byte lands at
+# iend == len-2 with a Big5 lead byte still queued right after it -- so the
+# safe cap is len-2, not len-1.
+_REASON_TITLE_BUFFER_BYTES = 40  # PROPER_TITLE_LEN(42) - 2, see vkey_purge() note above
 _REASON_PREFIX_FIXED_BYTES = 13  # Big5 bytes of "(已被刪除) <>", the literal part of "(已被%s刪除) <%s>"
 # A rough, moderator/author-id-independent ceiling: the most bytes `reason`
 # could ever fit under, i.e. the budget if both PTT ids were the shortest

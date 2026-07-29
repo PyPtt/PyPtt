@@ -22,10 +22,34 @@ def set_board_title(api, board: str, new_title: str) -> None:
     check_value.check_type(board, str, 'board')
     check_value.check_type(new_title, str, 'new_title')
 
+    # mbbsd/board.c:641 vgetstr(genbuf, BTLEN-16, ...) with BTLEN=48 gives
+    # len=32; vtuikit.c:1409-1415's vkey_purge() clears the input queue one
+    # byte early, so the safe limit is 32-2=30 Big5 bytes, not 31.
+    try:
+        encoded_new_title = new_title.encode('big5uao')
+    except UnicodeEncodeError as e:
+        raise exceptions.ParameterError(
+            f'new_title contains a character that cannot be encoded in Big5: {e}') from e
+    if len(encoded_new_title) > 30:
+        raise exceptions.ParameterError('new_title must not exceed 30 bytes')
+
     _api_util.check_board(
         api,
         board,
         check_moderator=True)
+
+    # check_board() above calls get_board_info(get_post_kind=False) (to look
+    # up the moderator list) whenever the board isn't already cached, and
+    # that helper reads the board's "《board》看板設定" info screen but never
+    # dismisses its trailing "[按任意鍵繼續]" prompt. Left alone, the 'I'
+    # below lands on that prompt instead of the board's article-list screen:
+    # it gets consumed as the "any key" dismissal, so the following ctrl_p
+    # is read as the article-list's own "[Ctrl-P]發表文章" shortcut and the
+    # whole command ends up composing a new post instead of opening board
+    # settings. Verified live against a moderated board: without this
+    # re-navigation the send always lands in the article editor; with it,
+    # the confirmation targets below match every time (8/8 in local testing).
+    _api_util.goto_board(api, board)
 
     cmd_list = []
     cmd_list.append('I')
@@ -42,7 +66,10 @@ def set_board_title(api, board: str, new_title: str) -> None:
         connect_core.TargetUnit('◆ 未改變任何設定', break_detect=True),
     ]
 
-    api.connect_core.send(
+    index = api.connect_core.send(
         cmd,
         target_list,
         screen_timeout=api.config.screen_long_timeout)
+    if index < 0:
+        ori_screen = api.connect_core.get_screen_queue()[-1]
+        raise exceptions.UnknownError(ori_screen)
