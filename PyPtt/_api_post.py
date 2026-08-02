@@ -149,6 +149,18 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
     check_value.check_type(content, str, 'content')
     check_value.check_type(anonymous, bool, 'anonymous')
 
+    # mbbsd/bbs.c:1360-1365 caps the title field at DISP_TTLEN=46 cells on an
+    # 80-col screen; mbbsd/vtuikit.c:1409-1415's vkey_purge() clears the whole
+    # input queue one byte earlier than that, eating PyPtt's batched Enter and
+    # follow-up commands -- so the safe limit is 46-2=44 Big5 bytes, not 45.
+    try:
+        encoded_title = title.encode('big5uao')
+    except UnicodeEncodeError as e:
+        raise exceptions.ParameterError(
+            f'title contains a character that cannot be encoded in Big5: {e}') from e
+    if len(encoded_title) > 44:
+        raise exceptions.ParameterError('title must not exceed 44 bytes')
+
     if str(sign_file).lower() not in sign_file_list:
         raise exceptions.ParameterError(f'wrong parameter sign_file: {sign_file}')
 
@@ -205,9 +217,12 @@ def post(api, board: str, title: str, content: str, title_index: int, sign_file:
         connect_core.TargetUnit('確定[y/N]', response='y' + command.enter, max_match=1),
         connect_core.TargetUnit('x=隨機', response=str(sign_file) + command.enter),
     ]
-    api.connect_core.send(
+    index = api.connect_core.send(
         cmd,
         target_list,
         screen_timeout=api.config.screen_post_timeout)
+    if index < 0:
+        ori_screen = api.connect_core.get_screen_queue()[-1]
+        raise exceptions.UnknownError(ori_screen)
 
     log.logger.info(i18n.post, '...', i18n.success)

@@ -16,6 +16,9 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
     if not api._is_login:
         raise exceptions.RequireLogin(i18n.require_login)
 
+    if not api.is_registered_user:
+        raise exceptions.UnregisteredUser(lib_util.get_current_func_name())
+
     if not isinstance(reply_to, data_type.ReplyTo):
         raise TypeError('ReplyTo must be data_type.ReplyTo')
 
@@ -79,6 +82,12 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
         connect_core.TargetUnit('任意鍵繼續', break_detect=True),
         connect_core.TargetUnit('◆ 很抱歉, 此文章已結案並標記, 不得回應', log_level=log.INFO,
                                 exceptions_=exceptions.CantResponse()),
+        # mbbsd/bbs.c:1736 "此篇文章已結案, 是否真的要回應?(y/N)" -- closed but not
+        # marked, distinct from the CantResponse case above; answering 'y'
+        # lets the reply continue normally.
+        connect_core.TargetUnit('是否真的要回應', log_level=log.INFO, response='y' + command.enter),
+        # mbbsd/bbs.c:1742-1745 BRD_NOREPLY board: "...本板不開放回覆文章...".
+        connect_core.TargetUnit('不開放回覆文章', log_level=log.INFO, exceptions_=exceptions.CantResponse()),
         connect_core.TargetUnit('(E)繼續編輯 (W)強制寫入', log_level=log.INFO, response='W' + command.enter),
         # max_match=1 是防禦性上限，理由同 _api_mail.py。三種 reply_to（BOARD / MAIL /
         # BOARD_MAIL）都對真 PTT 實測過，這個 target 一次都沒命中，目前執行不到。
@@ -93,9 +102,12 @@ def reply_post(api, reply_to: data_type.ReplyTo, board: str, content: str, sign_
                                 response=('Y' if backup else 'N') + command.enter),
     ]
 
-    api.connect_core.send(
+    index = api.connect_core.send(
         cmd,
         target_list,
         screen_timeout=api.config.screen_long_timeout)
+    if index < 0:
+        ori_screen = api.connect_core.get_screen_queue()[-1]
+        raise exceptions.UnknownError(ori_screen)
 
     log.logger.info(reply_msg, '...', i18n.success)
