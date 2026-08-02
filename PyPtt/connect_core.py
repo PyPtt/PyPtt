@@ -22,16 +22,16 @@ from . import log
 from . import screens
 from . import ssl_config
 
+# ponytail: pass the UA per-connect instead of mutating websockets' module global.
+# The global is baked into connect()'s default arg the moment websockets lazily
+# imports asyncio.client, so mutating it only works if you get there first —
+# order-dependent action at a distance. (websockets.http also went away in 15.)
 try:
-    import websockets.http
+    from websockets.http11 import USER_AGENT as _WS_USER_AGENT
+except ImportError:  # websockets < 13
+    from websockets.http import USER_AGENT as _WS_USER_AGENT
 
-    websockets.http.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
-    use_http11 = False
-except AttributeError:
-    import websockets.http11
-
-    websockets.http11.USER_AGENT += f' PyPtt/{PyPtt.__version__}'
-    use_http11 = True
+USER_AGENT = f'{_WS_USER_AGENT} PyPtt/{PyPtt.__version__}'
 
 def ssl_init(verify_ssl: bool = True) -> ssl.SSLContext:
     # Verify the PTT server certificate against the system CA bundle.
@@ -216,11 +216,11 @@ class API(object):
 
         for _ in range(2):
             try:
-                log.logger.debug('USER_AGENT',
-                                 websockets.http11.USER_AGENT if use_http11 else websockets.http.USER_AGENT)
+                log.logger.debug('USER_AGENT', USER_AGENT)
                 # ponytail: ws:// (local docker target) can't take an ssl context —
                 # websockets errors out if you pass one on a non-wss URI
-                connect_kwargs = {'origin': websocket_origin}
+                connect_kwargs = {'origin': websocket_origin,
+                                  'user_agent_header': USER_AGENT}
                 if websocket_host.startswith('wss://'):
                     connect_kwargs['ssl'] = self._ssl_context
                 self._core = loop.run_until_complete(
@@ -525,11 +525,10 @@ class API(object):
 
     def close(self):
         if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
-            try:
-                is_open = not self._core.closed
-            except AttributeError:
-                is_open = getattr(self._core, 'open', False)
-            if self._core and is_open:
+            # close_code is None until a close frame lands — true on both the legacy
+            # WebSocketClientProtocol and the websockets>=14 ClientConnection (which
+            # dropped .closed/.open entirely).
+            if self._core and self._core.close_code is None:
                 loop = self._get_event_loop()
                 try:
                     loop.run_until_complete(asyncio.wait_for(self._core.close(), timeout=2.0))
