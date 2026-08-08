@@ -110,6 +110,14 @@ string_data = {
     "success": "Success",
     "title": "Title",
     "transaction_cancelled": "The transaction is cancelled!",
+    "two_factor_auth_required": (
+        "This account has two-factor authentication (2FA) enabled, and PyPtt cannot "
+        "complete the verification automatically. PTT's 2FA can be configured to only "
+        "require verification from new IPs, so logging in again from the same IP will "
+        "skip it. Please first manually log in to PTT from this machine using a regular "
+        "BBS client and complete one 2FA verification; afterwards this machine's IP will "
+        "be considered verified, and you can then log in with PyPtt."
+    ),
     "unregistered_user_cant_use_all_api": "Unregistered UserField Can't Use All API",
     "unregistered_user_cant_use_this_api": "Unregistered UserField Can't Use This API",
     "update_remote_version": "Fetching latest version",

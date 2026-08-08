@@ -38,6 +38,16 @@ class LoginError(Error):
         return self.message
 
 
+# 繼承 LoginError 以維持既有 `except LoginError` 呼叫端的相容性。
+# PyPtt 不實作 TOTP 自動輸入, 這裡只負責偵測畫面並指路。
+class TwoFactorAuthRequired(LoginError):
+    def __init__(self):
+        self.message = i18n.two_factor_auth_required
+
+    def __str__(self):
+        return self.message
+
+
 class NoFastComment(Error):
     def __init__(self):
         self.message = i18n.no_fast_comment

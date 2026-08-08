@@ -20,6 +20,13 @@
 
     登入失敗。
 
+.. py:exception:: PyPtt.exceptions.TwoFactorAuthRequired
+    :module: PyPtt
+
+    偵測到 PTT 的兩階段驗證畫面。PyPtt 無法自動完成驗證，僅能偵測並中斷登入流程。PTT 可設定為
+    僅新 IP 需要驗證，同一 IP 再次登入時會跳過此步驟；建議先在同一台機器上用一般 BBS 客戶端手動
+    登入一次以完成驗證。繼承自 :py:exc:`PyPtt.exceptions.LoginError`。
+
 .. py:exception:: PyPtt.exceptions.NoFastComment
     :module: PyPtt
 

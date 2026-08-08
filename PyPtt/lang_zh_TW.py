@@ -110,6 +110,12 @@ string_data = {
     "success": "成功",
     "title": "標題",
     "transaction_cancelled": "交易取消!",
+    "two_factor_auth_required": (
+        "此帳號已啟用兩階段驗證(2FA), PyPtt 無法自動完成驗證。"
+        "PTT 的兩階段驗證可設定為「僅新 IP 需要驗證」, 同一 IP 再次登入時會跳過驗證。"
+        "請先在這台機器上使用一般 BBS 客戶端手動登入 PTT 並完成一次兩階段驗證, "
+        "之後這台機器的 IP 即可被視為已驗證, 再用 PyPtt 登入。"
+    ),
     "unregistered_user_cant_use_all_api": "未註冊使用者，將無法使用全部功能",
     "unregistered_user_cant_use_this_api": "未註冊使用者，無法使用此功能",
     "update_remote_version": "確認最新版本",
