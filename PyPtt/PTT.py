@@ -230,6 +230,7 @@ class API:
 
         Raises:
             LoginError: 登入失敗。
+            TwoFactorAuthRequired: 偵測到兩階段驗證畫面，PyPtt 無法自動完成驗證。
             WrongIDorPassword: 帳號或密碼錯誤。
             OnlySecureConnection: 只能使用安全連線。
             ResetYourContactEmail: 請先至信箱設定連絡信箱。
@@ -242,6 +243,8 @@ class API:
             try:
                 ptt_bot.login(
                     ptt_id='ptt_id', ptt_pw='ptt_pw', kick_other_session=True)
+            except PyPtt.TwoFactorAuthRequired:
+                print('偵測到兩階段驗證，請先手動登入完成驗證')
             except PyPtt.LoginError:
                 print('登入失敗')
             except PyPtt.WrongIDorPassword:
