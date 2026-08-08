@@ -302,6 +302,14 @@
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.TwoFactorAuthRequired">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">TwoFactorAuthRequired</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.TwoFactorAuthRequired" title="連結到這個定義">¶</a></dt>
+<dd><p>偵測到 PTT 的兩階段驗證畫面。PyPtt 無法自動完成驗證，僅能偵測並中斷登入流程。PTT 可設定為
+僅新 IP 需要驗證，同一 IP 再次登入時會跳過此步驟；建議先在同一台機器上用一般 BBS 客戶端手動
+登入一次以完成驗證。繼承自 <a class="reference internal" href="#PyPtt.PyPtt.exceptions.LoginError" title="PyPtt.PyPtt.exceptions.LoginError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">PyPtt.exceptions.LoginError</span></code></a>。</p>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.NoFastComment">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">NoFastComment</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.NoFastComment" title="連結到這個定義">¶</a></dt>
 <dd><p>無法快速推文。</p>
@@ -526,6 +534,7 @@
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.RequireLogin"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.RequireLogin</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoPermission"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoPermission</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.LoginError"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.LoginError</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.TwoFactorAuthRequired"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.TwoFactorAuthRequired</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoFastComment"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoFastComment</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchUser"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchUser</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchMail"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchMail</span></code></a></li>
@@ -564,7 +573,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=e22a2db2"></script>
+</div><script src="_static/documentation_options.js?v=d560699c"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
