@@ -280,6 +280,7 @@
 <div class="line">這裡寫著 PyPtt 的故事。</div>
 </div>
 <div class="line-block">
+<div class="line">2026.08.08 新增兩階段驗證(2FA)畫面偵測，登入時遇到 2FA 會拋出 <code class="docutils literal notranslate"><span class="pre">TwoFactorAuthRequired``（繼承自</span> <span class="pre">``LoginError</span></code>）。</div>
 <div class="line">2026.07.26 移除樂透 API（<code class="docutils literal notranslate"><span class="pre">get_lottery</span></code> / <code class="docutils literal notranslate"><span class="pre">bet_lottery</span></code>）與相關的 <code class="docutils literal notranslate"><span class="pre">LotteryField</span></code> / <code class="docutils literal notranslate"><span class="pre">LotteryOptionField</span></code> / <code class="docutils literal notranslate"><span class="pre">LotteryBetField</span></code> / <code class="docutils literal notranslate"><span class="pre">NoSuchLottery</span></code>。這是 breaking change：樂透畫面同時違反 <code class="docutils literal notranslate"><span class="pre">TargetUnit</span></code> 螢幕比對的三個前提（畫面字串唯一標識狀態、送出後必有回應、按鍵不會被中間層吃掉），維護成本高於價值。</div>
 <div class="line">2026.07.21 新增 <a class="reference internal" href="api/set_signature_file.html"><span class="doc">set_signature_file</span></a> API（<code class="docutils literal notranslate"><span class="pre">set_signature_file</span></code>），可更新使用者名片檔（plan）。</div>
 <div class="line">2026.07.19 內嵌 pyUAO Big5-UAO 編碼器，移除對外部 <code class="docutils literal notranslate"><span class="pre">uao</span></code> 套件的依賴。</div>

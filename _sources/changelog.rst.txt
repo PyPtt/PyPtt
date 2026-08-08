@@ -2,6 +2,7 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 
+| 2026.08.08 新增兩階段驗證(2FA)畫面偵測，登入時遇到 2FA 會拋出 ``TwoFactorAuthRequired``（繼承自 ``LoginError``）。
 | 2026.07.26 移除樂透 API（``get_lottery`` / ``bet_lottery``）與相關的 ``LotteryField`` / ``LotteryOptionField`` / ``LotteryBetField`` / ``NoSuchLottery``。這是 breaking change：樂透畫面同時違反 ``TargetUnit`` 螢幕比對的三個前提（畫面字串唯一標識狀態、送出後必有回應、按鍵不會被中間層吃掉），維護成本高於價值。
 | 2026.07.21 新增 :doc:`api/set_signature_file` API（``set_signature_file``），可更新使用者名片檔（plan）。
 | 2026.07.19 內嵌 pyUAO Big5-UAO 編碼器，移除對外部 ``uao`` 套件的依賴。
