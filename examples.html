@@ -295,27 +295,27 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 
-            <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;PTT ID&#39;</span><span class="p">,</span> <span class="s1">&#39;PTT PW&#39;</span><span class="p">,</span>
+            <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">'PTT ID'</span><span class="p">,</span> <span class="s1">'PTT PW'</span><span class="p">,</span>
                           <span class="n">kick_other_session</span><span class="o">=</span><span class="kc">False</span> <span class="k">if</span> <span class="n">retry_time</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">True</span><span class="p">)</span>
             <span class="k">break</span>
         <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">LoginError</span><span class="p">:</span>
             <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;登入失敗&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'登入失敗'</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">LoginTooOften</span><span class="p">:</span>
             <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;請稍後再試&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'請稍後再試'</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">WrongIDorPassword</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;帳號密碼錯誤&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'帳號密碼錯誤'</span><span class="p">)</span>
             <span class="k">raise</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;其他錯誤:&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'其他錯誤:'</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
             <span class="k">break</span>
 
     <span class="k">return</span> <span class="n">ptt_bot</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">last_newest_index</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
@@ -325,19 +325,19 @@
                 <span class="k">if</span> <span class="n">ptt_bot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">login</span><span class="p">()</span>
 
-                <span class="n">newest_index</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_newest_index</span><span class="p">(</span><span class="n">index_type</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span><span class="p">,</span> <span class="n">board</span><span class="o">=</span><span class="s1">&#39;Gossiping&#39;</span><span class="p">)</span>
+                <span class="n">newest_index</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_newest_index</span><span class="p">(</span><span class="n">index_type</span><span class="o">=</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span><span class="p">,</span> <span class="n">board</span><span class="o">=</span><span class="s1">'Gossiping'</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionClosed</span><span class="p">:</span>
                 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">continue</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;其他錯誤:&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'其他錯誤:'</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
                 <span class="k">break</span>
 
             <span class="k">if</span> <span class="n">newest_index</span> <span class="o">==</span> <span class="n">last_newest_index</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">last_newest_index</span> <span class="o">=</span> <span class="n">newest_index</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;有新文章!&#39;</span><span class="p">,</span> <span class="n">newest_index</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'有新文章!'</span><span class="p">,</span> <span class="n">newest_index</span><span class="p">)</span>
 
             <span class="c1"># do something</span>
 
@@ -353,16 +353,16 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
 
 <span class="n">content</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="s1">&#39;5&#39;</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">right</span> <span class="o">+</span> <span class="s1">&#39;這是閃爍字&#39;</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span><span class="p">,</span>
-    <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="s1">&#39;31&#39;</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">right</span> <span class="o">+</span> <span class="s1">&#39;前景紅色&#39;</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span><span class="p">,</span>
-    <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="s1">&#39;44&#39;</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">right</span> <span class="o">+</span> <span class="s1">&#39;背景藍色&#39;</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span><span class="p">,</span>
+    <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="s1">'5'</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">right</span> <span class="o">+</span> <span class="s1">'這是閃爍字'</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span><span class="p">,</span>
+    <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="s1">'31'</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">right</span> <span class="o">+</span> <span class="s1">'前景紅色'</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span><span class="p">,</span>
+    <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="s1">'44'</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">right</span> <span class="o">+</span> <span class="s1">'背景藍色'</span> <span class="o">+</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span><span class="p">,</span>
 <span class="p">]</span>
-<span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+<span class="n">content</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
 
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
-    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="n">title_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;PyPtt 程式貼文測試&#39;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span> <span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ptt_bot</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">board</span><span class="o">=</span><span class="s1">'Test'</span><span class="p">,</span> <span class="n">title_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'PyPtt 程式貼文測試'</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span> <span class="n">sign_file</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
@@ -385,12 +385,12 @@
 <span class="n">c</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">ctrl_c</span><span class="p">,</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">right</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">color</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-    <span class="c1"># attr 例如 &#39;1;33;44&#39; 代表亮黃字、藍底</span>
+    <span class="c1"># attr 例如 '1;33;44' 代表亮黃字、藍底</span>
     <span class="k">return</span> <span class="n">c</span> <span class="o">+</span> <span class="n">left</span> <span class="o">+</span> <span class="n">attr</span> <span class="o">+</span> <span class="n">right</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="n">c</span>
 
 <span class="n">content</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;31&#39;</span><span class="p">,</span> <span class="s1">&#39;紅&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;32&#39;</span><span class="p">,</span> <span class="s1">&#39;綠&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;33&#39;</span><span class="p">,</span> <span class="s1">&#39;黃&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-    <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;33;44&#39;</span><span class="p">,</span> <span class="s1">&#39; 亮黃字藍底 &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;  &#39;</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">&#39;1;36&#39;</span><span class="p">,</span> <span class="s1">&#39;亮青字&#39;</span><span class="p">)</span>
+    <span class="n">color</span><span class="p">(</span><span class="s1">'1;31'</span><span class="p">,</span> <span class="s1">'紅'</span><span class="p">)</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">'1;32'</span><span class="p">,</span> <span class="s1">'綠'</span><span class="p">)</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">'1;33'</span><span class="p">,</span> <span class="s1">'黃'</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+    <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">'1;33;44'</span><span class="p">,</span> <span class="s1">' 亮黃字藍底 '</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'  '</span> <span class="o">+</span> <span class="n">color</span><span class="p">(</span><span class="s1">'1;36'</span><span class="p">,</span> <span class="s1">'亮青字'</span><span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -407,24 +407,24 @@
 <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># .. login ..</span>
-    <span class="n">post_info</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post</span><span class="p">(</span><span class="s1">&#39;Python&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">post_info</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post</span><span class="p">(</span><span class="s1">'Python'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="n">post_info</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">post_info</span><span class="p">[</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">PostField</span><span class="o">.</span><span class="n">post_status</span><span class="p">]</span> <span class="o">==</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">PostStatus</span><span class="o">.</span><span class="n">EXISTS</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;文章存在！&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'文章存在！'</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">post_info</span><span class="p">[</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">PostField</span><span class="o">.</span><span class="n">post_status</span><span class="p">]</span> <span class="o">==</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">PostStatus</span><span class="o">.</span><span class="n">DELETED_BY_AUTHOR</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;文章被作者刪除&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'文章被作者刪除'</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">post_info</span><span class="p">[</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">PostField</span><span class="o">.</span><span class="n">post_status</span><span class="p">]</span> <span class="o">==</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">PostStatus</span><span class="o">.</span><span class="n">DELETED_BY_MODERATOR</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;文章被版主刪除&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'文章被版主刪除'</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">post_info</span><span class="p">[</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">PostField</span><span class="o">.</span><span class="n">pass_format_check</span><span class="p">]:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;未通過格式檢查&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'未通過格式檢查'</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;文章資料可以使用&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'文章資料可以使用'</span><span class="p">)</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
 </pre></div>
@@ -459,15 +459,15 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">PyPtt</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">ptt_bot</span> <span class="o">=</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PTT1_ID&#39;</span><span class="p">],</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PTT1_PW&#39;</span><span class="p">])</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'PTT1_ID'</span><span class="p">],</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'PTT1_PW'</span><span class="p">])</span>
 
-        <span class="n">post_info</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post</span><span class="p">(</span><span class="s1">&#39;Stock&#39;</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">&#39;1c5YhY_K&#39;</span><span class="p">)</span>
+        <span class="n">post_info</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post</span><span class="p">(</span><span class="s1">'Stock'</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">'1c5YhY_K'</span><span class="p">)</span>
 
         <span class="c1"># output False</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">post_info</span><span class="p">[</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">PostField</span><span class="o">.</span><span class="n">pass_format_check</span><span class="p">])</span>
@@ -475,9 +475,9 @@
         <span class="c1"># Add custom content_end_list</span>
 
         <span class="kn">from</span><span class="w"> </span><span class="nn">PyPtt</span><span class="w"> </span><span class="kn">import</span> <span class="n">screens</span>
-        <span class="n">screens</span><span class="o">.</span><span class="n">Target</span><span class="o">.</span><span class="n">content_end_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--</span><span class="se">\n</span><span class="s1">※ 文章網址&#39;</span><span class="p">)</span>
+        <span class="n">screens</span><span class="o">.</span><span class="n">Target</span><span class="o">.</span><span class="n">content_end_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'--</span><span class="se">\n</span><span class="s1">※ 文章網址'</span><span class="p">)</span>
 
-        <span class="n">post_info</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post</span><span class="p">(</span><span class="s1">&#39;Stock&#39;</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">&#39;1c5YhY_K&#39;</span><span class="p">)</span>
+        <span class="n">post_info</span> <span class="o">=</span> <span class="n">ptt_bot</span><span class="o">.</span><span class="n">get_post</span><span class="p">(</span><span class="s1">'Stock'</span><span class="p">,</span> <span class="n">aid</span><span class="o">=</span><span class="s1">'1c5YhY_K'</span><span class="p">)</span>
 
         <span class="c1"># output True</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">post_info</span><span class="p">[</span><span class="n">PyPtt</span><span class="o">.</span><span class="n">PostField</span><span class="o">.</span><span class="n">pass_format_check</span><span class="p">])</span>
@@ -570,7 +570,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d560699c"></script>
+</div><script src="_static/documentation_options.js?v=c7a65586"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

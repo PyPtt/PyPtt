@@ -300,24 +300,24 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">api_test</span><span class="p">(</span><span class="n">thread_id</span><span class="p">,</span> <span class="n">service</span><span class="p">):</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;get_time&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;thread id </span><span class="si">{</span><span class="n">thread_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;get_time&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">'get_time'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'thread id </span><span class="si">{</span><span class="n">thread_id</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'get_time'</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;get_aid_from_url&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html&#39;</span><span class="p">})</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;thread id </span><span class="si">{</span><span class="n">thread_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;get_aid_from_url&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">'get_aid_from_url'</span><span class="p">,</span> <span class="p">{</span><span class="s1">'url'</span><span class="p">:</span> <span class="s1">'https://www.ptt.cc/bbs/Python/M.1565335521.A.880.html'</span><span class="p">})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'thread id </span><span class="si">{</span><span class="n">thread_id</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'get_aid_from_url'</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;get_newest_index&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;index_type&#39;</span><span class="p">:</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span><span class="p">,</span> <span class="s1">&#39;board&#39;</span><span class="p">:</span> <span class="s1">&#39;Python&#39;</span><span class="p">})</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;thread id </span><span class="si">{</span><span class="n">thread_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;get_newest_index&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">'get_newest_index'</span><span class="p">,</span> <span class="p">{</span><span class="s1">'index_type'</span><span class="p">:</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">NewIndex</span><span class="o">.</span><span class="n">BOARD</span><span class="p">,</span> <span class="s1">'board'</span><span class="p">:</span> <span class="s1">'Python'</span><span class="p">})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'thread id </span><span class="si">{</span><span class="n">thread_id</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'get_newest_index'</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">pyptt_init_config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="c1"># &#39;language&#39;: PyPtt.Language.ENGLISH,</span>
+        <span class="c1"># 'language': PyPtt.Language.ENGLISH,</span>
     <span class="p">}</span>
 
     <span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span><span class="n">pyptt_init_config</span><span class="p">,</span> <span class="n">call_interval</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;ptt_id&#39;</span><span class="p">:</span> <span class="s1">&#39;YOUR_PTT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;ptt_pw&#39;</span><span class="p">:</span> <span class="s1">&#39;YOUR_PTT_PW&#39;</span><span class="p">})</span>
+        <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">'login'</span><span class="p">,</span> <span class="p">{</span><span class="s1">'ptt_id'</span><span class="p">:</span> <span class="s1">'YOUR_PTT_ID'</span><span class="p">,</span> <span class="s1">'ptt_pw'</span><span class="p">:</span> <span class="s1">'YOUR_PTT_PW'</span><span class="p">})</span>
 
         <span class="n">pool</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
@@ -328,7 +328,7 @@
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pool</span><span class="p">:</span>
             <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
-        <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;logout&#39;</span><span class="p">)</span>
+        <span class="n">service</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">'logout'</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">service</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
@@ -420,7 +420,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d560699c"></script>
+</div><script src="_static/documentation_options.js?v=c7a65586"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

@@ -307,17 +307,17 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span>
-        <span class="n">ptt_id</span><span class="o">=</span><span class="s1">&#39;ptt_id&#39;</span><span class="p">,</span> <span class="n">ptt_pw</span><span class="o">=</span><span class="s1">&#39;ptt_pw&#39;</span><span class="p">,</span> <span class="n">kick_other_session</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ptt_id</span><span class="o">=</span><span class="s1">'ptt_id'</span><span class="p">,</span> <span class="n">ptt_pw</span><span class="o">=</span><span class="s1">'ptt_pw'</span><span class="p">,</span> <span class="n">kick_other_session</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">TwoFactorAuthRequired</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;偵測到兩階段驗證，請先手動登入完成驗證&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'偵測到兩階段驗證，請先手動登入完成驗證'</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">LoginError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;登入失敗&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'登入失敗'</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">WrongIDorPassword</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;帳號密碼錯誤&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'帳號密碼錯誤'</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">OnlySecureConnection</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;只能使用安全連線&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'只能使用安全連線'</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">ResetYourContactEmail</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;請先至信箱設定連絡信箱&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'請先至信箱設定連絡信箱'</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -395,7 +395,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=d560699c"></script>
+</div><script src="../_static/documentation_options.js?v=c7a65586"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
