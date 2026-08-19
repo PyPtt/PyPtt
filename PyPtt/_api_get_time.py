@@ -38,7 +38,8 @@ def get_time(api) -> str:
     # 0:00
 
     for line in line_list:
-        if '星期' in line and '線上' in line and '我是' in line:
+        # 短格式的狀態列寫 '週三' 不是 '星期六', 所以不能比對 '星期'。
+        if '線上' in line and '我是' in line:
             result = pattern.search(line)
             if result is not None:
                 return result.group(0)

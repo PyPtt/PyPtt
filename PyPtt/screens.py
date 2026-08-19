@@ -63,10 +63,14 @@ def _str_pos_at_cells(line: str, cells: int) -> int:
 
 
 class Target:
+    # 正式站狀態列有兩種寫法, 短的那種會把逗號後的空格與中括號吃掉:
+    #   [5/23 星期六 16:40] [ 射手時 ]  線上27866人, 我是CodingMan   [呼叫器]打開
+    #   8/19週三22:35   [ 七夕 ]   線上30721人,我是DeepLearning 呼叫器關閉  (h)說明
+    # 只比對兩種格式共同的最短關鍵詞。
     MainMenu = [
         '離開，再見',
-        '人, 我是',
-        '[呼叫器]',
+        '我是',
+        '呼叫器',
     ]
 
     MainMenu_Exiting = [
