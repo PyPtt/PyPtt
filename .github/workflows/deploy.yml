@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t" ]
+        python-version: [ "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t", "3.15", "3.15t" ]
 
     steps:
       - uses: actions/checkout@v5
@@ -68,6 +68,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+          allow-prereleases: true  # 3.15 還在 rc；正式版出來後可拿掉
       - name: Cache pip dependencies
         uses: actions/cache@v4
         with:
