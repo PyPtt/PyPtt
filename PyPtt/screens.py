@@ -267,7 +267,8 @@ def show(config, screen_queue, function_name=None):
 
 xy_pattern_h = re.compile(r'^=ESC=\[[\d]+;[\d]+H')
 xy_pattern_s = re.compile(r'^=ESC=\[[\d]+;[\d]+s')
-_color_sgr = re.compile(r'\x1B\[[\d+;]*m')
+# SGR 顏色 + DEC 私有模式開關 (ESC[?2026h/l 同步輸出): 後者若留著, 引擎會當未知 escape 而丟掉其後整段畫面
+_color_sgr = re.compile(r'\x1B\[(?:[\d+;]*m|\?[\d;]*[hl])')
 
 
 def _preprocess(data: str) -> str:
