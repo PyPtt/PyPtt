@@ -445,3 +445,9 @@ class TestRealFixtures:
         assert '編號' in lines[2] and '看  板' in lines[2] and '類別' in lines[2]
         # Footer action hints.
         assert '增加看板' in lines[23]
+
+
+def test_dec_private_mode_escape_does_not_drop_screen():
+    # PTT 送 ESC[?2026h/l (同步輸出); 沒被吃掉時引擎會在此中止, 整個畫面變空白 (登入 LoginError)
+    lines = parse(b'\x1b[2J\x1b[?2026h\x1b[3;1Hhello\x1b[?2026l\x1b[4;1Hworld')
+    assert 'hello' in lines[2] and 'world' in lines[3]
