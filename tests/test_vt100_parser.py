@@ -451,3 +451,9 @@ def test_dec_private_mode_escape_does_not_drop_screen():
     # PTT 送 ESC[?2026h/l (同步輸出); 沒被吃掉時引擎會在此中止, 整個畫面變空白 (登入 LoginError)
     lines = parse(b'\x1b[2J\x1b[?2026h\x1b[3;1Hhello\x1b[?2026l\x1b[4;1Hworld')
     assert 'hello' in lines[2] and 'world' in lines[3]
+
+
+def test_dsr_query_is_ignored():
+    # PTT 歡迎畫面送 ESC[6n (DSR 游標位置查詢) 且不等回應; 沒被吃掉時畫面凍結在登入提示之前 (LoginError)
+    lines = parse(b'\x1b[2J\x1b[3;1Hhello\x1b[6n\x1b[4;1Hworld')
+    assert 'hello' in lines[2] and 'world' in lines[3]
