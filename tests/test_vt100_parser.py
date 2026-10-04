@@ -457,3 +457,27 @@ def test_dsr_query_is_ignored():
     # PTT 歡迎畫面送 ESC[6n (DSR 游標位置查詢) 且不等回應; 沒被吃掉時畫面凍結在登入提示之前 (LoginError)
     lines = parse(b'\x1b[2J\x1b[3;1Hhello\x1b[6n\x1b[4;1Hworld')
     assert 'hello' in lines[2] and 'world' in lines[3]
+
+
+def test_stray_esc_and_unknown_csi_are_ignored():
+    # PTT 主選單動畫尾端送 '\x1b\x1b[?2026h' (孤立 ESC); 未知 CSI 依 ECMA-48 一律略過 (PttCurrent M.1789835163.A.633)
+    lines = parse(b'\x1b[30m \x1b\x1b[?2026h\x1b[H\x1b[2J\x1b[3;1Hhello\x1b[0K\x1b[>4;1m\x1b[4;1Hworld')
+    assert 'hello' in lines[2] and 'world' in lines[3]
+
+
+def test_stray_esc_split_across_chunks():
+    from PyPtt.screens import IncrementalScreen
+    data = b'\x1b[2J\x1b[3;1Hhello\x1b\x1b[?2026h\x1b[4;1Hworld'
+    for cut in range(1, len(data)):
+        s = IncrementalScreen('utf-8')
+        s.feed(data[:cut])
+        s.feed(data[cut:])
+        lines = s.screen.split('\n')
+        assert 'hello' in lines[2] and 'world' in lines[3], cut
+    # ESC 後接非 ESC (串流會把尾端空白留到下一輪): 串流與批次須一致
+    data = b'a\x1b b'
+    for cut in range(1, len(data)):
+        s = IncrementalScreen('utf-8')
+        s.feed(data[:cut])
+        s.feed(data[cut:])
+        assert s.screen == VT100Parser(data, 'utf-8').screen, cut
