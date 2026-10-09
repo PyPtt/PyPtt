@@ -13,7 +13,7 @@ PyPtt 目前相依於以下套件，這些套件都會在安裝的過程中被�
 
 * progressbar2_ is a text progress bar library for Python.
 * websockets_ is a library for building WebSocket_ servers and clients in Python with a focus on correctness, simplicity, robustness, and performance.
-* uao_ is a pure Python implementation of the Unicode encoder/decoder.
+* certifi_ provides Mozilla's CA bundle, used to verify the TLS connection to PTT.
 * requests_ is a Python HTTP library, released under the Apache License 2.0.
 * AutoStrEnum_ is a Python library that provides an Enum class that automatically converts enum values to and from strings.
 * PyYAML_ is a YAML parser and emitter for Python.
@@ -21,7 +21,7 @@ PyPtt 目前相依於以下套件，這些套件都會在安裝的過程中被�
 .. _progressbar2: https://progressbar-2.readthedocs.io/en/latest/
 .. _websockets: https://websockets.readthedocs.io/en/stable/
 .. _`WebSocket`: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
-.. _uao: https://github.com/eight04/pyUAO
+.. _certifi: https://github.com/certifi/python-certifi
 .. _requests: https://requests.readthedocs.io/en/master/
 .. _AutoStrEnum: https://github.com/PttCodingMan/PttCodingMan
 .. _PyYAML: https://pyyaml.org/

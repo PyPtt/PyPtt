@@ -280,6 +280,14 @@
 <div class="line">這裡寫著 PyPtt 的故事。</div>
 </div>
 <div class="line-block">
+<div class="line">2026.10.09 相容 PTT 新版主選單狀態列（登入判定、<code class="docutils literal notranslate"><span class="pre">get_time</span></code>），修正登入時拋出 <code class="docutils literal notranslate"><span class="pre">LoginError</span></code>。</div>
+<div class="line">2026.10.04 <code class="docutils literal notranslate"><span class="pre">VT100Parser</span></code> 依 ECMA-48 略過未知 CSI 與孤立 ESC，修正登入時拋出 <code class="docutils literal notranslate"><span class="pre">LoginError</span></code>。</div>
+<div class="line">2026.09.27 <code class="docutils literal notranslate"><span class="pre">VT100Parser</span></code> 忽略 DSR 查詢 <code class="docutils literal notranslate"><span class="pre">ESC[6n</span></code>，修正登入時拋出 <code class="docutils literal notranslate"><span class="pre">LoginError</span></code>。(#226)</div>
+<div class="line">2026.09.21 <code class="docutils literal notranslate"><span class="pre">VT100Parser</span></code> 忽略 DEC 私有模式 <code class="docutils literal notranslate"><span class="pre">ESC[?2026h/l</span></code>，修正登入時拋出 <code class="docutils literal notranslate"><span class="pre">LoginError</span></code>。(#224)</div>
+<div class="line">2026.09.21 CI 測試矩陣加入 Python 3.15 / 3.15t。(#225)</div>
+<div class="line">2026.08.19 相容 PTT 主選單狀態列的短格式（登入判定、<code class="docutils literal notranslate"><span class="pre">get_time</span></code>、呼叫器狀態）。(#223)</div>
+</div>
+<div class="line-block">
 <div class="line">2026.08.08 新增兩階段驗證(2FA)畫面偵測，登入時遇到 2FA 會拋出 <code class="docutils literal notranslate"><span class="pre">TwoFactorAuthRequired``（繼承自</span> <span class="pre">``LoginError</span></code>）。</div>
 <div class="line">2026.07.26 移除樂透 API（<code class="docutils literal notranslate"><span class="pre">get_lottery</span></code> / <code class="docutils literal notranslate"><span class="pre">bet_lottery</span></code>）與相關的 <code class="docutils literal notranslate"><span class="pre">LotteryField</span></code> / <code class="docutils literal notranslate"><span class="pre">LotteryOptionField</span></code> / <code class="docutils literal notranslate"><span class="pre">LotteryBetField</span></code> / <code class="docutils literal notranslate"><span class="pre">NoSuchLottery</span></code>。這是 breaking change：樂透畫面同時違反 <code class="docutils literal notranslate"><span class="pre">TargetUnit</span></code> 螢幕比對的三個前提（畫面字串唯一標識狀態、送出後必有回應、按鍵不會被中間層吃掉），維護成本高於價值。</div>
 <div class="line">2026.07.21 新增 <a class="reference internal" href="api/set_signature_file.html"><span class="doc">set_signature_file</span></a> API（<code class="docutils literal notranslate"><span class="pre">set_signature_file</span></code>），可更新使用者名片檔（plan）。</div>

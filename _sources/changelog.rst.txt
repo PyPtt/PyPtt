@@ -2,6 +2,13 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 
+| 2026.10.09 相容 PTT 新版主選單狀態列（登入判定、``get_time``），修正登入時拋出 ``LoginError``。
+| 2026.10.04 ``VT100Parser`` 依 ECMA-48 略過未知 CSI 與孤立 ESC，修正登入時拋出 ``LoginError``。
+| 2026.09.27 ``VT100Parser`` 忽略 DSR 查詢 ``ESC[6n``，修正登入時拋出 ``LoginError``。(#226)
+| 2026.09.21 ``VT100Parser`` 忽略 DEC 私有模式 ``ESC[?2026h/l``，修正登入時拋出 ``LoginError``。(#224)
+| 2026.09.21 CI 測試矩陣加入 Python 3.15 / 3.15t。(#225)
+| 2026.08.19 相容 PTT 主選單狀態列的短格式（登入判定、``get_time``、呼叫器狀態）。(#223)
+
 | 2026.08.08 新增兩階段驗證(2FA)畫面偵測，登入時遇到 2FA 會拋出 ``TwoFactorAuthRequired``（繼承自 ``LoginError``）。
 | 2026.07.26 移除樂透 API（``get_lottery`` / ``bet_lottery``）與相關的 ``LotteryField`` / ``LotteryOptionField`` / ``LotteryBetField`` / ``NoSuchLottery``。這是 breaking change：樂透畫面同時違反 ``TargetUnit`` 螢幕比對的三個前提（畫面字串唯一標識狀態、送出後必有回應、按鍵不會被中間層吃掉），維護成本高於價值。
 | 2026.07.21 新增 :doc:`api/set_signature_file` API（``set_signature_file``），可更新使用者名片檔（plan）。

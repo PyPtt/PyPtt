@@ -5,6 +5,11 @@
 
 | 例外的種類
 
+.. py:exception:: PyPtt.exceptions.UnknownError
+    :module: PyPtt
+
+    未知的錯誤。
+
 .. py:exception:: PyPtt.exceptions.RequireLogin
     :module: PyPtt
 

@@ -55,9 +55,9 @@ Q: 在 Mac 無法使用 WebSocket 連線，遭遇 SSL 相關錯誤
 | A: 請參考以下指令，安裝 Python 的 SSL 憑證
 
 .. code-block:: bash
-    :caption: 以 Python 3.10 為例
+    :caption: 以 Python 3.12 為例
 
-    sh /Applications/Python\ 3.10/Install\ Certificates.command
+    sh /Applications/Python\ 3.12/Install\ Certificates.command
 
 Q: 為什麼我沒辦法在雲端環境上使用 PyPtt？
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
