@@ -20,4 +20,5 @@ def test_find_time_none():
 
 
 def test_cursor_to_goodbye_matches_main_menu():
-    assert screens.Target.CursorToGoodbye == screens.Target.MainMenu
+    # login 會在 CursorToGoodbye 尾端追加游標項目, 只比對 MainMenu 的前綴
+    assert screens.Target.CursorToGoodbye[:len(screens.Target.MainMenu)] == screens.Target.MainMenu
