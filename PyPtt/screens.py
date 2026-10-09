@@ -66,11 +66,11 @@ class Target:
     # 正式站狀態列有兩種寫法, 短的那種會把逗號後的空格與中括號吃掉:
     #   [5/23 星期六 16:40] [ 射手時 ]  線上27866人, 我是CodingMan   [呼叫器]打開
     #   8/19週三22:35   [ 七夕 ]   線上30721人,我是DeepLearning 呼叫器關閉  (h)說明
-    # 只比對兩種格式共同的最短關鍵詞。
+    # 新版 (2026-10) 已拿掉「我是」「呼叫器」:
+    #   主選單   世界郵政日   10/9 週五 15:04 | janice001 | 線上24305人       (h)說明
+    # 只比對三種格式共同的最短關鍵詞。
     MainMenu = [
         '離開，再見',
-        '我是',
-        '呼叫器',
     ]
 
     MainMenu_Exiting = [
@@ -267,9 +267,9 @@ def show(config, screen_queue, function_name=None):
 
 xy_pattern_h = re.compile(r'^=ESC=\[[\d]+;[\d]+H')
 xy_pattern_s = re.compile(r'^=ESC=\[[\d]+;[\d]+s')
-# SGR 顏色 + DEC 私有模式開關 (ESC[?2026h/l 同步輸出) + DSR 查詢 (ESC[6n, PTT 不等回應):
-# 後兩者若留著, 引擎會當未知 escape 而丟掉其後整段畫面
-_color_sgr = re.compile(r'\x1B\[(?:[\d+;]*m|\?[\d;]*[hl]|\d*n)')
+# 依 ECMA-48 剝掉引擎不處理的 CSI (顏色、ESC[?2026h、ESC[6n…, PttCurrent M.1789835163.A.633),
+# 以及被下一個 ESC 打斷的孤立 ESC (主選單動畫尾端的 '\x1b\x1b[?2026h'); 留著會讓引擎凍住畫面
+_color_sgr = re.compile(r'\x1B(?=\x1B)|\x1B\[(?!(?:\d+;\d+)?[Hs]|K|2J)[0-?]*[ -/]*[@-~]')
 
 
 def _preprocess(data: str) -> str:
@@ -495,6 +495,8 @@ class IncrementalScreen(_VT100Engine):
             cut -= 1
         esc = s.rfind('\x1b')
         if esc != -1 and not _escape_complete(s[esc:]):
+            while esc > 0 and s[esc - 1] == '\x1b':
+                esc -= 1        # 孤立 ESC 要跟後面的 ESC 一起送, _preprocess 才認得
             cut = min(cut, esc)
         return cut
 
