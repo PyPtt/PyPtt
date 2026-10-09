@@ -40,6 +40,8 @@ PyPtt
 
 重要消息
 --------------------
+| 2026.08.08 偵測 PTT 兩階段驗證(2FA)，登入時會拋出 ``TwoFactorAuthRequired``
+| 2026.07.26 移除樂透 API（breaking change），詳見 :doc:`更新日誌 <changelog>`
 | 2025.10.18 支援 Python 3.14 Free Threaded
 | 2025.09.06 發佈 `PTT MCP server`_
 
