@@ -102,7 +102,8 @@ jobs:
           tests/test_parse_query_post.py \
           tests/test_get_post_parser.py \
           tests/test_get_content_formula.py \
-          tests/test_uao_codec.py
+          tests/test_uao_codec.py \
+          tests/test_two_factor_auth.py
 
   # Runs the credentialed integration suite (tests/) against a disposable
   # local pttbbs container instead of the real PTT (cloud runners can't reach

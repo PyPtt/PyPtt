@@ -113,6 +113,8 @@ class API:
         self.ptt_id: str = ''
         self._ptt_pw: str = ''
         self._is_login: bool = False
+        # login() 停在兩階段驗證畫面時保留 target 清單, 給 submit_otp() 接續使用
+        self._otp_target_list = None
 
         host = kwargs.get('host', data_type.HOST.PTT1)
         screen_timeout = kwargs.get('screen_timeout', 3.0)
@@ -230,7 +232,7 @@ class API:
 
         Raises:
             LoginError: 登入失敗。
-            TwoFactorAuthRequired: 偵測到兩階段驗證畫面，PyPtt 無法自動完成驗證。
+            TwoFactorAuthRequired: 此帳號需要兩階段驗證。連線會停在驗證碼輸入畫面，請取得驗證碼後呼叫 :py:meth:`submit_otp` 繼續登入。
             WrongIDorPassword: 帳號或密碼錯誤。
             OnlySecureConnection: 只能使用安全連線。
             ResetYourContactEmail: 請先至信箱設定連絡信箱。
@@ -244,7 +246,7 @@ class API:
                 ptt_bot.login(
                     ptt_id='ptt_id', ptt_pw='ptt_pw', kick_other_session=True)
             except PyPtt.TwoFactorAuthRequired:
-                print('偵測到兩階段驗證，請先手動登入完成驗證')
+                print('需要兩階段驗證，請參考 submit_otp 的範例')
             except PyPtt.LoginError:
                 print('登入失敗')
             except PyPtt.WrongIDorPassword:
@@ -257,6 +259,46 @@ class API:
         """
 
         _api_loginout.login(self, ptt_id, ptt_pw, kick_other_session)
+
+    def submit_otp(self, otp: str) -> None:
+        """
+        送出兩階段驗證碼，接續被 :py:exc:`TwoFactorAuthRequired` 中斷的登入。
+
+        PyPtt 不會自己向使用者要驗證碼：:py:meth:`login` 遇到兩階段驗證畫面時丟出
+        :py:exc:`TwoFactorAuthRequired` 並保留連線，由 app 用自己的介面取得驗證碼後呼叫本方法。
+        驗證碼錯誤時會再丟出 :py:exc:`TwoFactorAuthRequired`，連線仍保留，可以再呼叫一次。
+        錯誤次數過多時 PTT 會中斷連線，此時必須重新呼叫 :py:meth:`login`。
+
+        Args:
+            otp (str): 6 位數字的限時驗證碼，或 8 位數字的救援碼。
+
+        Returns:
+            None
+
+        Raises:
+            TwoFactorAuthRequired: 驗證碼錯誤，可以再呼叫一次本方法。
+            ConnectionClosed: 錯誤次數過多，PTT 已中斷連線。
+            RequireLogin: 目前沒有等待輸入的兩階段驗證。
+
+        範例::
+
+            import PyPtt
+            ptt_bot = PyPtt.API()
+
+            try:
+                ptt_bot.login(ptt_id='ptt_id', ptt_pw='ptt_pw')
+            except PyPtt.TwoFactorAuthRequired:
+                while True:
+                    # 由 app 用自己的介面（對話框、網頁表單等）取得驗證碼
+                    otp = ask_user_for_otp()
+                    try:
+                        ptt_bot.submit_otp(otp)
+                        break
+                    except PyPtt.TwoFactorAuthRequired:
+                        print('驗證碼錯誤，請重新輸入')
+        """
+
+        _api_loginout.submit_otp(self, otp)
 
     def logout(self) -> None:
         """

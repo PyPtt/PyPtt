@@ -75,6 +75,7 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool) -> None:
     api.ptt_id = ptt_id
     api._ptt_pw = ptt_pw
 
+    api._otp_target_list = None
     api.connect_core.connect()
 
     log.logger.info(i18n.login_id, ptt_id)
@@ -98,7 +99,9 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool) -> None:
         connect_core.TargetUnit('您想刪除其他重複登入的連線嗎', response=kick_other_login_response),
         connect_core.TargetUnit('◆ 您的註冊申請單尚在處理中', response=command.enter, handler=register_processing),
         # 需排在「任意鍵」等泛用 catch-all 之前, 否則會被搶先命中而吃不到這條。
-        connect_core.TargetUnit('兩階段', break_detect=True, exceptions_=exceptions.TwoFactorAuthRequired()),
+        # 字串取自 pttbbs daemon/logind/logind.c; 只比對「兩階段」會誤中 mbbsd 的「2FA 兩階段驗證成功」。
+        connect_core.TargetUnit('請輸入兩階段(2FA)驗證碼', break_detect=True,
+                                exceptions_=exceptions.TwoFactorAuthRequired()),
         connect_core.TargetUnit('任意鍵', response=' '),
         connect_core.TargetUnit('正在更新與同步線上使用者及好友名單'),
         connect_core.TargetUnit('【分類看板】', response=command.go_main_menu),
@@ -132,12 +135,46 @@ def login(api, ptt_id: str, ptt_pw: str, kick_other_session: bool) -> None:
 
     cmd = ''.join(cmd_list)
 
-    index = api.connect_core.send(
-        cmd,
-        target_list,
-        screen_timeout=api.config.screen_long_timeout,
-        refresh=False,
-        secret=True)
+    try:
+        index = api.connect_core.send(
+            cmd,
+            target_list,
+            screen_timeout=api.config.screen_long_timeout,
+            refresh=False,
+            secret=True)
+    except exceptions.TwoFactorAuthRequired:
+        # 連線停在驗證碼輸入畫面, app 取得驗證碼後呼叫 submit_otp() 接續登入。
+        api._otp_target_list = target_list
+        raise
+
+    _finish_login(api, index)
+
+
+def submit_otp(api, otp: str) -> None:
+    _api_util.one_thread(api)
+
+    check_value.check_type(otp, str, 'otp')
+
+    if api._otp_target_list is None:
+        raise exceptions.RequireLogin(i18n.require_login)
+
+    target_list, api._otp_target_list = api._otp_target_list, None
+    try:
+        index = api.connect_core.send(
+            otp.strip() + command.enter,
+            target_list,
+            screen_timeout=api.config.screen_long_timeout,
+            refresh=False,
+            secret=True)
+    except exceptions.TwoFactorAuthRequired:
+        # 驗證碼錯誤: PTT 會重畫輸入提示, 連線仍停在同一個畫面, 可以再呼叫一次 submit_otp()。
+        api._otp_target_list = target_list
+        raise
+
+    _finish_login(api, index)
+
+
+def _finish_login(api, index: int) -> None:
     if index == 0:
 
         current_capacity, max_capacity = _api_util.get_mailbox_capacity(api)
