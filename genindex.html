@@ -195,7 +195,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">APIs</a><input aria-label="Toggle navigation of APIs" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/init.html">init</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/login_logout.html">login, logout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/login_logout.html">login, submit_otp, logout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_post.html">get_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_newest_index.html">get_newest_index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/post.html">post</a></li>
@@ -435,10 +435,12 @@
   <h2>F</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="type.html#PyPtt.UserField.five_chess">five_chess (PyPtt.UserField 的屬性)</a>
+        <li><a href="type.html#PyPtt.TwoFactorAuthReason.FIRST">FIRST (PyPtt.TwoFactorAuthReason 的屬性)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="type.html#PyPtt.UserField.five_chess">five_chess (PyPtt.UserField 的屬性)</a>
+</li>
         <li><a href="type.html#PyPtt.PostField.full_content">full_content (PyPtt.PostField 的屬性)</a>
 </li>
     </ul></td>
@@ -677,6 +679,8 @@
 </li>
         <li><a href="exceptions.html#PyPtt.PyPtt.exceptions.SetContactMailFirst">PyPtt.exceptions.SetContactMailFirst</a>
 </li>
+        <li><a href="exceptions.html#PyPtt.PyPtt.exceptions.TwoFactorAuthFailed">PyPtt.exceptions.TwoFactorAuthFailed</a>
+</li>
         <li><a href="exceptions.html#PyPtt.PyPtt.exceptions.TwoFactorAuthRequired">PyPtt.exceptions.TwoFactorAuthRequired</a>
 </li>
         <li><a href="exceptions.html#PyPtt.PyPtt.exceptions.UnregisteredUser">PyPtt.exceptions.UnregisteredUser</a>
@@ -785,6 +789,10 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="type.html#PyPtt.ConnectMode.WEBSOCKETS">WEBSOCKETS (PyPtt.ConnectMode 的屬性)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="type.html#PyPtt.TwoFactorAuthReason.WRONG_CODE">WRONG_CODE (PyPtt.TwoFactorAuthReason 的屬性)</a>
 </li>
     </ul></td>
   </tr></table>

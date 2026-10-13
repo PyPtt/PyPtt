@@ -197,7 +197,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">APIs</a><input aria-label="Toggle navigation of APIs" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/init.html">init</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/login_logout.html">login, logout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/login_logout.html">login, submit_otp, logout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_post.html">get_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_newest_index.html">get_newest_index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/post.html">post</a></li>
@@ -304,9 +304,15 @@
 <dl class="py exception">
 <dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.TwoFactorAuthRequired">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">TwoFactorAuthRequired</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.TwoFactorAuthRequired" title="連結到這個定義">¶</a></dt>
-<dd><p>偵測到 PTT 的兩階段驗證畫面。PyPtt 無法自動完成驗證，僅能偵測並中斷登入流程。PTT 可設定為
-僅新 IP 需要驗證，同一 IP 再次登入時會跳過此步驟；建議先在同一台機器上用一般 BBS 客戶端手動
-登入一次以完成驗證。繼承自 <a class="reference internal" href="#PyPtt.PyPtt.exceptions.LoginError" title="PyPtt.PyPtt.exceptions.LoginError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">PyPtt.exceptions.LoginError</span></code></a>。</p>
+<dd><p>此帳號需要兩階段驗證(2FA)。連線會停在 PTT 的驗證碼輸入畫面，請由 app 取得驗證碼後呼叫
+<a class="reference internal" href="api/login_logout.html"><span class="doc">login, submit_otp, logout</span></a> 的 <code class="docutils literal notranslate"><span class="pre">submit_otp</span></code> 繼續登入。<code class="docutils literal notranslate"><span class="pre">reason</span></code> 屬性為 <a class="reference internal" href="type.html#two-factor-auth-reason"><span class="std std-ref">TwoFactorAuthReason</span></a>，
+<code class="docutils literal notranslate"><span class="pre">ptt_id</span></code> 屬性為登入中的帳號。繼承自 <a class="reference internal" href="#PyPtt.PyPtt.exceptions.LoginError" title="PyPtt.PyPtt.exceptions.LoginError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">PyPtt.exceptions.LoginError</span></code></a>。</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="PyPtt.PyPtt.exceptions.TwoFactorAuthFailed">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">PyPtt.exceptions.</span></span><span class="sig-name descname"><span class="pre">TwoFactorAuthFailed</span></span><a class="headerlink" href="#PyPtt.PyPtt.exceptions.TwoFactorAuthFailed" title="連結到這個定義">¶</a></dt>
+<dd><p>兩階段驗證失敗次數過多，連線已中斷，必須重新登入。繼承自 <a class="reference internal" href="#PyPtt.PyPtt.exceptions.LoginError" title="PyPtt.PyPtt.exceptions.LoginError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">PyPtt.exceptions.LoginError</span></code></a>。</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -535,6 +541,7 @@
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoPermission"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoPermission</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.LoginError"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.LoginError</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.TwoFactorAuthRequired"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.TwoFactorAuthRequired</span></code></a></li>
+<li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.TwoFactorAuthFailed"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.TwoFactorAuthFailed</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoFastComment"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoFastComment</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchUser"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchUser</span></code></a></li>
 <li><a class="reference internal" href="#PyPtt.PyPtt.exceptions.NoSuchMail"><code class="docutils literal notranslate"><span class="pre">PyPtt.exceptions.NoSuchMail</span></code></a></li>
