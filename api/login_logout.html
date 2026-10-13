@@ -309,16 +309,15 @@
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span>
         <span class="n">ptt_id</span><span class="o">=</span><span class="s1">'ptt_id'</span><span class="p">,</span> <span class="n">ptt_pw</span><span class="o">=</span><span class="s1">'ptt_pw'</span><span class="p">,</span> <span class="n">kick_other_session</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">TwoFactorAuthRequired</span><span class="p">:</span>
-    <span class="c1"># 參考 submit_otp 的範例</span>
-    <span class="k">pass</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'需要兩階段驗證，請參考 submit_otp 的範例'</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">LoginError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'登入失敗'</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">WrongIDorPassword</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">'帳號密碼錯誤'</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">OnlySecureConnection</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">'只能使用安全連線'</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">ResetYourContactEmail</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">'請先至信箱設定連絡信箱'</span><span class="p">)</span>
-<span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">LoginError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">'登入失敗'</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -349,12 +348,10 @@
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">PyPtt.API.</span></span><span class="sig-name descname"><span class="pre">submit_otp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">otp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
 <dd><p>送出兩階段驗證碼，接續被 <code class="xref py py-exc docutils literal notranslate"><span class="pre">TwoFactorAuthRequired</span></code> 中斷的登入。</p>
-<p>PyPtt 不會自己向使用者要驗證碼：<code class="xref py py-meth docutils literal notranslate"><span class="pre">login()</span></code> 遇到 PTT 的兩階段驗證畫面時丟出
-<code class="xref py py-exc docutils literal notranslate"><span class="pre">TwoFactorAuthRequired</span></code> 並保留連線，由 app 用自己的介面取得驗證碼後呼叫本方法。</p>
-<p>驗證碼錯誤時會再丟出 <code class="xref py py-exc docutils literal notranslate"><span class="pre">TwoFactorAuthRequired</span></code>，其 <code class="docutils literal notranslate"><span class="pre">reason</span></code> 為
-<code class="docutils literal notranslate"><span class="pre">TwoFactorAuthReason.WRONG_CODE</span></code>，連線仍保留，可以再呼叫一次本方法。
-PTT 的錯誤次數與密碼錯誤共用上限（目前為 3 次），超過後會中斷連線並丟出
-<code class="xref py py-exc docutils literal notranslate"><span class="pre">TwoFactorAuthFailed</span></code>，此時必須重新呼叫 <code class="xref py py-meth docutils literal notranslate"><span class="pre">login()</span></code>。</p>
+<p>PyPtt 不會自己向使用者要驗證碼：<code class="xref py py-meth docutils literal notranslate"><span class="pre">login()</span></code> 遇到兩階段驗證畫面時丟出
+<code class="xref py py-exc docutils literal notranslate"><span class="pre">TwoFactorAuthRequired</span></code> 並保留連線，由 app 用自己的介面取得驗證碼後呼叫本方法。
+驗證碼錯誤時會再丟出 <code class="xref py py-exc docutils literal notranslate"><span class="pre">TwoFactorAuthRequired</span></code>，連線仍保留，可以再呼叫一次。
+錯誤次數過多時 PTT 會中斷連線，此時必須重新呼叫 <code class="xref py py-meth docutils literal notranslate"><span class="pre">login()</span></code>。</p>
 <dl class="field-list simple">
 <dt class="field-odd">參數<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>otp</strong> (<em>str</em>) -- 6 位數字的限時驗證碼，或 8 位數字的救援碼。</p>
@@ -364,10 +361,9 @@ PTT 的錯誤次數與密碼錯誤共用上限（目前為 3 次），超過後�
 </dd>
 <dt class="field-odd">引發<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.TwoFactorAuthRequired" title="PyPtt.PyPtt.exceptions.TwoFactorAuthRequired"><strong>TwoFactorAuthRequired</strong></a> -- 驗證碼錯誤，可以重新呼叫本方法。</p></li>
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.TwoFactorAuthFailed" title="PyPtt.PyPtt.exceptions.TwoFactorAuthFailed"><strong>TwoFactorAuthFailed</strong></a> -- 驗證失敗次數過多，連線已中斷，必須重新登入。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.TwoFactorAuthRequired" title="PyPtt.PyPtt.exceptions.TwoFactorAuthRequired"><strong>TwoFactorAuthRequired</strong></a> -- 驗證碼錯誤，可以再呼叫一次本方法。</p></li>
+<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.ConnectionClosed" title="PyPtt.PyPtt.exceptions.ConnectionClosed"><strong>ConnectionClosed</strong></a> -- 錯誤次數過多，PTT 已中斷連線。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.RequireLogin" title="PyPtt.PyPtt.exceptions.RequireLogin"><strong>RequireLogin</strong></a> -- 目前沒有等待輸入的兩階段驗證。</p></li>
-<li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.ParameterError" title="PyPtt.PyPtt.exceptions.ParameterError"><strong>ParameterError</strong></a> -- 驗證碼格式錯誤。</p></li>
 </ul>
 </dd>
 </dl>
@@ -377,17 +373,15 @@ PTT 的錯誤次數與密碼錯誤共用上限（目前為 3 次），超過後�
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">ptt_bot</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">ptt_id</span><span class="o">=</span><span class="s1">'ptt_id'</span><span class="p">,</span> <span class="n">ptt_pw</span><span class="o">=</span><span class="s1">'ptt_pw'</span><span class="p">)</span>
-<span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">TwoFactorAuthRequired</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">TwoFactorAuthRequired</span><span class="p">:</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="c1"># 由 app 用自己的介面（對話框、網頁表單等）取得驗證碼，</span>
-        <span class="c1"># e.reason 可以用來決定提示文字。</span>
-        <span class="n">otp</span> <span class="o">=</span> <span class="n">ask_user_for_otp</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
+        <span class="c1"># 由 app 用自己的介面（對話框、網頁表單等）取得驗證碼</span>
+        <span class="n">otp</span> <span class="o">=</span> <span class="n">ask_user_for_otp</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ptt_bot</span><span class="o">.</span><span class="n">submit_otp</span><span class="p">(</span><span class="n">otp</span><span class="p">)</span>
             <span class="k">break</span>
-        <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">TwoFactorAuthRequired</span> <span class="k">as</span> <span class="n">wrong_code</span><span class="p">:</span>
-            <span class="n">e</span> <span class="o">=</span> <span class="n">wrong_code</span>
-<span class="c1"># TwoFactorAuthFailed 會繼續往上丟，代表必須重新登入</span>
+        <span class="k">except</span> <span class="n">PyPtt</span><span class="o">.</span><span class="n">TwoFactorAuthRequired</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'驗證碼錯誤，請重新輸入'</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

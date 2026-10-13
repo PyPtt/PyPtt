@@ -44,20 +44,6 @@ ConnectMode
 
     使用 TELNET 連線
 
-.. _two-factor-auth-reason:
-
-TwoFactorAuthReason
--------------------
-* 要求輸入兩階段驗證碼的原因，見 :py:exc:`PyPtt.exceptions.TwoFactorAuthRequired`。
-
-.. py:attribute:: PyPtt.TwoFactorAuthReason.FIRST
-
-    第一次要求輸入驗證碼
-
-.. py:attribute:: PyPtt.TwoFactorAuthReason.WRONG_CODE
-
-    上一次送出的驗證碼錯誤，PTT 要求重新輸入
-
 .. _new-index:
 
 NewIndex
