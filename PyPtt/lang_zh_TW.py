@@ -72,6 +72,7 @@ string_data = {
     "no_comment": "禁止推薦",
     "no_fast_comment": "禁止快速連續推文",
     "no_money": "PTT 幣不足",
+    "no_pending_two_factor_auth": "目前沒有等待輸入的兩階段驗證, 請先呼叫 login()",
     "no_permission": "使用者沒有權限",
     "no_response": "很抱歉, 此文章已結案並標記, 不得回應",
     "no_search_result": "沒有搜尋結果",
@@ -83,6 +84,7 @@ string_data = {
     "not_push_aligned": "無推文對齊",
     "not_record_ip": "不紀錄 IP",
     "old_cursor": "舊式游標",
+    "otp_format_error": "驗證碼必須是 6 位數字(限時驗證碼)或 8 位數字(救援碼)",
     "only_secure_connection": "跳過填寫註冊單",
     "picks_in_register": "註冊申請單處理順位",
     "post": "發佈文章",
@@ -110,12 +112,9 @@ string_data = {
     "success": "成功",
     "title": "標題",
     "transaction_cancelled": "交易取消!",
-    "two_factor_auth_required": (
-        "此帳號已啟用兩階段驗證(2FA), PyPtt 無法自動完成驗證。"
-        "PTT 的兩階段驗證可設定為「僅新 IP 需要驗證」, 同一 IP 再次登入時會跳過驗證。"
-        "請先在這台機器上使用一般 BBS 客戶端手動登入 PTT 並完成一次兩階段驗證, "
-        "之後這台機器的 IP 即可被視為已驗證, 再用 PyPtt 登入。"
-    ),
+    "two_factor_auth_failed": "兩階段驗證(2FA)失敗次數過多, 連線已中斷, 請重新登入",
+    "two_factor_auth_required": "此帳號已啟用兩階段驗證(2FA), 請取得驗證碼後呼叫 submit_otp() 繼續登入",
+    "two_factor_auth_wrong_code": "兩階段驗證碼錯誤, 請重新取得驗證碼後再呼叫 submit_otp()",
     "unregistered_user_cant_use_all_api": "未註冊使用者，將無法使用全部功能",
     "unregistered_user_cant_use_this_api": "未註冊使用者，無法使用此功能",
     "update_remote_version": "確認最新版本",

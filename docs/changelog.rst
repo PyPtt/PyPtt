@@ -2,6 +2,7 @@
 ====================
 | 這裡寫著 PyPtt 的故事。
 
+| 2026.10.13 新增 ``submit_otp`` API，支援兩階段驗證(2FA)登入：``login`` 遇到 2FA 時丟出 ``TwoFactorAuthRequired`` 並保留連線，app 取得驗證碼後呼叫 ``submit_otp`` 繼續登入。``TwoFactorAuthRequired`` 新增 ``reason``（``TwoFactorAuthReason``）與 ``ptt_id`` 屬性；新增 ``TwoFactorAuthFailed``。``api_server`` 的錯誤回應改為帶上 PyPtt 例外的類別名稱，並且不再回傳 ``args``，避免帳密與驗證碼外洩。
 | 2026.08.08 新增兩階段驗證(2FA)畫面偵測，登入時遇到 2FA 會拋出 ``TwoFactorAuthRequired``（繼承自 ``LoginError``）。
 | 2026.07.26 移除樂透 API（``get_lottery`` / ``bet_lottery``）與相關的 ``LotteryField`` / ``LotteryOptionField`` / ``LotteryBetField`` / ``NoSuchLottery``。這是 breaking change：樂透畫面同時違反 ``TargetUnit`` 螢幕比對的三個前提（畫面字串唯一標識狀態、送出後必有回應、按鍵不會被中間層吃掉），維護成本高於價值。
 | 2026.07.21 新增 :doc:`api/set_signature_file` API（``set_signature_file``），可更新使用者名片檔（plan）。

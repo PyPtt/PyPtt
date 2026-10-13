@@ -39,10 +39,25 @@ class LoginError(Error):
 
 
 # 繼承 LoginError 以維持既有 `except LoginError` 呼叫端的相容性。
-# PyPtt 不實作 TOTP 自動輸入, 這裡只負責偵測畫面並指路。
+# 丟出時連線仍停在 PTT 的驗證碼輸入畫面, app 取得驗證碼後呼叫 API.submit_otp() 接續登入。
 class TwoFactorAuthRequired(LoginError):
+    def __init__(self, ptt_id: str = '',
+                 reason: data_type.TwoFactorAuthReason = data_type.TwoFactorAuthReason.FIRST):
+        self.ptt_id = ptt_id
+        self.reason = reason
+        if reason == data_type.TwoFactorAuthReason.WRONG_CODE:
+            self.message = i18n.two_factor_auth_wrong_code
+        else:
+            self.message = i18n.two_factor_auth_required
+
+    def __str__(self):
+        return self.message
+
+
+# 無法再重試的兩階段驗證失敗, 連線已不可用, 必須重新 login()。
+class TwoFactorAuthFailed(LoginError):
     def __init__(self):
-        self.message = i18n.two_factor_auth_required
+        self.message = i18n.two_factor_auth_failed
 
     def __str__(self):
         return self.message

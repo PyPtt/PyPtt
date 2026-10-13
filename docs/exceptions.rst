@@ -23,9 +23,14 @@
 .. py:exception:: PyPtt.exceptions.TwoFactorAuthRequired
     :module: PyPtt
 
-    偵測到 PTT 的兩階段驗證畫面。PyPtt 無法自動完成驗證，僅能偵測並中斷登入流程。PTT 可設定為
-    僅新 IP 需要驗證，同一 IP 再次登入時會跳過此步驟；建議先在同一台機器上用一般 BBS 客戶端手動
-    登入一次以完成驗證。繼承自 :py:exc:`PyPtt.exceptions.LoginError`。
+    此帳號需要兩階段驗證(2FA)。連線會停在 PTT 的驗證碼輸入畫面，請由 app 取得驗證碼後呼叫
+    :doc:`api/login_logout` 的 ``submit_otp`` 繼續登入。``reason`` 屬性為 :ref:`two-factor-auth-reason`，
+    ``ptt_id`` 屬性為登入中的帳號。繼承自 :py:exc:`PyPtt.exceptions.LoginError`。
+
+.. py:exception:: PyPtt.exceptions.TwoFactorAuthFailed
+    :module: PyPtt
+
+    兩階段驗證失敗次數過多，連線已中斷，必須重新登入。繼承自 :py:exc:`PyPtt.exceptions.LoginError`。
 
 .. py:exception:: PyPtt.exceptions.NoFastComment
     :module: PyPtt
