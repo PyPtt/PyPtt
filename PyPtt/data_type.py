@@ -31,15 +31,6 @@ class SearchType(AutoStrEnum):
     MONEY = auto()
 
 
-class TwoFactorAuthReason(AutoStrEnum):
-    """要求輸入兩階段驗證碼的原因"""
-
-    # 第一次要求輸入驗證碼
-    FIRST = auto()
-    # 上一次送出的驗證碼錯誤, PTT 要求重新輸入
-    WRONG_CODE = auto()
-
-
 class ReplyTo(AutoStrEnum):
     # 回文類型
 

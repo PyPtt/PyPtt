@@ -113,8 +113,8 @@ class API:
         self.ptt_id: str = ''
         self._ptt_pw: str = ''
         self._is_login: bool = False
-        # login() 停在兩階段驗證畫面, 等待 submit_otp()
-        self._pending_otp: bool = False
+        # login() 停在兩階段驗證畫面時保留 target 清單, 給 submit_otp() 接續使用
+        self._otp_target_list = None
 
         host = kwargs.get('host', data_type.HOST.PTT1)
         screen_timeout = kwargs.get('screen_timeout', 3.0)
@@ -246,16 +246,15 @@ class API:
                 ptt_bot.login(
                     ptt_id='ptt_id', ptt_pw='ptt_pw', kick_other_session=True)
             except PyPtt.TwoFactorAuthRequired:
-                # 參考 submit_otp 的範例
-                pass
+                print('需要兩階段驗證，請參考 submit_otp 的範例')
+            except PyPtt.LoginError:
+                print('登入失敗')
             except PyPtt.WrongIDorPassword:
                 print('帳號密碼錯誤')
             except PyPtt.OnlySecureConnection:
                 print('只能使用安全連線')
             except PyPtt.ResetYourContactEmail:
                 print('請先至信箱設定連絡信箱')
-            except PyPtt.LoginError:
-                print('登入失敗')
 
         """
 
@@ -265,13 +264,10 @@ class API:
         """
         送出兩階段驗證碼，接續被 :py:exc:`TwoFactorAuthRequired` 中斷的登入。
 
-        PyPtt 不會自己向使用者要驗證碼：:py:meth:`login` 遇到 PTT 的兩階段驗證畫面時丟出
+        PyPtt 不會自己向使用者要驗證碼：:py:meth:`login` 遇到兩階段驗證畫面時丟出
         :py:exc:`TwoFactorAuthRequired` 並保留連線，由 app 用自己的介面取得驗證碼後呼叫本方法。
-
-        驗證碼錯誤時會再丟出 :py:exc:`TwoFactorAuthRequired`，其 ``reason`` 為
-        ``TwoFactorAuthReason.WRONG_CODE``，連線仍保留，可以再呼叫一次本方法。
-        PTT 的錯誤次數與密碼錯誤共用上限（目前為 3 次），超過後會中斷連線並丟出
-        :py:exc:`TwoFactorAuthFailed`，此時必須重新呼叫 :py:meth:`login`。
+        驗證碼錯誤時會再丟出 :py:exc:`TwoFactorAuthRequired`，連線仍保留，可以再呼叫一次。
+        錯誤次數過多時 PTT 會中斷連線，此時必須重新呼叫 :py:meth:`login`。
 
         Args:
             otp (str): 6 位數字的限時驗證碼，或 8 位數字的救援碼。
@@ -280,10 +276,9 @@ class API:
             None
 
         Raises:
-            TwoFactorAuthRequired: 驗證碼錯誤，可以重新呼叫本方法。
-            TwoFactorAuthFailed: 驗證失敗次數過多，連線已中斷，必須重新登入。
+            TwoFactorAuthRequired: 驗證碼錯誤，可以再呼叫一次本方法。
+            ConnectionClosed: 錯誤次數過多，PTT 已中斷連線。
             RequireLogin: 目前沒有等待輸入的兩階段驗證。
-            ParameterError: 驗證碼格式錯誤。
 
         範例::
 
@@ -292,17 +287,15 @@ class API:
 
             try:
                 ptt_bot.login(ptt_id='ptt_id', ptt_pw='ptt_pw')
-            except PyPtt.TwoFactorAuthRequired as e:
+            except PyPtt.TwoFactorAuthRequired:
                 while True:
-                    # 由 app 用自己的介面（對話框、網頁表單等）取得驗證碼，
-                    # e.reason 可以用來決定提示文字。
-                    otp = ask_user_for_otp(e.reason)
+                    # 由 app 用自己的介面（對話框、網頁表單等）取得驗證碼
+                    otp = ask_user_for_otp()
                     try:
                         ptt_bot.submit_otp(otp)
                         break
-                    except PyPtt.TwoFactorAuthRequired as wrong_code:
-                        e = wrong_code
-            # TwoFactorAuthFailed 會繼續往上丟，代表必須重新登入
+                    except PyPtt.TwoFactorAuthRequired:
+                        print('驗證碼錯誤，請重新輸入')
         """
 
         _api_loginout.submit_otp(self, otp)
