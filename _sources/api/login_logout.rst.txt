@@ -1,8 +1,8 @@
-login, submit_otp, logout
-=========================
+login, logout
+================
 
 .. _api-login-logout:
 
 .. automodule:: PyPtt.API
-   :members: login, submit_otp, logout
+   :members: login, logout
    :noindex:

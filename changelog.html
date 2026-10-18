@@ -197,7 +197,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">安裝 PyPtt</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">APIs</a><input aria-label="Toggle navigation of APIs" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/init.html">init</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/login_logout.html">login, submit_otp, logout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/login_logout.html">login, logout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_post.html">get_post</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/get_newest_index.html">get_newest_index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/post.html">post</a></li>
@@ -280,7 +280,6 @@
 <div class="line">這裡寫著 PyPtt 的故事。</div>
 </div>
 <div class="line-block">
-<div class="line">2026.10.13 新增 <code class="docutils literal notranslate"><span class="pre">submit_otp</span></code> API，支援兩階段驗證(2FA)登入：<code class="docutils literal notranslate"><span class="pre">login</span></code> 遇到 2FA 時丟出 <code class="docutils literal notranslate"><span class="pre">TwoFactorAuthRequired</span></code> 並保留連線，app 取得驗證碼後呼叫 <code class="docutils literal notranslate"><span class="pre">submit_otp</span></code> 繼續登入。</div>
 <div class="line">2026.08.08 新增兩階段驗證(2FA)畫面偵測，登入時遇到 2FA 會拋出 <code class="docutils literal notranslate"><span class="pre">TwoFactorAuthRequired``（繼承自</span> <span class="pre">``LoginError</span></code>）。</div>
 <div class="line">2026.07.26 移除樂透 API（<code class="docutils literal notranslate"><span class="pre">get_lottery</span></code> / <code class="docutils literal notranslate"><span class="pre">bet_lottery</span></code>）與相關的 <code class="docutils literal notranslate"><span class="pre">LotteryField</span></code> / <code class="docutils literal notranslate"><span class="pre">LotteryOptionField</span></code> / <code class="docutils literal notranslate"><span class="pre">LotteryBetField</span></code> / <code class="docutils literal notranslate"><span class="pre">NoSuchLottery</span></code>。這是 breaking change：樂透畫面同時違反 <code class="docutils literal notranslate"><span class="pre">TargetUnit</span></code> 螢幕比對的三個前提（畫面字串唯一標識狀態、送出後必有回應、按鍵不會被中間層吃掉），維護成本高於價值。</div>
 <div class="line">2026.07.21 新增 <a class="reference internal" href="api/set_signature_file.html"><span class="doc">set_signature_file</span></a> API（<code class="docutils literal notranslate"><span class="pre">set_signature_file</span></code>），可更新使用者名片檔（plan）。</div>
@@ -376,7 +375,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d1db0284"></script>
+</div><script src="_static/documentation_options.js?v=e528fec9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
