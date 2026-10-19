@@ -81,12 +81,13 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
         connect_core.TargetUnit('要修改紅包袋嗎', response=command.enter),
         connect_core.TargetUnit('完成交易前要重新確認您的身份', response=api._ptt_pw + command.enter, secret=True),
         connect_core.TargetUnit('他是你的小主人，是否匿名？', response='n' + command.enter),
+        # 金額那行在後續畫面都還在，所以後續的確認提示要排在「幣呢?」前面，否則金額會被打在 y/n 提示上
+        connect_core.TargetUnit('認證尚未過期', response='y' + command.enter),
+        connect_core.TargetUnit('交易正在進行中', response=command.space),
         # 舊版「要給他多少Ptt幣呢?」、新版「要給多少Ptt幣呢?」(docker 站是 Dtt幣)。要排在「這位幸運兒的id」
         # 前面，否則同畫面的 id 行先被對上，id 又被送進金額欄。TAB 切到「對方收到 (稅後)」，與舊版相同
         connect_core.TargetUnit('幣呢?', response=command.tab + str(money) + command.enter),
         connect_core.TargetUnit('這位幸運兒的id', response=ptt_id + command.enter),
-        connect_core.TargetUnit('認證尚未過期', response='y' + command.enter),
-        connect_core.TargetUnit('交易正在進行中', response=command.space)
     ]
 
     api.connect_core.send(

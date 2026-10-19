@@ -88,14 +88,24 @@ def get_content(api, post_mode: bool = True):
         get_line_b = 0
         max_line_b = 0
         stall = 0
+        timeouts = 0
         while True:
             index = api.connect_core.send(cmd, target_list)
             if index == 3 or index == 4:
                 return None, False
             if index < 0:
-                # 認不出的畫面 (例如被 → 帶離文章) 就中止；以前會照送 → 在文章與列表間無限繞圈
+                # 逾時只繼續收、不送鍵 (送 Ctrl-L 會多一張重繪，被當成同頁再接一次而重複內容；重開 parser
+                # 則只看得到被逾時切斷那張的後半而漏內容)；連續 3 次認不出 (例如被 → 帶離文章) 才中止，
+                # 以前會照送 → 在文章與列表間無限繞圈
+                timeouts += 1
+                if timeouts < 3:
+                    cmd = None
+                    continue
+                if api.connect_core.last_timeout_was_silent:
+                    raise exceptions.ConnectionClosed()
                 status_line = api.connect_core.get_screen_queue()[-1].split('\n')[-1]
                 raise exceptions.UnknownError(f'get_content: unrecognized screen {status_line!r}')
+            timeouts = 0
 
             last_screen = api.connect_core.get_screen_queue()[-1]
             lines = last_screen.split('\n')

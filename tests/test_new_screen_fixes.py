@@ -11,6 +11,7 @@ import asyncio
 import pathlib
 import re
 import threading
+import time
 from unittest.mock import MagicMock
 
 import pytest
@@ -30,14 +31,16 @@ def _fx(name: str) -> str:
 
 class ScreenCore:
     """connect_core stand-in: each send() shows the next captured screen (the last
-    one repeats) and runs the real targets on it, like connect_core._decode_screen."""
+    one repeats) and runs the real targets on it, like connect_core._decode_screen.
+    A None entry is a timeout round (-1); `silent` says whether it got zero bytes."""
 
-    def __init__(self, screen_list, cursor='>'):
+    def __init__(self, screen_list, cursor='>', silent=False):
         self._screens = list(screen_list)
         self._cursor = cursor
         self._queue = []
         self.sent = []
         self.last_timeout_was_silent = False
+        self._silent = silent
 
     def send(self, msg, target_list, screen_timeout=0, refresh=True, secret=False):
         self.sent.append(msg)
@@ -45,6 +48,9 @@ class ScreenCore:
             if len(self.sent) > 60:
                 raise RuntimeError('runaway send loop')
             screen = self._screens.pop(0) if len(self._screens) > 1 else self._screens[0]
+            if screen is None:
+                self.last_timeout_was_silent = self._silent
+                return -1
             self._queue.append(screen)
             for i, target in enumerate(target_list):
                 if target.is_match(screen, self._cursor):
@@ -114,7 +120,11 @@ def _cursor_row(screen: str) -> str:
     [b'\x1b[?2026h' + _frame(_fx('post_list_stale.txt'))[:900],      # new PTT: bracket split over frames
      _frame(_fx('post_list_stale.txt'))[900:] + b'\x1b[?2026l'],
     [_frame(_fx('post_list_stale.txt'))],                            # old pttbbs: no bracket
-], ids=['sync', 'sync-split', 'old'])
+    # the previous send() matched on the first part of a split frame: its tail is still queued
+    [_frame(_fx('post_list_stale.txt'))[2000:] + b'\x1b[?2026l', _sync(_frame(_fx('post_list_stale.txt')))],
+    [_frame(_fx('post_list_stale.txt'))[2000:], _frame(_fx('post_list_stale.txt'))],
+    [_frame(_fx('post_list_stale.txt'))[:60], _frame(_fx('post_list_stale.txt'))[60:]],  # old: redraw split
+], ids=['sync', 'sync-split', 'old', 'tail-sync', 'tail-old', 'old-split'])
 def test_set_screen_height_swallows_resize_redraw(redraw):
     core = _real_core(redraw + [_frame(_fx('post_list_fresh.txt'))])
     core.set_screen_height(100)
@@ -123,10 +133,14 @@ def test_set_screen_height_swallows_resize_redraw(redraw):
     assert _cursor_row(core.get_screen_queue()[-1]).startswith('>778447')
 
 
-def test_set_screen_height_without_redraw_returns():
+def test_set_screen_height_without_redraw_returns_fast():
     core = _real_core([])
+    core.config.screen_timeout = 3.0
+    t0 = time.time()
     core.set_screen_height(100)
-    assert core.config.screen_height == 100
+    core.set_screen_height(24)
+    assert core.config.screen_height == 24
+    assert time.time() - t0 < 2.5  # was 2 x screen_timeout = 6 s
 
 
 def test_get_post_list_reads_the_jump_not_the_resize_redraw():
@@ -173,6 +187,80 @@ def test_get_content_stops_on_long_post_last_page():
     assert len(api.connect_core.sent) == 2
 
 
+def test_get_content_rides_out_a_transient_timeout():
+    # master kept reading after a timeout; get_mail has no retry, so one slow round must not abort.
+    api = _content_api([_fx('post_page11.txt'), None, _last_page()])
+    content, _ = _api_util.get_content(api)
+    assert content is not None
+    assert api.connect_core.sent[-1] is None  # receive-only retry: nothing is sent
+
+
+class PagerWs:
+    """Fake PTT pager over websocket, with timing. Every message holding a key moves one page
+    on (the first opens page 1); a lone Ctrl-L redraws the current page; an empty frame does
+    nothing (measured on PTT, fix8-emptyframe.log). `late` = {message no.: (delay of the reply,
+    delay of its second half or None)}."""
+
+    def __init__(self, pages, late):
+        self.pages, self.late = pages, late
+        self.page = -1
+        self.n = 0
+        self.queue = []  # (ready_at, bytes)
+
+    async def send(self, data):
+        self.n += 1
+        if not data:
+            return
+        if data != command.refresh.encode():
+            self.page = min(self.page + 1, len(self.pages) - 1)
+        frame = _frame(self.pages[self.page])
+        delay, split = self.late.get(self.n, (0, None))
+        now = time.monotonic()
+        if split is None:
+            self.queue.append((now + delay, frame))
+        else:
+            self.queue += [(now + delay, frame[:len(frame) // 2]), (now + delay + split, frame[len(frame) // 2:])]
+
+    async def recv(self):
+        while not self.queue:
+            await asyncio.sleep(0.01)
+        await asyncio.sleep(max(0.0, self.queue[0][0] - time.monotonic()))
+        return self.queue.pop(0)[1]
+
+
+def _pager_pages(total=250):
+    pages, a = [], 1
+    while True:
+        b = min(a + 98, total)
+        rows = [f'L{i:04d}' for i in range(a, b + 1)]
+        last = b == total
+        status = (f'  瀏覽 第 {len(pages) + 1} 頁 ({"100%" if last else " 50%"})  '
+                  f'目前顯示: 第 {a:02d}~{b} 行 (y)回應(X)推文 (←)離開(h)說明 ')
+        pages.append('\n'.join([''] * (99 - len(rows)) + rows + [status]))
+        if last:
+            return pages
+        a = b
+
+
+@pytest.mark.parametrize('late', [{2: (0.2, None)}, {2: (0.0, 0.2)}], ids=['late-reply', 'reply-cut-by-timeout'])
+def test_get_content_timeout_neither_duplicates_nor_drops(late):
+    core = _real_core([])
+    core.config.screen_timeout = 0.15
+    core.config.screen_height = 100  # already expanded: no resize
+    core._core = PagerWs(_pager_pages(), late)
+    api = _mock_api(core)
+    api.config = core.config
+    content, _ = _api_util.get_content(api)
+    assert [line for line in content.split('\n') if line.startswith('L')] == [f'L{i:04d}' for i in range(1, 251)]
+
+
+def test_get_content_dead_link_is_connection_closed():
+    api = _content_api([_fx('post_page11.txt'), None])
+    api.connect_core._silent = True
+    with pytest.raises(exceptions.ConnectionClosed):
+        _api_util.get_content(api)
+
+
 def test_get_content_raises_on_unrecognized_screen():
     # Pressing → past the end leaves the post; that list screen used to send it round and round.
     api = _content_api([_fx('post_page11.txt'), _fx('post_list_stale.txt')])
@@ -206,6 +294,14 @@ def test_newest_index_no_search_result(no_board_nav):
         _api_get_newest_index.get_newest_index(api, data_type.NewIndex.BOARD, board='Test',
                                                search_type=data_type.SearchType.AUTHOR,
                                                search_condition='janice001')
+
+
+def test_newest_index_no_search_result_on_animation_post(no_board_nav):
+    api = _newest_api([_fx('newest_index_board.txt'), screens.Target.Animation[0]])
+    with pytest.raises(exceptions.NoSearchResult):
+        _api_get_newest_index.get_newest_index(api, data_type.NewIndex.BOARD, board='Test',
+                                               search_type=data_type.SearchType.AUTHOR,
+                                               search_condition='nobody')
 
 
 def test_newest_index_plain_board_still_parses(no_board_nav):
@@ -245,6 +341,18 @@ def test_give_money_amount_prompt_variants(monkeypatch, prompt):
     api.is_registered_user = True
     _api_give_money.give_money(api, 'CodingMan', 10, None, None)
     assert core.sent[1] == command.tab + '10' + command.enter
+
+
+def test_give_money_auth_prompt_beats_amount_line(monkeypatch):
+    # 2nd give_money inside the auth window: the amount line is still on the screen that asks
+    # 認證尚未過期; the y/n prompt must get 'y', not the amount again.
+    monkeypatch.setattr(_api_util, 'check_user_exist', lambda *a, **k: None)
+    prompt = _fx('give_money_amount_prompt.txt')
+    core = ScreenCore([prompt, prompt + '\n認證尚未過期，是否直接進行交易? [Y/n]', '按任意鍵繼續'])
+    api = _mock_api(core)
+    api.is_registered_user = True
+    _api_give_money.give_money(api, 'CodingMan', 10, None, None)
+    assert core.sent[1:] == [command.tab + '10' + command.enter, 'y' + command.enter]
 
 
 # ── 5. get_all_boards: board list screen anchor ─────────────────────────────────
