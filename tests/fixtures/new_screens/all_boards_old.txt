@@ -1,0 +1,24 @@
+【看板列表】                      你有新信件                                   
+[←][q]回上層 [→][r]閱讀 [↑↓]選擇 [PgUp][PgDn]翻頁 [c]新文章 [/]搜尋 [h]求助
+   編號   看  板       類別   中   文   敘   述               人氣 板   主     
+●    1 ˇALLPOST      嘰哩 ◎跨板式LOCAL新文章
+      2   Announce     測試 ◎PyPtt Announce
+      3   AnonTest     測試 ◎PyPtt AnonTest
+      4   deleted      嘰哩 ◎資源回收筒
+      5   EditExp      嘰哩 ◎範本精靈投稿區
+      6   Note         嘰哩 ◎動態看板及歌曲投稿
+      7 ˇPyPttMod     測試 ◎PyPtt PyPttMod                       pypttbot1
+      8   Python       測試 ◎PyPtt Python
+      9   Record       嘰哩 ◎我們的成果
+     10   SYSOP        嘰哩 ◎站長好!
+     11 ˇTest         測試 ◎PyPtt Test
+     12   WhoAmI       嘰哩 ◎呵呵，猜猜我是誰！
+
+
+
+
+
+
+
+
+  選擇看板    (m)加入/移出最愛 (y)只列最愛 (v/V)已讀/未讀                      

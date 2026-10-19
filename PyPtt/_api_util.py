@@ -86,11 +86,16 @@ def get_content(api, post_mode: bool = True):
         stop_dict = dict()
         new_content_part = ''
         get_line_b = 0
-
+        max_line_b = 0
+        stall = 0
         while True:
             index = api.connect_core.send(cmd, target_list)
             if index == 3 or index == 4:
                 return None, False
+            if index < 0:
+                # 認不出的畫面 (例如被 → 帶離文章) 就中止；以前會照送 → 在文章與列表間無限繞圈
+                status_line = api.connect_core.get_screen_queue()[-1].split('\n')[-1]
+                raise exceptions.UnknownError(f'get_content: unrecognized screen {status_line!r}')
 
             last_screen = api.connect_core.get_screen_queue()[-1]
             lines = last_screen.split('\n')
@@ -117,6 +122,13 @@ def get_content(api, post_mode: bool = True):
                 last_read_line_list = pattern_result.group(0).split('~')
                 last_read_line_a_temp = int(last_read_line_list[0])
                 last_read_line_b_temp = int(last_read_line_list[1])
+                # 行號不再前進 (含倒退) 就中止；上限放寬是因為一行折成多列時 b 會合法地停住幾頁
+                if last_read_line_b_temp > max_line_b:
+                    max_line_b, stall = last_read_line_b_temp, 0
+                else:
+                    stall += 1
+                    if stall > 20:
+                        raise exceptions.UnknownError(f'get_content: stuck at line {last_read_line_b_temp}')
                 if control_code_mode:
                     last_read_line_a = last_read_line_a_temp - 1
                     last_read_line_b = last_read_line_b_temp - 1

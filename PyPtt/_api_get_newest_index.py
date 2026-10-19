@@ -119,6 +119,9 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
                                    screens.Target.InBoardWithCursor,
                                    log_level=log.DEBUG,
                                    break_detect=True))
+            # 新版搜尋無結果時，後面的 '1\r' 會打開游標所在的文章；落在文章裡就是沒有結果
+            target_list.append(connect_core.TargetUnit(screens.Target.InPost,
+                                                       exceptions_=exceptions.NoSearchResult()))
 
             cmd_list = _api_util.get_search_condition_cmd(index_type, search_list)
 

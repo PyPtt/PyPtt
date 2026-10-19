@@ -71,7 +71,8 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
 
     target_list = [
         connect_core.TargetUnit('你沒有那麼多Ptt幣喔!', break_detect=True, exceptions_=exceptions.NoMoney()),
-        connect_core.TargetUnit('金額過少，交易取消!', break_detect=True, exceptions_=exceptions.NoMoney()),
+        connect_core.TargetUnit('金額過少，交易取消!', break_detect=True,
+                                exceptions_=exceptions.ParameterError(f'money is too small: {money}')),
         connect_core.TargetUnit('交易取消!', break_detect=True,
                                 exceptions_=exceptions.UnknownError(i18n.transaction_cancelled)),
         connect_core.TargetUnit('確定進行交易嗎？', response='y' + command.enter),
@@ -80,7 +81,9 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
         connect_core.TargetUnit('要修改紅包袋嗎', response=command.enter),
         connect_core.TargetUnit('完成交易前要重新確認您的身份', response=api._ptt_pw + command.enter, secret=True),
         connect_core.TargetUnit('他是你的小主人，是否匿名？', response='n' + command.enter),
-        connect_core.TargetUnit('要給他多少Ptt幣呢?', response=command.tab + str(money) + command.enter),
+        # 舊版「要給他多少Ptt幣呢?」、新版「要給多少Ptt幣呢?」(docker 站是 Dtt幣)。要排在「這位幸運兒的id」
+        # 前面，否則同畫面的 id 行先被對上，id 又被送進金額欄。TAB 切到「對方收到 (稅後)」，與舊版相同
+        connect_core.TargetUnit('幣呢?', response=command.tab + str(money) + command.enter),
         connect_core.TargetUnit('這位幸運兒的id', response=ptt_id + command.enter),
         connect_core.TargetUnit('認證尚未過期', response='y' + command.enter),
         connect_core.TargetUnit('交易正在進行中', response=command.space)

@@ -522,6 +522,23 @@ class API(object):
         loop = self._get_event_loop()
         loop.run_until_complete(self._core.send(naws))
         self.config.screen_height = height
+        loop.run_until_complete(self._drain_resize_redraw())
+
+    async def _drain_resize_redraw(self) -> None:
+        # pttbbs answers every NAWS with a full redraw (measured old & new: one frame, <10 ms).
+        # Left unread, the next send() matches that stale screen and every later screen lags
+        # one behind. New PTT brackets the redraw in synchronized-update mode (?2026h … ?2026l),
+        # so read until the bracket closes; old pttbbs has no bracket, so its first frame is it.
+        buf = b''
+        try:
+            async with asyncio.timeout(self.config.screen_timeout):
+                while buf.rfind(b'\x1b[?2026h') > buf.rfind(b'\x1b[?2026l') or not buf:
+                    chunk = await self._core.recv()
+                    buf += chunk.encode('utf-8') if isinstance(chunk, str) else chunk
+        except TimeoutError:
+            pass  # no redraw came: nothing stale to swallow
+        except (websockets.exceptions.ConnectionClosed, websockets.exceptions.ConnectionClosedOK):
+            raise exceptions.ConnectionClosed()
 
     def close(self):
         if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:

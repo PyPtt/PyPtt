@@ -1,10 +1,16 @@
+import re
+
 from . import _api_util
 from . import command
 from . import connect_core
 from . import exceptions
 from . import i18n
 from . import log
+from . import screens
 from .data_type import FavouriteBoardField
+
+# '    83)  MCP_Test     測試 ◎…'、'     2 ˇAllTogether  聯誼 ◎…'：編號、[)]、[ˇ]、板名、類別、◎標題
+_ROW = re.compile(r'\s*\d+\)?\s+ˇ?\s*(\S+)\s+(\S+)\s*(.*)')
 
 
 def get_favourite_board(api) -> list:
@@ -17,7 +23,8 @@ def get_favourite_board(api) -> list:
     cmd = ''.join(cmd_list)
 
     target_list = [
-        connect_core.TargetUnit('選擇看板', break_detect=True)
+        # 舊版頁尾有「選擇看板」，新版沒有；標頭與頁尾的「已讀/未讀」新舊都有
+        connect_core.TargetUnit(['【看板列表】', '已讀/未讀'], break_detect=True)
     ]
 
     log.logger.info(i18n.get_favourite_board_list)
@@ -32,42 +39,20 @@ def get_favourite_board(api) -> list:
             target_list)
 
         ori_screen = api.connect_core.get_screen_queue()[-1]
-        # print(OriScreen)
-        screen_buf = ori_screen
-        screen_buf = [x for x in screen_buf.split('\n')][3:-1]
+        screen_buf = [x for x in ori_screen.split('\n')[3:-1] if x.strip()]
 
-        # adjust for cursor
-        screen_buf[0] = '  ' + screen_buf[0][1:]
-        screen_buf = [x for x in screen_buf]
-
-        min_len = 47
-
-        for i, line in enumerate(screen_buf):
-            if len(screen_buf[i]) == 0:
-                continue
-            if len(screen_buf[i]) <= min_len:
-                # print(f'[{ScreenBuf[i]}]')
-                screen_buf[i] = screen_buf[i] + (' ' * ((min_len + 1) - len(screen_buf[i])))
-        screen_buf = [x[10:min_len - len(x)].strip() for x in screen_buf]
-        screen_buf = list(filter(None, screen_buf))
-
-        for i, line in enumerate(screen_buf):
+        for line in screen_buf:
             if '------------' in line:
                 continue
-
-            temp = line.strip().split(' ')
-            no_space_temp = list(filter(None, temp))
-
-            board = no_space_temp[0]
-            if board.startswith('ˇ'):
-                board = board[1:]
-
-            board_type = no_space_temp[1]
-
-            title_start_index = temp.index(board_type) + 1
-            board_title = ' '.join(temp[title_start_index:])
+            if line.startswith(api.cursor):
+                line = ' ' * screens._cell_len(api.cursor) + line[len(api.cursor):]
+            # 板名、類別依欄位內容切；標題與人氣欄之間沒有分隔，只能在第 64 格 (人氣欄起點) 切掉
+            m = _ROW.match(line[:screens._str_pos_at_cells(line, 64)])
+            if m is None:
+                continue
+            board, board_type = m.group(1), m.group(2)
             # remove ◎
-            board_title = board_title[1:]
+            board_title = m.group(3)[1:].strip()
 
             if board in board_list:
                 log.logger.info(i18n.get_favourite_board_list, '...', i18n.success)
