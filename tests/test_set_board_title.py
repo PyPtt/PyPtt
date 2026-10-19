@@ -10,6 +10,7 @@ call fails with `NoSuchBoard` (a pre-existing PyPtt session-state
 quirk). Both `set_board_title` calls completing without raising is the
 strongest in-session signal of success.
 """
+import re
 import time
 
 import pytest
@@ -40,7 +41,10 @@ def test_b_set_board_title_on_moderated_board(ptt_bots):
         if not util.is_primary_host(ptt_bot, ptt_bots):
             continue
         info = ptt_bot.get_board_info(board=config.MOD_BOARD)
-        original = info[PyPtt.BoardField.mandarin_des]
+        # mandarin_des includes the board category (new UI: '[類別] ...',
+        # old UI: '類別 ◎...'), but set_board_title's new_title excludes it;
+        # restoring with mandarin_des as-is would double the category.
+        original = re.sub(r'^(\[[^\]]+\] |\S+ ◎)', '', info[PyPtt.BoardField.mandarin_des])
 
         marker = f'pyptt-{int(time.time())}'
         ptt_bot.set_board_title(board=config.MOD_BOARD, new_title=marker)

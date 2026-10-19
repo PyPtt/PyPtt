@@ -85,6 +85,15 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
 
+    # 新版「看板設定與管理」沒有任意鍵提示，會一直停在選單上 (之後 API 開頭的 Space
+    # 會落在選單裡)。畫面已存下來，先用一個 ← 退回文章列表再解析；確認不了就斷線。
+    if screens.in_board_setting(ori_screen):
+        api.connect_core.send(command.left, [
+            connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True)])
+        if not _api_util.is_article_list(api, api.connect_core.get_screen_queue()[-1]):
+            _api_util.close_session(api)
+            raise exceptions.ConnectionClosed()
+
     boardname = None
     # 新版: '看板名稱: Test 板主名單: ...'；舊版: '《Test》看板設定'
     r = re.search(r'看板名稱: (\S+)|《(.+)》看板設定', ori_screen)
@@ -125,10 +134,12 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
 
     if '看板名稱:' in ori_screen:
         # 新版畫面每項一列: '  9.   快速連推文章           限制 (間隔 5 秒)'。
+        # 2026-10-19 起欄寬變寬；編輯模式另有熱鍵標示 ' 1. (b)中文敘述' 與
+        # 權限註記 '開放 (限站長)'，兩者都去掉再比對。
         # 值要整串比對：'開放' 是 '不開放' 的子字串，'對齊' 是 '不用對齊' 的子字串。
         def value(label: str) -> str:
-            m = re.search(r'^[> ]*\d+\. +' + re.escape(label) + r' +(.+?) *$', ori_screen, re.M)
-            return m.group(1) if m else ''
+            m = re.search(r'^[> ]*\d+\. +(?:\(\w\))?' + re.escape(label) + r' +(.+?) *$', ori_screen, re.M)
+            return re.sub(r' *\(限[^)]*\)$', '', m.group(1)) if m else ''
 
         chinese_des = value('中文敘述')
         open_status = value('公開狀態 (是否隱形)') == '公開'
@@ -147,9 +158,14 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         tran_post_auto_recorded_and_require_post_permissions = value('轉錄文章自動記錄') == '會 (需發文權限)'
         cool_mode = value('冷靜模式') != '未設定'
         require18 = value('未滿十八歲進入') == '禁止'
-        # 新版畫面 (含 PgDn 第二頁與各子項) 已不顯示發文限制，維持舊 key 並給 0 (= 無限制)
-        require_login_time = 0
-        require_illegal_post = 0
+        # 2026-10-19 起有發文條件兩列:
+        #   '16.    [發文條件] 登入次數       500 次以上 (您: 6614 次)'
+        #   '17.    [發文條件] 退文篇數       1 篇以下 (您: 0 篇)'
+        # '無限制' 或沒有這兩列 (2026-10-18 的畫面) 都給 0 (= 無限制)
+        m = re.match(r'(\d+) 次以上', value('[發文條件] 登入次數'))
+        require_login_time = int(m.group(1)) if m else 0
+        m = re.match(r'(\d+) 篇以下', value('[發文條件] 退文篇數'))
+        require_illegal_post = int(m.group(1)) if m else 0
     else:
         open_status = ('公開狀態(是否隱形): 公開' in ori_screen)
         logger.debug('公開狀態', open_status)

@@ -6,11 +6,14 @@ PTT replaced the old "《board》看板設定" page with a numbered
 which catches substring bugs such as '開放' matching '不開放'.
 """
 
+import os
+import re
 import threading
 
 import pytest
 
 from PyPtt import _api_get_board_info
+from PyPtt import command
 from PyPtt import config
 from PyPtt import connect_core
 from PyPtt import exceptions
@@ -85,20 +88,27 @@ class FakeConnectCore:
     def __init__(self, screens):
         self._screens = list(screens)
         self.last_timeout_was_silent = False
+        self.keys = []
 
     def send(self, msg, target_list, **kwargs):
+        self.keys.append(msg)
         self._screens.pop(0)
         return 0
 
     def get_screen_queue(self):
         return [self._screens[0]]
 
+    def close(self):
+        self.closed = True
+
 
 class FakeApi:
     def __init__(self, info_screen):
         self.config = config.Config()
-        # goto_board() sends once, then get_board_info() sends 'i'.
-        self.connect_core = FakeConnectCore(['', BOARD_SCREEN, info_screen])
+        # goto_board() sends once, then get_board_info() sends 'i'; on the new
+        # layout it then leaves the settings menu with ← back to the board.
+        self.connect_core = FakeConnectCore(['', BOARD_SCREEN, info_screen, BOARD_SCREEN])
+        self.cursor = '>'
         self._is_login = True
         self._thread_id = threading.get_ident()
         self._goto_board_list = set()
@@ -167,3 +177,136 @@ def test_screen_targets_match_new_layout():
     assert connect_core.TargetUnit(screens.Target.InBoardWithCursor).is_match(BOARD_SCREEN, '>')
     assert not connect_core.TargetUnit(screens.Target.InBoard).is_match(MOBILESALES_INFO, '>')
     assert connect_core.TargetUnit('(PgUp)上頁 (PgDn)下頁').is_match(MOBILESALES_INFO, '>')
+
+
+# ---- 2026-10-19 layout: wider columns, posting-condition rows 16/17, and
+# (edit mode only) hotkey labels like '(b)中文敘述' plus '(限站長)' notes.
+# Live captures in tests/fixtures/board_info/ (trailing padding stripped).
+FIXTURE_DIR = os.path.join(os.path.dirname(__file__), 'fixtures', 'board_info')
+
+
+def _fixture(name):
+    with open(os.path.join(FIXTURE_DIR, name), encoding='utf-8') as f:
+        return f.read()
+
+
+_COMMON_GIVE = {
+    BoardField.board: 'give',
+    BoardField.moderators: ['janice001'],
+    BoardField.mandarin_des: '[贈送] 歡迎來到贈送板',
+    BoardField.open_status: True,
+    BoardField.into_top_ten_when_hide: False,
+    BoardField.can_non_board_members_post: True,
+    BoardField.can_reply_post: False,
+    BoardField.self_del_post: True,
+    BoardField.can_comment_post: True,
+    BoardField.can_boo_post: True,
+    BoardField.can_fast_push: True,
+    BoardField.min_interval_between_comments: 0,
+    BoardField.is_comment_record_ip: False,
+    BoardField.is_comment_aligned: False,
+    BoardField.can_moderators_del_illegal_content: False,
+    BoardField.does_tran_post_auto_recorded_and_require_post_permissions: True,
+    BoardField.is_cool_mode: False,
+    BoardField.is_require18: False,
+    BoardField.require_login_time: 100,
+    BoardField.require_illegal_post: 1,
+}
+
+EXPECTED_20261019 = {
+    # 非板主「唯讀檢視」
+    ('mobilesales', 'mobilesales_20261019.txt'): {
+        BoardField.board: 'mobilesales',
+        BoardField.moderators: ['Samuellu'],
+        BoardField.mandarin_des: '[Mobile] 遵守版規，進桶看通知信',
+        BoardField.into_top_ten_when_hide: False,
+        BoardField.can_reply_post: False,
+        BoardField.self_del_post: False,
+        BoardField.can_fast_push: True,
+        BoardField.is_comment_record_ip: True,
+        BoardField.is_comment_aligned: True,
+        BoardField.can_moderators_del_illegal_content: False,
+        BoardField.is_require18: False,
+        BoardField.require_login_time: 500,
+        BoardField.require_illegal_post: 1,
+    },
+    ('Gossiping', 'gossiping_20261019.txt'): {
+        BoardField.board: 'Gossiping',
+        BoardField.moderators: ['ubcs', '初音未來', 'redDest'],
+        BoardField.mandarin_des: '[八卦] 梅毒可解，崆峒神威！！',
+        BoardField.into_top_ten_when_hide: True,
+        BoardField.can_reply_post: True,
+        BoardField.self_del_post: True,
+        BoardField.can_fast_push: False,
+        BoardField.min_interval_between_comments: 5,
+        BoardField.is_comment_record_ip: True,
+        BoardField.is_comment_aligned: False,
+        BoardField.can_moderators_del_illegal_content: True,
+        BoardField.is_require18: True,
+        BoardField.require_login_time: 360,
+        BoardField.require_illegal_post: 0,
+    },
+    ('Test', 'test_20261019.txt'): {
+        BoardField.board: 'Test',
+        BoardField.moderators: ['hank2579'],
+        BoardField.mandarin_des: '[測試] 每週定期清除本板文章',
+        BoardField.require_login_time: 0,  # 無限制
+        BoardField.require_illegal_post: 0,  # 無限制
+    },
+    # 板主「唯讀模式 (按 Ctrl-P 編輯)」
+    ('give', 'give_20261019.txt'): _COMMON_GIVE,
+    # 板主「編輯模式」: 每列有 '(b)' 熱鍵標示與 '(限站長)' 權限註記
+    ('give', 'give_edit_20261019.txt'): _COMMON_GIVE,
+}
+
+
+@pytest.mark.parametrize('board, fixture', list(EXPECTED_20261019))
+def test_layout_20261019(board, fixture):
+    info = _info(board, _fixture(fixture))
+    for field, expected in EXPECTED_20261019[(board, fixture)].items():
+        assert info[field] == expected, field
+
+
+def test_layout_20261019_condition_rows_match_screen_text():
+    # require_login_time / require_illegal_post 要與畫面原文的數字一致
+    for (board, fixture) in EXPECTED_20261019:
+        screen = _fixture(fixture)
+        info = _info(board, screen)
+        login = re.search(r'登入次數 +(\d+) 次以上', screen)
+        illegal = re.search(r'退文篇數 +(\d+) 篇以下', screen)
+        assert info[BoardField.require_login_time] == (int(login.group(1)) if login else 0)
+        assert info[BoardField.require_illegal_post] == (int(illegal.group(1)) if illegal else 0)
+
+
+def test_hotkey_label_on_first_row():
+    info = _info('give', _fixture('give_edit_20261019.txt'))
+    assert '(b)中文敘述' in _fixture('give_edit_20261019.txt')
+    assert info[BoardField.mandarin_des] == '[贈送] 歡迎來到贈送板'
+
+
+def test_leaves_settings_menu_after_parsing():
+    # 新版選單沒有任意鍵提示；get_board_info 解析完要用 ← 退回文章列表，
+    # 否則下一支 API 的 goto_board 開頭的 Space 會落在選單上。
+    api = FakeApi(_fixture('give_20261019.txt'))
+    _api_get_board_info.get_board_info(api, 'give', get_post_kind=False, call_by_others=True)
+    assert api.connect_core.keys[-1] == command.left
+    assert connect_core.TargetUnit(screens.Target.InBoard).is_match(api.connect_core.get_screen_queue()[-1], '>')
+
+
+def test_left_that_does_not_reach_article_list_closes_session():
+    # ← 之後若不是文章列表 (例如畫面沒變)，就斷線並丟 ConnectionClosed，不再送鍵
+    api = FakeApi(_fixture('give_20261019.txt'))
+    api.connect_core._screens[-1] = _fixture('give_20261019.txt')
+    with pytest.raises(exceptions.ConnectionClosed):
+        _api_get_board_info.get_board_info(api, 'give', get_post_kind=False, call_by_others=True)
+    assert api.connect_core.keys[-1] == command.left
+    assert api.connect_core.closed is True
+    assert api._is_login is False
+
+
+def test_no_such_board_after_i_still_leaves_menu():
+    # 'i' 之後才發現看板名稱不符：也要先退出選單再丟 NoSuchBoard
+    api = FakeApi(_fixture('give_20261019.txt'))
+    with pytest.raises(exceptions.NoSuchBoard):
+        _api_get_board_info.get_board_info(api, 'Test', get_post_kind=False, call_by_others=True)
+    assert api.connect_core.keys[-1] == command.left

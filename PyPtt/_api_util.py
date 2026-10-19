@@ -417,6 +417,114 @@ def get_search_condition_cmd(index_type: data_type.NewIndex, search_list: Option
     return cmd_list
 
 
+def check_no_control_chars(value: str, name: str) -> None:
+    # 看板設定 / Bakuman 是逐鍵比對的流程：字串裡的 \r 會提早送出輸入列，
+    # 後面的字母就落到編輯選單變成熱鍵。比照 _api_post.py 的 display_id 檢查。
+    for c in value:
+        if ord(c) < 0x20 or ord(c) == 0x7f:
+            raise exceptions.ParameterError(f'{name} must not contain control characters (found {c!r})')
+
+
+def last_screen(api) -> str:
+    screen_queue = api.connect_core.get_screen_queue()
+    return screen_queue[-1] if screen_queue else ''
+
+
+def is_article_list(api, screen: str) -> bool:
+    # 看板設定畫面會顯示板主可自訂的中文敘述，可能剛好含 InBoard 的子字串
+    # (例如「[i]看板設定文章列表(b)進板」)；先用固定位置的頁首/頁尾排除設定畫面。
+    if screens.in_board_setting(screen):
+        return False
+    return connect_core.TargetUnit(screens.Target.InBoard).is_match(screen, api.cursor)
+
+
+def close_session(api) -> None:
+    # 確認不了已回到文章列表時，任何後續按鍵 (例如 go_main_menu 開頭的 Space)
+    # 都可能落在看板設定的熱鍵上，所以直接斷線並標成未登入。
+    if log.logger is not None:
+        log.logger.info('board setting: cannot confirm the article list, closing connection')
+    try:
+        api.connect_core.close()
+    except Exception:
+        pass
+    api._is_login = False
+
+
+def leave_board_setting(api, stale: bool = False) -> bool:
+    """從看板設定 / Bakuman 一次一鍵退回文章列表；回到文章列表才回傳 True。
+
+    每一步依目前畫面選鍵 (screens.board_setting_exit_key)，只會送 ←、Ctrl-C、
+    Bakuman「[Q]結束?」的 Enter，以及 Ctrl-L 重繪。stale=True (上一鍵完全沒收到
+    回應) 時最後一張畫面可能已過期，先送 Ctrl-L 重繪，不照舊畫面重送。
+    退不回文章列表 (或送鍵時出錯) 就斷線並回傳 False。"""
+    if not api._is_login:
+        return False
+
+    wait_list = [
+        screens.Target.InBoard,
+        '任意鍵',
+        screens.Target.Bakuman[1],
+        [['看板設定(編輯)', '(^P)開啟編輯', '(←)離開']],
+        screens.Target.BoardSettingOldPrompt,
+        '請輸入',
+        '確認以上資料全部正確嗎',
+    ]
+    refreshed_unknown = False
+    left_unknown = False
+    timeouts = 0
+    try:
+        for _ in range(15):
+            if stale:
+                key = command.refresh
+            else:
+                screen = last_screen(api)
+                if is_article_list(api, screen):
+                    return True
+                key = screens.board_setting_exit_key(screen)
+                if key is None:
+                    if not refreshed_unknown:
+                        refreshed_unknown = True
+                        key = command.refresh
+                    elif not left_unknown:
+                        left_unknown = True
+                        key = command.left
+                    else:
+                        break
+            target_list = [connect_core.TargetUnit(t, log_level=log.DEBUG, break_detect=True) for t in wait_list]
+            if api.connect_core.send(key, target_list, screen_timeout=api.config.screen_timeout) < 0:
+                timeouts += 1
+                if timeouts > 3:
+                    break
+                stale = getattr(api.connect_core, 'last_timeout_was_silent', False)
+            else:
+                stale = False
+    except Exception:
+        pass
+    except BaseException:
+        # KeyboardInterrupt / SystemExit：不再送鍵，直接斷線
+        close_session(api)
+        raise
+
+    close_session(api)
+    return False
+
+
+def run_in_board_setting(api, flow):
+    """執行看板設定流程 flow()；任何例外 (含 UseTooManyResources、逾時) 都先退回
+    文章列表再往外丟。退不回來就斷線並改丟 ConnectionClosed。"""
+    try:
+        return flow()
+    except Exception as e:
+        stale = getattr(api.connect_core, 'last_timeout_was_silent', False)
+        if not leave_board_setting(api, stale=stale):
+            raise exceptions.ConnectionClosed() from e
+        raise
+    except BaseException:
+        # KeyboardInterrupt / SystemExit：畫面狀態不明，不送任何鍵，直接斷線
+        close_session(api)
+        raise
+
+
 def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> None:
     cmd_list = []
     cmd_list.append(command.go_main_menu)
