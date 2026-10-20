@@ -5,6 +5,7 @@ import unicodedata
 
 from ._uao import register_uao
 
+from . import command
 from . import log
 
 register_uao()
@@ -89,15 +90,16 @@ class Target:
         '文章代碼(AID):'
     ]
 
+    # 新版文章列表: '[i]看板設定' 與頁尾 '文章列表  (^P)發表 ...'；新舊版兩種都要認
     InBoard = [
-        '看板資訊/設定',
-        '文章選讀',
-        '相關主題'
+        ['看板資訊/設定', '[i]看板設定'],
+        ['文章選讀', '文章列表'],
+        ['相關主題', '(b)進板'],
     ]
 
     InBoardWithCursor = [
         '【',
-        '看板資訊/設定',
+        ['看板資訊/設定', '[i]看板設定'],
     ]
     InBoardWithCursorLen = len(InBoardWithCursor)
 
@@ -105,16 +107,17 @@ class Target:
     # (y)回應(X%)推文(h)說明(←)離開
     # (y)回應(X/%)推文 (←)離開
 
+    # 長文 (兩位數頁碼 + 四位數行號) 的狀態列太寬，PTT 會砍掉「(←)離開」:
+    #   瀏覽 第 12/12 頁 (100%)  目前顯示: 第 1050~1148 行 (y)回應(X)推文    (h)說明
     InPost = [
         '瀏覽',
         '頁',
-        ')離開'
+        [')離開', '目前顯示'],
     ]
 
     PostEnd = [
         '瀏覽',
         '頁 (100%)',
-        ')離開'
     ]
 
     InWaterBallList = [
@@ -201,9 +204,9 @@ class Target:
         AnyKey
     ]
 
+    # 新版 (2026-10) 頁尾不再有「選擇看板」；「只列最愛」舊版在頁尾、新版在標頭
     InBoardList = [
         '【看板列表】',
-        '選擇看板',
         '只列最愛',
         '已讀/未讀'
     ]
@@ -234,6 +237,79 @@ class Target:
         '編號',
         '日 期'
     ]
+
+    # 新版 (2026-10)「看板設定與管理」: 板主按 i 先進唯讀模式，^P 進編輯模式。
+    # 編輯模式裡 Enter/→/Space 與多數字母都是「按下就切換設定」的熱鍵，
+    # 所以每一步都要比對到這些錨點才能送下一個鍵。頁尾最後畫，錨點都含頁尾。
+    BoardSettingReadOnly = [
+        '唯讀模式 (按 Ctrl-P 編輯)',
+        '(^P)開啟編輯',
+    ]
+    # 非板主看到的唯讀檢視 (板主唯讀模式的 16-21 項也有「[唯讀檢視]」，所以比對標頭)
+    BoardSettingViewOnly = [
+        '看板設定與管理  [唯讀檢視]',
+        '(←)離開',
+    ]
+    BoardSettingEdit = [
+        '編輯模式 (按 Ctrl-P 唯讀)',
+        '看板設定(編輯)',
+    ]
+    # 舊版 (本機 pttbbs): i → 設定頁 + 任意鍵提示，^P → 單行輸入「要改變的設定」
+    BoardSettingOld = '若要進行修改請按 Ctrl-P'
+    BoardSettingOldPrompt = '請輸入要改變的設定'
+    # Bakuman 水桶系統 (新舊版相同)
+    Bakuman = [
+        '權限設定系統',
+        '[Q]結束?',
+    ]
+    BoardTitlePrompt = '請輸入看板新中文敘述:'
+
+
+def _top_and_bottom(screen: str):
+    lines = screen.split('\n')
+    top = lines[0].strip() if lines else ''
+    second = lines[1] if len(lines) > 1 else ''
+    bottom = next((line.strip() for line in reversed(lines) if line.strip()), '')
+    return top, second, bottom
+
+
+# 看板設定畫面的中段會顯示使用者內容 (看板中文敘述、水桶理由)，所以判斷只看
+# 固定位置：頁首 (第 0 列)、Bakuman 提示列 (第 1 列)、最後一列 (頁尾 / 輸入列 / 任意鍵)。
+_bottom_input_prompts = (
+    Target.BoardTitlePrompt,
+    Target.BoardSettingOldPrompt,
+)
+# 頁首必須「以這些字開頭」：文章頁第 0 列是「作者 id (暱稱)」，暱稱是使用者可設的內容
+_board_setting_headers = ('看板設定與管理', 'Bakuman ' + Target.Bakuman[0])
+# 新版選單頁尾 (編輯模式 / 板主唯讀模式 / 非板主唯讀檢視)
+_board_setting_footers = ('看板設定(編輯)', '看板設定  (^P)開啟編輯', '看板資訊  (PgUp)')
+
+
+def in_board_setting(screen: str) -> bool:
+    """畫面是否停在看板設定 (新版選單 / Bakuman / 標題輸入列 / 舊版單字元輸入)。"""
+    top, _, bottom = _top_and_bottom(screen)
+    return (top.startswith(_board_setting_headers)
+            or bottom.startswith(_bottom_input_prompts + _board_setting_footers))
+
+
+def board_setting_exit_key(screen: str):
+    """從看板設定 / Bakuman 畫面往文章列表退一步的安全按鍵。
+
+    回傳 None 表示畫面認不得 (或已不在看板設定)，呼叫端不應照它送鍵。
+    只會回傳 ←、Ctrl-C，以及 Bakuman「[Q]結束?」的 Enter (空白 = Q，
+    正式站實測會回到編輯選單)；絕不回傳 Space 或字母。
+    """
+    top, second, bottom = _top_and_bottom(screen)
+    if bottom.startswith(_bottom_input_prompts):
+        return command.ctrl_c
+    if bottom.endswith('[按任意鍵繼續]') or '請按任意鍵繼續' in bottom:
+        return command.left
+    if top.startswith(_board_setting_headers[1]):
+        # 第 1 列是 Bakuman 主提示；其餘 Bakuman 畫面都是單行輸入 (代號/期限/理由/確認)
+        return command.enter if Target.Bakuman[1] in second else command.ctrl_c
+    if top.startswith(_board_setting_headers[0]) and bottom.startswith(_board_setting_footers):
+        return command.left
+    return None
 
 
 def show(config, screen_queue, function_name=None):

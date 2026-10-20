@@ -54,6 +54,9 @@ def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dic
 
     post_list = []
 
+    # get_newest_index 命中 2 秒快取時不會導航，畫面可能還停在上一支 API 留下的地方 (例如 get_post 的文章內)
+    _api_util.goto_board(api, board)
+
     with _api_util.expanded_screen(api):
         for _ in range(max_round):
 

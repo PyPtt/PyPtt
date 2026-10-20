@@ -586,6 +586,7 @@ class API:
             UnregisteredUser: 未註冊使用者。
             NoSuchUser: 使用者不存在。
             NoMoney: 餘額不足。
+            ParameterError: 金額過少，交易取消。
 
         範例::
 

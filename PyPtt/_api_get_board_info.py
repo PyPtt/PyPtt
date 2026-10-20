@@ -69,6 +69,9 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     logger.debug('人氣', online_user)
 
     target_list = [
+        # 新版「看板設定與管理」畫面沒有任意鍵提示；等頁尾畫完再解析
+        connect_core.TargetUnit('(PgUp)上頁 (PgDn)下頁', log_level=log.DEBUG if call_by_others else log.INFO,
+                                break_detect=True),
         connect_core.TargetUnit('任意鍵繼續', log_level=log.DEBUG if call_by_others else log.INFO,
                                 break_detect=True),
     ]
@@ -82,11 +85,20 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     ori_screen = api.connect_core.get_screen_queue()[-1]
     # print(ori_screen)
 
+    # 新版「看板設定與管理」沒有任意鍵提示，會一直停在選單上 (之後 API 開頭的 Space
+    # 會落在選單裡)。畫面已存下來，先用一個 ← 退回文章列表再解析；確認不了就斷線。
+    if screens.in_board_setting(ori_screen):
+        api.connect_core.send(command.left, [
+            connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True)])
+        if not _api_util.is_article_list(api, api.connect_core.get_screen_queue()[-1]):
+            _api_util.close_session(api)
+            raise exceptions.ConnectionClosed()
+
     boardname = None
-    p = re.compile(r'《(.+)》看板設定')
-    r = p.search(ori_screen)
+    # 新版: '看板名稱: Test 板主名單: ...'；舊版: '《Test》看板設定'
+    r = re.search(r'看板名稱: (\S+)|《(.+)》看板設定', ori_screen)
     if r is not None:
-        boardname = r.group(0)[1:-5].strip()
+        boardname = (r.group(1) or r.group(2)).strip()
 
     if boardname is None:
         if api.connect_core.last_timeout_was_silent:
@@ -116,90 +128,125 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
         else:
             moderators = moderator_line.split('/')
             for moderator in moderators.copy():
-                if moderator == '徵求中':
+                if moderator in ('徵求中', ''):
                     moderators.remove(moderator)
     logger.debug('板主名單', moderators)
 
-    open_status = ('公開狀態(是否隱形): 公開' in ori_screen)
-    logger.debug('公開狀態', open_status)
+    if '看板名稱:' in ori_screen:
+        # 新版畫面每項一列: '  9.   快速連推文章           限制 (間隔 5 秒)'。
+        # 2026-10-19 起欄寬變寬；編輯模式另有熱鍵標示 ' 1. (b)中文敘述' 與
+        # 權限註記 '開放 (限站長)'，兩者都去掉再比對。
+        # 值要整串比對：'開放' 是 '不開放' 的子字串，'對齊' 是 '不用對齊' 的子字串。
+        def value(label: str) -> str:
+            m = re.search(r'^[> ]*\d+\. +(?:\(\w\))?' + re.escape(label) + r' +(.+?) *$', ori_screen, re.M)
+            return re.sub(r' *\(限[^)]*\)$', '', m.group(1)) if m else ''
 
-    into_top_ten_when_hide = ('隱板時 可以 進入十大排行榜' in ori_screen)
-    logger.debug('隱板時可以進入十大排行榜', into_top_ten_when_hide)
+        chinese_des = value('中文敘述')
+        open_status = value('公開狀態 (是否隱形)') == '公開'
+        into_top_ten_when_hide = value('隱板時進入十大排行榜') == '可以'
+        non_board_members_post = value('非看板會員發文') == '開放'
+        reply_post = value('回應文章') == '開放'
+        self_del_post = value('自刪文章') == '開放'
+        push_post = value('推薦文章 (推文)') == '開放'
+        boo_post = value('噓文') == '開放'
+        fast_push = value('快速連推文章') == '開放'
+        m = re.search(r'間隔 (\d+) 秒', value('快速連推文章'))
+        min_interval = int(m.group(1)) if m else 0
+        push_record_ip = value('推文時記錄來源 IP') == '自動記錄'
+        push_aligned = value('推文開頭自動對齊') == '對齊'
+        moderator_can_del_illegal_content = value('板主刪除部份違規文字') == '可'
+        tran_post_auto_recorded_and_require_post_permissions = value('轉錄文章自動記錄') == '會 (需發文權限)'
+        cool_mode = value('冷靜模式') != '未設定'
+        require18 = value('未滿十八歲進入') == '禁止'
+        # 2026-10-19 起有發文條件兩列:
+        #   '16.    [發文條件] 登入次數       500 次以上 (您: 6614 次)'
+        #   '17.    [發文條件] 退文篇數       1 篇以下 (您: 0 篇)'
+        # '無限制' 或沒有這兩列 (2026-10-18 的畫面) 都給 0 (= 無限制)
+        m = re.match(r'(\d+) 次以上', value('[發文條件] 登入次數'))
+        require_login_time = int(m.group(1)) if m else 0
+        m = re.match(r'(\d+) 篇以下', value('[發文條件] 退文篇數'))
+        require_illegal_post = int(m.group(1)) if m else 0
+    else:
+        open_status = ('公開狀態(是否隱形): 公開' in ori_screen)
+        logger.debug('公開狀態', open_status)
 
-    non_board_members_post = ('開放 非看板會員發文' in ori_screen)
-    logger.debug('非看板會員發文', non_board_members_post)
+        into_top_ten_when_hide = ('隱板時 可以 進入十大排行榜' in ori_screen)
+        logger.debug('隱板時可以進入十大排行榜', into_top_ten_when_hide)
 
-    reply_post = ('開放 回應文章' in ori_screen)
-    logger.debug('回應文章', reply_post)
+        non_board_members_post = ('開放 非看板會員發文' in ori_screen)
+        logger.debug('非看板會員發文', non_board_members_post)
 
-    self_del_post = ('開放 自刪文章' in ori_screen)
-    logger.debug('自刪文章', self_del_post)
+        reply_post = ('開放 回應文章' in ori_screen)
+        logger.debug('回應文章', reply_post)
 
-    push_post = ('開放 推薦文章' in ori_screen)
-    logger.debug('推薦文章', push_post)
+        self_del_post = ('開放 自刪文章' in ori_screen)
+        logger.debug('自刪文章', self_del_post)
 
-    boo_post = ('開放 噓文' in ori_screen)
-    logger.debug('噓文', boo_post)
+        push_post = ('開放 推薦文章' in ori_screen)
+        logger.debug('推薦文章', push_post)
 
-    # 限制 快速連推文章, 最低間隔時間: 5 秒
-    # 開放 快速連推文章
+        boo_post = ('開放 噓文' in ori_screen)
+        logger.debug('噓文', boo_post)
 
-    fast_push = ('開放 快速連推文章' in ori_screen)
-    logger.debug('快速連推文章', fast_push)
+        # 限制 快速連推文章, 最低間隔時間: 5 秒
+        # 開放 快速連推文章
 
-    if not fast_push:
-        p = re.compile(r'最低間隔時間: [\d]+')
-        r = p.search(ori_screen)
-        if r is not None:
-            min_interval = r.group(0)[7:].strip()
-            min_interval = int(min_interval)
+        fast_push = ('開放 快速連推文章' in ori_screen)
+        logger.debug('快速連推文章', fast_push)
+
+        if not fast_push:
+            p = re.compile(r'最低間隔時間: [\d]+')
+            r = p.search(ori_screen)
+            if r is not None:
+                min_interval = r.group(0)[7:].strip()
+                min_interval = int(min_interval)
+            else:
+                min_interval = 0
+            logger.debug('最低間隔時間', min_interval)
         else:
             min_interval = 0
-        logger.debug('最低間隔時間', min_interval)
-    else:
-        min_interval = 0
 
-    # 推文時 自動 記錄來源 IP
-    # 推文時 不會 記錄來源 IP
-    push_record_ip = ('推文時 自動 記錄來源 IP' in ori_screen)
-    logger.debug('記錄來源 IP', push_record_ip)
+        # 推文時 自動 記錄來源 IP
+        # 推文時 不會 記錄來源 IP
+        push_record_ip = ('推文時 自動 記錄來源 IP' in ori_screen)
+        logger.debug('記錄來源 IP', push_record_ip)
 
-    # 推文時 對齊 開頭
-    # 推文時 不用對齊 開頭
-    push_aligned = ('推文時 對齊 開頭' in ori_screen)
-    logger.debug('對齊開頭', push_aligned)
+        # 推文時 對齊 開頭
+        # 推文時 不用對齊 開頭
+        push_aligned = ('推文時 對齊 開頭' in ori_screen)
+        logger.debug('對齊開頭', push_aligned)
 
-    # 板主 可 刪除部份違規文字
-    moderator_can_del_illegal_content = ('板主 可 刪除部份違規文字' in ori_screen)
-    logger.debug('板主可刪除部份違規文字', moderator_can_del_illegal_content)
+        # 板主 可 刪除部份違規文字
+        moderator_can_del_illegal_content = ('板主 可 刪除部份違規文字' in ori_screen)
+        logger.debug('板主可刪除部份違規文字', moderator_can_del_illegal_content)
 
-    # 轉錄文章 會 自動記錄，且 需要 發文權限
-    tran_post_auto_recorded_and_require_post_permissions = ('轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen)
-    logger.debug('轉錄文章 會 自動記錄，且 需要 發文權限', tran_post_auto_recorded_and_require_post_permissions)
+        # 轉錄文章 會 自動記錄，且 需要 發文權限
+        tran_post_auto_recorded_and_require_post_permissions = ('轉錄文章 會 自動記錄，且 需要 發文權限' in ori_screen)
+        logger.debug('轉錄文章 會 自動記錄，且 需要 發文權限', tran_post_auto_recorded_and_require_post_permissions)
 
-    cool_mode = ('未 設為冷靜模式' not in ori_screen)
-    logger.debug('冷靜模式', cool_mode)
+        cool_mode = ('未 設為冷靜模式' not in ori_screen)
+        logger.debug('冷靜模式', cool_mode)
 
-    require18 = ('禁止 未滿十八歲進入' in ori_screen)
-    logger.debug('禁止未滿十八歲進入', require18)
+        require18 = ('禁止 未滿十八歲進入' in ori_screen)
+        logger.debug('禁止未滿十八歲進入', require18)
 
-    p = re.compile(r'登入次數 [\d]+ 次以上')
-    r = p.search(ori_screen)
-    if r is not None:
-        require_login_time = r.group(0).split(' ')[1]
-        require_login_time = int(require_login_time)
-    else:
-        require_login_time = 0
-    logger.debug('發文限制登入次數', require_login_time)
+        p = re.compile(r'登入次數 [\d]+ 次以上')
+        r = p.search(ori_screen)
+        if r is not None:
+            require_login_time = r.group(0).split(' ')[1]
+            require_login_time = int(require_login_time)
+        else:
+            require_login_time = 0
+        logger.debug('發文限制登入次數', require_login_time)
 
-    p = re.compile(r'退文篇數 [\d]+ 篇以下')
-    r = p.search(ori_screen)
-    if r is not None:
-        require_illegal_post = r.group(0).split(' ')[1]
-        require_illegal_post = int(require_illegal_post)
-    else:
-        require_illegal_post = 0
-    logger.debug('發文限制退文篇數', require_illegal_post)
+        p = re.compile(r'退文篇數 [\d]+ 篇以下')
+        r = p.search(ori_screen)
+        if r is not None:
+            require_illegal_post = r.group(0).split(' ')[1]
+            require_illegal_post = int(require_illegal_post)
+        else:
+            require_illegal_post = 0
+        logger.debug('發文限制退文篇數', require_illegal_post)
 
     kind_list = []
     if get_post_kind:

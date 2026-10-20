@@ -33,6 +33,9 @@ except ImportError:  # websockets < 13
 
 USER_AGENT = f'{_WS_USER_AGENT} PyPtt/{PyPtt.__version__}'
 
+_REDRAW_WAIT = 1.0  # seconds to wait for PTT's redraw after a mid-session NAWS
+_REDRAW_IDLE = 0.1  # old pttbbs (no ?2026 bracket): redraw is complete after this much silence
+
 def ssl_init(verify_ssl: bool = True) -> ssl.SSLContext:
     # Verify the PTT server certificate against the system CA bundle.
     # The client cert loaded below is *not* for identity (PTT does not
@@ -163,6 +166,7 @@ class API(object):
         self._stream_parsers = {}
         self._ssl_context = ssl_init(self.config.verify_ssl)
         self.last_timeout_was_silent = False
+        self._pending = []  # chunks read ahead by _drain_resize_redraw, consumed first by _recv
 
     def _get_event_loop(self):
         if self._loop and not self._loop.is_closed():
@@ -211,6 +215,7 @@ class API(object):
             websocket_host = f'wss://{self.config.host}'
             websocket_origin = 'https://term.ptt.cc'
 
+        self._pending = []
         connect_success = False
         loop = self._get_event_loop()
 
@@ -326,27 +331,33 @@ class API(object):
         received_any_byte = False
 
         while True:
-            if refresh and msg and not msg.endswith(command.refresh):
+            # msg None = 只收不送: nothing goes out, and the parsers keep what the previous send()
+            # already received, so a frame that timeout cut in half is completed instead of restarted.
+            receive_only = msg is None
+            if receive_only:
+                msg = ''
+            elif refresh and msg and not msg.endswith(command.refresh):
                 msg += command.refresh
 
-            try:
-                encoded_msg = msg.encode('utf-8', 'replace')
-            except AttributeError:
-                encoded_msg = msg
-            except Exception as e:
-                traceback.print_tb(e.__traceback__)
-                print(e)
-                encoded_msg = msg.encode('utf-8', 'replace')
+            if not receive_only:
+                try:
+                    encoded_msg = msg.encode('utf-8', 'replace')
+                except AttributeError:
+                    encoded_msg = msg
+                except Exception as e:
+                    traceback.print_tb(e.__traceback__)
+                    print(e)
+                    encoded_msg = msg.encode('utf-8', 'replace')
 
-            if is_secret:
-                log.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
-            else:
-                log.logger.debug(i18n.send_msg, str(encoded_msg))
+                if is_secret:
+                    log.logger.debug(i18n.send_msg, i18n.hide_sensitive_info)
+                else:
+                    log.logger.debug(i18n.send_msg, str(encoded_msg))
 
-            try:
-                await self._core.send(encoded_msg)
-            except (websockets.exceptions.ConnectionClosed, websockets.exceptions.ConnectionClosedOK, RuntimeError):
-                raise exceptions.ConnectionClosed()
+                try:
+                    await self._core.send(encoded_msg)
+                except (websockets.exceptions.ConnectionClosed, websockets.exceptions.ConnectionClosedOK, RuntimeError):
+                    raise exceptions.ConnectionClosed()
 
             if break_detect_after_send:
                 return -1
@@ -357,7 +368,8 @@ class API(object):
             # accumulated buffer every time — turning the receive loop from
             # O(N²) into O(N). The parsers also hold the rendered screen, so no
             # separate raw byte buffer is accumulated.
-            self._stream_parsers = {}
+            if not receive_only:
+                self._stream_parsers = {}
             start_time = time.time()
             find_target = False
             target_index = -1
@@ -366,7 +378,7 @@ class API(object):
                 async with asyncio.timeout(current_screen_timeout):
                     while True:
                         try:
-                            data_chunk = await self._core.recv()
+                            data_chunk = await self._recv()
                         except (websockets.exceptions.ConnectionClosed, websockets.exceptions.ConnectionClosedOK):
                             if use_too_many_res:
                                 raise exceptions.UseTooManyResources()
@@ -522,6 +534,49 @@ class API(object):
         loop = self._get_event_loop()
         loop.run_until_complete(self._core.send(naws))
         self.config.screen_height = height
+        loop.run_until_complete(self._drain_resize_redraw())
+
+    async def _recv(self) -> bytes:
+        chunk = self._pending.pop(0) if self._pending else await self._core.recv()
+        return chunk.encode('utf-8') if isinstance(chunk, str) else chunk
+
+    async def _drain_resize_redraw(self) -> None:
+        # pttbbs answers every NAWS with a full redraw (measured old & new: <10 ms). Left unread,
+        # the next send() matches that stale screen and every later screen lags one behind.
+        # - Bytes before the redraw's clear-screen are the tail of a frame the previous send()
+        #   matched early on; drop them.
+        # - New PTT brackets the redraw in ?2026h … ?2026l: read to the closing mark.
+        # - Old pttbbs has no bracket: the redraw is over at the next clear-screen (pushed back for
+        #   the next send) or after _REDRAW_IDLE of silence.
+        clear, sync_h, sync_l = b'\x1b[2J', b'\x1b[?2026h', b'\x1b[?2026l'
+        redraw = b''
+        try:
+            try:
+                # No redraw at all was never observed; a shorter wait than screen_timeout keeps that
+                # case cheap, at the price of a stale screen if the redraw is slower than this.
+                async with asyncio.timeout(min(self.config.screen_timeout, _REDRAW_WAIT)):
+                    while clear not in redraw:
+                        redraw = await self._recv()
+            except TimeoutError:
+                return
+            if sync_h in redraw:
+                async with asyncio.timeout(self.config.screen_timeout):
+                    while redraw.rfind(sync_l) < redraw.rfind(sync_h):
+                        redraw += await self._recv()
+                return
+            while True:
+                try:
+                    async with asyncio.timeout(_REDRAW_IDLE):
+                        chunk = await self._recv()
+                except TimeoutError:
+                    return
+                if clear in chunk:
+                    self._pending.insert(0, chunk)
+                    return
+        except TimeoutError:
+            pass
+        except (websockets.exceptions.ConnectionClosed, websockets.exceptions.ConnectionClosedOK):
+            raise exceptions.ConnectionClosed()
 
     def close(self):
         if self.config.connect_mode == data_type.ConnectMode.WEBSOCKETS:
