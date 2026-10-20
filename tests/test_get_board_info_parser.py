@@ -174,7 +174,9 @@ def test_board_name_mismatch_raises_no_such_board():
 def test_screen_targets_match_new_layout():
     # goto_board() 與各 API 都靠 InBoard 判斷「已在文章列表」；PTT 改版後舊字串全部對不上
     assert connect_core.TargetUnit(screens.Target.InBoard).is_match(BOARD_SCREEN, '>')
-    assert connect_core.TargetUnit(screens.Target.InBoardWithCursor).is_match(BOARD_SCREEN, '>')
+    # login() 會把帳號的游標 append 進全域 InBoardWithCursor（本機 pttbbs 是 ●）；fixture 沒有游標列，只驗前面的錨點
+    base = screens.Target.InBoardWithCursor[:screens.Target.InBoardWithCursorLen]
+    assert connect_core.TargetUnit(base).is_match(BOARD_SCREEN, '>')
     assert not connect_core.TargetUnit(screens.Target.InBoard).is_match(MOBILESALES_INFO, '>')
     assert connect_core.TargetUnit('(PgUp)上頁 (PgDn)下頁').is_match(MOBILESALES_INFO, '>')
 
