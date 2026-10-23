@@ -212,7 +212,7 @@ def test_own_post_with_bad_post_type_raises(ptt_bots):
     prove the own-post branch of the check works. PyPttMod (LOCALHOST-only
     bootstrap board, moderated by pypttbot1) lets a real moderator delete
     their own post and hit that branch specifically."""
-    ptt1_bot, ptt2_bot = ptt_bots
+    ptt1_bot = ptt_bots[0]
     if ptt1_bot.host != PyPtt.HOST.LOCALHOST:
         pytest.skip('needs a board the bot actually moderates; only the LOCALHOST '
                     'bootstrap provisions one (PyPttMod, moderated by pypttbot1)')
@@ -234,7 +234,7 @@ def test_own_post_with_bad_post_type_raises(ptt_bots):
 
 def test_bad_post_other_without_reason_raises(ptt_bots):
     """BadPostType.OTHER requires bad_post_reason to be supplied."""
-    ptt1_bot, ptt2_bot = ptt_bots
+    ptt1_bot = ptt_bots[0]
     if ptt1_bot.host != PyPtt.HOST.LOCALHOST:
         pytest.skip('real PTT two-host setup cannot exercise this (poster is on PTT2, '
                     'board lives on PTT1); run against local imageptt (PTT_HOST=LOCALHOST)')
@@ -245,6 +245,7 @@ def test_bad_post_other_without_reason_raises(ptt_bots):
     if not util.is_primary_host(ptt1_bot, ptt_bots):
         pytest.skip('MOD_BOARD is moderated by the primary bot')
 
+    ptt2_bot = ptt_bots[1]
     board = config.MOD_BOARD
     title = f"PyPtt BadPost Other Test {int(time.time())}"
     post_aid = _post_and_find_aid(ptt2_bot, board, title)
@@ -275,7 +276,7 @@ def test_bad_post(ptt_bots):
     needs TEST_USER (the moderator-owned MOD_BOARD's non-moderator poster)
     to post. Both articles below are posted up front, before either
     bad-post call (and its posting ban) can land."""
-    ptt1_bot, ptt2_bot = ptt_bots
+    ptt1_bot = ptt_bots[0]
     if ptt1_bot.host != PyPtt.HOST.LOCALHOST:
         pytest.skip('real PTT two-host setup cannot exercise this; run against local imageptt')
 
@@ -285,6 +286,7 @@ def test_bad_post(ptt_bots):
     if not util.is_primary_host(ptt1_bot, ptt_bots):
         pytest.skip('MOD_BOARD is moderated by the primary bot')
 
+    ptt2_bot = ptt_bots[1]
     board = config.MOD_BOARD
     title_ad = f"PyPtt Bad Post AD Test {int(time.time())}"
     title_other = f"PyPtt Bad Post OTHER Test {int(time.time())}"
