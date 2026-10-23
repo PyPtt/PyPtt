@@ -6,8 +6,9 @@ load_dotenv()
 PTT1_ID = os.environ['PTT1_ID']
 PTT1_PW = os.environ['PTT1_PW']
 
-PTT2_ID = os.environ['PTT2_ID']
-PTT2_PW = os.environ['PTT2_PW']
+# Optional: leave PTT2_ID unset to run the suite against PTT1 only.
+PTT2_ID = os.environ.get('PTT2_ID')
+PTT2_PW = os.environ.get('PTT2_PW')
 
 TEST_USER = os.environ['TEST_USER']
 

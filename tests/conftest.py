@@ -27,21 +27,21 @@ def ptt_bots(request):
     ptt1_bot = PyPtt.API(host=ptt1_host)
     if not is_run_in_github_actions: util.login(ptt1_bot, kick=True, account=1)
 
-    ptt2_bot = PyPtt.API(host=ptt2_host)
-    if not is_run_in_github_actions: util.login(ptt2_bot, kick=True, account=2)
+    # PTT2_ID unset -> PTT1 only; tests iterating ptt_bots just see one bot.
+    if is_run_in_github_actions or util.config.PTT2_ID:
+        ptt2_bot = PyPtt.API(host=ptt2_host)
+        if not is_run_in_github_actions: util.login(ptt2_bot, kick=True, account=2)
+        bots = (ptt1_bot, ptt2_bot)
+    else:
+        bots = (ptt1_bot,)
 
-    yield ptt1_bot, ptt2_bot
+    yield bots
     # Final teardown at the end of the session
 
     if not is_run_in_github_actions:
-        try:
-            util.del_all_post(ptt1_bot)
-            ptt1_bot.logout()
-        except Exception:
-            pass
-
-        try:
-            util.del_all_post(ptt2_bot)
-            ptt2_bot.logout()
-        except Exception:
-            pass
+        for bot in bots:
+            try:
+                util.del_all_post(bot)
+                bot.logout()
+            except Exception:
+                pass
