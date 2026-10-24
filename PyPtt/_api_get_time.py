@@ -8,7 +8,7 @@ from . import i18n
 from . import log
 from . import screens
 
-pattern = re.compile(r'[\d]+:[\d][\d]')
+pattern = re.compile(r'(\d{1,2}):(\d{2})')
 
 
 def get_time(api) -> str:
@@ -46,5 +46,6 @@ def _find_time(line_list):
         if '線上' in line:
             result = pattern.search(line)
             if result is not None:
-                return result.group(0)
+                # 10 點前小時不補零 (週六 9:18), 統一回傳 HH:MM
+                return f'{int(result.group(1)):02d}:{result.group(2)}'
     return None
