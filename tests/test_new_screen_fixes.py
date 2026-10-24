@@ -17,7 +17,7 @@ from unittest.mock import MagicMock
 import pytest
 
 import PyPtt
-from PyPtt import (_api_get_favourite_board, _api_get_newest_index, _api_get_post_list, _api_give_money,
+from PyPtt import (_api_get_favourite_board, _api_get_newest_index, _api_get_time, _api_get_post_list, _api_give_money,
                    _api_util, command, config, connect_core, data_type, exceptions, i18n, screens)
 
 i18n.init(PyPtt.Language.ENGLISH)
@@ -404,3 +404,13 @@ def test_favourites_target_matches(name):
     core.get_screen_queue.return_value = [_fx('favourites_new_p5.txt')]
     _api_get_favourite_board.get_favourite_board(_mock_api(core))
     assert target_list[0].is_match(_fx(name), '>')
+
+
+@pytest.mark.parametrize('bar, expected', [
+    # 10 點前狀態列的小時不補零, get_time 仍要回 HH:MM
+    (' 主選單  [ 獅子時 ]    10/24 週六 9:18 | DeepLearning | 線上23636人    (h)說明 ', '09:18'),
+    (' 主選單  [ 獅子時 ]    10/24 週六 0:05 | DeepLearning | 線上23636人    (h)說明 ', '00:05'),
+    ('主選單   世界郵政日   10/9 週五 15:04 | janice001 | 線上24305人       (h)說明', '15:04'),
+])
+def test_get_time_zero_pads_hour(bar, expected):
+    assert _api_get_time._find_time(['', bar]) == expected
