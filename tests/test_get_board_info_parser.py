@@ -312,3 +312,60 @@ def test_no_such_board_after_i_still_leaves_menu():
     with pytest.raises(exceptions.NoSuchBoard):
         _api_get_board_info.get_board_info(api, 'Test', get_post_kind=False, call_by_others=True)
     assert api.connect_core.keys[-1] == command.left
+
+
+# 2026-11-01 PTT1 改版: 標頭 '看板名稱: X 板主名單: ...' 改成 '名稱: X  板主: ...'；
+# 帳號板主以 '/' 串接，非帳號的板主稱號 (綠字) 以空白分隔接在後面
+_ROWS_20261101 = '\n'.join([
+    '>  1.    中文敘述                   [八卦] Ｘ教授　Ｒ．Ｉ．Ｐ',
+    '   2.    公開狀態 (是否隱形)        公開',
+    '   3.    隱板時進入十大排行榜       可以',
+    '   4.    非看板會員發文             開放',
+    '   5.    回應文章                   開放',
+    '   6.    自刪文章                   開放',
+    '   7.    推薦文章 (推文)            開放',
+    '   8.    噓文                       開放',
+    '   9.    快速連推文章               限制 (間隔 5 秒)',
+    '  10.    推文時記錄來源 IP          自動記錄',
+    '  11.    推文開頭自動對齊           不用對齊',
+    '  12.    板主刪除部份違規文字       可',
+    '  13.    轉錄文章自動記錄           會 (需發文權限)',
+    '  14.    冷靜模式                   未設定',
+    '  15.    未滿十八歲進入             禁止',
+    '  16.    [發文條件] 登入次數        無限制',
+    '  17.    [發文條件] 退文篇數        無限制',
+    '  18.    個人發文推文權限           具有發文與推文權限',
+    '  19.    預設連署限制 (登入/退文)   無特別限制',
+    '  20.    [名單] 設定禁言名單(水桶)  [唯讀檢視]',
+    '  21.    [名單] 可見會員名單        [唯讀檢視]',
+    ' 看板資訊  (PgUp)上頁 (PgDn)下頁 (1)跳號                      (←)離開 (h)說明',
+])
+
+
+def _info_20261101(header):
+    return ' 看板設定與管理  [唯讀檢視]\n' + header + '\n' + _ROWS_20261101
+
+
+@pytest.mark.parametrize('header, board, moderators', [
+    ('名稱: Gossiping  板主: ubcs/redDest 初音未來', 'Gossiping', ['ubcs', 'redDest', '初音未來']),
+    ('名稱: C_Chat  板主: daniel0527/arrenwu/motw1999', 'C_Chat', ['daniel0527', 'arrenwu', 'motw1999']),
+    ('名稱: SYSOP  板主: 站長', 'SYSOP', ['站長']),
+    ('名稱: Python  板主: (無)', 'Python', []),
+])
+def test_layout_20261101(header, board, moderators):
+    info = _info(board, _info_20261101(header))
+    assert info[BoardField.board] == board
+    assert info[BoardField.moderators] == moderators
+    assert info[BoardField.mandarin_des] == '[八卦] Ｘ教授　Ｒ．Ｉ．Ｐ'
+    assert info[BoardField.into_top_ten_when_hide] is True
+    assert info[BoardField.can_fast_push] is False
+    assert info[BoardField.min_interval_between_comments] == 5
+    assert info[BoardField.is_comment_record_ip] is True
+    assert info[BoardField.can_moderators_del_illegal_content] is True
+    assert info[BoardField.is_require18] is True
+    assert info[BoardField.require_login_time] == 0
+
+
+def test_layout_20261101_board_name_mismatch_raises_no_such_board():
+    with pytest.raises(exceptions.NoSuchBoard):
+        _info('Test', _info_20261101('名稱: Python  板主: (無)'))

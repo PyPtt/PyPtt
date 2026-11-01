@@ -232,6 +232,36 @@ class TestSetBoardTitleNewFlow:
         assert api.connect_core.keys == ['I', LEFT]
 
 
+# 2026-11-01 PTT1 改版: 編輯模式頁首改成 '[管理權限: 板主]'，頁尾 (w) 改叫禁言名單
+EDIT_20261101 = EDIT.replace('[編輯模式 (按 Ctrl-P 唯讀)]', '[管理權限: 板主]').replace(
+    '(w)水桶名單', '(w)禁言名單').replace('看板名稱: give 板主名單: SomeBM', '名稱: give  板主: SomeBM')
+EDIT_20261101_CURSOR16 = EDIT_CURSOR16.replace('[編輯模式 (按 Ctrl-P 唯讀)]', '[管理權限: 板主]')
+
+
+class TestEditHeader20261101:
+    def test_set_board_title(self, make_api):
+        assert '[管理權限: 板主]' in EDIT_20261101 and '編輯模式' not in EDIT_20261101
+        text = '[贈送] 新標題 test'
+        api = make_api([READONLY, EDIT_20261101, TITLE_PROMPT, _typed(text), EDIT_20261101, SAVED, ARTICLE_LIST])
+        _api_set_board_title.set_board_title(api, 'give', '新標題 test')
+        keys = api.connect_core.keys
+        assert keys[:3] == ['I', CTRL_P, ENTER]
+        assert keys[3].lstrip(command.backspace) == text
+        assert keys[4:] == [ENTER, LEFT, LEFT]
+
+    def test_bucket(self, make_api):
+        api = make_api([READONLY, EDIT_20261101, BAKUMAN, BAKUMAN_ID, BAKUMAN_PERIOD, BAKUMAN_REASON,
+                        BAKUMAN_CONFIRM, BAKUMAN_DONE, BAKUMAN, EDIT_20261101_CURSOR16, UNCHANGED, ARTICLE_LIST])
+        _api_bucket.bucket(api, 'give', 1, 'PyPtt test', 'CodingMan')
+        assert api.connect_core.keys == [
+            'i', CTRL_P, 'w', 'a' + ENTER, 'CodingMan' + ENTER, '1' + ENTER, 'PyPtt test' + ENTER, 'y' + ENTER,
+            LEFT, ENTER, LEFT, LEFT]
+
+    def test_exit_key_and_in_board_setting(self):
+        assert screens.in_board_setting(EDIT_20261101)
+        assert screens.board_setting_exit_key(EDIT_20261101) == LEFT
+
+
 class TestBucketNewFlow:
     def test_happy_path(self, make_api):
         api = make_api([READONLY, EDIT, BAKUMAN, BAKUMAN_ID, BAKUMAN_PERIOD, BAKUMAN_REASON, BAKUMAN_CONFIRM,
