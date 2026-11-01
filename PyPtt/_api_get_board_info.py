@@ -95,8 +95,10 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
             raise exceptions.ConnectionClosed()
 
     boardname = None
-    # 新版: '看板名稱: Test 板主名單: ...'；舊版: '《Test》看板設定'
-    r = re.search(r'看板名稱: (\S+)|《(.+)》看板設定', ori_screen)
+    # 2026-11-01 起: '名稱: Test  板主: ...'；2026-10: '看板名稱: Test 板主名單: ...'；
+    # 舊版: '《Test》看板設定'
+    r = re.search(r'^(?:看板)?名稱: (\S+)|《(.+)》看板設定', ori_screen, re.M)
+    new_layout = r is not None and r.group(1) is not None
     if r is not None:
         boardname = (r.group(1) or r.group(2)).strip()
 
@@ -119,20 +121,17 @@ def get_board_info(api, board: str, get_post_kind: bool, call_by_others: bool) -
     logger.debug('中文敘述', chinese_des)
 
     moderators = []
-    p = re.compile(r'板主名單: (.+)')
+    # 2026-11-01 起帳號板主以 '/' 串接，非帳號的板主稱號接在後面、以空白分隔:
+    #   '板主: ubcs/redDest 初音未來'
+    p = re.compile(r'板主(?:名單)?: (.+)')
     r = p.search(ori_screen)
     if r is not None:
-        moderator_line = r.group(0)[5:].strip()
-        if '(無)' in moderator_line:
-            moderators = []
-        else:
-            moderators = moderator_line.split('/')
-            for moderator in moderators.copy():
-                if moderator in ('徵求中', ''):
-                    moderators.remove(moderator)
+        moderator_line = r.group(1).strip()
+        if '(無)' not in moderator_line:
+            moderators = [m for m in re.split(r'[/\s]+', moderator_line) if m not in ('徵求中', '')]
     logger.debug('板主名單', moderators)
 
-    if '看板名稱:' in ori_screen:
+    if new_layout:
         # 新版畫面每項一列: '  9.   快速連推文章           限制 (間隔 5 秒)'。
         # 2026-10-19 起欄寬變寬；編輯模式另有熱鍵標示 ' 1. (b)中文敘述' 與
         # 權限註記 '開放 (限站長)'，兩者都去掉再比對。
