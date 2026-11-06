@@ -179,6 +179,21 @@ class API(object):
             asyncio.set_event_loop(self._loop)
         return self._loop
 
+    def _websocket_endpoint(self) -> tuple[str, str]:
+        # PTT1 started answering wss://ws.ptt.cc/bbs/ (trailing slash) with HTTP 404 on
+        # 2026-11-06; term.ptt.cc connects to /bbs, so use the slash-less path everywhere
+        if self.config.host == data_type.HOST.PTT1:
+            return 'wss://ws.ptt.cc/bbs', 'https://term.ptt.cc'
+        if self.config.host == data_type.HOST.PTT2:
+            return 'wss://ws.ptt2.cc/bbs', 'https://term.ptt2.cc'
+        if self.config.host == data_type.HOST.LOCALHOST:
+            # ponytail: local pttbbs docker image (bbsdocker/imageptt) serves plain ws
+            # (no TLS) on 48763; config.port defaults to 23 (telnet default) so treat
+            # that as "not set" and fall back to imageptt's default port
+            port = self.config.port if self.config.port != 23 else 48763
+            return f'ws://localhost:{port}/bbs', 'http://localhost'
+        return f'wss://{self.config.host}', 'https://term.ptt.cc'
+
     def connect(self) -> None:
         def _wait():
             for i in range(self.config.retry_wait_time):
@@ -198,22 +213,7 @@ class API(object):
 
         self.current_encoding = 'big5uao'
 
-        if self.config.host == data_type.HOST.PTT1:
-            websocket_host = 'wss://ws.ptt.cc/bbs/'
-            websocket_origin = 'https://term.ptt.cc'
-        elif self.config.host == data_type.HOST.PTT2:
-            websocket_host = 'wss://ws.ptt2.cc/bbs/'
-            websocket_origin = 'https://term.ptt2.cc'
-        elif self.config.host == data_type.HOST.LOCALHOST:
-            # ponytail: local pttbbs docker image (bbsdocker/imageptt) serves plain ws
-            # (no TLS) on 48763; config.port defaults to 23 (telnet default) so treat
-            # that as "not set" and fall back to imageptt's default port
-            port = self.config.port if self.config.port != 23 else 48763
-            websocket_host = f'ws://localhost:{port}/bbs'
-            websocket_origin = 'http://localhost'
-        else:
-            websocket_host = f'wss://{self.config.host}'
-            websocket_origin = 'https://term.ptt.cc'
+        websocket_host, websocket_origin = self._websocket_endpoint()
 
         self._pending = []
         connect_success = False
