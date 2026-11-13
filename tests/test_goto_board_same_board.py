@@ -224,6 +224,38 @@ class TestSearch:
         assert api.connect_core.keys == [FULL_PATH]
 
 
+class TestCrowdedHeader:
+    # 板主名單長又有「你有新信件」時，PTT 整段省略標頭的「看板《X》」/「系列《X》」(PTT1 實測 Japan_Travel)
+    CROWDED = '【板主:modone01/modtwo002/modthree1/mod04】    你有新信件                      '
+    PLAIN = ARTICLE_LIST.replace(ARTICLE_LIST.split('\n', 1)[0], CROWDED)
+    SEARCH = SEARCH_LIST.replace(SEARCH_LIST.split('\n', 1)[0], CROWDED)
+    NO_RESULT = NO_RESULT.replace(NO_RESULT.split('\n', 1)[0], CROWDED)
+
+    def test_search_result_recognized_by_footer(self):
+        api = make_api([self.PLAIN, self.SEARCH], start=self.PLAIN, current_board=None)
+        _api_util.goto_board(api, 'give', search_list=KEYWORD)
+        assert api.connect_core.keys == [FULL_PATH, KEYWORD_CMD]
+        assert (api._current_board, api._current_search) == ('give', tuple(KEYWORD))
+
+    def test_no_result_stays_in_board(self):
+        api = make_api([self.PLAIN, self.NO_RESULT, self.PLAIN], start=self.PLAIN, current_board=None)
+        with pytest.raises(PyPtt.exceptions.NoSearchResult):
+            _api_util.goto_board(api, 'give', search_list=KEYWORD)
+        assert (api._current_board, api._current_search) == ('give', ())
+
+    def test_same_board_shortcut_needs_board_name(self):
+        # 看不到看板名稱就確認不了還在同一個看板，照完整路徑
+        api = make_api([self.PLAIN], start=self.PLAIN)
+        _api_util.goto_board(api, 'give')
+        assert api.connect_core.keys == [FULL_PATH]
+
+    def test_kind_without_name(self):
+        api = make_api([], start=self.PLAIN)
+        assert _api_util.board_list_kind(api, self.PLAIN, 'give') is None
+        assert _api_util.board_list_kind(api, self.PLAIN, 'give', require_name=False) == 'plain'
+        assert _api_util.board_list_kind(api, self.SEARCH, 'give', require_name=False) == 'search'
+
+
 def test_forget_current_board():
     api = make_api([], start=ARTICLE_LIST, current_search=KEYWORD)
     _api_util.forget_current_board(api)

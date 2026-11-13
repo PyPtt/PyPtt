@@ -552,19 +552,34 @@ def search_key(search_list: Optional[list]) -> tuple:
     return tuple((search_type, search_condition) for search_type, search_condition in (search_list or []))
 
 
-def board_list_kind(api, screen: str, board: str) -> Optional[str]:
+def board_list_kind(api, screen: str, board: str, require_name: bool = True) -> Optional[str]:
     """目前畫面是 board 的哪一種列表：'plain' 一般文章列表、'search' 搜尋結果，其他回傳 None。
 
-    一般列表標頭是「看板《Python》」；搜尋結果是「系列《Python》」。"""
+    一般列表標頭是「看板《Python》」；搜尋結果是「系列《Python》」。
+    標頭擠不下時 (例如板主名單長又有「你有新信件」) PTT 會整段省略「看板《X》」，
+    這時改看頁尾 (PTT1 新版：一般列表「文章列表」、搜尋結果「系列文章」)；
+    但看不到看板名稱，require_name=True 時回傳 None，只有呼叫端確定還在這個看板裡才放寬。"""
     if screens.in_board_setting(screen):
         return None
-    first_line = screen.split('\n', 1)[0]
-    match = re.search(r'(看板|系列)《([^》]+)》', first_line)
-    if match is None or match.group(2).lower() != board.lower():
-        return None
-    if match.group(1) == '看板' and is_article_list(api, screen):
+    lines = screen.split('\n')
+    match = re.search(r'(看板|系列)《([^》]+)》', lines[0])
+    if match is not None:
+        if match.group(2).lower() != board.lower():
+            return None
+        kind = 'plain' if match.group(1) == '看板' else 'search'
+    else:
+        if require_name:
+            return None
+        footer = next((line.strip() for line in reversed(lines) if line.strip()), '')
+        if footer.startswith('文章列表'):
+            kind = 'plain'
+        elif footer.startswith('系列文章'):
+            kind = 'search'
+        else:
+            return None
+    if kind == 'plain' and is_article_list(api, screen):
         return 'plain'
-    if match.group(1) == '系列' and connect_core.TargetUnit(screens.Target.InSearchList).is_match(screen, api.cursor):
+    if kind == 'search' and connect_core.TargetUnit(screens.Target.InSearchList).is_match(screen, api.cursor):
         return 'search'
     return None
 
@@ -635,14 +650,15 @@ def _search_in_board(api, board: str, search_list: list, want: tuple) -> None:
         connect_core.TargetUnit(screens.Target.InSearchList, log_level=log.DEBUG, break_detect=True),
     ]
     index = api.connect_core.send(cmd, target_list)
-    if index == 1 and board_list_kind(api, last_screen(api), board) == 'search':
+    # 搜尋是從已確認的一般列表送出的，標頭省略看板名稱時也認得是同一個看板
+    if index == 1 and board_list_kind(api, last_screen(api), board, require_name=False) == 'search':
         api._current_search = want
         return
 
     if index == 0:
         # 關掉提示框；回到一般列表就留在板內，下一次不用重新進板
         index = api.connect_core.send(command.space, _list_targets())
-        if index == 0 and board_list_kind(api, last_screen(api), board) == 'plain':
+        if index == 0 and board_list_kind(api, last_screen(api), board, require_name=False) == 'plain':
             api._current_search = ()
             raise exceptions.NoSearchResult()
 
