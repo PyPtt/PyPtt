@@ -289,7 +289,8 @@ def _newest_api(screen_list):
 
 
 def test_newest_index_no_search_result(no_board_nav):
-    api = _newest_api([_fx('newest_index_board.txt'), _fx('newest_index_in_post.txt')])
+    # goto_board (含搜尋) 被換掉；搜尋後的 '1\r$' 落在文章裡就是沒有結果
+    api = _newest_api([_fx('newest_index_in_post.txt')])
     with pytest.raises(exceptions.NoSearchResult):
         _api_get_newest_index.get_newest_index(api, data_type.NewIndex.BOARD, board='Test',
                                                search_type=data_type.SearchType.AUTHOR,
@@ -297,7 +298,7 @@ def test_newest_index_no_search_result(no_board_nav):
 
 
 def test_newest_index_no_search_result_on_animation_post(no_board_nav):
-    api = _newest_api([_fx('newest_index_board.txt'), screens.Target.Animation[0]])
+    api = _newest_api([screens.Target.Animation[0]])
     with pytest.raises(exceptions.NoSearchResult):
         _api_get_newest_index.get_newest_index(api, data_type.NewIndex.BOARD, board='Test',
                                                search_type=data_type.SearchType.AUTHOR,

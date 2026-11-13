@@ -61,10 +61,8 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     else:
         raise exceptions.ParameterError('wrong parameter index or aid must input')
 
-    search_cmd = None
     if search_list is not None and len(search_list) > 0:
         current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board, search_list=search_list)
-        search_cmd = _api_util.get_search_condition_cmd(data_type.NewIndex.BOARD, search_list)
     else:
         current_index = api.get_newest_index(data_type.NewIndex.BOARD, board=board)
 
@@ -75,7 +73,7 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
     post = {}
     for i in range(max_retry):
         try:
-            post = _get_post(api, board, aid, index, query, search_cmd)
+            post = _get_post(api, board, aid, index, query, search_list)
             if not post:
                 pass
             elif not post[PostField.pass_format_check]:
@@ -97,18 +95,16 @@ def get_post(api, board: str, aid: Optional[str] = None, index: Optional[int] = 
 
 
 def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, query: bool = False,
-              search_cmd_list: Optional[list[str]] = None) -> Dict:
+              search_list: Optional[list] = None) -> Dict:
     _api_util.check_board(api, board)
-    _api_util.goto_board(api, board)
+    # 用 AID 找文章時不需要搜尋條件；用編號時要停在同一組條件的搜尋結果裡，編號才對得上
+    _api_util.goto_board(api, board, search_list=search_list if post_aid is None else None)
 
     cmd_list = []
 
     if post_aid is not None:
         cmd_list.append(lib_util.check_aid(post_aid))
     elif post_index != 0:
-
-        if search_cmd_list is not None:
-            cmd_list.extend(search_cmd_list)
 
         cmd_list.append(str(max(1, post_index - 100)))
         cmd_list.append(command.enter)
@@ -126,6 +122,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
             screens.Target.PTT1_QueryPost if api.config.host == data_type.HOST.PTT1 else screens.Target.PTT2_QueryPost,
             log_level=log.DEBUG, break_detect=True, refresh=False),
         connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InSearchList, log_level=log.DEBUG, break_detect=True),
         connect_core.TargetUnit(screens.Target.MainMenu_Exiting, exceptions_=exceptions.NoSuchBoard(api.config, board)),
     ]
 
@@ -155,7 +152,7 @@ def _get_post(api, board: str, post_aid: Optional[str] = None, post_index: int =
         PostField.is_unconfirmed: False,
     }
 
-    if index < 0 or index == 1:
+    if index < 0 or index in (1, 2):
         # Known gap (intentionally not fixed here): a connection that dies
         # mid-redraw (bytes received, so last_timeout_was_silent is False)
         # leaves a stale listing screen with a cursor line in RDQ, and
