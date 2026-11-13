@@ -356,7 +356,8 @@ xy_pattern_h = re.compile(r'^=ESC=\[[\d]+;[\d]+H')
 xy_pattern_s = re.compile(r'^=ESC=\[[\d]+;[\d]+s')
 # 依 ECMA-48 剝掉引擎不處理的 CSI (顏色、ESC[?2026h、ESC[6n…, PttCurrent M.1789835163.A.633),
 # 以及被下一個 ESC 打斷的孤立 ESC (主選單動畫尾端的 '\x1b\x1b[?2026h'); 留著會讓引擎凍住畫面
-_color_sgr = re.compile(r'\x1B(?=\x1B)|\x1B\[(?!(?:\d+;\d+)?[Hs]|K|2J)[0-?]*[ -/]*[@-~]')
+# OSC (ESC ] ... BEL 或 ESC \\) 也一併剝掉, 例如內文網址的 OSC 8 超連結 '\x1b]8;;URL\x1b\\'
+_color_sgr = re.compile(r'\x1B\][^\x07\x1B]*(?:\x07|\x1B\\)|\x1B(?=\x1B)|\x1B\[(?!(?:\d+;\d+)?[Hs]|K|2J)[0-?]*[ -/]*[@-~]')
 
 
 def _preprocess(data: str) -> str:
@@ -541,6 +542,8 @@ def _escape_complete(seq: str) -> bool:
     engine will bail on it, same as the batch parser)."""
     if len(seq) < 2:
         return False            # lone ESC — wait for more
+    if seq[1] == ']':
+        return '\x07' in seq or '\x1b\\' in seq   # OSC 要等到 BEL 或 ESC \\ 結尾
     if seq[1] != '[':
         return True             # ESC + non-'[': engine bails on it
     for ch in seq[2:]:
@@ -581,6 +584,9 @@ class IncrementalScreen(_VT100Engine):
         while cut > 0 and s[cut - 1] in ' \x08':
             cut -= 1
         esc = s.rfind('\x1b')
+        osc = s.rfind('\x1b]')
+        if osc != -1 and not _escape_complete(s[osc:]):
+            esc = osc           # OSC 的 ESC \\ 結尾可能還沒到, 從 OSC 開頭整段留著
         if esc != -1 and not _escape_complete(s[esc:]):
             while esc > 0 and s[esc - 1] == '\x1b':
                 esc -= 1        # 孤立 ESC 要跟後面的 ESC 一起送, _preprocess 才認得

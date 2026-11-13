@@ -54,6 +54,8 @@ CRAFTED = [
     b'  \x08\x08\xe2\x97\x8e tail',                     # ◎ via reservation pair
     b'\x1b[10;1H  \x08\x08\xe2\x80\xbb\x1b[10;3H \xe7\x99\xbc\xe4\xbf\xa1\xe7\xab\x99: x',
     b'\x1b[6nHELLO',                                    # unknown escape -> bail
+    b'a\x1b]8;;https://x.y/z\x1b\\link\x1b]8;;\x1b\\b',     # OSC 8 hyperlink (ST)
+    b'a\x1b]8;;https://x.y/z\x07link\x1b]8;;\x07b',         # OSC 8 hyperlink (BEL)
     b'line1\r\nline2',                                  # CRLF
     b'helloworld\x1b[1;2HXY',                           # replace mode
     b'\x1b[100;1HX',                                    # row clamp
