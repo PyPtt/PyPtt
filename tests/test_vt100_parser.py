@@ -481,3 +481,26 @@ def test_stray_esc_split_across_chunks():
         s.feed(data[:cut])
         s.feed(data[cut:])
         assert s.screen == VT100Parser(data, 'utf-8').screen, cut
+
+
+# 內文網址被包成 OSC 8 超連結 (ESC ] 8 ; ; URL ST 文字 ESC ] 8 ; ; ST); 沒被吃掉時引擎凍住, get_content 讀不到頁尾
+OSC8_POST = (b'\x1b[2J\x1b[3;1H\xe7\xb6\xb2\xe5\x9d\x80 \x1b]8;;https://example.com/a?b=1\x1b\\https://example.com/a?b=1'
+             b'\x1b]8;;\x1b\\ end\x1b[4;1H\x1b]8;;https://ptt.cc\x07ptt\x1b]8;;\x07\x1b[24;1Hfooter')
+
+
+def test_osc8_hyperlink_is_stripped():
+    lines = parse(OSC8_POST)
+    assert lines[2] == '網址 https://example.com/a?b=1 end'
+    assert lines[3] == 'ptt'
+    assert lines[23] == 'footer'
+
+
+def test_osc8_hyperlink_split_across_chunks():
+    from PyPtt.screens import IncrementalScreen
+    expected = VT100Parser(OSC8_POST, 'utf-8').screen
+    for cut in range(1, len(OSC8_POST)):
+        s = IncrementalScreen('utf-8')
+        s.feed(OSC8_POST[:cut])
+        s.feed(OSC8_POST[cut:])
+        assert not s._bailed, cut
+        assert s.screen == expected, cut

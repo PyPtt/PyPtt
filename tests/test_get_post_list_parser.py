@@ -118,6 +118,16 @@ class TestLineLayouts:
         assert posts[0][data_type.PostField.push_number] == ''
         assert posts[0][data_type.PostField.list_date] == '4/17'
 
+    def test_full_width_push_count(self):
+        # 「爆」是全形字，終端機上佔 2 格；用字元位置切的話後面每一欄都會左移一格
+        cursor = '>  9446 +爆10/15 someone      □ [問安] 1015'
+        api = _build_api(_build_screen(cursor, []), newest=9446)
+        posts = _api_get_post_list.get_post_list(api, 'Python', limit=1)
+        assert posts[0][data_type.PostField.push_number] == '爆'
+        assert posts[0][data_type.PostField.list_date] == '10/15'
+        assert posts[0][data_type.PostField.author] == "someone"
+        assert posts[0][data_type.PostField.title].strip() == '□ [問安] 1015'
+
     def test_reply_marker_R_in_title(self):
         # Title section includes the kind marker ('R:', '□', '轉', '鎖').
         cursor = '>  9440   4 1/15 ddavid       R: [問題] @property 真正的運用是啥'
