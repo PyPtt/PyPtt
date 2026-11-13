@@ -11,6 +11,24 @@ from . import log
 from . import screens
 
 
+def _cell_width(char: str) -> int:
+    # 終端機上全形字佔 2 格 (例如推文數的「爆」)，用 big5uao 的位元組數當作顯示寬度
+    return len(char.encode('big5uao', 'replace'))
+
+
+def _split_columns(line: str, bounds: List[int]) -> List[str]:
+    """依顯示欄位 (不是字元位置) 切開列表的一行。bounds 是各欄的起始欄位。"""
+    fields = [''] * len(bounds)
+    column = 0
+    for char in line:
+        for i in range(len(bounds) - 1, -1, -1):
+            if column >= bounds[i]:
+                fields[i] += char
+                break
+        column += _cell_width(char)
+    return fields
+
+
 def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dict]:
     _api_util.one_thread(api)
 
@@ -84,18 +102,21 @@ def get_post_list(api, board: str, limit: int = 20, offset: int = 0) -> List[Dic
                     # offsets here were tuned to that padded layout.
                     line = f' {line}'
 
+                # 欄位是固定的顯示寬度；推文數「爆」是全形字，用字元位置切會讓後面每一欄都偏一格
+                index_field, status, comment, list_date, _, author, title = _split_columns(
+                    line, [0, 8, 10, 12, 17, 18, 31])
+
                 try:
-                    cur_index = int(line[:8].strip())
+                    cur_index = int(index_field.strip())
                 except ValueError:
                     # Pinned/announcement posts use '★' instead of a numeric
                     # index — they have no sequential index and cannot be
                     # fetched by index, so skip them.
                     continue
-                status = line[8:10].strip()
-                comment = line[10:12].strip()
-                list_date = line[12:17].strip()
-                author = line[18:31].strip()
-                title = line[31:]
+                status = status.strip()
+                comment = comment.strip()
+                list_date = list_date.strip()
+                author = author.strip()
 
                 cur_post = {
                     data_type.PostField.board: board,
