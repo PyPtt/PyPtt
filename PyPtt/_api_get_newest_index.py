@@ -85,7 +85,8 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
         check_value.check_type(board, str, 'board')
 
         _api_util.check_board(api, board)
-        _api_util.goto_board(api, board)
+        # 有搜尋條件時 goto_board 會停在搜尋結果裡；搜不到直接丟 NoSearchResult
+        _api_util.goto_board(api, board, search_list=search_list)
 
         cmd_list = []
         cmd_list.append('1')
@@ -97,10 +98,18 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
         target_list = [
             connect_core.TargetUnit('沒有文章...', log_level=log.DEBUG, break_detect=True),
             connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+            connect_core.TargetUnit(screens.Target.InSearchList, log_level=log.DEBUG, break_detect=True),
             connect_core.TargetUnit(screens.Target.InBoardWithCursor, log_level=log.DEBUG, break_detect=True),
             connect_core.TargetUnit(screens.Target.MainMenu_Exiting,
                                     exceptions_=exceptions.NoSuchBoard(api.config, board)),
         ]
+        if search_list:
+            # 搜不到時 goto_board 已經丟 NoSearchResult；萬一提示框沒被認出來，'1\r' 會打開游標所在的文章
+            # (游標文是動畫文時先停在「要開始播放嗎？」)，落在文章裡同樣是沒有結果
+            target_list.append(connect_core.TargetUnit(screens.Target.InPost,
+                                                       exceptions_=exceptions.NoSearchResult()))
+            target_list.append(connect_core.TargetUnit(screens.Target.Animation,
+                                                       exceptions_=exceptions.NoSearchResult()))
 
         index = api.connect_core.send(cmd, target_list)
         if index < 0:
@@ -111,43 +120,7 @@ def get_newest_index(api, index_type: data_type.NewIndex, board: Optional[str] =
         if index == 0:
             return 0
 
-        normal_newest_index = _get_newest_index(api)
-
-        if search_list is not None and len(search_list) > 0:
-            target_list.insert(2,
-                               connect_core.TargetUnit(
-                                   screens.Target.InBoardWithCursor,
-                                   log_level=log.DEBUG,
-                                   break_detect=True))
-            # 新版搜尋無結果時，後面的 '1\r' 會打開游標所在的文章；落在文章裡就是沒有結果
-            # 游標文是動畫文時會先停在「要開始播放嗎？」；同樣是沒有結果 (畫面留在詢問上，由下一支 API 的導航離開)
-            target_list.append(connect_core.TargetUnit(screens.Target.InPost,
-                                                       exceptions_=exceptions.NoSearchResult()))
-            target_list.append(connect_core.TargetUnit(screens.Target.Animation,
-                                                       exceptions_=exceptions.NoSearchResult()))
-
-            cmd_list = _api_util.get_search_condition_cmd(index_type, search_list)
-
-            cmd_list.append('1')
-            cmd_list.append(command.enter)
-            cmd_list.append('$')
-            cmd = ''.join(cmd_list)
-
-            index = api.connect_core.send(cmd, target_list)
-            if index < 0:
-                if api.connect_core.last_timeout_was_silent:
-                    raise exceptions.ConnectionClosed()
-                raise exceptions.NoSuchBoard(api.config, board)
-
-            if index == 0:
-                return 0
-
-            newest_index = _get_newest_index(api)
-
-            if normal_newest_index == newest_index:
-                raise exceptions.NoSearchResult()
-        else:
-            newest_index = normal_newest_index
+        newest_index = _get_newest_index(api)
 
     elif index_type == data_type.NewIndex.MAIL:
 

@@ -79,28 +79,17 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
         board,
         check_moderator=True)
 
-    _api_util.goto_board(api, board)
+    search_list = None
+    if post_aid is None and search_condition is not None:
+        # 用編號找文章時要停在同一組條件的搜尋結果裡，編號才對得上
+        search_list = [(search_type, search_condition)]
+    _api_util.goto_board(api, board, search_list=search_list)
 
     cmd_list = []
     if post_aid is not None:
         cmd_list.append(lib_util.check_aid(post_aid))
         cmd_list.append(command.enter)
     elif post_index != 0:
-        if search_condition is not None:
-            if search_type == data_type.SearchType.KEYWORD:
-                cmd_list.append('/')
-            elif search_type == data_type.SearchType.AUTHOR:
-                cmd_list.append('a')
-            elif search_type == data_type.SearchType.COMMENT:
-                cmd_list.append('Z')
-            elif search_type == data_type.SearchType.MARK:
-                cmd_list.append('G')
-            elif search_type == data_type.SearchType.MONEY:
-                cmd_list.append('A')
-
-            cmd_list.append(search_condition)
-            cmd_list.append(command.enter)
-
         cmd_list.append(str(post_index))
 
         cmd_list.append(command.enter)
@@ -123,6 +112,7 @@ def mark_post(api, mark_type: int, board: str, post_aid: str, post_index: int, s
     target_list = [
         connect_core.TargetUnit('刪除所有標記', log_level=log.INFO, response='y' + command.enter),
         connect_core.TargetUnit(screens.Target.InBoard, log_level=log.INFO, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InSearchList, log_level=log.INFO, break_detect=True),
     ]
 
     api.connect_core.send(cmd, target_list)
