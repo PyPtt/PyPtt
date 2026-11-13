@@ -124,9 +124,9 @@ def test_newest_index_noisy_timeout_still_raises_no_such_board():
 
 
 def test_newest_index_search_round_silent_timeout_raises_connection_closed():
-    """The second (search) send at _api_get_newest_index.py:128 has its own
-    flag check; the goto_board and first '$' sends must not mask it."""
-    api = FakeApi(FakeConnectCore([(2, False), (2, False), (-1, True)],
+    """The search send (goto_board's _search_in_board) has its own flag
+    check; the goto_board send before it must not mask it."""
+    api = FakeApi(FakeConnectCore([(2, False), (-1, True)],
                                   screens=(BOARD_SCREEN,)))
     with pytest.raises(exceptions.ConnectionClosed):
         _api_get_newest_index.get_newest_index(
@@ -135,7 +135,7 @@ def test_newest_index_search_round_silent_timeout_raises_connection_closed():
 
 
 def test_newest_index_search_round_noisy_timeout_raises_no_such_board():
-    api = FakeApi(FakeConnectCore([(2, False), (2, False), (-1, False)],
+    api = FakeApi(FakeConnectCore([(2, False), (-1, False)],
                                   screens=(BOARD_SCREEN,)))
     with pytest.raises(exceptions.NoSuchBoard):
         _api_get_newest_index.get_newest_index(

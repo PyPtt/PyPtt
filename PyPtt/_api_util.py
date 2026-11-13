@@ -547,7 +547,142 @@ def run_in_board_setting(api, flow):
         raise
 
 
-def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> None:
+def search_key(search_list: Optional[list]) -> tuple:
+    # 搜尋條件的比對鍵；空 tuple 表示一般文章列表
+    return tuple((search_type, search_condition) for search_type, search_condition in (search_list or []))
+
+
+def board_list_kind(api, screen: str, board: str) -> Optional[str]:
+    """目前畫面是 board 的哪一種列表：'plain' 一般文章列表、'search' 搜尋結果，其他回傳 None。
+
+    一般列表標頭是「看板《Python》」；搜尋結果是「系列《Python》」。"""
+    if screens.in_board_setting(screen):
+        return None
+    first_line = screen.split('\n', 1)[0]
+    match = re.search(r'(看板|系列)《([^》]+)》', first_line)
+    if match is None or match.group(2).lower() != board.lower():
+        return None
+    if match.group(1) == '看板' and is_article_list(api, screen):
+        return 'plain'
+    if match.group(1) == '系列' and connect_core.TargetUnit(screens.Target.InSearchList).is_match(screen, api.cursor):
+        return 'search'
+    return None
+
+
+def forget_current_board(api) -> None:
+    # 送出 goto_board 以外的搜尋指令後，畫面上的搜尋結果跟記錄對不起來；
+    # 下一次 goto_board 一定要走完整路徑重新進板
+    api._current_board = None
+    api._current_search = ()
+
+
+def _list_targets() -> list:
+    return [
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InSearchList, log_level=log.DEBUG, break_detect=True),
+    ]
+
+
+def _stay_in_board(api, board: str, want: tuple) -> Optional[str]:
+    """上一個 API 停在同一個看板時，不回主選單、不重新進板，只用 ← 退回需要的列表。
+
+    回傳 'search' 表示已經在 want 這組條件的搜尋結果裡；'plain' 表示在一般文章列表
+    (呼叫端視需要再搜尋)；None 表示判斷不了，交給完整路徑 (go_main_menu 從任何畫面都能回主選單)。
+    每一步都以畫面確認：標頭的看板名稱、一般列表或搜尋結果。"""
+    if getattr(api, '_current_board', None) != board.lower():
+        return None
+
+    # 最多: 提示框 → 文章內文 → 搜尋結果 → 一般列表
+    for _ in range(4):
+        screen = last_screen(api)
+        kind = board_list_kind(api, screen, board)
+        if kind == 'plain':
+            return 'plain'
+        if kind == 'search' and want and api._current_search == want:
+            return 'search'
+
+        if kind is None and '任意鍵' in screen.rstrip().rsplit('\n', 1)[-1]:
+            # 「請按任意鍵繼續」(查詢文章資訊 Q、發文/回文完成)；完整路徑也是先按空白鍵關掉提示框
+            key = command.space
+        elif kind is None and connect_core.TargetUnit(screens.Target.InPost).is_match(screen, api.cursor):
+            # 文章內文 ← 回到點進來的列表
+            key = command.left
+        elif kind == 'search':
+            # 搜尋結果 ← 直接回到一般列表 (多層搜尋也是一次)
+            key = command.left
+        else:
+            return None
+
+        target_list = _list_targets() + [
+            connect_core.TargetUnit(screens.Target.InPost, log_level=log.DEBUG, break_detect=True),
+        ]
+        index = api.connect_core.send(key, target_list)
+        if index < 0:
+            if api.connect_core.last_timeout_was_silent:
+                raise exceptions.ConnectionClosed()
+            return None
+        if kind == 'search':
+            api._current_search = ()
+
+    return None
+
+
+def _search_in_board(api, board: str, search_list: list, want: tuple) -> None:
+    # 從一般文章列表送出搜尋條件；搜不到時 PTT 跳出「找不到符合條件的文章」並留在一般列表
+    cmd = ''.join(get_search_condition_cmd(data_type.NewIndex.BOARD, search_list))
+    target_list = [
+        connect_core.TargetUnit(screens.Target.NoSearchResult, log_level=log.DEBUG, break_detect=True),
+        connect_core.TargetUnit(screens.Target.InSearchList, log_level=log.DEBUG, break_detect=True),
+    ]
+    index = api.connect_core.send(cmd, target_list)
+    if index == 1 and board_list_kind(api, last_screen(api), board) == 'search':
+        api._current_search = want
+        return
+
+    if index == 0:
+        # 關掉提示框；回到一般列表就留在板內，下一次不用重新進板
+        index = api.connect_core.send(command.space, _list_targets())
+        if index == 0 and board_list_kind(api, last_screen(api), board) == 'plain':
+            api._current_search = ()
+            raise exceptions.NoSearchResult()
+
+        # 提示框之後畫面不明；下一次 goto_board 走完整路徑
+        forget_current_board(api)
+        if index < 0 and api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
+        raise exceptions.NoSearchResult()
+
+    # 搜尋後認不得畫面 (跟改版前一樣：完全沒回應是斷線，其他當成進不了看板)
+    forget_current_board(api)
+    if index < 0 and api.connect_core.last_timeout_was_silent:
+        raise exceptions.ConnectionClosed()
+    raise exceptions.NoSuchBoard(api.config, board)
+
+
+def goto_board(api, board: str, refresh: bool = False, end: bool = False,
+               search_list: Optional[list] = None) -> None:
+    """進到 board 的文章列表；給 search_list 時進到該條件的搜尋結果 (搜不到丟 NoSearchResult)。
+    refresh=True 保證最後一個畫面是剛重畫的一般列表 (不跟 search_list 一起用)。
+
+    上一個 API 已經停在同一個看板時不重新進板 (見 _stay_in_board)。"""
+    want = search_key(search_list)
+    state = _stay_in_board(api, board, want)
+    if state == 'plain' and refresh:
+        # 呼叫端要讀最新畫面 (get_board_info 的人氣)：不重新進板，重畫一次
+        index = api.connect_core.send(command.refresh, _list_targets(), refresh=False)
+        if index < 0 and api.connect_core.last_timeout_was_silent:
+            raise exceptions.ConnectionClosed()
+        if index != 0 or board_list_kind(api, last_screen(api), board) != 'plain':
+            state = None
+    if state is not None:
+        if want and state == 'plain':
+            _search_in_board(api, board, search_list, want)
+        if end:
+            _goto_board_end(api)
+        return
+
+    forget_current_board(api)
+
     cmd_list = []
     cmd_list.append(command.go_main_menu)
     cmd_list.append('qs')
@@ -591,18 +726,28 @@ def goto_board(api, board: str, refresh: bool = False, end: bool = False) -> Non
         if index == 4:
             raise exceptions.NoSuchBoard(api.config, board)
 
+    if index in (2, 3):
+        api._current_board = board.lower()
+        api._current_search = ()
+        if want:
+            _search_in_board(api, board, search_list, want)
+
     if end:
-        cmd_list = []
-        cmd_list.append('1')
-        cmd_list.append(command.enter)
-        cmd_list.append('$')
-        cmd = ''.join(cmd_list)
+        _goto_board_end(api)
 
-        target_list = [
-            connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
-        ]
 
-        api.connect_core.send(cmd, target_list)
+def _goto_board_end(api) -> None:
+    cmd_list = []
+    cmd_list.append('1')
+    cmd_list.append(command.enter)
+    cmd_list.append('$')
+    cmd = ''.join(cmd_list)
+
+    target_list = [
+        connect_core.TargetUnit(screens.Target.InBoard, log_level=log.DEBUG, break_detect=True),
+    ]
+
+    api.connect_core.send(cmd, target_list)
 
 
 def one_thread(api):

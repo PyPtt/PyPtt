@@ -162,6 +162,8 @@ class API:
         self._moderators = dict()
         self._thread_id = threading.get_ident()
         self._goto_board_list = set()
+        self._current_board = None
+        self._current_search = ()
         self._board_info_list = dict()
         self._newest_index_data = data_type.TimedDict(timeout=2)
         self._mail_capacity = None
