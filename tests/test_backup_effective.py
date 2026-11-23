@@ -21,8 +21,8 @@ account (CodingMan) on two different hosts (PTT1=批踢踢實業坊,
 PTT2=批踢踢兔), not two distinct accounts. Mailing yourself would merge the
 "received" signal with the "draft" signal and defeat the mailbox-index
 assertion. The sender is `ptt_bots[0]` (CodingMan on PTT1); the recipient is
-a second, genuinely distinct PTT1 account (DeepLearning, via the
-`deep_learning_bot` fixture below).
+a second, genuinely distinct PTT1 test account (via the
+`second_bot` fixture below).
 """
 import os
 import time
@@ -41,8 +41,8 @@ DEEPLEARNING_PW = os.environ.get('DEEPLEARNING_PW')
 
 
 @pytest.fixture(scope='module')
-def deep_learning_bot():
-    """A second, distinct PTT1 account (DeepLearning) to act as mail
+def second_bot():
+    """A second, distinct PTT1 test account to act as mail
     recipient / reply target author. Skips the whole module when the
     credentials aren't configured rather than failing with a KeyError."""
     if not DEEPLEARNING_ID or not DEEPLEARNING_PW:
@@ -80,12 +80,12 @@ def _find_and_delete_mail(bot, title_fragment, search_back=5):
         pass
 
 
-def test_mail_backup_false_leaves_mailbox_unchanged(ptt_bots, deep_learning_bot):
+def test_mail_backup_false_leaves_mailbox_unchanged(ptt_bots, second_bot):
     bot1 = ptt_bots[0]
     title = f'PyPtt backup=False mail test {int(time.time())}'
     before = _mailbox_index(bot1)
     try:
-        bot1.mail(ptt_id=deep_learning_bot.ptt_id, title=title,
+        bot1.mail(ptt_id=second_bot.ptt_id, title=title,
                   content='backup=False regression test\n', sign_file=0, backup=False)
         time.sleep(MAIL_DELIVERY_WAIT)
         after = _mailbox_index(bot1)
@@ -94,15 +94,15 @@ def test_mail_backup_false_leaves_mailbox_unchanged(ptt_bots, deep_learning_bot)
         )
     finally:
         _find_and_delete_mail(bot1, title)
-        _find_and_delete_mail(deep_learning_bot, title)
+        _find_and_delete_mail(second_bot, title)
 
 
-def test_mail_backup_true_saves_draft(ptt_bots, deep_learning_bot):
+def test_mail_backup_true_saves_draft(ptt_bots, second_bot):
     bot1 = ptt_bots[0]
     title = f'PyPtt backup=True mail test {int(time.time())}'
     before = _mailbox_index(bot1)
     try:
-        bot1.mail(ptt_id=deep_learning_bot.ptt_id, title=title,
+        bot1.mail(ptt_id=second_bot.ptt_id, title=title,
                   content='backup=True regression test\n', sign_file=0, backup=True)
         time.sleep(MAIL_DELIVERY_WAIT)
         after = _mailbox_index(bot1)
@@ -111,7 +111,7 @@ def test_mail_backup_true_saves_draft(ptt_bots, deep_learning_bot):
         )
     finally:
         _find_and_delete_mail(bot1, title)
-        _find_and_delete_mail(deep_learning_bot, title)
+        _find_and_delete_mail(second_bot, title)
 
 
 def _find_and_delete_post(bot, title_fragment, board='Test', search_back=10):
@@ -132,8 +132,8 @@ def _find_and_delete_post(bot, title_fragment, board='Test', search_back=10):
         pass
 
 
-def _post_reply_target(deep_learning_bot, bot1, board='Test'):
-    """DeepLearning posts a fresh article on `board` so bot1 (CodingMan) can
+def _post_reply_target(second_bot, bot1, board='Test'):
+    """The second test account posts a fresh article on `board` so bot1 (CodingMan) can
     reply to it as mail. The author must not be bot1 -- replying to your own
     post as mail would land in your own mailbox and be indistinguishable
     from a backup draft. Returns the post's index (as seen by bot1).
@@ -149,7 +149,7 @@ def _post_reply_target(deep_learning_bot, bot1, board='Test'):
     # endswith()/in matches below), so this must NOT grow the title.
     suffix = int(time.time() * 1000) % 10_000_000_000
     title = f'PyPtt backup reply target {suffix}'
-    deep_learning_bot.post(board=board, title_index=1, title=title,
+    second_bot.post(board=board, title_index=1, title=title,
                            content='reply-target for backup regression test\n', sign_file=0)
     time.sleep(2)
 
@@ -164,13 +164,13 @@ def _post_reply_target(deep_learning_bot, bot1, board='Test'):
                 return title, index
         raise AssertionError(f'freshly posted reply target {title!r} not found on {board}')
     except Exception:
-        _find_and_delete_post(deep_learning_bot, title, board=board)
+        _find_and_delete_post(second_bot, title, board=board)
         raise
 
 
-def test_reply_post_backup_false_leaves_mailbox_unchanged(ptt_bots, deep_learning_bot):
+def test_reply_post_backup_false_leaves_mailbox_unchanged(ptt_bots, second_bot):
     bot1 = ptt_bots[0]
-    target_title, index = _post_reply_target(deep_learning_bot, bot1)
+    target_title, index = _post_reply_target(second_bot, bot1)
     try:
         before = _mailbox_index(bot1)
         bot1.reply_post(reply_to=ReplyTo.MAIL, board='Test',
@@ -183,16 +183,16 @@ def test_reply_post_backup_false_leaves_mailbox_unchanged(ptt_bots, deep_learnin
         )
     finally:
         _find_and_delete_mail(bot1, target_title)
-        _find_and_delete_mail(deep_learning_bot, target_title)
+        _find_and_delete_mail(second_bot, target_title)
         try:
-            deep_learning_bot.del_post(board='Test', index=index)
+            second_bot.del_post(board='Test', index=index)
         except Exception:
             pass
 
 
-def test_reply_post_backup_true_saves_draft(ptt_bots, deep_learning_bot):
+def test_reply_post_backup_true_saves_draft(ptt_bots, second_bot):
     bot1 = ptt_bots[0]
-    target_title, index = _post_reply_target(deep_learning_bot, bot1)
+    target_title, index = _post_reply_target(second_bot, bot1)
     try:
         before = _mailbox_index(bot1)
         bot1.reply_post(reply_to=ReplyTo.MAIL, board='Test',
@@ -205,9 +205,9 @@ def test_reply_post_backup_true_saves_draft(ptt_bots, deep_learning_bot):
         )
     finally:
         _find_and_delete_mail(bot1, target_title)
-        _find_and_delete_mail(deep_learning_bot, target_title)
+        _find_and_delete_mail(second_bot, target_title)
         try:
-            deep_learning_bot.del_post(board='Test', index=index)
+            second_bot.del_post(board='Test', index=index)
         except Exception:
             pass
 
@@ -288,9 +288,9 @@ def _assert_no_stalled_round(bot, elapsed, label):
     )
 
 
-def test_reply_post_board_appears_on_board(ptt_bots, deep_learning_bot, sign_file_trace):
+def test_reply_post_board_appears_on_board(ptt_bots, second_bot, sign_file_trace):
     bot1 = ptt_bots[0]
-    target_title, target_index = _post_reply_target(deep_learning_bot, bot1)
+    target_title, target_index = _post_reply_target(second_bot, bot1)
     reply_index = None
     try:
         start = time.time()
@@ -319,21 +319,21 @@ def test_reply_post_board_appears_on_board(ptt_bots, deep_learning_bot, sign_fil
             except Exception as exc:
                 warnings.warn(f'cleanup failed for reply post at index {reply_index}: {exc!r}')
         try:
-            deep_learning_bot.del_post(board='Test', index=target_index)
-            post = deep_learning_bot.get_post(board='Test', index=target_index, query=True)
+            second_bot.del_post(board='Test', index=target_index)
+            post = second_bot.get_post(board='Test', index=target_index, query=True)
             if post and post.get(PostField.post_status) == PyPtt.PostStatus.EXISTS:
                 warnings.warn(f'cleanup failed: target post at index {target_index} still EXISTS')
         except Exception as exc:
             warnings.warn(f'cleanup failed for target post at index {target_index}: {exc!r}')
 
 
-def _reply_post_board_mail(ptt_bots, deep_learning_bot, sign_file_trace, backup):
+def _reply_post_board_mail(ptt_bots, second_bot, sign_file_trace, backup):
     bot1 = ptt_bots[0]
-    target_title, target_index = _post_reply_target(deep_learning_bot, bot1)
+    target_title, target_index = _post_reply_target(second_bot, bot1)
     reply_index = None
     try:
         codingman_before = _mailbox_index(bot1)
-        deeplearning_before = _mailbox_index(deep_learning_bot)
+        second_before = _mailbox_index(second_bot)
 
         start = time.time()
         bot1.reply_post(reply_to=ReplyTo.BOARD_MAIL, board='Test',
@@ -356,10 +356,10 @@ def _reply_post_board_mail(ptt_bots, deep_learning_bot, sign_file_trace, backup)
         )
 
         time.sleep(MAIL_DELIVERY_WAIT)
-        deeplearning_after = _mailbox_index(deep_learning_bot)
-        assert deeplearning_after == deeplearning_before + 1, (
-            f'DeepLearning did not receive the BOARD_MAIL reply: mailbox index '
-            f'{deeplearning_before} -> {deeplearning_after}'
+        second_after = _mailbox_index(second_bot)
+        assert second_after == second_before + 1, (
+            f'The second test account did not receive the BOARD_MAIL reply: mailbox index '
+            f'{second_before} -> {second_after}'
         )
 
         # NOTE (discovered while writing this test, not a max_match=1 effect):
@@ -388,16 +388,16 @@ def _reply_post_board_mail(ptt_bots, deep_learning_bot, sign_file_trace, backup)
             except Exception:
                 pass
         try:
-            deep_learning_bot.del_post(board='Test', index=target_index)
+            second_bot.del_post(board='Test', index=target_index)
         except Exception:
             pass
-        _find_and_delete_mail(deep_learning_bot, target_title)
+        _find_and_delete_mail(second_bot, target_title)
         _find_and_delete_mail(bot1, target_title)
 
 
-def test_reply_post_board_mail_backup_false(ptt_bots, deep_learning_bot, sign_file_trace):
-    _reply_post_board_mail(ptt_bots, deep_learning_bot, sign_file_trace, backup=False)
+def test_reply_post_board_mail_backup_false(ptt_bots, second_bot, sign_file_trace):
+    _reply_post_board_mail(ptt_bots, second_bot, sign_file_trace, backup=False)
 
 
-def test_reply_post_board_mail_backup_true(ptt_bots, deep_learning_bot, sign_file_trace):
-    _reply_post_board_mail(ptt_bots, deep_learning_bot, sign_file_trace, backup=True)
+def test_reply_post_board_mail_backup_true(ptt_bots, second_bot, sign_file_trace):
+    _reply_post_board_mail(ptt_bots, second_bot, sign_file_trace, backup=True)
