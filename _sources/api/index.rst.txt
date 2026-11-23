@@ -62,5 +62,6 @@ APIs
 .. toctree::
 
    set_board_title
+   set_post_template
    mark_post
    bucket
