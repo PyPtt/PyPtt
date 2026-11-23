@@ -286,7 +286,10 @@
 <li><p><strong>board</strong> (<em>str</em>) -- 看板名稱。</p></li>
 <li><p><strong>aid</strong> (<em>str</em>) -- 文章編號。</p></li>
 <li><p><strong>index</strong> (<em>int</em>) -- 文章編號。</p></li>
-<li><p><strong>reason</strong> (<em>str</em>) -- 板主刪除他人文章時，加註於刪除後標題的理由（僅板主刪除他板友文章時有效）。</p></li>
+<li><p><strong>reason</strong> (<em>str</em>) -- 板主刪除他人文章時的理由（僅板主刪除他板友文章時有效）。
+PTT1 2026-11 起的「移除文章」流程會把理由公開記入看板管理紀錄，並顯示在
+移除後的標題「(本文已被移除) &lt;作者&gt;: 理由」；未傳入時，依 <code class="docutils literal notranslate"><span class="pre">bad_post_type</span></code>
+帶入「廣告」「不當用辭」「人身攻擊」或 <code class="docutils literal notranslate"><span class="pre">bad_post_reason</span></code>，都沒有則為「違反板規」。</p></li>
 <li><p><strong>bad_post_type</strong> (<em>data_type.BadPostType</em>) -- 板主刪除他人文章時，對作者記的惡退（劣文）分類，
 僅板主刪除他板友文章時有效。</p></li>
 <li><p><strong>bad_post_reason</strong> (<em>str</em>) -- 惡退理由，僅 <code class="docutils literal notranslate"><span class="pre">bad_post_type</span></code> 為 <code class="docutils literal notranslate"><span class="pre">BadPostType.OTHER</span></code> 時可傳入且必須傳入，
@@ -306,6 +309,7 @@
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.ParameterError" title="PyPtt.PyPtt.exceptions.ParameterError"><strong>ParameterError</strong></a> -- 對自己的文章傳入 reason 或 bad_post_type（僅適用於版主刪除他人文章），
     或 bad_post_type 為 BadPostType.OTHER 卻未傳入 bad_post_reason（或超過 50 bytes，
     或含有控制字元）。</p></li>
+<li><p><strong>PostInDigest</strong> -- 文章已收入看板文摘，PTT 拒絕刪除；請先在文章列表按 g 解除文摘。</p></li>
 <li><p><a class="reference internal" href="../exceptions.html#PyPtt.PyPtt.exceptions.BadPostNotRecorded" title="PyPtt.PyPtt.exceptions.BadPostNotRecorded"><strong>BadPostNotRecorded</strong></a> -- 傳入 bad_post_type 時，文章已成功刪除，但 PTT 端沒有完成惡退
     （劣文）記錄流程（例如文章太舊而跳過惡退選單、或逾時）。代表刪除本身已經成功，
     只是這支惡退沒有記上。</p></li>
@@ -380,7 +384,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=44535a37"></script>
+</div><script src="../_static/documentation_options.js?v=1c45c176"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
