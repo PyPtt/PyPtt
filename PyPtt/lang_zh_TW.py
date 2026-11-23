@@ -104,6 +104,7 @@ string_data = {
     "set_connect_host": "設定連線主機",
     "set_connect_mode": "設定連線模式",
     "set_contact_mail_first": "請先設定聯絡信箱後才能修改密碼",
+    "set_post_template": "設定發文範本",
     "set_signature_file": "更新名片檔",
     "set_up_lang_module": "設定語言模組",
     "spend_time": "花費時間",
