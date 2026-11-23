@@ -87,6 +87,7 @@ string_data = {
     "picks_in_register": "Registration application processing order",
     "post": "Post article",
     "post_deleted": "Post has been deleted",
+    "post_in_digest": "the post is in the board digest; remove it from the digest before deleting",
     "prepare_connect_again": "Prepare connect again",
     "ptt2_not_support": "PTT2 not support this api",
     "push_aligned": "Push aligned",

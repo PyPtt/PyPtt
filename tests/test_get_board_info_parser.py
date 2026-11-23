@@ -194,7 +194,7 @@ def _fixture(name):
 
 _COMMON_GIVE = {
     BoardField.board: 'give',
-    BoardField.moderators: ['janice001'],
+    BoardField.moderators: ['somebm'],
     BoardField.mandarin_des: '[贈送] 歡迎來到贈送板',
     BoardField.open_status: True,
     BoardField.into_top_ten_when_hide: False,

@@ -1,7 +1,7 @@
 """PTT 主選單狀態列有長短兩種寫法, 兩種都必須認得。
 
 長: [5/23 星期六 16:40] [ 射手時 ]    線上27866人, 我是CodingMan      [呼叫器]打開
-短: 8/19週三22:35   [ 七夕 ]    線上30721人,我是DeepLearning 呼叫器關閉     (h)說明
+短: 8/19週三22:35   [ 七夕 ]    線上30721人,我是someone 呼叫器關閉     (h)說明
 
 短的那種把逗號後的空格與呼叫器的中括號都吃掉了, 日期也從 '星期六' 縮成 '週三'。
 """
@@ -13,7 +13,7 @@ from PyPtt._api_get_time import pattern as time_pattern
 from PyPtt.screens import Target
 
 LONG = '[5/23 星期六 16:40] [ 射手時 ]    線上27866人, 我是CodingMan      [呼叫器]打開 '
-SHORT = '8/19週三22:35   [ 七夕 ]    線上30721人,我是DeepLearning 呼叫器關閉     (h)說明'
+SHORT = '8/19週三22:35   [ 七夕 ]    線上30721人,我是someone 呼叫器關閉     (h)說明'
 
 MENU_BODY = '                      (G)oodbye         離開，再見…'
 

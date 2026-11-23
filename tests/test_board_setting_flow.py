@@ -271,6 +271,17 @@ class TestBucketNewFlow:
             'i', CTRL_P, 'w', 'a' + ENTER, 'CodingMan' + ENTER, '1' + ENTER, 'PyPtt test' + ENTER, 'y' + ENTER,
             LEFT, ENTER, LEFT, LEFT]
 
+    def test_left_from_edit_menu_goes_straight_to_article_list(self, make_api):
+        """PTT1 2026-11: when no setting was changed (only Bakuman was used), ← from
+        the edit menu returns to the article list without「◆ 未改變任何設定」.
+        The ban had already been added, so PyPtt must not report an error."""
+        api = make_api([READONLY, EDIT, BAKUMAN, BAKUMAN_ID, BAKUMAN_PERIOD, BAKUMAN_REASON, BAKUMAN_CONFIRM,
+                        BAKUMAN_DONE, BAKUMAN, EDIT_CURSOR16, ARTICLE_LIST])
+        _api_bucket.bucket(api, 'give', 1, 'PyPtt test', 'CodingMan')
+        assert api.connect_core.keys == [
+            'i', CTRL_P, 'w', 'a' + ENTER, 'CodingMan' + ENTER, '1' + ENTER, 'PyPtt test' + ENTER, 'y' + ENTER,
+            LEFT, ENTER, LEFT]
+
     def test_previously_banned_backs_out_then_raises(self, make_api):
         api = make_api([READONLY, EDIT, BAKUMAN, BAKUMAN_ID, BAKUMAN_BANNED, BAKUMAN, EDIT_CURSOR16, UNCHANGED,
                         ARTICLE_LIST])

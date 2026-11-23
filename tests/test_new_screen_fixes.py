@@ -294,7 +294,7 @@ def test_newest_index_no_search_result(no_board_nav):
     with pytest.raises(exceptions.NoSearchResult):
         _api_get_newest_index.get_newest_index(api, data_type.NewIndex.BOARD, board='Test',
                                                search_type=data_type.SearchType.AUTHOR,
-                                               search_condition='janice001')
+                                               search_condition='someone')
 
 
 def test_newest_index_no_search_result_on_animation_post(no_board_nav):
@@ -409,9 +409,9 @@ def test_favourites_target_matches(name):
 
 @pytest.mark.parametrize('bar, expected', [
     # 10 點前狀態列的小時不補零, get_time 仍要回 HH:MM
-    (' 主選單  [ 獅子時 ]    10/24 週六 9:18 | DeepLearning | 線上23636人    (h)說明 ', '09:18'),
-    (' 主選單  [ 獅子時 ]    10/24 週六 0:05 | DeepLearning | 線上23636人    (h)說明 ', '00:05'),
-    ('主選單   世界郵政日   10/9 週五 15:04 | janice001 | 線上24305人       (h)說明', '15:04'),
+    (' 主選單  [ 獅子時 ]    10/24 週六 9:18 | someone | 線上23636人    (h)說明 ', '09:18'),
+    (' 主選單  [ 獅子時 ]    10/24 週六 0:05 | someone | 線上23636人    (h)說明 ', '00:05'),
+    ('主選單   世界郵政日   10/9 週五 15:04 | someone | 線上24305人       (h)說明', '15:04'),
 ])
 def test_get_time_zero_pads_hour(bar, expected):
     assert _api_get_time._find_time(['', bar]) == expected

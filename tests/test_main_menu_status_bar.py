@@ -3,9 +3,9 @@ import pytest
 from PyPtt import screens
 from PyPtt._api_get_time import _find_time
 
-NEW = '主選單   世界郵政日   10/9 週五 15:04 | janice001 | 線上24305人       (h)說明'
+NEW = '主選單   世界郵政日   10/9 週五 15:04 | someone | 線上24305人       (h)說明'
 OLD = '[5/23 星期六 16:40] [ 射手時 ]  線上27866人, 我是CodingMan   [呼叫器]打開'
-SHORT = '8/19週三22:35   [ 七夕 ]   線上30721人,我是DeepLearning 呼叫器關閉  (h)說明'
+SHORT = '8/19週三22:35   [ 七夕 ]   線上30721人,我是someone 呼叫器關閉  (h)說明'
 
 
 @pytest.mark.parametrize('bar, expected', [(NEW, '15:04'), (OLD, '16:40'), (SHORT, '22:35')])

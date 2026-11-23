@@ -87,6 +87,7 @@ string_data = {
     "picks_in_register": "註冊申請單處理順位",
     "post": "發佈文章",
     "post_deleted": "文章已經被刪除",
+    "post_in_digest": "文章已收入文摘，請先解除文摘再刪除",
     "prepare_connect_again": "準備再次連線",
     "ptt2_not_support": "批踢踢兔不支援此功能",
     "push_aligned": "推文對齊",
