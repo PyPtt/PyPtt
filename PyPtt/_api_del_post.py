@@ -144,6 +144,28 @@ def _check_reason_budget(reason: str, moderator_id: str, author_id: str) -> None
             f'and the prefix "(已被{moderator_id}刪除) <{author_id}>" already uses {prefix_bytes} of them)')
 
 
+# PTT1 2026-11「移除文章」流程沒有惡退分類選單，分類改用理由文字表達；
+# 文字與理由選單上的預設項目相同。
+_BAD_POST_TYPE_REASON = {
+    data_type.BadPostType.AD: '廣告',
+    data_type.BadPostType.BAD_LANGUAGE: '不當用辭',
+    data_type.BadPostType.PERSONAL_ATTACK: '人身攻擊',
+}
+_DEFAULT_REMOVE_REASON = '違反板規'
+
+
+def _new_flow_reason(reason: Optional[str], bad_post_type: Optional[data_type.BadPostType],
+                     bad_post_reason: Optional[str]) -> str:
+    """新版「移除文章」流程要輸入的一次性理由：reason > 惡退分類 / 惡退理由 > 違反板規。"""
+    if reason:
+        return reason
+    if bad_post_type == data_type.BadPostType.OTHER:
+        return bad_post_reason
+    if bad_post_type is not None:
+        return _BAD_POST_TYPE_REASON[bad_post_type]
+    return _DEFAULT_REMOVE_REASON
+
+
 def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 0, reason: Optional[str] = None,
              bad_post_type: Optional[data_type.BadPostType] = None,
              bad_post_reason: Optional[str] = None) -> None:
@@ -284,7 +306,40 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
             return 'r' + command.enter
         return 'y' + command.enter
 
+    # --- PTT1 2026-11 改版後，板主刪除他人文章改走「移除文章」流程 ---
+    #
+    #   d → 請選取理由：1.廣告 2.不當用辭 3.人身攻擊 4.違反板規 5.清理看板 6-9.(空)
+    #       (o)其他(不儲存) → 請輸入理由(空白返回):
+    #     → 同時惡退此文?(y/N/q取消)[N]      (文章超過一週時不問，直接「退文設定: 文章超過一週 (跳過)」)
+    #     → 請確定移除(Y/N/R修改標題)?[N]   (畫面會預覽「退文設定」與移除後的標題)
+    #     → 已移除文章。[按任意鍵繼續]
+    #
+    # 理由會公開記入看板管理紀錄（自動公告），所以一律用 (o) 輸入一次性理由，
+    # 不用選單上的編號：選單項目每個看板都能改（按 e），而且游標預設停在「1. 廣告」，
+    # 誤按 Enter 就會記成廣告。惡退也不再有分類選單，分類改由理由文字表達。
+    # 文章被收入文摘時 PTT 拒絕刪除（「文章被收入文摘(g)，請先解除」），
+    # 這裡不替呼叫端解除文摘，丟 PostInDigest 讓呼叫端決定。
+    new_flow_reason = _new_flow_reason(reason, bad_post_type, bad_post_reason)
+    api.post_in_digest = False
+    new_flow_bad_post = False
+
+    def digest_handler(screen):
+        api.post_in_digest = True
+
+    def new_flow_confirm_handler(screen):
+        nonlocal new_flow_bad_post
+        api.confirm = True
+        new_flow_bad_post = '退文設定: 惡退' in screen
+
     target_list = [
+        connect_core.TargetUnit('請先解除', response=' ', handler=digest_handler, break_detect_after_send=True),
+        # 「請輸入理由」的畫面上方仍留著「請選取理由」，所以要排在前面
+        connect_core.TargetUnit('請輸入理由(空白返回)', response=new_flow_reason + command.enter, max_match=1),
+        connect_core.TargetUnit('請選取理由', response='o', max_match=1),
+        connect_core.TargetUnit('同時惡退此文', response=('y' if bad_post_type else 'n') + command.enter,
+                                max_match=1),
+        connect_core.TargetUnit('請確定移除', response='y' + command.enter, handler=new_flow_confirm_handler,
+                                max_match=1),
         connect_core.TargetUnit('請按任意鍵繼續', response=' '),
         connect_core.TargetUnit('請確定刪除(Y/N', response=confirm_delete_response,
                                 handler=confirm_delete_handler, max_match=1),
@@ -352,6 +407,10 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
 
     result = api.connect_core.send(cmd, target_list)
 
+    if api.post_in_digest:
+        log.logger.info(i18n.delete_post, '...', i18n.fail)
+        raise exceptions.PostInDigest(i18n.post_in_digest)
+
     if not api.confirm:
         log.logger.info(i18n.delete_post, '...', i18n.fail)
         raise exceptions.NoPermission(i18n.no_permission)
@@ -370,7 +429,7 @@ def del_post(api, board: str, post_aid: Optional[str] = None, post_index: int = 
 
     if bad_post_type is not None:
         reason_ok = bad_post_type != data_type.BadPostType.OTHER or reason_prompted
-        api.bad_post_done = bool(menu_shown and reason_ok and not timed_out)
+        api.bad_post_done = bool(((menu_shown and reason_ok) or new_flow_bad_post) and not timed_out)
         if not api.bad_post_done:
             raise exceptions.BadPostNotRecorded(i18n.bad_post_not_recorded)
     elif timed_out:

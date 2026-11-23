@@ -96,6 +96,7 @@ jobs:
           tests/test_get_post_list_parser.py \
           tests/test_pyte_parity.py \
           tests/test_del_post_unit.py \
+          tests/test_del_post_remove_flow.py \
           tests/test_backup_param.py \
           tests/test_get_board_info_parser.py \
           tests/test_board_setting_flow.py \

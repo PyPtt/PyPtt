@@ -53,11 +53,15 @@ def open_board_setting(api, board: str, key: str) -> str:
 
 def close_board_setting(api, mode: str) -> None:
     """從編輯選單 (新版) / 「請輸入要改變的設定」(舊版) 離開並回到文章列表。"""
-    step(api, command.left if mode == 'new' else command.enter, [
+    result = step(api, command.left if mode == 'new' else command.enter, [
         ('saved', '◆ 已儲存新設定'),
         ('unchanged', '◆ 未改變任何設定'),
+        # PTT1 2026-11：沒有改到任何設定時 (例如只用了水桶系統)，← 直接回到文章列表，
+        # 不再出現「未改變任何設定」
+        ('board', screens.Target.InBoard),
     ], screen_timeout=api.config.screen_long_timeout)
-    step(api, command.left, [('board', screens.Target.InBoard)])
+    if result != 'board':
+        step(api, command.left, [('board', screens.Target.InBoard)])
     # 中文敘述是板主可設的內容，可能含 InBoard 的子字串；再確認不是設定畫面
     screen = _api_util.last_screen(api)
     if not _api_util.is_article_list(api, screen):

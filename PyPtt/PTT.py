@@ -1152,7 +1152,10 @@ class API:
             board (str): 看板名稱。
             aid (str): 文章編號。
             index (int): 文章編號。
-            reason (str): 板主刪除他人文章時，加註於刪除後標題的理由（僅板主刪除他板友文章時有效）。
+            reason (str): 板主刪除他人文章時的理由（僅板主刪除他板友文章時有效）。
+                PTT1 2026-11 起的「移除文章」流程會把理由公開記入看板管理紀錄，並顯示在
+                移除後的標題「(本文已被移除) <作者>: 理由」；未傳入時，依 ``bad_post_type``
+                帶入「廣告」「不當用辭」「人身攻擊」或 ``bad_post_reason``，都沒有則為「違反板規」。
             bad_post_type (data_type.BadPostType): 板主刪除他人文章時，對作者記的惡退（劣文）分類，
                 僅板主刪除他板友文章時有效。
             bad_post_reason (str): 惡退理由，僅 ``bad_post_type`` 為 ``BadPostType.OTHER`` 時可傳入且必須傳入，
@@ -1170,6 +1173,7 @@ class API:
             ParameterError: 對自己的文章傳入 reason 或 bad_post_type（僅適用於版主刪除他人文章），
                 或 bad_post_type 為 BadPostType.OTHER 卻未傳入 bad_post_reason（或超過 50 bytes，
                 或含有控制字元）。
+            PostInDigest: 文章已收入看板文摘，PTT 拒絕刪除；請先在文章列表按 g 解除文摘。
             BadPostNotRecorded: 傳入 bad_post_type 時，文章已成功刪除，但 PTT 端沒有完成惡退
                 （劣文）記錄流程（例如文章太舊而跳過惡退選單、或逾時）。代表刪除本身已經成功，
                 只是這支惡退沒有記上。
