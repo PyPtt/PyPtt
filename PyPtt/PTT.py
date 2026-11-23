@@ -27,6 +27,7 @@ from . import _api_post
 from . import _api_reply_post
 from . import _api_search_user
 from . import _api_set_board_title
+from . import _api_set_post_template
 from . import _api_set_signature_file
 from . import check_value
 from . import config
@@ -745,6 +746,47 @@ class API:
         """
 
         _api_set_board_title.set_board_title(self, board, new_title)
+
+    def set_post_template(self, board: str, post_type: str, content: str) -> None:
+        """
+        設定看板某個文章類別的發文範本（板主功能）。
+
+        對應看板設定 →【[管理] 文章類別設定】→「要編輯現有類別的範本嗎」。
+        只更換指定類別的範本，不會修改類別清單本身。
+        目前只支援 PTT1 2026-10 起的新版看板設定選單。
+
+        Args:
+            board (str): 看板名稱。
+            post_type (str): 文章類別名稱，例如「贈送」（不含中括號），必須是看板上已存在的類別。
+            content (str): 新範本內容，會整份取代原本的範本。不可含換行以外的控制字元，
+                且必須能以 Big5 編碼。每行建議不超過 78 bytes（中文 2 bytes），超過會被編輯器折行。
+
+        Returns:
+            None
+
+        Raises:
+            RequireLogin: 需要登入。
+            UnregisteredUser: 未註冊使用者。
+            NoSuchBoard: 看板不存在。
+            NeedModeratorPermission: 需要看板管理員權限。
+            ParameterError: 看板沒有這個文章類別，或 content 含控制字元、無法以 Big5 編碼。
+            UnknownError: 畫面與預期不符；PyPtt 會先放棄編輯、退回文章列表再丟出。
+
+        範例::
+
+            import PyPtt
+
+            ptt_bot = PyPtt.API()
+            try:
+                # .. login ..
+                ptt_bot.set_post_template(board='Test', post_type='問題', content='物品：\n地點：\n')
+                # .. do something ..
+            finally:
+                ptt_bot.logout()
+
+        """
+
+        _api_set_post_template.set_post_template(self, board, post_type, content)
 
     def set_signature_file(self, content: str) -> None:
 

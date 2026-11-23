@@ -294,13 +294,19 @@ _bottom_input_prompts = (
 _board_setting_headers = ('看板設定與管理', 'Bakuman ' + Target.Bakuman[0])
 # 新版選單頁尾 (編輯模式 / 板主唯讀模式 / 非板主唯讀檢視)
 _board_setting_footers = ('看板設定(編輯)', '看板設定  (^P)開啟編輯', '看板資訊  (PgUp)')
+# 「文章類別設定」(set_post_template) 會經過的畫面
+_EDITOR_FOOTER = '編輯文章'
+_SAVE_FILE_PROMPT = '確定要儲存檔案嗎'
+_ASK_POST_TEMPLATE = '要編輯現有類別的範本嗎'
+_POST_TEMPLATE_LIST = '文章類別範本設定'
 
 
 def in_board_setting(screen: str) -> bool:
     """畫面是否停在看板設定 (新版選單 / Bakuman / 標題輸入列 / 舊版單字元輸入)。"""
     top, _, bottom = _top_and_bottom(screen)
-    return (top.startswith(_board_setting_headers)
-            or bottom.startswith(_bottom_input_prompts + _board_setting_footers))
+    return (top.startswith(_board_setting_headers + (_POST_TEMPLATE_LIST,))
+            or bottom.startswith(_bottom_input_prompts + _board_setting_footers
+                                 + (_EDITOR_FOOTER, _SAVE_FILE_PROMPT, _ASK_POST_TEMPLATE)))
 
 
 def board_setting_exit_key(screen: str):
@@ -309,8 +315,20 @@ def board_setting_exit_key(screen: str):
     回傳 None 表示畫面認不得 (或已不在看板設定)，呼叫端不應照它送鍵。
     只會回傳 ←、Ctrl-C，以及 Bakuman「[Q]結束?」的 Enter (空白 = Q，
     正式站實測會回到編輯選單)；絕不回傳 Space 或字母。
+
+    唯一的例外在「文章類別設定」的編輯器：編輯器裡 ← 只會移動游標，要 Ctrl-X
+    才離得開，接著「確定要儲存檔案嗎」必須回答 (A)放棄 才不會存檔；
+    之後「要編輯現有類別的範本嗎？(y/N)」用 Enter 取預設的 N。
     """
     top, second, bottom = _top_and_bottom(screen)
+    if _EDITOR_FOOTER in bottom and '(^X)存檔' in bottom:
+        return command.ctrl_x
+    if bottom.startswith(_SAVE_FILE_PROMPT):
+        return 'a' + command.enter
+    if bottom.startswith(_ASK_POST_TEMPLATE):
+        return command.enter
+    if top.startswith(_POST_TEMPLATE_LIST):
+        return command.left
     if bottom.startswith(_bottom_input_prompts):
         return command.ctrl_c
     if bottom.endswith('[按任意鍵繼續]') or '請按任意鍵繼續' in bottom:

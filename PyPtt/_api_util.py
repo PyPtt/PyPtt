@@ -490,6 +490,11 @@ def leave_board_setting(api, stale: bool = False) -> bool:
         screens.Target.BoardSettingOldPrompt,
         '請輸入',
         '確認以上資料全部正確嗎',
+        # set_post_template：文章類別／範本編輯器與其後的提示
+        '編輯文章',
+        '確定要儲存檔案嗎',
+        '要編輯現有類別的範本嗎',
+        '文章類別範本設定',
     ]
     refreshed_unknown = False
     left_unknown = False
